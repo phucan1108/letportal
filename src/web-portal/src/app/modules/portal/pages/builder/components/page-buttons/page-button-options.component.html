@@ -1,0 +1,10 @@
+<h3 mat-dialog-title>Button Options</h3>
+<mat-dialog-content>
+    <div class="dialog-width">
+        <let-buttonoptions #buttonOptionsComponent [buttonOptions]="buttonOptions"></let-buttonoptions>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
+    <button mat-button (click)="save()" color="primary">Save</button>
+</mat-dialog-actions>

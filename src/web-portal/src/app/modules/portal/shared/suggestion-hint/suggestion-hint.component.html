@@ -1,0 +1,18 @@
+<div [formGroup]="formGroup">
+    <mat-form-field class="example-full-width">
+        <input [formControlName]="controlKey" matInput #formNameInput (keyup)="onKeyUp($event)" [placeholder]="placeholder" (keyup.control.space)="onCtrlSpacePress($event)"
+            autocomplete="off">
+        <mat-hint align="end">{{formNameInput.value?.length || 0}}/50</mat-hint>
+        <span #suggestionHint class="suggestion-hint" [ngStyle]="{ 'left': left, 'visibility': visible }"
+            [ngClass]="appendedClass">
+            <cdk-virtual-scroll-viewport itemSize="50" class="scrollable-viewport">
+                <mat-list *cdkVirtualFor="let suggest of suggestionList" (click)="selectSuggestHint(suggest)" dense>
+                    <mat-list-item>
+                        {{suggest}}
+                    </mat-list-item>
+                </mat-list>
+            </cdk-virtual-scroll-viewport>
+        </span>
+        <span #spanTextWrap class="span-text-wrap">{{tempText}}</span>
+    </mat-form-field>
+</div>

@@ -1,0 +1,87 @@
+<div>
+    <dynamic-list-filters *ngIf="isContructedGrid" [filters]="filters" (onSearch)="onSubmittingSearch($event)"
+        [fetchFirstTime]="listOptions.fetchDataFirstTime" [enableSearch]="listOptions.enableSearch" [enableAdvancedSearch]="listOptions.enableAdvancedSearch">
+    </dynamic-list-filters>
+</div>
+<div *ngIf="readyToRender else loading"></div>
+<div class="table-flex" [hidden]="!readyToRender">
+    <mat-table class="lmat-elevation-z8" [dataSource]="dataSource$" matSort [matSortActive]="defaultSortColumn"
+        matSortDirection="asc" matSortDisableClear>
+        <ng-container *ngFor="let header of headers">
+            <ng-container [matColumnDef]="header.name">
+                <!-- ATTRIBUTE mat-sort-header  for sorting | https://material.angular.io/components/sort/overview -->
+                <mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!header.allowSort">
+                    {{ header.displayName
+                        }}</mat-header-cell>
+                <mat-cell *matCellDef="let data">
+                    <span class="handset-label">{{ header.displayName }}</span>
+                    <ng-container *ngIf="!isDisplayedAsHtml(header)">
+                        <span class="handset-data"
+                            (click)="openDialogData(data)">{{ translateData(data, header) }}</span>
+                    </ng-container>
+                    <ng-container *ngIf="isDisplayedAsHtml(header)">
+                        <span class="handset-data" (click)="openDialogData(data)" *ngIf="isTextAsHtml(header)"
+                            [innerHtml]="renderInnerHtml(data, header)"></span>
+                        <div class="handset-data" *ngIf="isBooleanAsHtml(header)">
+                            <mat-chip-list>
+                                <mat-chip color="primary" *ngIf="getBooleanValue(data, header)" selected>
+                                    {{ getBooleanValue(data, header) }}</mat-chip>
+                                <mat-chip color="accent" *ngIf="!getBooleanValue(data, header)" selected>
+                                    {{ getBooleanValue(data, header) }}</mat-chip>
+                            </mat-chip-list>
+                        </div>
+                        <div class="handset-data" *ngIf="isSelectAsHtml(header)">
+                            <mat-chip-list>
+                                <mat-basic-chip [class]="getClassForChip(data, header)">{{ translateData(data, header) }}</mat-basic-chip>
+                            </mat-chip-list>
+                        </div>
+                    </ng-container>
+                </mat-cell>
+            </ng-container>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let data">
+                <span class="handset-label">Actions</span>
+                <span class="handset-action">
+                    <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu">
+                        <mat-icon>add_box</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu" yPosition="above">
+                        <ng-container *ngFor="let command of commandsInList">
+                            <dynamic-list-command [data]="data" [command]="command" (onClick)="onCommandClick($event)"
+                                isHansetDisplay="true">
+                            </dynamic-list-command>
+                        </ng-container>
+                    </mat-menu>
+                </span>
+                <span class="desktop-action">
+                    <button mat-icon-button matTooltip="More data..." (click)="openDialogDataForButton(data)" *ngIf="hasDetailCols">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+                    <ng-container *ngFor="let command of commandsInList">
+                        <dynamic-list-command [data]="data" [command]="command" (onClick)="onCommandClick($event)">
+                        </dynamic-list-command>
+                    </ng-container>
+                </span>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
+</div>
+<div class="align-center" *ngIf="readyToRender && totalItems == 0">No records found</div>
+<!-- Message for empty data  -->
+
+<div class="mat-table__bottom">
+    <mat-spinner [diameter]="20" *ngIf="loading$ | async"></mat-spinner>
+    <mat-paginator [pageSize]="listOptions.defaultPageSize" [pageSizeOptions]="listOptions.sizeOptions"
+        [length]="totalItems" [hidePageSize]="false" [showFirstLastButtons]="false" *ngIf="listOptions.enablePagination"></mat-paginator>
+</div>
+
+<ng-template #loading>
+    
+</ng-template>

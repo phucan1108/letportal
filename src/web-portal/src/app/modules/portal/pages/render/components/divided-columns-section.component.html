@@ -1,0 +1,43 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            {{ section.displayName }}
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="align-center" *ngIf="readyToRender">
+        <ng-container *ngFor="let groupControl of controlsGroups">
+            <div class="form-group row" *ngIf="!groupControl.isLineBreaker">
+                <ng-container *ngFor="let control of groupControl.controlsList">
+                    <ng-container *ngIf="control.type !== controlType.RichTextEditor
+                                        && control.type !== controlType.Label">
+                        <label [ngClass]="_labelClass"
+                            class="font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div [ngClass]="_boundedClass" [formGroup]="builderFormGroup"
+                            *ngIf="control.type !== controlType.RichTextEditor">
+                            <let-general-control [section]="section" [formGroup]="builderFormGroup" [control]="control">
+                            </let-general-control>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="control.type === controlType.RichTextEditor">
+                        <label
+                            class="col-lg-2 col-form-label font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div class="col-lg-10">
+                            <let-general-control [section]="section" [formGroup]="builderFormGroup" [control]="control">
+                            </let-general-control>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="control.type === controlType.Label">
+                        <label [ngClass]="_labelClass"
+                            class="font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div [ngClass]="_boundedClass">
+                            <p class="float-left col-form-label">
+                                {{builderFormGroup.get(control.name).value}}
+                            </p>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+            <div class="separator-dashed pb-3" *ngIf="groupControl.isLineBreaker"></div>
+        </ng-container>
+    </mat-card-content>
+</mat-card>

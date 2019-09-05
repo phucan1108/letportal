@@ -1,0 +1,34 @@
+<h3 mat-dialog-title>Option</h3>
+<mat-dialog-content>
+    <form [formGroup]="shellOptForm">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Key</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter key name" formControlName="key" #keyInput maxlength="100" />
+                    <mat-hint align="end">
+                        {{keyInput.value?.length || 0}}/100
+                    </mat-hint>
+                    <mat-error *ngIf="shellOptForm.get('key').hasError('isExist')">
+                        Key is already used
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Value</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter value" formControlName="value" #valueInput maxlength="250" />
+                    <mat-hint align="end">
+                        {{valueInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
+    <button mat-button (click)="save()" color="primary">Save</button>
+</mat-dialog-actions>

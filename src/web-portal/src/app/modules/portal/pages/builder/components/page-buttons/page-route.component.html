@@ -1,0 +1,64 @@
+<form [formGroup]="routeForm">
+    <div class="row">
+        <label class="col-lg-2 col-form-label">Condition**</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="condition" matInput #conditionInput maxlength="250"
+                    placeholder="Enter a condition expression **">
+                <mat-hint align="end">{{conditionInput.value?.length || 0}}/250</mat-hint>
+                <mat-icon matSuffix matTooltip="A condition expression must be evaluted to true/false">code
+                </mat-icon>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-lg-2 col-form-label">Route Type</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <mat-select placeholder="Pick one route type" formControlName="routeType">
+                    <mat-option *ngFor="let routeType of _routeTypes" [value]="routeType.value">
+                        {{ routeType.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row" *ngIf="routeForm.get('routeType').value === routeType.ThroughPage">
+        <label class="col-lg-2 col-form-label">Page</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <mat-select placeholder="Pick one page" formControlName="targetPageId">
+                    <mat-option *ngFor="let page of page$ | async" [value]="page.id">
+                        {{ page.displayName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row" *ngIf="routeForm.get('routeType').value === routeType.ThroughUrl">
+        <label class="col-lg-2 col-form-label">Url*</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="targetUrl" matInput #targetUrlInput maxlength="250" placeholder="Enter a url *">
+                <mat-hint align="end">{{targetUrlInput.value?.length || 0}}/250</mat-hint>
+                <mat-icon matSuffix
+                    matTooltip="A url can contain Angular expression to bind data. Can include expression">
+                    code
+                </mat-icon>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-lg-2 col-form-label">Url Parameters*</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="passDataPath" matInput #passDataPathInput maxlength="250"
+                    placeholder="Enter parameters *">
+                <mat-hint align="end">{{passDataPathInput.value?.length || 0}}/250</mat-hint>
+                <mat-icon matSuffix matTooltip="Parameters are included in url. Can include expression">
+                    help_outline
+                </mat-icon>
+            </mat-form-field>
+        </div>
+    </div>
+</form>

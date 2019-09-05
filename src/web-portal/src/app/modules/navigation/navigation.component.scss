@@ -1,0 +1,45 @@
+.sidenav-container {
+  flex: 1;
+}
+
+.sidenav {
+  width: 300px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.portal-container{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.parent-menu{
+  font-size: 15px;
+}
+.sub-menu{
+  font-size: 13px;
+}
+
+.icon-side{
+  font-size: 20px !important;
+  color: rgba(0,0,0,.54);
+}
+
+
+.icon-side-small{
+  font-size: 18px !important;
+  color: rgba(0,0,0,.54);
+}

@@ -1,0 +1,37 @@
+.suggestion-hint {
+  position: absolute;
+  display: block;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  overflow: auto;
+  padding-top: 5px;
+  z-index: 10;
+  top: 26px;
+}
+
+.scrollable-viewport{
+  width: 300px;
+  min-height: 200px;
+}
+
+.suggestion-hint .mat-list {
+  padding-top: 0px;
+}
+
+.suggestion-hint .mat-list-item {
+  background-color: rgb(255, 255, 255);
+}
+
+.suggestion-hint .mat-list-item:hover {
+  background-color: rgb(245, 245, 245);
+}
+
+.span-text-wrap {
+  position: absolute;
+  left: -9999999px;
+  font-family: inherit;
+  font-stretch: inherit;
+  font-weight: inherit;
+  text-size-adjust: 100%;
+  white-space: pre; // Important: this 'pre' helps us to count offsetWidth including the white-space
+}

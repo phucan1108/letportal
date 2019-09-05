@@ -1,0 +1,19 @@
+<div class="grid-container-sub" [ngSwitch]="pageSection.constructionType">
+    <ng-container *ngSwitchCase="constructionType.Standard">
+        <divided-columns [section]="pageSection" *ngIf="readyToRender else loading"></divided-columns>
+    </ng-container>
+    <ng-container *ngSwitchCase="constructionType.Array">
+    </ng-container>
+    <ng-container *ngSwitchCase="constructionType.DynamicList">
+        <let-dynamic-list-render [section]="pageSection" [dynamicList]="pageSection.relatedDynamicList"
+            [displayName]="pageSection.displayName" *ngIf="readyToRender else loading"></let-dynamic-list-render>
+    </ng-container>
+</div>
+
+<ng-template #loading>
+    <mat-card>
+        <mat-card-content>
+            <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
+        </mat-card-content>
+    </mat-card>
+</ng-template>

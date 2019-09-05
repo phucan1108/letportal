@@ -1,0 +1,7 @@
+<form [formGroup]="formGroup" action="#">
+    <mat-form-field class="field-full-width">
+        <json-editor [options]="jsonOptions" [data]="queryJsonData" [formControlName]="formControlKey"></json-editor>
+        <input [formControlName]="formControlKey" matInput #queryTypeInput style="display:none">
+        <mat-hint align="end">{{queryTypeInput.value?.length || 0}}/500</mat-hint>
+    </mat-form-field>
+</form>

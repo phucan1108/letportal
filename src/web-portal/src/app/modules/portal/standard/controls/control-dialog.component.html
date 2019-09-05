@@ -1,0 +1,106 @@
+<h3 mat-dialog-title>Control</h3>
+<mat-dialog-content>
+    <form class="m-form dialog-width" [formGroup]="controlForm">
+        <div class="row row-heading">
+            <h3>Control Settings:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                Control Name
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Control Name" #controlNameInput formControlName="name" maxlength="100" />
+                    <mat-hint align="end"> {{controlNameInput.value?.length || 0}}/100</mat-hint>
+                    <mat-error *ngIf="controlForm.get('name').hasError('isExist')">
+                        Name is already used
+                    </mat-error>
+                    <mat-error *ngIf="controlForm.get('name').hasError('pattern')">
+                        Accept only alpha characters
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                Control Type
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one control type" formControlName="controlType">
+                        <mat-option *ngFor="let type of _controlTypes" [value]="type.value">
+                            {{ type.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div class="row row-heading" *ngIf="currentControlType !== controlType.LineBreaker">
+        <h3>Control Options:</h3>
+    </div>
+    <let-shell-option *ngIf="currentControlType !== controlType.LineBreaker" [shellOptions$]="shellOptions$" (changed)="onChangingOptions($event)"></let-shell-option>
+    <div class="row row-heading" *ngIf="currentControlType !== controlType.LineBreaker">
+        <h3>Validation Options</h3>
+    </div>
+    <div *ngIf="!isHandset && currentControlType !== controlType.LineBreaker">
+        <ng-container *ngFor="let validator of validators$ | async">
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">{{validator.displayName}}</label>
+                <div class="col-lg-1 pt-3 align-center">
+                    <mat-checkbox [(ngModel)]="validator.isActive" (change)="picked($event)">
+                    </mat-checkbox>
+                </div>
+                <div class="col-lg-4">
+                    <mat-form-field class="field-full-width">
+                        <input [(ngModel)]="validator.validatorMessage" placeholder="Input the error message" matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4">
+                    <mat-form-field *ngIf="!validator.hideOption" class="field-full-width">
+                        <input [(ngModel)]="validator.validatorOption"
+                            [placeholder]="validator.validatorOptionPlaceholder" matInput>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <mat-accordion *ngIf="isHandset && currentControlType !== controlType.LineBreaker">
+        <mat-expansion-panel *ngFor="let validator of validators$ | async">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{validator.displayName}}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="form-group row">
+                <div class="col-lg-2">
+                    <mat-checkbox [(ngModel)]="validator.isActive" (change)="picked($event)">
+                        Active
+                    </mat-checkbox>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Error message</label>
+                <div class="col-lg-2">
+                    <mat-form-field class="field-full-width">
+                        <input [(ngModel)]="validator.validatorMessage" placeholder="Input the error message" matInput>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="!validator.hideOption">
+                <label class="col-lg-2 col-form-label">Option</label>
+                <div class="col-lg-2">
+                    <mat-form-field class="field-full-width">
+                        <input [(ngModel)]="validator.validatorOption"
+                            [placeholder]="validator.validatorOptionPlaceholder" matInput>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="">Cancel</button>&nbsp;
+    <button mat-button (click)="onSubmittingControl()" color="primary">Save</button>
+</mat-dialog-actions>

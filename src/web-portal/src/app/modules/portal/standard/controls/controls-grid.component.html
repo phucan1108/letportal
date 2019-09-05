@@ -1,0 +1,160 @@
+<div class="grid-container-sub" *ngIf="!isHandset">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="addNewControl()">New Control</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="align-center">
+            <div class="row" [hidden]="selection.selected.length == 0">
+                <div class="col-xl-12 selector-box">
+                    <label>Selected records count:
+                        {{ selection.selected.length }}</label>
+                    <button mat-raised-button color="primary" (click)="deleteSelectedControls()"
+                        matTooltip="Delete selected actions">
+                        <mat-icon>delete</mat-icon> Delete All
+                    </button>
+                </div>
+            </div>
+            <mat-table #table cdkDropList (cdkDropListDropped)="onListDrop($event)" class="lmat-elevation-z8"
+                [dataSource]="controls$" [cdkDropListData]="controls">
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
+                        <mat-checkbox (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row" class="mat-column-checkbox">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="label">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Name
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let control" class="mat-column-vinCode">{{control.name}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="controlType">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Control Type
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let control" class="mat-column-vinCode">
+                        {{translateControlType(control.type)}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="bindname">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Bind name
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let control" class="mat-column-vinCode">{{getBindName(control.options)}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>
+                        Actions
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let control">
+                        <button mat-icon-button color="primary" matTooltip="Edit Control"
+                            (click)="editControl(control)">
+                            <mat-icon>create</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="warn" type="button" matTooltip="Delete Control"
+                            (click)="deleteControl(control)">
+                            <mat-icon>delete</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="accent" type="button" matTooltip="Edit Events"
+                            (click)="editEvents(control)" *ngIf="ifHasEvents(control)">
+                            <mat-icon>notifications_none</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="primary" type="button" matTooltip="Edit Async Validators"
+                            (click)="editAsyncValidators(control)">
+                            <mat-icon>rotate_90_degrees_ccw</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="warn" type="button" matTooltip="Edit datasource"
+                            *ngIf="allowEditDatasource(control)" (click)="editControlDatasource(control)">
+                            <mat-icon>library_books</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedControlsInListColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedControlsInListColumns" cdkDrag [cdkDragData]="row">
+                    <div class="drag-drop-placeholder" *cdkDragPlaceholder></div>
+                </mat-row>
+            </mat-table>
+
+            <div class="align-center" *ngIf="controls.length == 0">No records found</div>
+        </mat-card-content>
+    </mat-card>
+</div>
+<ng-container *ngIf="isHandset">
+    <div class="row">
+        <div class="col-lg-12">
+            <button mat-raised-button color="primary" (click)="addNewControl()">New Control</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 pt-3">
+            <mat-accordion *ngIf="isHandset" cdkDropList [cdkDropListData]="controls"
+                (cdkDropListDropped)="onListDropExpansion($event)">
+                <mat-expansion-panel *ngFor="let control of controls$ | async ;let index = index;" cdkDrag
+                    [cdkDragData]="control">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{control.name}}
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label font-weight-bold">Control Name</label>
+                        <label class="col-lg-2 text-left">
+                            {{control.name}}
+                        </label>
+                        <label class="col-lg-2 col-form-label font-weight-bold">Control Type</label>
+                        <label class="col-lg-2 text-left">
+                            {{translateControlType(control.type)}}
+                        </label>
+                        <label class="col-lg-2 col-form-label font-weight-bold">Bind name</label>
+                        <label class="col-lg-2 text-left">
+                            {{getBindName(control.options)}}
+                        </label>
+                        <div class="col-lg-2 d-flex justify-content-center">
+                            <button mat-button color="primary" matTooltip="Actions" [matMenuTriggerFor]="action"
+                                aria-label="Toggle menu">
+                                Actions
+                            </button>
+                            <mat-menu #action="matMenu" xPosition="after">
+                                <button mat-menu-item color="primary" matTooltip="Edit Control"
+                                    (click)="editControl(control)">
+                                    <mat-icon>create</mat-icon>
+                                    Edit Control
+                                </button>&nbsp;
+                                <button mat-menu-item color="warn" type="button" matTooltip="Delete Control"
+                                    (click)="deleteControl(control)">
+                                    <mat-icon>delete</mat-icon>
+                                    Delete Control
+                                </button>&nbsp;
+                                <button mat-menu-item color="accent" type="button" matTooltip="Edit Events"
+                                    (click)="editEvents(control)">
+                                    <mat-icon>notifications_none</mat-icon>
+                                    Edit Events
+                                </button>&nbsp;
+                                <button mat-menu-item color="warn" type="button" matTooltip="Edit datasource"
+                                    *ngIf="allowEditDatasource(control)" (click)="editControlDatasource(control)">
+                                    <mat-icon>library_books</mat-icon>
+                                    Datasource
+                                </button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                    <div class="drag-drop-placeholder" *cdkDragPlaceholder></div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+</ng-container>

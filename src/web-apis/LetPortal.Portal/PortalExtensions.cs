@@ -1,0 +1,83 @@
+﻿using LetPortal.Core;
+using LetPortal.Core.Files;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Options.Files;
+using LetPortal.Portal.Persistences;
+using LetPortal.Portal.Providers.Databases;
+using LetPortal.Portal.Providers.Datasources;
+using LetPortal.Portal.Providers.EntitySchemas;
+using LetPortal.Portal.Providers.Pages;
+using LetPortal.Portal.Repositories;
+using LetPortal.Portal.Repositories.Apps;
+using LetPortal.Portal.Repositories.Components;
+using LetPortal.Portal.Repositories.Databases;
+using LetPortal.Portal.Repositories.Datasources;
+using LetPortal.Portal.Repositories.EntitySchemas;
+using LetPortal.Portal.Repositories.Files;
+using LetPortal.Portal.Repositories.Pages;
+using LetPortal.Portal.Services.Databases;
+using LetPortal.Portal.Services.Files;
+using LetPortal.Portal.Services.Files.Validators;
+using LetPortal.Portal.Services.Http;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Reflection;
+
+namespace LetPortal.Portal
+{
+    public static class PortalExtensions
+    {
+        public static ILetPortalBuilder AddPortalService(
+            this ILetPortalBuilder builder,
+            Action<PortalOptions> action = null)
+        {
+            var portalOptions = new PortalOptions();
+            if(action != null)
+            {
+                action.Invoke(portalOptions);
+            }
+            if(builder.ConnectionType == ConnectionType.MongoDB)
+            {
+                MongoDbRegistry.RegisterEntities();
+
+                // Register all mongo repositories
+                builder.Services.AddSingleton<IDatabaseRepository, DatabaseMongoRepository>();
+                builder.Services.AddSingleton<IDatasourceRepository, DatasourceMongoRepository>();
+                builder.Services.AddSingleton<IEntitySchemaRepository, EntitySchemaMongoRepository>();
+                builder.Services.AddSingleton<IAppRepository, AppMongoRepository>();
+                builder.Services.AddSingleton<IAppVersionRepository, AppVersionMongoRepository>();
+                builder.Services.AddSingleton<IPageRepository, PageMongoRepository>();
+                builder.Services.AddSingleton<IDynamicListRepository, DynamicListMongoRepository>();
+                builder.Services.AddSingleton<IStandardRepository, StandardMongoRepository>();
+                builder.Services.AddSingleton<IFileRepository, FileMongoRepository>();
+            }
+
+            if(portalOptions.EnableFileServer)
+            {
+                builder.Services.Configure<FileOptions>(builder.Configuration.GetSection("FileOptions"));
+                builder.Services.Configure<FileValidatorOptions>(builder.Configuration.GetSection("FileOptions").GetSection("FileValidatorOptions"));
+                builder.Services.Configure<DiskStorageOptions>(builder.Configuration.GetSection("FileOptions").GetSection("DiskStorageOptions"));
+                builder.Services.Configure<DatabaseStorageOptions>(builder.Configuration.GetSection("FileOptions").GetSection("DatabaseStorageOptions"));
+
+                builder.Services.AddSingleton<IFileConnectorExecution, DiskFileConnectorExecution>();
+                builder.Services.AddSingleton<IFileConnectorExecution, DatabaseFileConnectorExecution>();
+                builder.Services.AddTransient<IFileValidatorRule, CheckFileExtensionRule>();
+                builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
+            }
+
+            builder.Services.AddSingleton<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();
+            builder.Services.AddSingleton<IDatasourceServiceProvider, InternalDatasourceServiceProvider>();
+            builder.Services.AddSingleton<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();
+            builder.Services.AddSingleton<IPageServiceProvider, InternalPageServiceProvider>();
+
+            builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+            builder.Services.AddSingleton<IFileService, FileService>();
+            builder.Services.AddTransient<HttpService>();
+            builder.Services.AddHttpClient<HttpService>();
+
+            builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+            return builder;
+        }
+    }
+}

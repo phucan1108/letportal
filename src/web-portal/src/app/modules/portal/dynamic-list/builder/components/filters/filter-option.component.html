@@ -1,0 +1,107 @@
+<div class="row row-heading">
+    <h3>Filters Option:</h3>
+</div>
+<div *ngIf="!isSmallDevice">
+    <ng-container *ngFor="let filter of filterOptions;let index = index; trackBy: trackFilterName">
+        <div class="form-group row">
+            <div class="col-lg-1">
+                <button mat-icon-button color="primary" matTooltip="Actions" class="more-button"
+                    [matMenuTriggerFor]="action" aria-label="Toggle menu">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <mat-menu #action="matMenu" xPosition="after">
+                    <button mat-menu-item color="warn" (click)="deleteFilter(filter)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        Delete
+                    </button>
+                    <button *ngIf="filter.filterValueType == fieldValueType.Select" mat-menu-item
+                        (click)="openDatasourceDialogForFilter(filter)">
+                        <mat-icon color="accent">library_books</mat-icon>
+                        Datasource
+                    </button>
+                </mat-menu>
+            </div>
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <input [(ngModel)]="filter.displayName" matInput placeholder="Display Name for Filter Field">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one field type" [(ngModel)]="filter.filterValueType"
+                        (selectionChange)="onFieldTypeSelectChange(filter,jsonEditorChild)">
+                        <mat-option *ngFor="let fieldType of _fieldTypes" [value]="fieldType.value">
+                            {{ fieldType.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-7 pt-3">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <mat-checkbox [(ngModel)]="filter.allowTextSearch" name="allowInAdvancedMode"
+                            matTooltip="Allow this field can be searchable by keywords">Search Keyword</mat-checkbox>
+                    </div>
+                    <div class="col-lg-3">
+                        <mat-checkbox [(ngModel)]="filter.allowInAdvancedMode" name="allowInAdvancedMode"
+                            matTooltip="Allow this field can be filtered by Advanced Mode">Advanced Mode
+                        </mat-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
+
+<mat-accordion *ngIf="isSmallDevice">
+    <mat-expansion-panel *ngFor="let filter of filterOptions;let index = index; trackBy: trackFilterName">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{filter.name}}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="form-group row">
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <input [(ngModel)]="filter.displayName" matInput placeholder="Display Name for Filter Field">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one field type" [(ngModel)]="filter.filterValueType"
+                        (selectionChange)="onFieldTypeSelectChange(filter,jsonEditorChild)">
+                        <mat-option *ngFor="let fieldType of _fieldTypes" [value]="fieldType.value">
+                            {{ fieldType.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-3">
+                <mat-checkbox [(ngModel)]="filter.allowTextSearch" name="allowInAdvancedMode"
+                    matTooltip="Allow this field can be searchable by keywords">Search Keyword</mat-checkbox>
+            </div>
+            <div class="col-lg-3">
+                <mat-checkbox [(ngModel)]="filter.allowInAdvancedMode" name="allowInAdvancedMode"
+                    matTooltip="Allow this field can be filtered by Advanced Mode">Advanced Mode
+                </mat-checkbox>
+            </div>
+            <div class="col-lg-2 d-flex justify-content-center">
+                <button mat-button color="primary" matTooltip="Actions" [matMenuTriggerFor]="action"
+                    aria-label="Toggle menu">
+                    Actions
+                </button>
+                <mat-menu #action="matMenu" xPosition="after">
+                    <button mat-menu-item color="warn" (click)="deleteFilter(filter)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        Delete
+                    </button>
+                    <button *ngIf="filter.filterValueType == filterValueType.Select" mat-menu-item
+                        (click)="openDatasourceDialogForFilter(filter)">
+                        <mat-icon color="accent">library_books</mat-icon>
+                        Datasource
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

@@ -1,0 +1,214 @@
+<div class="form-group row">
+    <label class="col-lg-2 col-form-label">Action Type</label>
+    <div class="col-lg-6">
+        <mat-form-field class="field-full-width">
+            <mat-select placeholder="Pick one action type" [(ngModel)]="currentActionType"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option *ngFor="let type of actionTypes" [value]="type.value">
+                    {{ type.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-2 col-form-label">Enable</label>
+    <div class="col-lg-10">
+        <mat-slide-toggle [(ngModel)]="isEnable"></mat-slide-toggle>
+    </div>
+</div>
+<ng-container [ngSwitch]="currentActionType">
+    <form [formGroup]="databaseOptionsForm" *ngSwitchCase="actionType.ExecuteDatabase">
+        <div class="row row-heading">
+            <h3>Execute Database Info:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Database</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one connection" formControlName="databaseConnectionId">
+                        <mat-option *ngFor="let database of databaseConnections | async" [value]="database.id">
+                            {{ database.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Hint</label>
+            <div class="col-lg-10 pt-2">
+                <button mat-button (click)="openQueryHint()" color="primary">Query</button>
+                <button mat-button (click)="openInsertHint()" color="primary">Insert</button>
+                <button mat-button (click)="openUpdateHint()" color="primary">Update</button>
+                <button mat-button (click)="openUpdatePartsHint()" color="primary">Update Parts</button>
+                <button mat-button (click)="openDeleteHint()" color="primary">Delete</button>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="isHintClicked">
+            <div class="col-lg-10 offset-lg-2" (click)="copy()">
+                <mat-form-field class="field-full-width">
+                    <textarea style="cursor: pointer;" disabled="disabled" rows="6" readonly="true"
+                        [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="hintText"
+                        placeholder="Click to copy"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Command</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <json-editor #jsonDataEditor [options]="editorOptions3" [data]="jsonData">
+                    </json-editor>
+                    <input formControlName="query" matInput #jsonDataEditor style="display:none">
+                    <mat-hint align="end">{{jsonDataEditor.value?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <form [formGroup]="httpOptionsForm" *ngSwitchCase="actionType.CallHttpService ">
+        <div class="row row-heading">
+            <h3>HTTP Web service Info:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Service Url:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="httpCallUrl" matInput #httpUrlInput placeholder="Enter Url"
+                        autocomplete="off">
+                    <mat-hint align="end">{{httpUrlInput.value?.length || 0}}/255</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Http Method</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one HTTP method" formControlName="httpCallMethod">
+                        <mat-option *ngFor="let httpMethod of _httpMethods" [value]="httpMethod.value">
+                            {{ httpMethod.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Json Body:</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <json-editor #jsonPayloadEditor [options]="editorOptions1" [data]="jsonHttpBodyData"></json-editor>
+                    <input formControlName="httpJsonPayload" matInput #jsonBodyInput style="display:none">
+                    <mat-hint align="end">{{jsonBodyInput.value?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Output Projection:</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="httpOutputProjection" matInput #outputProjectionInput
+                        placeholder="Enter Url" autocomplete="off">
+                    <mat-hint align="end">{{outputProjectionInput.value?.length || 0}}/255</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Http Success Code:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="httpSuccessCode" matInput #httpSuccessCodeInput
+                        placeholder="Enter HTTP Success Code">
+                    <mat-hint align="end">{{httpSuccessCodeInput.value?.length || 0}}/255</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <form [formGroup]="redirectionOptionsForm" *ngSwitchCase="actionType.Redirect">
+        <div class="row row-heading">
+            <h3>Redirection Info:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Through:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one route type" formControlName="redirectionType">
+                        <mat-option *ngFor="let type of _redirectionTypes" [value]="type.value">
+                            {{ type.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <ng-container *ngIf="redirectionOptionsForm.get('redirectionType').value === redirectionType.ThroughPage">
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Page:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <mat-select placeholder="Pick one page" formControlName="targetPageId">
+                            <mat-option *ngFor="let page of page$ | async" [value]="page.id">
+                                {{ page.displayName }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Parameters:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <input matInput placeholder="Passing Parameters" formControlName="passParams" />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Same domain:</label>
+                <div class="col-lg-6">
+                    <mat-slide-toggle formControlName="isSameDomain" name="isSameDomain">
+                    </mat-slide-toggle>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="redirectionOptionsForm.get('redirectionType').value === redirectionType.ThroughUrl">
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Url:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <input matInput placeholder="Redirect Url" formControlName="redirectUrl" />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Same domain:</label>
+                <div class="col-lg-6">
+                    <mat-slide-toggle formControlName="isSameDomain" name="isSameDomain">
+                    </mat-slide-toggle>
+                </div>
+            </div>
+        </ng-container>
+    </form>
+</ng-container>
+
+<form [formGroup]="notificationOptionsForm" *ngIf="currentActionType !== actionType.Redirect">
+    <div class="row row-heading">
+        <h3>Notification Info:</h3>
+    </div>
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">Complete Message</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="completeMessage" matInput #completeMessageInput
+                    placeholder="Enter Complete Message" autocomplete="off">
+                <mat-hint align="end">{{completeMessageInput.value?.length || 0}}/255</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">Failed Message</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="failedMessage" matInput #failedMessageInput placeholder="Enter Failed Message"
+                    autocomplete="off">
+                <mat-hint align="end">{{failedMessageInput.value?.length || 0}}/255</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+</form>

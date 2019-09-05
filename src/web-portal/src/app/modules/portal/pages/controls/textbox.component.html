@@ -1,0 +1,7 @@
+<div class="example-full-width" [formGroup]="form">
+    <mat-form-field *ngIf="isPreviewMode">
+        <input [formControlName]="formControl.name" [id]="formControl.name" matInput #formNameInput
+            [placeholder]="formControl.tooltip" [readonly]="formControl.readOnlyMode">
+        <mat-hint align="end">{{formNameInput.value?.length || 0}}/50</mat-hint>
+    </mat-form-field>
+</div>

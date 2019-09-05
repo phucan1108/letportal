@@ -1,0 +1,46 @@
+<div class="col-lg-12">
+    <form [formGroup]="pageInfoFormGroup" #formDirective="ngForm">
+        <div class="row row-heading">
+            <h3>{{heading}}:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Display Name:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="displayName" matInput #displayNameInput placeholder="Enter Display Name"
+                        [readonly]="isEditMode" maxlength="250">
+                    <mat-hint align="end">
+                        {{displayNameInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Page Name:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="name" matInput #formNameInput placeholder="Auto-generated from Display Name"
+                        [readonly]="isEditMode" maxlength="250">
+                    <mat-hint align="end">
+                        {{formNameInput.value?.length || 0}}/250
+                    </mat-hint>
+                    <mat-error *ngIf="pageInfoFormGroup.get('name').hasError('uniqueName')">
+                        Name is already used
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Url Path:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="urlPath" matInput #urlPathInput
+                        placeholder="Auto-generated from Display Name">
+                    <mat-hint align="end">
+                        {{urlPathInput.value?.length || 0}}/100
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</div>

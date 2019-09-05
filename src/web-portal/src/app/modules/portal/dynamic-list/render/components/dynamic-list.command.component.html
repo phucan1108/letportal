@@ -1,0 +1,15 @@
+<ng-container *ngIf="isCommandInList && !isHansetDisplay">
+    <button mat-icon-button [color]="command.color" [matTooltip]="command.displayName" (click)="onCommandClick()">
+        <mat-icon>{{ command.icon }}</mat-icon>
+    </button>
+</ng-container>
+<ng-container *ngIf="isCommandInList && isHansetDisplay">
+    <button mat-menu-item (click)="onCommandClick()" [matTooltip]="command.displayName">
+        <mat-icon>{{ command.icon }}</mat-icon>
+        {{ command.displayName }}
+    </button>
+</ng-container>
+<ng-container *ngIf="!isCommandInList">
+    <button mat-menu-item (click)="onCommandClick()"
+        [matTooltip]="command.displayName">{{ command.displayName }}</button>
+</ng-container>

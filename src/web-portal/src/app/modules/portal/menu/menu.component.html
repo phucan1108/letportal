@@ -1,0 +1,81 @@
+<div class="grid-container">
+    <div class="row">
+        <div class="col-lg-12 pb-2">
+            <h4>Menu: {{app.displayName}}</h4>
+            <button mat-icon-button class="more-button revert-button" [matMenuTriggerFor]="menu"
+                aria-label="Toggle menu">
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="addMenu()">Add Menu</button>
+                <button mat-menu-item (click)="saveMenu()">Save</button>
+                <button mat-menu-item (click)="cancel()">Cancel</button>
+            </mat-menu>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="align-center">
+                    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+                        <!-- This is the tree node template for leaf nodes -->
+                        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="10"
+                            #tree>
+                            <!-- use a disabled button to provide padding for tree leaf -->
+                            <button mat-icon-button disabled></button>
+                            {{node.name}}
+                            <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu" yPosition="below">
+                                <button mat-menu-item matTooltip="Edit" color="primary" (click)="editMenu(node)">
+                                    Edit
+                                </button>
+                                <button mat-menu-item matTooltip="Add" color="primary" (click)="addChild(node)">
+                                    Add Child
+                                </button>
+                                <button mat-menu-item matTooltip="Add Below" color="primary" (click)="addBelow(node)">
+                                    Add Below
+                                </button>
+                                <button mat-menu-item matTooltip="Remove" color="warn" (click)="removeMenu(node)">
+                                    Remove
+                                </button>
+                            </mat-menu>
+                        </mat-tree-node>
+                        <!-- This is the tree node template for expandable nodes -->
+                        <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
+                            matTreeNodePaddingIndent="10">
+                            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                <mat-icon class="mat-icon-rtl-mirror">
+                                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                </mat-icon>
+                            </button>
+                            {{node.name}}
+                            <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu" yPosition="below">
+                                <button mat-menu-item matTooltip="Edit" color="primary" (click)="editMenu(node)">
+                                    Edit
+                                </button>
+                                <button mat-menu-item matTooltip="Add" color="primary" (click)="addChild(node)">
+                                    Add Child
+                                </button>
+                                <button mat-menu-item matTooltip="Add Below" color="primary" (click)="addBelow(node)">
+                                    Add Below
+                                </button>
+                                <button mat-menu-item matTooltip="Remove" color="warn" (click)="removeMenu(node)">
+                                    Remove
+                                </button>
+                            </mat-menu>
+                        </mat-tree-node>
+                    </mat-tree>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

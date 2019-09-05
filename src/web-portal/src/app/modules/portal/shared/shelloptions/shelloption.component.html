@@ -1,0 +1,39 @@
+<div class="row">
+
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-lg-12">
+                <button mat-raised-button color="primary" (click)="addShell()">Add Option</button>
+            </div>
+            <div class="col-lg-12 pt-3">
+                <m-table [(value)]="shellOptions" #mtable [selectable]="false" selectionHandler="false"
+                    (onEditComplete)="editComplete($event)">
+                    <m-column field="description" header="Hint">
+                        <ng-template let-col let-row="row" mTemplate="body">
+                            <mat-icon *ngIf="!!row.description" [matTooltip]="row.description"
+                                matTooltipPosition="right" color="primary" style="cursor: pointer;">help_outline
+                            </mat-icon>
+                        </ng-template>
+                    </m-column>
+                    <m-column field="key" header="Key">
+                    </m-column>
+                    <m-column field="value" header="Value" editable="true">
+                    </m-column>
+                    <m-column field="value" header="Actions">
+                        <ng-template let-col let-row="row" mTemplate="body">
+                            <button mat-icon-button color="warn" type="button" matTooltip="Delete Shell"
+                                (click)="deleteShell(row)" *ngIf="allowDeleteShell(row)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </ng-template>
+                    </m-column>
+                    <ng-template mTemplate="emptyTable">
+                        <div class="align-center">
+                            No records
+                        </div>
+                    </ng-template>
+                </m-table>
+            </div>
+        </div>
+    </div>
+</div>

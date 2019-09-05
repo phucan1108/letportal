@@ -1,0 +1,30 @@
+.dashboard-card {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+}
+
+.dashboard-card-content {
+  text-align: center;
+}
+
+.mat-card-block {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.button-tools {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.div-stepper {
+  display: flex;
+}
+.div-stepper > button {
+  margin-left: 5px;
+  margin-right: 5px;
+}

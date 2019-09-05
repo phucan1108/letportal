@@ -1,0 +1,91 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Page Builder
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="saveChanges()">Save</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-horizontal-stepper linear (selectionChange)="onStepChange($event)">
+                <ng-template matStepperIcon="edit">
+                    <mat-icon>check</mat-icon>
+                </ng-template>
+                <mat-step label="Page Options" [stepControl]="pageInfoFormGroup" errorMessage="Page info is required">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button matStepperNext mat-raised-button color="primary" [disabled]="pageInfoFormGroup.invalid">Next</button>
+                        </div>
+                    </div>
+                    <let-page-info [(pageInfoFormGroup)]="pageInfoFormGroup" [heading]="heading" [isEditMode]="isEditMode"></let-page-info>
+                    <div class="separator-dashed"></div>
+                    <div class="row row-heading">
+                        <h3>List Options:</h3>
+                    </div>
+                    <let-shell-option [shellOptions$]="shellOptions$" (change)="onChangingOptions($event)">
+                    </let-shell-option>
+                    <div class="separator-dashed"></div>
+                    <div class="row row-heading">
+                        <h3>List Claims:</h3>
+                    </div>
+                    <let-claim-table [(claims)]="claims" style="width: 100%;"></let-claim-table>
+                </mat-step>
+                <!-- Builder Step -->
+                <mat-step label="Sections">
+                    <div class="row">
+                        <div class="col-md-12 button-wrapper">
+                            <button matStepperPrevious mat-raised-button>Previous</button>
+                            <button matStepperNext mat-raised-button color="primary"
+                                (click)="nextToDatasource()">Next</button>
+                        </div>
+                        <div class="col-md-12">
+
+                        </div>
+                        <div class="col-md-12">
+                            <form [formGroup]="tempBuilderForm" class="m-form m-form--label-align-right">
+                                <let-builder-dnd></let-builder-dnd>
+                            </form>
+                        </div>
+                        <div class="col-md-12">
+                            <let-page-button-grid></let-page-button-grid>
+                        </div>
+                    </div>
+                </mat-step>
+                <!-- /End Builder Step -->
+                <mat-step label="Datasources">
+                    <div class="row">
+                        <div class="col-md-12 button-wrapper">
+                            <button matStepperPrevious mat-raised-button>Previous</button>
+                            <button matStepperNext mat-raised-button color="primary"
+                                (click)="nextToWorkflow()">Next</button>
+                        </div>
+                        <div class="col-md-12">
+                        </div>
+                        <div class="col-md-12">
+                            <let-page-datasource-grid></let-page-datasource-grid>
+                        </div>
+                    </div>
+                </mat-step>
+                <!-- Workflow Step -->
+                <mat-step label="Events">
+                    <div class="row">
+                        <div class="col-md-12 button-wrapper">
+                            <button matStepperPrevious mat-raised-button>Previous</button>
+                        </div>
+                        <div class="col-md-12">
+                        </div>
+                        <div class="col-md-12">
+                            <let-page-event-grid></let-page-event-grid>
+                        </div>
+                    </div>
+                </mat-step>
+                <!-- /End Workflow Step -->
+            </mat-horizontal-stepper>
+        </mat-card-content>
+    </mat-card>
+</div>

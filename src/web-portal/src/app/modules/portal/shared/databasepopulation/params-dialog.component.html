@@ -1,0 +1,19 @@
+<h3 mat-dialog-title>Params</h3>
+<mat-dialog-content>
+    <ng-container *ngFor="let param of params">
+        <div class="row">
+            <label class="col-lg-6 col-form-label">
+                {{param.name}}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter value" [(ngModel)]="param.value" [name]="param.value" />
+                </mat-form-field>
+            </div>
+        </div>
+    </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
+    <button mat-button (click)="onPolulating()" color="primary">Populate</button>
+</mat-dialog-actions>

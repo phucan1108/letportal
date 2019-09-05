@@ -1,0 +1,92 @@
+<h3 mat-dialog-title>Command</h3>
+<mat-dialog-content>
+    <form class="dialog-width" [formGroup]="commandButtonForm" (ngSubmit)="onSubmittingCommand()">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Display Name</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter Command Display Name" #displayNameInput
+                        formControlName="displayName" />
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Name</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Auto-generated name" formControlName="name" readonly />
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Position</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Choose Command Position" formControlName="commandPositionType">
+                        <mat-option *ngFor="let commandPosition of _commandPositions" [value]="commandPosition.value">
+                            {{ commandPosition.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="isInList">
+            <label class="col-lg-2 col-form-label">Icon</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Icon" aria-label="Icon" [matAutocomplete]="autoIcon"
+                        formControlName="icon">
+                    <mat-autocomplete #autoIcon="matAutocomplete">
+                        <mat-option *ngFor="let _icon of iconFilterOptions | async" [value]="_icon">
+                            <mat-icon>{{_icon}}</mat-icon>
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="m-separator m-separator--dashed" *ngIf="isInList"></div>
+        <div class="form-group row" *ngIf="isInList">
+            <label class="col-lg-2 col-form-label">Button Color:</label>
+            <div class="col-lg-10" *ngIf="!isSmallDevice">
+                <div class="m-radio-inline">
+                    <mat-radio-group formControlName="color">
+                        <mat-radio-button value="primary">
+                            <button type="button" mat-raised-button color="primary">Sample</button>
+                        </mat-radio-button>
+                        <mat-radio-button value="basic">
+                            <button type="button" mat-raised-button color="basic">Sample</button>
+                        </mat-radio-button>
+                        <mat-radio-button value="warn">
+                            <button type="button" mat-raised-button color="warn">Sample</button>
+                        </mat-radio-button>
+                        <mat-radio-button value="accent">
+                            <button type="button" mat-raised-button color="accent">Sample</button>
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+            <div class="col-lg-10" *ngIf="isSmallDevice">
+                <mat-radio-group formControlName="color">
+                    <mat-radio-button value="primary">
+                        <button type="button" mat-raised-button color="primary">Sample</button>
+                    </mat-radio-button>
+                    <mat-radio-button value="basic">
+                        <button type="button" mat-raised-button color="basic">Sample</button>
+                    </mat-radio-button>
+                    <mat-radio-button value="warn">
+                        <button type="button" mat-raised-button color="warn">Sample</button>
+                    </mat-radio-button>
+                    <mat-radio-button value="accent">
+                        <button type="button" mat-raised-button color="accent">Sample</button>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+    </form>
+    <let-commandoptions #actionOptions [options]="options" [actionCommandOptions]="actionCommandOptions">
+    </let-commandoptions>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
+    <button mat-button (click)="onSubmittingCommand()" color="primary">Save</button>
+</mat-dialog-actions>

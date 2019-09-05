@@ -1,0 +1,19 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            {{ displayName ? displayName : dynamicList.displayName }}
+            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+                <ng-container *ngFor="let command of commandOutList">
+                    <dynamic-list-command [command]="command" (onClick)="onCommandClicked($event)">
+                    </dynamic-list-command>
+                </ng-container>
+            </mat-menu>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="align-center">
+        <dynamic-list-grid [dynamicList]="dynamicList" (onClick)="onCommandClicked($event)"></dynamic-list-grid>
+    </mat-card-content>
+</mat-card>

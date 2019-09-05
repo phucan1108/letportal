@@ -1,0 +1,106 @@
+﻿using LetPortal.Core;
+using LetPortal.Core.Persistences;
+using LetPortal.Identity.Configurations;
+using LetPortal.Identity.Entities;
+using LetPortal.Identity.Providers.Emails;
+using LetPortal.Identity.Providers.Identity;
+using LetPortal.Identity.Repositories.Identity;
+using LetPortal.Identity.Stores;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LetPortal.Identity
+{
+    public static class IdentityExtensions
+    {
+        public static ILetPortalBuilder AddIdentity(this ILetPortalBuilder builder)
+        {
+            builder.Services.Configure<Configurations.JwtBearerOptions>(builder.Configuration.GetSection("JwtBearerOptions"));
+            builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
+
+            if(builder.ConnectionType == ConnectionType.MongoDB)
+            {                                                                                       
+                builder.Services.AddSingleton<IUserRepository, UserMongoRepository>();
+                builder.Services.AddSingleton<IRoleRepository, RoleMongoRepository>();
+                builder.Services.AddSingleton<IIssuedTokenRepository, IssuedTokenMongoRepository>();
+                builder.Services.AddSingleton<IUserSessionRepository, UserSessionMongoRepository>();
+            }
+
+            builder.Services.AddTransient<IIdentityServiceProvider, InternalIdentityServiceProvider>();
+            builder.Services.AddSingleton<IEmailServiceProvider, EmailServiceProvider>();
+            builder.Services.AddIdentity<User, Role>()
+                .AddUserStore<UserStore>()
+                .AddRoleStore<RoleStore>()
+                .AddDefaultTokenProviders();
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                // Password options
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+                options.SignIn.RequireConfirmedEmail = false;
+
+
+                // User options
+                options.User.RequireUniqueEmail = true;
+                // Lockout options
+                options.Lockout.AllowedForNewUsers = true;
+            });
+
+            var jwtOptions = builder.Configuration.GetSection("JwtBearerOptions").Get<Configurations.JwtBearerOptions>();
+            builder.Services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    NameClaimType = "name"
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if(context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("X-Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+
+            return builder;
+        }
+
+        public static BaseClaim ToBaseClaim(this Claim claim)
+        {
+            return new BaseClaim
+            {
+                ClaimType = claim.Type,
+                ClaimValue = claim.Value,
+                ClaimValueType = claim.ValueType,
+                Issuer = claim.Issuer
+            };
+        }
+
+        public static Claim ToClaim(this BaseClaim baseClaim)
+        {
+            return new Claim(baseClaim.ClaimType, baseClaim.ClaimValue, baseClaim.ClaimValueType, baseClaim.Issuer);
+        }
+    }
+}
