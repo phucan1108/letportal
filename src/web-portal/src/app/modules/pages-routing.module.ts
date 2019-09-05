@@ -15,6 +15,11 @@ const routes: Routes = [
                 path: '',
                 component: AppDashboardComponent,
                 canActivate: [AuthGuard]
+            },            
+            {
+                path: 'portal/builder',
+                loadChildren: './portal/portal-builder.module#PortalBuilderModule',
+                canActivate: [AuthGuard, CanActivePortal]
             },
             {
                 path: 'portal',

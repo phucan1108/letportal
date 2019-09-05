@@ -10,7 +10,6 @@ import { NgxsStoreModule } from 'stores/store.module';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { ConfigurationService } from 'services/configuration.service';
 import { ConfigurationProvider } from './core/configs/configProvider';
-import { ShellModule } from './core/shell/shell.module';
 import { environment } from 'environments/environment';
 import { RouterExtService } from './core/ext-service/routerext.service';
 import { LoginComponent } from './modules/login/login.component';
@@ -70,7 +69,6 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
     ]),
     NgxsStoreModule,
     MomentumTableModule,
-    ShellModule,
     LoggerModule.forRoot({
       serverLoggingUrl: "",
       level: environment.production ? NgxLoggerLevel.OFF: NgxLoggerLevel.DEBUG,
@@ -81,29 +79,16 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
   ],
   providers: [
     ConfigurationService,
-    // Portal Clients
-    DynamicListClient,
     {
       provide: PORTAL_BASE_URL,
       useFactory: portalBaseUrl,
       deps: [ConfigurationProvider]
     },
-    DatabasesClient,
-    DatasourceClient,
-    EntitySchemasClient,
-    AppsClient,
-    RouterExtService,
-    SessionService,
-    AccountsClient,
-    UserSessionClient,    
-    StandardComponentClient,
-    PagesClient,
     {
       provide: IDENTITY_BASE_URL,
       useFactory: identityBaseUrl,
       deps: [ConfigurationProvider]
     },
-    RolesClient,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtTokenInterceptor,
