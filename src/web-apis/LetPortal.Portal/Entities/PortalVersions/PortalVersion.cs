@@ -9,9 +9,7 @@ namespace LetPortal.Portal.Entities.Versions
     {
         public string VersionNumber { get; set; }
 
-        public string AffectiveList { get; set; }  
-        
-        public VersionRunningType RunningType { get; set; }
+        public string AffectiveList { get; set; }
 
         public DateTime CreatedDate { get; set; }  
 
@@ -24,12 +22,6 @@ namespace LetPortal.Portal.Entities.Versions
             string number = majorNumber + minorNumber + patchNumber;
             return int.Parse(number);
         }
-    }
-
-    public enum VersionRunningType
-    {
-        Upgrade,
-        Downgrade
     }
 }
 

@@ -32,7 +32,7 @@ namespace LET.Tools.Installation
         [Option("-f|--force", Description = "Force run without asking")]
         public bool Force { get; set; } = false;
 
-        [Argument(0, Name = "mode", Description = "Supports: info | install | uninstall | upgrade | downgrade")]
+        [Argument(0, Name = "mode", Description = "Supports: info | install | uninstall | up | down")]
         public string Mode { get; set; }
 
         [Argument(1, Name = "version", Description = "Version number is needed to run with mode. Ex: 0.0.1")]
@@ -66,10 +66,10 @@ namespace LET.Tools.Installation
                     case ConnectionType.MongoDB:
                         var mongoConnection = new MongoConnection(databaseOption);
                         var mongoVersionContext = new MongoVersionContext(databaseOption);
-                        var portalVersionCollection = mongoConnection.GetDatabaseConnection().GetCollection<PortalVersion>(typeof(PortalVersion).GetEntityCollectionName());
-                        var allPortalVersions = portalVersionCollection.AsQueryable().ToList();
-                        var latestVersion = allPortalVersions.OrderByDescending(b => b.GetNumber()).ThenBy(a => a.CreatedDate).FirstOrDefault();
                         var portalMongoRepository = new PortalVersionMongoRepository(mongoConnection);
+
+                        var latestVersion = portalMongoRepository.GetAsQueryable().ToList().LastOrDefault();
+
                         var toolsContext = new ToolsContext
                         {
                             LatestVersion = latestVersion,

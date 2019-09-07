@@ -50,7 +50,7 @@ namespace LetPortal.Tools.Features
 
             foreach(var groupVersion in availableGroupVersions)
             {
-                Console.WriteLine($"Installing Version: {groupVersion}");
+                Console.WriteLine($"Upgrading Version: {groupVersion}");
                 var matchingVersions = versions.Where(a => a.VersionNumber == groupVersion);
 
                 var executingVersions = new List<string>();
@@ -58,7 +58,7 @@ namespace LetPortal.Tools.Features
                 {
                     version.Upgrade(toolsContext.VersionContext);
                     executingVersions.Add(version.GetType().GetTypeInfo().Name);
-                    Console.WriteLine(string.Format("Installing {0} Version {1} Completely!", version.GetType().GetTypeInfo().Name, version.VersionNumber));
+                    Console.WriteLine(string.Format("Upgrading {0} Version {1} Completely!", version.GetType().GetTypeInfo().Name, version.VersionNumber));
                 }
 
                 dicVersions.Add(groupVersion, executingVersions);
@@ -71,8 +71,7 @@ namespace LetPortal.Tools.Features
                     Id = DataUtil.GenerateUniqueId(),
                     VersionNumber = kvp.Key,
                     AffectiveList = ConvertUtil.SerializeObject(kvp.Value),
-                    CreatedDate = DateTime.UtcNow,
-                    RunningType = VersionRunningType.Upgrade
+                    CreatedDate = DateTime.UtcNow
                 });
             }
 

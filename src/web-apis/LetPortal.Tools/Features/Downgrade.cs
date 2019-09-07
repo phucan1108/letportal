@@ -21,13 +21,18 @@ namespace LetPortal.Tools.Features
                 if(requestingVersionNumber < context.LatestVersion.GetNumber())
                 {
                     var matchingVersions = context.Versions.Where(
-                         a => a.GetNumber() < context.LatestVersion.GetNumber()
-                             && a.GetNumber() >= requestingVersionNumber);
+                         a => a.GetNumber() <= context.LatestVersion.GetNumber()
+                             && a.GetNumber() > requestingVersionNumber);
 
-                    var portalVersions = DowngradingVersion(matchingVersions, context);
+                    var portalVersions = DowngradingVersion(matchingVersions, context);                    
                     foreach(var portalVersion in portalVersions)
                     {
-                        await context.PortalVersionRepository.AddAsync(portalVersion);
+                        var storedVersion = context.PortalVersionRepository.GetAsQueryable().Where(a => a.VersionNumber == portalVersion.VersionNumber).FirstOrDefault();
+
+                        if(storedVersion != null)
+                        {
+                            await context.PortalVersionRepository.DeleteAsync(storedVersion.Id);
+                        }                        
                     }
                 }
                 else
@@ -46,7 +51,7 @@ namespace LetPortal.Tools.Features
             var effectivePortalVersions = new List<PortalVersion>();
             var dicVersions = new Dictionary<string, List<string>>();
 
-            var availableGroupVersions = versions.Select(a => a.VersionNumber).Distinct();
+            var availableGroupVersions = versions.OrderByDescending(b => b.GetNumber()).Select(a => a.VersionNumber).Distinct();
 
             foreach(var groupVersion in availableGroupVersions)
             {
@@ -56,7 +61,7 @@ namespace LetPortal.Tools.Features
                 var executingVersions = new List<string>();
                 foreach(var version in matchingVersions)
                 {
-                    version.Upgrade(toolsContext.VersionContext);
+                    version.Downgrade(toolsContext.VersionContext);
                     executingVersions.Add(version.GetType().GetTypeInfo().Name);
                     Console.WriteLine(string.Format("Downgrading {0} Version {1} Completely!", version.GetType().GetTypeInfo().Name, version.VersionNumber));
                 }
@@ -71,8 +76,7 @@ namespace LetPortal.Tools.Features
                     Id = DataUtil.GenerateUniqueId(),
                     VersionNumber = kvp.Key,
                     AffectiveList = ConvertUtil.SerializeObject(kvp.Value),
-                    CreatedDate = DateTime.UtcNow,
-                    RunningType = VersionRunningType.Downgrade
+                    CreatedDate = DateTime.UtcNow
                 });
             }
 

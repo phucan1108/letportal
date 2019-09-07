@@ -13,8 +13,7 @@ namespace LetPortal.Tools.Features
         {
             if(context.LatestVersion != null)
             {
-                Console.WriteLine($"Current Version: {context.LatestVersion.VersionNumber}");
-                Console.WriteLine($"Last Action Type: {context.LatestVersion.RunningType.ToString()}");
+                Console.WriteLine($"Current Version: {context.LatestVersion.VersionNumber}");                
                 Console.WriteLine($"Last Modified Date: {context.LatestVersion.CreatedDate}");
 
 

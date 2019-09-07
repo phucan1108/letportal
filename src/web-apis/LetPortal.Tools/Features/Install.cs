@@ -75,8 +75,7 @@ namespace LetPortal.Tools.Features
                    Id = DataUtil.GenerateUniqueId(),
                    VersionNumber = kvp.Key,
                    AffectiveList = ConvertUtil.SerializeObject(kvp.Value),
-                   CreatedDate = DateTime.UtcNow,
-                   RunningType = VersionRunningType.Upgrade
+                   CreatedDate = DateTime.UtcNow
                 });
             }
 
