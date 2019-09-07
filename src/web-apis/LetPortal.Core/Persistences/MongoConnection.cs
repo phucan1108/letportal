@@ -20,6 +20,10 @@ namespace LetPortal.Core.Persistences
         public MongoConnection(DatabaseOptions databaseOptions)
         {
             ConnectionString = databaseOptions.ConnectionString;
+            if(string.IsNullOrEmpty(databaseOptions.Datasource))
+            {
+                databaseOptions.Datasource = MongoUrl.Create(databaseOptions.ConnectionString).DatabaseName;
+            }
             DatabaseName = databaseOptions.Datasource;
         }
 

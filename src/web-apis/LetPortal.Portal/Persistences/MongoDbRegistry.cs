@@ -1,5 +1,6 @@
 ﻿using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Entities.Versions;
 using MongoDB.Bson.Serialization;
 
 namespace LetPortal.Portal.Persistences
@@ -31,6 +32,13 @@ namespace LetPortal.Portal.Persistences
             BsonClassMap.RegisterClassMap<StandardComponent>(cm =>
             {
                 cm.AutoMap();
+                cm.SetIgnoreExtraElements(true);
+            });
+
+            BsonClassMap.RegisterClassMap<PortalVersion>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIsRootClass(true);
                 cm.SetIgnoreExtraElements(true);
             });
         }

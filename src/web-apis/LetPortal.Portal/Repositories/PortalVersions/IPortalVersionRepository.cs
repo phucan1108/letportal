@@ -3,7 +3,7 @@ using LetPortal.Portal.Entities.Versions;
 
 namespace LetPortal.Portal.Repositories.PortalVersions
 {
-    internal interface IPortalVersionRepository : IGenericRepository<PortalVersion>
+    public interface IPortalVersionRepository : IGenericRepository<PortalVersion>
     {
     }
 }

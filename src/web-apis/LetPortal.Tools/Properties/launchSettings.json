@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LET.Tools.Installation": {
+      "commandName": "Project",
+      "commandLineArgs": "uninstall"
+    }
+  }
+}
