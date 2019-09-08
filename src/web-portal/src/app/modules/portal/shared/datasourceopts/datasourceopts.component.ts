@@ -4,7 +4,7 @@ import { NGXLogger } from 'ngx-logger';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { StaticResources } from 'portal/resources/static-resources';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
-import { ControlsGridComponent } from 'portal/standard/controls/controls-grid.component';
+import { ControlsGridComponent } from 'portal/modules/builder/components/standard/controls/controls-grid.component';
 import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';

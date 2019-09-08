@@ -373,7 +373,7 @@ namespace LetPortal.Versions.Pages
                         Name = "Update",
                         Icon = "edit",
                         Color = "primary",
-                        AllowHidden = "!!queryparams.id",
+                        AllowHidden = "!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {

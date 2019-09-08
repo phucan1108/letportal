@@ -50,7 +50,6 @@ export class StaticResources {
         return [
             { name: 'Execute Database', value: ActionType.ExecuteDatabase },
             { name: 'Http Service', value: ActionType.CallHttpService },
-            { name: 'Workflow', value: ActionType.CallWorkflow },
             { name: 'Redirect', value: ActionType.Redirect }
         ]
     }

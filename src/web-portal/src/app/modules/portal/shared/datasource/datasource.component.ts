@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angula
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DynamicListDataSourceComponent } from '../../dynamic-list/builder/components/dynamic-list.datasource.component';
+import { DynamicListDataSourceComponent } from '../../modules/builder/components/dynamic-list/components/dynamic-list.datasource.component';
 import { Datasource, DatasourceClient, DatasourceType, DatabaseConnection, DatabasesClient } from 'services/portal.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 

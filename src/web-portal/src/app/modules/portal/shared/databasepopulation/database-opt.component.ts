@@ -3,15 +3,13 @@ import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
-import { Constants } from 'portal/resources/constants';
-import { ExtendedFilterField } from 'portal/dynamic-list/models/extended.model';
 import { NGXLogger } from 'ngx-logger';
 import StringUtils from 'app/core/utils/string-util';
 import { MatDialog } from '@angular/material';
 import { ParamsDialogComponent } from './params-dialog.component';
 import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions } from 'services/portal.service';
-import { ShortcutUtil } from 'app/shared/components/shortcuts/shortcut-util';
-import { ToastType } from 'app/shared/components/shortcuts/shortcut.models';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 
 @Component({
     selector: 'let-database-opt',

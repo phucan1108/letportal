@@ -79,7 +79,7 @@ namespace LetPortal.Versions.Components
                             {
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/dynamic-list/builder",
+                                    RedirectUrl = "portal/builder/dynamic-list",
                                     IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
@@ -96,7 +96,7 @@ namespace LetPortal.Versions.Components
                             {
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/dynamic-list/builder/{{data.id}}",
+                                    RedirectUrl = "portal/builder/dynamic-list/{{data.id}}",
                                     IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
@@ -169,7 +169,7 @@ namespace LetPortal.Versions.Components
                             {
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/standard/builder",
+                                    RedirectUrl = "portal/builder/standard",
                                     IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
@@ -186,7 +186,7 @@ namespace LetPortal.Versions.Components
                             {
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/standard/builder/{{data.id}}",
+                                    RedirectUrl = "portal/builder/standard/{{data.id}}",
                                     IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect

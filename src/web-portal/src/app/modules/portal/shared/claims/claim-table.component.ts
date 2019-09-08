@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { PortalClaim, ClaimValueType } from 'services/portal.service';
-import { ShortcutUtil } from 'app/shared/components/shortcuts/shortcut-util';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { MatDialog, MatTable } from '@angular/material';
 import { ClaimDialogComponent } from './claim-dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import * as _ from 'lodash';
-import { MessageType, ToastType } from 'app/shared/components/shortcuts/shortcut.models';
+import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PortalStandardClaims } from 'app/core/security/portalClaims';
 import { StaticResources } from 'portal/resources/static-resources';
 

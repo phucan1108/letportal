@@ -4,8 +4,8 @@ import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { Observable } from 'rxjs';
 import { DatabaseConnection, DatabasesClient, DatabaseOptions } from 'services/portal.service';
 import { ClipboardService } from 'ngx-clipboard';
-import { ShortcutUtil } from 'app/shared/components/shortcuts/shortcut-util';
-import { ToastType } from 'app/shared/components/shortcuts/shortcut.models';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 
 @Component({
     selector: 'let-databaseoptions',

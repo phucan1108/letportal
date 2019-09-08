@@ -19,7 +19,6 @@ namespace LetPortal.Versions.SectionParts
             versionContext.DeleteData<DynamicList>("5d0f2dca6ba2fd4ca49e3742");
             versionContext.DeleteData<DynamicList>("5d0f2dca6ba2fd4ca49e3743");
             versionContext.DeleteData<DynamicList>("5d0f2dca6ba2fd4ca49e3746");
-            versionContext.DeleteData<DynamicList>("5d316b88e7fefb62d805bfb5");
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -281,7 +280,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/menus/{{data.id}}"
+                                    RedirectUrl = "portal/builder/menus/{{data.id}}"
                                 }
                             },
                             Order = 2
@@ -449,7 +448,7 @@ namespace LetPortal.Versions.SectionParts
                                 ActionType = ActionType.Redirect,
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/page/builder",
+                                    RedirectUrl = "portal/builder/page",
                                     IsSameDomain = true
                                 }
                             },
@@ -466,7 +465,7 @@ namespace LetPortal.Versions.SectionParts
                                 ActionType = ActionType.Redirect,
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/page/builder/{{data.name}}",
+                                    RedirectUrl = "portal/builder/page/{{data.name}}",
                                     IsSameDomain = true
                                 }
                             },
@@ -699,115 +698,12 @@ namespace LetPortal.Versions.SectionParts
                             {
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/roles/{{data.name}}/claims",
+                                    RedirectUrl = "portal/builder/roles/{{data.name}}/claims",
                                     IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
                             },
                             Order = 2
-                        }
-                    }
-                }
-            };
-
-            var workflowListSectionPart = new DynamicList
-            {
-                Id = "5d316b88e7fefb62d805bfb5",
-                Name = "workflows-list-section-part",
-                DisplayName = "Workflows List",
-                Options = Constants.DynamicListOptions,
-                ListDatasource = new DynamicListDatasource
-                {
-                    DatabaseConnectionOptions = new DatabaseOptions
-                    {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
-                        EntityName = "apps",
-                        Query = "{ \"$query\": { \"workflows\": [] }}"
-                    },
-                    SourceType = DynamicListSourceType.Database
-                },                 
-                ColumnsList = new ColumnsList
-                {
-                    ColumndDefs = new List<ColumndDef>
-                    {
-                        new ColumndDef
-                        {
-                            Name = "id",
-                            DisplayName = "Id",
-                            IsHidden = true,
-                            DisplayFormat = "{0}",
-                            SearchOptions = new SearchOptions
-                            {
-                                AllowInAdvancedMode = false,
-                                AllowTextSearch = false
-                            },
-                            Order = 0
-                        },
-                        new ColumndDef
-                        {
-                            Name = "name",
-                            DisplayName = "Workflow",
-                            AllowSort = true,
-                            DisplayFormat = "{0}",
-                            SearchOptions = new SearchOptions
-                            {
-                                AllowInAdvancedMode = true,
-                                AllowTextSearch = true
-                            },
-                            Order = 1
-                        },
-                        new ColumndDef
-                        {
-                            Name = "longRunningMode",
-                            DisplayName = "Long Running",
-                            DisplayFormat = "{0}",
-                            SearchOptions = new SearchOptions
-                            {
-                                AllowInAdvancedMode = true,
-                                AllowTextSearch = true,
-                                FieldValueType = FieldValueType.Checkbox
-                            },
-                            Order = 2
-                        }
-                    }
-                },
-                CommandsList = new CommandsList
-                {
-                    CommandButtonsInList = new List<CommandButtonInList>
-                    {
-                        new CommandButtonInList
-                        {
-                            Name = "create",
-                            DisplayName = "Create",
-                            Color = "primary",
-                            CommandPositionType = CommandPositionType.OutList,
-                            ActionCommandOptions =new ActionCommandOptions
-                            {
-                                RedirectOptions = new RedirectOptions
-                                {
-                                    RedirectUrl = "portal/workflow/builder",
-                                    IsSameDomain = true
-                                },
-                                ActionType = ActionType.Redirect
-                            },
-                            Order = 0
-                        },
-                        new CommandButtonInList
-                        {
-                            Name = "edit",
-                            DisplayName = "Edit",
-                            Color = "primary",
-                            Icon = "create",
-                            ActionCommandOptions = new ActionCommandOptions
-                            {
-                                RedirectOptions = new RedirectOptions
-                                {
-                                    RedirectUrl = "portal/workflow/builder/{{data.id}}",
-                                    IsSameDomain = true
-                                },
-                                ActionType = ActionType.Redirect
-                            },
-                            Order = 1
                         }
                     }
                 }
@@ -818,7 +714,6 @@ namespace LetPortal.Versions.SectionParts
             versionContext.InsertData(pageListSectionPart);
             versionContext.InsertData(userListSectionPart);
             versionContext.InsertData(roleListSectionPart);
-            versionContext.InsertData(workflowListSectionPart);
         }
     }
 }

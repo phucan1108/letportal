@@ -84,16 +84,6 @@ namespace LetPortal.Versions.Apps
                                         MenuPath = "~/5cf616bc462b56ee3bc2c7e1/172fd9c3-0168-90d1-5de7-60b0acaa24ea"
                                     }
                                 }
-                            },
-                            new Menu
-                            {
-                                Id = "5cf618cd9ec1d3bf5c339615",
-                                DisplayName = "Workflows Management",
-                                Icon = "transform",
-                                Url = "/portal/page/workflows-management",
-                                Order = 4,
-                                ParentId = "5cf616bc462b56ee3bc2c7e1",
-                                MenuPath = "~/5cf616bc462b56ee3bc2c7e1"
                             }
                         }
                     },
