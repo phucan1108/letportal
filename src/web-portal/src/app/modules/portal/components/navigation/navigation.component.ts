@@ -78,6 +78,6 @@ export class NavigationComponent implements OnInit {
   logout() {
     this.security.userLogout()
     this.session.clear()
-    this.router.navigateByUrl('/login')
+    this.router.navigateByUrl('/')
   }
 }

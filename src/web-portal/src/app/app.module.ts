@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SharedModule } from './modules/shared/shortcut.module';
-import { NgxsStoreModule } from 'stores/store.module';
+import { NgxsStoreModule } from 'app/core/store.module';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { ConfigurationService } from 'services/configuration.service';
 import { ConfigurationProvider } from './core/configs/configProvider';
@@ -43,16 +43,6 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
     AppRoutingModule,
     BrowserAnimationsModule,
     MatProgressButtonsModule.forRoot(),
-    MatProgressBarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCardModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatIconModule,
-    MatToolbarModule,
-    FormsModule,
-		ReactiveFormsModule,
     SharedModule,
     NgxsStoreModule,
     LoggerModule.forRoot({
@@ -64,10 +54,7 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
     ClipboardModule,
 
     // Portal Module Sections
-    CoreModule.forRoot([
-      toJsonStringTranslator,
-      currentDateTranslator
-    ])
+    CoreModule.forRoot()
   ],
   providers: [
     ConfigurationService,

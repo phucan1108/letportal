@@ -1,12 +1,12 @@
 import { NgxsConfig } from '@ngxs/store/src/symbols';
 import { NgxsDevtoolsOptions } from '@ngxs/devtools-plugin/src/symbols';
 import { NgxsLoggerPluginOptions } from '@ngxs/logger-plugin/src/symbols';
-import { PageBuilderState } from './pages/pagebuilder.state';
-import { ShellDataState } from './shell/shell.state';
-import { SelectedAppState } from './apps/app.state';
+import { PageBuilderState } from './stores/pages/pagebuilder.state';
+import { ShellDataState } from './stores/shell/shell.state';
+import { SelectedAppState } from './stores/apps/app.state';
 import { environment } from 'environments/environment';
-import { PageState } from './pages/page.state';
-import { PageControlEventState } from './pages/pagecontrol.state';
+import { PageState } from './stores/pages/page.state';
+import { PageControlEventState } from './stores/pages/pagecontrol.state';
 
 export const STATES_MODULES = [
   PageBuilderState, 

@@ -12,6 +12,9 @@ import { SessionService } from 'services/session.service';
 import { AccountsClient, UserSessionClient, RolesClient } from 'services/identity.service';
 import { PageService } from 'services/page.service';
 import { UploadFileService } from 'services/uploadfile.service';
+import { TRANSLATOR_METHODS, CONTROL_EVENTS } from './core.config';
+import { ControlEventExecution } from './events/control/control.event';
+import { EventsProvider } from './events/event.provider';
 @NgModule({
   declarations: [
   ],
@@ -24,6 +27,7 @@ import { UploadFileService } from 'services/uploadfile.service';
   ],
   providers: [
     TranslateConfigs,
+    EventsProvider,
     DatasourceOptionsService,
     CustomHttpService,
     Translator,
@@ -47,13 +51,20 @@ import { UploadFileService } from 'services/uploadfile.service';
 })
 export class CoreModule {
 
-  static forRoot(builtInMethods: any[]): ModuleWithProviders {
+  static forRoot(
+    builtInMethods: any[] = null,
+    controlEvents: ControlEventExecution[] = null): ModuleWithProviders {
     return {
       ngModule: CoreModule,
       providers: [
         {
           provide: TranslateConfigs, useValue: {
-            builtInMethods: builtInMethods
+            builtInMethods: builtInMethods ? TRANSLATOR_METHODS.concat(builtInMethods) : TRANSLATOR_METHODS
+          }
+        },
+        {
+          provide: EventsProvider, useValue: {
+            events: controlEvents ? CONTROL_EVENTS.concat(controlEvents) : CONTROL_EVENTS
           }
         }
       ]

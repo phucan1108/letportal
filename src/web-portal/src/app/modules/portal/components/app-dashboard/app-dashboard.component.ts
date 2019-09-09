@@ -6,8 +6,11 @@ import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { UserSelectAppAction } from 'stores/apps/app.action';
 import * as _ from 'lodash';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, tap } from 'rxjs/operators';
 import { MatProgressButtonOptions } from 'mat-progress-buttons';
+import { SecurityService } from 'app/core/security/security.service';
+import { AuthUser } from 'app/core/security/auth.model';
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-app-dashboard',
@@ -21,38 +24,50 @@ export class AppDashboardComponent implements OnInit {
     loadingApps$: Observable<{ app: App, loading: boolean, btnOption: MatProgressButtonOptions }[]>
     constructor(
         private appsClient: AppsClient,
+        private security: SecurityService,
         private sessionService: SessionService,
         private router: Router,
-        private store: Store
+        private store: Store,
+        private logger: NGXLogger
     ) { }
 
     ngOnInit(): void {
-        this.loadingApps$ = this.appsClient.getMany("5c162e9005924c1c741bfdc2").pipe(
-            mergeMap(
-                apps => {
-                    let loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
-                    _.forEach(apps, app => {
-                        loadingApps.push({
-                            app: app,
-                            loading: false,
-                            btnOption: {
-                                active: false,
-                                text: 'Enter',
-                                buttonColor: 'primary',
-                                barColor: 'primary',
-                                raised: false,
-                                stroked: false,
-                                fab: false,
-                                mode: 'indeterminate',
-                                disabled: false,
-                            }
-                        })
-                    })
-
-                    return of(loadingApps)
+        this.security.getPortalClaims().pipe(
+            tap(
+                res => {
+                    if(res){
+                        this.loadingApps$ = this.appsClient.getMany(
+                            this.getAvailableAppIds(this.security.getAuthUser())
+                        ).pipe(
+                            mergeMap(
+                                apps => {
+                                    let loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
+                                    _.forEach(apps, app => {
+                                        loadingApps.push({
+                                            app: app,
+                                            loading: false,
+                                            btnOption: {
+                                                active: false,
+                                                text: 'Enter',
+                                                buttonColor: 'primary',
+                                                barColor: 'primary',
+                                                raised: false,
+                                                stroked: false,
+                                                fab: false,
+                                                mode: 'indeterminate',
+                                                disabled: false,
+                                            }
+                                        })
+                                    })
+                
+                                    return of(loadingApps)
+                                }
+                            )
+                        )
+                    }  
                 }
             )
-        );
+        ).subscribe()        
     }
 
     onSelectingApp(app: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }) {
@@ -60,5 +75,20 @@ export class AppDashboardComponent implements OnInit {
         this.sessionService.setCurrentApp(app.app);
         this.store.dispatch(new UserSelectAppAction(app.app))
         this.router.navigateByUrl(app.app.defaultUrl);
+    }
+
+    private getAvailableAppIds(user: AuthUser){
+        let ids = ''
+
+        const apps = user.claims.find(a => a.name === 'apps')
+        apps.claims.forEach(element => {
+            if(apps.claims.indexOf(element) === apps.claims.length - 1){
+                ids += element
+            }
+            else{
+                ids += element + ';'
+            }            
+        });
+        return ids
     }
 }

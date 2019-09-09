@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef, Optional } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 import { StaticResources } from 'portal/resources/static-resources';
 import { ExtendedFormValidator, ExtendedControlValidator, ExtendedPageSection } from '../../../../core/models/extended.models';
 import * as _ from 'lodash';
@@ -14,6 +14,7 @@ import { ChangeControlValueEvent } from 'stores/pages/page.actions';
 import { PageControlEventStateModel } from 'stores/pages/pagecontrol.state';
 import { PageService } from 'services/page.service';
 import { NGXLogger } from 'ngx-logger';
+import { EventsProvider } from 'app/core/events/event.provider';
 
 @Component({
     selector: 'let-general-control',
@@ -46,6 +47,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
     currentAsyncErrorName: string
     hasAsyncInvalid: boolean = false
     constructor(
+        @Optional() private eventsProvider: EventsProvider,
         private pageService: PageService,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef
@@ -58,6 +60,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
                 state => {
                     // Implement some function events there based on control type
                     switch (state.eventType) {
+
                         case 'change':
                             this.formGroup.get(this.control.name).setValue(state.data)
                             break
@@ -77,6 +80,20 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
                             break
                         case 'noAsyncError':
                             this.hasAsyncInvalid = false
+                            break
+                        default:
+                            const eventExecution = this.eventsProvider.getEvent(state.eventType)
+                            if(eventExecution != null){
+                                eventExecution.execute(
+                                    this.formGroup.get(this.control.name) as FormControl,
+                                    this.formGroup,
+                                    this.pageService,
+                                    this.control.defaultOptions.bindname,
+                                    this.defaultData,
+                                    this.pageService.getDataByBindName(this.control.defaultOptions.bindname),
+                                    state.data
+                                )
+                            }
                             break
                     }
                 }

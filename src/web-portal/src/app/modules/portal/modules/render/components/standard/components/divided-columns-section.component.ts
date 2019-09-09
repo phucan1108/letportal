@@ -49,11 +49,6 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = '';
 
-    _tempOptions = [
-        { name: 'Choose One', value: '1' },
-        { name: 'Choose Two', value: '2' }
-    ]
-
     pageState$: Observable<PageStateModel>
     subscription: Subscription
     readyToRender = false
