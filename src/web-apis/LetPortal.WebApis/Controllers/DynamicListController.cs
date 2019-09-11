@@ -1,10 +1,9 @@
 ﻿using LetPortal.Core.Logger;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
-using LetPortal.Portal.Handlers.Components.DynamicLists.Commands;
-using LetPortal.Portal.Handlers.Components.DynamicLists.Queries;
-using LetPortal.Portal.Handlers.Components.DynamicLists.Requests;
 using LetPortal.Portal.Models.DynamicLists;
-using MediatR;
+using LetPortal.Portal.Repositories.Components;
+using LetPortal.Portal.Services.Components;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,71 +14,112 @@ namespace LetPortal.WebApis.Controllers
     [ApiController]
     public class DynamicListController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IDynamicListRepository _dynamicListRepository;
 
-        private readonly IServiceLogger<DynamicListController> _serviceLogger;
+        private readonly IDynamicListService _dynamicService;
 
-        public DynamicListController(IMediator mediator, IServiceLogger<DynamicListController> serviceLogger)
+        private readonly IServiceLogger<DynamicListController> _logger;
+
+        public DynamicListController(
+            IDynamicListRepository dynamicListRepository,
+            IDynamicListService dynamicListService,
+            IServiceLogger<DynamicListController> logger)
         {
-            _mediator = mediator;
-            _serviceLogger = serviceLogger;
+            _dynamicListRepository = dynamicListRepository;
+            _dynamicService = dynamicListService;
+            _logger = logger;
         }
 
         [HttpGet("")]
         [ProducesResponseType(typeof(List<DynamicList>), 200)]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _mediator.Send(new GetAllDynamicListRequest(new GetAllDynamicListQuery())));
+            var result = await _dynamicListRepository.GetAllAsync(isRequiredDiscriminator: true);
+            _logger.Info("Found dynamic lists {@result}", result);
+            if(result != null)
+                return Ok(result);
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(DynamicList), 200)]
         public async Task<IActionResult> GetOne(string id)
         {
-            return Ok(await _mediator.Send(new GetOneDynamicListRequest(new GetOneDynamicListQuery { DynamicListId = id })));
+            var result = await _dynamicListRepository.GetOneAsync(id);
+            _logger.Info("Found dynamic list: {@result}", result);
+            if(result != null)
+                return Ok(result);
+
+            return NotFound();
         }
 
         [HttpPost("")]
         [ProducesResponseType(typeof(string), 200)]
-        public async Task<IActionResult> Create([FromBody] CreateDynamicListCommand createDynamicListCommand)
+        public async Task<IActionResult> Create([FromBody] DynamicList dynamicList)
         {
-            return Ok(await _mediator.Send(new CreateDynamicListRequest(createDynamicListCommand)));
+            if(ModelState.IsValid)
+            {
+                dynamicList.Id = DataUtil.GenerateUniqueId();
+                await _dynamicListRepository.AddAsync(dynamicList);
+                _logger.Info("Created dynamic list: {@dynamicList}", dynamicList);
+                return Ok(dynamicList);
+            }
+
+            return BadRequest();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateDynamicListCommand updateDynamicListCommand)
+        public async Task<IActionResult> Update(string id, [FromBody] DynamicList dynamicList)
         {
-            updateDynamicListCommand.DynamicListId = id;
-            await _mediator.Send(new UpdateDynamicLIstRequest(updateDynamicListCommand));
-            return Ok();
+            if(ModelState.IsValid)
+            {
+                dynamicList.Id = id;
+                await _dynamicListRepository.UpdateAsync(id, dynamicList);
+                _logger.Info("Updated dynamic list: {@dynamicList}", dynamicList);
+            }
+            return BadRequest();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            await _mediator.Send(new DeleteDynamicListRequest(new DeleteDynamicListCommand { Id = id }));
+            await _dynamicListRepository.DeleteAsync(id);
+            _logger.Info("Deleted dynamic list {id}", id);
             return Ok();
         }
 
-        [HttpPost("fetch-data")]
+        [HttpPost("{id}/fetch-data")]
         [ProducesResponseType(typeof(DynamicListResponseDataModel), 200)]
-        public async Task<IActionResult> ExecuteQuery([FromBody] FetchingDataForDynamicListQuery fetchingDataForDynamicListQuery)
+        public async Task<IActionResult> ExecuteQuery(string id, [FromBody] DynamicListFetchDataModel fetchDataModel)
         {
-            return Ok(await _mediator.Send(new FetchingDataForDynamicListRequest(fetchingDataForDynamicListQuery)));
+            _logger.Info("Execute query in dynamic list id {id} with fetch data {@fetchDataModel}", id, fetchDataModel);
+            var dynamicList = await _dynamicListRepository.GetOneAsync(id);
+
+            if(dynamicList == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _dynamicService.FetchData(dynamicList, fetchDataModel);
+            _logger.Info("Result of query: {@result}", result);
+            return Ok(result);
         }
 
         [HttpPost("extract-query")]
         [ProducesResponseType(typeof(PopulateQueryModel), 200)]
-        public async Task<IActionResult> ExtractingQuery([FromBody] ExtractingQueryForDynamicListQuery extractingQueryForDynamicListQuery)
+        public async Task<IActionResult> ExtractingQuery([FromBody] ExtractingQueryModel extractingQuery)
         {
-            return Ok(await _mediator.Send(new ExtractingQueryForDynamicListRequest(extractingQueryForDynamicListQuery)));
+            _logger.Info("Extracing query model {@extractingQuery}", extractingQuery);
+            var result = await _dynamicService.ExtractingQuery(extractingQuery);
+            _logger.Info("Extracting result {@result}", result);
+            return Ok(result);
         }
 
         [HttpGet("check-exist/{name}")]
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> CheckExist(string name)
         {
-            return Ok(await _mediator.Send(new CheckNameIsExistRequest(new CheckNameIsExistQuery { Name = name })));
+            return Ok(await _dynamicListRepository.IsExistAsync(name));
         }
     }
 }

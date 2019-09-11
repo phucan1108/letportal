@@ -1,41 +1,31 @@
 ﻿using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Datasources;
-using LetPortal.Portal.Handlers.Datasources.Requests;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Providers.Databases;
-using LetPortal.Portal.Repositories.Datasources;
-using MediatR;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace LetPortal.Portal.Handlers.Datasources
+namespace LetPortal.Portal.Services.Datasources
 {
-    public class ExecuteDatasourceHandler : IRequestHandler<ExecuteDatasourceRequest, ExecutedDataSourceModel>
+    public class DatasourceService : IDatasourceService
     {
         private readonly IDatabaseServiceProvider _databaseServiceProvider;
 
-        private readonly IDatasourceRepository _datasourceRepository;
-
-        public ExecuteDatasourceHandler(IDatabaseServiceProvider databaseServiceProvider, IDatasourceRepository datasourceRepository)
+        public DatasourceService(
+            IDatabaseServiceProvider databaseServiceProvider)
         {
             _databaseServiceProvider = databaseServiceProvider;
-            _datasourceRepository = datasourceRepository;
         }
 
-        public async Task<ExecutedDataSourceModel> Handle(ExecuteDatasourceRequest request, CancellationToken cancellationToken)
+        public async Task<ExecutedDataSourceModel> GetDatasourceService(Datasource datasource)
         {
             List<DatasourceModel> datasourceModels = new List<DatasourceModel>();
 
-            var datasource = await _datasourceRepository.GetOneAsync(request.GetQuery().DatasourceId);
-
-            if (datasource.DatasourceType == DatasourceType.Static)
+            if(datasource.DatasourceType == DatasourceType.Static)
             {
                 datasourceModels = ConvertUtil.DeserializeObject<List<DatasourceModel>>(datasource.Query);
             }
@@ -68,9 +58,9 @@ namespace LetPortal.Portal.Handlers.Datasources
                     projectDoc.Add(new BsonElement(arrays[0], "$" + arrays[1]));
                 }
                 aggregateFluent = aggregateFluent.Project(projectDoc);
-                using (IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
                 {
-                    while (executingCursor.MoveNext())
+                    while(executingCursor.MoveNext())
                     {
                         IEnumerable<BsonDocument> currentDocument = executingCursor.Current;
 
@@ -85,11 +75,5 @@ namespace LetPortal.Portal.Handlers.Datasources
                 CanCache = datasource.CanCache
             };
         }
-    }
-
-    internal class DatasourceExtract
-    {
-        public string Name { get; set; }
-        public string Value { get; set; }
     }
 }

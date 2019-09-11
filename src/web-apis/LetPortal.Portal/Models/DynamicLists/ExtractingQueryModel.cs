@@ -1,9 +1,10 @@
-﻿using LetPortal.Portal.Models.DynamicLists;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace LetPortal.Portal.Handlers.Components.DynamicLists.Queries
+namespace LetPortal.Portal.Models.DynamicLists
 {
-    public class ExtractingQueryForDynamicListQuery
+    public class ExtractingQueryModel
     {
         public List<FilledParameterModel> Parameters { get; set; }
 

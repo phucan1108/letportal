@@ -1,27 +1,27 @@
-﻿using LetPortal.Portal.Entities.Databases;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.EntitySchemas;
-using LetPortal.Portal.Handlers.EntitySchemas.Requests;
 using LetPortal.Portal.Providers.Databases;
-using MediatR;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace LetPortal.Portal.Handlers.EntitySchemas
+namespace LetPortal.Portal.Services.EntitySchemas
 {
-    public class FetchAllEntitiesFromDatabaseHandler : RequestHandler<FetchAllEntitiesFromDatabaseRequest, List<EntitySchema>>
+    public class EntitySchemaService : IEntitySchemaService
     {
         private readonly IDatabaseServiceProvider _databaseServiceProvider;
 
-        public FetchAllEntitiesFromDatabaseHandler(IDatabaseServiceProvider databaseServiceProvider)
+        public EntitySchemaService(IDatabaseServiceProvider databaseServiceProvider)
         {
             _databaseServiceProvider = databaseServiceProvider;
         }
 
-        protected override List<EntitySchema> Handle(FetchAllEntitiesFromDatabaseRequest request)
+        public async Task<List<EntitySchema>> FetchAllEntitiesFromDatabase(string databaseId)
         {
-            DatabaseConnection database = _databaseServiceProvider.GetOneDatabaseConnectionAsync(request.GetQuery().DatabaseId).Result;
+            DatabaseConnection database = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(databaseId);            
 
             IMongoDatabase currentDatabaseConnection = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
 
@@ -29,17 +29,17 @@ namespace LetPortal.Portal.Handlers.EntitySchemas
 
             List<EntitySchema> analyzedEntitySchemas = new List<EntitySchema>();
 
-            while (cursorCollectionNames.MoveNext())
+            while(cursorCollectionNames.MoveNext())
             {
                 IEnumerable<string> currentCollectionNamesList = cursorCollectionNames.Current;
 
-                foreach (string collectionName in currentCollectionNamesList)
+                foreach(string collectionName in currentCollectionNamesList)
                 {
                     IMongoCollection<BsonDocument> analyzingCollection = currentDatabaseConnection.GetCollection<BsonDocument>(collectionName);
 
                     BsonDocument firstElem = analyzingCollection.AsQueryable().FirstOrDefault();
 
-                    if (firstElem != null)
+                    if(firstElem != null)
                     {
                         analyzedEntitySchemas.Add(AnalyzeOneBsonDocument(collectionName, firstElem));
                     }
@@ -53,7 +53,7 @@ namespace LetPortal.Portal.Handlers.EntitySchemas
         {
             EntitySchema entitySchema = new EntitySchema { Name = entityName, DisplayName = entityName };
 
-            foreach (BsonElement bsonElem in bsonDocument)
+            foreach(BsonElement bsonElem in bsonDocument)
             {
                 EntityField entityField = new EntityField
                 {
@@ -70,11 +70,11 @@ namespace LetPortal.Portal.Handlers.EntitySchemas
 
         private string GetTypeByBsonDocument(BsonValue bsonValue)
         {
-            if (bsonValue.IsBoolean)
+            if(bsonValue.IsBoolean)
             {
                 return "boolean";
             }
-            if (bsonValue.IsInt32
+            if(bsonValue.IsInt32
                 || bsonValue.IsInt64
                 || bsonValue.IsNumeric
                 || bsonValue.IsDecimal128
@@ -82,15 +82,15 @@ namespace LetPortal.Portal.Handlers.EntitySchemas
             {
                 return "number";
             }
-            if (bsonValue.IsValidDateTime)
+            if(bsonValue.IsValidDateTime)
             {
                 return "datetime";
             }
-            if (bsonValue.IsBsonArray)
+            if(bsonValue.IsBsonArray)
             {
                 return "list";
             }
-            if (bsonValue.IsBsonDocument)
+            if(bsonValue.IsBsonDocument)
             {
                 return "document";
             }

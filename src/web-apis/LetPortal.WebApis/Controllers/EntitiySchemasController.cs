@@ -1,10 +1,9 @@
-﻿using LetPortal.Portal.Entities.EntitySchemas;
-using LetPortal.Portal.Handlers.EntitySchemas.Commands;
-using LetPortal.Portal.Handlers.EntitySchemas.Queries;
-using LetPortal.Portal.Handlers.EntitySchemas.Requests;
-using MediatR;
+﻿using LetPortal.Core.Logger;
+using LetPortal.Portal.Entities.EntitySchemas;
+using LetPortal.Portal.Models.EntitySchemas;
+using LetPortal.Portal.Repositories.EntitySchemas;
+using LetPortal.Portal.Services.EntitySchemas;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,22 +13,30 @@ namespace LetPortal.WebApis.Controllers
     [ApiController]
     public class EntitySchemasController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IEntitySchemaRepository _entitySchemaRepository;
 
-        private readonly ILogger _logger;
+        private readonly IEntitySchemaService _entitySchemaService;
 
-        public EntitySchemasController(IMediator mediator, ILoggerFactory loggerFactory)
+        private readonly IServiceLogger<EntitySchemasController> _logger;
+
+        public EntitySchemasController(
+            IEntitySchemaRepository entitySchemaRepository,
+            IEntitySchemaService entitySchemaService,
+            IServiceLogger<EntitySchemasController> logger)
         {
-            _mediator = mediator;
-            _logger = loggerFactory.CreateLogger<EntitySchemasController>();
+            _entitySchemaRepository = entitySchemaRepository;
+            _entitySchemaService = entitySchemaService;
+            _logger = logger;
         }
 
         [HttpGet("{entityName}/{databaseId}")]
         [ProducesResponseType(typeof(EntitySchema), 200)]
         public async Task<IActionResult> GetOne(string databaseId, string entityName)
         {
-            var result = await _mediator.Send(new GetOneEntitySchemaByNameRequest(new GetOneEntitySchemaByNameQuery { DatabaseId = databaseId, EntityName = entityName }));
-            if (result != null)
+            _logger.Info("Get one entity schema in database id = {databaseId}, entity name = {entityName}", databaseId, entityName);
+            var result = await _entitySchemaRepository.GetOneEntitySchemaAsync(databaseId, entityName);
+            _logger.Info("Found entity schemas: {@result}", result);
+            if(result != null)
                 return Ok(result);
             return NotFound();
         }
@@ -38,7 +45,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<EntitySchema>), 200)]
         public async Task<IActionResult> FetchAllFromDatabase(string id)
         {
-            List<EntitySchema> result = await _mediator.Send(new FetchAllEntitiesFromDatabaseRequest(new FetchAllEntitiesFromDatabaseQuery { DatabaseId = id }));
+            var result = await _entitySchemaService.FetchAllEntitiesFromDatabase(id);
 
             return Ok(result);
         }
@@ -47,52 +54,27 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<EntitySchema>), 200)]
         public async Task<IActionResult> GetAllFromOneDatabase(string id)
         {
-            List<EntitySchema> result = await _mediator.Send(new GetAllEntitySchemasOfOneDatabaseRequest(new GetAllEntitySchemasOfOneDatabaseQuery { DatabaseId = id }));
+            var result = await _entitySchemaRepository.GetAllAsync(a => a.DatabaseId == id);
 
             return Ok(result);
         }
 
         [HttpPost("flush")]
         [ProducesResponseType(typeof(List<EntitySchema>), 200)]
-        public async Task<IActionResult> FlushOneDatabase(FlushEntitySchemasInOneDatabaseCommand flushEntitySchemasInOneDatabaseCommand)
+        public async Task<IActionResult> FlushOneDatabase(FlushDatabaseModel flushDatabaseModel)
         {
-            List<EntitySchema> result = await _mediator.Send(new FlushEntitySchemasInOneDatabaseRequest(flushEntitySchemasInOneDatabaseCommand));
+            var result = await _entitySchemaService.FetchAllEntitiesFromDatabase(flushDatabaseModel.DatabaseId);
+
+            await _entitySchemaRepository.UpsertEntitySchemasAsync(result, flushDatabaseModel.KeptSameName);
 
             return Ok(result);
-        }
-
-        [HttpPost]
-        [ProducesResponseType(typeof(EntitySchema), 200)]
-        public async Task<IActionResult> Post([FromBody] CreateEntitySchemaCommand createEntitySchemaCommand)
-        {
-            if (ModelState.IsValid)
-            {
-                EntitySchema result = await _mediator.Send(new CreateEntitySchemaRequest(createEntitySchemaCommand));
-
-                return Ok(result);
-            }
-
-            return BadRequest();
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] UpdateEntitySchemaCommand updateEntitySchemaCommand)
-        {
-            if (ModelState.IsValid)
-            {
-                await _mediator.Send(new UpdateEntitySchemaRequest(updateEntitySchemaCommand));
-
-                return Ok();
-            }
-
-            return BadRequest();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            await _mediator.Send(new DeleteEntitySchemaRequest(new DeleteEntitySchemaCommand { EntitySchemaId = id }));
-
+            await _entitySchemaRepository.DeleteAsync(id);
+            _logger.Info("Deleted entity schema id = {id}", id);
             return Ok();
         }
     }

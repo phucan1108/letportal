@@ -1,49 +1,34 @@
 ﻿using LetPortal.Core.Common;
-using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.SectionParts;
-using LetPortal.Portal.Handlers.Components.DynamicLists.Queries;
-using LetPortal.Portal.Handlers.Components.DynamicLists.Requests;
 using LetPortal.Portal.Models.DynamicLists;
 using LetPortal.Portal.Providers.Databases;
-using LetPortal.Portal.Repositories.Components;
-using MediatR;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace LetPortal.Portal.Handlers.Components.DynamicLists
+namespace LetPortal.Portal.Services.Components
 {
-    public class FetchingDataForDynamicListHandler : IRequestHandler<FetchingDataForDynamicListRequest, DynamicListResponseDataModel>
+    public class DynamicListService : IDynamicListService
     {
-        private readonly IDynamicListRepository _dynamicListRepository;
-
         private readonly IDatabaseServiceProvider _databaseServiceProvider;
 
-        public FetchingDataForDynamicListHandler(
-            IDynamicListRepository dynamicListRepository,
-            IDatabaseServiceProvider databaseServiceProvider)
+        public DynamicListService(IDatabaseServiceProvider databaseServiceProvider)
         {
-            _dynamicListRepository = dynamicListRepository;
             _databaseServiceProvider = databaseServiceProvider;
         }
 
-        public async Task<DynamicListResponseDataModel> Handle(FetchingDataForDynamicListRequest request, CancellationToken cancellationToken)
+        public async Task<DynamicListResponseDataModel> FetchData(DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
-            DynamicList dynamicList = await _dynamicListRepository.GetOneAsync(request.GetQuery().DynamicListId);
             dynamicList.GenerateFilters();
-            DatabaseConnection databaseConnection = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(dynamicList.ListDatasource.DatabaseConnectionOptions.DatabaseConnectionId);
+            var databaseConnection = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(dynamicList.ListDatasource.DatabaseConnectionOptions.DatabaseConnectionId);
 
             DynamicListResponseDataModel dynamicListResponseDataModel = new DynamicListResponseDataModel();
-
-            FetchingDataForDynamicListQuery fetchingDataForDynamicListQuery = request.GetQuery();
 
             // Because this flow is very complicated. We MUST UPDATE this flow fequently
             // 1. Extract collection name for executing
@@ -69,7 +54,7 @@ namespace LetPortal.Portal.Handlers.Components.DynamicLists
 
             string collectionQuery = parsingObject["$query"][executingCollectionName].ToString(Newtonsoft.Json.Formatting.Indented);
 
-            foreach(var filledParam in request.GetQuery().FilledParameterOptions.FilledParameters)
+            foreach(var filledParam in fetchDataModel.FilledParameterOptions.FilledParameters)
             {
                 collectionQuery = collectionQuery.Replace("{{" + filledParam.Name + "}}", filledParam.Value);
             }
@@ -82,15 +67,15 @@ namespace LetPortal.Portal.Handlers.Components.DynamicLists
                 aggregateFluent = aggregateFluent.AppendStage(pipe);
             }
             // Add Text search first if had
-            if(!string.IsNullOrEmpty(fetchingDataForDynamicListQuery.TextSearch))
+            if(!string.IsNullOrEmpty(fetchDataModel.TextSearch))
             {
-                aggregateFluent = aggregateFluent.Match(CombineTextSearch(fetchingDataForDynamicListQuery.TextSearch, dynamicList.FiltersList));
+                aggregateFluent = aggregateFluent.Match(CombineTextSearch(fetchDataModel.TextSearch, dynamicList.FiltersList));
             }
 
             // Add Filter Options if had
-            if(fetchingDataForDynamicListQuery.FilterGroupOptions.FilterGroups != null)
+            if(fetchDataModel.FilterGroupOptions.FilterGroups != null)
             {
-                aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Match(BuildFilters(fetchingDataForDynamicListQuery.FilterGroupOptions.FilterGroups)));
+                aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Match(BuildFilters(fetchDataModel.FilterGroupOptions.FilterGroups)));
             }
 
             // Projection only columns
@@ -106,9 +91,9 @@ namespace LetPortal.Portal.Handlers.Components.DynamicLists
             aggregateFluent = aggregateFluent.AppendStage((PipelineStageDefinition<BsonDocument, BsonDocument>)projection);
 
             // Add Sort if had
-            if(fetchingDataForDynamicListQuery.SortOptions.SortableFields != null)
+            if(fetchDataModel.SortOptions.SortableFields != null)
             {
-                SortableField sortField = fetchingDataForDynamicListQuery.SortOptions.SortableFields[0];
+                SortableField sortField = fetchDataModel.SortOptions.SortableFields[0];
                 FieldDefinition<BsonDocument, string> field = sortField.FieldName;
                 SortDefinition<BsonDocument> sortDefinition = sortField.SortType == SortType.Asc
                                                                 ? Builders<BsonDocument>.Sort.Ascending(field) :
@@ -116,19 +101,19 @@ namespace LetPortal.Portal.Handlers.Components.DynamicLists
                 aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Sort(sortDefinition));
             }
 
-            if(fetchingDataForDynamicListQuery.PaginationOptions.NeedTotalItems)
+            if(fetchDataModel.PaginationOptions.NeedTotalItems)
             {
                 var aggregateFluentForCountTotal = aggregateFluent.Count();
                 var totalItems = await aggregateFluentForCountTotal.FirstOrDefaultAsync();
                 dynamicListResponseDataModel.TotalItems = totalItems != null ? totalItems.Count : 0;
             }
 
-            if(fetchingDataForDynamicListQuery.PaginationOptions.NeedTotalItems && dynamicListResponseDataModel.TotalItems > 0)
+            if(fetchDataModel.PaginationOptions.NeedTotalItems && dynamicListResponseDataModel.TotalItems > 0)
             {
                 // Add Pagination
                 aggregateFluent = aggregateFluent
-                    .Skip(fetchingDataForDynamicListQuery.PaginationOptions.PageNumber * fetchingDataForDynamicListQuery.PaginationOptions.PageSize)
-                    .Limit(fetchingDataForDynamicListQuery.PaginationOptions.PageSize);
+                    .Skip(fetchDataModel.PaginationOptions.PageNumber * fetchDataModel.PaginationOptions.PageSize)
+                    .Limit(fetchDataModel.PaginationOptions.PageSize);
 
                 using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
                 {
@@ -176,9 +161,17 @@ namespace LetPortal.Portal.Handlers.Components.DynamicLists
             return dynamicListResponseDataModel;
         }
 
-        private string ReplaceISODate(string json)
+        public async Task<PopulateQueryModel> ExtractingQuery(ExtractingQueryModel extractingQuery)
         {
-            return json.Replace("ISODate(", "").Replace(")", "");
+            var query = extractingQuery.Query;
+            foreach(var param in extractingQuery.Parameters)
+            {
+                query = query.Replace("{{" + param.Name + "}}", param.Value);
+            }
+
+            var extractingResult = await _databaseServiceProvider.GetSchemasByQuery(extractingQuery.DatabaseId, query);
+
+            return new PopulateQueryModel { ColumnFields = extractingResult.ColumnFields };
         }
 
         private List<FormatBsonField> GetFormatFields(List<ColumndDef> columndDefs)
@@ -331,14 +324,14 @@ namespace LetPortal.Portal.Handlers.Components.DynamicLists
                     var day = datetime.Day;
                     var year = datetime.Year;
                     if(filterOption.FilterOperator == FilterOperator.Equal)
-                    {                      
+                    {
                         // Support Format MM/DD/YYYY, we can change its in configuration later
                         var filterDateGt = new DateTime(year, month, day);
                         var filterDateLt = new DateTime(year, month, day + 1);
                         filterDateLt = filterDateLt.Subtract(TimeSpan.FromSeconds(1));
                         return filterBuilderOption.And(
                             filterBuilderOption.Gte(filterOption.FieldName, filterDateGt),
-                            filterBuilderOption.Lte(filterOption.FieldName, filterDateLt));                         
+                            filterBuilderOption.Lte(filterOption.FieldName, filterDateLt));
                     }
                     else if(filterOption.FilterOperator == FilterOperator.Great)
                     {
@@ -364,7 +357,7 @@ namespace LetPortal.Portal.Handlers.Components.DynamicLists
                 case FieldValueType.Number:
                     if(filterOption.FilterOperator == FilterOperator.Equal)
                     {
-                        return filterBuilderOption.Eq(filterOption.FieldName, new BsonInt64(long.Parse(filterOption.FieldValue)));  
+                        return filterBuilderOption.Eq(filterOption.FieldName, new BsonInt64(long.Parse(filterOption.FieldValue)));
                     }
                     else if(filterOption.FilterOperator == FilterOperator.Great)
                     {

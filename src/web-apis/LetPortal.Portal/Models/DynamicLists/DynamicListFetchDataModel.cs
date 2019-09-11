@@ -1,11 +1,9 @@
 ﻿using LetPortal.Portal.Entities.SectionParts;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace LetPortal.Portal.Handlers.Components.DynamicLists.Queries
+namespace LetPortal.Portal.Models.DynamicLists
 {
-    public class FetchingDataForDynamicListQuery
+    public class DynamicListFetchDataModel
     {
         public string DynamicListId { get; set; }
 
