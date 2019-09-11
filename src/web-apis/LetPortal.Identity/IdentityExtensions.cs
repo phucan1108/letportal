@@ -21,7 +21,7 @@ namespace LetPortal.Identity
     {
         public static ILetPortalBuilder AddIdentity(this ILetPortalBuilder builder)
         {
-            builder.Services.Configure<Configurations.JwtBearerOptions>(builder.Configuration.GetSection("JwtBearerOptions"));
+            builder.Services.Configure<Core.Configurations.JwtBearerOptions>(builder.Configuration.GetSection("JwtBearerOptions"));
             builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
 
             if(builder.ConnectionType == ConnectionType.MongoDB)
@@ -52,7 +52,7 @@ namespace LetPortal.Identity
                 options.Lockout.AllowedForNewUsers = true;
             });
 
-            var jwtOptions = builder.Configuration.GetSection("JwtBearerOptions").Get<Configurations.JwtBearerOptions>();
+            var jwtOptions = builder.Configuration.GetSection("JwtBearerOptions").Get<Core.Configurations.JwtBearerOptions>();
             builder.Services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -96,7 +96,40 @@ namespace LetPortal.Core
 
             applicationLifetime.RegisterServiceLifecycle(app);
 
-            if(defaultOptions.EnableWrapException)
+            if(defaultOptions.EnableCheckUserSession)
+            {
+                if(defaultOptions.SkipCheckUrls != null && defaultOptions.SkipCheckUrls.Length > 0)
+                {
+                    app.UseWhen(context =>
+                    {
+                        bool isSkipped = false;
+                        foreach(var url in defaultOptions.SkipCheckUrls)
+                        {
+                            isSkipped = context.Request.Path.ToString().Contains(url);
+                            if(isSkipped)
+                            {
+                                break;
+                            }
+                        }
+
+                        return !isSkipped;
+
+                    }, builder =>
+                    {
+                        builder.UseMiddleware<CheckUserSessionIdMiddleware>();
+                        builder.UseMiddleware<CheckTraceIdMiddleware>();
+                    });
+                }
+                else
+                {
+                    app.UseMiddleware<CheckUserSessionIdMiddleware>();
+                    app.UseMiddleware<CheckTraceIdMiddleware>();
+                }
+                
+            }
+
+            if(defaultOptions.EnableCheckUserSession 
+                && defaultOptions.EnableWrapException)
             {
                 app.UseMiddleware<NotifyExceptionLogMiddleware>();
                 app.UseMiddleware<AddRequestMonitorMiddleware>();

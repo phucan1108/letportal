@@ -17,6 +17,9 @@
     <Folder Include="Handlers\Modules\Requests\" />
     <Folder Include="Handlers\Modules\Queries\" />
     <Folder Include="Providers\Apps\" />
+    <Folder Include="Services\Datasources\" />
+    <Folder Include="Services\EntitySchemas\" />
+    <Folder Include="Services\Pages\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />

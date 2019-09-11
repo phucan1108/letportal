@@ -29,13 +29,14 @@ export class JwtTokenInterceptor implements HttpInterceptor {
 
         if(!ignore){
             headers = headers.set('Authorization', 'Bearer ' + this.security.getJwtToken());
+            headers = headers.set('X-User-Session-Id', window.btoa(this.session.getUserSession()))
             const authReq = req.clone({ headers });
             return next.handle(authReq).pipe(
                 catchError(err => {
                     if(err.status === 401){
                         this.session.clear()
                         this.security.userLogout()
-                        this.router.navigateByUrl('/login')
+                        this.router.navigateByUrl('/')
                     }
                     return throwError(err)
                 })

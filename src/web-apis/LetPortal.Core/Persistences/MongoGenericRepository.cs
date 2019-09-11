@@ -86,14 +86,26 @@ namespace LetPortal.Core.Persistences
             await Collection.FindOneAndReplaceAsync(a => a.Id == id, entity);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool isRequiredDiscriminator = false)
         {
-            if(expression != null)
+            if(isRequiredDiscriminator)
             {
-                return await Collection.OfType<T>().AsQueryable().Where(expression).ToListAsync();
-            }
+                if(expression != null)
+                {
+                    return await Collection.OfType<T>().AsQueryable().Where(expression).ToListAsync();
+                }
 
-            return await Collection.OfType<T>().AsQueryable().ToListAsync();
+                return await Collection.OfType<T>().AsQueryable().ToListAsync();
+            }
+            else
+            {
+                if(expression != null)
+                {
+                    return await Collection.AsQueryable().Where(expression).ToListAsync();
+                }
+
+                return await Collection.AsQueryable().ToListAsync();
+            }
         }
 
         private async Task CheckIsExist(T entity)

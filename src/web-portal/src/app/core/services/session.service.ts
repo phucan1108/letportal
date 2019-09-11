@@ -31,7 +31,7 @@ export class SessionService{
 
     getUserSession(){
         if(sessionStorage.getItem('user-session-id')){
-            return JSON.parse(sessionStorage.getItem('user-session-id'));
+            return sessionStorage.getItem('user-session-id');
         }
         return null;
     }

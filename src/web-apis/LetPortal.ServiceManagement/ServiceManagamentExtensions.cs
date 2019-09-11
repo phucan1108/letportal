@@ -10,6 +10,7 @@ namespace LetPortal.ServiceManagement
     {
         public static void AddServiceManagement(this IServiceCollection services, IConfiguration configuration)
         {
+            ConventionPackDefault.Register();
             services.Configure<DatabaseOptions>(configuration.GetSection("DatabaseOptions"));
             services.AddSingleton<MongoConnection>();
             services.AddSingleton<IServiceRepository, ServiceMongoRepository>();

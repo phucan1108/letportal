@@ -17,14 +17,14 @@ namespace LetPortal.Core.Logger
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var traceId = httpContext.Request.Headers[Constants.TraceIdHeader].ToString();
-            if(!string.IsNullOrEmpty(traceId) || (environment == "Development"))
+            if(!string.IsNullOrEmpty(traceId) || environment == "Development")
             {
                 await _next.Invoke(httpContext);
             }
             else
             {
                 httpContext.Response.StatusCode = 403;
-                await httpContext.Response.WriteAsync("Not found trace id");
+                await httpContext.Response.WriteAsync("Missing some important headers");
             }
         }
     }

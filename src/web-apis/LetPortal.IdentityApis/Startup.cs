@@ -64,10 +64,7 @@ namespace LetPortal.IdentityApis
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            app.UseLetPortal(appLifetime, options =>
-            {
-                options.EnableWrapException = true;
-            });
+            app.UseLetPortal(appLifetime);
 
             app.UseAuthentication();
             app.UseMvc();

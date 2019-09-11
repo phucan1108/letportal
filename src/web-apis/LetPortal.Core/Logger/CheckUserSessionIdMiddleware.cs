@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using LetPortal.Core.Utils;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 
@@ -17,14 +18,15 @@ namespace LetPortal.Core.Logger
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var userSessionId = httpContext.Request.Headers[Constants.UserSessionIdHeader].ToString();
-            if(!string.IsNullOrEmpty(userSessionId) || (environment == "Development"))
+            if(!string.IsNullOrEmpty(userSessionId) || environment == "Development")
             {
+                httpContext.Items[Constants.UserSessionIdHeader] = StringUtil.DecodeBase64ToUTF8(userSessionId);
                 await _next.Invoke(httpContext);
             }
             else
             {
                 httpContext.Response.StatusCode = 403;
-                await httpContext.Response.WriteAsync("Not found user session id");
+                await httpContext.Response.WriteAsync("Missing some important headers");
             }
         }
     }

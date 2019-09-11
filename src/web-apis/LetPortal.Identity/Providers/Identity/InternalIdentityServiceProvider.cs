@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Extensions;
+﻿using LetPortal.Core.Configurations;
+using LetPortal.Core.Extensions;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Identity.Configurations;

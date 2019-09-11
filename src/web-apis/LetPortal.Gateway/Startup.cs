@@ -1,4 +1,5 @@
 ﻿using LetPortal.Core;
+using LetPortal.Core.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -39,7 +40,7 @@ namespace LetPortal.Gateway
                 options.EnableMicroservices = true;
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
-            });
+            }).AddGateway();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -49,16 +50,20 @@ namespace LetPortal.Gateway
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors("Cors");
             }
-            app.UseCors("Cors");
+               
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
+            app.UseMiddleware<GenerateTraceIdMiddleware>();
             app.UseLetPortal(appLifetime, options =>
             {
+                options.EnableCheckUserSession = true;
                 options.EnableWrapException = true;
+                options.SkipCheckUrls = new string[] { "api/configurations" };
             });
             app.UseOcelot().Wait();
             app.UseMvc();

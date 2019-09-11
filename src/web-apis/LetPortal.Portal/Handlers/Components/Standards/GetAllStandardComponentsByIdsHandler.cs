@@ -24,7 +24,7 @@ namespace LetPortal.Portal.Handlers.Components.Standards
         {
             if(request.GetQuery().Ids == null)
             {
-                return await _standardRepository.GetAllAsync();
+                return await _standardRepository.GetAllAsync(isRequiredDiscriminator: true);
             }
             return await _standardRepository.GetAllByIdsAsync(request.GetQuery().Ids);
         }

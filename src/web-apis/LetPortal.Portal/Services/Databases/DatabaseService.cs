@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LetPortal.Core.Common;
-using LetPortal.Core.Utils;
+﻿using LetPortal.Core.Common;
+using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
-using LetPortal.Portal.Repositories.Databases;
+using LetPortal.Portal.Models.Databases;
+using LetPortal.Portal.Models.Shared;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Databases
 {
@@ -23,20 +24,13 @@ namespace LetPortal.Portal.Services.Databases
         private const string DATA_KEY = "$data";
         private const string WHERE_KEY = "$where";
 
-        private IDatabaseRepository _databaseRepository;
-
-        public DatabaseService(IDatabaseRepository databaseRepository)
-        {
-            _databaseRepository = databaseRepository;
-        }
-
-        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(string databaseId, string formattedString)
+        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(DatabaseConnection databaseConnection, string formattedString)
         {
             try
             {
                 var result = new ExecuteDynamicResultModel { IsSuccess = true };
                 var query = EliminateRedundantFormat(formattedString);
-                var database = await _databaseRepository.GetOneAsync(databaseId);
+                var database = databaseConnection;
                 var mongoDatabase = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
                 BsonDocument parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
                 var executionGroupType = parsingBson.First().Name;
@@ -62,7 +56,7 @@ namespace LetPortal.Portal.Services.Databases
                                     var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
                                     {
                                         OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
-                                    })).Select(b => 
+                                    })).Select(b =>
                                             JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter())).ToList();
                                     result.Result = objsList.Count > 1 ? objsList : objsList[0];
                                     result.IsSuccess = true;
@@ -117,7 +111,7 @@ namespace LetPortal.Portal.Services.Databases
 
                         break;
                     case DELETE_KEY:
-                        var mongoDeleteCollection = GetCollection(mongoDatabase, parsingBson, DELETE_KEY);                        
+                        var mongoDeleteCollection = GetCollection(mongoDatabase, parsingBson, DELETE_KEY);
                         BsonDocument collectionWhereDeleteBson = parsingBson[DELETE_KEY][0][WHERE_KEY].AsBsonDocument;
                         var deleteResult = await mongoDeleteCollection.DeleteOneAsync(collectionWhereDeleteBson);
                         result.Result = deleteResult.DeletedCount;
@@ -129,6 +123,102 @@ namespace LetPortal.Portal.Services.Databases
             {
                 return ExecuteDynamicResultModel.IsFailed(ex.Message);
             }
+        }
+
+        public async Task<ExtractingSchemaQueryModel> ExtractColumnSchema(DatabaseConnection databaseConnection, string formattedString)
+        {
+            // queryJsonString sample
+            // { "$query" : { 
+            //      "users": [
+            //          "$match" : { 'username': 'A' }
+            //      ]
+            //  }}
+            // Note: we just support aggreation framework only
+            var result = new ExtractingSchemaQueryModel();
+
+            var database = databaseConnection;
+
+            JObject parsingObject = JObject.Parse(formattedString);
+
+            var mongoClient = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
+
+            var executionGroupTypes = parsingObject.Children().Select(a => (a as JProperty).Name);
+
+            foreach(var executionGroupType in executionGroupTypes)
+            {
+                switch(executionGroupType)
+                {
+                    case QUERY_KEY:
+                        var collectionNames = parsingObject[QUERY_KEY].Children().Select(a => (a as JProperty).Name);
+                        foreach(var collectionName in collectionNames)
+                        {
+                            var mongoCollection = mongoClient.GetCollection<BsonDocument>(collectionName);
+                            string collectionQuery = parsingObject[QUERY_KEY][collectionName].ToString(Newtonsoft.Json.Formatting.Indented);
+                            List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+
+                            IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
+                            foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
+                            {
+                                aggregateFluent = aggregateFluent.AppendStage(pipe);
+                            }
+
+                            using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                            {
+                                while(executingCursor.MoveNext())
+                                {
+                                    // Important note: this query must have one row result for extracting params and filters
+                                    BsonDocument currentDocument = executingCursor.Current.First();
+
+                                    foreach(BsonElement element in currentDocument.Elements)
+                                    {
+                                        ColumnField columnField = new ColumnField
+                                        {
+                                            Name = element.Name,
+                                            DisplayName = element.Name,
+                                            FieldType = GetTypeByBsonDocument(element.Value)
+                                        };
+
+                                        result.ColumnFields.Add(columnField);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return result;
+        }
+
+        private string GetTypeByBsonDocument(BsonValue bsonValue)
+        {
+            if(bsonValue.IsBoolean)
+            {
+                return "boolean";
+            }
+            if(bsonValue.IsInt32
+                || bsonValue.IsInt64
+                || bsonValue.IsNumeric
+                || bsonValue.IsDecimal128
+                || bsonValue.IsDouble)
+            {
+                return "number";
+            }
+            if(bsonValue.IsValidDateTime)
+            {
+                return "datetime";
+            }
+            if(bsonValue.IsBsonArray)
+            {
+                return "list";
+            }
+            if(bsonValue.IsBsonDocument)
+            {
+                return "document";
+            }
+            return "string";
         }
 
         private string EliminateRedundantFormat(string query)

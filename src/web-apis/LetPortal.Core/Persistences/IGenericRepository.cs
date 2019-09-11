@@ -18,7 +18,7 @@ namespace LetPortal.Core.Persistences
 
         IQueryable<T> GetAsQueryable();
 
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool isRequiredDiscriminator = false);
 
         Task<IEnumerable<T>> GetAllByIdsAsync(List<string> ids);
 

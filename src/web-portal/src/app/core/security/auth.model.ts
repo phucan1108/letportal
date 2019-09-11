@@ -5,7 +5,11 @@ import { RolePortalClaimModel } from 'services/identity.service';
 export class AuthToken {
     public jsonTokenPayload: any;
 
-    constructor(public jwtToken: string, public expiresIn: number, public refreshToken: string, public expireRefresh: number) {
+    constructor(
+        public jwtToken: string, 
+        public expiresIn: number, 
+        public refreshToken: string, 
+        public expireRefresh: number) {
         if (jwtToken) {
             this.jsonTokenPayload = decode(jwtToken);
         }

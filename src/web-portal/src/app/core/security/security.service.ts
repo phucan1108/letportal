@@ -23,7 +23,11 @@ export class SecurityService {
         let tempAuthToken = this.session.getUserToken()
 
         if (tempAuthToken) {
-            this.authToken = new AuthToken(tempAuthToken.jwtToken, tempAuthToken.expireseIn, tempAuthToken.refreshToken, tempAuthToken.expireRefresh)
+            this.authToken = new AuthToken(
+                tempAuthToken.jwtToken,
+                tempAuthToken.expireseIn, 
+                tempAuthToken.refreshToken, 
+                tempAuthToken.expireRefresh)
             this.authUser = this.authToken ? this.authToken.toAuthUser() : null
         }
     }

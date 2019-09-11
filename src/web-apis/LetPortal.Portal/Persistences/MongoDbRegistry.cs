@@ -1,4 +1,5 @@
-﻿using LetPortal.Portal.Entities.Pages;
+﻿using LetPortal.Portal.Entities.Apps;
+using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Versions;
 using MongoDB.Bson.Serialization;

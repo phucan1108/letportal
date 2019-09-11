@@ -12,6 +12,10 @@ namespace LetPortal.Core.Utils
     {
         public static string EncodeBase64FromUTF8(string encodingString)
         {
+            if(string.IsNullOrEmpty(encodingString))
+            {
+                return null;
+            }
             var encodedBytes = Encoding.UTF8.GetBytes(encodingString);
             var encodedTxt = Convert.ToBase64String(encodedBytes);
             return encodedTxt;
@@ -19,6 +23,10 @@ namespace LetPortal.Core.Utils
 
         public static string DecodeBase64ToUTF8(string encodedString)
         {
+            if(string.IsNullOrEmpty(encodedString))
+            {
+                return null;
+            }
             var decodedBytes = Convert.FromBase64String(encodedString);
             return Encoding.UTF8.GetString(decodedBytes);
         }
