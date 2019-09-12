@@ -1,4 +1,5 @@
-﻿using LetPortal.Portal.Entities.Files;
+﻿using LetPortal.Core.Logger;
+using LetPortal.Portal.Entities.Files;
 using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Services.Files;
 using Microsoft.AspNetCore.Http;
@@ -13,16 +14,23 @@ namespace LetPortal.WebApis.Controllers
     {
         private readonly IFileService _fileService;
 
-        public FilesController(IFileService fileService)
+        private readonly IServiceLogger<FilesController> _logger;
+
+        public FilesController(
+            IFileService fileService,
+            IServiceLogger<FilesController> logger)
         {
             _fileService = fileService;
+            _logger = logger;
         }
 
         [HttpPost("upload")]
         [ProducesResponseType(typeof(ResponseUploadFile), 200)]
         public async Task<IActionResult> Upload(IFormFile formFile)
         {
+            _logger.Info("Upload file with name = {name} size = {size}", formFile.FileName, formFile.Length);
             var result = await _fileService.UploadFileAsync(formFile, "");
+            _logger.Info("Uploaded file: {@result}", result);
             return Ok(result);
         }
 
@@ -30,13 +38,16 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(File), 200)]
         public async Task<IActionResult> GetFileInfo(string fileId)
         {
-            return Ok(await _fileService.GetFileInfo(fileId));
+            var result = await _fileService.GetFileInfo(fileId);
+            _logger.Info("File info: {@result}", result);
+            return Ok(result);
         }
 
         [HttpGet("download/{fileId}")]
         public async Task<IActionResult> GetFile(string fileId)
         {
             var response = await _fileService.DownloadFileAsync(fileId);
+            _logger.Info("Responsed file when downloading: {fileName} {size}", response.FileName, response.FileBytes.Length);
             return File(response.FileBytes, response.MIMEType, response.FileName);
         }
     }

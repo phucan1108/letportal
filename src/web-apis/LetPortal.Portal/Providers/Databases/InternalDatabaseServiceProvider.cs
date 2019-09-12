@@ -3,7 +3,6 @@ using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Services.Databases;
-using MediatR;
 using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Providers.Databases
@@ -15,7 +14,7 @@ namespace LetPortal.Portal.Providers.Databases
         private readonly IDatabaseRepository _databaseRepository;
 
         public InternalDatabaseServiceProvider(
-            IDatabaseService databaseService, 
+            IDatabaseService databaseService,
             IDatabaseRepository databaseRepository)
         {
             _databaseService = databaseService;

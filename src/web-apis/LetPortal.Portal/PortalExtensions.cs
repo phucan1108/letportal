@@ -19,10 +19,8 @@ using LetPortal.Portal.Services.Databases;
 using LetPortal.Portal.Services.Files;
 using LetPortal.Portal.Services.Files.Validators;
 using LetPortal.Portal.Services.Http;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Reflection;
 
 namespace LetPortal.Portal
 {
@@ -75,8 +73,6 @@ namespace LetPortal.Portal
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddTransient<HttpService>();
             builder.Services.AddHttpClient<HttpService>();
-
-            builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
             return builder;
         }
     }

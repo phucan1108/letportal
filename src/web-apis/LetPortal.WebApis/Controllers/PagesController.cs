@@ -1,13 +1,11 @@
-﻿using LetPortal.Portal.Entities.Pages;
-using LetPortal.Portal.Handlers.Pages.Requests;
+﻿using LetPortal.Core.Logger;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models.Pages;
-using MediatR;
+using LetPortal.Portal.Repositories.Pages;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LetPortal.Portal.Handlers.Pages.Commands;
-using LetPortal.Portal.Handlers.Pages.Queries;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -15,22 +13,24 @@ namespace LetPortal.WebApis.Controllers
     [ApiController]
     public class PagesController : ControllerBase
     {
+        private readonly IPageRepository _pageRepository;
 
-        private readonly IMediator _mediator;
+        private readonly IServiceLogger<PagesController> _logger;
 
-        private readonly ILogger _logger;
-
-        public PagesController(IMediator mediator, ILoggerFactory loggerFactory)
+        public PagesController(
+            IPageRepository pageRepository,
+            IServiceLogger<PagesController> logger)
         {
-            _mediator = mediator;
-            _logger = loggerFactory.CreateLogger<PagesController>();
+            _pageRepository = pageRepository;
+            _logger = logger;
         }
 
         [HttpGet("shorts")]
-        [ProducesResponseType(typeof(List<ShortPageModel>),200)]
+        [ProducesResponseType(typeof(List<ShortPageModel>), 200)]
         public async Task<IActionResult> GetAllShortPages()
         {
-            var result = await _mediator.Send(new GetAllShortPagesRequest(new Portal.Handlers.Pages.Queries.GetAllShortPagesQuery()));
+            var result = await _pageRepository.GetAllShortPages();
+            _logger.Info("All short pages: {@result}", result);
             return Ok(result);
         }
 
@@ -38,7 +38,8 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<ShortPortalClaimModel>), 200)]
         public async Task<IActionResult> GetAllPortalClaims()
         {
-            var result = await _mediator.Send(new GetAllPortalClaimsRequest(new Portal.Handlers.Pages.Queries.GetAllPortalClaimsQuery()));
+            var result = await _pageRepository.GetShortPortalClaimModels();
+            _logger.Info("All portal claims: {@result}", result);
             return Ok(result);
         }
 
@@ -46,7 +47,8 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(Page), 200)]
         public async Task<IActionResult> GetOneById(string id)
         {
-            var result = await _mediator.Send(new GetOnePageByIdRequest(new Portal.Handlers.Pages.Queries.GetOnePageByIdQuery { PageId = id }));
+            var result = await _pageRepository.GetOneAsync(id);
+            _logger.Info("Found page: {@result}", result);
             return Ok(result);
         }
 
@@ -54,29 +56,43 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(Page), 200)]
         public async Task<IActionResult> GetOne(string name)
         {
-            var result = await _mediator.Send(new GetOnePageRequest(new Portal.Handlers.Pages.Queries.GetOnePageQuery { PageName = name }));
+            var result = await _pageRepository.GetOneByName(name);
+            _logger.Info("Found page: {@result}", result);
             return Ok(result);
         }
 
         [HttpPost("")]
         [ProducesResponseType(typeof(string), 200)]
-        public async Task<IActionResult> Create([FromBody] CreatePageCommand createPageCommand)
+        public async Task<IActionResult> Create([FromBody] Page page)
         {
-            return Ok(await _mediator.Send(new CreatePageRequest(createPageCommand)));
+            if(ModelState.IsValid)
+            {
+                page.Id = DataUtil.GenerateUniqueId();
+                await _pageRepository.AddAsync(page);
+                _logger.Info("Created page: {@page}", page);
+                return Ok(page.Id);
+            }
+            return BadRequest();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdatePageCommand updatePageCommand)
+        public async Task<IActionResult> Update(string id, [FromBody] Page page)
         {
-            updatePageCommand.PageId = id;
-            await _mediator.Send(new UpdatePageRequest(updatePageCommand));
-            return Ok();
+            if(ModelState.IsValid)
+            {
+                page.Id = id;
+                await _pageRepository.UpdateAsync(id, page);
+                _logger.Info("Updated page: {@page}", page);
+                return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            await _mediator.Send(new DeletePageRequest(new DeletePageCommand { PageId = id }));
+            await _pageRepository.DeleteAsync(id);
+            _logger.Info("Deleted page id: {id}", id);
             return Ok();
         }
 
@@ -84,7 +100,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> CheckExist(string name)
         {
-            return Ok(await _mediator.Send(new CheckNameIsExistRequest(new CheckNameIsExistQuery { Name = name })));
+            return Ok(await _pageRepository.IsExistAsync(name));
         }
     }
 }
