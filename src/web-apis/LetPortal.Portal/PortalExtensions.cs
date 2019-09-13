@@ -1,6 +1,7 @@
 ﻿using LetPortal.Core;
 using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
+using LetPortal.Portal.Executions;
 using LetPortal.Portal.Options.Files;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Providers.Databases;
@@ -15,7 +16,10 @@ using LetPortal.Portal.Repositories.Datasources;
 using LetPortal.Portal.Repositories.EntitySchemas;
 using LetPortal.Portal.Repositories.Files;
 using LetPortal.Portal.Repositories.Pages;
+using LetPortal.Portal.Services.Components;
 using LetPortal.Portal.Services.Databases;
+using LetPortal.Portal.Services.Datasources;
+using LetPortal.Portal.Services.EntitySchemas;
 using LetPortal.Portal.Services.Files;
 using LetPortal.Portal.Services.Files.Validators;
 using LetPortal.Portal.Services.Http;
@@ -64,11 +68,18 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
             }
 
+            builder.Services.AddSingleton<IExecutionDatabase, MongoExecutionDatabase>();
+            builder.Services.AddSingleton<IExtractionDatabase, MongoExtractionDatabase>();
+
+
             builder.Services.AddSingleton<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();
             builder.Services.AddSingleton<IDatasourceServiceProvider, InternalDatasourceServiceProvider>();
             builder.Services.AddSingleton<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();
             builder.Services.AddSingleton<IPageServiceProvider, InternalPageServiceProvider>();
 
+            builder.Services.AddSingleton<IEntitySchemaService, EntitySchemaService>();
+            builder.Services.AddSingleton<IDynamicListService, DynamicListService>();
+            builder.Services.AddSingleton<IDatasourceService, DatasourceService>();
             builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
             builder.Services.AddSingleton<IFileService, FileService>();
             builder.Services.AddTransient<HttpService>();
