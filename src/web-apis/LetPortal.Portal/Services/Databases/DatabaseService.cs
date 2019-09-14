@@ -29,13 +29,16 @@ namespace LetPortal.Portal.Services.Databases
         public async Task<ExecuteDynamicResultModel> ExecuteDynamic(DatabaseConnection databaseConnection, string formattedString)
         {
             var connectionType = databaseConnection.GetConnectionType();
-            var executionDatabase = _executionDatabases.First(a => a.ConnectionType == connectionType);
+            var executionDatabase = _executionDatabases.FirstOrDefault(a => a.ConnectionType == connectionType);
 
-            switch(connectionType)
+            if(executionDatabase != null)
             {
-                case ConnectionType.MongoDB:
-                    return await executionDatabase.Execute(GetMongoConnection(databaseConnection), formattedString);
-            }
+                switch(connectionType)
+                {
+                    case ConnectionType.MongoDB:
+                        return await executionDatabase.Execute(GetMongoConnection(databaseConnection), formattedString);
+                }
+            }             
             throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
         }
 

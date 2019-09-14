@@ -17,4 +17,14 @@
     <ProjectReference Include="..\..\..\src\web-apis\LetPortal.Portal\LetPortal.Portal.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Artifacts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Artifacts\connect-iot-to-internet.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

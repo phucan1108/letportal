@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using LetPortal.Portal.Entities.Databases;
+﻿using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.EntitySchemas;
 using LetPortal.Portal.Providers.Databases;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.EntitySchemas
 {
@@ -21,7 +19,7 @@ namespace LetPortal.Portal.Services.EntitySchemas
 
         public async Task<List<EntitySchema>> FetchAllEntitiesFromDatabase(string databaseId)
         {
-            DatabaseConnection database = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(databaseId);            
+            DatabaseConnection database = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(databaseId);
 
             IMongoDatabase currentDatabaseConnection = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
 

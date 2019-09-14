@@ -11,7 +11,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetPortal.Portal.Executions
+namespace LetPortal.Portal.Executions.Mongo
 {
     public class MongoExecutionDatabase : IExecutionDatabase
     {

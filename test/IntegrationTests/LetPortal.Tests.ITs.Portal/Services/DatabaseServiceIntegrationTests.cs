@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Xunit;
 using LetPortal.Core.Extensions;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Executions.Mongo;
 
 namespace LetPortal.Tests.ITs.Portal.Services
 {

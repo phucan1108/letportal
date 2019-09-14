@@ -7,7 +7,7 @@ namespace LetPortal.Core.Exceptions
     {
         protected virtual string ExceptionService { get; set; }
 
-        protected ErrorCode ErrorCode { get; set; }
+        public ErrorCode ErrorCode { get; set; }
 
         public CoreException(ErrorCode errorCode)
         {

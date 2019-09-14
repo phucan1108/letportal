@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetPortal.Portal.Executions
+namespace LetPortal.Portal.Executions.Mongo
 {
     public class MongoExtractionDatabase : IExtractionDatabase
     {
