@@ -9,16 +9,11 @@ namespace LetPortal.Core.Common
     public class BsonConverter : JsonConverter
     {
         private readonly List<FormatBsonField> formatBsonFields;
-        public BsonConverter(List<FormatBsonField> formatBsonFields = null)
+
+        public BsonConverter(
+            List<FormatBsonField> formatBsonFields = null)
         {
-            if(formatBsonFields == null)
-            {
-                this.formatBsonFields = new List<FormatBsonField>();
-            }
-            else
-            {
-                this.formatBsonFields = formatBsonFields;
-            }
+            this.formatBsonFields = formatBsonFields ?? new List<FormatBsonField>();            
         }
 
         public override bool CanConvert(Type objectType)
@@ -110,7 +105,7 @@ namespace LetPortal.Core.Common
                 jObject.Add(kvp.Key == "_id" ? "id" : kvp.Key, JToken.FromObject(kvp.Value));
             }
 
-            return JsonConvert.DeserializeObject(jObject.ToString(Formatting.Indented));
+            return JsonConvert.DeserializeObject(jObject.ToString(Formatting.Indented), objectType);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

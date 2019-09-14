@@ -50,8 +50,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseId = "aaa",
                 DatasourceType = DatasourceType.Database,
-                Query = "{\r\n  \"databases\": { \"name\" : \"testdatabase\" }\r\n}",
-                OutputProjection = "name=name;value=_id"
+                Query = "{\r\n  \"databases\": { \"name\" : \"testdatabase\" }\r\n}"
             });
 
             // Assert

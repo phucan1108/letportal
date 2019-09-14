@@ -1,9 +1,11 @@
-﻿using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Common;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +23,7 @@ namespace LetPortal.Portal.Executions
             string outputProjection)
         {
 
-            List<DatasourceModel> datasourceModels = null;
+            List<DatasourceModel> datasourceModels = new List<DatasourceModel>();
             JObject parsingObject = JObject.Parse(formattedQueryString);
 
             var collectionName = parsingObject.Properties().Select(a => a.Name).First();
@@ -55,13 +57,66 @@ namespace LetPortal.Portal.Executions
 
                 aggregateFluent = aggregateFluent.Project(projectDoc);
             }
+
+
             using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
             {
                 while(executingCursor.MoveNext())
                 {
-                    IEnumerable<BsonDocument> currentDocument = executingCursor.Current;
+                    if(hasProjection)
+                    {
+                        datasourceModels = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
+                        {
+                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
+                        })).Select(b =>
+                                JsonConvert.DeserializeObject<DatasourceModel>(b, new BsonConverter())).ToList();
+                    }
+                    else
+                    {
+                        var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
+                        {
+                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
+                        })).Select(b =>
+                                JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter())).ToList();
 
-                    datasourceModels = ConvertUtil.DeserializeObject<List<DatasourceModel>>(currentDocument.ToJson());
+                        if(objsList.Count > 0)
+                        {
+                            foreach(var ob in objsList)
+                            {
+                                string temp = JsonConvert.SerializeObject(ob);
+                                var dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(temp);
+                                var dataModel = new DatasourceModel();
+                                if(dic.ContainsKey("id"))
+                                {
+                                    dataModel.Value = dic["id"];
+                                    dataModel.Name = dic.First().Value;
+                                }
+                                else
+                                {
+                                    int i = 0;
+                                    foreach(var kvp in dic)
+                                    {
+                                        if(i == 0)
+                                        {
+                                            dataModel.Name = kvp.Value;
+                                        }
+
+                                        if(i == 1)
+                                        {
+                                            dataModel.Value = kvp.Value;
+                                        }
+
+                                        if(i > 1)
+                                        {
+                                            break;
+                                        }
+                                        i++;
+                                    }  
+                                }             
+                                datasourceModels.Add(dataModel);
+                            }
+                        }
+                    }
                 }
             }
 

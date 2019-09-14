@@ -70,7 +70,7 @@ namespace LetPortal.Portal
 
             builder.Services.AddSingleton<IExecutionDatabase, MongoExecutionDatabase>();
             builder.Services.AddSingleton<IExtractionDatabase, MongoExtractionDatabase>();
-
+            builder.Services.AddSingleton<IExtractionDatasource, MongoExtractionDatasource>();
 
             builder.Services.AddSingleton<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();
             builder.Services.AddSingleton<IDatasourceServiceProvider, InternalDatasourceServiceProvider>();

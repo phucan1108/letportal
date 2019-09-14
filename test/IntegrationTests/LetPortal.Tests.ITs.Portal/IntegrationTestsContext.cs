@@ -4,6 +4,7 @@ using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Persistences;
 using MongoDB.Driver;
 using System;
+using System.Threading;
 
 namespace LetPortal.Tests.ITs.Portal
 {
@@ -13,10 +14,29 @@ namespace LetPortal.Tests.ITs.Portal
 
         public DatabaseConnection SqlServerDatabaseConnection { get; }
 
+        public static bool isRegistered;
+        private static readonly object _lockObject = new object();
+
         public IntegrationTestsContext()
         {
-            ConventionPackDefault.Register();
-            MongoDbRegistry.RegisterEntities();
+            bool lockTaken = false;
+            Monitor.Enter(_lockObject, ref lockTaken);
+            try
+            {
+                if(!isRegistered)
+                {
+                    ConventionPackDefault.Register();
+                    MongoDbRegistry.RegisterEntities();
+                    isRegistered = true;
+                }
+            }
+            finally
+            {
+                if(lockTaken)
+                {
+                    Monitor.Exit(_lockObject);
+                }
+            }
 
             MongoDatabaseConenction = new DatabaseConnection
             {
