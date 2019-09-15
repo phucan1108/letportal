@@ -6,7 +6,6 @@ using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Options.Files;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Providers.Databases;
-using LetPortal.Portal.Providers.Datasources;
 using LetPortal.Portal.Providers.EntitySchemas;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories;
@@ -74,8 +73,7 @@ namespace LetPortal.Portal
             builder.Services.AddSingleton<IExtractionDatasource, MongoExtractionDatasource>();
             builder.Services.AddSingleton<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();
 
-            builder.Services.AddSingleton<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();
-            builder.Services.AddSingleton<IDatasourceServiceProvider, InternalDatasourceServiceProvider>();
+            builder.Services.AddSingleton<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
             builder.Services.AddSingleton<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();
             builder.Services.AddSingleton<IPageServiceProvider, InternalPageServiceProvider>();
 

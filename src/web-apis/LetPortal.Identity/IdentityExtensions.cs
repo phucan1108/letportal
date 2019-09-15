@@ -43,8 +43,7 @@ namespace LetPortal.Identity
             {
                 // Password options
                 options.SignIn.RequireConfirmedPhoneNumber = false;
-                options.SignIn.RequireConfirmedEmail = false;
-
+                options.SignIn.RequireConfirmedEmail = false; 
 
                 // User options
                 options.User.RequireUniqueEmail = true;

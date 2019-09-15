@@ -29,7 +29,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<ShortPageModel>), 200)]
         public async Task<IActionResult> GetAllShortPages()
         {
-            var result = await _pageRepository.GetAllShortPages();
+            var result = await _pageRepository.GetAllShortPagesAsync();
             _logger.Info("All short pages: {@result}", result);
             return Ok(result);
         }
@@ -38,7 +38,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<ShortPortalClaimModel>), 200)]
         public async Task<IActionResult> GetAllPortalClaims()
         {
-            var result = await _pageRepository.GetShortPortalClaimModels();
+            var result = await _pageRepository.GetShortPortalClaimModelsAsync();
             _logger.Info("All portal claims: {@result}", result);
             return Ok(result);
         }
@@ -56,7 +56,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(Page), 200)]
         public async Task<IActionResult> GetOne(string name)
         {
-            var result = await _pageRepository.GetOneByName(name);
+            var result = await _pageRepository.GetOneByNameAsync(name);
             _logger.Info("Found page: {@result}", result);
             return Ok(result);
         }

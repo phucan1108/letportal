@@ -8,10 +8,10 @@ namespace LetPortal.Portal.Repositories.Pages
 {
     public interface IPageRepository : IGenericRepository<Page>
     {
-        Task<Page> GetOneByName(string name);
+        Task<Page> GetOneByNameAsync(string name);
 
-        Task<List<ShortPageModel>> GetAllShortPages();
+        Task<List<ShortPageModel>> GetAllShortPagesAsync();
 
-        Task<List<ShortPortalClaimModel>> GetShortPortalClaimModels();
+        Task<List<ShortPortalClaimModel>> GetShortPortalClaimModelsAsync();
     }
 }

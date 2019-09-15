@@ -27,7 +27,7 @@ namespace LetPortal.Portal.Providers.Pages
 
         public async Task<List<ShortPageModel>> GetAllPages()
         {
-            return await _pageRepository.GetAllShortPages();
+            return await _pageRepository.GetAllShortPagesAsync();
         }
 
         public async Task<Page> GetOne(string id)

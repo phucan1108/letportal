@@ -17,17 +17,17 @@ namespace LetPortal.Portal.Repositories.Pages
             Connection = mongoConnection;
         }
 
-        public async Task<List<ShortPageModel>> GetAllShortPages()
+        public async Task<List<ShortPageModel>> GetAllShortPagesAsync()
         {
             return await Collection.AsQueryable().OfType<Page>().Select(a => new ShortPageModel { Id = a.Id, Name = a.Name, DisplayName = a.DisplayName, UrlPath = a.UrlPath }).ToListAsync();
         }
 
-        public async Task<Page> GetOneByName(string name)
+        public async Task<Page> GetOneByNameAsync(string name)
         {
             return await Collection.AsQueryable().OfType<Page>().FirstAsync(a => a.Name == name);  
         }
 
-        public async Task<List<ShortPortalClaimModel>> GetShortPortalClaimModels()
+        public async Task<List<ShortPortalClaimModel>> GetShortPortalClaimModelsAsync()
         {
             var portalClaims = await Collection.AsQueryable().OfType<Page>().Select(a => new ShortPortalClaimModel { PageDisplayName = a.DisplayName,  PageName = a.Name, Claims = a.Claims }).ToListAsync();
             return portalClaims;
