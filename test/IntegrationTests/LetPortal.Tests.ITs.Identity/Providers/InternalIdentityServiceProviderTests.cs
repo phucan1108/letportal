@@ -13,12 +13,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -42,10 +40,10 @@ namespace LetPortal.Tests.ITs.Identity.Providers
             // Act
             await internalISProvider.RegisterAsync(new LetPortal.Identity.Models.RegisterModel
             {
-               Username = "testuser",
-               Password = "@Dm1n!",
-               Repassword = "@Dm1n!",
-               Email = "testuser@gmail.com"
+                Username = "testuser",
+                Password = "@Dm1n!",
+                Repassword = "@Dm1n!",
+                Email = "testuser@gmail.com"
             });
 
             // Assert
@@ -61,8 +59,8 @@ namespace LetPortal.Tests.ITs.Identity.Providers
             // Act
             var result = await internalISProvider.SignInAsync(new LetPortal.Identity.Models.LoginModel
             {
-               Username = "admin",
-               Password = "@Dm1n!"
+                Username = "admin",
+                Password = "@Dm1n!"
             });
 
             // Assert
@@ -295,7 +293,7 @@ namespace LetPortal.Tests.ITs.Identity.Providers
                 .Setup(a => a.CreateAsync(It.IsAny<User>()))
                 .Returns(Task.FromResult(new ClaimsPrincipal()));
 
-            var mockLogger = new Mock<ILogger<SignInManager<User>>>();            
+            var mockLogger = new Mock<ILogger<SignInManager<User>>>();
             var authenticationOptions = new AuthenticationOptions
             {
 

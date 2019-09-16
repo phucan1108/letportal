@@ -1,6 +1,11 @@
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Identity.Entities;
+using LetPortal.Identity.Repositories.Identity;
+using LetPortal.Identity.Stores;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -50,6 +55,73 @@ namespace LetPortal.Tests.ITs.Identity
             // Remove all created databases
             var mongoClient = new MongoClient(MongoDatabaseOptions.ConnectionString);
             mongoClient.DropDatabase(MongoDatabaseOptions.Datasource);
+        }
+
+        public UserStore GetUserStore()
+        {
+            var userStore = new UserStore(getUserMongoRepository(), getRoleMongoRepository());
+            return userStore;
+        }
+
+        public User GenerateUser()
+        {
+            var username = generateUniqueUserName();
+            return new User
+            {
+                Id = DataUtil.GenerateUniqueId(),
+                Username = username,
+                NormalizedUserName = username.ToUpper(),
+                Domain = string.Empty,
+                PasswordHash = "AQAAAAEAACcQAAAAEBhhMYTL5kwYqXheHSdarA/+vleSI07yGkTKNw1bb1jrTlYnBZK1CZ+zdHnqWwLLDA==",
+                Email = username + "@portal.com",
+                NormalizedEmail = username.ToUpper() + "@PORTAL.COM",
+                IsConfirmedEmail = true,
+                SecurityStamp = "7YHYVBYWLTYC4EAPVRS2SWX2IIUOZ3XM",
+                AccessFailedCount = 0,
+                IsLockoutEnabled = false,
+                LockoutEndDate = DateTime.UtcNow,
+                Roles = new List<string>
+                {
+                    "SuperAdmin"
+                },
+                Claims = new List<BaseClaim>
+                {
+                    StandardClaims.AccessAppSelectorPage,
+                    StandardClaims.Sub("5ce287ee569d6f23e8504cef"),
+                    StandardClaims.UserId("5ce287ee569d6f23e8504cef"),
+                    StandardClaims.Name(username)
+                }
+            };
+        }
+
+        private string generateUniqueUserName()
+        {
+            var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var lengthOfName = 20;
+            var username = string.Empty;
+            for(int i = 0; i < lengthOfName; i++)
+            {
+                var randomIndx = (new Random()).Next(0, 45);
+                username += suppliedVars[randomIndx];
+            }
+
+            return username;
+        }
+
+        private UserMongoRepository getUserMongoRepository()
+        {
+            var databaseOptions = MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var userMongoRepository = new UserMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            return userMongoRepository;
+        }
+
+        private RoleMongoRepository getRoleMongoRepository()
+        {
+            var databaseOptions = MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var roleMongoRepository = new RoleMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            return roleMongoRepository;
         }
 
         private string generateUniqueDatasourceName()
