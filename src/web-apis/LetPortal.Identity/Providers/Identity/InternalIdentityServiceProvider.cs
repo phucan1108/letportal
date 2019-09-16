@@ -2,7 +2,6 @@
 using LetPortal.Core.Extensions;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
-using LetPortal.Identity.Configurations;
 using LetPortal.Identity.Entities;
 using LetPortal.Identity.Exceptions;
 using LetPortal.Identity.Models;
@@ -77,9 +76,9 @@ namespace LetPortal.Identity.Providers.Identity
                 }
             }, registerModel.Password);
 
-            if (!result.Succeeded)
+            if(!result.Succeeded)
             {
-                if (result.Errors.Any(a => a.Code == "DuplicateUserName"))
+                if(result.Errors.Any(a => a.Code == "DuplicateUserName"))
                 {
                     throw new IdentityException(ErrorCodes.UsernameHasBeenRegistered);
                 }
@@ -95,7 +94,7 @@ namespace LetPortal.Identity.Providers.Identity
             _serviceLogger.Info("User Login {$loginModel}", loginModel.ToJson());
             var user = await _userManager.FindByNameAsync(loginModel.Username);
             var validationResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, true);
-            if (validationResult.Succeeded)
+            if(validationResult.Succeeded)
             {
 
                 var userClaims = await _userManager.GetClaimsAsync(user);
@@ -158,7 +157,7 @@ namespace LetPortal.Identity.Providers.Identity
         {
             var issuedToken = await _issuedTokenRepository.GetByRefreshToken(refreshToken);
             var canDeactive = await _issuedTokenRepository.DeactiveRefreshToken(refreshToken);
-            if (canDeactive)
+            if(canDeactive)
             {
                 var claimPrincipal = GetPrincipalFromExpiredToken(issuedToken.JwtToken);
                 var newToken = SignedToken(claimPrincipal.Claims);
@@ -224,17 +223,17 @@ namespace LetPortal.Identity.Providers.Identity
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if(jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
 
             return principal;
         }
 
-        public async Task ForgotPassword(string email)
+        public async Task ForgotPasswordAsync(string email)
         {
             var verifyingUser = await _userManager.FindByEmailAsync(email);
 
-            if (verifyingUser != null)
+            if(verifyingUser != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(verifyingUser);
 
@@ -247,16 +246,16 @@ namespace LetPortal.Identity.Providers.Identity
             }
         }
 
-        public async Task RecoveryPassword(RecoveryPasswordModel recoveryPasswordModel)
+        public async Task RecoveryPasswordAsync(RecoveryPasswordModel recoveryPasswordModel)
         {
             var verifyingUser = await _userManager.FindByIdAsync(recoveryPasswordModel.UserId);
 
-            if (verifyingUser != null)
+            if(verifyingUser != null)
             {
                 var result = await _userManager.ResetPasswordAsync(verifyingUser, recoveryPasswordModel.ValidateCode,
                     recoveryPasswordModel.NewPassword);
 
-                if (!result.Succeeded)
+                if(!result.Succeeded)
                 {
                     throw new IdentityException(new Core.Exceptions.ErrorCode { MessageCode = result.Errors.First().Code, MessageContent = result.Errors.First().Description });
                 }
@@ -276,7 +275,7 @@ namespace LetPortal.Identity.Providers.Identity
             await _roleRepository.UpdateAsync(role.Id, role);
         }
 
-        public async Task<List<RolePortalClaimModel>> GetPortalClaims(string username)
+        public async Task<List<RolePortalClaimModel>> GetPortalClaimsAsync(string username)
         {
             var roles = (await _userManager.FindByNameAsync(username)).Roles;
 
@@ -287,9 +286,9 @@ namespace LetPortal.Identity.Providers.Identity
             return claims;
         }
 
-        public async Task<List<RolePortalClaimModel>> GetPortalClaimsByRole(string roleName)
+        public async Task<List<RolePortalClaimModel>> GetPortalClaimsByRoleAsync(string roleName)
         {
-            var dicClaims = await _roleRepository.GetBaseClaims(new string[]{roleName});
+            var dicClaims = await _roleRepository.GetBaseClaims(new string[] { roleName });
 
             var claims = dicClaims.SelectMany(a => a.Value).GroupBy(a => a.ClaimType).Select(g => new RolePortalClaimModel { Name = g.Key, Claims = g.Select(k => k.ClaimValue).Distinct().ToList() }).ToList();
 

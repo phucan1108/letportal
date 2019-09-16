@@ -84,7 +84,7 @@ namespace LetPortal.IdentityApis.Controllers
                 return BadRequest();
             }
 
-            await _identityServiceProvider.ForgotPassword(model.Email);
+            await _identityServiceProvider.ForgotPasswordAsync(model.Email);
 
             return NoContent();
         }
@@ -99,7 +99,7 @@ namespace LetPortal.IdentityApis.Controllers
                 return BadRequest();
             }
 
-            await _identityServiceProvider.RecoveryPassword(model);
+            await _identityServiceProvider.RecoveryPasswordAsync(model);
 
             return NoContent();
         }

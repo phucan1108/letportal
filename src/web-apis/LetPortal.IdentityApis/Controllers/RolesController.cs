@@ -49,7 +49,7 @@ namespace LetPortal.IdentityApis.Controllers
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> GetPortalClaims()
         {
-            return Ok(await _identityServiceProvider.GetPortalClaims(_httpContextAccessor.HttpContext.User.Identity.Name));
+            return Ok(await _identityServiceProvider.GetPortalClaimsAsync(_httpContextAccessor.HttpContext.User.Identity.Name));
         }
 
         [HttpGet("{roleName}/claims")]
@@ -58,7 +58,7 @@ namespace LetPortal.IdentityApis.Controllers
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> GetPortalClaimsByRole(string roleName)
         {
-            return Ok(await _identityServiceProvider.GetPortalClaimsByRole(roleName));
+            return Ok(await _identityServiceProvider.GetPortalClaimsByRoleAsync(roleName));
         }
     }
 }

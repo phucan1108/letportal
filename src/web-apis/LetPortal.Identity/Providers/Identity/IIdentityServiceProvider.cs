@@ -13,16 +13,16 @@ namespace LetPortal.Identity.Providers.Identity
 
         Task<TokenModel> RefreshTokenAsync(string refreshToken);
 
-        Task ForgotPassword(string email);
+        Task ForgotPasswordAsync(string email);
 
-        Task RecoveryPassword(RecoveryPasswordModel recoveryPasswordModel);
+        Task RecoveryPasswordAsync(RecoveryPasswordModel recoveryPasswordModel);
 
         Task<List<Role>> GetRolesAsync();
 
         Task AddPortalClaimsToRoleAsync(string roleName, List<PortalClaimModel> portalClaims);
 
-        Task<List<RolePortalClaimModel>> GetPortalClaimsByRole(string roleName);
+        Task<List<RolePortalClaimModel>> GetPortalClaimsByRoleAsync(string roleName);
 
-        Task<List<RolePortalClaimModel>> GetPortalClaims(string username);
+        Task<List<RolePortalClaimModel>> GetPortalClaimsAsync(string username);
     }
 }
