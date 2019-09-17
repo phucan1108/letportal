@@ -9,7 +9,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Xunit;
 
 namespace LetPortal.Tests.ITs.Identity
 {
@@ -57,6 +56,13 @@ namespace LetPortal.Tests.ITs.Identity
             mongoClient.DropDatabase(MongoDatabaseOptions.Datasource);
         }
 
+        public RoleStore GetRoleStore()
+        {
+            var roleStore = new RoleStore(getRoleMongoRepository());
+
+            return roleStore;
+        }
+
         public UserStore GetUserStore()
         {
             var userStore = new UserStore(getUserMongoRepository(), getRoleMongoRepository());
@@ -92,6 +98,41 @@ namespace LetPortal.Tests.ITs.Identity
                     StandardClaims.Name(username)
                 }
             };
+        }
+
+        public Role GenerateRole()
+        {
+            var roleName = generateUniqueRoleName();
+            return new Role
+            {
+                Id = DataUtil.GenerateUniqueId(),
+                Name = roleName,
+                NormalizedName = roleName.ToUpper(),
+                DisplayName = roleName,
+                Claims = new List<BaseClaim>
+                {
+                    StandardClaims.AccessCoreApp,
+                    new BaseClaim
+                    {
+                        ClaimType = "apps",
+                        ClaimValue = "5c162e9005924c1c741bfd22"
+                    }
+                }
+            };
+        }
+
+        private string generateUniqueRoleName()
+        {
+            var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var lengthOfName = 20;
+            var role = string.Empty;
+            for(int i = 0; i < lengthOfName; i++)
+            {
+                var randomIndx = (new Random()).Next(0, 45);
+                role += suppliedVars[randomIndx];
+            }
+
+            return role;
         }
 
         private string generateUniqueUserName()
