@@ -15,13 +15,24 @@ import { UploadFileService } from 'services/uploadfile.service';
 import { TRANSLATOR_METHODS, CONTROL_EVENTS } from './core.config';
 import { ControlEventExecution } from './events/control/control.event';
 import { EventsProvider } from './events/event.provider';
+import { UnlockScreenDialogComponent } from './security/components/unlock-screen.component';
+import { MatFormFieldModule, MatDialogModule, MatInputModule, MatIconModule, MatButtonModule } from '@angular/material';
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
+    UnlockScreenDialogComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,    
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatInputModule    
   ],
   entryComponents: [
+    UnlockScreenDialogComponent
   ],
   exports: [
   ],

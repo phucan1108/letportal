@@ -121,7 +121,7 @@ export class DynamicListBuilderPage implements OnInit {
             this.isSubmitted = true;
             const submittingDynamicList = this.combineAllDatasToDynamicList()
             if (this.isEditMode) {
-                this.dynamicListClient.update(this.edittingDynamicList.id, { dynamicList: submittingDynamicList })
+                this.dynamicListClient.update(this.edittingDynamicList.id, submittingDynamicList)
                     .subscribe(rep => {
                         this.shortcutUtil.notifyMessage("Update successfully!", ToastType.Success)
                     },
@@ -130,9 +130,7 @@ export class DynamicListBuilderPage implements OnInit {
                         })
             }
             else {
-                this.dynamicListClient.create({
-                    dynamicList: submittingDynamicList
-                }).subscribe(rep => {
+                this.dynamicListClient.create(submittingDynamicList).subscribe(rep => {
                     this.router.navigateByUrl('/portal/dynamic-list/builder/')
                     this.shortcutUtil.notifyMessage("Save successfully!", ToastType.Success)
                 },

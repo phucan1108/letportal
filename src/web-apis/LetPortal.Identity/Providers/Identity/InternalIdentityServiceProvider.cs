@@ -93,24 +93,26 @@ namespace LetPortal.Identity.Providers.Identity
         {
             _serviceLogger.Info("User Login {$loginModel}", loginModel.ToJson());
             var user = await _userManager.FindByNameAsync(loginModel.Username);
-            var validationResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, true);
-            if(validationResult.Succeeded)
+
+            if(user != null)
             {
-
-                var userClaims = await _userManager.GetClaimsAsync(user);
-
-                var token = SignedToken(userClaims);
-
-                // Create UserSession
-                var userSession = new UserSession
+                var validationResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, true);
+                if(validationResult.Succeeded)
                 {
-                    Id = DataUtil.GenerateUniqueId(),
-                    RequestIpAddress = loginModel.ClientIp,
-                    SoftwareAgent = loginModel.SoftwareAgent,
-                    VersionInstalled = loginModel.VersionInstalled,
-                    SignInDate = DateTime.UtcNow,
-                    UserId = user.Id,
-                    UserActivities = new List<UserActivity>
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+
+                    var token = SignedToken(userClaims);
+
+                    // Create UserSession
+                    var userSession = new UserSession
+                    {
+                        Id = DataUtil.GenerateUniqueId(),
+                        RequestIpAddress = loginModel.ClientIp,
+                        SoftwareAgent = loginModel.SoftwareAgent,
+                        VersionInstalled = loginModel.VersionInstalled,
+                        SignInDate = DateTime.UtcNow,
+                        UserId = user.Id,
+                        UserActivities = new List<UserActivity>
                     {
                         new UserActivity
                         {
@@ -120,35 +122,36 @@ namespace LetPortal.Identity.Providers.Identity
                             ActivityType = ActivityType.Info
                         }
                     }
-                };
-                await _userSessionRepository.AddAsync(userSession);
+                    };
+                    await _userSessionRepository.AddAsync(userSession);
 
-                // Create refresh token
-                var expToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.TokenExpiration);
-                var expRefreshToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.RefreshTokenExpiration);
-                var issuedToken = new IssuedToken
-                {
-                    Id = DataUtil.GenerateUniqueId(),
-                    UserId = user.Id,
-                    JwtToken = token,
-                    ExpiredJwtToken = expToken,
-                    ExpiredRefreshToken = expRefreshToken,
-                    RefreshToken = CryptoUtil.ToSHA256(Guid.NewGuid().ToString()),
-                    UserSessionId = userSession.Id,
-                    Deactive = false
-                };
+                    // Create refresh token
+                    var expToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.TokenExpiration);
+                    var expRefreshToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.RefreshTokenExpiration);
+                    var issuedToken = new IssuedToken
+                    {
+                        Id = DataUtil.GenerateUniqueId(),
+                        UserId = user.Id,
+                        JwtToken = token,
+                        ExpiredJwtToken = expToken,
+                        ExpiredRefreshToken = expRefreshToken,
+                        RefreshToken = CryptoUtil.ToSHA256(Guid.NewGuid().ToString()),
+                        UserSessionId = userSession.Id,
+                        Deactive = false
+                    };
 
-                await _issuedTokenRepository.AddAsync(issuedToken);
-                _serviceLogger.Info("User Login Successfully {$issuedToken}", issuedToken.ToJson());
-                return new TokenModel
-                {
-                    Token = token,
-                    Exp = ((DateTimeOffset)expToken).ToUnixTimeSeconds(),
-                    ExpRefresh = ((DateTimeOffset)expRefreshToken).ToUnixTimeSeconds(),
-                    RefreshToken = issuedToken.RefreshToken,
-                    UserSessionId = userSession.Id
-                };
-            }
+                    await _issuedTokenRepository.AddAsync(issuedToken);
+                    _serviceLogger.Info("User Login Successfully {$issuedToken}", issuedToken.ToJson());
+                    return new TokenModel
+                    {
+                        Token = token,
+                        Exp = ((DateTimeOffset)expToken).ToUnixTimeSeconds(),
+                        ExpRefresh = ((DateTimeOffset)expRefreshToken).ToUnixTimeSeconds(),
+                        RefreshToken = issuedToken.RefreshToken,
+                        UserSessionId = userSession.Id
+                    };
+                }
+            }            
 
             throw new IdentityException(ErrorCodes.CannotSignIn);
         }

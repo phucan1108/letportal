@@ -102,10 +102,7 @@ export class MenuProfilesPage implements OnInit {
 
     saveChange() {
         if (this.menuProfile && this.selectedRole) {
-            this.appClient.asssignRolesToMenu({
-                appId: this.app.id,
-                menuProfile: this.menuProfile
-            }).subscribe(
+            this.appClient.asssignRolesToMenu( this.app.id, this.menuProfile).subscribe(
                 result => {
                     this.shortcutUtil.notifyMessage('Update successfully', ToastType.Success)
                 },

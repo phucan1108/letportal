@@ -94,9 +94,7 @@ export class PageBuilderState {
   @Action(PageActions.CreatePageAction)
   public create(ctx: StateContext<PageBuilderStateModel>, { }: PageActions.CreatePageAction) {
     const state = ctx.getState()
-    return this.pagesClient.create({
-      page: state.processPage
-    }).pipe(
+    return this.pagesClient.create(state.processPage).pipe(
       tap((result: string) => {
         ctx.setState({
           ...state,
@@ -113,9 +111,7 @@ export class PageBuilderState {
   @Action(PageActions.EditPageAction)
   public editForm(ctx: StateContext<PageBuilderStateModel>, { }: PageActions.EditPageAction) {
     const state = ctx.getState()
-    return this.pagesClient.update(state.processPage.id, {
-      page: state.processPage
-    }).pipe(
+    return this.pagesClient.update(state.processPage.id, state.processPage).pipe(
       tap(() => {
         ctx.setState({
           ...state,

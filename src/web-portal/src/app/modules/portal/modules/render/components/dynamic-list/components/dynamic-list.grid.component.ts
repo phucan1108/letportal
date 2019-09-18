@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, EventEmitter, Output } from '@angular/core';
-import { DynamicList, FetchingDataForDynamicListQuery, ColumndDef, SortType, CommandButtonInList, CommandPositionType, DatabasesClient, EntitySchemasClient, DatasourceClient, DynamicListClient, FieldValueType } from 'services/portal.service';
+import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType,  DynamicListClient, FieldValueType, DynamicListFetchDataModel } from 'services/portal.service';
 import { MatDialog, MatTable, MatPaginator, MatSort } from '@angular/material';
 import { BehaviorSubject, of, merge, Observable } from 'rxjs';
 import * as _ from 'lodash';
@@ -51,7 +51,7 @@ export class DynamicListGridComponent implements OnInit {
     readyToRender = false
     commandsInList: Array<CommandButtonInList> = new Array<CommandButtonInList>();
     filters: ExtendedFilterField[] = []
-    private fetchDataQuery: FetchingDataForDynamicListQuery = {
+    private fetchDataQuery: DynamicListFetchDataModel = {
         dynamicListId: null,
         filledParameterOptions: null,
         filterGroupOptions: null,
@@ -228,7 +228,7 @@ export class DynamicListGridComponent implements OnInit {
     }
 
     onSubmittingSearch($event) {
-        let fetchQuery = $event as FetchingDataForDynamicListQuery
+        let fetchQuery = $event as DynamicListFetchDataModel
         this.fetchDataQuery = this.getFetchDataQuery();
         this.fetchDataQuery.filledParameterOptions = fetchQuery.filledParameterOptions;
         this.fetchDataQuery.filterGroupOptions = fetchQuery.filterGroupOptions;
@@ -258,7 +258,7 @@ export class DynamicListGridComponent implements OnInit {
 
     private fetchData() {
         this.loading$.next(true)
-        this.dynamicClient.executeQuery(this.fetchDataQuery)
+        this.dynamicClient.executeQuery(this.dynamicList.id, this.fetchDataQuery)
             .pipe(
                 tap(res => {
                     this.logger.debug('Reponse from query', res)

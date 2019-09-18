@@ -145,10 +145,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         _.each(params, param => {
             query = query.replace("{{" + param.name + "}}", param.value);
         })
-        this.databaseClient.extractingQuery({
-            databaseId: databaseId,
-            queryJsonString: query
-        }).subscribe(
+        this.databaseClient.extractingQuery(databaseId, query).subscribe(
             result => {
                 this.afterPopulatingQuery.emit(result)
             },

@@ -115,9 +115,7 @@ export class StandardPagePage implements OnInit {
             this.combineStandardInfo()
             this.logger.debug('Current standard info', this.standardComponent)
             if (!this.isEditMode) {
-                this.standardsClient.createOne({
-                    standard: this.standardComponent
-                }).subscribe(
+                this.standardsClient.createOne(this.standardComponent).subscribe(
                     result => {
                         this.shortcutUtil.notifyMessage('Create standard successfully', ToastType.Success)
                         this.router.navigateByUrl('portal/standard/builder/' + result)
@@ -128,10 +126,7 @@ export class StandardPagePage implements OnInit {
                 )
             }
             else {
-                this.standardsClient.updateOne(this.standardComponent.id, {
-                    standardId: this.standardComponent.id,
-                    standard: this.standardComponent
-                }).subscribe(
+                this.standardsClient.updateOne(this.standardComponent.id, this.standardComponent).subscribe(
                     result => {
                         this.shortcutUtil.notifyMessage('Update standard successfully', ToastType.Success)
                     },

@@ -62,6 +62,6 @@ export class ResetPasswordPage implements OnInit {
     }
 
     moveToLogin(){
-        this.router.navigateByUrl('/login')
+        this.router.navigateByUrl('/')
     }
 }

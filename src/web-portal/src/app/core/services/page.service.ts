@@ -297,10 +297,7 @@ export class PageService {
             queryparams: this.queryparams
         })
 
-        return this.databasesClient.executeQueryDatasource({
-            databaseId: databaseId,
-            query: combineQuery
-        }).pipe(
+        return this.databasesClient.executeQueryDatasource(databaseId, combineQuery).pipe(
             mergeMap(result => {
                 if(result.isSuccess){
                     let array = []
@@ -432,10 +429,7 @@ export class PageService {
                             case DatasourceControlType.Database:
                                 const query = translator.translate(ds.options.databaseOptions.query, {})
                                 const dsName = ds.name
-                                datasources$.push(databaseClient.executeQueryDatasource({
-                                    databaseId: ds.options.databaseOptions.databaseConnectionId,
-                                    query: query
-                                }).pipe(
+                                datasources$.push(databaseClient.executeQueryDatasource(ds.options.databaseOptions.databaseConnectionId, query).pipe(
                                     filter(res => res.isSuccess),
                                     map<ExecuteDynamicResultModel, PageLoadedDatasource>((res: ExecuteDynamicResultModel) => {
                                         return { name: dsName, data: res.result }

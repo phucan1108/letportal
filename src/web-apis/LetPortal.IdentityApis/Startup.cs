@@ -25,12 +25,18 @@ namespace LetPortal.IdentityApis
             // Only for Development
             services.AddCors(options =>
             {
-                options.AddPolicy("Cors", builder =>
+                options.AddPolicy("DevCors", builder =>
                 {
                     builder.AllowAnyHeader();
                     builder.AllowAnyMethod();
                     builder.AllowAnyOrigin();
                     builder.AllowCredentials();
+                    builder.WithExposedHeaders("X-Token-Expired");
+                });
+
+                options.AddPolicy("ProdCors", builder =>
+                {
+                    builder.WithExposedHeaders("X-Token-Expired");
                 });
             });
 
@@ -52,11 +58,12 @@ namespace LetPortal.IdentityApis
             if(env.IsDevelopment())
             {
                 // Support allow any in Development mode
-                app.UseCors("Cors");
+                app.UseCors("DevCors");
             }
             else
             {
                 app.UseHsts();
+                app.UseCors("ProdCors");
             }
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -64,7 +71,12 @@ namespace LetPortal.IdentityApis
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            app.UseLetPortal(appLifetime);
+            app.UseLetPortal(appLifetime, options =>
+            {
+                options.EnableCheckUserSession = true;
+                options.EnableWrapException = true;
+                options.SkipCheckUrls = new string[] { "api/accounts/login", "api/accounts/forgot-password", "api/accounts/recovery-password" };
+            });
 
             app.UseAuthentication();
             app.UseMvc();

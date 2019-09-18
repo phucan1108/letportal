@@ -65,10 +65,11 @@ namespace LetPortal.Core.Persistences
             return Collection.AsQueryable();
         }
 
-        public Task<IEnumerable<T>> GetAllByIdsAsync(List<string> ids)
+        public async Task<IEnumerable<T>> GetAllByIdsAsync(List<string> ids)
         {
-            var filter = Builders<T>.Filter.In(a => a.Id, ids);
-            return Task.FromResult(Collection.Find(filter).ToCursor().Current);
+            //var filter = Builders<T>.Filter.In(a => a.Id, ids);
+            //return Task.FromResult(Collection.Find(filter).ToCursor().Current);
+            return await Collection.AsQueryable().Where(a => ids.Contains(a.Id)).ToListAsync();
         }
 
         public async Task<T> GetOneAsync(string id)

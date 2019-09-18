@@ -16,13 +16,13 @@ export const PORTAL_BASE_URL = new InjectionToken<string>('PORTAL_BASE_URL');
 
 export interface IAppsClient {
     getOne(id: string | null): Observable<App>;
-    update(id: string | null, updateAppCommand: UpdateAppCommand): Observable<FileResponse>;
+    update(id: string | null, app: App): Observable<FileResponse>;
     getMany(ids: string | null | undefined): Observable<App[]>;
     getAvailableUrls(id: string | null): Observable<AvailableUrl[]>;
-    create(createAppCommand: CreateAppCommand): Observable<App>;
+    create(app: App): Observable<App>;
     getAllApps(): Observable<App[]>;
-    updateMenu(id: string | null, updateAppMenuCommand: UpdateAppMenuCommand): Observable<FileResponse>;
-    asssignRolesToMenu(assignRoleToMenuCommand: AssignRoleToMenuCommand): Observable<FileResponse>;
+    updateMenu(id: string | null, menus: Menu[]): Observable<FileResponse>;
+    asssignRolesToMenu(id: string | null, menuProfile: MenuProfile): Observable<FileResponse>;
 }
 
 @Injectable()
@@ -86,14 +86,14 @@ export class AppsClient implements IAppsClient {
         return _observableOf<App>(<any>null);
     }
 
-    update(id: string | null, updateAppCommand: UpdateAppCommand): Observable<FileResponse> {
+    update(id: string | null, app: App): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/apps/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(updateAppCommand);
+        const content_ = JSON.stringify(app);
 
         let options_ : any = {
             body: content_,
@@ -238,11 +238,11 @@ export class AppsClient implements IAppsClient {
         return _observableOf<AvailableUrl[]>(<any>null);
     }
 
-    create(createAppCommand: CreateAppCommand): Observable<App> {
+    create(app: App): Observable<App> {
         let url_ = this.baseUrl + "/api/apps";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createAppCommand);
+        const content_ = JSON.stringify(app);
 
         let options_ : any = {
             body: content_,
@@ -336,14 +336,14 @@ export class AppsClient implements IAppsClient {
         return _observableOf<App[]>(<any>null);
     }
 
-    updateMenu(id: string | null, updateAppMenuCommand: UpdateAppMenuCommand): Observable<FileResponse> {
+    updateMenu(id: string | null, menus: Menu[]): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/apps/{id}/menus";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(updateAppMenuCommand);
+        const content_ = JSON.stringify(menus);
 
         let options_ : any = {
             body: content_,
@@ -389,11 +389,14 @@ export class AppsClient implements IAppsClient {
         return _observableOf<FileResponse>(<any>null);
     }
 
-    asssignRolesToMenu(assignRoleToMenuCommand: AssignRoleToMenuCommand): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/apps/menus/assign-role";
+    asssignRolesToMenu(id: string | null, menuProfile: MenuProfile): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/apps/{id}/menus/assign-role";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(assignRoleToMenuCommand);
+        const content_ = JSON.stringify(menuProfile);
 
         let options_ : any = {
             body: content_,
@@ -405,7 +408,7 @@ export class AppsClient implements IAppsClient {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processAsssignRolesToMenu(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -442,13 +445,13 @@ export class AppsClient implements IAppsClient {
 
 export interface IDatabasesClient {
     getAll(): Observable<DatabaseConnection[]>;
-    post(command: CreateDatabaseCommand): Observable<DatabaseConnection>;
+    post(databaseConnection: DatabaseConnection): Observable<DatabaseConnection>;
     get(id: string | null): Observable<DatabaseConnection>;
-    put(id: string | null, command: UpdateDatabaseCommand): Observable<FileResponse>;
+    put(id: string | null, databaseConnection: DatabaseConnection): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
     executionDynamic(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel>;
-    extractingQuery(extractingColumnSchemaQuery: ExtractingColumnSchemaQuery): Observable<ExtractingSchemaQueryModel>;
-    executeQueryDatasource(executeQueryForDatasourceQuery: ExecuteQueryForDatasourceQuery): Observable<ExecuteDynamicResultModel>;
+    extractingQuery(databaseId: string | null, content: any): Observable<ExtractingSchemaQueryModel>;
+    executeQueryDatasource(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel>;
 }
 
 @Injectable()
@@ -509,11 +512,11 @@ export class DatabasesClient implements IDatabasesClient {
         return _observableOf<DatabaseConnection[]>(<any>null);
     }
 
-    post(command: CreateDatabaseCommand): Observable<DatabaseConnection> {
+    post(databaseConnection: DatabaseConnection): Observable<DatabaseConnection> {
         let url_ = this.baseUrl + "/api/databases";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(command);
+        const content_ = JSON.stringify(databaseConnection);
 
         let options_ : any = {
             body: content_,
@@ -610,14 +613,14 @@ export class DatabasesClient implements IDatabasesClient {
         return _observableOf<DatabaseConnection>(<any>null);
     }
 
-    put(id: string | null, command: UpdateDatabaseCommand): Observable<FileResponse> {
+    put(id: string | null, databaseConnection: DatabaseConnection): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/databases/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(command);
+        const content_ = JSON.stringify(databaseConnection);
 
         let options_ : any = {
             body: content_,
@@ -713,7 +716,7 @@ export class DatabasesClient implements IDatabasesClient {
     }
 
     executionDynamic(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel> {
-        let url_ = this.baseUrl + "/api/databases/execution/{databaseId}";
+        let url_ = this.baseUrl + "/api/databases/{databaseId}/execution";
         if (databaseId === undefined || databaseId === null)
             throw new Error("The parameter 'databaseId' must be defined.");
         url_ = url_.replace("{databaseId}", encodeURIComponent("" + databaseId)); 
@@ -766,11 +769,14 @@ export class DatabasesClient implements IDatabasesClient {
         return _observableOf<ExecuteDynamicResultModel>(<any>null);
     }
 
-    extractingQuery(extractingColumnSchemaQuery: ExtractingColumnSchemaQuery): Observable<ExtractingSchemaQueryModel> {
-        let url_ = this.baseUrl + "/api/databases/extract-raw";
+    extractingQuery(databaseId: string | null, content: any): Observable<ExtractingSchemaQueryModel> {
+        let url_ = this.baseUrl + "/api/databases/{databaseId}/extract-raw";
+        if (databaseId === undefined || databaseId === null)
+            throw new Error("The parameter 'databaseId' must be defined.");
+        url_ = url_.replace("{databaseId}", encodeURIComponent("" + databaseId)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(extractingColumnSchemaQuery);
+        const content_ = JSON.stringify(content);
 
         let options_ : any = {
             body: content_,
@@ -817,11 +823,14 @@ export class DatabasesClient implements IDatabasesClient {
         return _observableOf<ExtractingSchemaQueryModel>(<any>null);
     }
 
-    executeQueryDatasource(executeQueryForDatasourceQuery: ExecuteQueryForDatasourceQuery): Observable<ExecuteDynamicResultModel> {
-        let url_ = this.baseUrl + "/api/databases/query-datasource";
+    executeQueryDatasource(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel> {
+        let url_ = this.baseUrl + "/api/databases/{databaseId}/query-datasource";
+        if (databaseId === undefined || databaseId === null)
+            throw new Error("The parameter 'databaseId' must be defined.");
+        url_ = url_.replace("{databaseId}", encodeURIComponent("" + databaseId)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(executeQueryForDatasourceQuery);
+        const content_ = JSON.stringify(content);
 
         let options_ : any = {
             body: content_,
@@ -871,9 +880,9 @@ export class DatabasesClient implements IDatabasesClient {
 
 export interface IDatasourceClient {
     getAll(): Observable<Datasource[]>;
-    create(createDatasourceCommand: CreateDatasourceCommand): Observable<Datasource>;
+    create(datasource: Datasource): Observable<Datasource>;
     get(id: string | null): Observable<Datasource>;
-    update(id: string | null, updateDatasourceCommand: UpdateDatasourceCommand): Observable<FileResponse>;
+    update(id: string | null, datasource: Datasource): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
     fetchDatasource(id: string | null, keyWord: string | null | undefined): Observable<DatasourceModel[]>;
 }
@@ -936,11 +945,11 @@ export class DatasourceClient implements IDatasourceClient {
         return _observableOf<Datasource[]>(<any>null);
     }
 
-    create(createDatasourceCommand: CreateDatasourceCommand): Observable<Datasource> {
+    create(datasource: Datasource): Observable<Datasource> {
         let url_ = this.baseUrl + "/api/datasources";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createDatasourceCommand);
+        const content_ = JSON.stringify(datasource);
 
         let options_ : any = {
             body: content_,
@@ -1037,14 +1046,14 @@ export class DatasourceClient implements IDatasourceClient {
         return _observableOf<Datasource>(<any>null);
     }
 
-    update(id: string | null, updateDatasourceCommand: UpdateDatasourceCommand): Observable<FileResponse> {
+    update(id: string | null, datasource: Datasource): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/datasources/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(updateDatasourceCommand);
+        const content_ = JSON.stringify(datasource);
 
         let options_ : any = {
             body: content_,
@@ -1194,12 +1203,12 @@ export class DatasourceClient implements IDatasourceClient {
 
 export interface IDynamicListClient {
     getAll(): Observable<DynamicList[]>;
-    create(createDynamicListCommand: CreateDynamicListCommand): Observable<string>;
+    create(dynamicList: DynamicList): Observable<string>;
     getOne(id: string | null): Observable<DynamicList>;
-    update(id: string | null, updateDynamicListCommand: UpdateDynamicListCommand): Observable<FileResponse>;
+    update(id: string | null, dynamicList: DynamicList): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
-    executeQuery(fetchingDataForDynamicListQuery: FetchingDataForDynamicListQuery): Observable<DynamicListResponseDataModel>;
-    extractingQuery(extractingQueryForDynamicListQuery: ExtractingQueryForDynamicListQuery): Observable<PopulateQueryModel>;
+    executeQuery(id: string | null, fetchDataModel: DynamicListFetchDataModel): Observable<DynamicListResponseDataModel>;
+    extractingQuery(extractingQuery: ExtractingQueryModel): Observable<PopulateQueryModel>;
     checkExist(name: string | null): Observable<boolean>;
 }
 
@@ -1261,11 +1270,11 @@ export class DynamicListClient implements IDynamicListClient {
         return _observableOf<DynamicList[]>(<any>null);
     }
 
-    create(createDynamicListCommand: CreateDynamicListCommand): Observable<string> {
+    create(dynamicList: DynamicList): Observable<string> {
         let url_ = this.baseUrl + "/api/dynamiclists";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createDynamicListCommand);
+        const content_ = JSON.stringify(dynamicList);
 
         let options_ : any = {
             body: content_,
@@ -1362,14 +1371,14 @@ export class DynamicListClient implements IDynamicListClient {
         return _observableOf<DynamicList>(<any>null);
     }
 
-    update(id: string | null, updateDynamicListCommand: UpdateDynamicListCommand): Observable<FileResponse> {
+    update(id: string | null, dynamicList: DynamicList): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/dynamiclists/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(updateDynamicListCommand);
+        const content_ = JSON.stringify(dynamicList);
 
         let options_ : any = {
             body: content_,
@@ -1464,11 +1473,14 @@ export class DynamicListClient implements IDynamicListClient {
         return _observableOf<FileResponse>(<any>null);
     }
 
-    executeQuery(fetchingDataForDynamicListQuery: FetchingDataForDynamicListQuery): Observable<DynamicListResponseDataModel> {
-        let url_ = this.baseUrl + "/api/dynamiclists/fetch-data";
+    executeQuery(id: string | null, fetchDataModel: DynamicListFetchDataModel): Observable<DynamicListResponseDataModel> {
+        let url_ = this.baseUrl + "/api/dynamiclists/{id}/fetch-data";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(fetchingDataForDynamicListQuery);
+        const content_ = JSON.stringify(fetchDataModel);
 
         let options_ : any = {
             body: content_,
@@ -1515,11 +1527,11 @@ export class DynamicListClient implements IDynamicListClient {
         return _observableOf<DynamicListResponseDataModel>(<any>null);
     }
 
-    extractingQuery(extractingQueryForDynamicListQuery: ExtractingQueryForDynamicListQuery): Observable<PopulateQueryModel> {
+    extractingQuery(extractingQuery: ExtractingQueryModel): Observable<PopulateQueryModel> {
         let url_ = this.baseUrl + "/api/dynamiclists/extract-query";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(extractingQueryForDynamicListQuery);
+        const content_ = JSON.stringify(extractingQuery);
 
         let options_ : any = {
             body: content_,
@@ -1621,9 +1633,7 @@ export interface IEntitySchemasClient {
     getOne(databaseId: string | null, entityName: string | null): Observable<EntitySchema>;
     fetchAllFromDatabase(id: string | null): Observable<EntitySchema[]>;
     getAllFromOneDatabase(id: string | null): Observable<EntitySchema[]>;
-    flushOneDatabase(flushEntitySchemasInOneDatabaseCommand: FlushEntitySchemasInOneDatabaseCommand): Observable<EntitySchema[]>;
-    post(createEntitySchemaCommand: CreateEntitySchemaCommand): Observable<EntitySchema>;
-    put(id: string | null, updateEntitySchemaCommand: UpdateEntitySchemaCommand): Observable<FileResponse>;
+    flushOneDatabase(flushDatabaseModel: FlushDatabaseModel): Observable<EntitySchema[]>;
     delete(id: string | null): Observable<FileResponse>;
 }
 
@@ -1791,11 +1801,11 @@ export class EntitySchemasClient implements IEntitySchemasClient {
         return _observableOf<EntitySchema[]>(<any>null);
     }
 
-    flushOneDatabase(flushEntitySchemasInOneDatabaseCommand: FlushEntitySchemasInOneDatabaseCommand): Observable<EntitySchema[]> {
+    flushOneDatabase(flushDatabaseModel: FlushDatabaseModel): Observable<EntitySchema[]> {
         let url_ = this.baseUrl + "/api/entity-schemas/flush";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(flushEntitySchemasInOneDatabaseCommand);
+        const content_ = JSON.stringify(flushDatabaseModel);
 
         let options_ : any = {
             body: content_,
@@ -1840,110 +1850,6 @@ export class EntitySchemasClient implements IEntitySchemasClient {
             }));
         }
         return _observableOf<EntitySchema[]>(<any>null);
-    }
-
-    post(createEntitySchemaCommand: CreateEntitySchemaCommand): Observable<EntitySchema> {
-        let url_ = this.baseUrl + "/api/entity-schemas";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(createEntitySchemaCommand);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPost(<any>response_);
-                } catch (e) {
-                    return <Observable<EntitySchema>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<EntitySchema>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPost(response: HttpResponseBase): Observable<EntitySchema> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : <EntitySchema>JSON.parse(_responseText, this.jsonParseReviver);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<EntitySchema>(<any>null);
-    }
-
-    put(id: string | null, updateEntitySchemaCommand: UpdateEntitySchemaCommand): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/entity-schemas/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(updateEntitySchemaCommand);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPut(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPut(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPut(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
     }
 
     delete(id: string | null): Observable<FileResponse> {
@@ -2170,8 +2076,8 @@ export interface IPagesClient {
     getAllPortalClaims(): Observable<ShortPortalClaimModel[]>;
     getOneById(id: string | null): Observable<Page>;
     getOne(name: string | null): Observable<Page>;
-    create(createPageCommand: CreatePageCommand): Observable<string>;
-    update(id: string | null, updatePageCommand: UpdatePageCommand): Observable<FileResponse>;
+    create(page: Page): Observable<string>;
+    update(id: string | null, page: Page): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
     checkExist(name: string | null): Observable<boolean>;
 }
@@ -2381,11 +2287,11 @@ export class PagesClient implements IPagesClient {
         return _observableOf<Page>(<any>null);
     }
 
-    create(createPageCommand: CreatePageCommand): Observable<string> {
+    create(page: Page): Observable<string> {
         let url_ = this.baseUrl + "/api/pages";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createPageCommand);
+        const content_ = JSON.stringify(page);
 
         let options_ : any = {
             body: content_,
@@ -2432,14 +2338,14 @@ export class PagesClient implements IPagesClient {
         return _observableOf<string>(<any>null);
     }
 
-    update(id: string | null, updatePageCommand: UpdatePageCommand): Observable<FileResponse> {
+    update(id: string | null, page: Page): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/pages/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(updatePageCommand);
+        const content_ = JSON.stringify(page);
 
         let options_ : any = {
             body: content_,
@@ -2587,9 +2493,9 @@ export class PagesClient implements IPagesClient {
 
 export interface IStandardComponentClient {
     getOne(id: string | null): Observable<StandardComponent>;
-    updateOne(id: string | null, updateStandardComponentCommand: UpdateStandardComponentCommand): Observable<FileResponse>;
-    createOne(createStandardComponentCommand: CreateStandardComponentCommand): Observable<string>;
-    createBulk(createBulkStandardComponentsCommand: CreateBulkStandardComponentsCommand): Observable<FileResponse>;
+    updateOne(id: string | null, standardComponent: StandardComponent): Observable<FileResponse>;
+    createOne(standardComponent: StandardComponent): Observable<string>;
+    createBulk(standardComponents: StandardComponent[]): Observable<FileResponse>;
     deleteBulk(ids: string | null | undefined): Observable<FileResponse>;
     getManys(ids: string | null | undefined): Observable<StandardComponent[]>;
     checkExist(name: string | null): Observable<boolean>;
@@ -2656,14 +2562,14 @@ export class StandardComponentClient implements IStandardComponentClient {
         return _observableOf<StandardComponent>(<any>null);
     }
 
-    updateOne(id: string | null, updateStandardComponentCommand: UpdateStandardComponentCommand): Observable<FileResponse> {
+    updateOne(id: string | null, standardComponent: StandardComponent): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/standards/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(updateStandardComponentCommand);
+        const content_ = JSON.stringify(standardComponent);
 
         let options_ : any = {
             body: content_,
@@ -2709,11 +2615,11 @@ export class StandardComponentClient implements IStandardComponentClient {
         return _observableOf<FileResponse>(<any>null);
     }
 
-    createOne(createStandardComponentCommand: CreateStandardComponentCommand): Observable<string> {
+    createOne(standardComponent: StandardComponent): Observable<string> {
         let url_ = this.baseUrl + "/api/standards";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createStandardComponentCommand);
+        const content_ = JSON.stringify(standardComponent);
 
         let options_ : any = {
             body: content_,
@@ -2760,11 +2666,11 @@ export class StandardComponentClient implements IStandardComponentClient {
         return _observableOf<string>(<any>null);
     }
 
-    createBulk(createBulkStandardComponentsCommand: CreateBulkStandardComponentsCommand): Observable<FileResponse> {
+    createBulk(standardComponents: StandardComponent[]): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/standards/bulk";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createBulkStandardComponentsCommand);
+        const content_ = JSON.stringify(standardComponents);
 
         let options_ : any = {
             body: content_,
@@ -3002,44 +2908,10 @@ export interface AvailableUrl {
     pageId?: string | undefined;
 }
 
-export interface CreateAppCommand {
-    app?: App | undefined;
-}
-
-export interface UpdateAppCommand {
-    appId?: string | undefined;
-    app?: App | undefined;
-}
-
-export interface UpdateAppMenuCommand {
-    appId?: string | undefined;
-    menus?: Menu[] | undefined;
-}
-
-export interface AssignRoleToMenuCommand {
-    menuProfile?: MenuProfile | undefined;
-    appId?: string | undefined;
-}
-
 export interface DatabaseConnection extends BackupableEntity {
     connectionString?: string | undefined;
     dataSource?: string | undefined;
     databaseConnectionType?: string | undefined;
-}
-
-export interface CreateDatabaseCommand {
-    name: string;
-    connectionString: string;
-    dataSource: string;
-    databaseConnectionType: string;
-}
-
-export interface UpdateDatabaseCommand {
-    id: string;
-    name: string;
-    connectionString: string;
-    dataSource: string;
-    databaseConnectionType: string;
 }
 
 export interface ExecuteDynamicResultModel {
@@ -3058,16 +2930,6 @@ export interface ColumnField {
     fieldType?: string | undefined;
 }
 
-export interface ExtractingColumnSchemaQuery {
-    databaseId?: string | undefined;
-    queryJsonString?: string | undefined;
-}
-
-export interface ExecuteQueryForDatasourceQuery {
-    databaseId?: string | undefined;
-    query?: string | undefined;
-}
-
 export interface Datasource extends BackupableEntity {
     datasourceType?: DatasourceType;
     canCache?: boolean;
@@ -3084,15 +2946,6 @@ export enum DatasourceType {
 export interface DatasourceModel {
     name?: string | undefined;
     value?: string | undefined;
-}
-
-export interface CreateDatasourceCommand {
-    datasource?: Datasource | undefined;
-}
-
-export interface UpdateDatasourceCommand {
-    datasourceId?: string | undefined;
-    datasource?: Datasource | undefined;
 }
 
 export interface Component extends BackupableEntity {
@@ -3283,21 +3136,12 @@ export interface ShellOption {
     description?: string | undefined;
 }
 
-export interface CreateDynamicListCommand {
-    dynamicList?: DynamicList | undefined;
-}
-
-export interface UpdateDynamicListCommand {
-    dynamicListId?: string | undefined;
-    dynamicList?: DynamicList | undefined;
-}
-
 export interface DynamicListResponseDataModel {
     data?: any | undefined;
     totalItems?: number;
 }
 
-export interface FetchingDataForDynamicListQuery {
+export interface DynamicListFetchDataModel {
     dynamicListId?: string | undefined;
     textSearch?: string | undefined;
     filledParameterOptions?: FilledParameterOptions | undefined;
@@ -3371,7 +3215,7 @@ export interface PopulateQueryModel {
     columnFields?: ColumnField[] | undefined;
 }
 
-export interface ExtractingQueryForDynamicListQuery {
+export interface ExtractingQueryModel {
     parameters?: FilledParameterModel[] | undefined;
     query?: string | undefined;
     databaseId?: string | undefined;
@@ -3394,17 +3238,9 @@ export interface EntityField {
     fieldType?: string | undefined;
 }
 
-export interface FlushEntitySchemasInOneDatabaseCommand {
+export interface FlushDatabaseModel {
     databaseId?: string | undefined;
     keptSameName?: boolean;
-}
-
-export interface CreateEntitySchemaCommand {
-    entitySchema: EntitySchema;
-}
-
-export interface UpdateEntitySchemaCommand {
-    entitySchema: EntitySchema;
 }
 
 export interface ResponseUploadFile {
@@ -3556,15 +3392,6 @@ export enum RouteType {
     ThroughUrl = 1, 
 }
 
-export interface CreatePageCommand {
-    page?: Page | undefined;
-}
-
-export interface UpdatePageCommand {
-    pageId?: string | undefined;
-    page?: Page | undefined;
-}
-
 export interface StandardComponent extends Component {
     layoutType?: PageSectionLayoutType;
     controls?: PageControl[] | undefined;
@@ -3661,19 +3488,6 @@ export interface PageControlEvent {
     eventActionType?: EventActionType;
     httpServiceOptions?: EventHttpServiceOptions | undefined;
     triggerEventOptions?: TriggerEventOptions | undefined;
-}
-
-export interface CreateStandardComponentCommand {
-    standard?: StandardComponent | undefined;
-}
-
-export interface UpdateStandardComponentCommand {
-    standardId?: string | undefined;
-    standard?: StandardComponent | undefined;
-}
-
-export interface CreateBulkStandardComponentsCommand {
-    standards?: StandardComponent[] | undefined;
 }
 
 export interface FileParameter {

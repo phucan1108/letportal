@@ -133,8 +133,10 @@ namespace LetPortal.Core
             {
                 app.UseMiddleware<NotifyExceptionLogMiddleware>();
                 app.UseMiddleware<AddRequestMonitorMiddleware>();
-                app.UseMiddleware<CatchGlobalExceptionMiddleware>();
             }
+
+
+            app.UseMiddleware<CatchGlobalExceptionMiddleware>();
         }
 
         /// <summary>

@@ -20,13 +20,16 @@ namespace LetPortal.Identity.Entities
             ClaimValueType = DefaultStringValueType
         };
 
-        public static readonly BaseClaim AccessCoreApp = new BaseClaim
+        public static BaseClaim AccessCoreApp(string coreAppId)
         {
-            Issuer = DefaultIssuer,
-            ClaimType = "apps",
-            ClaimValue = "5c162e9005924c1c741bfdc2",
-            ClaimValueType = DefaultArrayValueType
-        };
+            return new BaseClaim
+            {
+                Issuer = DefaultIssuer,
+                ClaimType = "apps",
+                ClaimValue = coreAppId,
+                ClaimValueType = DefaultArrayValueType
+            };
+        }
 
         public static IEnumerable<BaseClaim> TransformRoleClaims(List<string> roles)
         {

@@ -132,7 +132,7 @@ namespace LetPortal.WebApis.Controllers
             if(databaseConnection == null)
                 return BadRequest();
 
-            var result = await _databaseService.ExecuteDynamic(databaseConnection, ConvertUtil.SerializeObject(content));
+            var result = await _databaseService.ExecuteDynamic(databaseConnection, content);
             _logger.Info("Result of dynamic datasource: {@result}", result);
             return Ok(result);
         }

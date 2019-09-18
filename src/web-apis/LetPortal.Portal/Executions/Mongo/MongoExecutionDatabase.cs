@@ -124,7 +124,7 @@ namespace LetPortal.Portal.Executions.Mongo
             var indexObjectId = query.IndexOf("\"ObjectId(");
             while(indexObjectId > 0)
             {
-                var closedCurly = query.IndexOf(")\"", indexObjectId);
+                var closedCurly = query.IndexOf(")", indexObjectId);
                 query = query.Remove(closedCurly + 1, 1);
                 query = query.Remove(indexObjectId, 1);
                 indexObjectId = query.IndexOf("\"ObjectId(");
@@ -134,7 +134,7 @@ namespace LetPortal.Portal.Executions.Mongo
             var indexISODate = query.IndexOf("\"ISODate(");
             while(indexISODate > 0)
             {
-                var closedCurly = query.IndexOf(")\"", indexISODate);
+                var closedCurly = query.IndexOf(")", indexISODate);
                 query = query.Remove(closedCurly + 1, 1);
                 query = query.Remove(indexISODate, 1);
                 indexISODate = query.IndexOf("\"ISODate(");

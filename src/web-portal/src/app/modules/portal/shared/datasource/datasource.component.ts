@@ -107,9 +107,7 @@ export class DatasourceDialogComponent implements OnInit {
         if (this.isAddingNewDatasource) {
             const newDatasource = this.combineFormData();
 
-            this.datasourceClient.create({
-                datasource: newDatasource
-            }).subscribe(rep => {
+            this.datasourceClient.create(newDatasource).subscribe(rep => {
                 this.dialogRef.close(rep.id)
             })
         }

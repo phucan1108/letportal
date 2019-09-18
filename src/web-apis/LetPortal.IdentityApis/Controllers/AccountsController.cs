@@ -44,7 +44,7 @@ namespace LetPortal.IdentityApis.Controllers
         }
 
         [HttpPost("register")]
-        [AllowAnonymous]
+        [Authorize]
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
         {
@@ -64,7 +64,7 @@ namespace LetPortal.IdentityApis.Controllers
         }
 
         [HttpGet("refresh/{refreshToken}")]
-        [AllowAnonymous]
+        [Authorize]
         [ProducesResponseType(typeof(TokenModel), 200)]
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> RefreshToken(string refreshToken)

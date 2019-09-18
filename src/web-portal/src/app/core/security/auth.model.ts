@@ -4,7 +4,8 @@ import { RolePortalClaimModel } from 'services/identity.service';
 
 export class AuthToken {
     public jsonTokenPayload: any;
-
+    public expireDate: Date
+    public expireRefreshDate: Date
     constructor(
         public jwtToken: string, 
         public expiresIn: number, 
@@ -13,10 +14,21 @@ export class AuthToken {
         if (jwtToken) {
             this.jsonTokenPayload = decode(jwtToken);
         }
+
+        this.expireDate = new Date(0)
+        this.expireDate.setUTCSeconds(expiresIn)
+
+        this.expireRefreshDate = new Date(0)
+        this.expireRefreshDate.setUTCSeconds(expireRefresh)
     }
 
     public toAuthUser() {
         return new AuthUser(this.jsonTokenPayload.id, this.jsonTokenPayload.name, this.jsonTokenPayload.roles, this.jsonTokenPayload);
+    }
+
+    public isExpired(): boolean{
+        let isExpired = this.expireDate < new Date()
+        return isExpired
     }
 }
 

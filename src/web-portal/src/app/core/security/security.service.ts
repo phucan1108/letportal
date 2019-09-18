@@ -25,7 +25,7 @@ export class SecurityService {
         if (tempAuthToken) {
             this.authToken = new AuthToken(
                 tempAuthToken.jwtToken,
-                tempAuthToken.expireseIn, 
+                tempAuthToken.expiresIn, 
                 tempAuthToken.refreshToken, 
                 tempAuthToken.expireRefresh)
             this.authUser = this.authToken ? this.authToken.toAuthUser() : null
@@ -69,7 +69,7 @@ export class SecurityService {
     }
 
     isUserSignedIn() {
-        return this.authUser ? true : false;
+        return this.authUser && !this.authToken.isExpired() ? true : false;
     }
 
     userLogout() {

@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, ChangeDetectionStrategy, HostListener } from '@angular/core';
-import { FilterField, FilterGroup, FilterOption, FilterOperator, FilterChainOperator, FetchingDataForDynamicListQuery, FilledParameter, DatasourceClient, DatasourceModel, FieldValueType, DatabasesClient } from 'services/portal.service';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, HostListener } from '@angular/core';
+import { FilterGroup, FilterOption, FilterOperator, FilterChainOperator, FilledParameter, DatasourceClient, DatasourceModel, FieldValueType, DatabasesClient, DynamicListFetchDataModel } from 'services/portal.service';
 import { MatSelectChange, MatDialog } from '@angular/material';
 import * as _ from 'lodash';
-import { element } from '@angular/core/src/render3/instructions';
 import { NGXLogger } from 'ngx-logger';
 import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/extended.model';
 import { AdvancedFilterDialogComponent } from './advancedfilter-dialog.component';
@@ -102,7 +101,7 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     onSearchClick() {
-        let filterQuery: FetchingDataForDynamicListQuery = {
+        let filterQuery: DynamicListFetchDataModel = {
             textSearch: this.textSearch,
             filledParameterOptions: {
                 filledParameters: this.combineFilledParameters()

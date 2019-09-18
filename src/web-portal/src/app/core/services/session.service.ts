@@ -22,7 +22,7 @@ export class SessionService{
     }
 
     getDefaultAppPage(){
-        return this.getCurrentApp().defaultUrl
+        return this.getCurrentApp() ? this.getCurrentApp().defaultUrl : null
     }
 
     setUserSession(userSessionId: string){
@@ -45,6 +45,26 @@ export class SessionService{
             return JSON.parse(sessionStorage.getItem('user-token'));
         }
         return null;
+    }
+
+    setRememberMe(rememberMe: boolean){
+        localStorage.setItem('rememberMe', rememberMe.toString())
+    }
+
+    getRememberMe(){
+        let rememberMe = localStorage.getItem('rememberMe')
+        if(rememberMe){
+            return rememberMe.toLowerCase() == 'true'
+        }
+        return false
+    }
+
+    clearUserToken(){
+        sessionStorage.removeItem('user-token')
+    }
+
+    clearUserSession(){
+        sessionStorage.removeItem('user-session-id')
     }
 
     clear(){

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccountsClient } from 'services/identity.service';
@@ -40,7 +40,12 @@ export class ForgotPasswordPage implements OnInit {
         }
     }
 
+    @HostListener('window:keydown.enter',  ['$event'])
+    handleEnterPress(event: KeyboardEvent){
+        this.forgotPassword()
+    }
+
     moveToLogin(){
-        this.router.navigateByUrl('/login')
+        this.router.navigateByUrl('/')
     }
 }

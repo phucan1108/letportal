@@ -25,12 +25,7 @@ namespace LetPortal.Versions.Identity
                 DisplayName = "Super Admin",
                 Claims = new List<BaseClaim>
                 {
-                    StandardClaims.AccessCoreApp,
-                    new BaseClaim
-                    {
-                        ClaimType = "apps",
-                        ClaimValue = "5c162e9005924c1c741bfd22"
-                    }
+                    StandardClaims.AccessCoreApp(Constants.CoreAppId)
                 }
             };
 

@@ -75,10 +75,7 @@ export class MenuPage implements OnInit, AfterViewInit {
     }
 
     saveMenu(){
-        this.appClient.updateMenu(this.app.id, {
-            appId: this.app.id,
-            menus: this.menus
-        }).subscribe(
+        this.appClient.updateMenu(this.app.id, this.menus).subscribe(
             result => {
                 this.shortcutUtil.notifyMessage('Update menu successfully!', ToastType.Success)
             }

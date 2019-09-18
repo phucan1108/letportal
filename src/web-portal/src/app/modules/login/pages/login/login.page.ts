@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AccountsClient, Role, RolesClient } from 'services/identity.service';
 import { environment } from 'environments/environment';
@@ -29,11 +29,21 @@ export class LoginPage implements OnInit {
     ) { }
 
     ngOnInit(): void { 
+
+        // Ensure user will be signed out when be back to login page
+        this.session.clear()
+        this.security.userLogout()
+
         this.loginForm = this.fb.group({
             username: ['', Validators.required],
             password: ['', Validators.required],
             rememberMe: [false]
         })
+    }
+
+    @HostListener('window:keydown.enter',  ['$event'])
+    handleEnterPress(event: KeyboardEvent){
+        this.signIn()
     }
 
     signIn(){
@@ -47,7 +57,10 @@ export class LoginPage implements OnInit {
                 versionInstalled: environment.version
             }).subscribe(
                 result => {
-                    this.security.setAuthUser(new AuthToken(result.token, result.exp, result.refreshToken, result.expRefresh))
+                    this.security
+                        .setAuthUser(
+                            new AuthToken(result.token, result.exp, result.refreshToken, result.expRefresh))
+                    
                     this.session.setUserSession(result.userSessionId)
                     this.roleClient.getPortalClaims().subscribe(result =>{
                         this.security.setPortalClaims(result)                        

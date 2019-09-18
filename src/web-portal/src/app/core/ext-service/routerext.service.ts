@@ -10,7 +10,7 @@ export class RouterExtService {
     this.currentUrl = this.router.url;
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        if(this.previousUrl.indexOf(this.currentUrl) === -1){
+        if (this.previousUrl.indexOf(this.currentUrl) === -1) {
           // Not duplicate url          
           this.previousUrl = this.currentUrl;
         }
@@ -21,5 +21,9 @@ export class RouterExtService {
 
   public getPreviousUrl() {
     return this.previousUrl;
+  }
+
+  public getCurrentUrl() {
+    return this.currentUrl
   }
 }

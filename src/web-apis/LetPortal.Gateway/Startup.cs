@@ -25,12 +25,18 @@ namespace LetPortal.Gateway
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("Cors", builder =>
-                {
+                options.AddPolicy("DevCors", builder =>
+                {   
                     builder.AllowAnyHeader();
                     builder.AllowAnyMethod();
                     builder.AllowAnyOrigin();
                     builder.AllowCredentials();
+                    builder.WithExposedHeaders("X-Token-Expired");
+                });
+
+                options.AddPolicy("ProdCors", builder =>
+                {
+                    builder.WithExposedHeaders("X-Token-Expired");
                 });
             });
             services.AddOcelot();
@@ -49,8 +55,11 @@ namespace LetPortal.Gateway
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseCors("Cors");
+                app.UseCors("DevCors");                
+            }
+            else
+            {
+                app.UseCors("ProdCors");
             }
                
             app.UseForwardedHeaders(new ForwardedHeadersOptions

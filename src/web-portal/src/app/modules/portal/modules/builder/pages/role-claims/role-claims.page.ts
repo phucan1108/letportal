@@ -254,6 +254,6 @@ export class RoleClaimsPage implements OnInit {
     }
 
     cancel() {
-        this.router.navigateByUrl('portal/lists/roles-list-management')
+        this.router.navigateByUrl('portal/page/roles-management')
     }
 }

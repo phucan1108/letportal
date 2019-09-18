@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,9 +67,18 @@ namespace LetPortal.Identity
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
                     ValidIssuer = jwtOptions.Issuer,
                     ValidAudience = jwtOptions.Audience,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    NameClaimType = "name"
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    RequireExpirationTime = true,
+                    RequireSignedTokens = true,
+                    NameClaimType = "name",
+                    // Important for testing purpose with zero but in production, it should be 5m (default)
+                    ClockSkew = 
+                        Environment
+                            .GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? 
+                            TimeSpan.Zero : TimeSpan.FromMinutes(5) 
+                            
                 };
                 x.Events = new JwtBearerEvents
                 {

@@ -111,12 +111,7 @@ namespace LetPortal.Tests.ITs.Identity
                 DisplayName = roleName,
                 Claims = new List<BaseClaim>
                 {
-                    StandardClaims.AccessCoreApp,
-                    new BaseClaim
-                    {
-                        ClaimType = "apps",
-                        ClaimValue = "5c162e9005924c1c741bfd22"
-                    }
+                    StandardClaims.AccessCoreApp("5c162e9005924c1c741bfdc2")
                 }
             };
         }
@@ -193,12 +188,7 @@ namespace LetPortal.Tests.ITs.Identity
                 DisplayName = "Super Admin",
                 Claims = new List<BaseClaim>
                 {
-                    StandardClaims.AccessCoreApp,
-                    new BaseClaim
-                    {
-                        ClaimType = "apps",
-                        ClaimValue = "5c162e9005924c1c741bfd22"
-                    }
+                    StandardClaims.AccessCoreApp("5c162e9005924c1c741bfdc2")
                 }
             };
 
