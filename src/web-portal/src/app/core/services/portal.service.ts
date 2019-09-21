@@ -2076,10 +2076,13 @@ export interface IPagesClient {
     getAllPortalClaims(): Observable<ShortPortalClaimModel[]>;
     getOneById(id: string | null): Observable<Page>;
     getOne(name: string | null): Observable<Page>;
+    getOneForRender(name: string | null): Observable<Page>;
     create(page: Page): Observable<string>;
     update(id: string | null, page: Page): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
     checkExist(name: string | null): Observable<boolean>;
+    submitCommand(pageId: string | null, pageSubmittedButtonModel: PageSubmittedButtonModel): Observable<ExecuteDynamicResultModel>;
+    getDatasourceForPage(pageId: string | null, pageRequestDatasourceModel: PageRequestDatasourceModel): Observable<ExecuteDynamicResultModel>;
 }
 
 @Injectable()
@@ -2267,6 +2270,56 @@ export class PagesClient implements IPagesClient {
     }
 
     protected processGetOne(response: HttpResponseBase): Observable<Page> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Page>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Page>(<any>null);
+    }
+
+    getOneForRender(name: string | null): Observable<Page> {
+        let url_ = this.baseUrl + "/api/pages/render/{name}";
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined.");
+        url_ = url_.replace("{name}", encodeURIComponent("" + name)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetOneForRender(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetOneForRender(<any>response_);
+                } catch (e) {
+                    return <Observable<Page>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Page>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetOneForRender(response: HttpResponseBase): Observable<Page> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -2488,6 +2541,114 @@ export class PagesClient implements IPagesClient {
             }));
         }
         return _observableOf<boolean>(<any>null);
+    }
+
+    submitCommand(pageId: string | null, pageSubmittedButtonModel: PageSubmittedButtonModel): Observable<ExecuteDynamicResultModel> {
+        let url_ = this.baseUrl + "/api/pages/{pageId}/submit";
+        if (pageId === undefined || pageId === null)
+            throw new Error("The parameter 'pageId' must be defined.");
+        url_ = url_.replace("{pageId}", encodeURIComponent("" + pageId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(pageSubmittedButtonModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubmitCommand(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubmitCommand(<any>response_);
+                } catch (e) {
+                    return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSubmitCommand(response: HttpResponseBase): Observable<ExecuteDynamicResultModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ExecuteDynamicResultModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExecuteDynamicResultModel>(<any>null);
+    }
+
+    getDatasourceForPage(pageId: string | null, pageRequestDatasourceModel: PageRequestDatasourceModel): Observable<ExecuteDynamicResultModel> {
+        let url_ = this.baseUrl + "/api/pages/{pageId}/fetch-datasource";
+        if (pageId === undefined || pageId === null)
+            throw new Error("The parameter 'pageId' must be defined.");
+        url_ = url_.replace("{pageId}", encodeURIComponent("" + pageId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(pageRequestDatasourceModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDatasourceForPage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDatasourceForPage(<any>response_);
+                } catch (e) {
+                    return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDatasourceForPage(response: HttpResponseBase): Observable<ExecuteDynamicResultModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ExecuteDynamicResultModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExecuteDynamicResultModel>(<any>null);
     }
 }
 
@@ -3390,6 +3551,22 @@ export interface Route {
 export enum RouteType {
     ThroughPage = 0, 
     ThroughUrl = 1, 
+}
+
+export interface PageSubmittedButtonModel {
+    buttonName?: string | undefined;
+    parameters?: PageParameterModel[] | undefined;
+}
+
+export interface PageParameterModel {
+    name?: string | undefined;
+    replaceValue?: string | undefined;
+    removeQuotes?: boolean;
+}
+
+export interface PageRequestDatasourceModel {
+    datasourceId?: string | undefined;
+    parameters?: PageParameterModel[] | undefined;
 }
 
 export interface StandardComponent extends Component {

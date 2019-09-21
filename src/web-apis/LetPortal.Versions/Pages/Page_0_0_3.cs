@@ -438,7 +438,7 @@ namespace LetPortal.Versions.Pages
                                     new Route
                                     {
                                         RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/roles-management",
+                                        TargetUrl = "portal/page/users-management",
                                         Condition = "true"
                                     }
                                 }

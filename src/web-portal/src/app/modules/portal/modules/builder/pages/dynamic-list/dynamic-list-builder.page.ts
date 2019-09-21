@@ -14,6 +14,7 @@ import { PagesClient, DynamicListClient, DynamicList, ShellOption, PortalClaim, 
 import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ExtendedFilterField, ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
+import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 
 @Component({
     selector: 'dynamic-list-builder',
@@ -23,8 +24,8 @@ import { ExtendedFilterField, ListOptions } from 'portal/modules/models/dynamicl
 export class DynamicListBuilderPage implements OnInit {
     //#region New changes
     componentInfo: FormGroup
-    shellOptions$: BehaviorSubject<Array<ShellOption>> = new BehaviorSubject([])
-    shellOptions: Array<ShellOption> = []
+    shellOptions$: BehaviorSubject<Array<ExtendedShellOption>> = new BehaviorSubject([])
+    shellOptions: Array<ExtendedShellOption> = []
     claims: Array<PortalClaim> = []
     filterOptions: Array<ExtendedFilterField> = []
     commandsInList: Array<CommandButtonInList> = [];
@@ -96,7 +97,9 @@ export class DynamicListBuilderPage implements OnInit {
         this.filterOptions = this.edittingDynamicList.filtersList ? this.edittingDynamicList.filtersList.filterFields as Array<ExtendedFilterField> : []
         this.columnDefs = this.edittingDynamicList.columnsList ? this.edittingDynamicList.columnsList.columndDefs : []
         this.commandsInList = _.cloneDeep(this.edittingDynamicList.commandsList.commandButtonsInList)
-        this.shellOptions = this.edittingDynamicList.options
+        this.shellOptions = this.edittingDynamicList.options as ExtendedShellOption[]
+
+        ListOptions.combinedDefaultShellOptions(this.shellOptions)
         this.shellOptions$.next(this.shellOptions)
         this.onValueChanges()
         this.isCanSubmit = true
@@ -113,7 +116,7 @@ export class DynamicListBuilderPage implements OnInit {
     }
 
     onCancelClick() {
-        this.router.navigateByUrl('/portal/lists/dynamic-list-management')
+        this.router.navigateByUrl('/portal/page/dynamic-list-management')
     }
 
     onSubmitDynamicListForm() {

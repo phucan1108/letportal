@@ -98,13 +98,25 @@ export class ListOptions {
     public static getDefaultShellOptionsForList(): ExtendedShellOption[] {
         return [
             this.PageSizeOptions,
-            this.PageSizeOptions,
+            this.DefaultPageSize,
             this.FetchDataFirstTime,
             this.MaximumColumns,
             this.EnableSearch,
             this.EnableAdvancedSearch,
             this.EnablePagination
         ]
+    }
+
+    public static combinedDefaultShellOptions(opts: ExtendedShellOption[]){
+        const defaultOpts = this.getDefaultShellOptionsForList()
+        opts.forEach(a => {
+            const found = defaultOpts.find(b => b.key === a.key)
+            if(found){
+                a.description = found.description
+                a.allowDelete = found.allowDelete 
+                a.id = found.id
+            }                       
+        })
     }
 
     public static getPageSizeOptions(optValue: string) {

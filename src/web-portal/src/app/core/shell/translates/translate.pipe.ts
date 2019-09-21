@@ -10,6 +10,7 @@ import { NGXLogger } from 'ngx-logger';
 import { TranslateConfigs } from './translate.configs';
 import { ShellMethod } from './methods/shellmethod';
 import { PageShellData } from 'app/core/models/page.model';
+import { PageParameterModel } from 'services/portal.service';
 
 let shellConfigs: Array<ShellConfig> = []
 @Injectable({
@@ -138,6 +139,48 @@ export class Translator {
         })
 
         return text
+    }
+
+    retrieveParameters(text: string, translatorFactors: TranslatorFactors){
+        let foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
+        let foundReplacedConfigs: Array<ShellConfig> = [];
+        _.forEach(foundReplacingConfigs, config => {
+            if (config.indexOf('data') === 0) {                
+                foundReplacedConfigs.push(this.generateReplacedValue(config, 'data', translatorFactors.data))
+            }
+            else if (config.indexOf('user') === 0) {
+                foundReplacedConfigs.push(this.generateReplacedValue(config, 'user', translatorFactors.user))
+            }
+            else if (config.indexOf('options') === 0) {
+                foundReplacedConfigs.push(this.generateReplacedValue(config, 'options', translatorFactors.options))
+            }
+            else if (config.indexOf('queryparams') === 0) {
+                foundReplacedConfigs.push(this.generateReplacedValue(config, 'queryparams', translatorFactors.queryparams))
+            }
+            else if (config.indexOf('claims') === 0) {
+                foundReplacedConfigs.push(this.generateReplacedValue(config, 'claims', translatorFactors.claims))
+            }
+            else {
+                let builtInMethod = this.isBuiltInMethod(config)
+                if (builtInMethod) {
+                    foundReplacedConfigs.push({ key: config, value: builtInMethod.execute(translatorFactors.data), type: ShellConfigType.Method, replaceDQuote: builtInMethod.replaceDQuote })
+                }
+                else {
+                    foundReplacedConfigs.push(_.find(shellConfigs, (shell: ShellConfig) => shell.key.indexOf(config) === 0))
+                }
+            }
+        })
+
+        let params: PageParameterModel[] = []
+        _.forEach(foundReplacedConfigs, config => {
+            params.push({
+                name: config.key,
+                removeQuotes: config.replaceDQuote,
+                replaceValue: config.value
+            })  
+        })
+
+        return params
     }
 
     translateDataWithShell(text: string, pageShellData: PageShellData) {

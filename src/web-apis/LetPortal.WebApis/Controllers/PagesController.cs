@@ -1,10 +1,13 @@
 ﻿using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Pages;
+using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Repositories.Pages;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
@@ -13,15 +16,19 @@ namespace LetPortal.WebApis.Controllers
     [ApiController]
     public class PagesController : ControllerBase
     {
+        private readonly IDatabaseServiceProvider _databaseServiceProvider;
+
         private readonly IPageRepository _pageRepository;
 
         private readonly IServiceLogger<PagesController> _logger;
 
         public PagesController(
             IPageRepository pageRepository,
+            IDatabaseServiceProvider databaseServiceProvider,
             IServiceLogger<PagesController> logger)
         {
             _pageRepository = pageRepository;
+            _databaseServiceProvider = databaseServiceProvider;
             _logger = logger;
         }
 
@@ -57,6 +64,15 @@ namespace LetPortal.WebApis.Controllers
         public async Task<IActionResult> GetOne(string name)
         {
             var result = await _pageRepository.GetOneByNameAsync(name);
+            _logger.Info("Found page: {@result}", result);
+            return Ok(result);
+        }
+
+        [HttpGet("render/{name}")]
+        [ProducesResponseType(typeof(Page), 200)]
+        public async Task<IActionResult> GetOneForRender(string name)
+        {
+            var result = await _pageRepository.GetOneByNameForRenderAsync(name);
             _logger.Info("Found page: {@result}", result);
             return Ok(result);
         }
@@ -101,6 +117,54 @@ namespace LetPortal.WebApis.Controllers
         public async Task<IActionResult> CheckExist(string name)
         {
             return Ok(await _pageRepository.IsExistAsync(name));
+        }
+
+        [HttpPost("{pageId}/submit")]
+        [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        public async Task<IActionResult> SubmitCommand(string pageId, [FromBody] PageSubmittedButtonModel pageSubmittedButtonModel)
+        {
+            var page = await _pageRepository.GetOneAsync(pageId);
+            if(page != null)
+            {
+                var button = page.Commands.First(a => a.Name == pageSubmittedButtonModel.ButtonName);
+                if(button.ButtonOptions.ActionCommandOptions.ActionType == Portal.Entities.Shared.ActionType.ExecuteDatabase)
+                {
+                    var formattedString =
+                        StringUtil.ReplaceDoubleCurlyBraces(
+                            button.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query,
+                            pageSubmittedButtonModel.Parameters.Select(a => new System.Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
+
+                    var result = await _databaseServiceProvider.ExecuteDatabase(button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId, formattedString);
+
+                    return Ok(result);
+                }
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost("{pageId}/fetch-datasource")]
+        [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        public async Task<IActionResult> GetDatasourceForPage(string pageId, [FromBody] PageRequestDatasourceModel pageRequestDatasourceModel)
+        {
+            var page = await _pageRepository.GetOneAsync(pageId);
+            if(page != null)
+            {
+                var datasource = page.PageDatasources.First(a => a.Id == pageRequestDatasourceModel.DatasourceId);
+                if(datasource.Options.Type == Portal.Entities.Shared.DatasourceControlType.Database)
+                {
+                    var formattedString =
+                    StringUtil.ReplaceDoubleCurlyBraces(
+                        datasource.Options.DatabaseOptions.Query,
+                        pageRequestDatasourceModel.Parameters.Select(a => new System.Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
+
+                    var result = await _databaseServiceProvider.ExecuteDatabase(datasource.Options.DatabaseOptions.DatabaseConnectionId, formattedString);
+
+                    return Ok(result);
+                }                 
+            }
+
+            return NotFound();
         }
     }
 }

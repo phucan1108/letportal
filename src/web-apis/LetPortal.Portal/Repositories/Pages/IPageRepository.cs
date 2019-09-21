@@ -8,6 +8,8 @@ namespace LetPortal.Portal.Repositories.Pages
 {
     public interface IPageRepository : IGenericRepository<Page>
     {
+        Task<Page> GetOneByNameForRenderAsync(string name);
+
         Task<Page> GetOneByNameAsync(string name);
 
         Task<List<ShortPageModel>> GetAllShortPagesAsync();

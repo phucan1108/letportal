@@ -1,6 +1,10 @@
-﻿namespace LetPortal.Portal.Models.Databases
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace LetPortal.Portal.Models.Pages
 {
-    public class ExecuteParamModel
+    public class PageParameterModel
     {
         public string Name { get; set; }
 

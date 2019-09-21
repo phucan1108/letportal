@@ -64,7 +64,7 @@ export class PageService {
      * @returns Observable PageResponse
      */
     init(pageName: string): Observable<PageResponse> {
-        return this.pageClients.getOne(pageName).pipe(
+        return this.pageClients.getOneForRender(pageName).pipe(
             map<Page, PageResponse>((page: Page) => {
                 this.page = page
                 return { page: page, allowAccess: this.isAllowAccess(this.security.getAuthUser(), page) }
@@ -108,7 +108,7 @@ export class PageService {
             res => {
                 const subOptions$ = preapreOptions$.subscribe(
                     res => {
-                        const prepareDatasource$ = this.loadDatasource(page, this.store, this.shellConfigProvider, this.translator, this.databasesClient, this.options, this.queryparams)
+                        const prepareDatasource$ = this.loadDatasource(page, this.store, this.translator, this.pageClients)
                         const subDatasource$ = prepareDatasource$.subscribe(
                             res => {
                                 this.store.dispatch(new PageReadyAction(this.options, this.queryparams))
@@ -287,7 +287,7 @@ export class PageService {
         this.store.dispatch(new TriggerControlChangeValueEvent(event))
     }
 
-    fetchDatasource(databaseId: string, query: string): Observable<any>{
+    fetchDatasource(databaseId: string, query: string): Observable<any> {
         let combineQuery = this.translator.translateData(query, {
             user: this.security.getAuthUser(),
             claims: {},
@@ -299,29 +299,29 @@ export class PageService {
 
         return this.databasesClient.executeQueryDatasource(databaseId, combineQuery).pipe(
             mergeMap(result => {
-                if(result.isSuccess){
+                if (result.isSuccess) {
                     let array = []
-                    if(ObjectUtils.isObject(result.result)){                        
+                    if (ObjectUtils.isObject(result.result)) {
                         array.push(result.result)
                     }
-                    else{
+                    else {
                         array = result.result
                     }
                     return of(array)
                 }
-                else{
+                else {
                     return throwError(result.error)
                 }
             })
         )
     }
 
-    evaluatedExpression(evaluteStr: string, data: any = null): boolean{
+    evaluatedExpression(evaluteStr: string, data: any = null): boolean {
         let func = new Function('user', 'claims', 'configs', 'options', 'queryparams', 'data', `return ${evaluteStr} ? true : false;`);
         return func(this.security.getAuthUser(), this.claims, this.configs, this.options, this.queryparams, !!data ? data : this.data) as boolean
     }
 
-    translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string{
+    translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string {
         let translated = this.translator.translateData(translateStr, {
             user: this.security.getAuthUser(),
             claims: this.claims,
@@ -334,24 +334,24 @@ export class PageService {
         return translated
     }
 
-    private mergeData(mergingData: any){
+    private mergeData(mergingData: any) {
         return {
             ...this.data,
             ...mergingData
         }
     }
 
-    private initPageClaims(pageName: string): Observable<Object>{
+    private initPageClaims(pageName: string): Observable<Object> {
         return this.security.getPortalClaims().pipe(
             mergeMap(res => {
-                if(res){
+                if (res) {
                     return of(this.security.getAuthUser().getClaimsPerPage(pageName))
                 }
-                else{
+                else {
                     of([])
                 }
             })
-        )        
+        )
     }
 
     private initQueryParams(activatedRoute: ActivatedRoute, shellConfigProvider: ShellConfigProvider): Observable<ShellConfig[]> {
@@ -390,11 +390,8 @@ export class PageService {
     private loadDatasource(
         page: Page,
         store: Store,
-        shellConfigProvider: ShellConfigProvider,
         translator: Translator,
-        databaseClient: DatabasesClient,
-        options: any,
-        queryparams: any): Observable<PageLoadedDatasource[]> {
+        pagesClient: PagesClient): Observable<PageLoadedDatasource[]> {
         if (!!page.pageDatasources && page.pageDatasources.length > 0) {
             store.dispatch(new LoadDatasource())
             let datasources$: Observable<PageLoadedDatasource>[] = []
@@ -427,14 +424,27 @@ export class PageService {
                                 }
                                 break
                             case DatasourceControlType.Database:
-                                const query = translator.translate(ds.options.databaseOptions.query, {})
+                                const params = translator.retrieveParameters(ds.options.databaseOptions.query, {
+                                    user: this.security.getAuthUser(),
+                                    configs: this.configs,
+                                    claims: this.claims,
+                                    data: this.data,
+                                    options: this.options,
+                                    queryparams: this.queryparams
+                                })
                                 const dsName = ds.name
-                                datasources$.push(databaseClient.executeQueryDatasource(ds.options.databaseOptions.databaseConnectionId, query).pipe(
-                                    filter(res => res.isSuccess),
-                                    map<ExecuteDynamicResultModel, PageLoadedDatasource>((res: ExecuteDynamicResultModel) => {
-                                        return { name: dsName, data: res.result }
-                                    })
-                                ))
+                                datasources$.push(
+                                    pagesClient
+                                        .getDatasourceForPage(page.id, {
+                                            datasourceId: ds.id,
+                                            parameters: params
+                                        })
+                                        .pipe(
+                                            filter(res => res.isSuccess),
+                                            map<ExecuteDynamicResultModel, PageLoadedDatasource>((res: ExecuteDynamicResultModel) => {
+                                                return { name: dsName, data: res.result }
+                                            })
+                                        ))
                                 break
                         }
                     }
@@ -479,28 +489,32 @@ export class PageService {
             this.store.dispatch(new UserClicksOnButtonAction(command))
         }
     }
-    
+
     private executingCommandHit(command: PageButton) {
         if (command.buttonOptions.actionCommandOptions.isEnable) {
             switch (command.buttonOptions.actionCommandOptions.actionType) {
                 case ActionType.ExecuteDatabase:
-                    let dbCommand = this.translator.translateData(
+                    const params = this.translator.retrieveParameters(
                         command.buttonOptions.actionCommandOptions.databaseOptions.query, {
-                            user: this.security.getAuthUser(),
-                            configs: this.configs,
-                            claims: this.claims,
-                            data: this.data,
-                            options: this.options,
-                            queryparams: this.queryparams
-                        });
-                    this.databasesClient.executionDynamic(command.buttonOptions.actionCommandOptions.databaseOptions.databaseConnectionId, dbCommand).subscribe(
-                        res => {
-                            this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                            this.routingCommand(command)
-                        },
-                        err => {
-                            this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
-                        })
+                        user: this.security.getAuthUser(),
+                        configs: this.configs,
+                        claims: this.claims,
+                        data: this.data,
+                        options: this.options,
+                        queryparams: this.queryparams
+                    });
+                    this.pageClients
+                        .submitCommand(this.page.id, {
+                            buttonName: command.name,
+                            parameters: params
+                        }).subscribe(
+                            res => {
+                                this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.routingCommand(command)
+                            },
+                            err => {
+                                this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                            })
                     break
                 case ActionType.CallHttpService:
                     let translatorFactors = {

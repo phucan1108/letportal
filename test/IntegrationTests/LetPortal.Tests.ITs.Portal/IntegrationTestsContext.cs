@@ -2,7 +2,9 @@
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Persistences;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Moq;
 using System;
 using System.Threading;
 
@@ -69,6 +71,19 @@ namespace LetPortal.Tests.ITs.Portal
             // Remove all created databases
             var mongoClient = new MongoClient(MongoDatabaseConenction.ConnectionString);
             mongoClient.DropDatabase(MongoDatabaseConenction.DataSource);
+        }
+
+        public MongoConnection GetMongoConnection()
+        {
+            var databaseOptions = new DatabaseOptions
+            {
+                ConnectionString = MongoDatabaseConenction.ConnectionString,
+                ConnectionType = ConnectionType.MongoDB,
+                Datasource = MongoDatabaseConenction.DataSource
+            };
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+
+            return new MongoConnection(databaseOptionsMock.CurrentValue);
         }
 
         private string generateUniqueDatasourceName()

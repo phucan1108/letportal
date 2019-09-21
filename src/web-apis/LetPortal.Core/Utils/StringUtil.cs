@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -119,11 +121,36 @@ namespace LetPortal.Core.Utils
             return plain;
         }
 
-        public static string[] GetAllDoubleCurlyBraces(string str)
+        public static string[] GetAllDoubleCurlyBraces(string str, bool keptCurlyBraces = false)
         {
             var matches = Regex.Matches(str, @"{{(.*?)}}");
-            var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().ToArray();
-            return results;
+            if(keptCurlyBraces)
+            {
+                var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().Select(b => "{{" + b + "}}").ToArray();
+                return results;
+            }
+            else
+            {
+                var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().ToArray();
+                return results;
+            }
+        }
+
+        public static string ReplaceDoubleCurlyBraces(string str, IEnumerable<Tuple<string, string, bool>> tuples)
+        {
+            foreach(var tuple in tuples)
+            {
+                if(tuple.Item3)
+                {
+                    str = str.Replace("\"{{" + tuple.Item1 + "}}\"", tuple.Item2);
+                }
+                else
+                {
+                    str = str.Replace("{{" + tuple.Item1 + "}}", tuple.Item2);
+                }
+            }
+
+            return str;
         }
     }
 }
