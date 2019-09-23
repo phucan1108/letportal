@@ -11,6 +11,8 @@ namespace LetPortal.Identity.Entities
     {
         public string UserId { get; set; }
 
+        public User User { get; set; }
+
         public string VersionInstalled { get; set; }
 
         public string SoftwareAgent { get; set; }
@@ -26,6 +28,8 @@ namespace LetPortal.Identity.Entities
 
     public class UserActivity
     {
+        public string Id { get; set; }
+
         public string ActivityName { get; set; }
 
         public string Content { get; set; }
@@ -33,6 +37,8 @@ namespace LetPortal.Identity.Entities
         public ActivityType ActivityType { get; set; }
 
         public DateTime ActivityDate { get; set; }
+
+        public UserSession UserSession { get; set; }
     }
 
     public enum ActivityType

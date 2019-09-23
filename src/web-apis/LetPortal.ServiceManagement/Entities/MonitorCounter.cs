@@ -9,6 +9,8 @@ namespace LetPortal.ServiceManagement.Entities
     {
         public string ServiceId { get; set; }
 
+        public Service Service { get; set; }
+
         public string ServiceName { get; set; }
 
         public HttpCounter HttpCounter { get; set; }
@@ -20,6 +22,10 @@ namespace LetPortal.ServiceManagement.Entities
 
     public class HardwareCounter
     {
+        public string Id { get; set; }
+
+        public string MonitorCounterId { get; set; }
+
         public double CpuUsage { get; set; }
 
         public long MemoryUsed { get; set; }
@@ -31,6 +37,10 @@ namespace LetPortal.ServiceManagement.Entities
 
     public class HttpCounter
     {
+        public string Id { get; set; }
+
+        public string MonitorCounterId { get; set; }
+
         public DateTime MeansureDateTime { get; set; }
 
         public int TotalRequestsPerDay { get; set; }

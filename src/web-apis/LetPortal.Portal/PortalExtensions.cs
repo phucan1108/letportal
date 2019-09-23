@@ -55,6 +55,22 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IFileRepository, FileMongoRepository>();
             }
 
+            if(builder.ConnectionType == ConnectionType.SQLServer
+                || builder.ConnectionType == ConnectionType.PostgreSQL
+                || builder.ConnectionType == ConnectionType.MySQL)
+            {
+                builder.Services.AddTransient<LetPortalDbContext>();
+                // Register all EF repositories
+                builder.Services.AddTransient<IDatabaseRepository, DatabaseEFRepository>();
+                builder.Services.AddTransient<IDatasourceRepository, DatasourceEFRepository>();
+                builder.Services.AddTransient<IEntitySchemaRepository, EntitySchemaEFRepository>();
+                builder.Services.AddTransient<IAppRepository, AppEFRepository>();
+                builder.Services.AddTransient<IPageRepository, PageEFRepository>();
+                builder.Services.AddTransient<IDynamicListRepository, DynamicListEFRepository>();
+                builder.Services.AddTransient<IStandardRepository, StandardEFRepository>();
+                builder.Services.AddSingleton<IFileRepository, FileEFRepository>();
+            }
+
             if(portalOptions.EnableFileServer)
             {
                 builder.Services.Configure<FileOptions>(builder.Configuration.GetSection("FileOptions"));

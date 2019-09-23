@@ -8,7 +8,7 @@ namespace LetPortal.Core.Persistences
 {
     public interface IGenericRepository<T> where T : Entity
     {
-        Task<bool> IsExistAsync(string compareValue, string key = "name");
+        Task<bool> IsExistAsync(Expression<Func<T, bool>> expression);
 
         Task AddAsync(T entity);
 

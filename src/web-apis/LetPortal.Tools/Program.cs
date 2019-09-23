@@ -2,16 +2,14 @@
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
-using LetPortal.Portal.Entities.Versions;
 using LetPortal.Portal.Persistences;
+using LetPortal.Portal.Repositories;
 using LetPortal.Portal.Repositories.PortalVersions;
 using LetPortal.Tools;
 using LetPortal.Tools.Features;
 using LetPortal.Versions;
 using McMaster.Extensions.CommandLineUtils;
-using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +22,7 @@ namespace LET.Tools.Installation
     internal class Program
     {
         [Option("-c|--connection", Description = "A connection string to indicate the database")]
-        public string Connection { get; set; } = "mongodb://localhost:27017/letportal";
+        public string Connection { get; set; }
 
         [Option("-db|--db-type", Description = "Database type, support specific parameter: mongodb | sqlserver")]
         public string DatabseType { get; set; } = "mongodb";
@@ -53,7 +51,7 @@ namespace LET.Tools.Installation
 
             var databaseOption = new DatabaseOptions
             {
-                ConnectionString = Connection,
+                ConnectionString = !string.IsNullOrEmpty(Connection) ? Connection : GetDefaultConnectionString(dbType),
                 ConnectionType = dbType
             };
 
@@ -61,6 +59,7 @@ namespace LET.Tools.Installation
 
             if(runningCommand != null)
             {
+                ToolsContext toolsContext = null;
                 switch(dbType)
                 {
                     case ConnectionType.MongoDB:
@@ -70,7 +69,7 @@ namespace LET.Tools.Installation
 
                         var latestVersion = portalMongoRepository.GetAsQueryable().ToList().LastOrDefault();
 
-                        var toolsContext = new ToolsContext
+                        toolsContext = new ToolsContext
                         {
                             LatestVersion = latestVersion,
                             VersionContext = mongoVersionContext,
@@ -81,14 +80,37 @@ namespace LET.Tools.Installation
 
                         await runningCommand.RunAsync(toolsContext);
                         break;
+                    case ConnectionType.PostgreSQL:
+                    case ConnectionType.MySQL:
                     case ConnectionType.SQLServer:
+                        var letportalContext = new LetPortalVersionDbContext(databaseOption);
+                        letportalContext.Database.EnsureCreated();
+
+                        var postgreSQLVersionContext = new EFVersionContext(letportalContext);
+                        var portalVersionRepository = new PortalVersionEFRepository(letportalContext);
+                        var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
+
+                        toolsContext = new ToolsContext
+                        {
+                            LatestVersion = latestVersionEF,
+                            VersionContext = postgreSQLVersionContext,
+                            VersionNumber = VersionNumber,
+                            Versions = allVersions,
+                            PortalVersionRepository = portalVersionRepository
+                        };
                         break;
                 }
+
+                if(toolsContext != null)
+                {
+                    await runningCommand.RunAsync(toolsContext);
+                }
+
                 Console.WriteLine("====Done====");
             }
             else
             {
-                Console.WriteLine("Oops! We don't find any matching command to execute. If you don't know how to run, please type '--help'");                
+                Console.WriteLine("Oops! We don't find any matching command to execute. If you don't know how to run, please type '--help'");
             }
         }
 
@@ -97,13 +119,23 @@ namespace LET.Tools.Installation
             var currentAssembly = Assembly.GetExecutingAssembly();
 
             return ReflectionUtil.GetAllInstances<IFeatureCommand>(currentAssembly);
-        }         
-    }
+        }
 
-    internal enum RunMode
-    {
-        Clean,
-        Upgrade,
-        Downgrade
+        private string GetDefaultConnectionString(ConnectionType connectionType)
+        {
+            switch(connectionType)
+            {
+                case ConnectionType.MongoDB:
+                    return "mongodb://localhost:27017/letportal";
+                case ConnectionType.SQLServer:
+                    return "Server=.;Database=letportal;User Id=sa;Password=123456;";
+                case ConnectionType.PostgreSQL:
+                    return "Host=localhost;Port=5432;Database=letportal;Username=postgres;Password=123456";
+                case ConnectionType.MySQL:
+                    return "";
+                default:
+                    return "";
+            }
+        }
     }
 }

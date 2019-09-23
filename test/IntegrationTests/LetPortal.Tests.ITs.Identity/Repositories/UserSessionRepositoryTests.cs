@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -35,16 +34,16 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
                 Id = DataUtil.GenerateUniqueId(),
                 UserId = "5c06a15e4cc9a850bca44488",
                 RequestIpAddress = "127.0.0.1",
-                UserActivities = new List<UserActivity>(),                 
+                UserActivities = new List<UserActivity>(),
                 SignInDate = DateTime.UtcNow
             };
             await userSessionRepository.AddAsync(userSession);
             await userSessionRepository.LogUserActivityAsync(userSession.Id, new UserActivity
             {
-               Content = "Abc",
-               ActivityDate = DateTime.UtcNow,
-               ActivityName = "Test",
-               ActivityType = ActivityType.Info
+                Content = "Abc",
+                ActivityDate = DateTime.UtcNow,
+                ActivityName = "Test",
+                ActivityType = ActivityType.Info
             });
 
             // Assert

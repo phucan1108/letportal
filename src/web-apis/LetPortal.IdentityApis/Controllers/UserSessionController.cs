@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using LetPortal.Identity.Entities;
+using LetPortal.Core.Utils;
 
 namespace LetPortal.IdentityApis.Controllers
 {
@@ -32,6 +33,7 @@ namespace LetPortal.IdentityApis.Controllers
 
             await _userSessionRepository.LogUserActivityAsync(model.UserSessionId, new UserActivity
             {
+                Id = DataUtil.GenerateUniqueId(),
                 ActivityName = model.ActivityName,
                 ActivityType = model.ActivityType,
                 ActivityDate = DateTime.UtcNow,

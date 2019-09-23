@@ -122,11 +122,9 @@ namespace LetPortal.Core.Persistences
             }
         }
 
-        public async Task<bool> IsExistAsync(string compareValue, string key = "name")
+        public async Task<bool> IsExistAsync(Expression<Func<T, bool>> expression)
         {
-            var filter = Builders<T>.Filter.Eq(key, compareValue);
-            var result = await Collection.Find(filter).AnyAsync();
-            return result;
+            return await Collection.AsQueryable().AnyAsync(expression);
         }
     }
 }

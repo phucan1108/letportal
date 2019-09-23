@@ -12,6 +12,8 @@
     public enum ConnectionType
     {
         MongoDB,
-        SQLServer
+        SQLServer,
+        PostgreSQL,
+        MySQL
     }
 }

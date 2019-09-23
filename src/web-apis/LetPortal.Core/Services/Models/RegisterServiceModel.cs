@@ -17,6 +17,10 @@
 
     public class ServiceHardwareInfo
     {
+        public string Id { get; set; }
+
+        public string ServiceId { get; set; }
+
         public int ProcessorCores { get; set; }
 
         public string Os { get; set; }

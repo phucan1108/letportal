@@ -10,6 +10,13 @@ namespace LetPortal.Portal.Persistences
     {
         public static void RegisterEntities()
         {
+            BsonClassMap.RegisterClassMap<App>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIsRootClass(true);
+                cm.SetIgnoreExtraElementsIsInherited(true);
+            });
+
             BsonClassMap.RegisterClassMap<Page>(cm =>
             {
                 cm.AutoMap();

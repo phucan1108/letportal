@@ -119,7 +119,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> CheckExist(string name)
         {
-            return Ok(await _dynamicListRepository.IsExistAsync(name));
+            return Ok(await _dynamicListRepository.IsExistAsync(a => a.Name == name));
         }
     }
 }

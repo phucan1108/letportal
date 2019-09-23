@@ -116,7 +116,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> CheckExist(string name)
         {
-            return Ok(await _pageRepository.IsExistAsync(name));
+            return Ok(await _pageRepository.IsExistAsync(a => a.Name == name));
         }
 
         [HttpPost("{pageId}/submit")]

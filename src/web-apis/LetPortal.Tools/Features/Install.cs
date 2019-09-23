@@ -60,9 +60,10 @@ namespace LetPortal.Tools.Features
                 var executingVersions = new List<string>();
                 foreach(var version in matchingVersions)
                 {
+                    var executionName = version.GetType().GetTypeInfo().Name;
                     version.Upgrade(toolsContext.VersionContext);
-                    executingVersions.Add(version.GetType().GetTypeInfo().Name);
-                    Console.WriteLine(string.Format("Installing {0} Version {1} Completely!", version.GetType().GetTypeInfo().Name, version.VersionNumber));
+                    executingVersions.Add(executionName);
+                    Console.WriteLine(string.Format("Installing {0} Version {1} Completely!", executionName, version.VersionNumber));
                 }
 
                 dicVersions.Add(groupVersion, executingVersions);

@@ -36,20 +36,27 @@ namespace LetPortal.Core.Utils
 
         public static string SerializeObject(object serializingObject, bool allowCamel = false)
         {
-            if(allowCamel)
+            if(serializingObject != null)
             {
-                var contractResolver = new DefaultContractResolver
+                if(allowCamel)
                 {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                };
+                    var contractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new CamelCaseNamingStrategy()
+                    };
 
-                return JsonConvert.SerializeObject(serializingObject, new JsonSerializerSettings
-                {
-                    ContractResolver = contractResolver,
-                    Formatting = Formatting.Indented
-                });
+                    return JsonConvert.SerializeObject(serializingObject, new JsonSerializerSettings
+                    {
+                        ContractResolver = contractResolver,
+                        Formatting = Formatting.Indented
+                    });
+                }
+                return JsonConvert.SerializeObject(serializingObject);
             }
-            return JsonConvert.SerializeObject(serializingObject);
+            else
+            {
+                return string.Empty;
+            }
         }
 
         public static T DeserializeObject<T>(string deserializingObject)

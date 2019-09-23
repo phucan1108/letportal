@@ -2,7 +2,7 @@
   "profiles": {
     "LET.Tools.Installation": {
       "commandName": "Project",
-      "commandLineArgs": "install"
+      "commandLineArgs": "install -db=postgresql"
     }
   }
 }

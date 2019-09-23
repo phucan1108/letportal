@@ -2,8 +2,10 @@
 using LetPortal.Core.Persistences;
 using LetPortal.Identity.Configurations;
 using LetPortal.Identity.Entities;
+using LetPortal.Identity.Persistences;
 using LetPortal.Identity.Providers.Emails;
 using LetPortal.Identity.Providers.Identity;
+using LetPortal.Identity.Repositories;
 using LetPortal.Identity.Repositories.Identity;
 using LetPortal.Identity.Stores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,11 +28,23 @@ namespace LetPortal.Identity
             builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
 
             if(builder.ConnectionType == ConnectionType.MongoDB)
-            {                                                                                       
+            {
+                MongoDbRegistry.RegisterEntities();
                 builder.Services.AddSingleton<IUserRepository, UserMongoRepository>();
                 builder.Services.AddSingleton<IRoleRepository, RoleMongoRepository>();
                 builder.Services.AddSingleton<IIssuedTokenRepository, IssuedTokenMongoRepository>();
                 builder.Services.AddSingleton<IUserSessionRepository, UserSessionMongoRepository>();
+            }
+
+            if(builder.ConnectionType == ConnectionType.PostgreSQL
+                || builder.ConnectionType == ConnectionType.MySQL
+                || builder.ConnectionType == ConnectionType.SQLServer)
+            {
+                builder.Services.AddTransient<LetPortalIdentityDbContext>();
+                builder.Services.AddTransient<IUserRepository, UserEFRepository>();
+                builder.Services.AddTransient<IRoleRepository, RoleEFRepository>();
+                builder.Services.AddTransient<IIssuedTokenRepository, IssuedTokenEFRepository>();
+                builder.Services.AddTransient<IUserSessionRepository, UserSessionEFRepository>();
             }
 
             builder.Services.AddTransient<IIdentityServiceProvider, InternalIdentityServiceProvider>();

@@ -13,6 +13,8 @@ namespace LetPortal.Identity.Entities
 
         public string UserId { get; set; }
 
+        public User User { get; set; }
+
         public string RefreshToken { get; set; }
 
         public string UserSessionId { get; set; }
