@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Helpers.McMaster.Extensions.CommandLineUtils" Version="1.0.0" />
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.3.4" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

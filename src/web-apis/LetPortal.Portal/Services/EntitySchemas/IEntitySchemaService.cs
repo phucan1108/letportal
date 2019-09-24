@@ -9,6 +9,6 @@ namespace LetPortal.Portal.Services.EntitySchemas
 {
     public interface IEntitySchemaService
     {
-        Task<List<EntitySchema>> FetchAllEntitiesFromDatabase(string databaseId);
+        Task<IEnumerable<EntitySchema>> FetchAllEntitiesFromDatabase(string databaseId);
     }
 }

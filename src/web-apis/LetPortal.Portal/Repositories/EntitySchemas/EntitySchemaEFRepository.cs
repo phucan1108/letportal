@@ -23,7 +23,7 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
             return Task.FromResult(found);
         }
 
-        public Task UpsertEntitySchemasAsync(List<EntitySchema> entitySchemas, bool isKeptSameName = false)
+        public Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false)
         {
             foreach(EntitySchema entitySchema in entitySchemas)
             {

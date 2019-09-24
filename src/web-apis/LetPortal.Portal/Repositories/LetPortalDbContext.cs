@@ -167,6 +167,10 @@ namespace LetPortal.Portal.Repositories
             {
                 optionsBuilder.UseNpgsql(_options.ConnectionString);
             }
+            else if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                optionsBuilder.UseMySql(_options.ConnectionString);
+            }
         }
     }
 }

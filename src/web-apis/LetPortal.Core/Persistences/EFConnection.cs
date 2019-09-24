@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using MySql.Data.MySqlClient;
 using Npgsql;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -28,6 +29,10 @@ namespace LetPortal.Core.Persistences
             else if(databaseOptions.ConnectionType == ConnectionType.PostgreSQL)
             {
                 _connection = new NpgsqlConnection(databaseOptions.ConnectionString);
+            }
+            else if(databaseOptions.ConnectionType == ConnectionType.MySQL)
+            {
+                _connection = new MySqlConnection(databaseOptions.ConnectionString);
             }
         }
     }

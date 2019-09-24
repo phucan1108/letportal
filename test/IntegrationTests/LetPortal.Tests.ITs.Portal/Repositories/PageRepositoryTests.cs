@@ -21,6 +21,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Get_One_By_Name_In_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
             // Act
@@ -48,6 +53,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Get_All_Short_Pages_In_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
             // Act
@@ -75,6 +85,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Get_Short_Portal_Claims_Model_In_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
             // Act
@@ -102,6 +117,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Get_One_By_Name_For_Render_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 

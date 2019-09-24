@@ -14,9 +14,7 @@ using LetPortal.Portal.Entities.SectionParts.Controls;
 using LetPortal.Portal.Entities.Versions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Versions
 {

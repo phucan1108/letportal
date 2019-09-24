@@ -21,7 +21,7 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
             return await Collection.AsQueryable().FirstOrDefaultAsync(a => a.Name == name && a.DatabaseId == databaseId);
         }
 
-        public async Task UpsertEntitySchemasAsync(List<EntitySchema> entitySchemas, bool isKeptSameName = false)
+        public async Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false)
         {
             foreach(EntitySchema entitySchema in entitySchemas)
             {

@@ -7,13 +7,12 @@ using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace LetPortal.Tests.ITs.Portal.Repositories
 {
-    public  class AppRepositoryTests : IClassFixture<IntegrationTestsContext>
+    public class AppRepositoryTests : IClassFixture<IntegrationTestsContext>
     {
         private readonly IntegrationTestsContext _context;
 
@@ -25,6 +24,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Update_Menu_In_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var databaseOptions = new DatabaseOptions
             {
@@ -49,7 +53,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 new Menu
                 {
                     Id = Guid.NewGuid().ToString(),
-                    DisplayName = "Core"                    
+                    DisplayName = "Core"
                 }
             };
 
@@ -62,6 +66,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Update_Menu_Profile_In_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var databaseOptions = new DatabaseOptions
             {
