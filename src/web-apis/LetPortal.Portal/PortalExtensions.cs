@@ -83,6 +83,8 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IFileConnectorExecution, DatabaseFileConnectorExecution>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileExtensionRule>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
+
+                builder.Services.AddSingleton<IStoreFileDatabase, MongoStoreFileDatabase>();
             }
 
             builder.Services.AddSingleton<IExecutionDatabase, MongoExecutionDatabase>();
