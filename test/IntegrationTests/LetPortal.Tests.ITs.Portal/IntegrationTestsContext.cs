@@ -271,6 +271,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureCreated();
                 postgreContext.Databases.Add(PostgreSqlDatabaseConnection);
+                postgreContext.SaveChanges();
             }
 
             if(AllowSQLServer)
@@ -278,6 +279,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureCreated();
                 sqlContext.Databases.Add(SqlServerDatabaseConnection);
+                sqlContext.SaveChanges();
             }
 
             if(AllowMySQL)
@@ -285,6 +287,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureCreated();
                 mysqlContext.Databases.Add(MySqlDatabaseConnection);
+                mysqlContext.SaveChanges();
             }
         }
     }

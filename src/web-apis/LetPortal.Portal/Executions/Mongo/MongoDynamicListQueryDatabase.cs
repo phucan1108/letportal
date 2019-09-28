@@ -152,6 +152,55 @@ namespace LetPortal.Portal.Executions.Mongo
                     }
                 }
             }
+            else if(!fetchDataModel.PaginationOptions.NeedTotalItems)
+            {
+                // Add Pagination
+                aggregateFluent = aggregateFluent
+                    .Skip(fetchDataModel.PaginationOptions.PageNumber * fetchDataModel.PaginationOptions.PageSize)
+                    .Limit(fetchDataModel.PaginationOptions.PageSize);
+
+                using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                {
+                    while(executingCursor.MoveNext())
+                    {
+                        var currentBson = executingCursor.Current;
+                        foreach(var item in currentBson)
+                        {
+                            var addedFields = new List<BsonElement>();
+                            var removedFields = new List<string>();
+                            foreach(var elem in item)
+                            {
+                                if(elem.Value.IsObjectId)
+                                {
+                                    addedFields.Add(new BsonElement(elem.Name == "_id" ? "id" : elem.Name, BsonValue.Create(elem.Value.AsObjectId.ToString())));
+                                    removedFields.Add(elem.Name);
+                                }
+                            }
+
+                            foreach(var removedField in removedFields)
+                            {
+                                item.Remove(removedField);
+                            }
+
+                            foreach(var addedField in addedFields)
+                            {
+                                item.Add(addedField);
+                            }
+                        }
+
+                        // Important note: this query must have one row result for extracting params and filters
+                        dynamicListResponseDataModel.Data =
+                            currentBson
+                                .Select(a =>
+                                    a.ToJson(
+                                        new MongoDB.Bson.IO.JsonWriterSettings
+                                        {
+                                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
+                                        })).Select(b =>
+                                            JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)))).ToList();
+                    }
+                }
+            }
 
             return dynamicListResponseDataModel;
         }

@@ -152,5 +152,19 @@ namespace LetPortal.Core.Utils
 
             return str;
         }
+
+        public static string GenerateUniqueName(int length = 10)
+        {
+            var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var lengthOfName = length;
+            var datasourceName = string.Empty;
+            for(int i = 0; i < lengthOfName; i++)
+            {
+                var randomIndx = (new Random()).Next(0, 45);
+                datasourceName += suppliedVars[randomIndx];
+            }
+
+            return datasourceName;
+        }
     }
 }

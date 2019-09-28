@@ -55,11 +55,6 @@ namespace LetPortal.Portal.Models.DynamicLists
         public string Name { get; set; }
 
         public string Value { get; set; }
-
-        public string GetParamName()
-        {
-            return string.Format("({0})", Name);
-        }
     }
 
     public class FilterGroupOptions
