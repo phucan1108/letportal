@@ -26,6 +26,8 @@ namespace LetPortal.Portal.Executions
 
         public string ContainsOperatorFormat = " LIKE '%' || {0} || '%'";
 
+        public string OrderByFormat = " ORDER BY {0}";
+
         public string FieldFormat { get; set; } = "\"{0}\"";
 
         public string SearchWord { get; set; } = "{{SEARCH}}";

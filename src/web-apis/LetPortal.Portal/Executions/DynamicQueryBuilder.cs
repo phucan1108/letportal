@@ -20,6 +20,12 @@ namespace LetPortal.Portal.Executions
 
         private string paginationString;
 
+        private int pageNumber;
+
+        private int numberPerPage;
+
+        private int startRow;
+
         public DynamicQueryBuilder()
         {
             builderOptions = new DynamicQueryBuilderOptions();
@@ -127,34 +133,111 @@ namespace LetPortal.Portal.Executions
 
         public IDynamicQueryBuilder AddPagination(int currentPage, int numberPerPage)
         {
-            paginationString += string.Format(builderOptions.PaginationFormat, numberPerPage, currentPage * numberPerPage);
+            pageNumber = currentPage;
+            this.numberPerPage = numberPerPage;
+            startRow = currentPage * numberPerPage;
+            paginationString += string.Format(builderOptions.PaginationFormat, numberPerPage, startRow);
 
             return this;
         }
 
         public DynamicQuery Build()
         {
-            string warpQuery;
-            // 1. Check a query contains WHERE clause, if not, add search, filter, order and pagination
+            string warpQuery;            
             var whereIndex = dynamicQuery.CombinedQuery.ToUpper().IndexOf(" WHERE ");
             var closeTagIndex = dynamicQuery.CombinedQuery.IndexOf(")");
-            if(whereIndex < 0)
+
+            bool containSearch = false;
+            bool containFilter = false;
+            bool containOrder = false;
+            bool containPaging = false;                 
+
+            if(dynamicQuery.CombinedQuery.Contains(builderOptions.SearchWord))
             {
-                warpQuery = @"{0} WHERE (({1}) AND ({2})) Order By {3} {4}";
+                containSearch = true;
+                dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.SearchWord, searchString);
+                searchString = builderOptions.DefaultSearchNull;
             }
-            else if(whereIndex > 0 && whereIndex > closeTagIndex)
+
+            if(dynamicQuery.CombinedQuery.Contains(builderOptions.FilterWord))
             {
-                warpQuery = @"{0} AND (({1}) AND ({2})) Order By {3} {4}";
+                containFilter = true;
+                dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.FilterWord, filterString);
+                filterString = builderOptions.DefaultFilterNull;
+            }
+
+            bool enableOrder = !dynamicQuery.CombinedQuery.Contains(builderOptions.OrderWord);
+            if(!enableOrder)
+            {
+                containOrder = true;
+                dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.OrderWord, orderString);
+                orderString = builderOptions.DefaultOrderNull;
             }
             else
             {
-                warpQuery = @"Select * From ({0}) s Where (({1}) AND ({2})) Order By {3} {4}";
+                orderString = string.Format(builderOptions.OrderByFormat, orderString);
             }
 
-            if(string.IsNullOrEmpty(paginationString))
+            bool enablePagination = !(dynamicQuery.CombinedQuery.Contains(builderOptions.CurrentPageWord)
+                                        || dynamicQuery.CombinedQuery.Contains(builderOptions.NumberPageWord)
+                                        || dynamicQuery.CombinedQuery.Contains(builderOptions.StartRowWord));
+
+            if(!enablePagination)
+            {
+                containPaging = true;
+                dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.CurrentPageWord, pageNumber.ToString());
+                dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.NumberPageWord, numberPerPage.ToString());
+                dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.StartRowWord, startRow.ToString());
+            }
+
+            if(string.IsNullOrEmpty(paginationString) && enablePagination)
             {
                 paginationString = string.Format(builderOptions.PaginationFormat, builderOptions.DefaultNumberPage, builderOptions.DefaultCurrentPage);
             }
+
+            bool notContainWords = !containSearch && !containFilter && !containOrder && !containPaging;
+
+            if(notContainWords)
+            {
+                if(whereIndex < 0)
+                {
+                    warpQuery = @"{0} WHERE (({1}) AND ({2})) {3} {4}";
+                }
+                else if(whereIndex > 0 && whereIndex > closeTagIndex)
+                {
+                    warpQuery = @"{0} AND (({1}) AND ({2})) {3} {4}";
+                }
+                else
+                {
+                    warpQuery = @"Select * From ({0}) s Where (({1}) AND ({2})) {3} {4}";
+                }
+            }
+            else
+            {
+                if(containSearch)
+                {
+                    searchString = builderOptions.DefaultSearchNull;
+                }
+
+                if(containFilter)
+                {
+                    filterString = builderOptions.DefaultFilterNull;
+                }
+
+                if(containOrder)
+                {
+                    orderString = string.Empty;
+                }
+
+                if(containPaging)
+                {
+                    paginationString = string.Empty;
+                }
+
+                warpQuery = @"Select * From ({0}) s Where (({1}) AND ({2})) {3} {4}";
+            } 
+
+
             dynamicQuery.CombinedQuery =
                    string.Format(
                        warpQuery,

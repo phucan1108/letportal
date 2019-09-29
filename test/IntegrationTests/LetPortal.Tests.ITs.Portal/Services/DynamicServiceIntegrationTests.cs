@@ -255,6 +255,165 @@ namespace LetPortal.Tests.ITs.Portal.Services
             Assert.NotEmpty(result.Data);
         }
 
+        [Fact]
+        public async Task Fetch_Data_With_Filter_And_Filled_Params_In_Postgre_Test()
+        {
+            // Arrange
+            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            mockDatabaseServiceProvider
+                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
+
+            var dynamicListQueries = new List<IDynamicListQueryDatabase>
+            {
+                new PostgreDynamicListQueryDatabase(new DynamicQueryBuilder())
+            };
+
+            var databaseListSectionPart = SampleEFDynamicList();
+            databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
+                = "Select * From \"Databases\" Where \"Name\"={{data.name}}";
+            var dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            // Act
+            var result = await dynamicListService.FetchData(databaseListSectionPart,
+            new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
+            {
+                DynamicListId = "sadas",
+                FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
+                {
+                    FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>
+                    {
+                        new LetPortal.Portal.Models.DynamicLists.FilledParameter
+                        {
+                            Name = "data.name",
+                            Value = "testdatabase"
+                        }
+                    }
+                },
+                FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
+                {
+                    FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
+                    {
+                        new LetPortal.Portal.Models.DynamicLists.FilterGroup
+                        {
+                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+                            FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
+                            {
+                                new LetPortal.Portal.Models.DynamicLists.FilterOption
+                                {
+                                    FieldName = "Name",
+                                    FieldValue = "database",
+                                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+                                    FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
+                                    FilterValueType = FieldValueType.Text
+                                }
+                            }
+                        }
+                    }
+                },
+                PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
+                {
+                    NeedTotalItems = false,
+                    PageNumber = 0,
+                    PageSize = 10
+                },
+                SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
+                {
+                    SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
+                    {
+                        new LetPortal.Portal.Models.DynamicLists.SortableField
+                        {
+                            FieldName = "DisplayName",
+                            SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
+                        }
+                    }
+                },
+                TextSearch = "database"
+            });
+
+            // Assert
+            Assert.NotEmpty(result.Data);
+        }
+
+        [Fact]
+        public async Task Fetch_Data_With_Filter_And_Words_In_Postgre_Test()
+        {
+            // Arrange
+            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            mockDatabaseServiceProvider
+                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
+
+            var dynamicListQueries = new List<IDynamicListQueryDatabase>
+            {
+                new PostgreDynamicListQueryDatabase(new DynamicQueryBuilder())
+            };
+
+            var databaseListSectionPart = SampleEFDynamicList();
+            databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
+                = "Select * From \"Databases\" Where \"Name\"={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} Limit {{PAGENUM}} offset {{PAGESTART}}";
+            var dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            // Act
+            var result = await dynamicListService.FetchData(databaseListSectionPart,
+            new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
+            {
+                DynamicListId = "sadas",
+                FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
+                {
+                    FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>
+                    {
+                        new LetPortal.Portal.Models.DynamicLists.FilledParameter
+                        {
+                            Name = "data.name",
+                            Value = "testdatabase"
+                        }
+                    }
+                },
+                FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
+                {
+                    FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
+                    {
+                        new LetPortal.Portal.Models.DynamicLists.FilterGroup
+                        {
+                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+                            FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
+                            {
+                                new LetPortal.Portal.Models.DynamicLists.FilterOption
+                                {
+                                    FieldName = "Name",
+                                    FieldValue = "database",
+                                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+                                    FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
+                                    FilterValueType = FieldValueType.Text
+                                }
+                            }
+                        }
+                    }
+                },
+                PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
+                {
+                    NeedTotalItems = false,
+                    PageNumber = 0,
+                    PageSize = 10
+                },
+                SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
+                {
+                    SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
+                    {
+                        new LetPortal.Portal.Models.DynamicLists.SortableField
+                        {
+                            FieldName = "DisplayName",
+                            SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
+                        }
+                    }
+                },
+                TextSearch = "database"
+            });
+
+            // Assert
+            Assert.NotEmpty(result.Data);
+        }
+
+
         private DynamicList SampleEFDynamicList()
         {
             return new DynamicList
