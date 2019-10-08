@@ -2,6 +2,7 @@
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models;
+using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Repositories.Pages;
@@ -134,7 +135,7 @@ namespace LetPortal.WebApis.Controllers
                             button.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query,
                             pageSubmittedButtonModel.Parameters.Select(a => new System.Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
 
-                    var result = await _databaseServiceProvider.ExecuteDatabase(button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId, formattedString);
+                    var result = await _databaseServiceProvider.ExecuteDatabase(button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId, formattedString, pageSubmittedButtonModel.Parameters.Select(a => new Portal.Models.Databases.ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue}));
 
                     return Ok(result);
                 }
@@ -153,12 +154,7 @@ namespace LetPortal.WebApis.Controllers
                 var datasource = page.PageDatasources.First(a => a.Id == pageRequestDatasourceModel.DatasourceId);
                 if(datasource.Options.Type == Portal.Entities.Shared.DatasourceControlType.Database)
                 {
-                    var formattedString =
-                    StringUtil.ReplaceDoubleCurlyBraces(
-                        datasource.Options.DatabaseOptions.Query,
-                        pageRequestDatasourceModel.Parameters.Select(a => new System.Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
-
-                    var result = await _databaseServiceProvider.ExecuteDatabase(datasource.Options.DatabaseOptions.DatabaseConnectionId, formattedString);
+                    var result = await _databaseServiceProvider.ExecuteDatabase(datasource.Options.DatabaseOptions.DatabaseConnectionId, datasource.Options.DatabaseOptions.Query, pageRequestDatasourceModel.Parameters.Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }));
 
                     return Ok(result);
                 }                 

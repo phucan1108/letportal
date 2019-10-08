@@ -26,18 +26,14 @@ namespace LetPortal.Portal.Services.Databases
             _extractionDatabases = extractionDatabases;
         }
 
-        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(DatabaseConnection databaseConnection, string formattedString)
+        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             var connectionType = databaseConnection.GetConnectionType();
             var executionDatabase = _executionDatabases.FirstOrDefault(a => a.ConnectionType == connectionType);
 
             if(executionDatabase != null)
             {
-                switch(connectionType)
-                {
-                    case ConnectionType.MongoDB:
-                        return await executionDatabase.Execute(GetMongoConnection(databaseConnection), formattedString);
-                }
+                return await executionDatabase.Execute(databaseConnection, formattedString, parameters);
             }             
             throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
         }
@@ -50,14 +46,11 @@ namespace LetPortal.Portal.Services.Databases
             switch(connectionType)
             {
                 case ConnectionType.MongoDB:
-                    return await extractionDatabase.Extract(GetMongoConnection(databaseConnection), formattedString);
+                    return await extractionDatabase.Extract(databaseConnection, formattedString);
+                case ConnectionType.PostgreSQL:
+                    return await extractionDatabase.Extract(databaseConnection, formattedString);
             }
             throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
-        }
-
-        private DefaultMongoConnection GetMongoConnection(DatabaseConnection databaseConnection)
-        {
-            return new DefaultMongoConnection { ConnectionString = databaseConnection.ConnectionString, DatabaseName = databaseConnection.DataSource };
         }
     }
 }

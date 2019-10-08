@@ -1,10 +1,13 @@
+using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Exceptions.Databases;
 using LetPortal.Portal.Executions;
+using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Services.Databases;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,7 +22,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
             var mongoExecutionDatabaseMock = new Mock<IExecutionDatabase>();
             mongoExecutionDatabaseMock.Setup(a => a.ConnectionType).Returns(Core.Persistences.ConnectionType.MongoDB);
             mongoExecutionDatabaseMock
-                .Setup(a => a.Execute(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(a => a.Execute(It.IsAny<DatabaseConnection>(), It.IsAny<string>(), It.IsAny<IEnumerable<ExecuteParamModel>>()))
                 .Returns(Task.FromResult(new ExecuteDynamicResultModel
                 {
                     IsSuccess = true,
@@ -34,7 +37,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
                 ConnectionString = "mongodb://localhost:27017",
                 DatabaseConnectionType = "mongodb",
                 DataSource = "letportal"
-            }, "");
+            }, "", new List<ExecuteParamModel>());
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -47,7 +50,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
             var mongoExecutionDatabaseMock = new Mock<IExecutionDatabase>();
             mongoExecutionDatabaseMock.Setup(a => a.ConnectionType).Returns(Core.Persistences.ConnectionType.MongoDB);
             mongoExecutionDatabaseMock
-                .Setup(a => a.Execute(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(a => a.Execute(It.IsAny<DatabaseConnection>(), It.IsAny<string>(), It.IsAny<IEnumerable<ExecuteParamModel>>()))
                 .Returns(Task.FromResult(new ExecuteDynamicResultModel
                 {
                     IsSuccess = true,
@@ -62,7 +65,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
                 var result = await databaseService.ExecuteDynamic(new LetPortal.Portal.Entities.Databases.DatabaseConnection
                 {
                     DatabaseConnectionType = "SQLServer"
-                }, "");
+                }, "", new List<ExecuteParamModel>());
 
                 Assert.False(true);
             }
@@ -86,7 +89,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
             var mongoExtractionDatabaseMock = new Mock<IExtractionDatabase>();
             mongoExtractionDatabaseMock.Setup(a => a.ConnectionType).Returns(Core.Persistences.ConnectionType.MongoDB);
             mongoExtractionDatabaseMock
-                .Setup(a => a.Extract(It.IsAny<object>(), It.IsAny<string>()))
+                .Setup(a => a.Extract(It.IsAny<DatabaseConnection>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(new ExtractingSchemaQueryModel
                 {
                     ColumnFields = new System.Collections.Generic.List<LetPortal.Portal.Models.Shared.ColumnField>
@@ -112,8 +115,6 @@ namespace LetPortal.Tests.UTs.Portal.Services
 
             // Assert
             Assert.True(result.ColumnFields.Count > 0);
-        }
-
-
+        } 
     }
 }

@@ -1,6 +1,9 @@
 ﻿using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
+using LetPortal.Portal.Models.Databases;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -17,13 +20,14 @@ namespace LetPortal.Portal.Executions.Mongo
     {
         public ConnectionType ConnectionType => ConnectionType.MongoDB;
 
-        public async Task<ExecuteDynamicResultModel> Execute(object database, string formattedString)
+        public async Task<ExecuteDynamicResultModel> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             try
             {
+                formattedString = StringUtil.ReplaceDoubleCurlyBraces(formattedString, parameters.Select(a => new Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
                 var result = new ExecuteDynamicResultModel { IsSuccess = true };
                 var query = EliminateRedundantFormat(formattedString);
-                var mongoDatabase = (database as IPersistenceConnection<IMongoDatabase>).GetDatabaseConnection();
+                var mongoDatabase = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource);
                 BsonDocument parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
                 var executionGroupType = parsingBson.First().Name;
 

@@ -1,6 +1,7 @@
 ﻿using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
+using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Services.Datasources;
 using Moq;
@@ -52,6 +53,29 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 DatabaseId = "aaa",
                 DatasourceType = DatasourceType.Database,
                 Query = "{\r\n  \"databases\": { \"name\" : \"testdatabase\" }\r\n}"
+            });
+
+            // Assert
+            Assert.NotEmpty(result.DatasourceModels);
+        }
+
+        [Fact]
+        public async Task Fetch_Datasource_In_Postgre_Test()
+        {
+            // Arrange
+            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            mockDatabaseServiceProvider
+                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
+
+            var postgreExtractionDatasource = new PostgreExtractionDatasource();
+            var datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { postgreExtractionDatasource });
+            // Act
+            var result = await datasourceService.GetDatasourceService(new Datasource
+            {
+                DatabaseId = "aaa",
+                DatasourceType = DatasourceType.Database,
+                Query = "Select \"Name\", \"Id\" as \"Value\" from \"Databases\""
             });
 
             // Assert

@@ -12,6 +12,6 @@ namespace LetPortal.Portal.Providers.Databases
 
         Task<ExtractingSchemaQueryModel> GetSchemasByQuery(string databaseId, string queryJsonString);
 
-        Task<ExecuteDynamicResultModel> ExecuteDatabase(string databaseId, string formattedCommand);
+        Task<ExecuteDynamicResultModel> ExecuteDatabase(string databaseId, string formattedCommand, IEnumerable<ExecuteParamModel> parameters);
     }
 }

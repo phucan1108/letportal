@@ -1,4 +1,5 @@
 ﻿using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Shared;
 using MongoDB.Bson;
@@ -15,7 +16,7 @@ namespace LetPortal.Portal.Executions.Mongo
     {
         public ConnectionType ConnectionType => ConnectionType.MongoDB;
 
-        public async Task<ExtractingSchemaQueryModel> Extract(object database, string formattedString)
+        public async Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString)
         {
             // queryJsonString sample
             // { "$query" : { 
@@ -28,7 +29,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
             JObject parsingObject = JObject.Parse(formattedString);
 
-            var mongoClient = (database as IPersistenceConnection<IMongoDatabase>).GetDatabaseConnection();
+            var mongoClient = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
 
             var executionGroupTypes = parsingObject.Children().Select(a => (a as JProperty).Name);
 
