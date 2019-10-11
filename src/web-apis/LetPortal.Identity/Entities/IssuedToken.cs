@@ -1,12 +1,12 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Identity.Entities
 {
     [EntityCollection(Name = "issuedtokens")]
+    [Table("issuedtokens")]
     public class IssuedToken : Entity
     {
         public string JwtToken { get; set; }

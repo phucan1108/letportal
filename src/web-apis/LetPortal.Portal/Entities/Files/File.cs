@@ -3,10 +3,12 @@ using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Portal.Constants;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Files
 {
     [EntityCollection(Name = FileConstants.FileCollection)]
+    [Table("files")]
     public class File : Entity
     {
         public string Name { get; set; }

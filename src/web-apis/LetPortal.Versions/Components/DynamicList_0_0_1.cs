@@ -35,7 +35,9 @@ namespace LetPortal.Versions.SectionParts
                     {
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "databases",
-                        Query = "{ \"$query\": { \"databases\": [ ] } }"
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB 
+                        ? "{ \"$query\": { \"databases\": [ ] } }" 
+                        : "Select * From databases"
                     },
                     SourceType = DynamicListSourceType.Database
                 },                   
@@ -162,7 +164,7 @@ namespace LetPortal.Versions.SectionParts
                             {
                                 DatasourceStaticOptions = new DatasourceStaticOptions
                                 {
-                                    JsonResource = "[{\"name\":\"MongoDB\",\"value\":\"mongodb\"},{\"name\":\"SQL Server\",\"value\":\"sqlserver\"}]"
+                                    JsonResource = "[{\"name\":\"MongoDB\",\"value\":\"mongodb\"},{\"name\":\"SQL Server\",\"value\":\"sqlserver\"}, {\"name\":\"PostgreSQL\",\"value\":\"postgresql\"}, {\"name\":\"MySQL\",\"value\":\"mysql\"}]"
                                 },
                                 Type = DatasourceControlType.StaticResource
                             },
@@ -210,7 +212,9 @@ namespace LetPortal.Versions.SectionParts
                     {
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
-                        Query = "{ \"$query\": { \"apps\": [ ] } }"
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                            "{ \"$query\": { \"apps\": [ ] } }" 
+                            : "Select * from apps"
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -371,7 +375,9 @@ namespace LetPortal.Versions.SectionParts
                     {
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
-                        Query = "{ \"$query\": { \"pages\": [ ] } }"
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                        "{ \"$query\": { \"pages\": [ ] } }" 
+                        : "Select * from pages"
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -421,7 +427,7 @@ namespace LetPortal.Versions.SectionParts
                         new ColumndDef
                         {
                             Name = "name",
-                            DisplayName = "name",
+                            DisplayName = "Name",
                             IsHidden = true,
                             DisplayFormat = "{0}",
                             SearchOptions = new SearchOptions
@@ -487,7 +493,9 @@ namespace LetPortal.Versions.SectionParts
                     {
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
-                        Query = "{ \"$query\": { \"users\": [ ] } }"
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                        "{ \"$query\": { \"users\": [ ] } }" 
+                        : "Select * from users"
                     },
                     SourceType = DynamicListSourceType.Database
                 },                 
@@ -614,7 +622,9 @@ namespace LetPortal.Versions.SectionParts
                     {
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
-                        Query = "{ \"$query\": { \"roles\": [ ] } }"
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                        "{ \"$query\": { \"roles\": [ ] } }" 
+                        : "Select * from roles"
                     },
                     SourceType = DynamicListSourceType.Database
                 },                  

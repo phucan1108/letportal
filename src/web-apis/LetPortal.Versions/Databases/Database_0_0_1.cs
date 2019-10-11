@@ -1,5 +1,7 @@
-﻿using LetPortal.Core.Versions;
+﻿using LetPortal.Core.Persistences;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Databases;
+using System;
 
 namespace LetPortal.Versions.Databases
 {
@@ -14,12 +16,13 @@ namespace LetPortal.Versions.Databases
 
         public void Upgrade(IVersionContext versionContext)
         {
+            DatabaseOptions databaseOptions = versionContext.DatabaseOptions as DatabaseOptions;
             var databaseManagement = new DatabaseConnection
             {
                 Id = Constants.CoreDatabaseId,
-                ConnectionString = "mongodb://localhost:27017",
-                DatabaseConnectionType = "mongodb",
-                DataSource = "letportal",
+                ConnectionString = databaseOptions.ConnectionString,
+                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseOptions.ConnectionType).ToLower(),
+                DataSource = databaseOptions.Datasource,
                 Name = "Database Management"
             };
 

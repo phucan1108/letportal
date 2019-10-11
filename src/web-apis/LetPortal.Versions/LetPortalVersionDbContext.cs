@@ -193,6 +193,14 @@ namespace LetPortal.Versions
 
             var userActivityBuilder = modelBuilder.Entity<UserActivity>();
             userActivityBuilder.HasKey(a => a.Id);
+
+            foreach(var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach(var property in entity.GetProperties())
+                {
+                    property.Relational().ColumnName = ToCamelCase(property.Relational().ColumnName);
+                }
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -205,6 +213,15 @@ namespace LetPortal.Versions
             {
                 optionsBuilder.UseNpgsql(_options.ConnectionString);
             }
+            else if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                optionsBuilder.UseMySql(_options.ConnectionString);
+            }
+        }
+
+        private string ToCamelCase(string column)
+        {
+            return char.ToLowerInvariant(column[0]) + column.Substring(1);
         }
     }
 }

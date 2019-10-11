@@ -1,5 +1,7 @@
-﻿using LetPortal.ServiceManagement;
+﻿using LetPortal.Core.Persistences;
+using LetPortal.ServiceManagement;
 using LetPortal.ServiceManagement.Providers;
+using LetPortal.ServiceManagement.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +13,8 @@ namespace LetPortal.ServiceManagementApis
     public class Startup
     {
         private IServiceManagementProvider serviceManagementProvider;
+
+        private bool isExistedDB = false;
 
         public Startup(IConfiguration configuration)
         {
@@ -34,6 +38,24 @@ namespace LetPortal.ServiceManagementApis
             {
                 serviceManagementProvider = app.ApplicationServices.GetService<IServiceManagementProvider>();
             }
+
+            if(!isExistedDB)
+            {
+                var databaseOptions = app.ApplicationServices.GetService<DatabaseOptions>();
+                if(databaseOptions.ConnectionType != ConnectionType.MongoDB)
+                {
+                    using(var letportalDbContext = app.ApplicationServices.GetService<LetPortalServiceManagementDbContext>())
+                    {
+                        letportalDbContext.Database.EnsureCreated();
+                        isExistedDB = true;
+                    }                    
+                }
+                else
+                {
+                    isExistedDB = true;
+                }
+            }
+
             applicationLifetime.ApplicationStarted.Register(OnStart);
             applicationLifetime.ApplicationStopping.Register(OnStop);
             if(env.IsDevelopment())

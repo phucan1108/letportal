@@ -2,10 +2,13 @@
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Core.Services.Models;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.ServiceManagement.Entities
 {
     [EntityCollection(Name = "services")]
+    [Table("services")]
     public class Service : Entity
     {
         public string Name { get; set; }
@@ -25,6 +28,8 @@ namespace LetPortal.ServiceManagement.Entities
         public bool HealthCheckNotifyEnable { get; set; }
 
         public DateTime LastCheckingDate { get; set; }
+
+        public IList<MonitorCounter> MonitorCounters { get; set; }
     }
 
     public enum ServiceState

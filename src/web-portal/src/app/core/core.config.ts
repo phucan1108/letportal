@@ -5,6 +5,7 @@ import { ReboundControlEvent } from './events/control/rebound.event';
 import { CleanControlEvent } from './events/control/clean.event';
 import { ResetControlEvent } from './events/control/reset.event';
 import { ControlEventExecution } from './events/control/control.event';
+import { currentTickTranslator } from './shell/translates/methods/currentTickTranslator';
 
 /**
  * Declare all classes which contains a function to translate a expression data in {{ }}
@@ -12,7 +13,8 @@ import { ControlEventExecution } from './events/control/control.event';
  */
 export const TRANSLATOR_METHODS = [
     toJsonStringTranslator,
-    currentDateTranslator
+    currentDateTranslator,
+    currentTickTranslator
 ]
 
 /**

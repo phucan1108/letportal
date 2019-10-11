@@ -35,7 +35,7 @@ namespace LetPortal.ServiceManagement.Repositories
             serviceBuilder.HasKey(a => a.Id);
 
             serviceBuilder.HasOne(a => a.ServiceHardwareInfo).WithOne().OnDelete(DeleteBehavior.Cascade);
-
+            serviceBuilder.HasMany(a => a.MonitorCounters).WithOne(b => b.Service).OnDelete(DeleteBehavior.Cascade);
             var logEventBuilder = modelBuilder.Entity<LogEvent>();
             logEventBuilder.HasKey(a => a.Id);
 
@@ -49,7 +49,14 @@ namespace LetPortal.ServiceManagement.Repositories
 
             monitorCounterBuilder.HasOne(a => a.HardwareCounter).WithOne().OnDelete(DeleteBehavior.Cascade);
             monitorCounterBuilder.HasOne(a => a.HttpCounter).WithOne().OnDelete(DeleteBehavior.Cascade);
-            monitorCounterBuilder.HasOne(a => a.Service).WithOne();
+
+            foreach(var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach(var property in entity.GetProperties())
+                {
+                    property.Relational().ColumnName = ToCamelCase(property.Relational().ColumnName);
+                }
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -62,6 +69,15 @@ namespace LetPortal.ServiceManagement.Repositories
             {
                 optionsBuilder.UseNpgsql(_options.ConnectionString);
             }
+            else if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                optionsBuilder.UseMySql(_options.ConnectionString);
+            }
+        }
+
+        private string ToCamelCase(string column)
+        {
+            return char.ToLowerInvariant(column[0]) + column.Substring(1);
         }
     }
 }

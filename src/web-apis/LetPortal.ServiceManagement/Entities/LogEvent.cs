@@ -2,10 +2,12 @@
 using LetPortal.Core.Persistences.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.ServiceManagement.Entities
 {
     [EntityCollection(Name = "logevents")]
+    [Table("logevents")]
     public class LogEvent : Entity
     {
         public string TraceId { get; set; }

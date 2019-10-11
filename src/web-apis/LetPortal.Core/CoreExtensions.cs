@@ -32,6 +32,7 @@ namespace LetPortal.Core
             {
                 builder.Services.Configure<DatabaseOptions>(configuration.GetSection("DatabaseOptions"));
                 var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
+                builder.Services.AddSingleton(databaseOptions);
                 builder.SetConnectionType(databaseOptions.ConnectionType);
                 if(databaseOptions.ConnectionType == ConnectionType.MongoDB)
                 {

@@ -74,7 +74,9 @@ namespace LetPortal.Versions.Pages
                             {
                                 DatabaseConnectionId = Constants.CoreDatabaseId,
                                 EntityName = "databases",
-                                Query = "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                : "Select * From databases Where id={{queryparams.id}}"
                             }
                         }
                     }
@@ -102,7 +104,9 @@ namespace LetPortal.Versions.Pages
                                 DatabaseOptions = new DatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
-                                    Query = "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                    "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                    : "INSERT INTO databases(id, name, displayName, timeSpan, connectionString, dataSource, databaseConnectionType) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.datasource}}, {{data.databaseConnectionType}})"
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -137,7 +141,9 @@ namespace LetPortal.Versions.Pages
                                 DatabaseOptions = new DatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
-                                    Query = "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                    "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
+                                    : "Update databases SET name={{data.name}}, displayName={{data.displayName}}, timeSpan={{currentTick()}}, connectionString={{data.connectionString}}, dataSource={{data.datasource}}, databaseConnectionType={{data.databaseConnectionType}}"
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -238,7 +244,9 @@ namespace LetPortal.Versions.Pages
                             {
                                 DatabaseConnectionId = Constants.CoreDatabaseId,
                                 EntityName = "databases",
-                                Query = "{\"$query\":{\"apps\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? 
+                                "{\"$query\":{\"apps\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                : "Select * from apps Where id={{queryparams.id}}"
                             }
                         }
                     }
@@ -267,7 +275,9 @@ namespace LetPortal.Versions.Pages
                                 DatabaseOptions = new DatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
-                                    Query = "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"author\": \"{{user.username}}\",\r\n      \"createdDate\": \"ISODate('{{currentDate()}}')\",\r\n      \"updatedDate\": \"ISODate('{{currentDate()}}')\"\r\n    }\r\n  }\r\n}"
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                        "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"author\": \"{{user.username}}\",\r\n      \"createdDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\"\r\n    }\r\n  }\r\n}"
+                                        : "INSERT INTO apps(id, name, displayName, timeSpan, logo, defaultUrl, author, currentVersionNumber, dateCreated, dateModified) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.logo}}, {{data.defaultUrl}}, {{user.username}}, {{data.currentVersionNumber}}, {{currentDate()}}, {{currentDate()}})"
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -304,7 +314,9 @@ namespace LetPortal.Versions.Pages
                                 DatabaseOptions = new DatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
-                                    Query = "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"updatedDate\": \"ISODate('{{currentDate()}}')\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                        "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                        : "UPDATE apps SET name={{data.name}}, displayName={{data.displayName}}, timeSpan={{currentTick()}}, logo={{data.logo}}, defaultUrl={{data.defaultUrl}}, currentVersionNumber={{data.currentVersionNumber}}, dateModified={{currentDate()}} Where id={{data.id}}"
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {

@@ -7,6 +7,6 @@ import { ShellMethod } from './shellmethod';
 })
 export class currentDateTranslator implements ShellMethod  {
     execute(...params: any[]) {
-        return (new Date()).toISOString()
+        return (new Date()).toUTCString()
     }
 }

@@ -53,6 +53,6 @@
 
         public string HealthcheckEndpoint { get; set; }
 
-        public int Delay { get; set; } = 10;
+        public int Delay { get; set; } = 60;
     }
 }

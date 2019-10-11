@@ -2,10 +2,12 @@
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Core.Security;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Pages
 {
     [EntityCollection(Name = "pages")]
+    [Table("pages")]
     public class Page : BackupableEntity
     {      
         public string UrlPath { get; set; }

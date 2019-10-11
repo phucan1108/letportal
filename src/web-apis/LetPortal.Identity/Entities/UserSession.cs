@@ -2,11 +2,12 @@
 using LetPortal.Core.Persistences.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Identity.Entities
 {
     [EntityCollection(Name = "usersessions")]
+    [Table("usersessions")]
     public class UserSession : Entity
     {
         public string UserId { get; set; }
@@ -20,12 +21,13 @@ namespace LetPortal.Identity.Entities
         public string RequestIpAddress { get; set; }
 
         public DateTime SignInDate { get; set; }
-        
+
         public DateTime SignOutDate { get; set; }
 
         public List<UserActivity> UserActivities { get; set; }
     }
 
+    [Table("useractivities")]
     public class UserActivity
     {
         public string Id { get; set; }

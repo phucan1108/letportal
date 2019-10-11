@@ -72,7 +72,9 @@ namespace LetPortal.Versions.Pages
                             {
                                 DatabaseConnectionId = Constants.CoreDatabaseId,
                                 EntityName = "roles",
-                                Query = "{\"$query\":{\"roles\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                    "{\"$query\":{\"roles\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                    : "Select * from roles Where id={{queryparams.id}}"
                             }
                         }
                     }
@@ -101,7 +103,9 @@ namespace LetPortal.Versions.Pages
                                 DatabaseOptions = new DatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
-                                    Query = "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"normalizedName\": \"{{data.name.toUpperCase()}}\" }\r\n  }\r\n}"
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                        "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"normalizedName\": \"{{data.name.toUpperCase()}}\" }\r\n  }\r\n}"
+                                        : "INSERT INTO roles(id, name, displayName, normalizedName) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})"
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -147,7 +151,9 @@ namespace LetPortal.Versions.Pages
                                 DatabaseOptions = new DatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
-                                    Query = "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                        "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                        : "UPDATE roles SET name={{data.name}}, displayName={{data.displayName}}, normalizedName={{data.name.toUpperCase()}} Where id={{data.id}}"
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -360,7 +366,9 @@ namespace LetPortal.Versions.Pages
                             {
                                 DatabaseConnectionId = Constants.CoreDatabaseId,
                                 EntityName = "roles",
-                                Query = "{\"$query\":{\"users\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                    "{\"$query\":{\"users\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
+                                    : "Select * from users Where id={{queryparams.id}}"
                             }
                         }
                     }
@@ -389,7 +397,9 @@ namespace LetPortal.Versions.Pages
                                 DatabaseOptions = new DatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
-                                    Query = "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\", \"normalizedEmail\":\"{{data.email.toUpperCase()}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                        "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\", \"normalizedEmail\":\"{{data.email.toUpperCase()}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                        : "Update users Set email={{data.email}}, normalizedEmail={{data.email.toUpperCase()}}, isConfirmedEmail={{data.isConfirmedEmail}}, isLockoutEnabled={{data.isLockoutEnabled}}, lockoutEndDate={{data.lockoutEndDate}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}"
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {

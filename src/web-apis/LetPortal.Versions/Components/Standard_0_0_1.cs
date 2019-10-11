@@ -252,7 +252,7 @@ namespace LetPortal.Versions.Components
                         {
                             DatasourceStaticOptions = new Portal.Entities.Shared.DatasourceStaticOptions
                             {
-                                JsonResource = "[{\"name\":\"MongoDB\",\"value\":\"mongodb\"},{\"name\":\"SQL Server\",\"value\":\"sqlserver\"}]"
+                                JsonResource = "[{\"name\":\"MongoDB\",\"value\":\"mongodb\"},{\"name\":\"SQL Server\",\"value\":\"sqlserver\"}, {\"name\":\"PostgreSQL\",\"value\":\"postgresql\"}, {\"name\":\"MySQL\",\"value\":\"mysql\"}]"
                             }
                         },
                          Validators = new List<Portal.Entities.SectionParts.Controls.PageControlValidator>

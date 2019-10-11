@@ -6,6 +6,10 @@ namespace LetPortal.Core.Versions
 {
     public interface IVersionContext
     {
+        ConnectionType ConnectionType { get; set; }
+
+        object DatabaseOptions { get; set; }
+
         void DropAll<T>() where T : Entity;
 
         void BulkInsertData<T>(T[] entities) where T : Entity;

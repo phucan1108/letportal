@@ -33,8 +33,8 @@ namespace LetPortal.Versions.Datasources
                 Name = "Apps List",
                 DatabaseId = Constants.CoreDatabaseId,
                 DatasourceType = DatasourceType.Database,
-                Query = "{\"apps\":{}}",
-                OutputProjection = "name=displayName;value=_id"
+                Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? "{\"apps\":{}}" : "SELECT displayName as name, id as value From apps",
+                OutputProjection = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? "name=displayName;value=_id" : null
             };
 
             versionContext.InsertData(databaseConnectionType);

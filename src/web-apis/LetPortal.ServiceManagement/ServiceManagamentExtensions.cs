@@ -12,6 +12,7 @@ namespace LetPortal.ServiceManagement
         {
             services.Configure<DatabaseOptions>(configuration.GetSection("DatabaseOptions"));
             var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
+            services.AddSingleton(databaseOptions);
             if(databaseOptions.ConnectionType == ConnectionType.MongoDB)
             {
 
@@ -32,9 +33,9 @@ namespace LetPortal.ServiceManagement
                 services.AddTransient<IMonitorCounterRepository, MonitorCounterEFRepository>();
             }
 
-            services.AddSingleton<IServiceManagementProvider, ServiceManagamentProvider>();
-            services.AddSingleton<ILogEventProvider, LogEventProvider>();
-            services.AddSingleton<IMonitorProvider, MonitorProvider>();
+            services.AddTransient<IServiceManagementProvider, ServiceManagamentProvider>();
+            services.AddTransient<ILogEventProvider, LogEventProvider>();
+            services.AddTransient<IMonitorProvider, MonitorProvider>();
 
         }
     }

@@ -1,10 +1,12 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Versions
 {
     [EntityCollection(Name = "portalversions")]
+    [Table("portalversions")]
     public class PortalVersion : Entity
     {
         public string VersionNumber { get; set; }

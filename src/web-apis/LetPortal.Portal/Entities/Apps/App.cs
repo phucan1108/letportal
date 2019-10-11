@@ -4,10 +4,12 @@ using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Menus;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Apps
 {
     [EntityCollection(Name = "apps")]
+    [Table("apps")]
     public class App : BackupableEntity
     {                                         
         public string Logo { get; set; }

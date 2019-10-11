@@ -69,7 +69,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IPageRepository, PageEFRepository>();
                 builder.Services.AddTransient<IDynamicListRepository, DynamicListEFRepository>();
                 builder.Services.AddTransient<IStandardRepository, StandardEFRepository>();
-                builder.Services.AddSingleton<IFileRepository, FileEFRepository>();
+                builder.Services.AddTransient<IFileRepository, FileEFRepository>();
             }
 
             if(portalOptions.EnableFileServer)
@@ -79,31 +79,37 @@ namespace LetPortal.Portal
                 builder.Services.Configure<DiskStorageOptions>(builder.Configuration.GetSection("FileOptions").GetSection("DiskStorageOptions"));
                 builder.Services.Configure<DatabaseStorageOptions>(builder.Configuration.GetSection("FileOptions").GetSection("DatabaseStorageOptions"));
 
-                builder.Services.AddSingleton<IFileConnectorExecution, DiskFileConnectorExecution>();
-                builder.Services.AddSingleton<IFileConnectorExecution, DatabaseFileConnectorExecution>();
+                builder.Services.AddTransient<IFileConnectorExecution, DiskFileConnectorExecution>();
+                builder.Services.AddTransient<IFileConnectorExecution, DatabaseFileConnectorExecution>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileExtensionRule>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
 
-                builder.Services.AddSingleton<IStoreFileDatabase, MongoStoreFileDatabase>();
+                builder.Services.AddTransient<IStoreFileDatabase, MongoStoreFileDatabase>();
             }
 
-            builder.Services.AddSingleton<IExecutionDatabase, MongoExecutionDatabase>();
-            builder.Services.AddSingleton<IExtractionDatabase, MongoExtractionDatabase>();
-            builder.Services.AddSingleton<IExtractionDatasource, MongoExtractionDatasource>();
-            builder.Services.AddSingleton<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();
+            builder.Services.AddTransient<IExecutionDatabase, MongoExecutionDatabase>();
+            builder.Services.AddTransient<IExtractionDatabase, MongoExtractionDatabase>();
+            builder.Services.AddTransient<IExtractionDatasource, MongoExtractionDatasource>();
+            builder.Services.AddTransient<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();           
+            builder.Services.AddTransient<IAnalyzeDatabase, MongoAnalyzeDatabase>();
 
-            builder.Services.AddSingleton<IAnalyzeDatabase, MongoAnalyzeDatabase>();
-            builder.Services.AddSingleton<IAnalyzeDatabase, PostgreAnalyzeDatabase>();
+            builder.Services.AddTransient<IAnalyzeDatabase, PostgreAnalyzeDatabase>();
+            builder.Services.AddTransient<IExecutionDatabase, PostgreExecutionDatabase>();
+            builder.Services.AddTransient<IExtractionDatabase, PostgreExtractionDatabase>();
+            builder.Services.AddTransient<IDynamicListQueryDatabase, PostgreDynamicListQueryDatabase>();
+            builder.Services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
 
-            builder.Services.AddSingleton<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
-            builder.Services.AddSingleton<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();
-            builder.Services.AddSingleton<IPageServiceProvider, InternalPageServiceProvider>();
+            builder.Services.AddTransient<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
+            builder.Services.AddTransient<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();
+            builder.Services.AddTransient<IPageServiceProvider, InternalPageServiceProvider>();
 
-            builder.Services.AddSingleton<IEntitySchemaService, EntitySchemaService>();
-            builder.Services.AddSingleton<IDynamicListService, DynamicListService>();
-            builder.Services.AddSingleton<IDatasourceService, DatasourceService>();
-            builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
-            builder.Services.AddSingleton<IFileService, FileService>();
+            builder.Services.AddTransient<IDynamicQueryBuilder, DynamicQueryBuilder>();
+
+            builder.Services.AddTransient<IEntitySchemaService, EntitySchemaService>();
+            builder.Services.AddTransient<IDynamicListService, DynamicListService>();
+            builder.Services.AddTransient<IDatasourceService, DatasourceService>();
+            builder.Services.AddTransient<IDatabaseService, DatabaseService>();
+            builder.Services.AddTransient<IFileService, FileService>();
             builder.Services.AddTransient<HttpService>();
             builder.Services.AddHttpClient<HttpService>();
             return builder;

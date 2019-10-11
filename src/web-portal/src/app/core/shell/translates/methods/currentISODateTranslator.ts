@@ -2,12 +2,11 @@ import { MethodTranslator } from '../../decorators/method.decorator';
 import { ShellMethod } from './shellmethod';
 
 @MethodTranslator({
-    name: 'toJsonString',
-    replaceDQuote: true
+    name: 'currentISODate',
+    replaceDQuote: false
 })
-export class toJsonStringTranslator implements ShellMethod  {
+export class currentISODateTranslator implements ShellMethod  {
     execute(...params: any[]) {
-        return JSON.stringify(params[0])
+        return (new Date()).toISOString()
     }
 }
-    

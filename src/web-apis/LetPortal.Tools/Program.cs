@@ -66,7 +66,8 @@ namespace LET.Tools.Installation
                         var mongoConnection = new MongoConnection(databaseOption);
                         var mongoVersionContext = new MongoVersionContext(databaseOption);
                         var portalMongoRepository = new PortalVersionMongoRepository(mongoConnection);
-
+                        mongoVersionContext.ConnectionType = ConnectionType.MongoDB;
+                        mongoVersionContext.DatabaseOptions = databaseOption;
                         var latestVersion = portalMongoRepository.GetAsQueryable().ToList().LastOrDefault();
 
                         toolsContext = new ToolsContext
@@ -86,14 +87,16 @@ namespace LET.Tools.Installation
                         var letportalContext = new LetPortalVersionDbContext(databaseOption);
                         letportalContext.Database.EnsureCreated();
 
-                        var postgreSQLVersionContext = new EFVersionContext(letportalContext);
+                        var sqlEFVersionContext = new EFVersionContext(letportalContext);
+                        sqlEFVersionContext.ConnectionType = dbType;
+                        sqlEFVersionContext.DatabaseOptions = databaseOption;
                         var portalVersionRepository = new PortalVersionEFRepository(letportalContext);
                         var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
 
                         toolsContext = new ToolsContext
                         {
                             LatestVersion = latestVersionEF,
-                            VersionContext = postgreSQLVersionContext,
+                            VersionContext = sqlEFVersionContext,
                             VersionNumber = VersionNumber,
                             Versions = allVersions,
                             PortalVersionRepository = portalVersionRepository

@@ -53,7 +53,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                     {
                         DataTable dt = new DataTable();
                         dt.Load(reader);
-                        response.Data = ConvertUtil.SerializeObject(dt, true);
+                        response.Data = ConvertUtil.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true));
                     }
                 }
                 postgreDbConnection.Close();

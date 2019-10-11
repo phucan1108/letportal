@@ -2,10 +2,12 @@
 using LetPortal.Core.Persistences.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Identity.Entities
 {
     [EntityCollection(Name = "users")]
+    [Table("users")]
     public class User : Entity
     {
         public string Username { get; set; }

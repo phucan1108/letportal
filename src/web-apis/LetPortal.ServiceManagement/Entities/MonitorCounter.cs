@@ -1,10 +1,12 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.ServiceManagement.Entities
 {
     [EntityCollection(Name = "monitorcounters")]
+    [Table("monitorcounters")]
     public class MonitorCounter : Entity
     {
         public string ServiceId { get; set; }
@@ -20,6 +22,7 @@ namespace LetPortal.ServiceManagement.Entities
         public DateTime BeatDate { get; set; }
     }
 
+    [Table("hardwarecounters")]
     public class HardwareCounter
     {
         public string Id { get; set; }
@@ -35,6 +38,7 @@ namespace LetPortal.ServiceManagement.Entities
         public bool IsMemoryThreshold { get; set; }
     }
 
+    [Table("httpcounters")]
     public class HttpCounter
     {
         public string Id { get; set; }

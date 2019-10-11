@@ -20,6 +20,9 @@ namespace LetPortal.Core.Versions
             mongoDatabase = mongoClient.GetDatabase(databaseOptions.Datasource);
         }
 
+        public ConnectionType ConnectionType { get; set; } = ConnectionType.MongoDB;
+        public object DatabaseOptions { get; set; }
+
         public void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity
         {
             var entityCollection = GetMongoCollection<T>();

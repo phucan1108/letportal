@@ -1,4 +1,6 @@
-﻿namespace LetPortal.Core.Services.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LetPortal.Core.Services.Models
 {
     public class RegisterServiceModel
     {
@@ -15,6 +17,7 @@
         public bool HealthCheckNotifyEnable { get; set; }
     }
 
+    [Table("servicehardwareinfos")]
     public class ServiceHardwareInfo
     {
         public string Id { get; set; }

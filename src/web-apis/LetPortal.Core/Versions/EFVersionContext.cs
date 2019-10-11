@@ -15,6 +15,8 @@ namespace LetPortal.Core.Versions
             _context = context;
         }
 
+        public ConnectionType ConnectionType { get; set; }
+        public object DatabaseOptions { get; set; }
         public void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity
         {
             var dbSet = _context.Set<T>();

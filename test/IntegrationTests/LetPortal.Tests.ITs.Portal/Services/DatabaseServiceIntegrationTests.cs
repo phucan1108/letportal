@@ -8,6 +8,7 @@ using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Executions.PostgreSql;
 using System.Collections.Generic;
 using LetPortal.Portal.Models.Databases;
+using System;
 
 namespace LetPortal.Tests.ITs.Portal.Services
 {
@@ -137,6 +138,92 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             // Assert
             Assert.NotEmpty(result.Result);
+        }
+
+        [Fact]
+        public async Task Execute_Insert_In_Postgre_Test()
+        {
+            // Arrange
+            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+
+            // Act
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.PostgreSqlDatabaseConnection,
+                        "INSERT INTO \"Databases\"(\"Id\", \"Name\", \"DisplayName\", \"TimeSpan\", \"ConnectionString\", \"DataSource\", \"DatabaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Execute_Update_In_Postgre_Test()
+        {
+            // Arrange
+            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+
+            // Act
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.PostgreSqlDatabaseConnection,
+                        "Update  \"Databases\" SET \"DisplayName\"={{data.displayName}} WHERE \"Id\"={{data.id}}",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "data.id", ReplaceValue = _context.PostgreSqlDatabaseConnection.Id },                            
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Execute_Delete_In_Postgre_Test()
+        {
+            // Arrange
+            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+            var insertId = Guid.NewGuid().ToString();
+            // Act
+            await databaseService.ExecuteDynamic(
+                    _context.PostgreSqlDatabaseConnection,
+                        "INSERT INTO \"Databases\"(\"Id\", \"Name\", \"DisplayName\", \"TimeSpan\", \"ConnectionString\", \"DataSource\", \"DatabaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = insertId },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
+                        });
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.PostgreSqlDatabaseConnection,
+                        "DELETE From \"Databases\" Where \"Id\"={{data.id}}",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "data.id", ReplaceValue = insertId }                          
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
         }
     }
 }

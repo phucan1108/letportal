@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using LetPortal.Core.Monitors.Models;
+﻿using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Repositories;
+using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
 {

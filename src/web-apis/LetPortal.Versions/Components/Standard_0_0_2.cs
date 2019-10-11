@@ -83,7 +83,7 @@ namespace LetPortal.Versions.Components
                            new Portal.Entities.Pages.ShellOption
                            {
                                Key = "disabled",
-                               Value = "false"
+                               Value = "!!queryparams.id"
                            },
                            new Portal.Entities.Pages.ShellOption
                            {

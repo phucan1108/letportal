@@ -40,10 +40,11 @@ namespace LetPortal.Portal.Executions.PostgreSql
                         {
                             var fieldParam = StringUtil.GenerateUniqueName();
                             formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
+                            object castObject;
                             listParams.Add(
-                                new NpgsqlParameter(fieldParam, GetNpgsqlDbType(parameter.ReplaceValue))
+                                new NpgsqlParameter(fieldParam, GetNpgsqlDbType(parameter.ReplaceValue, out castObject))
                                 {
-                                    Value = parameter.ReplaceValue,
+                                    Value = castObject,
                                     Direction = ParameterDirection.Input
                                 });
                         }
@@ -87,30 +88,41 @@ namespace LetPortal.Portal.Executions.PostgreSql
             return result;
         }
 
-        private NpgsqlDbType GetNpgsqlDbType(string value)
+        private NpgsqlDbType GetNpgsqlDbType(string value, out object castObj)
         {
-            if(decimal.TryParse(value, out _))
+            if(decimal.TryParse(value, out decimal tempDecimal))
             {
+                castObj = tempDecimal;
                 return NpgsqlDbType.Numeric;
             }
-            else if(int.TryParse(value, out _))
+            else if(int.TryParse(value, out int tempInt))
             {
+                castObj = tempInt;
                 return NpgsqlDbType.Integer;
             }
-            else if(DateTime.TryParse(value, out _))
+            else if(long.TryParse(value, out long tempLong))
             {
+                castObj = tempLong;
+                return NpgsqlDbType.Bigint;
+            }
+            else if(DateTime.TryParse(value, out DateTime tempDateTime))
+            {
+                castObj = tempDateTime;
                 return NpgsqlDbType.Date;
             }
-            else if(bool.TryParse(value, out _))
+            else if(bool.TryParse(value, out bool tempBool))
             {
+                castObj = tempBool;
                 return NpgsqlDbType.Boolean;
             }
-            else if(TimeSpan.TryParse(value, out _))
+            else if(TimeSpan.TryParse(value, out TimeSpan tempTimeSpan))
             {
+                castObj = tempTimeSpan;
                 return NpgsqlDbType.Timestamp;
             }
             else
             {
+                castObj = value;
                 return NpgsqlDbType.Varchar;
             }
         }

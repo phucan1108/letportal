@@ -65,29 +65,32 @@ namespace LetPortal.Portal.Executions
         {
             if(groups != null && groups.Count > 0)
             {
-                filterString = null;
-                foreach(var group in groups)
+                if(groups.Count == 1 && groups.First().FilterOptions.Count > 0)
                 {
-                    foreach(var filter in group.FilterOptions)
+                    filterString = null;
+                    foreach(var group in groups)
                     {
-                        var fieldParam = StringUtil.GenerateUniqueName();
-                        if(filter.FilterOperator != FilterOperator.Contains)
+                        foreach(var filter in group.FilterOptions)
                         {
-                            filterString += string.Format(builderOptions.FieldFormat, filter.FieldName) + GetOperator(filter.FilterOperator) + builderOptions.ParamSign + fieldParam + GetChainOperator(filter.FilterChainOperator) + " ";
-                        }
-                        else
-                        {
-                            filterString += string.Format(builderOptions.FieldFormat, filter.FieldName) + GetOperator(filter.FilterOperator, fieldParam)  + GetChainOperator(filter.FilterChainOperator) + " ";
-                        }                        
+                            var fieldParam = StringUtil.GenerateUniqueName();
+                            if(filter.FilterOperator != FilterOperator.Contains)
+                            {
+                                filterString += string.Format(builderOptions.FieldFormat, filter.FieldName) + GetOperator(filter.FilterOperator) + builderOptions.ParamSign + fieldParam + GetChainOperator(filter.FilterChainOperator) + " ";
+                            }
+                            else
+                            {
+                                filterString += string.Format(builderOptions.FieldFormat, filter.FieldName) + GetOperator(filter.FilterOperator, fieldParam) + GetChainOperator(filter.FilterChainOperator) + " ";
+                            }
 
-                        dynamicQuery.Parameters.Add(new DynamicQueryParameter
-                        {
-                            Name = fieldParam,
-                            Value = filter.FieldValue,
-                            ValueType = filter.FilterValueType
-                        });
+                            dynamicQuery.Parameters.Add(new DynamicQueryParameter
+                            {
+                                Name = fieldParam,
+                                Value = filter.FieldValue,
+                                ValueType = filter.FilterValueType
+                            });
+                        }
                     }
-                }
+                }                
             }
             return this;
         }
