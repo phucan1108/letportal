@@ -38,24 +38,30 @@ namespace LetPortal.Portal.Repositories.Pages
                 // Security Notes: Because in render mode, we don't need to return a raw json/command in Command/Datasource
                 // Just only return params which will be filled by Client side
 
-                // Datasources
-                page.PageDatasources = page.PageDatasources.Where(a => a.IsActive).ToList();
-                foreach(var ds in page.PageDatasources)
+                if(page.PageDatasources != null)
                 {
-                    if(ds.Options.Type == Entities.Shared.DatasourceControlType.Database)
+                    // Datasources
+                    page.PageDatasources = page.PageDatasources.Where(a => a.IsActive).ToList();
+                    foreach(var ds in page.PageDatasources)
                     {
-                        ds.Options.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(ds.Options.DatabaseOptions.Query, true));
+                        if(ds.Options.Type == Entities.Shared.DatasourceControlType.Database)
+                        {
+                            ds.Options.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(ds.Options.DatabaseOptions.Query, true));
+                        }
                     }
                 }
-
-                // Commands
-                foreach(var command in page.Commands)
+                
+                if(page.Commands != null)
                 {
-                    if(command.ButtonOptions.ActionCommandOptions.ActionType == Entities.Shared.ActionType.ExecuteDatabase)
+                    // Commands
+                    foreach(var command in page.Commands)
                     {
-                        command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query, true));
+                        if(command.ButtonOptions.ActionCommandOptions.ActionType == Entities.Shared.ActionType.ExecuteDatabase)
+                        {
+                            command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query, true));
+                        }
                     }
-                }
+                }                
             }
             return Task.FromResult(page);
         }

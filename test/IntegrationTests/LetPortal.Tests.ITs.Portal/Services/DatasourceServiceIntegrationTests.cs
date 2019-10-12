@@ -75,7 +75,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseId = "aaa",
                 DatasourceType = DatasourceType.Database,
-                Query = "Select \"Name\", \"Id\" as \"Value\" from \"Databases\""
+                Query = "Select \"name\", \"id\" as \"Value\" from databases"
             });
 
             // Assert

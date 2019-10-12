@@ -42,7 +42,7 @@ export class DynamicListGridComponent implements OnInit {
     displayedColumns: Array<string> = [];
 
     loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    isAlreadyFetchedTotal = false;
+    isAlreadyFetchedTotal = true;
     totalItems = 0;
 
     datasourceCache: Array<DatasourceCache> = []

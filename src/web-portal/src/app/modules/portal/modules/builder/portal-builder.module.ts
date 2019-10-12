@@ -64,9 +64,9 @@ import { PortalBuilderRoutingModule } from './portal-builder-routing.module';
 import { PortalBuilderPageComponent } from './portal-builder.component';
 import { DynamicListBuilderResolve } from './resolve/dynamic-list.builder.resolve';
 import { StandardResolve } from './resolve/standard.resolve';
-
+import { HighlightModule } from 'ngx-highlightjs';
 @NgModule({
-    declarations: [
+	declarations: [
 		PortalBuilderPageComponent,
 		PageBuilderPage,
 		DynamicListBuilderPage,
@@ -115,64 +115,66 @@ import { StandardResolve } from './resolve/standard.resolve';
 		PageRouteComponent,
 		AsyncValidatorDialogComponent,
 		DatabaseOptionsComponent
-    ],
-    imports: [
+	],
+	imports: [
 		PortalBuilderRoutingModule,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatDatepickerModule,
-        MatAutocompleteModule,
-        MatListModule,
-        MatSliderModule,
-        MatCardModule,
-        MatSelectModule,
-        MatButtonModule,
-        MatIconModule,
-        MatNativeDateModule,
-        MatSlideToggleModule,
-        MatCheckboxModule,
-        MatMenuModule,
-        MatTabsModule,
-        MatTooltipModule,
-        MatSidenavModule,
-        MatProgressBarModule,
-        MatProgressSpinnerModule,
-        MatSnackBarModule,
-        MatTableModule,
-        MatGridListModule,
-        MatToolbarModule,
-        MatExpansionModule,
-        MatDividerModule,
-        MatSortModule,
-        MatStepperModule,
-        MatChipsModule,
-        MatPaginatorModule,
-        MatDialogModule,
-        MatRadioModule,
-        MatTreeModule,
-        NgJsonEditorModule,
-        DragDropModule,
-        MomentumTableModule,
-        ScrollDispatchModule,
-        MatMomentDateModule,
-        QuillModule.forRoot({
-            modules: {
-                syntax: true,
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    [{ 'script': 'sub' }, { 'script': 'super' }],
-                    [{ 'indent': '-1' }, { 'indent': '+1' }],
-                    ['link', 'image']
-                ]
-            }
-        })],
-    entryComponents: [
-        CommandModalComponent,
+		CommonModule,
+		FormsModule,
+		ReactiveFormsModule,
+		MatInputModule,
+		MatFormFieldModule,
+		MatDatepickerModule,
+		MatAutocompleteModule,
+		MatListModule,
+		MatSliderModule,
+		MatCardModule,
+		MatSelectModule,
+		MatButtonModule,
+		MatIconModule,
+		MatNativeDateModule,
+		MatSlideToggleModule,
+		MatCheckboxModule,
+		MatMenuModule,
+		MatTabsModule,
+		MatTooltipModule,
+		MatSidenavModule,
+		MatProgressBarModule,
+		MatProgressSpinnerModule,
+		MatSnackBarModule,
+		MatTableModule,
+		MatGridListModule,
+		MatToolbarModule,
+		MatExpansionModule,
+		MatDividerModule,
+		MatSortModule,
+		MatStepperModule,
+		MatChipsModule,
+		MatPaginatorModule,
+		MatDialogModule,
+		MatRadioModule,
+		MatTreeModule,
+		NgJsonEditorModule,
+		DragDropModule,
+		MomentumTableModule,
+		ScrollDispatchModule,
+		MatMomentDateModule,
+		QuillModule.forRoot({
+			modules: {
+				syntax: true,
+				toolbar: [
+					['bold', 'italic', 'underline', 'strike'],
+					[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+					[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+					[{ 'script': 'sub' }, { 'script': 'super' }],
+					[{ 'indent': '-1' }, { 'indent': '+1' }],
+					['link', 'image']
+				]
+			}
+		}),
+		HighlightModule
+	],
+	entryComponents: [
+		CommandModalComponent,
 		DynamicListDataSourceComponent,
 		DatasourceDialogComponent,
 		BuilderDnDComponent,
@@ -185,7 +187,7 @@ import { StandardResolve } from './resolve/standard.resolve';
 		PageEventDialogComponent,
 		PageEventGridComponent,
 		SuggestionHintComponent,
-        PageShellOptionDialogComponent,
+		PageShellOptionDialogComponent,
 		MenuDialogComponent,
 		ClaimDialogComponent,
 		PageInfoComponent,
@@ -204,10 +206,10 @@ import { StandardResolve } from './resolve/standard.resolve';
 		ButtonOptionsComponent,
 		PageButtonOptionsDialogComponent,
 		AsyncValidatorDialogComponent
-    ],
-    exports: [RouterModule],
-    providers: [
-        MatIconRegistry,
+	],
+	exports: [RouterModule],
+	providers: [
+		MatIconRegistry,
 		DynamicListBuilderResolve,
 		PageBuilderResolve,
 		MenuResolve,
@@ -215,7 +217,7 @@ import { StandardResolve } from './resolve/standard.resolve';
 		RoleClaimsResolve,
 		StandardResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
-		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }		
-    ],
+		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
+	],
 })
 export class PortalBuilderModule { }

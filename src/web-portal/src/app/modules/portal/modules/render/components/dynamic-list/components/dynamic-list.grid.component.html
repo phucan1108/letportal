@@ -73,7 +73,7 @@
         <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
     </mat-table>
 </div>
-<div class="align-center" *ngIf="readyToRender && totalItems == 0">No records found</div>
+<div class="align-center" *ngIf="readyToRender && totalItems == 0 && !isAlreadyFetchedTotal">No records found</div>
 <!-- Message for empty data  -->
 
 <div class="mat-table__bottom">

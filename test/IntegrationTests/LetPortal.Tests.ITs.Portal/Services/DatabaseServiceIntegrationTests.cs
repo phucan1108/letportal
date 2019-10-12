@@ -103,7 +103,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { postgreExtractionDatabase });
             // Act
-            var warpQuery = "Select * From \"Databases\"";
+            var warpQuery = "Select * From databases";
             var result = await databaseService.ExtractColumnSchema(_context.PostgreSqlDatabaseConnection, warpQuery);
 
             // Assert
@@ -119,7 +119,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
             // Act
-            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from \"Databases\"", null);
+            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from databases", null);
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -134,7 +134,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
             // Act
-            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from \"Databases\" Where \"Name\"={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
+            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from {{options.entityname}} Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "options.entityname", ReplaceValue = "databases" }, new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -152,7 +152,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var result =
                 await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
-                        "INSERT INTO \"Databases\"(\"Id\", \"Name\", \"DisplayName\", \"TimeSpan\", \"ConnectionString\", \"DataSource\", \"DatabaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
                         new List<ExecuteParamModel>
                         {
                             new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
@@ -180,7 +180,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var result =
                 await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
-                        "Update  \"Databases\" SET \"DisplayName\"={{data.displayName}} WHERE \"Id\"={{data.id}}",
+                        "Update databases SET \"displayName\"={{data.displayName}} WHERE id={{data.id}}",
                         new List<ExecuteParamModel>
                         {
                             new ExecuteParamModel { Name = "data.id", ReplaceValue = _context.PostgreSqlDatabaseConnection.Id },                            
@@ -202,7 +202,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
-                        "INSERT INTO \"Databases\"(\"Id\", \"Name\", \"DisplayName\", \"TimeSpan\", \"ConnectionString\", \"DataSource\", \"DatabaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
                         new List<ExecuteParamModel>
                         {
                             new ExecuteParamModel { Name = "guid()", ReplaceValue = insertId },
@@ -216,7 +216,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var result =
                 await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
-                        "DELETE From \"Databases\" Where \"Id\"={{data.id}}",
+                        "DELETE From databases Where id={{data.id}}",
                         new List<ExecuteParamModel>
                         {
                             new ExecuteParamModel { Name = "data.id", ReplaceValue = insertId }                          

@@ -23,6 +23,7 @@ import { ExtendedPageButton } from '../models/extended.models';
 import { ConfigurationProvider } from '../configs/configProvider';
 import { CustomHttpService } from './customhttp.service';
 import { ObjectUtils } from '../utils/object-util';
+import { SessionService } from './session.service';
 
 /**
  * This class contains all base methods for interacting with Page
@@ -45,6 +46,7 @@ export class PageService {
         private configurationProvider: ConfigurationProvider,
         private pageClients: PagesClient,
         private security: SecurityService,
+        private session: SessionService,
         private router: Router,
         private translator: Translator,
         private shellConfigProvider: ShellConfigProvider,
@@ -73,12 +75,12 @@ export class PageService {
                 result => {
                     if (!result.allowAccess) {
                         this.shortcutUtil.notifyMessage(`Sorry, you can access ${result.page.displayName} page !`, ToastType.Warning)
-                        this.router.navigateByUrl('/')
+                        this.router.navigateByUrl(this.session.getDefaultAppPage())
                     }
                 },
                 err => {
                     this.shortcutUtil.notifyMessage("Oops, Something went wrong, please try again!", ToastType.Error)
-                    this.router.navigateByUrl('/')
+                    this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
             )
         )
@@ -442,6 +444,10 @@ export class PageService {
                                         .pipe(
                                             filter(res => res.isSuccess),
                                             map<ExecuteDynamicResultModel, PageLoadedDatasource>((res: ExecuteDynamicResultModel) => {
+                                                // Ensure if result is array, take 1st elem for data
+                                                if(ObjectUtils.isArray(res.result)){
+                                                    return { name: dsName, data: res.result[0] }
+                                                }
                                                 return { name: dsName, data: res.result }
                                             })
                                         ))

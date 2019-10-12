@@ -7,7 +7,7 @@
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <mat-select placeholder="Pick one connection" formControlName="databaseConnectionId">
-                    <mat-option *ngFor="let database of databaseConnections | async" [value]="database.id">
+                    <mat-option *ngFor="let database of databaseConnections$ | async" [value]="database.id">
                         {{ database.name }}
                     </mat-option>
                 </mat-select>
@@ -17,11 +17,16 @@
     <div class="form-group row">
         <label class="col-lg-2 col-form-label">Hint</label>
         <div class="col-lg-10 pt-2">
-            <button mat-button *ngIf="allowDisplayHint('query')" (click)="openQueryHint()" color="primary">Query</button>
-            <button mat-button *ngIf="allowDisplayHint('insert')"  (click)="openInsertHint()" color="primary">Insert</button>
-            <button mat-button *ngIf="allowDisplayHint('update')" (click)="openUpdateHint()" color="primary">Update</button>
-            <button mat-button *ngIf="allowDisplayHint('updatepart')" (click)="openUpdatePartsHint()" color="primary">Update Parts</button>
-            <button mat-button *ngIf="allowDisplayHint('delete')" (click)="openDeleteHint()" color="primary">Delete</button>
+            <button mat-button *ngIf="allowDisplayHint('query')" (click)="openQueryHint()"
+                color="primary">Query</button>
+            <button mat-button *ngIf="allowDisplayHint('insert')" (click)="openInsertHint()"
+                color="primary">Insert</button>
+            <button mat-button *ngIf="allowDisplayHint('update')" (click)="openUpdateHint()"
+                color="primary">Update</button>
+            <button mat-button *ngIf="allowDisplayHint('updatepart')" (click)="openUpdatePartsHint()"
+                color="primary">Update Parts</button>
+            <button mat-button *ngIf="allowDisplayHint('delete')" (click)="openDeleteHint()"
+                color="primary">Delete</button>
         </div>
     </div>
     <div class="form-group row" *ngIf="isHintClicked">
@@ -33,7 +38,7 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group row" *ngIf="isMongoDb">
         <label class="col-lg-2 col-form-label">Command</label>
         <div class="col-lg-10">
             <mat-form-field class="field-full-width">
@@ -42,6 +47,15 @@
                 <input formControlName="query" matInput #jsonDataEditor style="display:none">
                 <mat-hint align="end">{{jsonDataEditor.value?.length || 0}}/5000</mat-hint>
             </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group row" *ngIf="!isMongoDb">
+        <label class="col-lg-2 col-form-label">Command</label>
+        <div class="col-lg-10">
+            <mat-form-field class="field-full-width">
+                <input matInput placeholder="Put your SQL command" formControlName="query" />
+            </mat-form-field>
+            <pre><code [highlight]="code"></code></pre>
         </div>
     </div>
 </form>

@@ -154,7 +154,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
-            databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query = "Select * from public.\"Databases\"";
+            databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query = "Select * from databases";
             var dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
             // Act
             var result = await dynamicListService.FetchData(databaseListSectionPart,
@@ -221,7 +221,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             {
                                 new LetPortal.Portal.Models.DynamicLists.FilterOption
                                 {
-                                    FieldName = "Name",
+                                    FieldName = "name",
                                     FieldValue = "database",
                                     FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
                                     FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
@@ -243,7 +243,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     {
                         new LetPortal.Portal.Models.DynamicLists.SortableField
                         {
-                            FieldName = "DisplayName",
+                            FieldName = "displayName",
                             SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
                         }
                     }
@@ -271,7 +271,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
-                = "Select * From \"Databases\" Where \"Name\"={{data.name}}";
+                = "Select * From databases Where name={{data.name}}";
             var dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
             // Act
             var result = await dynamicListService.FetchData(databaseListSectionPart,
@@ -300,7 +300,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             {
                                 new LetPortal.Portal.Models.DynamicLists.FilterOption
                                 {
-                                    FieldName = "Name",
+                                    FieldName = "name",
                                     FieldValue = "database",
                                     FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
                                     FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
@@ -322,7 +322,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     {
                         new LetPortal.Portal.Models.DynamicLists.SortableField
                         {
-                            FieldName = "DisplayName",
+                            FieldName = "displayName",
                             SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
                         }
                     }
@@ -350,7 +350,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
-                = "Select * From \"Databases\" Where \"Name\"={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} Limit {{PAGENUM}} offset {{PAGESTART}}";
+                = "Select * From databases Where name={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} Limit {{PAGENUM}} offset {{PAGESTART}}";
             var dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
             // Act
             var result = await dynamicListService.FetchData(databaseListSectionPart,
@@ -379,7 +379,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             {
                                 new LetPortal.Portal.Models.DynamicLists.FilterOption
                                 {
-                                    FieldName = "Name",
+                                    FieldName = "name",
                                     FieldValue = "database",
                                     FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
                                     FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
@@ -401,7 +401,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     {
                         new LetPortal.Portal.Models.DynamicLists.SortableField
                         {
-                            FieldName = "DisplayName",
+                            FieldName = "displayName",
                             SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
                         }
                     }
@@ -427,7 +427,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     {
                         DatabaseConnectionId = "asda",
                         EntityName = "databases",
-                        Query = "Select * from \"Databases\""
+                        Query = "Select * from databases"
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -513,7 +513,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     {
                         new ColumndDef
                         {
-                            Name = "Id",
+                            Name = "id",
                             DisplayName = "Id",
                             IsHidden = true,
                             DisplayFormat = "{0}",
@@ -526,7 +526,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                         },
                         new ColumndDef
                         {
-                            Name = "Name",
+                            Name = "name",
                             DisplayName = "Name",
                             DisplayFormat = "{0}",
                             AllowSort = true,
@@ -539,7 +539,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                         },
                         new ColumndDef
                         {
-                            Name = "DatabaseConnectionType",
+                            Name = "databaseConnectionType",
                             DisplayName = "Connection Type",
                             DisplayFormat = "{0}",
                             AllowSort = true,
@@ -562,7 +562,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                         },
                         new ColumndDef
                         {
-                            Name = "ConnectionString",
+                            Name = "connectionString",
                             DisplayName = "Connection String",
                             DisplayFormat = "{0}",
                             AllowSort = true,
@@ -575,7 +575,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                         },
                         new ColumndDef
                         {
-                            Name = "DataSource",
+                            Name = "dataSource",
                             DisplayName = "Datasource",
                             DisplayFormat = "{0}",
                             AllowSort = true,

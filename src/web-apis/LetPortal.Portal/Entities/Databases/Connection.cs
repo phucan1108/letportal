@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LetPortal.Portal.Entities.Databases
 {
     [EntityCollection(Name = DatabaseConstants.DatabaseCollection)]
-    [Table("databaseconnections")]
+    [Table("databases")]
     public class DatabaseConnection : BackupableEntity
     {
         public string ConnectionString { get; set; }

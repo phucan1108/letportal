@@ -52,7 +52,8 @@ namespace LET.Tools.Installation
             var databaseOption = new DatabaseOptions
             {
                 ConnectionString = !string.IsNullOrEmpty(Connection) ? Connection : GetDefaultConnectionString(dbType),
-                ConnectionType = dbType
+                ConnectionType = dbType,
+                Datasource = "letportal"
             };
 
             var runningCommand = GetAvailableCommands().FirstOrDefault(a => a.CommandName.ToLower() == Mode.ToLower());

@@ -19,11 +19,16 @@ export class DatabaseOptionsComponent implements OnInit {
     options: DatabaseFormOptions
 
     databaseOptionsForm: FormGroup
+    selectedDatabase: DatabaseConnection
+    databases: Array<DatabaseConnection>
+
+    isMongoDb = true
+    code = ''
 
     @ViewChild('jsonDataEditor') jsonDataEditor: JsonEditorComponent
     public editorOptions3: JsonEditorOptions = new JsonEditorOptions()
     jsonData: any = {}
-    databaseConnections: Observable<Array<DatabaseConnection>>;
+    databaseConnections$: Observable<Array<DatabaseConnection>>;
     hintText = ''
     isHintClicked = false
     
@@ -36,7 +41,14 @@ export class DatabaseOptionsComponent implements OnInit {
 
     ngOnInit(): void { 
         this.initDatabaseOptions()
-        this.databaseConnections = this.databaseClient.getAll()
+        this.databaseConnections$ = this.databaseClient.getAll()
+        this.databaseConnections$.subscribe(res => {
+            this.databases = res
+            this.selectedDatabase = this.databaseOptions.databaseConnectionId ? this.databases.find(a => a.id == this.databaseOptions.databaseConnectionId ) : null
+            if(this.selectedDatabase){
+                this.code = this.selectedDatabase.databaseConnectionType == 'mongodb' ? '' : this.databaseOptions.query
+            }
+        })
     }
 
     initDatabaseOptions(){
@@ -66,9 +78,18 @@ export class DatabaseOptionsComponent implements OnInit {
             databaseConnectionId: [this.databaseOptions.databaseConnectionId, Validators.required],
             query: [this.databaseOptions.query, Validators.required]
         })
-
-        this.databaseOptionsForm.valueChanges.subscribe(newValue => {
-
+        
+        this.databaseOptionsForm.get('databaseConnectionId').valueChanges.subscribe(newValue => {
+            this.selectedDatabase = this.databases.find(a => a.id == newValue)
+            if(this.selectedDatabase.databaseConnectionType == 'mongodb'){
+                this.isMongoDb = true
+            }
+            else{
+                this.isMongoDb = false
+            }
+        })
+        this.databaseOptionsForm.get('query').valueChanges.subscribe(newValue => {
+            this.code = newValue
         })
     }
 

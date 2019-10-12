@@ -51,6 +51,10 @@ export class ObjectUtils {
         return typeof value === 'boolean'
     }
 
+    public static isArray(value){
+        return Array.isArray(value);
+    }
+
     public static clone(source: any): any {
         // Prefer to Mozila docs: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
         let jsonStr = JSON.stringify(source)

@@ -317,7 +317,9 @@ namespace LetPortal.Versions.Components
                             {
                                 DatabaseConnectionId = Constants.CoreDatabaseId,
                                 EntityName = "roles",
-                                Query = "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$project\": {\r\n          \"name\": \"$displayName\",\r\n          \"value\": \"$name\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$project\": {\r\n          \"name\": \"$displayName\",\r\n          \"value\": \"$name\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                : "Select \"displayName\" as name, name as value from roles"
                             }
                         },
                         Validators = new List<Portal.Entities.SectionParts.Controls.PageControlValidator>
