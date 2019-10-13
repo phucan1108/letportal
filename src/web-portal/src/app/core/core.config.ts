@@ -6,6 +6,8 @@ import { CleanControlEvent } from './events/control/clean.event';
 import { ResetControlEvent } from './events/control/reset.event';
 import { ControlEventExecution } from './events/control/control.event';
 import { currentTickTranslator } from './shell/translates/methods/currentTickTranslator';
+import { guidTranslator } from './shell/translates/methods/guidTranslator';
+import { bsonidTranslator } from './shell/translates/methods/bsonidTranslator';
 
 /**
  * Declare all classes which contains a function to translate a expression data in {{ }}
@@ -14,7 +16,9 @@ import { currentTickTranslator } from './shell/translates/methods/currentTickTra
 export const TRANSLATOR_METHODS = [
     toJsonStringTranslator,
     currentDateTranslator,
-    currentTickTranslator
+    currentTickTranslator,
+    guidTranslator,
+    bsonidTranslator
 ]
 
 /**

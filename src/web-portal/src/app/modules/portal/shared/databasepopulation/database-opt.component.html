@@ -12,7 +12,7 @@
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <mat-select placeholder="Pick one connection" formControlName="databaseId">
-                    <mat-option *ngFor="let database of databaseConnections | async" [value]="database.id">
+                    <mat-option *ngFor="let database of databaseConnections$ | async" [value]="database.id">
                         {{ database.name }}
                     </mat-option>
                 </mat-select>
@@ -33,7 +33,7 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group row" *ngIf="ismongodb && isReadyToRender">
         <label class="col-lg-2 col-form-label">Query:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
@@ -42,6 +42,15 @@
                 <input formControlName="query" matInput #queryTypeInput style="display:none">
                 <mat-hint align="end">{{queryTypeInput.value?.length || 0}}/500</mat-hint>
             </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group row" *ngIf="!ismongodb && isReadyToRender">
+        <label class="col-lg-2 col-form-label">Query:</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="query" matInput>
+            </mat-form-field>
+            <pre class="text-left"><code [highlight]="code"></code></pre>
         </div>
     </div>
     <div class="form-group row">

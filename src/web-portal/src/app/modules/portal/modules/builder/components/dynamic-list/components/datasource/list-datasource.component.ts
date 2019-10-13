@@ -71,8 +71,7 @@ export class ListDatasourceComponent implements OnInit {
 
     onSelectingEntityName($event: string) {
         this.selectedEntityname = $event
-    }
-    
+    }    
 
     private convertFieldType(fieldType: string): FieldValueType{
         switch(fieldType){

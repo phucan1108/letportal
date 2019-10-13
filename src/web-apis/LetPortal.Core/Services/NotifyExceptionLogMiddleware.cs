@@ -38,14 +38,14 @@ namespace LetPortal.Core.Services
             {
                 Process currentProcess = Process.GetCurrentProcess();
                 object reponseErrorBody;
-
+                var rawBody = await httpContext.Request.GetRawBodyAsync();
                 var pushLogModel = new PushLogModel
                 {
                     TraceId = httpContext.Request.Headers[Constants.TraceIdHeader].ToString(),
                     UserSessionId = httpContext.Request.Headers[Constants.UserSessionIdHeader].ToString(),
                     HttpRequestUrl = httpContext.Request.Path.ToUriComponent(),
                     HttpHeaders = ConvertUtil.SerializeObject(httpContext.Request.Headers),
-                    HttpRequestBody = await httpContext.Request.GetRawBodyAsync(),
+                    HttpRequestBody = rawBody,
                     ResponseBody = httpContext.Items.TryGetValue(Constants.OccurredException, out reponseErrorBody) ? reponseErrorBody.ToString() : await httpContext.Response.GetRawBodyAsync(),
                     ResponseStatusCode = httpContext.Response.StatusCode
                 };

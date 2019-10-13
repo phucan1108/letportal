@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Logger\Attributes\**" />
+    <EmbeddedResource Remove="Logger\Attributes\**" />
+    <None Remove="Logger\Attributes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="2.0.42" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
@@ -19,9 +25,5 @@
 	<PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
 	<PackageReference Include="Serilog.Sinks.MongoDB" Version="4.0.0" />
 	<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Logger\Attributes\" />
   </ItemGroup>
 </Project>

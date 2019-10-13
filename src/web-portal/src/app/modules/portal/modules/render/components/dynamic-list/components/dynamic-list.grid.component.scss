@@ -20,6 +20,10 @@
   text-align: left;
 }
 
+mat-cell{
+  word-break: break-all
+}
+
 @media (max-width: 768px) {
   .table-flex {
     padding-top: 30px;

@@ -129,13 +129,15 @@ namespace LetPortal.WebApis.Controllers
             {
                 var button = page.Commands.First(a => a.Name == pageSubmittedButtonModel.ButtonName);
                 if(button.ButtonOptions.ActionCommandOptions.ActionType == Portal.Entities.Shared.ActionType.ExecuteDatabase)
-                {
-                    var formattedString =
-                        StringUtil.ReplaceDoubleCurlyBraces(
-                            button.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query,
-                            pageSubmittedButtonModel.Parameters.Select(a => new System.Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
-
-                    var result = await _databaseServiceProvider.ExecuteDatabase(button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId, formattedString, pageSubmittedButtonModel.Parameters.Select(a => new Portal.Models.Databases.ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue}));
+                { 
+                    var result = 
+                        await _databaseServiceProvider
+                                .ExecuteDatabase(
+                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId, 
+                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query, 
+                                    pageSubmittedButtonModel
+                                        .Parameters
+                                        .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue}));
 
                     return Ok(result);
                 }

@@ -27,8 +27,7 @@ import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 
 export function hlJSLang() {
   return [
-    { name: 'sql', func: sql },
-    { name: 'pgsql', func: pgsql }
+    { name: 'sql', func: sql }
   ]
 }
 let portalBaseUrl = (configProvider: ConfigurationProvider) => {

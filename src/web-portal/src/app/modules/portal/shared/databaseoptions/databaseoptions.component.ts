@@ -98,31 +98,37 @@ export class DatabaseOptionsComponent implements OnInit {
     }
 
     openQueryHint() {
-        let query = '{\r\n  \"$query\":{\r\n    \"{{options.entityname}}\":[\r\n        {\r\n          \"$match\": {\r\n            \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n          }\r\n        }\r\n      ]\r\n  }\r\n}'
+        let query = this.isMongoDb ? 
+                    '{\r\n  \"$query\":{\r\n    \"{{options.entityname}}\":[\r\n        {\r\n          \"$match\": {\r\n            \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n          }\r\n        }\r\n      ]\r\n  }\r\n}'
+                    : 'Select * From {Your_table} Where id={{data.id}}'
         this.hintText = query
         this.isHintClicked = true
     }
 
     openInsertHint() {
-        let insert = '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}'
+        let insert =  this.isMongoDb ? '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}' :
+                        'Insert into {Your_table}(id) values ({{data.id}})'
         this.hintText = insert
         this.isHintClicked = true
     }
 
     openUpdateHint() {
-        let update = '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
+        let update = this.isMongoDb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}' :
+                        'Update {Your_table} Set name={{data.name}} Where id={{data.id}}'
         this.hintText = update
         this.isHintClicked = true
     }
 
     openUpdatePartsHint(){
-        let updatePart = '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
+        let updatePart = this.isMongoDb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
+                        : 'Update {Your_table} Set name={{data.name}} Where id={{data.id}}'
         this.hintText = updatePart
         this.isHintClicked = true
     }
 
     openDeleteHint() {
-        let deleteText = '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
+        let deleteText = this.isMongoDb ? '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
+                        : 'Delete From {Your_tabler} Where id={{data.id}}'
         this.hintText = deleteText
         this.isHintClicked = true
     }
