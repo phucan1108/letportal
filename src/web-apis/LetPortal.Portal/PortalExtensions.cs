@@ -4,6 +4,7 @@ using LetPortal.Core.Persistences;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Executions.PostgreSql;
+using LetPortal.Portal.Executions.SqlServer;
 using LetPortal.Portal.Options.Files;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Providers.Databases;
@@ -85,6 +86,8 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
 
                 builder.Services.AddTransient<IStoreFileDatabase, MongoStoreFileDatabase>();
+                builder.Services.AddTransient<IStoreFileDatabase, PostgreStoreFileDatabase>();
+                builder.Services.AddTransient<IStoreFileDatabase, SqlServerStoreFileDatabase>();
             }
 
             builder.Services.AddTransient<IExecutionDatabase, MongoExecutionDatabase>();
@@ -98,6 +101,12 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IExtractionDatabase, PostgreExtractionDatabase>();
             builder.Services.AddTransient<IDynamicListQueryDatabase, PostgreDynamicListQueryDatabase>();
             builder.Services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
+
+            builder.Services.AddTransient<IAnalyzeDatabase, SqlServerAnalyzeDatabase>();
+            builder.Services.AddTransient<IExecutionDatabase, SqlServerExecutionDatabase>();
+            builder.Services.AddTransient<IExtractionDatabase, SqlServerExtractionDatabase>();
+            builder.Services.AddTransient<IDynamicListQueryDatabase, SqlServerDynamicListQueryDatabase>();
+            builder.Services.AddTransient<IExtractionDatasource, SqlServerExtractionDatasource>();
 
             builder.Services.AddTransient<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
             builder.Services.AddTransient<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();

@@ -82,7 +82,8 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/dynamic-list",
-                                    IsSameDomain = true
+                                    IsSameDomain = true,
+                                    RedirectType = RedirectType.ThroughUrl
                                 },
                                 ActionType = ActionType.Redirect
                             },
@@ -99,7 +100,8 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/dynamic-list/{{data.id}}",
-                                    IsSameDomain = true
+                                    IsSameDomain = true,
+                                    RedirectType = RedirectType.ThroughUrl
                                 },
                                 ActionType = ActionType.Redirect
                             },
@@ -174,7 +176,8 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/standard",
-                                    IsSameDomain = true
+                                    IsSameDomain = true,
+                                    RedirectType = RedirectType.ThroughUrl
                                 },
                                 ActionType = ActionType.Redirect
                             },
@@ -191,7 +194,8 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/standard/{{data.id}}",
-                                    IsSameDomain = true
+                                    IsSameDomain = true,
+                                    RedirectType = RedirectType.ThroughUrl
                                 },
                                 ActionType = ActionType.Redirect
                             },

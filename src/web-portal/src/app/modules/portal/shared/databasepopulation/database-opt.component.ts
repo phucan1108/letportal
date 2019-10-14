@@ -61,7 +61,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     shallowedEntitySchemas: Array<EntitySchema>;
 
     isRefreshClicked = false
-
+    isAutoPopulate = false
     private params: FilledParameter[] = []
 
     constructor(
@@ -111,6 +111,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
              
             if(this.isEditMode){
                 this.entityClient.getAllFromOneDatabase(this.databaseOptionForm.get('databaseId').value).subscribe(result => {
+                    this.shallowedEntitySchemas = result
                     this.entities.next(result)
                 })
             }
@@ -218,15 +219,18 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                             this.code = defaultQuery
                         }
                         this.databaseOptionForm.get('query').setValue(defaultQuery)
-                        this.dynamicListClient.extractingQuery({ query: defaultQuery, databaseId: this.databaseOptionForm.get('databaseId').value, parameters: [] }).subscribe(
-                            result => {
-                                this.logger.debug('Parsing response', result)
-                                this.afterSelectingEntity.emit(result)
-                            },
-                            err => {
-                                this.shortcutUtil.notifyMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
-                            }
-                        )
+                        
+                        if(this.isAutoPopulate){
+                            this.dynamicListClient.extractingQuery({ query: defaultQuery, databaseId: this.databaseOptionForm.get('databaseId').value, parameters: [] }).subscribe(
+                                result => {
+                                    this.logger.debug('Parsing response', result)
+                                    this.afterSelectingEntity.emit(result)
+                                },
+                                err => {
+                                    this.shortcutUtil.notifyMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
+                                }
+                            )
+                        }                        
 
                         return false;
                     }
@@ -262,6 +266,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             }).subscribe(
                 result => {
                     this.entityClient.getAllFromOneDatabase(this.databaseOptionForm.get('databaseId').value).subscribe(result => {
+                        this.shallowedEntitySchemas = result;
                         this.entities.next(result)
                     })
                 },

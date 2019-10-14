@@ -118,7 +118,16 @@ namespace LetPortal.WebApis.Controllers
             if(databaseConnection == null)
                 return BadRequest();
 
-            var result = await _databaseService.ExtractColumnSchema(databaseConnection, ConvertUtil.SerializeObject(content));
+            string formattedContent;
+            if(databaseConnection.GetConnectionType() != Core.Persistences.ConnectionType.MongoDB)
+            {
+                formattedContent = content;
+            }
+            else
+            {
+                formattedContent = ConvertUtil.SerializeObject(content);
+            }
+            var result = await _databaseService.ExtractColumnSchema(databaseConnection, formattedContent);
             _logger.Info("Result of extracting dynamic: {@result}", result);
             return Ok(result);
         }
