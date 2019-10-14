@@ -140,26 +140,38 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                         preserveQueryParams: true
                     };
                     let url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
-                        this.translatePipe.translate(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, commandClicked.data) :
-                        this.translatePipe.translate(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {})
+                        this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {
+                            ...this.pageService.getPageShellData(),
+                            data: commandClicked.data
+                        }) : 
+                        this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, this.pageService.getPageShellData())
                     this.logger.debug('redirecit url', url)
                     this.redirectRoute.navigateByUrl(url, navigationExtras)
                 }
                 else {
                     let url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
-                        this.translatePipe.translate(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, commandClicked.data) :
-                        this.translatePipe.translate(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {})
+                        this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {
+                            ...this.pageService.getPageShellData(),
+                            data: commandClicked.data
+                        }) :
+                        this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, this.pageService.getPageShellData())
                     this.logger.debug('redirecit url', url)
                     window.open(url, '_blank')
                 }
                 break
             case ActionType.CallHttpService:
                 let url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
-                    this.translatePipe.translate(commandClicked.command.actionCommandOptions.httpServiceOptions.httpServiceUrl, commandClicked.data) :
-                    this.translatePipe.translate(commandClicked.command.actionCommandOptions.httpServiceOptions.httpServiceUrl, {})
+                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.httpServiceUrl, {
+                        ...this.pageService.getPageShellData(),
+                        data: commandClicked.data
+                    }) :
+                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.httpServiceUrl, this.pageService.getPageShellData())
                 let body = commandClicked.command.commandPositionType === CommandPositionType.InList ?
-                    this.translatePipe.translate(commandClicked.command.actionCommandOptions.httpServiceOptions.jsonBody, commandClicked.data) :
-                    this.translatePipe.translate(commandClicked.command.actionCommandOptions.httpServiceOptions.jsonBody, {})
+                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.jsonBody, {
+                        ...this.pageService.getPageShellData(),
+                        data: commandClicked.data
+                    }) :
+                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.jsonBody, this.pageService.getPageShellData())
                 switch (commandClicked.command.actionCommandOptions.httpServiceOptions.httpMethod.toUpperCase()) {
                     case 'GET':
                         const get$ = this.httpClient.get(url, {

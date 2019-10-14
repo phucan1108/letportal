@@ -17,6 +17,7 @@ import { NGXLogger } from 'ngx-logger';
 import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { CustomHttpService } from 'services/customhttp.service';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'divided-columns',
@@ -204,8 +205,28 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             tempSectionData[this.section.name] = new Object()
         }
         _.forEach(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[], control => {
-            let controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname)
-            controlData = controlData ? controlData : ''
+            let controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname)           
+
+            if(control.type == ControlType.AutoComplete || control.type == ControlType.Select){
+                if(controlData){
+                    if(!ObjectUtils.isArray(controlData)){
+                        try{
+                            let temp = JSON.parse(controlData)
+                            controlData = temp
+                        }
+                        catch{
+                            controlData = []
+                        }                        
+                    }
+                } 
+                else{
+                    controlData = []
+                }               
+            }
+            if(!ObjectUtils.isBoolean(controlData)){
+                controlData = controlData ? controlData : null
+            }
+            
             let mapDataControl: MapDataControl
             if (isKeepDataSection) {
                 mapDataControl = {
@@ -225,7 +246,6 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                 }
                 sectionsMap.push(mapDataControl)
             }
-
             formControls[control.name] = new FormControl({
                 value: controlData,
                 disabled: control.defaultOptions.checkDisabled

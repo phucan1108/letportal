@@ -12,7 +12,7 @@ import { tap, map, filter, mergeMap } from 'rxjs/operators';
 import { AuthUser } from '../security/auth.model';
 import { PortalStandardClaims } from '../security/portalClaims';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { PageResponse, PageLoadedDatasource, PageControlEvent, TriggeredControlEvent } from '../models/page.model';
+import { PageResponse, PageLoadedDatasource, PageControlEvent, TriggeredControlEvent, PageShellData } from '../models/page.model';
 import { PageStateModel, PageState } from 'stores/pages/page.state';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
 import * as _ from 'lodash';
@@ -290,14 +290,7 @@ export class PageService {
     }
 
     fetchDatasource(databaseId: string, query: string): Observable<any> {
-        let combineQuery = this.translator.translateData(query, {
-            user: this.security.getAuthUser(),
-            claims: {},
-            configs: this.configs,
-            data: this.data,
-            options: this.options,
-            queryparams: this.queryparams
-        })
+        let combineQuery = this.translator.translateDataWithShell(query, this.getPageShellData())
 
         return this.databasesClient.executeQueryDatasource(databaseId, combineQuery).pipe(
             mergeMap(result => {
@@ -324,16 +317,21 @@ export class PageService {
     }
 
     translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string {
-        let translated = this.translator.translateData(translateStr, {
-            user: this.security.getAuthUser(),
-            claims: this.claims,
-            configs: this.configs,
-            data: !!data ? (isMergingData ? this.mergeData(data) : data) : this.data,
-            options: this.options,
-            queryparams: this.queryparams
-        })
+        let translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
 
         return translated
+    }
+
+    getPageShellData(): PageShellData{
+        return {
+            data: this.data,
+            appsettings: {},
+            claims: this.claims,
+            configs: this.configs,
+            options: this.options,
+            queryparams: this.queryparams,
+            user: this.security.getAuthUser()
+        }
     }
 
     private mergeData(mergingData: any) {
@@ -411,8 +409,8 @@ export class PageService {
                                 }))
                                 break
                             case DatasourceControlType.WebService:
-                                const jsonBody = translator.translate(ds.options.databaseOptions.query, {})
-                                const url = translator.translate(ds.options.httpServiceOptions.httpServiceUrl, {})
+                                const jsonBody = translator.translateDataWithShell(ds.options.databaseOptions.query, this.getPageShellData())
+                                const url = translator.translateDataWithShell(ds.options.httpServiceOptions.httpServiceUrl, this.getPageShellData())
 
                                 switch (ds.options.httpServiceOptions.httpMethod.toUpperCase()) {
                                     case 'GET':
@@ -426,14 +424,7 @@ export class PageService {
                                 }
                                 break
                             case DatasourceControlType.Database:
-                                const params = translator.retrieveParameters(ds.options.databaseOptions.query, {
-                                    user: this.security.getAuthUser(),
-                                    configs: this.configs,
-                                    claims: this.claims,
-                                    data: this.data,
-                                    options: this.options,
-                                    queryparams: this.queryparams
-                                })
+                                const params = translator.retrieveParameters(ds.options.databaseOptions.query, this.getPageShellData())
                                 const dsName = ds.name
                                 datasources$.push(
                                     pagesClient
@@ -501,14 +492,7 @@ export class PageService {
             switch (command.buttonOptions.actionCommandOptions.actionType) {
                 case ActionType.ExecuteDatabase:
                     const params = this.translator.retrieveParameters(
-                        command.buttonOptions.actionCommandOptions.databaseOptions.query, {
-                        user: this.security.getAuthUser(),
-                        configs: this.configs,
-                        claims: this.claims,
-                        data: this.data,
-                        options: this.options,
-                        queryparams: this.queryparams
-                    });
+                        command.buttonOptions.actionCommandOptions.databaseOptions.query, this.getPageShellData());
                     this.pageClients
                         .submitCommand(this.page.id, {
                             buttonName: command.name,
@@ -531,13 +515,13 @@ export class PageService {
                         options: this.options,
                         queryparams: this.queryparams
                     }
-                    let url = this.translator.translateData(
+                    let url = this.translator.translateDataWithShell(
                         command.buttonOptions.actionCommandOptions.httpServiceOptions.httpServiceUrl,
-                        translatorFactors
+                        this.getPageShellData()
                     )
-                    let body = this.translator.translateData(
+                    let body = this.translator.translateDataWithShell(
                         command.buttonOptions.actionCommandOptions.httpServiceOptions.jsonBody,
-                        translatorFactors
+                        this.getPageShellData()
                     )
 
                     this.customHttpService.performHttp(
@@ -576,8 +560,8 @@ export class PageService {
                     let allowed = this.evaluatedExpression(route.condition)
                     if (allowed && !foundRoute) {
                         foundRoute = true
-                        let url = this.translator.translate(route.targetUrl, this.data)
-                        let path = this.translator.translate(route.passDataPath, this.data)
+                        let url = this.translator.translateDataWithShell(route.targetUrl, this.getPageShellData())
+                        let path = this.translator.translateDataWithShell(route.passDataPath, this.getPageShellData())
                         let fullUrl = !!url ? url : ''
                         if (!!path) {
                             fullUrl += '?' + path
@@ -591,7 +575,7 @@ export class PageService {
                     if (allowedPage && !foundRoute) {
                         this.pageClients.getOneById(route.targetPageId).subscribe(
                             page => {
-                                let combineData = this.translator.translate(route.passDataPath, this.data)
+                                let combineData = this.translator.translateDataWithShell(route.passDataPath, this.getPageShellData())
                                 if (combineData) {
                                     this.router.navigateByUrl(page.urlPath + '?' + combineData)
                                 }
