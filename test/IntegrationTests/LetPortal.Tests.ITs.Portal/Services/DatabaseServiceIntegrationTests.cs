@@ -134,7 +134,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
             // Act
-            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from {{options.entityname}} Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "options.entityname", ReplaceValue = "databases" }, new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
+            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from databases Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
 
             // Assert
             Assert.NotEmpty(result.Result);
