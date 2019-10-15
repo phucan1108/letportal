@@ -5,6 +5,7 @@ using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Repositories;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -279,6 +280,8 @@ namespace LetPortal.Tests.ITs.Portal
                 var sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureCreated();
                 sqlContext.Databases.Add(SqlServerDatabaseConnection);
+                // Only Sql Server must create a table for storing file
+                sqlContext.Database.ExecuteSqlCommand("Create table [dbo].[uploadFiles] ([id] [nvarchar](450) NOT NULL, [file] [varbinary](max) NULL, CONSTRAINT [PK_uploadFiles] PRIMARY KEY CLUSTERED ( [id] ASC )WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]) ON[PRIMARY] TEXTIMAGE_ON[PRIMARY]");
                 sqlContext.SaveChanges();
             }
 

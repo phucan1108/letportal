@@ -76,6 +76,7 @@ namespace LetPortal.WebApis.Controllers
                 dynamicList.Id = id;
                 await _dynamicListRepository.UpdateAsync(id, dynamicList);
                 _logger.Info("Updated dynamic list: {@dynamicList}", dynamicList);
+                return Ok();
             }
             return BadRequest();
         }

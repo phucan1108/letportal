@@ -19,14 +19,18 @@ namespace LetPortal.Portal.Executions.SqlServer
             using(var sqlDbConnection = new SqlConnection(databaseOptions.ConnectionString))
             {
                 sqlDbConnection.Open();
-                using(var sqlCommand = new SqlCommand("SELECT * FROM uploadFiles", sqlDbConnection))
+                using(var sqlCommand = new SqlCommand("SELECT * FROM uploadFiles Where id=@id", sqlDbConnection))
                 {
+                    sqlCommand.Parameters.Add("id", System.Data.SqlDbType.NVarChar, 450).Value = fileId;
                     using(var sqlReader = await sqlCommand.ExecuteReaderAsync())
                     {
-                        while(sqlReader.NextResult())
+                        if(sqlReader.HasRows)
                         {
-                            bytes = (byte[])sqlReader["File"];
-                            break;
+                            while(sqlReader.Read())
+                            {
+                                bytes = (byte[])sqlReader["File"];
+                                break;
+                            }
                         }
                     }
                 }
@@ -43,9 +47,10 @@ namespace LetPortal.Portal.Executions.SqlServer
                 string oid = DataUtil.GenerateUniqueId();
                 using(var transaction = sqlDbConnection.BeginTransaction())
                 {
-                    using(var sqlCommand = new SqlCommand("INSERT INTO uploadFiles (File) Values(@File)", sqlDbConnection, transaction))
+                    using(var sqlCommand = new SqlCommand("INSERT INTO uploadFiles ([id], [file]) Values (@id, @File)", sqlDbConnection, transaction))
                     {
                         var bytes = await File.ReadAllBytesAsync(tempFilePath);
+                        sqlCommand.Parameters.Add("@id", System.Data.SqlDbType.NVarChar).Value = oid;
                         sqlCommand.Parameters.Add("@File", System.Data.SqlDbType.VarBinary, bytes.Length).Value = bytes;
                         sqlCommand.ExecuteNonQuery();
                     }
