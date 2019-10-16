@@ -4,9 +4,7 @@ using LetPortal.Portal.Entities.EntitySchemas;
 using LetPortal.Portal.Repositories.EntitySchemas;
 using Microsoft.Extensions.Options;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -24,6 +22,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Get_One_Entity_Schema_By_DB_And_Name_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var databaseOptions = new DatabaseOptions
             {
@@ -63,6 +66,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
         [Fact]
         public async Task Update_Entity_Schema_With_Kept_Name_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var databaseOptions = new DatabaseOptions
             {

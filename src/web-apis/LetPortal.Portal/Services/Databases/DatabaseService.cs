@@ -43,14 +43,7 @@ namespace LetPortal.Portal.Services.Databases
             var connectionType = databaseConnection.GetConnectionType();
             var extractionDatabase = _extractionDatabases.First(a => a.ConnectionType == connectionType);
 
-            switch(connectionType)
-            {
-                case ConnectionType.MongoDB:
-                    return await extractionDatabase.Extract(databaseConnection, formattedString);
-                case ConnectionType.PostgreSQL:
-                    return await extractionDatabase.Extract(databaseConnection, formattedString);
-            }
-            throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
+            return await extractionDatabase.Extract(databaseConnection, formattedString);
         }
     }
 }

@@ -27,7 +27,19 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
         {
             foreach(EntitySchema entitySchema in entitySchemas)
             {
-                bool isExisted = _context.EntitySchemas.Any(a => a.Name == entitySchema.Name);
+                bool isExisted = false;
+
+                // Hotfix for MySQL issue: https://bugs.mysql.com/bug.php?id=92987
+                if(_context.ConnectionType == ConnectionType.MySQL)
+                {
+                    var exist = _context.EntitySchemas.FirstOrDefault(a => a.Name == entitySchema.Name);
+                    isExisted = exist != null;
+                }
+                else
+                {
+                    isExisted = _context.EntitySchemas.Any(a => a.Name == entitySchema.Name);
+                }
+
                 if((isExisted && isKeptSameName) == false)
                 {
                     entitySchema.Id = DataUtil.GenerateUniqueId();

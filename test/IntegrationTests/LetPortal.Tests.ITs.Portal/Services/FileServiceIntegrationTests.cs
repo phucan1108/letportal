@@ -2,6 +2,7 @@
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
+using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
 using LetPortal.Portal.Options.Files;
@@ -47,9 +48,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
             _context = context;
         }
 
+        #region UTs for Mongo
         [Fact]
         public async Task Upload_File_And_Save_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // 1. Arrange
             var mockFile = new Mock<IFormFile>();
             var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
@@ -112,6 +119,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Upload_Then_Download_File_Mongo_Test()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // 1. Arrange
             var mockFile = new Mock<IFormFile>();
             var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
@@ -172,10 +184,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // 3. Assert
             Assert.NotNull(response.FileBytes);
         }
+        #endregion
 
+        #region UTs for Postgre
         [Fact]
         public async Task Upload_File_And_Save_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // 1. Arrange
             var mockFile = new Mock<IFormFile>();
             var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
@@ -237,6 +256,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Upload_Then_Download_File_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // 1. Arrange
             var mockFile = new Mock<IFormFile>();
             var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
@@ -296,10 +320,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // 3. Assert
             Assert.NotNull(response.FileBytes);
         }
+        #endregion
 
+        #region UTs for Sql Server
         [Fact]
         public async Task Upload_File_And_Save_Sql_Server_Test()
         {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
             // 1. Arrange
             var mockFile = new Mock<IFormFile>();
             var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
@@ -361,6 +392,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Upload_Then_Download_File_Sql_Server_Test()
         {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
             // 1. Arrange
             var mockFile = new Mock<IFormFile>();
             var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
@@ -420,5 +456,143 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // 3. Assert
             Assert.NotNull(response.FileBytes);
         }
+        #endregion
+
+        #region UTs for MySQL
+        [Fact]
+        public async Task Upload_File_And_Save_My_Sql_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+
+            // 1. Arrange
+            var mockFile = new Mock<IFormFile>();
+            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            var memoryStream = new MemoryStream();
+            await sourceImg.CopyToAsync(memoryStream);
+            sourceImg.Close();
+            memoryStream.Position = 0;
+            var fileName = "connect-iot-to-internet.jpg";
+            mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
+            mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
+            mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
+            mockFile
+                .Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
+                .Verifiable();
+
+            var databaseOptions = new Core.Persistences.DatabaseOptions
+            {
+                ConnectionString = _context.MySqlDatabaseConnection.ConnectionString,
+                ConnectionType = Core.Persistences.ConnectionType.MySQL,
+                Datasource = _context.MySqlDatabaseConnection.DataSource
+            };
+
+            var fileRepository = new FileEFRepository(_context.GetMySQLContext());
+            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+
+            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+
+            var storeFileDatabases = new List<IStoreFileDatabase>
+            {
+                new MySqlStoreFileDatabase()
+            };
+            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+                databaseOptionsMock,
+                databaseStorageOptionsMock,
+                storeFileDatabases);
+
+            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            {
+               databaseFileConnectorExecution
+            }, new List<IFileValidatorRule>
+            {
+               checkFileExtensionRule,
+               checkFileSizeRule
+            }, fileRepository);
+
+            // Act
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            memoryStream.Close();
+
+            // 3. Assert
+            Assert.True(!string.IsNullOrEmpty(result.FileId));
+        }
+
+        [Fact]
+        public async Task Upload_Then_Download_File_My_Sql_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+            // 1. Arrange
+            var mockFile = new Mock<IFormFile>();
+            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            var memoryStream = new MemoryStream();
+            await sourceImg.CopyToAsync(memoryStream);
+            sourceImg.Close();
+            memoryStream.Position = 0;
+            var fileName = "connect-iot-to-internet.jpg";
+            mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
+            mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
+            mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
+            mockFile
+                .Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
+                .Verifiable();
+
+            var databaseOptions = new Core.Persistences.DatabaseOptions
+            {
+                ConnectionString = _context.MySqlDatabaseConnection.ConnectionString,
+                ConnectionType = Core.Persistences.ConnectionType.MySQL,
+                Datasource = _context.MySqlDatabaseConnection.DataSource
+            };
+
+            var fileRepository = new FileEFRepository(_context.GetMySQLContext());
+            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+
+            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+
+            var storeFileDatabases = new List<IStoreFileDatabase>
+            {
+                new MySqlStoreFileDatabase()
+            };
+            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+                databaseOptionsMock,
+                databaseStorageOptionsMock,
+                storeFileDatabases);
+
+            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            {
+               databaseFileConnectorExecution
+            }, new List<IFileValidatorRule>
+            {
+               checkFileExtensionRule,
+               checkFileSizeRule
+            }, fileRepository);
+
+            // Act
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            memoryStream.Close();
+            var response = await fileService.DownloadFileAsync(result.FileId);
+            // 3. Assert
+
+            // 3. Assert
+            Assert.NotNull(response.FileBytes);
+        }
+        #endregion
     }
 }

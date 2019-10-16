@@ -9,6 +9,14 @@ namespace LetPortal.Identity.Repositories
 {
     public class LetPortalIdentityDbContext : DbContext
     {
+        public ConnectionType ConnectionType
+        {
+            get
+            {
+                return _options.ConnectionType;
+            }
+        }
+
         public DbSet<User> Users { get; set; }
 
         public DbSet<Role> Roles { get; set; }
@@ -31,6 +39,12 @@ namespace LetPortal.Identity.Repositories
             var userBuilder = modelBuilder.Entity<User>();
             userBuilder.HasKey(a => a.Id);
 
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                userBuilder.Property(a => a.IsConfirmedEmail).HasColumnType("BIT");
+                userBuilder.Property(a => a.IsLockoutEnabled).HasColumnType("BIT");
+            }
+
             var jsonRolesConverter = new ValueConverter<List<string>, string>(
                 v => ConvertUtil.SerializeObject(v, true),
                 v => ConvertUtil.DeserializeObject<List<string>>(v));
@@ -49,11 +63,14 @@ namespace LetPortal.Identity.Repositories
 
             var issueTokenBuilder = modelBuilder.Entity<IssuedToken>();
             issueTokenBuilder.HasKey(a => a.Id);
-            issueTokenBuilder.HasOne(a => a.User).WithOne();
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                issueTokenBuilder.Property(a => a.Deactive).HasColumnType("BIT");
+            }
 
             var userSessionBuilder = modelBuilder.Entity<UserSession>();
             userSessionBuilder.HasKey(a => a.Id);
-            userSessionBuilder.HasMany(a => a.UserActivities).WithOne().OnDelete(DeleteBehavior.Cascade);            
+            userSessionBuilder.HasMany(a => a.UserActivities).WithOne().OnDelete(DeleteBehavior.Cascade);
 
             var userActivityBuilder = modelBuilder.Entity<UserActivity>();
             userActivityBuilder.HasKey(a => a.Id);
@@ -78,7 +95,7 @@ namespace LetPortal.Identity.Repositories
             }
             else if(_options.ConnectionType == ConnectionType.MySQL)
             {
-                optionsBuilder.UseMySql(_options.ConnectionString);
+                optionsBuilder.UseMySQL(_options.ConnectionString);
             }
         }
 

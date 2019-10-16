@@ -20,6 +20,13 @@ namespace LetPortal.Portal.Repositories
 {
     public class LetPortalDbContext : DbContext, IDisposable
     {
+        public ConnectionType ConnectionType
+        {
+            get
+            {
+                return _options.ConnectionType;
+            }
+        }
         public DbSet<App> Apps { get; set; }
 
         public DbSet<Component> Components { get; set; }
@@ -68,6 +75,12 @@ namespace LetPortal.Portal.Repositories
 
             var componentBuilder = modelBuilder.Entity<Component>();
             componentBuilder.HasKey(a => a.Id);
+
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                componentBuilder.Property(a => a.AllowOverrideOptions).HasColumnType("BIT");
+                componentBuilder.Property(a => a.AllowPassingDatasource).HasColumnType("BIT");
+            }
 
             var jsonShellOptionsConverter = new ValueConverter<List<ShellOption>, string>(
                 v => ConvertUtil.SerializeObject(v, true),
@@ -142,6 +155,10 @@ namespace LetPortal.Portal.Repositories
 
             var datasourceBuilder = modelBuilder.Entity<Datasource>();
             datasourceBuilder.HasKey(a => a.Id);
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                datasourceBuilder.Property(a => a.CanCache).HasColumnType("BIT");
+            }
 
             var entitySchemaBuilder = modelBuilder.Entity<EntitySchema>();
             entitySchemaBuilder.HasKey(a => a.Id);
@@ -176,7 +193,7 @@ namespace LetPortal.Portal.Repositories
             }
             else if(_options.ConnectionType == ConnectionType.MySQL)
             {
-                optionsBuilder.UseMySql(_options.ConnectionString);
+                optionsBuilder.UseMySQL(_options.ConnectionString);
             }
         }
 

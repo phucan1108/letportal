@@ -1,14 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
-using Npgsql;
 using System.Data.Common;
-using System.Data.SqlClient;
 
 namespace LetPortal.Core.Persistences
 {
     public class EFConnection : IPersistenceConnection<DbConnection>
     {
-        private DbConnection _connection;
+        private readonly DbConnection _connection;
 
         public EFConnection(IOptionsMonitor<DatabaseOptions> options)
         {
@@ -22,18 +19,6 @@ namespace LetPortal.Core.Persistences
 
         public void ReloadOptions(DatabaseOptions databaseOptions)
         {
-            if(databaseOptions.ConnectionType == ConnectionType.SQLServer)
-            {
-                _connection = new SqlConnection(databaseOptions.ConnectionString);
-            }
-            else if(databaseOptions.ConnectionType == ConnectionType.PostgreSQL)
-            {
-                _connection = new NpgsqlConnection(databaseOptions.ConnectionString);
-            }
-            else if(databaseOptions.ConnectionType == ConnectionType.MySQL)
-            {
-                _connection = new MySqlConnection(databaseOptions.ConnectionString);
-            }
         }
     }
 }

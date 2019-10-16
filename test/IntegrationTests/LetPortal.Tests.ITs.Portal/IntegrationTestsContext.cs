@@ -280,7 +280,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureCreated();
                 sqlContext.Databases.Add(SqlServerDatabaseConnection);
-                // Only Sql Server must create a table for storing file
+                // Sql Server must create a table for storing file
                 sqlContext.Database.ExecuteSqlCommand("Create table [dbo].[uploadFiles] ([id] [nvarchar](450) NOT NULL, [file] [varbinary](max) NULL, CONSTRAINT [PK_uploadFiles] PRIMARY KEY CLUSTERED ( [id] ASC )WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]) ON[PRIMARY] TEXTIMAGE_ON[PRIMARY]");
                 sqlContext.SaveChanges();
             }
@@ -290,6 +290,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureCreated();
                 mysqlContext.Databases.Add(MySqlDatabaseConnection);
+                mysqlContext.Database.ExecuteSqlCommand("Create table `uploadFiles`(`id` varchar(255) NOT NULL,  `file` mediumblob NULL, PRIMARY KEY(`id`)) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci");
                 mysqlContext.SaveChanges();
             }
         }

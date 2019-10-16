@@ -9,6 +9,8 @@ using LetPortal.Portal.Executions.PostgreSql;
 using System.Collections.Generic;
 using LetPortal.Portal.Models.Databases;
 using System;
+using LetPortal.Portal.Executions.SqlServer;
+using LetPortal.Portal.Executions.MySQL;
 
 namespace LetPortal.Tests.ITs.Portal.Services
 {
@@ -21,9 +23,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
             _context = context;
         }
 
+        #region UTs for MongoDB
         [Fact]
         public async Task Execute_Dynamic_Query_Command_In_MongoDb()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var mongoExecutionDatabase = new MongoExecutionDatabase();
             var mongoDatabaseConnection = _context.MongoDatabaseConenction;
@@ -39,6 +47,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Dynamic_Insert_In_MongoDb()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var mongoExecutionDatabase = new MongoExecutionDatabase();
             var mongoDatabaseConnection = _context.MongoDatabaseConenction;
@@ -59,6 +72,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Dynamic_Update_In_MongoDb()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var mongoExecutionDatabase = new MongoExecutionDatabase();
             var mongoDatabaseConnection = _context.MongoDatabaseConenction;
@@ -75,6 +93,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Dynamic_Delete_In_MongoDb()
         {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var mongoExecutionDatabase = new MongoExecutionDatabase();
             var mongoDatabaseConnection = _context.MongoDatabaseConenction;
@@ -95,9 +118,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
             Assert.True(result.IsSuccess);
         }
 
+        #endregion
+
+        #region UTs for Postgre
         [Fact]
         public async Task Extract_Schema_From_Query_In_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var postgreExtractionDatabase = new PostgreExtractionDatabase();
 
@@ -113,6 +144,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Dynamic_Query_In_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var postgreExecutionDatabase = new PostgreExecutionDatabase();
 
@@ -128,6 +164,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Dynamic_Query_With_Params_In_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var postgreExecutionDatabase = new PostgreExecutionDatabase();
 
@@ -143,6 +184,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Insert_In_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var postgreExecutionDatabase = new PostgreExecutionDatabase();
 
@@ -171,6 +217,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Update_In_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var postgreExecutionDatabase = new PostgreExecutionDatabase();
 
@@ -194,6 +245,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
         [Fact]
         public async Task Execute_Delete_In_Postgre_Test()
         {
+            if(!_context.AllowPostgreSQL)
+            {
+                Assert.True(true);
+                return;
+            }
             // Arrange
             var postgreExecutionDatabase = new PostgreExecutionDatabase();
 
@@ -225,5 +281,335 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Assert
             Assert.True(result.IsSuccess);
         }
+
+        #endregion
+
+        #region UTs for SQL Server
+        [Fact]
+        public async Task Extract_Schema_From_Query_In_Sql_Server_Test()
+        {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var sqlServerExtractionDatabase = new SqlServerExtractionDatabase();
+
+            var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { sqlServerExtractionDatabase });
+            // Act
+            var warpQuery = "Select * From databases";
+            var result = await databaseService.ExtractColumnSchema(_context.SqlServerDatabaseConnection, warpQuery);
+
+            // Assert
+            Assert.NotEmpty(result.ColumnFields);
+        }
+
+        [Fact]
+        public async Task Execute_Dynamic_Query_In_Sql_Server_Test()
+        {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+
+            // Act
+            var result = await databaseService.ExecuteDynamic(_context.SqlServerDatabaseConnection, "Select * from databases", null);
+
+            // Assert
+            Assert.NotEmpty(result.Result);
+        }
+
+        [Fact]
+        public async Task Execute_Dynamic_Query_With_Params_In_Sql_Server_Test()
+        {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+
+            // Act
+            var result = await databaseService.ExecuteDynamic(_context.SqlServerDatabaseConnection, "Select * from databases Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
+
+            // Assert
+            Assert.NotEmpty(result.Result);
+        }
+
+        [Fact]
+        public async Task Execute_Insert_In_Sql_Server_Test()
+        {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+
+            // Act
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.SqlServerDatabaseConnection,
+                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Execute_Update_In_Sql_Server_Test()
+        {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+
+            // Act
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.SqlServerDatabaseConnection,
+                        "Update databases SET \"displayName\"={{data.displayName}} WHERE id={{data.id}}",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "data.id", ReplaceValue = _context.PostgreSqlDatabaseConnection.Id },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Execute_Delete_In_Sql_Server_Test()
+        {
+            if(!_context.AllowSQLServer)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+            var insertId = Guid.NewGuid().ToString();
+            // Act
+            await databaseService.ExecuteDynamic(
+                    _context.SqlServerDatabaseConnection,
+                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = insertId },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
+                        });
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.SqlServerDatabaseConnection,
+                        "DELETE From databases Where id={{data.id}}",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "data.id", ReplaceValue = insertId }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        #endregion
+
+        #region UTs for MySQL
+        [Fact]
+        public async Task Extract_Schema_From_Query_In_MySQL_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var mysqlExtractionDatabase = new MySqlExtractionDatabase();
+
+            var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { mysqlExtractionDatabase });
+            // Act
+            var warpQuery = "Select * From `databases`";
+            var result = await databaseService.ExtractColumnSchema(_context.MySqlDatabaseConnection, warpQuery);
+
+            // Assert
+            Assert.NotEmpty(result.ColumnFields);
+        }
+
+        [Fact]
+        public async Task Execute_Dynamic_Query_In_MySQL_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+
+            // Act
+            var result = await databaseService.ExecuteDynamic(_context.MySqlDatabaseConnection, "Select * from `databases`", null);
+
+            // Assert
+            Assert.NotEmpty(result.Result);
+        }
+
+        [Fact]
+        public async Task Execute_Dynamic_Query_With_Params_In_MySQL_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+
+            // Act
+            var result = await databaseService.ExecuteDynamic(_context.MySqlDatabaseConnection, "Select * from `databases` Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
+
+            // Assert
+            Assert.NotEmpty(result.Result);
+        }
+
+        [Fact]
+        public async Task Execute_Insert_In_MySql_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+
+            // Act
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.MySqlDatabaseConnection,
+                        "INSERT INTO `databases`(id, name, displayName, timeSpan, connectionString, dataSource, databaseConnectionType) VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Execute_Update_In_MySQL_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+
+            // Act
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.MySqlDatabaseConnection,
+                        "Update `databases` SET `displayName`={{data.displayName}} WHERE `id`={{data.id}}",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "data.id", ReplaceValue = _context.MySqlDatabaseConnection.Id },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Execute_Delete_In_MySQL_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+            var insertId = Guid.NewGuid().ToString();
+            // Act
+            await databaseService.ExecuteDynamic(
+                    _context.MySqlDatabaseConnection,
+                        "INSERT INTO `databases`(id, name, displayName, timeSpan, connectionString, dataSource, databaseConnectionType) VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = insertId },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
+                        });
+            var result =
+                await databaseService.ExecuteDynamic(
+                    _context.MySqlDatabaseConnection,
+                        "DELETE From `databases` Where id={{data.id}}",
+                        new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "data.id", ReplaceValue = insertId }
+                        });
+
+            // Assert
+            Assert.True(result.IsSuccess);
+        }
+
+        #endregion
     }
 }

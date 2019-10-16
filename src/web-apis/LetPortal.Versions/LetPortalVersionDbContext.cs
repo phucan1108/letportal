@@ -20,6 +20,14 @@ namespace LetPortal.Versions
 {
     public class LetPortalVersionDbContext : DbContext
     {
+        public ConnectionType ConnectionType
+        {
+            get
+            {
+                return _options.ConnectionType;
+            }
+        }
+
         public DbSet<App> Apps { get; set; }
 
         public DbSet<Component> Components { get; set; }
@@ -78,6 +86,12 @@ namespace LetPortal.Versions
 
             var componentBuilder = modelBuilder.Entity<Component>();
             componentBuilder.HasKey(a => a.Id);
+
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                componentBuilder.Property(a => a.AllowOverrideOptions).HasColumnType("BIT");
+                componentBuilder.Property(a => a.AllowPassingDatasource).HasColumnType("BIT");
+            }
 
             var jsonShellOptionsConverter = new ValueConverter<List<ShellOption>, string>(
                 v => ConvertUtil.SerializeObject(v, true),
@@ -152,6 +166,10 @@ namespace LetPortal.Versions
 
             var datasourceBuilder = modelBuilder.Entity<Datasource>();
             datasourceBuilder.HasKey(a => a.Id);
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                datasourceBuilder.Property(a => a.CanCache).HasColumnType("BIT");
+            }
 
             var entitySchemaBuilder = modelBuilder.Entity<EntitySchema>();
             entitySchemaBuilder.HasKey(a => a.Id);
@@ -167,6 +185,12 @@ namespace LetPortal.Versions
 
             var userBuilder = modelBuilder.Entity<User>();
             userBuilder.HasKey(a => a.Id);
+
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                userBuilder.Property(a => a.IsConfirmedEmail).HasColumnType("BIT");
+                userBuilder.Property(a => a.IsLockoutEnabled).HasColumnType("BIT");
+            }
 
             var jsonRolesConverter = new ValueConverter<List<string>, string>(
                 v => ConvertUtil.SerializeObject(v, true),
@@ -186,6 +210,10 @@ namespace LetPortal.Versions
 
             var issueTokenBuilder = modelBuilder.Entity<IssuedToken>();
             issueTokenBuilder.HasKey(a => a.Id);
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                issueTokenBuilder.Property(a => a.Deactive).HasColumnType("BIT");
+            }
 
             var userSessionBuilder = modelBuilder.Entity<UserSession>();
             userSessionBuilder.HasKey(a => a.Id);
@@ -215,7 +243,7 @@ namespace LetPortal.Versions
             }
             else if(_options.ConnectionType == ConnectionType.MySQL)
             {
-                optionsBuilder.UseMySql(_options.ConnectionString);
+                optionsBuilder.UseMySQL(_options.ConnectionString);
             }
         }
 

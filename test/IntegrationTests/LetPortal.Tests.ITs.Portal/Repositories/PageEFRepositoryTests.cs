@@ -18,6 +18,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             _context = context;
         }
 
+        #region UTs for Postgre
         [Fact]
         public async Task Get_One_By_Name_In_Postgre_Test()
         {
@@ -201,7 +202,9 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             // Assert
             Assert.NotNull(page);
         }
+        #endregion
 
+        #region UTs for SqlServer
         [Fact]
         public async Task Get_One_By_Name_In_SqlServer_Test()
         {
@@ -385,7 +388,9 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             // Assert
             Assert.NotNull(page);
         }
+        #endregion
 
+        #region UTs for MySQL
         [Fact]
         public async Task Get_One_By_Name_In_MySql_Test()
         {
@@ -569,5 +574,6 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             // Assert
             Assert.NotNull(page);
         }
+        #endregion
     }
 }

@@ -136,7 +136,7 @@ namespace LET.Tools.Installation
                 case ConnectionType.PostgreSQL:
                     return "Host=localhost;Port=5432;Database=letportal;Username=postgres;Password=123456";
                 case ConnectionType.MySQL:
-                    return "";
+                    return "server=localhost;uid=root;pwd=123456;database=letportal";
                 default:
                     return "";
             }

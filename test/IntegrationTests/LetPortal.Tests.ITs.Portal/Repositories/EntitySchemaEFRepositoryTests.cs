@@ -16,6 +16,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             _context = context;
         }
 
+        #region UTs for Postgre
         [Fact]
         public async Task Get_One_Entity_Schema_By_DB_And_Name_PostgreSQL_Test()
         {
@@ -92,7 +93,9 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             // Assert
             Assert.True(true);
         }
+        #endregion
 
+        #region UTs for SqlServer
         [Fact]
         public async Task Get_One_Entity_Schema_By_DB_And_Name_SqlServer_Test()
         {
@@ -169,7 +172,9 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             // Assert
             Assert.True(true);
         }
+        #endregion
 
+        #region UTs for MySQL
         [Fact]
         public async Task Get_One_Entity_Schema_By_DB_And_Name_MySql_Test()
         {
@@ -246,5 +251,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             // Assert
             Assert.True(true);
         }
+
+        #endregion
     }
 }
