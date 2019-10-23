@@ -38,7 +38,8 @@ import {
 	MatRadioModule,
 	MatDialog,
 	MatTreeModule,
-	MAT_DIALOG_DATA
+	MAT_DIALOG_DATA,
+	MAT_DATE_FORMATS
 } from '@angular/material';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from "@angular/material-moment-adapter";
 import { DragDropModule } from '@angular/cdk/drag-drop'
@@ -64,6 +65,19 @@ import { DynamicListFiltersComponent } from './components/dynamic-list/component
 import { DynamicListGridComponent } from './components/dynamic-list/components/dynamic-list.grid.component';
 import { QuillModule } from 'ngx-quill';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
+
+export const FULL_MONTH_FORMATS = {
+	parse: {
+	  dateInput: 'LL',
+	},
+	display: {
+	  dateInput: 'LL',
+	  monthYearLabel: 'MMM YYYY',
+	  dateA11yLabel: 'LL',
+	  monthYearA11yLabel: 'MMMM YYYY',
+	},
+  };
+  
 
 @NgModule({
 	imports: [
@@ -130,7 +144,8 @@ import { NgJsonEditorModule } from 'ang-jsoneditor';
 		MatIconRegistry,
 		PageRenderResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
-		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
+		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
+		{provide: MAT_DATE_FORMATS, useValue: FULL_MONTH_FORMATS}
 	],
 	declarations: [
 		// Render Page Components

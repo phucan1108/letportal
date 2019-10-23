@@ -75,7 +75,17 @@ namespace LetPortal.Portal.Executions
                             var fieldParam = StringUtil.GenerateUniqueName();
                             if(filter.FilterOperator != FilterOperator.Contains)
                             {
-                                filterString += string.Format(builderOptions.FieldFormat, filter.FieldName) + GetOperator(filter.FilterOperator) + builderOptions.ParamSign + fieldParam + GetChainOperator(filter.FilterChainOperator) + " ";
+                                if(filter.FilterValueType == Entities.SectionParts.FieldValueType.DatePicker)
+                                {
+                                    filterString += string.Format(builderOptions.DateCompareFormat,
+                                        string.Format(builderOptions.FieldFormat, filter.FieldName),
+                                            GetOperator(filter.FilterOperator),
+                                            builderOptions.ParamSign + fieldParam + GetChainOperator(filter.FilterChainOperator) + " ");
+                                }
+                                else
+                                {
+                                    filterString += string.Format(builderOptions.FieldFormat, filter.FieldName) + GetOperator(filter.FilterOperator) + builderOptions.ParamSign + fieldParam + GetChainOperator(filter.FilterChainOperator) + " ";
+                                }
                             }
                             else
                             {
@@ -90,7 +100,7 @@ namespace LetPortal.Portal.Executions
                             });
                         }
                     }
-                }                
+                }
             }
             return this;
         }
@@ -146,14 +156,14 @@ namespace LetPortal.Portal.Executions
 
         public DynamicQuery Build()
         {
-            string warpQuery;            
+            string warpQuery;
             var whereIndex = dynamicQuery.CombinedQuery.ToUpper().IndexOf(" WHERE ");
             var closeTagIndex = dynamicQuery.CombinedQuery.IndexOf(")");
 
             bool containSearch = false;
             bool containFilter = false;
             bool containOrder = false;
-            bool containPaging = false;                 
+            bool containPaging = false;
 
             if(dynamicQuery.CombinedQuery.Contains(builderOptions.SearchWord))
             {
@@ -238,7 +248,7 @@ namespace LetPortal.Portal.Executions
                 }
 
                 warpQuery = @"Select * From ({0}) s Where (({1}) AND ({2})) {3} {4}";
-            } 
+            }
 
 
             dynamicQuery.CombinedQuery =
@@ -257,7 +267,7 @@ namespace LetPortal.Portal.Executions
             switch(filterOperator)
             {
                 case FilterOperator.Contains:
-                    return string.Format(builderOptions.ContainsOperatorFormat, builderOptions.ParamSign +  comparision);
+                    return string.Format(builderOptions.ContainsOperatorFormat, builderOptions.ParamSign + comparision);
                 case FilterOperator.Great:
                     return ">";
                 case FilterOperator.Greater:

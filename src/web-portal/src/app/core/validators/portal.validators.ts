@@ -1,4 +1,4 @@
-import { DynamicListClient, StandardComponentClient, PagesClient, PageControlAsyncValidator, AsyncValidatorType, DatabasesClient } from 'services/portal.service';
+import { DynamicListClient, StandardComponentClient, PagesClient, PageControlAsyncValidator, AsyncValidatorType, DatabasesClient, ChartsClient } from 'services/portal.service';
 import { AsyncValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable, timer, of } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
@@ -6,6 +6,23 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { PageService } from 'services/page.service';
 
 export class PortalValidators {
+
+    public static chartUniqueName(chartsClient: ChartsClient): AsyncValidatorFn {
+        return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+            return timer(500).pipe(
+                switchMap(() => {
+                    return chartsClient.checkExist(control.value).pipe(
+                        map(
+                            exist => {
+                                return exist ? { 'uniqueName': true } : null;
+                            }
+                        )
+                    )
+                })
+            )
+        };
+    }
+
     public static dynamicListUniqueName(dynamicListClient: DynamicListClient): AsyncValidatorFn {
         return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
             return timer(500).pipe(

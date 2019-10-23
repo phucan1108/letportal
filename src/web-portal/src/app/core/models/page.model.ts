@@ -61,7 +61,10 @@ export interface DefaultControlOptions {
     // For Uploader only
     allowfileurl: boolean
     saveonchange: boolean
-
+    // For checkbox/slider only
+    allowZero: boolean   
+    allowYesNo: boolean
+    
     checkDisabled: boolean
     checkedHidden: boolean
 }

@@ -88,10 +88,11 @@ namespace LET.Tools.Installation
                         var letportalContext = new LetPortalVersionDbContext(databaseOption);
                         letportalContext.Database.EnsureCreated();
 
+                        var letportalContextForRepo = new LetPortalVersionDbContext(databaseOption);
                         var sqlEFVersionContext = new EFVersionContext(letportalContext);
                         sqlEFVersionContext.ConnectionType = dbType;
                         sqlEFVersionContext.DatabaseOptions = databaseOption;
-                        var portalVersionRepository = new PortalVersionEFRepository(letportalContext);
+                        var portalVersionRepository = new PortalVersionEFRepository(letportalContextForRepo);
                         var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
 
                         toolsContext = new ToolsContext

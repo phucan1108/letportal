@@ -17,6 +17,7 @@ namespace LetPortal.Versions.Pages
             versionContext.DeleteData<Page>("5d64e0dc6a1a49378cef5c70");
             versionContext.DeleteData<Page>("5d63423dbaac7d4790b7d301");
             versionContext.DeleteData<Page>("5d63423dbaac7d4790b7d302");
+            versionContext.DeleteData<Page>("5dabf30467cb8d0bd02643f9");
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -74,7 +75,7 @@ namespace LetPortal.Versions.Pages
                                 EntityName = "roles",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                     "{\"$query\":{\"roles\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
-                                    : "Select * from roles Where id={{queryparams.id}}"
+                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `roles` Where id={{queryparams.id}}" : "Select * from roles Where id={{queryparams.id}}")
                             }
                         }
                     }
@@ -105,7 +106,7 @@ namespace LetPortal.Versions.Pages
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"normalizedName\": \"{{data.name.toUpperCase()}}\" }\r\n  }\r\n}"
-                                        : "INSERT INTO roles(id, name, \"displayName\", \"normalizedName\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})"
+                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "INSERT INTO `roles` (id, name, `displayName`, `normalizedName`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})" : "INSERT INTO roles(id, name, \"displayName\", \"normalizedName\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})")
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -153,7 +154,7 @@ namespace LetPortal.Versions.Pages
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
-                                        : "UPDATE roles SET name={{data.name}}, \"displayName\"={{data.displayName}}, \"normalizedName\"={{data.name.toUpperCase()}} Where id={{data.id}}"
+                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "UPDATE `roles` SET name={{data.name}}, `displayName`={{data.displayName}}, `normalizedName`={{data.name.toUpperCase()}} Where id={{data.id}}" : "UPDATE roles SET name={{data.name}}, \"displayName\"={{data.displayName}}, \"normalizedName\"={{data.name.toUpperCase()}} Where id={{data.id}}")
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -368,7 +369,7 @@ namespace LetPortal.Versions.Pages
                                 EntityName = "roles",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                     "{\"$query\":{\"users\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
-                                    : "Select * from users Where id={{queryparams.id}}"
+                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `users` Where id={{queryparams.id}}" : "Select * from users Where id={{queryparams.id}}")
                             }
                         }
                     }
@@ -399,7 +400,7 @@ namespace LetPortal.Versions.Pages
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\", \"normalizedEmail\":\"{{data.email.toUpperCase()}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
-                                        : "Update users Set email={{data.email}}, \"normalizedEmail\"={{data.email.toUpperCase()}}, \"isConfirmedEmail\"={{data.isConfirmedEmail}}, \"isLockoutEnabled\"={{data.isLockoutEnabled}}, \"lockoutEndDate\"={{data.lockoutEndDate}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}"
+                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Update `users` Set email={{data.email}}, `normalizedEmail`={{data.email.toUpperCase()}}, `isConfirmedEmail`={{data.isConfirmedEmail}}, `isLockoutEnabled`={{data.isLockoutEnabled}}, `lockoutEndDate`={{data.lockoutEndDate}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}" : "Update users Set email={{data.email}}, \"normalizedEmail\"={{data.email.toUpperCase()}}, \"isConfirmedEmail\"={{data.isConfirmedEmail}}, \"isLockoutEnabled\"={{data.isLockoutEnabled}}, \"lockoutEndDate\"={{data.lockoutEndDate}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}")
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -458,9 +459,37 @@ namespace LetPortal.Versions.Pages
                 }
             };
 
+            var chartListsPage = new Page
+            {
+                Id = "5dabf30467cb8d0bd02643f9",
+                Name = "charts-management",
+                DisplayName = "Charts Management",
+                UrlPath = "portal/page/charts-management",
+                Claims = new List<PortalClaim>
+                    {
+                        PortalClaimStandards.AllowAccess
+                    },
+                Builder = new PageBuilder
+                {
+                    Sections = new List<PageSection>
+                    {
+                        new PageSection
+                        {
+                            Id = "5d0c7da473e71f3330054792",
+                            Name = "chartslist",
+                            DisplayName = "Charts List",
+                            ComponentId = "5dabf30467cb8d0bd02643f8",
+                            ConstructionType = SectionContructionType.DynamicList,
+                            Order = 0
+                        }
+                    }
+                }
+            };
+
             versionContext.InsertData(userFormPage);
             versionContext.InsertData(rolePage);
             versionContext.InsertData(registerUserPage);
+            versionContext.InsertData(chartListsPage);
         }
     }
 }

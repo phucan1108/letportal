@@ -31,7 +31,7 @@ namespace LetPortal.Versions.Components
                         EntityName = "components",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"components\": [{ \r\n \"$match\" : {\r\n  \"_t\": {\r\n    $elemMatch: {\r\n      $eq: \"DynamicList\"\r\n    }\r\n  }\r\n}\r\n}] }}"
-                        : "Select * from components Where discriminator='DynamicList'"
+                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `components` Where discriminator='DynamicList'" : "Select * from components Where discriminator='DynamicList'")
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -125,7 +125,7 @@ namespace LetPortal.Versions.Components
                         EntityName = "components",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"components\": [{ \r\n \"$match\" : {\r\n  \"_t\": {\r\n    $elemMatch: {\r\n      $eq: \"StandardComponent\"\r\n    }\r\n  }\r\n}\r\n}] }}"
-                        : "Select * from components Where discriminator='StandardComponent'"
+                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `components` Where discriminator='StandardComponent'" : "Select * from components Where discriminator='StandardComponent'")
                     },
                     SourceType = DynamicListSourceType.Database
                 },

@@ -65,6 +65,8 @@ import { PortalBuilderPageComponent } from './portal-builder.component';
 import { DynamicListBuilderResolve } from './resolve/dynamic-list.builder.resolve';
 import { StandardResolve } from './resolve/standard.resolve';
 import { HighlightModule } from 'ngx-highlightjs';
+import { ChartBuilderPage } from './pages/chart/chart-builder.page';
+import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -114,7 +116,8 @@ import { HighlightModule } from 'ngx-highlightjs';
 		PageButtonOptionsDialogComponent,
 		PageRouteComponent,
 		AsyncValidatorDialogComponent,
-		DatabaseOptionsComponent
+		DatabaseOptionsComponent,
+		ChartBuilderPage
 	],
 	imports: [
 		PortalBuilderRoutingModule,
@@ -216,6 +219,7 @@ import { HighlightModule } from 'ngx-highlightjs';
 		MenuProfilesResolve,
 		RoleClaimsResolve,
 		StandardResolve,
+		ChartBuilderResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
 	],

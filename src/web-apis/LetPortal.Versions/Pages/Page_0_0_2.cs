@@ -76,7 +76,7 @@ namespace LetPortal.Versions.Pages
                                 EntityName = "databases",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                 "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
-                                : "Select * From databases Where id={{queryparams.id}}"
+                                : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * From `databases` Where id={{queryparams.id}}" : "Select * From databases Where id={{queryparams.id}}")
                             }
                         }
                     }
@@ -107,7 +107,7 @@ namespace LetPortal.Versions.Pages
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                     "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
-                                    : "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})"
+                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "INSERT INTO `databases` (id, name, `displayName`, `timeSpan`, `connectionString`, `dataSource`, `databaseConnectionType`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})" : "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})")
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -145,7 +145,7 @@ namespace LetPortal.Versions.Pages
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                     "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
-                                    : "Update databases SET name={{data.name}}, \"displayName\"={{data.name}}, \"timeSpan\"={{currentTick()}}, \"connectionString\"={{data.connectionString}}, \"dataSource\"={{data.dataSource}}, \"databaseConnectionType\"={{data.databaseConnectionType}}"
+                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Update `databases` SET name={{data.name}}, `displayName`={{data.name}}, `timeSpan`={{currentTick()}}, `connectionString`={{data.connectionString}}, `dataSource`={{data.dataSource}}, `databaseConnectionType`={{data.databaseConnectionType}}" : "Update databases SET name={{data.name}}, \"displayName\"={{data.name}}, \"timeSpan\"={{currentTick()}}, \"connectionString\"={{data.connectionString}}, \"dataSource\"={{data.dataSource}}, \"databaseConnectionType\"={{data.databaseConnectionType}}")
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -248,7 +248,7 @@ namespace LetPortal.Versions.Pages
                                 EntityName = "databases",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? 
                                 "{\"$query\":{\"apps\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
-                                : "Select * from apps Where id={{queryparams.id}}"
+                                : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `apps` Where id={{queryparams.id}}" : "Select * from apps Where id={{queryparams.id}}")
                             }
                         }
                     }
@@ -279,7 +279,7 @@ namespace LetPortal.Versions.Pages
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"author\": \"{{user.username}}\",\r\n      \"createdDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\"\r\n    }\r\n  }\r\n}"
-                                        : "INSERT INTO apps(id, name, \"displayName\", \"timeSpan\", \"logo\", \"defaultUrl\", \"author\", \"currentVersionNumber\", \"dateCreated\", \"dateModified\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.logo}}, {{data.defaultUrl}}, {{user.username}}, {{data.currentVersionNumber}}, {{currentDate()}}, {{currentDate()}})"
+                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "INSERT INTO `apps` (id, name, `displayName`, `timeSpan`, `logo`, `defaultUrl`, `author`, `currentVersionNumber`, `dateCreated`, `dateModified`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.logo}}, {{data.defaultUrl}}, {{user.username}}, {{data.currentVersionNumber}}, {{currentDate()}}, {{currentDate()}})": "INSERT INTO apps(id, name, \"displayName\", \"timeSpan\", \"logo\", \"defaultUrl\", \"author\", \"currentVersionNumber\", \"dateCreated\", \"dateModified\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()}}, {{data.logo}}, {{data.defaultUrl}}, {{user.username}}, {{data.currentVersionNumber}}, {{currentDate()}}, {{currentDate()}})")
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -318,7 +318,7 @@ namespace LetPortal.Versions.Pages
                                     DatabaseConnectionId = Constants.CoreDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
-                                        : "UPDATE apps SET \"name\"={{data.name}}, \"displayName\"={{data.displayName}}, \"timeSpan\"={{currentTick()}}, \"logo\"={{data.logo}}, \"defaultUrl\"={{data.defaultUrl}}, \"currentVersionNumber\"={{data.currentVersionNumber}}, \"dateModified\"={{currentDate()}} Where id={{data.id}}"
+                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "UPDATE `apps` SET `name`={{data.name}}, `displayName`={{data.displayName}}, `timeSpan`={{currentTick()}}, `logo`={{data.logo}}, `defaultUrl`={{data.defaultUrl}}, `currentVersionNumber`={{data.currentVersionNumber}}, `dateModified`={{currentDate()}} Where id={{data.id}}" : "UPDATE apps SET \"name\"={{data.name}}, \"displayName\"={{data.displayName}}, \"timeSpan\"={{currentTick()}}, \"logo\"={{data.logo}}, \"defaultUrl\"={{data.defaultUrl}}, \"currentVersionNumber\"={{data.currentVersionNumber}}, \"dateModified\"={{currentDate()}} Where id={{data.id}}")
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {

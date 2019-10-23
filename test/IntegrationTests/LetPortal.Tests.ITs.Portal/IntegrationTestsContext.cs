@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using LetPortal.ServiceManagement.Repositories;
+using LetPortal.ServiceManagement.Entities;
 
 namespace LetPortal.Tests.ITs.Portal
 {
@@ -104,7 +106,7 @@ namespace LetPortal.Tests.ITs.Portal
                     TimeSpan = DateTime.UtcNow.Ticks,
                     ConnectionString = "mongodb://localhost:27017",
                     DatabaseConnectionType = "mongodb",
-                    DataSource = generateUniqueDatasourceName()
+                    DataSource = GenerateUniqueDatasourceName()
                 };
                 var mongoOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.MongoDB);
                 MongoDatabaseConenction.ConnectionString = mongoOptions.ConnectionString;                
@@ -112,7 +114,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowSQLServer)
             {
-                var sqlDatasourceName = generateUniqueDatasourceName();
+                var sqlDatasourceName = GenerateUniqueDatasourceName();
                 SqlServerDatabaseConnection = new DatabaseConnection
                 {
                     Id = DataUtil.GenerateUniqueId(),
@@ -129,7 +131,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowPostgreSQL)
             {
-                var postgresqlDatasourceName = generateUniqueDatasourceName();
+                var postgresqlDatasourceName = GenerateUniqueDatasourceName();
                 PostgreSqlDatabaseConnection = new DatabaseConnection
                 {
                     Id = DataUtil.GenerateUniqueId(),
@@ -146,7 +148,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowMySQL)
             {
-                var mysqlDatasourceName = generateUniqueDatasourceName();
+                var mysqlDatasourceName = GenerateUniqueDatasourceName();
                 MySqlDatabaseConnection = new DatabaseConnection
                 {
                     Id = DataUtil.GenerateUniqueId(),
@@ -161,12 +163,11 @@ namespace LetPortal.Tests.ITs.Portal
                 MySqlDatabaseConnection.ConnectionString = string.Format(mysqlOptions.ConnectionString, mysqlDatasourceName);
             }
             
-            createSomeDummyData();
+            CreateSomeDummyData();
         }
 
         public void Dispose()
-        {
-
+        {   
             // Remove all created databases
             if(AllowMongoDB)
             {
@@ -178,18 +179,27 @@ namespace LetPortal.Tests.ITs.Portal
             {
                 var postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureDeleted();
+
+                var postgreServiceContext = GetPostgreServiceContext();
+                postgreServiceContext.Database.EnsureDeleted();
             }
 
             if(AllowSQLServer)
             {
                 var sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureDeleted();
+
+                var sqlServiceContext = GetSQLServerServiceContext();
+                sqlServiceContext.Database.EnsureDeleted();
             }
 
             if(AllowMySQL)
             {
                 var mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureDeleted();
+
+                var mysqlServiceContext = GetMySQLServiceContext();
+                mysqlServiceContext.Database.EnsureDeleted();
             }
         }
 
@@ -218,6 +228,18 @@ namespace LetPortal.Tests.ITs.Portal
             return letportalDbContext;
         }
 
+        public LetPortalServiceManagementDbContext GetPostgreServiceContext()
+        {
+            var databaseOptions = new DatabaseOptions
+            {
+                ConnectionString = PostgreSqlDatabaseConnection.ConnectionString,
+                ConnectionType = ConnectionType.PostgreSQL,
+                Datasource = PostgreSqlDatabaseConnection.DataSource
+            };
+            var letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
+            return letportalDbContext;
+        }
+
         public LetPortalDbContext GetSQLServerContext()
         {
             var databaseOptions = new DatabaseOptions
@@ -227,6 +249,18 @@ namespace LetPortal.Tests.ITs.Portal
                 Datasource = SqlServerDatabaseConnection.DataSource
             };
             var letportalDbContext = new LetPortalDbContext(databaseOptions);
+            return letportalDbContext;
+        }
+
+        public LetPortalServiceManagementDbContext GetSQLServerServiceContext()
+        {
+            var databaseOptions = new DatabaseOptions
+            {
+                ConnectionString = SqlServerDatabaseConnection.ConnectionString,
+                ConnectionType = ConnectionType.SQLServer,
+                Datasource = SqlServerDatabaseConnection.DataSource
+            };
+            var letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
             return letportalDbContext;
         }
 
@@ -242,7 +276,19 @@ namespace LetPortal.Tests.ITs.Portal
             return letportalDbContext;
         }
 
-        private string generateUniqueDatasourceName()
+        public LetPortalServiceManagementDbContext GetMySQLServiceContext()
+        {
+            var databaseOptions = new DatabaseOptions
+            {
+                ConnectionString = MySqlDatabaseConnection.ConnectionString,
+                ConnectionType = ConnectionType.MySQL,
+                Datasource = MySqlDatabaseConnection.DataSource
+            };
+            var letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
+            return letportalDbContext;
+        }
+
+        private string GenerateUniqueDatasourceName()
         {
             var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
             var lengthOfName = 20;
@@ -256,7 +302,7 @@ namespace LetPortal.Tests.ITs.Portal
             return datasourceName;
         }
 
-        private void createSomeDummyData()
+        private void CreateSomeDummyData()
         {
             if(AllowMongoDB)
             {
@@ -272,7 +318,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureCreated();
                 postgreContext.Databases.Add(PostgreSqlDatabaseConnection);
-                postgreContext.SaveChanges();
+                postgreContext.SaveChanges();                
             }
 
             if(AllowSQLServer)
@@ -293,6 +339,50 @@ namespace LetPortal.Tests.ITs.Portal
                 mysqlContext.Database.ExecuteSqlCommand("Create table `uploadFiles`(`id` varchar(255) NOT NULL,  `file` mediumblob NULL, PRIMARY KEY(`id`)) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci");
                 mysqlContext.SaveChanges();
             }
+        }
+
+        private IEnumerable<MonitorCounter> GenerateCounters(string serviceId, string serviceName)
+        {
+            var countersList = new List<MonitorCounter>();
+            int random = RandomUtil.NextInt(20, 50);
+            for(int i = 0; i < random; i++)
+            {
+                int randomBeatHour = RandomUtil.NextInt(1, 5);
+                int randomCpuUsage = RandomUtil.NextInt(1, 99);
+                int memoryUsage = RandomUtil.NextInt(1, 99);
+                int successRequest = RandomUtil.NextInt(100, 3000);
+                int failRequest = RandomUtil.NextInt(100, successRequest);
+                var beatDate = DateTime.UtcNow.AddHours(randomBeatHour);
+                var monitorCounterId = DataUtil.GenerateUniqueId();
+                countersList.Add(new MonitorCounter
+                {
+                    Id = monitorCounterId,
+                    BeatDate = beatDate,
+                    ServiceId = serviceId,
+                    ServiceName = serviceName,
+                    Hour = beatDate.Hour,
+                    Minute = beatDate.Minute,
+                    HardwareCounter = new HardwareCounter
+                    {
+                        Id = DataUtil.GenerateUniqueId(),
+                        CpuUsage = randomCpuUsage,
+                        MemoryUsed = memoryUsage,
+                        MonitorCounterId = monitorCounterId
+                    },
+                    HttpCounter = new HttpCounter
+                    {
+                        Id = DataUtil.GenerateUniqueId(),
+                        MonitorCounterId = monitorCounterId,
+                        AvgDuration = 100,
+                        SuccessRequests = successRequest,
+                        FailedRequests = failRequest,
+                        MeansureDateTime = beatDate,
+                        TotalRequestsPerDay = 999999
+                    }
+                });
+            }
+
+            return countersList;
         }
     }
 

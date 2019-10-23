@@ -4,6 +4,7 @@ using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.DynamicLists;
 using MySql.Data.MySqlClient;
+using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace LetPortal.Portal.Executions.MySQL
                             {
                                 options.ContainsOperatorFormat = "LIKE CONCAT('%', {0},'%')";
                                 options.FieldFormat = "`{0}`";
+                                options.DateCompareFormat = "date({0}){1}date({2})";
                             })
                         .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumndDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
                         .AddFilter(fetchDataModel.FilterGroupOptions.FilterGroups)
@@ -46,11 +48,12 @@ namespace LetPortal.Portal.Executions.MySQL
                 {
                     foreach(var param in combinedQuery.Parameters)
                     {
+                        object castObj;
                         cmd.Parameters.Add(
                             new MySqlParameter(
-                                param.Name, GetMySqlDbType(param.ValueType))
+                                param.Name, GetMySqlDbType(param, out castObj))
                             {
-                                Value = param.Value,
+                                Value = castObj,
                                 Direction = System.Data.ParameterDirection.Input
                             });
                     }
@@ -67,20 +70,27 @@ namespace LetPortal.Portal.Executions.MySQL
             return Task.FromResult(response);
         }
 
-        private MySqlDbType GetMySqlDbType(FieldValueType fieldValueType)
+        private MySqlDbType GetMySqlDbType(DynamicQueryParameter param, out object castObj)
         {
-            switch(fieldValueType)
+            switch(param.ValueType)
             {
                 case FieldValueType.Number:
+                    castObj = int.Parse(param.Value);
                     return MySqlDbType.Int64;
                 case FieldValueType.DatePicker:
+                    DateTime tempDt = DateTime.Parse(param.Value);
+                    tempDt = tempDt.Date;
+                    castObj = tempDt;
                     return MySqlDbType.DateTime;
                 case FieldValueType.Checkbox:
                 case FieldValueType.Slide:
+                    bool temp = bool.Parse(param.Value);
+                    castObj = temp ? 1 : 0;
                     return MySqlDbType.Bit;
                 case FieldValueType.Select:
                 case FieldValueType.Text:
                 default:
+                    castObj = param.Value;
                     return MySqlDbType.LongText;
             }
         }

@@ -122,7 +122,20 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
             tap(
                 newValue => {
                     this.hasAsyncInvalid = this.isInvalidAsync()
-                    this.pageService.changeControlValue(this.controlFullName, newValue)
+                    if(this.control.type == ControlType.Checkbox || this.control.type == ControlType.Slide){
+                        if(this.control.defaultOptions.allowZero){
+                            this.pageService.changeControlValue(this.controlFullName, newValue ? 1 : 0)
+                        }
+                        else if(this.control.defaultOptions.allowYesNo){
+                            this.pageService.changeControlValue(this.controlFullName, newValue ? 'Y' : 'N')
+                        }
+                        else{
+                            this.pageService.changeControlValue(this.controlFullName, newValue)
+                        }
+                    }
+                    else{
+                        this.pageService.changeControlValue(this.controlFullName, newValue)
+                    }                   
                     // Check with chaining events must be notified
                     _.forEach(this.control.pageControlEvents, event => {
                         switch (event.eventActionType) {

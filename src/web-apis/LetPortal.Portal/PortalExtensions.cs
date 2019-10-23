@@ -3,6 +3,7 @@ using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
+using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
 using LetPortal.Portal.Options.Files;
@@ -55,6 +56,7 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IDynamicListRepository, DynamicListMongoRepository>();
                 builder.Services.AddSingleton<IStandardRepository, StandardMongoRepository>();
                 builder.Services.AddSingleton<IFileRepository, FileMongoRepository>();
+                builder.Services.AddSingleton<IChartRepository, ChartMongoRepository>();
             }
 
             if(builder.ConnectionType == ConnectionType.SQLServer
@@ -71,6 +73,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IDynamicListRepository, DynamicListEFRepository>();
                 builder.Services.AddTransient<IStandardRepository, StandardEFRepository>();
                 builder.Services.AddTransient<IFileRepository, FileEFRepository>();
+                builder.Services.AddTransient<IChartRepository, ChartEFRepository>();
             }
 
             if(portalOptions.EnableFileServer)
@@ -85,28 +88,44 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileExtensionRule>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
 
-                builder.Services.AddTransient<IStoreFileDatabase, MongoStoreFileDatabase>();
-                builder.Services.AddTransient<IStoreFileDatabase, PostgreStoreFileDatabase>();
+                builder.Services.AddTransient<IStoreFileDatabase, MySqlStoreFileDatabase>();
                 builder.Services.AddTransient<IStoreFileDatabase, SqlServerStoreFileDatabase>();
+                builder.Services.AddTransient<IStoreFileDatabase, PostgreStoreFileDatabase>();
+                builder.Services.AddTransient<IStoreFileDatabase, MongoStoreFileDatabase>();
             }
 
-            builder.Services.AddTransient<IExecutionDatabase, MongoExecutionDatabase>();
-            builder.Services.AddTransient<IExtractionDatabase, MongoExtractionDatabase>();
-            builder.Services.AddTransient<IExtractionDatasource, MongoExtractionDatasource>();
-            builder.Services.AddTransient<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();           
-            builder.Services.AddTransient<IAnalyzeDatabase, MongoAnalyzeDatabase>();
-
-            builder.Services.AddTransient<IAnalyzeDatabase, PostgreAnalyzeDatabase>();
-            builder.Services.AddTransient<IExecutionDatabase, PostgreExecutionDatabase>();
-            builder.Services.AddTransient<IExtractionDatabase, PostgreExtractionDatabase>();
-            builder.Services.AddTransient<IDynamicListQueryDatabase, PostgreDynamicListQueryDatabase>();
-            builder.Services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
-
-            builder.Services.AddTransient<IAnalyzeDatabase, SqlServerAnalyzeDatabase>();
-            builder.Services.AddTransient<IExecutionDatabase, SqlServerExecutionDatabase>();
-            builder.Services.AddTransient<IExtractionDatabase, SqlServerExtractionDatabase>();
-            builder.Services.AddTransient<IDynamicListQueryDatabase, SqlServerDynamicListQueryDatabase>();
-            builder.Services.AddTransient<IExtractionDatasource, SqlServerExtractionDatasource>();
+            if(builder.ConnectionType == ConnectionType.MongoDB)
+            {
+                builder.Services.AddTransient<IExecutionDatabase, MongoExecutionDatabase>();
+                builder.Services.AddTransient<IExtractionDatabase, MongoExtractionDatabase>();
+                builder.Services.AddTransient<IExtractionDatasource, MongoExtractionDatasource>();
+                builder.Services.AddTransient<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();
+                builder.Services.AddTransient<IAnalyzeDatabase, MongoAnalyzeDatabase>();
+            }
+            else if(builder.ConnectionType == ConnectionType.PostgreSQL)
+            {
+                builder.Services.AddTransient<IAnalyzeDatabase, PostgreAnalyzeDatabase>();
+                builder.Services.AddTransient<IExecutionDatabase, PostgreExecutionDatabase>();
+                builder.Services.AddTransient<IExtractionDatabase, PostgreExtractionDatabase>();
+                builder.Services.AddTransient<IDynamicListQueryDatabase, PostgreDynamicListQueryDatabase>();
+                builder.Services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
+            }
+            else if(builder.ConnectionType == ConnectionType.SQLServer)
+            {
+                builder.Services.AddTransient<IAnalyzeDatabase, SqlServerAnalyzeDatabase>();
+                builder.Services.AddTransient<IExecutionDatabase, SqlServerExecutionDatabase>();
+                builder.Services.AddTransient<IExtractionDatabase, SqlServerExtractionDatabase>();
+                builder.Services.AddTransient<IDynamicListQueryDatabase, SqlServerDynamicListQueryDatabase>();
+                builder.Services.AddTransient<IExtractionDatasource, SqlServerExtractionDatasource>();
+            }
+            else if(builder.ConnectionType == ConnectionType.MySQL)
+            {
+                builder.Services.AddTransient<IAnalyzeDatabase, MySqlAnalyzeDatabase>();
+                builder.Services.AddTransient<IExecutionDatabase, MySqlExecutionDatabase>();
+                builder.Services.AddTransient<IExtractionDatabase, MySqlExtractionDatabase>();
+                builder.Services.AddTransient<IDynamicListQueryDatabase, MySqlDynamicListQueryDatabase>();
+                builder.Services.AddTransient<IExtractionDatasource, MySqlExtractionDatasource>();
+            }
 
             builder.Services.AddTransient<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
             builder.Services.AddTransient<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();

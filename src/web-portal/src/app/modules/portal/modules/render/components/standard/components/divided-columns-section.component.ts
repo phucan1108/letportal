@@ -205,27 +205,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             tempSectionData[this.section.name] = new Object()
         }
         _.forEach(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[], control => {
-            let controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname)           
-
-            if(control.type == ControlType.AutoComplete || control.type == ControlType.Select){
-                if(controlData){
-                    if(!ObjectUtils.isArray(controlData)){
-                        try{
-                            let temp = JSON.parse(controlData)
-                            controlData = temp
-                        }
-                        catch{
-                            controlData = []
-                        }                        
-                    }
-                } 
-                else{
-                    controlData = []
-                }               
-            }
-            if(!ObjectUtils.isBoolean(controlData)){
-                controlData = controlData ? controlData : null
-            }
+            let controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control) 
             
             let mapDataControl: MapDataControl
             if (isKeepDataSection) {
@@ -246,8 +226,9 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                 }
                 sectionsMap.push(mapDataControl)
             }
+            
             formControls[control.name] = new FormControl({
-                value: controlData,
+                value: this.getFormValue(control, controlData),
                 disabled: control.defaultOptions.checkDisabled
             },
                 this.generateFormValidators(control.validators, formControls),
@@ -263,17 +244,66 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         this.builderFormGroup = new FormGroup(formControls)
     }
 
-    private getInitDataOfControl(data: any, controlBindName: string): any {
+    private getInitDataOfControl(data: any, controlBindName: string, control: PageRenderedControl<DefaultControlOptions>): any {
+        let controlData = null
         if (controlBindName === 'id' || controlBindName === '_id') {
             const boundData = data['_id']
             if (!boundData) {
-                return data['id']
+                controlData =  data['id']
             }
             else {
-                return boundData
+                controlData = boundData
             }
         }
-        return data[controlBindName]
+        else {
+            controlData = data[controlBindName]
+        }
+
+        // Depends on control type, we need to doublecheck data and set default value if data is null
+        if(control.type == ControlType.AutoComplete || control.type == ControlType.Select){
+            if(controlData){
+                if(!ObjectUtils.isArray(controlData)){
+                    try{
+                        let temp = JSON.parse(controlData)
+                        controlData = temp
+                    }
+                    catch{
+                        controlData = []
+                    }                        
+                }
+            } 
+            else{
+                controlData = []
+            }               
+        }
+        else if(control.type == ControlType.Checkbox || control.type == ControlType.Slide){
+            if(controlData == 0 || controlData == 1){
+                control.defaultOptions.allowZero = true
+            }
+            else if(controlData == 'Y' || controlData == 'N'){
+                control.defaultOptions.allowYesNo = true
+            }
+            else{
+                if(!ObjectUtils.isNotNull(controlData)){
+                    controlData = false
+                }
+            }            
+        }
+
+        controlData = ObjectUtils.isNotNull(controlData) ? controlData : null
+        return controlData
+    }
+
+    private getFormValue(control: PageRenderedControl<DefaultControlOptions>, controlData: any){
+        if(control.type ==  ControlType.Checkbox || control.type == ControlType.Slide){
+            if(control.defaultOptions.allowYesNo){
+                return controlData == 'Y' 
+            }
+            else if(control.defaultOptions.allowZero){
+                return controlData == 1
+            }
+        }
+        return controlData
     }
 
     private generateFormValidators(validators: Array<PageControlValidator>, availableControls: any): ValidatorFn[] {

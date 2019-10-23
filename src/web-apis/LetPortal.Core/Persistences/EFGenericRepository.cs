@@ -37,7 +37,7 @@ namespace LetPortal.Core.Persistences
 
         public Task DeleteAsync(string id)
         {
-            var entity = _context.Set<T>().AsNoTracking().Where(a => a.Id == id).First();
+            var entity = _context.Set<T>().Where(a => a.Id == id).First();
             _context.Set<T>().Remove(entity);
             _context.SaveChanges();
             return Task.CompletedTask;
@@ -45,8 +45,12 @@ namespace LetPortal.Core.Persistences
 
         public Task DeleteBulkAsync(IEnumerable<string> ids)
         {
-            var entities = _context.Set<T>().AsNoTracking().Where(a => ids.Contains(a.Id));
-            _context.Set<T>().RemoveRange(entities);
+            var dbSet = _context.Set<T>();
+            var entities = dbSet.Where(a => ids.Contains(a.Id));
+            foreach(var entity in entities)
+            {
+                dbSet.Remove(entity);
+            }
             _context.SaveChanges();
             return Task.CompletedTask;
         }
@@ -83,7 +87,9 @@ namespace LetPortal.Core.Persistences
 
         public Task<bool> IsExistAsync(Expression<Func<T, bool>> expression)
         {
-            return Task.FromResult(_context.Set<T>().AsNoTracking().Any(expression));
+            // We still got a problem EF Core for MySQL when using Any()
+            // So that we keep using FirstOrDefault() for checking
+            return Task.FromResult(_context.Set<T>().FirstOrDefault(expression) != null);
         }
 
         public Task UpdateAsync(string id, T entity)

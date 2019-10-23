@@ -50,11 +50,21 @@ namespace LetPortal.Core.Versions
             mongoDatabase.DropCollection(GetEntityName(typeof(T)));
         }
 
+        public void ExecuteRaw(string rawCommand)
+        {
+            // Do nothing
+        }
+
         public void InsertData<T>(T entity) where T : Entity
         {
             entity.Check();
             var entityCollection = GetMongoCollection<T>();
             entityCollection.InsertOne(entity);
+        }
+
+        public void SaveChange()
+        {
+            // Do nothing
         }
 
         public void UpdateData<T>(string id, T entity) where T : Entity

@@ -13,6 +13,8 @@ import { RoleClaimsPage } from './pages/role-claims/role-claims.page';
 import { RoleClaimsResolve } from './resolve/role-claims.resolve';
 import { DynamicListBuilderResolve } from './resolve/dynamic-list.builder.resolve';
 import { StandardResolve } from './resolve/standard.resolve';
+import { ChartBuilderPage } from './pages/chart/chart-builder.page';
+import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
 
 const routes: Routes = [
     {
@@ -72,7 +74,18 @@ const routes: Routes = [
 				resolve: {
 					roleClaims: RoleClaimsResolve
 				}
-			}
+			},
+			{
+				path: 'chart',
+				redirectTo: 'chart/'
+			},
+			{
+				path: 'chart/:chartid',
+				component: ChartBuilderPage,
+				resolve: {
+					chart: ChartBuilderResolve
+				}
+            },
         ]
     }
 ]

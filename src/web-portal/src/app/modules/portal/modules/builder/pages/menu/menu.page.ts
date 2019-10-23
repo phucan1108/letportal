@@ -14,6 +14,7 @@ import { SecurityService } from 'app/core/security/security.service';
 import { RouterExtService } from 'app/core/ext-service/routerext.service';
 import { PageService } from 'services/page.service';
 import { ExtendedMenu, MenuNode } from 'portal/modules/models/menu.model';
+import { SessionService } from 'services/session.service';
 
 @Component({
     selector: 'let-menu',
@@ -51,11 +52,8 @@ export class MenuPage implements OnInit, AfterViewInit {
         private logger: NGXLogger,
         private appClient: AppsClient,
         private shortcutUtil: ShortcutUtil,
-        private pagesClient: PagesClient,
-        private activatedRoute: ActivatedRoute,
         private router: Router,
-        private routerExtService: RouterExtService,
-        private security: SecurityService
+        private routerExtService: RouterExtService
     ) {
     }
 
@@ -138,9 +136,15 @@ export class MenuPage implements OnInit, AfterViewInit {
         })
     }
 
-    removeMenu(menu: MenuNode) {
-        let parentMenu = this.findParent(menu.extMenu);
-        parentMenu.subMenus = ArrayUtils.removeOneItem(parentMenu.subMenus, m => m.id === menu.id)
+    removeMenu(menu: MenuNode) {        
+        if(menu.extMenu.menuPath == '~'){
+            let foundMenu = this.menus.find(a => a.id == menu.extMenu.id)
+            this.menus.splice(this.menus.indexOf(foundMenu), 1)
+        }
+        else{
+            let parentMenu = this.findParent(menu.extMenu);            
+            parentMenu.subMenus = ArrayUtils.removeOneItem(parentMenu.subMenus, m => m.id === menu.id)
+        }
         this.refreshTree()
     }
 

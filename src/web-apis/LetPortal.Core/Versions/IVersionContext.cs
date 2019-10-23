@@ -10,6 +10,8 @@ namespace LetPortal.Core.Versions
 
         object DatabaseOptions { get; set; }
 
+        void ExecuteRaw(string rawCommand);
+
         void DropAll<T>() where T : Entity;
 
         void BulkInsertData<T>(T[] entities) where T : Entity;
@@ -21,5 +23,7 @@ namespace LetPortal.Core.Versions
         void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity;
 
         void UpdateData<T>(string id, T entity) where T : Entity;
+
+        void SaveChange();
     }
 }

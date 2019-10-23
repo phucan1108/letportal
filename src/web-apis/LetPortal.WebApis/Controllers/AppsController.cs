@@ -80,7 +80,7 @@ namespace LetPortal.WebApis.Controllers
             app.DateCreated = DateTime.UtcNow;
             app.DateModified = DateTime.UtcNow;
             await _appRepository.AddAsync(app);
-            _logger.Info("Created app: {@app", app);
+            _logger.Info("Created app: {@app}", app);
 
             return Ok(app);
         }

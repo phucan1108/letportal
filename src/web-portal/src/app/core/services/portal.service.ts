@@ -14,6 +14,229 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 
 export const PORTAL_BASE_URL = new InjectionToken<string>('PORTAL_BASE_URL');
 
+export interface IChartsClient {
+    getOne(id: string | null): Observable<Chart>;
+    update(id: string | null, chart: Chart): Observable<FileResponse>;
+    create(chart: Chart): Observable<Chart>;
+    checkExist(name: string | null): Observable<boolean>;
+}
+
+@Injectable()
+export class ChartsClient implements IChartsClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(PORTAL_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "http://localhost:53508";
+    }
+
+    getOne(id: string | null): Observable<Chart> {
+        let url_ = this.baseUrl + "/api/charts/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetOne(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetOne(<any>response_);
+                } catch (e) {
+                    return <Observable<Chart>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Chart>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetOne(response: HttpResponseBase): Observable<Chart> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Chart>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Chart>(<any>null);
+    }
+
+    update(id: string | null, chart: Chart): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/charts/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(chart);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
+    }
+
+    create(chart: Chart): Observable<Chart> {
+        let url_ = this.baseUrl + "/api/charts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(chart);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<Chart>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Chart>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<Chart> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Chart>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Chart>(<any>null);
+    }
+
+    checkExist(name: string | null): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/charts/check-exist/{name}";
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined.");
+        url_ = url_.replace("{name}", encodeURIComponent("" + name)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCheckExist(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCheckExist(<any>response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<boolean>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCheckExist(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <boolean>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(<any>null);
+    }
+}
+
 export interface IAppsClient {
     getOne(id: string | null): Observable<App>;
     update(id: string | null, app: App): Observable<FileResponse>;
@@ -1203,7 +1426,7 @@ export class DatasourceClient implements IDatasourceClient {
 
 export interface IDynamicListClient {
     getAll(): Observable<DynamicList[]>;
-    create(dynamicList: DynamicList): Observable<string>;
+    create(dynamicList: DynamicList): Observable<DynamicList>;
     getOne(id: string | null): Observable<DynamicList>;
     update(id: string | null, dynamicList: DynamicList): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
@@ -1270,7 +1493,7 @@ export class DynamicListClient implements IDynamicListClient {
         return _observableOf<DynamicList[]>(<any>null);
     }
 
-    create(dynamicList: DynamicList): Observable<string> {
+    create(dynamicList: DynamicList): Observable<DynamicList> {
         let url_ = this.baseUrl + "/api/dynamiclists";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1293,14 +1516,14 @@ export class DynamicListClient implements IDynamicListClient {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<DynamicList>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<DynamicList>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<string> {
+    protected processCreate(response: HttpResponseBase): Observable<DynamicList> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1310,7 +1533,7 @@ export class DynamicListClient implements IDynamicListClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : <string>JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = _responseText === "" ? null : <DynamicList>JSON.parse(_responseText, this.jsonParseReviver);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1318,7 +1541,7 @@ export class DynamicListClient implements IDynamicListClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<DynamicList>(<any>null);
     }
 
     getOne(id: string | null): Observable<DynamicList> {
@@ -3035,6 +3258,74 @@ export interface BackupableEntity extends Entity {
     timeSpan?: number;
 }
 
+export interface Component extends BackupableEntity {
+    datasourceName?: string | undefined;
+    options?: ShellOption[] | undefined;
+    allowOverrideOptions?: boolean;
+    allowPassingDatasource?: boolean;
+}
+
+export interface Chart extends Component {
+    databaseOptions?: DatabaseOptions | undefined;
+    chartFilters?: ChartFilter[] | undefined;
+}
+
+export interface DatabaseOptions {
+    databaseConnectionId?: string | undefined;
+    entityName?: string | undefined;
+    query?: string | undefined;
+}
+
+export interface ChartFilter {
+    name?: string | undefined;
+    displayName?: string | undefined;
+    type?: FilterType;
+    datasourceOptions?: DatasourceOptions | undefined;
+    options?: ShellOption[] | undefined;
+    isHidden?: boolean;
+}
+
+export enum FilterType {
+    Number = 0, 
+    Checkbox = 1, 
+    Radio = 2, 
+    Select = 3, 
+    DatePicker = 4, 
+    MonthPicker = 5, 
+}
+
+export interface DatasourceOptions {
+    type?: DatasourceControlType;
+    datasourceStaticOptions?: DatasourceStaticOptions | undefined;
+    databaseOptions?: DatabaseOptions | undefined;
+    httpServiceOptions?: HttpServiceOptions | undefined;
+    triggeredEvents?: string | undefined;
+}
+
+export enum DatasourceControlType {
+    StaticResource = 0, 
+    Database = 1, 
+    WebService = 2, 
+}
+
+export interface DatasourceStaticOptions {
+    jsonResource?: string | undefined;
+}
+
+export interface HttpServiceOptions {
+    httpServiceUrl?: string | undefined;
+    httpMethod?: string | undefined;
+    httpSuccessCode?: string | undefined;
+    jsonBody?: string | undefined;
+    outputProjection?: string | undefined;
+}
+
+export interface ShellOption {
+    key?: string | undefined;
+    value?: string | undefined;
+    description?: string | undefined;
+}
+
 export interface App extends BackupableEntity {
     logo?: string | undefined;
     defaultUrl?: string | undefined;
@@ -3109,13 +3400,6 @@ export interface DatasourceModel {
     value?: string | undefined;
 }
 
-export interface Component extends BackupableEntity {
-    datasourceName?: string | undefined;
-    options?: ShellOption[] | undefined;
-    allowOverrideOptions?: boolean;
-    allowPassingDatasource?: boolean;
-}
-
 export interface DynamicList extends Component {
     listDatasource?: DynamicListDatasource | undefined;
     paramsList?: ParamsList | undefined;
@@ -3133,20 +3417,6 @@ export interface DynamicListDatasource {
 export enum DynamicListSourceType {
     Database = 0, 
     HttpService = 1, 
-}
-
-export interface DatabaseOptions {
-    databaseConnectionId?: string | undefined;
-    entityName?: string | undefined;
-    query?: string | undefined;
-}
-
-export interface HttpServiceOptions {
-    httpServiceUrl?: string | undefined;
-    httpMethod?: string | undefined;
-    httpSuccessCode?: string | undefined;
-    jsonBody?: string | undefined;
-    outputProjection?: string | undefined;
 }
 
 export interface ParamsList {
@@ -3203,26 +3473,8 @@ export interface SearchOptions {
     allowInAdvancedMode?: boolean;
 }
 
-export interface DatasourceOptions {
-    type?: DatasourceControlType;
-    datasourceStaticOptions?: DatasourceStaticOptions | undefined;
-    databaseOptions?: DatabaseOptions | undefined;
-    httpServiceOptions?: HttpServiceOptions | undefined;
-    triggeredEvents?: string | undefined;
-}
-
 export interface DynamicListDatasourceOptions extends DatasourceOptions {
     outputMapProjection?: string | undefined;
-}
-
-export enum DatasourceControlType {
-    StaticResource = 0, 
-    Database = 1, 
-    WebService = 2, 
-}
-
-export interface DatasourceStaticOptions {
-    jsonResource?: string | undefined;
 }
 
 export interface CommandsList {
@@ -3289,12 +3541,6 @@ export interface MapWorkflowInput {
 export interface NotificationOptions {
     completeMessage?: string | undefined;
     failedMessage?: string | undefined;
-}
-
-export interface ShellOption {
-    key?: string | undefined;
-    value?: string | undefined;
-    description?: string | undefined;
 }
 
 export interface DynamicListResponseDataModel {

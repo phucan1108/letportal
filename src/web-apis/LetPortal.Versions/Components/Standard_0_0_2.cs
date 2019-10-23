@@ -319,7 +319,7 @@ namespace LetPortal.Versions.Components
                                 EntityName = "roles",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                 "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$project\": {\r\n          \"name\": \"$displayName\",\r\n          \"value\": \"$name\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
-                                : "Select \"displayName\" as name, name as value from roles"
+                                : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select `displayName` as name, name as value from `roles`" : "Select \"displayName\" as name, name as value from roles")
                             }
                         },
                         Validators = new List<Portal.Entities.SectionParts.Controls.PageControlValidator>

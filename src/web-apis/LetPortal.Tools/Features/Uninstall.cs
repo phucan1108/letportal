@@ -17,9 +17,12 @@ namespace LetPortal.Tools.Features
             {
                 var requestingVersionNumber = context.LatestVersion.GetNumber();
                 var matchingVersions = context.Versions.Where(a => a.GetNumber() <= requestingVersionNumber);
-                UninstallingVersion(matchingVersions, context);
+                UninstallingVersion(matchingVersions, context);                
                 var foundVersions = await context.PortalVersionRepository.GetAllAsync(isRequiredDiscriminator: false);
-                await context.PortalVersionRepository.DeleteBulkAsync(foundVersions.Select(a => a.Id));
+                foreach(var version in foundVersions)
+                {
+                    await context.PortalVersionRepository.DeleteAsync(version.Id);
+                }                
             }
             else
             {

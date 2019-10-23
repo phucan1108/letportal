@@ -54,7 +54,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPost("")]
-        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(DynamicList), 200)]
         public async Task<IActionResult> Create([FromBody] DynamicList dynamicList)
         {
             if(ModelState.IsValid)

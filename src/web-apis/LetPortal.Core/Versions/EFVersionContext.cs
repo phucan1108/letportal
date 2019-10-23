@@ -53,11 +53,21 @@ namespace LetPortal.Core.Versions
             // Do nothing
         }
 
+        public void ExecuteRaw(string rawCommand)
+        {
+            _context.Database.ExecuteSqlCommand(rawCommand);
+        }
+
         public void InsertData<T>(T entity) where T : Entity
         {
             entity.Check();
             var dbSet = _context.Set<T>();
             dbSet.Add(entity);
+            _context.SaveChanges();
+        }
+
+        public void SaveChange()
+        {
             _context.SaveChanges();
         }
 

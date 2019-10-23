@@ -116,7 +116,17 @@ namespace LetPortal.Versions.Apps
                                 Order = 1,
                                 ParentId = "5d4d8adfae5f5b68b811ec24",
                                 MenuPath = "~/5d4d8adfae5f5b68b811ec24"
-                            }, 
+                            },
+                            new Menu
+                            {
+                                Id = "172fd9c3-0168-90d1-5de7-60b0acaa24c2",
+                                DisplayName = "Charts Management",
+                                Icon = "bar_chart",
+                                Url = "/portal/page/charts-management",
+                                Order = 2,
+                                ParentId = "5d4d8adfae5f5b68b811ec24",
+                                MenuPath = "~/5d4d8adfae5f5b68b811ec24"
+                            },
                             new Menu
                             {
                                 Id = "5cf618cd9ec1d3bf5c339614",

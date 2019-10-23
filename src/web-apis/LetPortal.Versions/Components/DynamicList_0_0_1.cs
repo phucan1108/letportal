@@ -37,7 +37,7 @@ namespace LetPortal.Versions.SectionParts
                         EntityName = "databases",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB 
                         ? "{ \"$query\": { \"databases\": [ ] } }" 
-                        : "Select * From databases"
+                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * From `databases`" : "Select * From databases")
                     },
                     SourceType = DynamicListSourceType.Database
                 },                   
@@ -217,7 +217,7 @@ namespace LetPortal.Versions.SectionParts
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                             "{ \"$query\": { \"apps\": [ ] } }" 
-                            : "Select * from apps"
+                            : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `apps`" : "Select * from apps")
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -384,7 +384,7 @@ namespace LetPortal.Versions.SectionParts
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"pages\": [ ] } }" 
-                        : "Select * from pages"
+                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `pages`" : "Select * from pages")
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -504,7 +504,7 @@ namespace LetPortal.Versions.SectionParts
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"users\": [ ] } }" 
-                        : "Select * from users"
+                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `users`" : "Select * from users")
                     },
                     SourceType = DynamicListSourceType.Database
                 },                 
@@ -635,7 +635,7 @@ namespace LetPortal.Versions.SectionParts
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"roles\": [ ] } }" 
-                        : "Select * from roles"
+                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `roles`" : "Select * from roles")
                     },
                     SourceType = DynamicListSourceType.Database
                 },                  

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/extended.model';
 import { FilterOperator, FilterChainOperator, FieldValueType } from 'services/portal.service';
@@ -33,6 +33,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
     constructor(
         public dialogRef: MatDialogRef<any>,
         private logger: NGXLogger,
+        private cd: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) { 
         this.filterOption = this.data.filterOption
@@ -51,7 +52,8 @@ export class AdvancedFilterDialogComponent implements OnInit {
 
                 filterOption.filterValueType = element.fieldValueType
                 filterOption.filterOperators = this.getAllowedOperators(filterOption.filterValueType)
-                filterOption.filterOperator = this.getDefaultOperator(filterOption.filterValueType)
+                filterOption.filterOperator = this.getDefaultOperator(filterOption.filterValueType)        
+                this.cd.markForCheck()
             }
         })
     }
@@ -66,7 +68,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
             case FieldValueType.Slide:
             case FieldValueType.Checkbox:
             case FieldValueType.Select:
-            case FieldValueType.Number:
+            case FieldValueType.Number:                          
             case FieldValueType.DatePicker:
                 return FilterOperator.Equal
         }
@@ -95,11 +97,11 @@ export class AdvancedFilterDialogComponent implements OnInit {
                 ]
             case FieldValueType.DatePicker:
                 return [
-                    { name: 'Equal', value: FilterOperator.Equal },
                     { name: '>', value: FilterOperator.Great },
                     { name: '<', value: FilterOperator.Less },
                     { name: '>=', value: FilterOperator.Greater },
-                    { name: '<=', value: FilterOperator.Lesser }
+                    { name: '<=', value: FilterOperator.Lesser },                    
+                    { name: 'Equal', value: FilterOperator.Equal }
                 ]
         }
     }

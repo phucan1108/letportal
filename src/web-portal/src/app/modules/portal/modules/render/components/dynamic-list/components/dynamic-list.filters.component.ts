@@ -322,11 +322,11 @@ export class DynamicListFiltersComponent implements OnInit {
     private getDefaultOperator(fieldType: FieldValueType): FilterOperator {
         switch (fieldType) {
             case FieldValueType.Text:
-                return FilterOperator.Contains
+                return FilterOperator.Contains 
             case FieldValueType.Slide:
             case FieldValueType.Checkbox:
             case FieldValueType.Select:
-            case FieldValueType.Number:
+            case FieldValueType.Number:                           
             case FieldValueType.DatePicker:
                 return FilterOperator.Equal
         }

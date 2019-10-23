@@ -2,6 +2,7 @@
 using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
+using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Entities.EntitySchemas;
@@ -34,6 +35,8 @@ namespace LetPortal.Portal.Repositories
         public DbSet<DynamicList> DynamicLists { get; set; }
 
         public DbSet<StandardComponent> StandardComponents { get; set; }
+
+        public DbSet<Chart> Charts { get; set; }
 
         public DbSet<Page> Pages { get; set; }
 
@@ -119,6 +122,24 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.SerializeObject(v, true),
                 v => ConvertUtil.DeserializeObject<List<PageControl>>(v));
             standardBuilder.Property(a => a.Controls).HasConversion(jsonControlsConverter);
+
+            var chartBuilder = modelBuilder.Entity<Chart>();
+            chartBuilder.HasBaseType<Component>();
+
+            var jsonChartDatabaseOptions = new ValueConverter<Entities.Shared.DatabaseOptions, string>(
+                v => ConvertUtil.SerializeObject(v, true),
+                v => ConvertUtil.DeserializeObject<Entities.Shared.DatabaseOptions>(v));
+            chartBuilder.Property(a => a.DatabaseOptions).HasConversion(jsonChartDatabaseOptions);
+
+            var jsonChartDefinitions = new ValueConverter<ChartDefinitions, string>(
+                v => ConvertUtil.SerializeObject(v, true),
+                v => ConvertUtil.DeserializeObject<ChartDefinitions>(v));
+            chartBuilder.Property(a => a.Definitions).HasConversion(jsonChartDefinitions);
+
+            var jsonChartFiltersConverter = new ValueConverter<List<ChartFilter>, string>(
+               v => ConvertUtil.SerializeObject(v, true),
+               v => ConvertUtil.DeserializeObject<List<ChartFilter>>(v));
+            chartBuilder.Property(a => a.ChartFilters).HasConversion(jsonChartFiltersConverter);
 
             var pageBuilder = modelBuilder.Entity<Page>();
             pageBuilder.HasKey(a => a.Id);

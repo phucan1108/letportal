@@ -38,6 +38,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                                 options.ContainsOperatorFormat = " LIKE '%' + {0} + '%'";
                                 options.PaginationFormat = "OFFSET {1} ROWS FETCH NEXT {0} ROWS ONLY";
                                 options.FieldFormat = "[{0}]";
+                                options.DateCompareFormat = "cast({0} as date){1}cast({2} as date)";
                             })
                         .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumndDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
                         .AddFilter(fetchDataModel.FilterGroupOptions.FilterGroups)
