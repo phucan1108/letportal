@@ -121,7 +121,7 @@ namespace LetPortal.Portal.Executions.MySQL
                 || type == typeof(decimal)
                 || type == typeof(long))
             {
-                return FilterType.NumberRange;
+                return FilterType.NumberPicker;
             }
             else if(type == typeof(bool))
             {

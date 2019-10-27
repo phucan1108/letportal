@@ -319,7 +319,7 @@ export class DynamicListFiltersComponent implements OnInit {
         this.cd.markForCheck()
     }
 
-    private getDefaultOperator(fieldType: FieldValueType): FilterOperator {
+    private getDefaultOperator(fieldType: FieldValueType): FilterOperator {      
         switch (fieldType) {
             case FieldValueType.Text:
                 return FilterOperator.Contains 

@@ -53,11 +53,23 @@ namespace LetPortal.Portal.Entities.Components
         public DatasourceOptions DatasourceOptions { get; set; }
 
         /// <summary>
-        /// Only support for Range Type. 
-        /// Ex: NumberRange = '[1000,2000,3000]', DateRange = '[10/10/2019,12/10/2019]', MonthYearRange = '[1/1990,NOW]'
-        /// HourRange='[0,24]'
+        /// Support for NumberPicker/ DatePicker/ MonthPicker 
+        /// Guide: 
+        /// * For NumberPicker: [10,20,30] or [10..20] or [10..2..20] or [10-20,20-30,30-40]
+        /// * For DatePicker: ['10/10/2019','Now']
+        /// * For MonthPicker: ['10/2018', 'Now']
         /// </summary>
         public string RangeValue { get; set; }
+
+        /// <summary>
+        /// Support some filter type with Range and Select. Allow user choose multiple option
+        /// Ex: 
+        /// Select: Allow multiple options: ['A','B']
+        /// NumberPicker: Can pick multiple number: [10,20] or [10-20,20-30]
+        /// DatePicker: Can pick StartDate - EndDate: ['10/20/2018','10/20/2019']
+        /// MonthPicker: Can pick StartMonthYear - EndMonthYear: ['10/2018','12/2019']
+        /// </summary>
+        public bool IsMultiple { get; set; }
 
         public bool IsHidden { get; set; }
     }
@@ -66,12 +78,8 @@ namespace LetPortal.Portal.Entities.Components
     {
         Checkbox,
         Select,
-        NumberRange,
+        NumberPicker,
         DatePicker,
-        DateRange,
-        MonthYearPicker,
-        MonthYearRange,
-        HourPicker,
-        HourRange
+        MonthYearPicker
     }
 }

@@ -29,6 +29,8 @@ namespace LetPortal.Portal.Models.Charts
 
         public FilterType FilterType { get; set; }
 
+        public bool IsMultiple { get; set; }
+
         public string Value { get; set; }
     }
 }

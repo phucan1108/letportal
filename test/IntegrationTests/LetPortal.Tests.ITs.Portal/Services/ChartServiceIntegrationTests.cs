@@ -81,13 +81,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
-                    Query = "SELECT name, `displayName`, `timeSpan` FROM `databases`"
+                    Query = "SELECT name, `displayName`, `timeSpan`, `dateCreated`, `dateModified` FROM `apps`"
                 },
                 Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=timeSpan;group=name"
+                    MappingProjection = "name=name;value=dateCreated;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
@@ -96,9 +96,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 {
                     new LetPortal.Portal.Models.Charts.ChartFilterValue
                     {
-                        FilterType = LetPortal.Portal.Entities.Components.FilterType.NumberRange,
+                        FilterType = LetPortal.Portal.Entities.Components.FilterType.NumberPicker,
                         Name = "timeSpan",
-                        Value = "[1000,2000000000000]"
+                        IsMultiple = true,
+                        Value = "['1000-837076877586810630','10000-737076877586810630']"
+                    },
+                    new LetPortal.Portal.Models.Charts.ChartFilterValue
+                    {
+                        FilterType = LetPortal.Portal.Entities.Components.FilterType.DatePicker,
+                        Name = "dateCreated",
+                        IsMultiple = true,
+                        Value = "['2019-10-25T11:59:45.121Z','2019-10-26T11:59:45.121Z']"
                     }
                 }
             });

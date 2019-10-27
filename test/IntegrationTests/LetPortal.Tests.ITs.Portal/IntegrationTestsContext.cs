@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading;
 using LetPortal.ServiceManagement.Repositories;
 using LetPortal.ServiceManagement.Entities;
+using LetPortal.Portal.Entities.Apps;
 
 namespace LetPortal.Tests.ITs.Portal
 {
@@ -309,8 +310,10 @@ namespace LetPortal.Tests.ITs.Portal
                 var mongoClient = new MongoClient(MongoDatabaseConenction.ConnectionString);
                 var mongoDatabase = mongoClient.GetDatabase(MongoDatabaseConenction.DataSource);
                 var mongoCollection = mongoDatabase.GetCollection<DatabaseConnection>("databases");
-
                 mongoCollection.InsertOne(MongoDatabaseConenction);
+
+                var mongoAppCollection = mongoDatabase.GetCollection<App>("apps");
+                mongoAppCollection.InsertOne(SampleApp());
             }
 
             if(AllowPostgreSQL)
@@ -318,6 +321,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureCreated();
                 postgreContext.Databases.Add(PostgreSqlDatabaseConnection);
+                postgreContext.Apps.Add(SampleApp());
                 postgreContext.SaveChanges();                
             }
 
@@ -326,6 +330,7 @@ namespace LetPortal.Tests.ITs.Portal
                 var sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureCreated();
                 sqlContext.Databases.Add(SqlServerDatabaseConnection);
+                sqlContext.Apps.Add(SampleApp());
                 // Sql Server must create a table for storing file
                 sqlContext.Database.ExecuteSqlCommand("Create table [dbo].[uploadFiles] ([id] [nvarchar](450) NOT NULL, [file] [varbinary](max) NULL, CONSTRAINT [PK_uploadFiles] PRIMARY KEY CLUSTERED ( [id] ASC )WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]) ON[PRIMARY] TEXTIMAGE_ON[PRIMARY]");
                 sqlContext.SaveChanges();
@@ -336,11 +341,28 @@ namespace LetPortal.Tests.ITs.Portal
                 var mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureCreated();
                 mysqlContext.Databases.Add(MySqlDatabaseConnection);
+                mysqlContext.Apps.Add(SampleApp());
                 mysqlContext.Database.ExecuteSqlCommand("Create table `uploadFiles`(`id` varchar(255) NOT NULL,  `file` mediumblob NULL, PRIMARY KEY(`id`)) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci");
                 mysqlContext.SaveChanges();
             }
         }
 
+        private App SampleApp()
+        {
+            return new App
+            {
+                Id = DataUtil.GenerateUniqueId(),
+                Name = "testapp",
+                DisplayName = "Test App",
+                Author = "Admin",
+                CurrentVersionNumber = "0.0.1",
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow.AddDays(7),
+                DefaultUrl = "~",
+                Logo = "icon",
+                TimeSpan = DateTime.UtcNow.Ticks
+            };
+        }
         private IEnumerable<MonitorCounter> GenerateCounters(string serviceId, string serviceName)
         {
             var countersList = new List<MonitorCounter>();
