@@ -59,12 +59,48 @@
                                 </mat-form-field>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Chart Title:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <input formControlName="chartTitle" matInput #formChartTitleInput
+                                        placeholder="Chart Title" maxlength="250">
+                                    <mat-hint align="end">
+                                        {{formChartTitleInput.value?.length || 0}}/250
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Chart Type:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <mat-select placeholder="Choose Chart Type" formControlName="chartType">
+                                        <mat-option *ngFor="let chartType of _chartTypes" [value]="chartType.value">
+                                            {{ chartType.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Mapping Projection:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <input formControlName="mappingProjection" matInput #formMappingProjectionInput
+                                        placeholder="Required Format: name=name;value=value;group=group"
+                                        maxlength="250">
+                                    <mat-hint align="end">
+                                        {{formMappingProjectionInput.value?.length || 0}}/250
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                        </div>
                     </form>
                     <div class="separator-dashed"></div>
                     <div class="row row-heading">
                         <h3>Chart Options:</h3>
                     </div>
-
                     <let-shell-option [shellOptions$]="shellOptions$" (changed)="onChangingOptions($event)">
                     </let-shell-option>
                 </mat-step>
@@ -78,17 +114,11 @@
                             <button matStepperNext mat-raised-button color="primary">Next</button>
                         </div>
                     </div>
-                    <let-list-datasource [isEditMode]="isEditMode" [databaseOptions]="databaseOptions"
+                    <let-chart-datasource [isEditMode]="isEditMode" [databaseOptions]="databaseOptions"
                         (afterSelectingEntity)="afterSelectingEntity($event)"
                         (afterPopulatingQuery)="afterPopulatingQuery($event)"
-                        (changed)="databaseOptionsChanged($event)"></let-list-datasource>
-                    <let-column-grid [columnDefs]="columnDefs" (columnDefsChanged)="columnDefsChanged($event)">
-                    </let-column-grid>
-                </mat-step>
-                <mat-step>
-                    <ng-template matStepLabel>
-                        <span class="d-none d-sm-block">De</span>
-                    </ng-template>
+                        (changed)="databaseOptionsChanged($event)"></let-chart-datasource>
+                    <let-chart-filter-grid [chartFilters]="chartFilters" (chartFiltersChanged)="chartFiltersChanged($event)"></let-chart-filter-grid>
                 </mat-step>
             </mat-horizontal-stepper>
         </mat-card-content>

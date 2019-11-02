@@ -10,6 +10,7 @@ import { ParamsDialogComponent } from './params-dialog.component';
 import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions } from 'services/portal.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-database-opt',
@@ -62,6 +63,9 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
     isRefreshClicked = false
     isAutoPopulate = false
+
+    isEnablePopulate = false
+
     private params: FilledParameter[] = []
 
     constructor(
@@ -114,6 +118,8 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                     this.shallowedEntitySchemas = result
                     this.entities.next(result)
                 })
+                
+                this.enablePopulateButton()
             }
         })
 
@@ -124,6 +130,15 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         })
 
         this.onValueChanges()
+    }
+
+    private enablePopulateButton(){
+        if(ObjectUtils.isNotNull(this.databaseOptionForm.get('query').value)){
+            this.isEnablePopulate = true
+        }
+        else{
+            this.isEnablePopulate = false
+        }
     }
 
     private onJsonEditorChange($event) {
@@ -210,7 +225,13 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 this.afterSelectingEntityName.emit(newValue)
                 _.forEach(this.shallowedEntitySchemas, (element) => {
                     if (element.name === newValue) {
-                        let defaultQuery = this.ismongodb ? `{ "$query": { "${element.name}": [ ] } }` : `SELECT * FROM ${element.name}`
+                        let elementName = 
+                            this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'postgresql'
+                            || this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'sqlserver' ? `"${element.name}"` : `\`${element.name}\``
+                        let defaultQuery = 
+                            this.ismongodb ? 
+                                `{ "$query": { "${element.name}": [ ] } }` : 
+                                `SELECT * FROM ${elementName}`
 
                         if(this.ismongodb){
                             this.editor.set(JSON.parse(defaultQuery))
@@ -242,6 +263,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             if(!this.ismongodb){
                 this.code = newValue
             }
+            this.enablePopulateButton()
         })
 
         this.databaseOptionForm.valueChanges.subscribe(newValue => {

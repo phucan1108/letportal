@@ -1,24 +1,24 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Charts;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetPortal.Portal.Executions.MySQL
+namespace LetPortal.Portal.Executions.SqlServer
 {
-    public class MySqlExecutionChartReport : IExecutionChartReport
+    public class SqlServerExecutionChartReport : IExecutionChartReport
     {
-        public ConnectionType ConnectionType => ConnectionType.MySQL;
+        public ConnectionType ConnectionType => ConnectionType.SQLServer;
 
         private readonly IChartReportQueryBuilder _chartReportQueryBuilder;
 
         private readonly IChartReportProjection _chartReportProjection;
 
-        public MySqlExecutionChartReport(IChartReportQueryBuilder chartReportQueryBuilder, IChartReportProjection chartReportProjection)
+        public SqlServerExecutionChartReport(IChartReportQueryBuilder chartReportQueryBuilder, IChartReportProjection chartReportProjection)
         {
             _chartReportQueryBuilder = chartReportQueryBuilder;
             _chartReportProjection = chartReportProjection;
@@ -32,19 +32,19 @@ namespace LetPortal.Portal.Executions.MySQL
             IEnumerable<ChartFilterValue> filterValues)
         {
             var result = new ExecutionChartResponseModel();
-            using(var mysqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
+            using(var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
             {
-                mysqlDbConnection.Open();
-                using(var command = new MySqlCommand(formattedString, mysqlDbConnection))
+                sqlDbConnection.Open();
+                using(var command = new SqlCommand(formattedString, sqlDbConnection))
                 {
                     var chartQuery = _chartReportQueryBuilder
                                             .Init(formattedString, mappingProjection, options =>
                                             {
-                                                options.FieldFormat = "`{0}`";
-                                                options.AllowBoolIsInt = true;
+                                                options.FieldFormat = "[{0}]";
+                                                options.AllowBoolIsInt = false;
                                                 options.DateCompare = "date({0}){1}date({2})";
                                                 options.MonthCompare = "month({0}){1}month({2})";
-                                                options.YearCompare = "year({0}){1}year({2})"; 
+                                                options.YearCompare = "year({0}){1}year({2})";
                                             })
                                             .AddFilters(filterValues)
                                             .AddParameters(parameters)
@@ -78,47 +78,47 @@ namespace LetPortal.Portal.Executions.MySQL
             return result;
         }
 
-        private IEnumerable<MySqlParameter> ConvertToParameters(List<ChartReportParameter> parameters)
+        private IEnumerable<SqlParameter> ConvertToParameters(List<ChartReportParameter> parameters)
         {
             foreach(var param in parameters)
             {
-                var mysqlParam = new MySqlParameter(param.Name, ConvertTypeToMySql(param.ValueType))
+                var postgreParam = new SqlParameter(param.Name, ConvertTypeToSql(param.ValueType))
                 {
                     Value = param.CastedValue
                 };
-                yield return mysqlParam;
+                yield return postgreParam;
             }
         }
 
-        private MySqlDbType ConvertTypeToMySql(Type type)
+        private SqlDbType ConvertTypeToSql(Type type)
         {
             if(type == typeof(decimal))
             {
-                return MySqlDbType.Decimal;
+                return SqlDbType.Decimal;
             }
             else if(type == typeof(double))
             {
-                return MySqlDbType.Double;
+                return SqlDbType.Float;
             }
             else if(type == typeof(long))
             {
-                return MySqlDbType.Int64;
+                return SqlDbType.BigInt;
             }
             else if(type == typeof(int))
             {
-                return MySqlDbType.Int32;
+                return SqlDbType.Int;
             }
             else if(type == typeof(bool))
             {
-                return MySqlDbType.Bit;
+                return SqlDbType.Bit;
             }
             else if(type == typeof(DateTime))
             {
-                return MySqlDbType.DateTime;
+                return SqlDbType.DateTime2;
             }
             else
             {
-                return MySqlDbType.VarChar;
+                return SqlDbType.NVarChar;
             }
         }
     }

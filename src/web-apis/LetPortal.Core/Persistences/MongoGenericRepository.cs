@@ -67,8 +67,6 @@ namespace LetPortal.Core.Persistences
 
         public async Task<IEnumerable<T>> GetAllByIdsAsync(List<string> ids)
         {
-            //var filter = Builders<T>.Filter.In(a => a.Id, ids);
-            //return Task.FromResult(Collection.Find(filter).ToCursor().Current);
             return await Collection.AsQueryable().Where(a => ids.Contains(a.Id)).ToListAsync();
         }
 

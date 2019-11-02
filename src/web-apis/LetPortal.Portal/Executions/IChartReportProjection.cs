@@ -5,6 +5,6 @@ namespace LetPortal.Portal.Executions
 {
     public interface IChartReportProjection
     {
-        Task<dynamic> ProjectionFromDataTable(DataTable dataTable, string mappringProjection);
+        Task<object> ProjectionFromDataTable(DataTable dataTable, string mappringProjection);
     }
 }

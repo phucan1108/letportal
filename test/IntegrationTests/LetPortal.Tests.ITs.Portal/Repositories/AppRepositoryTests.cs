@@ -43,7 +43,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             var app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
-                Name = "testapp",
+                Name = "testapp123",
                 DisplayName = "Test App"
             };
             await appMongoRepository.AddAsync(app);

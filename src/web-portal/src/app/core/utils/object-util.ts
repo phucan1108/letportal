@@ -43,20 +43,20 @@ export class ObjectUtils {
         return value && typeof value === 'object' && value.constructor === Object;
     }
 
-    public static isNumber(value){
+    public static isNumber(value: number){
         return !isNaN(value)
     }
 
-    public static isBoolean(value){
+    public static isBoolean(value: any){
         return typeof value === 'boolean'
     }
 
-    public static isArray(value){
+    public static isArray(value: any){
         return Array.isArray(value);
     }
 
-    public static isNotNull(value){
-        return typeof value !== 'undefined' && value != null
+    public static isNotNull(value: any){
+        return typeof value !== 'undefined' && value != null && value != ""
     }
 
     public static clone(source: any): any {

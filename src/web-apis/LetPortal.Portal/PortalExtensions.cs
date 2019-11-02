@@ -109,6 +109,8 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IExtractionDatabase, PostgreExtractionDatabase>();
                 builder.Services.AddTransient<IDynamicListQueryDatabase, PostgreDynamicListQueryDatabase>();
                 builder.Services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
+                builder.Services.AddTransient<IExecutionChartReport, PostgreExecutionChartReport>();
+                builder.Services.AddTransient<IExtractionChartQuery, PostgreExtractionChartQuery>();
             }
             else if(builder.ConnectionType == ConnectionType.SQLServer)
             {
@@ -117,6 +119,8 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IExtractionDatabase, SqlServerExtractionDatabase>();
                 builder.Services.AddTransient<IDynamicListQueryDatabase, SqlServerDynamicListQueryDatabase>();
                 builder.Services.AddTransient<IExtractionDatasource, SqlServerExtractionDatasource>();
+                builder.Services.AddTransient<IExecutionChartReport, SqlServerExecutionChartReport>();
+                builder.Services.AddTransient<IExtractionChartQuery, SqlServerExtractionChartQuery>();
             }
             else if(builder.ConnectionType == ConnectionType.MySQL)
             {
@@ -125,6 +129,8 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IExtractionDatabase, MySqlExtractionDatabase>();
                 builder.Services.AddTransient<IDynamicListQueryDatabase, MySqlDynamicListQueryDatabase>();
                 builder.Services.AddTransient<IExtractionDatasource, MySqlExtractionDatasource>();
+                builder.Services.AddTransient<IExecutionChartReport, MySqlExecutionChartReport>();
+                builder.Services.AddTransient<IExtractionChartQuery, MySqlExtractionChartQuery>();
             }
 
             builder.Services.AddTransient<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
@@ -132,12 +138,16 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IPageServiceProvider, InternalPageServiceProvider>();
 
             builder.Services.AddTransient<IDynamicQueryBuilder, DynamicQueryBuilder>();
+            builder.Services.AddTransient<IChartReportProjection, ChartReportProjection>();
+            builder.Services.AddTransient<IChartReportQueryBuilder, ChartReportQueryBuilder>();
 
             builder.Services.AddTransient<IEntitySchemaService, EntitySchemaService>();
             builder.Services.AddTransient<IDynamicListService, DynamicListService>();
             builder.Services.AddTransient<IDatasourceService, DatasourceService>();
             builder.Services.AddTransient<IDatabaseService, DatabaseService>();
             builder.Services.AddTransient<IFileService, FileService>();
+            builder.Services.AddTransient<IChartService, ChartService>();
+
             builder.Services.AddTransient<HttpService>();
             builder.Services.AddHttpClient<HttpService>();
             return builder;

@@ -1,4 +1,4 @@
-import { RouteType, ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, RedirectType, FieldValueType, AsyncValidatorType } from "services/portal.service"
+import { RouteType, ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, RedirectType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
 
 export class StaticResources {
 
@@ -145,6 +145,32 @@ export class StaticResources {
             { name: 'Slide', value: FieldValueType.Slide },
             { name: 'Select', value: FieldValueType.Select },
         ]
+    }
+
+    public static chartTypes(){
+        return [
+            { name: 'Vertical Bar Chart', value: ChartType.VerticalBarChart },
+            { name: 'Horizontal Bar Chart', value: ChartType.HorizontalBarChart },
+            { name: 'Grouped Vertical Bar Chart', value: ChartType.GroupedVerticalBarChart },
+            { name: 'Grouped Horizontal Bar Chart', value: ChartType.GroupedHorizontalBarChart },
+            { name: 'Pie Chart', value: ChartType.PieChart },
+            { name: 'Advanced Pie Chart', value: ChartType.AdvancedPieChart },
+            { name: 'Pie Grid', value: ChartType.PieGrid },
+            { name: 'Line Chart', value: ChartType.LineChart },
+            { name: 'Area Chart', value: ChartType.AreaChart },
+            { name: 'Gauge', value: ChartType.Gauge }
+        ]
+    }
+
+    public static chartFilterTypes(){
+        return [
+           { name: 'None', value: FilterType.None } ,
+           { name: 'Checkbox', value: FilterType.Checkbox } , 
+           { name: 'Select', value: FilterType.Select } ,
+           { name: 'NumberPicker', value: FilterType.NumberPicker } ,
+           { name: 'DatePicker', value: FilterType.DatePicker } ,
+           { name: 'MonthYearPicker', value: FilterType.MonthYearPicker } 
+        ] 
     }
 
     public static iconsList() {

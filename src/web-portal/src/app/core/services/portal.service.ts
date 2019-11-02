@@ -19,6 +19,8 @@ export interface IChartsClient {
     update(id: string | null, chart: Chart): Observable<FileResponse>;
     create(chart: Chart): Observable<Chart>;
     checkExist(name: string | null): Observable<boolean>;
+    extraction(model: ExtractingChartQueryModel): Observable<ExtractionChartFilter>;
+    execution(model: ExecutionChartRequestModel): Observable<ExecutionChartResponseModel>;
 }
 
 @Injectable()
@@ -234,6 +236,108 @@ export class ChartsClient implements IChartsClient {
             }));
         }
         return _observableOf<boolean>(<any>null);
+    }
+
+    extraction(model: ExtractingChartQueryModel): Observable<ExtractionChartFilter> {
+        let url_ = this.baseUrl + "/api/charts/extract";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExtraction(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExtraction(<any>response_);
+                } catch (e) {
+                    return <Observable<ExtractionChartFilter>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ExtractionChartFilter>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processExtraction(response: HttpResponseBase): Observable<ExtractionChartFilter> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ExtractionChartFilter>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExtractionChartFilter>(<any>null);
+    }
+
+    execution(model: ExecutionChartRequestModel): Observable<ExecutionChartResponseModel> {
+        let url_ = this.baseUrl + "/api/charts/execution";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExecution(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExecution(<any>response_);
+                } catch (e) {
+                    return <Observable<ExecutionChartResponseModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ExecutionChartResponseModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processExecution(response: HttpResponseBase): Observable<ExecutionChartResponseModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ExecutionChartResponseModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExecutionChartResponseModel>(<any>null);
     }
 }
 
@@ -3266,8 +3370,28 @@ export interface Component extends BackupableEntity {
 }
 
 export interface Chart extends Component {
+    definitions?: ChartDefinitions | undefined;
     databaseOptions?: DatabaseOptions | undefined;
     chartFilters?: ChartFilter[] | undefined;
+}
+
+export interface ChartDefinitions {
+    chartTitle?: string | undefined;
+    chartType?: ChartType;
+    mappingProjection?: string | undefined;
+}
+
+export enum ChartType {
+    VerticalBarChart = 0, 
+    HorizontalBarChart = 1, 
+    GroupedVerticalBarChart = 2, 
+    GroupedHorizontalBarChart = 3, 
+    PieChart = 4, 
+    AdvancedPieChart = 5, 
+    PieGrid = 6, 
+    LineChart = 7, 
+    AreaChart = 8, 
+    Gauge = 9, 
 }
 
 export interface DatabaseOptions {
@@ -3281,17 +3405,18 @@ export interface ChartFilter {
     displayName?: string | undefined;
     type?: FilterType;
     datasourceOptions?: DatasourceOptions | undefined;
-    options?: ShellOption[] | undefined;
+    rangeValue?: string | undefined;
+    isMultiple?: boolean;
     isHidden?: boolean;
 }
 
 export enum FilterType {
-    Number = 0, 
+    None = 0, 
     Checkbox = 1, 
-    Radio = 2, 
-    Select = 3, 
+    Select = 2, 
+    NumberPicker = 3, 
     DatePicker = 4, 
-    MonthPicker = 5, 
+    MonthYearPicker = 5, 
 }
 
 export interface DatasourceOptions {
@@ -3324,6 +3449,46 @@ export interface ShellOption {
     key?: string | undefined;
     value?: string | undefined;
     description?: string | undefined;
+}
+
+export interface ExtractionChartFilter {
+    filters?: ChartFilter[] | undefined;
+}
+
+export interface ExtractingChartQueryModel {
+    parameters?: FilledParameterModel[] | undefined;
+    query?: string | undefined;
+    databaseId?: string | undefined;
+}
+
+export interface FilledParameterModel {
+    name?: string | undefined;
+    value?: string | undefined;
+}
+
+export interface ExecutionChartResponseModel {
+    isSuccess?: boolean;
+    result?: any | undefined;
+    error?: string | undefined;
+}
+
+export interface ExecutionChartRequestModel {
+    chartId?: string | undefined;
+    chartParameterValues?: ChartParameterValue[] | undefined;
+    chartFilterValues?: ChartFilterValue[] | undefined;
+}
+
+export interface ChartParameterValue {
+    name?: string | undefined;
+    value?: string | undefined;
+    replaceDQuotes?: boolean;
+}
+
+export interface ChartFilterValue {
+    name?: string | undefined;
+    filterType?: FilterType;
+    isMultiple?: boolean;
+    value?: string | undefined;
 }
 
 export interface App extends BackupableEntity {
@@ -3623,12 +3788,12 @@ export interface PopulateQueryModel {
 }
 
 export interface ExtractingQueryModel {
-    parameters?: FilledParameterModel[] | undefined;
+    parameters?: FilledParameterModel2[] | undefined;
     query?: string | undefined;
     databaseId?: string | undefined;
 }
 
-export interface FilledParameterModel {
+export interface FilledParameterModel2 {
     name?: string | undefined;
     value?: string | undefined;
 }

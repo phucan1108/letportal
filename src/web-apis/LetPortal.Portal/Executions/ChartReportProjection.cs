@@ -7,7 +7,7 @@ namespace LetPortal.Portal.Executions
 {
     public class ChartReportProjection : IChartReportProjection
     {
-        public Task<dynamic> ProjectionFromDataTable(DataTable dataTable, string mappringProjection)
+        public Task<object> ProjectionFromDataTable(DataTable dataTable, string mappringProjection)
         {
             var grouped = dataTable.AsEnumerable()
                                         .GroupBy(a => a.Field<string>("group"));
@@ -27,7 +27,8 @@ namespace LetPortal.Portal.Executions
                 @array.Add(groupObject);
             }
 
-            return @array.ToObject<dynamic>();
+            var result = @array.ToObject<object>();
+            return Task.FromResult(result);
         }
     }
 }

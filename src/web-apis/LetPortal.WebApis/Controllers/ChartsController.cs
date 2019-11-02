@@ -1,7 +1,9 @@
 ﻿using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Models.Charts;
 using LetPortal.Portal.Repositories.Components;
+using LetPortal.Portal.Services.Components;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -13,10 +15,16 @@ namespace LetPortal.PortalApis.Controllers
     {
         private readonly IChartRepository _chartRepository;
 
+        private readonly IChartService _chartService;
+
         private readonly IServiceLogger<ChartsController> _logger;
 
-        public ChartsController(IChartRepository chartRepository, IServiceLogger<ChartsController> logger)
+        public ChartsController(
+            IChartRepository chartRepository,
+            IChartService chartService,
+            IServiceLogger<ChartsController> logger)
         {
+            _chartService = chartService;
             _chartRepository = chartRepository;
             _logger = logger;
         }
@@ -65,5 +73,34 @@ namespace LetPortal.PortalApis.Controllers
         {
             return Ok(await _chartRepository.IsExistAsync(a => a.Name == name));
         }
+
+        [HttpGet("extract")]
+        [ProducesResponseType(typeof(ExtractionChartFilter), 200)]
+        public async Task<IActionResult> Extraction([FromBody] ExtractingChartQueryModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var result = await _chartService.Extract(model);
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost("execution")]
+        [ProducesResponseType(typeof(ExecutionChartResponseModel), 200)]
+        public async Task<IActionResult> Execution([FromBody] ExecutionChartRequestModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var foundChart = await _chartRepository.GetOneAsync(model.ChartId);
+                if(foundChart != null)
+                {
+                    var result = await _chartService.Execute(foundChart, model);
+                    return Ok(result);
+                }
+            }
+            return BadRequest();
+        }
+
     }
 }

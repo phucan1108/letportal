@@ -67,6 +67,9 @@ import { StandardResolve } from './resolve/standard.resolve';
 import { HighlightModule } from 'ngx-highlightjs';
 import { ChartBuilderPage } from './pages/chart/chart-builder.page';
 import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
+import { ChartDatasourceComponent } from './components/chart-builder/components/chart-datasource.component';
+import { ChartFilterGridComponent } from './components/chart-builder/components/chart-filter.grid.component';
+import { ChartFilterDialogComponent } from './components/chart-builder/components/chart-filter.dialog.component';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -117,7 +120,10 @@ import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
 		PageRouteComponent,
 		AsyncValidatorDialogComponent,
 		DatabaseOptionsComponent,
-		ChartBuilderPage
+		ChartBuilderPage,
+		ChartDatasourceComponent,
+		ChartFilterGridComponent,
+		ChartFilterDialogComponent
 	],
 	imports: [
 		PortalBuilderRoutingModule,
@@ -208,7 +214,10 @@ import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
 		PageButtonRouteDialogComponent,
 		ButtonOptionsComponent,
 		PageButtonOptionsDialogComponent,
-		AsyncValidatorDialogComponent
+		AsyncValidatorDialogComponent,
+		ChartDatasourceComponent,
+		ChartFilterGridComponent,
+		ChartFilterDialogComponent
 	],
 	exports: [RouterModule],
 	providers: [

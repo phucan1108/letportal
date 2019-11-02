@@ -57,7 +57,7 @@ namespace LetPortal.Portal.Executions
                 foreach(var param in parameterValues)
                 {
                     var fieldParam = StringUtil.GenerateUniqueName();
-                    formattedString = formattedString.Replace("{{" + param.Name + "}}", "@" + fieldParam);
+                    formattedString = formattedString.Replace("{{" + param.Name + "}}", GetFieldWithParamSign(fieldParam));
                     var paramType = GetValueDbType(param.Value, out object castObject);
                     listParams.Add(new ChartReportParameter
                     {
@@ -83,6 +83,11 @@ namespace LetPortal.Portal.Executions
         private string GetFieldFormat(string fieldName)
         {
             return string.Format(options.FieldFormat, fieldName);
+        }
+
+        private string GetFieldWithParamSign(string fieldName)
+        {
+            return options.ParamSign + fieldName;
         }
 
         private string GenerateChartColumns(string mappingProjection)
@@ -157,7 +162,7 @@ namespace LetPortal.Portal.Executions
                 {
                     case Entities.Components.FilterType.Checkbox:
                         var tempCheckBoxParam = StringUtil.GenerateUniqueName();
-                        filterStr += string.Format("{0}={1}{2}", GetFieldFormat(filter.Name), options.ParamSign, tempCheckBoxParam);
+                        filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempCheckBoxParam));
 
                         // Only for MySQL, bool is 0 or 1
                         int passValue = 0;
@@ -178,7 +183,7 @@ namespace LetPortal.Portal.Executions
                         break;
                     case Entities.Components.FilterType.Select:
                         var tempSelectParam = StringUtil.GenerateUniqueName();
-                        filterStr += string.Format("{0}={1}{2}", GetFieldFormat(filter.Name), options.ParamSign, tempSelectParam);
+                        filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempSelectParam));
 
                         // Check value is int or string
                         long selectValue = 0;
@@ -227,14 +232,14 @@ namespace LetPortal.Portal.Executions
                                     var tempEndNumParam = StringUtil.GenerateUniqueName();
                                     if(counterTemp < arrayStrings.Length - 1)
                                     {
-                                        compareStr += 
-                                            string.Format(options.NumberRangeCompare + " OR ", 
-                                                GetFieldFormat(filter.Name), tempStartNumParam, tempEndNumParam);
+                                        compareStr +=
+                                            string.Format(options.NumberRangeCompare + " OR ",
+                                                GetFieldFormat(filter.Name), GetFieldWithParamSign(tempStartNumParam), GetFieldWithParamSign(tempEndNumParam));
                                     }
                                     else
                                     {
-                                        compareStr += string.Format(options.NumberRangeCompare, 
-                                                GetFieldFormat(filter.Name), tempStartNumParam, tempEndNumParam);
+                                        compareStr += string.Format(options.NumberRangeCompare,
+                                                GetFieldFormat(filter.Name), GetFieldWithParamSign(tempStartNumParam), GetFieldWithParamSign(tempEndNumParam));
                                     }
                                     counterTemp++;
                                     parameters.Add(new ChartReportParameter
@@ -268,7 +273,11 @@ namespace LetPortal.Portal.Executions
                                 var splitted = filter.Value.Split("-");
                                 var tempStartNumParam = StringUtil.GenerateUniqueName();
                                 var tempEndNumParam = StringUtil.GenerateUniqueName();
-                                filterStr += string.Format(options.NumberRangeCompare, GetFieldFormat(filter.Name), tempStartNumParam, tempEndNumParam);
+                                filterStr += string.Format(
+                                    options.NumberRangeCompare,
+                                    GetFieldFormat(filter.Name), 
+                                    GetFieldWithParamSign(tempStartNumParam), 
+                                    GetFieldWithParamSign(tempEndNumParam));
                                 parameters.Add(new ChartReportParameter
                                 {
                                     Name = tempStartNumParam,
@@ -284,7 +293,9 @@ namespace LetPortal.Portal.Executions
                             }
                             else
                             {
-                                filterStr += string.Format("{0}={1}{2}",GetFieldFormat(filter.Name), options.ParamSign, tempNumberRangeParam);
+                                filterStr += string.Format("{0}={1}", 
+                                    GetFieldFormat(filter.Name), 
+                                    GetFieldWithParamSign(tempNumberRangeParam));
                                 parameters.Add(new ChartReportParameter
                                 {
                                     Name = tempNumberRangeParam,
@@ -306,12 +317,12 @@ namespace LetPortal.Portal.Executions
                                         options.DateCompare,
                                         GetFieldFormat(filter.Name),
                                         ">=",
-                                        options.ParamSign + tempStartDateParam),
+                                        GetFieldWithParamSign(tempStartDateParam)),
                                     string.Format(
                                         options.DateCompare,
                                         GetFieldFormat(filter.Name),
                                         "<=",
-                                        options.ParamSign + tempEndDateParam));                                    
+                                        GetFieldWithParamSign(tempEndDateParam)));
                             var arrayDates = ConvertUtil.DeserializeObject<string[]>(filter.Value);
                             var startDatePickerDt = DateTime.Parse(arrayDates[0]);
                             var endDatePickerDt = DateTime.Parse(arrayDates[1]);
@@ -335,7 +346,7 @@ namespace LetPortal.Portal.Executions
                                         options.DateCompare,
                                         GetFieldFormat(filter.Name),
                                         "=",
-                                        options.ParamSign + tempDatePickerParam);
+                                        GetFieldWithParamSign(tempDatePickerParam));
                             // Support Date Format: MM/DD/YYYY
                             var datePickerDt = DateTime.Parse(filter.Value);
                             parameters.Add(new ChartReportParameter
@@ -357,21 +368,21 @@ namespace LetPortal.Portal.Executions
                                         options.DateCompare,
                                         GetFieldFormat(filter.Name),
                                         ">=",
-                                        options.ParamSign + tempStartDateParam),
+                                        GetFieldWithParamSign(tempStartDateParam)),
                                     string.Format(
                                         options.DateCompare,
                                         GetFieldFormat(filter.Name),
                                         "<=",
-                                        options.ParamSign + tempEndDateParam));
+                                        GetFieldWithParamSign(tempEndDateParam)));
 
                             var arrayDates = ConvertUtil.DeserializeObject<string[]>(filter.Value);
                             var startDatePickerDt = DateTime.Parse(arrayDates[0]);
                             var endDatePickerDt = DateTime.Parse(arrayDates[1]);
                             parameters.Add(new ChartReportParameter
                             {
-                                 Name = tempStartDateParam,
-                                 CastedValue = startDatePickerDt,
-                                 ValueType = typeof(DateTime)
+                                Name = tempStartDateParam,
+                                CastedValue = startDatePickerDt,
+                                ValueType = typeof(DateTime)
                             });
                             parameters.Add(new ChartReportParameter
                             {
@@ -390,12 +401,12 @@ namespace LetPortal.Portal.Executions
                                         options.MonthCompare,
                                         GetFieldFormat(filter.Name),
                                         "=",
-                                        options.ParamSign + tempMonthPickerParam),
+                                        GetFieldWithParamSign(tempMonthPickerParam)),
                                     string.Format(
                                         options.YearCompare,
                                         GetFieldFormat(filter.Name),
                                         "=",
-                                        options.ParamSign + tempYearPickerParam));
+                                        GetFieldWithParamSign(tempYearPickerParam)));
                             // Support Date Format: MM/DD/YYYY
                             var dateMonthPickerDt = DateTime.Parse(filter.Value);
                             parameters.Add(new ChartReportParameter

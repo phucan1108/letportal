@@ -76,6 +76,7 @@ namespace LetPortal.Portal.Entities.Components
 
     public enum FilterType
     {
+        None,
         Checkbox,
         Select,
         NumberPicker,

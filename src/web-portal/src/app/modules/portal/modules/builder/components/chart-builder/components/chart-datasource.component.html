@@ -1,0 +1,10 @@
+<let-database-opt *ngIf="databaseOptions"
+    [heading]="heading" 
+    [isEditMode]="isEditMode"
+    [databaseOptions]="databaseOptions"
+    (afterSelectingEntity)="onSelectingEntity($event)" 
+    (afterPopulatingQuery)="onPopulatingQuery($event)"
+    (afterSelectingEntityName)="onSelectingEntityName($event)"
+    (afterPopulatingParams)="onExtractingParam($event)"
+    (changed)="databaseOptChanged($event)">
+</let-database-opt>

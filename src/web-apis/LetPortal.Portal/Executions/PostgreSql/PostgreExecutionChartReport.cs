@@ -1,24 +1,25 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Charts;
-using MySql.Data.MySqlClient;
+using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetPortal.Portal.Executions.MySQL
+namespace LetPortal.Portal.Executions.PostgreSql
 {
-    public class MySqlExecutionChartReport : IExecutionChartReport
+    public class PostgreExecutionChartReport : IExecutionChartReport
     {
-        public ConnectionType ConnectionType => ConnectionType.MySQL;
+        public ConnectionType ConnectionType => ConnectionType.PostgreSQL;
 
         private readonly IChartReportQueryBuilder _chartReportQueryBuilder;
 
         private readonly IChartReportProjection _chartReportProjection;
 
-        public MySqlExecutionChartReport(IChartReportQueryBuilder chartReportQueryBuilder, IChartReportProjection chartReportProjection)
+        public PostgreExecutionChartReport(IChartReportQueryBuilder chartReportQueryBuilder, IChartReportProjection chartReportProjection)
         {
             _chartReportQueryBuilder = chartReportQueryBuilder;
             _chartReportProjection = chartReportProjection;
@@ -32,20 +33,13 @@ namespace LetPortal.Portal.Executions.MySQL
             IEnumerable<ChartFilterValue> filterValues)
         {
             var result = new ExecutionChartResponseModel();
-            using(var mysqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
+            using(var mysqlDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
             {
                 mysqlDbConnection.Open();
-                using(var command = new MySqlCommand(formattedString, mysqlDbConnection))
+                using(var command = new NpgsqlCommand(formattedString, mysqlDbConnection))
                 {
                     var chartQuery = _chartReportQueryBuilder
-                                            .Init(formattedString, mappingProjection, options =>
-                                            {
-                                                options.FieldFormat = "`{0}`";
-                                                options.AllowBoolIsInt = true;
-                                                options.DateCompare = "date({0}){1}date({2})";
-                                                options.MonthCompare = "month({0}){1}month({2})";
-                                                options.YearCompare = "year({0}){1}year({2})"; 
-                                            })
+                                            .Init(formattedString, mappingProjection)
                                             .AddFilters(filterValues)
                                             .AddParameters(parameters)
                                             .Build();
@@ -78,47 +72,47 @@ namespace LetPortal.Portal.Executions.MySQL
             return result;
         }
 
-        private IEnumerable<MySqlParameter> ConvertToParameters(List<ChartReportParameter> parameters)
+        private IEnumerable<NpgsqlParameter> ConvertToParameters(List<ChartReportParameter> parameters)
         {
             foreach(var param in parameters)
             {
-                var mysqlParam = new MySqlParameter(param.Name, ConvertTypeToMySql(param.ValueType))
+                var postgreParam = new NpgsqlParameter(param.Name, ConvertTypeToPostgre(param.ValueType))
                 {
                     Value = param.CastedValue
                 };
-                yield return mysqlParam;
+                yield return postgreParam;
             }
         }
 
-        private MySqlDbType ConvertTypeToMySql(Type type)
+        private NpgsqlDbType ConvertTypeToPostgre(Type type)
         {
             if(type == typeof(decimal))
             {
-                return MySqlDbType.Decimal;
+                return NpgsqlDbType.Numeric;
             }
             else if(type == typeof(double))
             {
-                return MySqlDbType.Double;
+                return NpgsqlDbType.Double;
             }
             else if(type == typeof(long))
             {
-                return MySqlDbType.Int64;
+                return NpgsqlDbType.Bigint;
             }
             else if(type == typeof(int))
             {
-                return MySqlDbType.Int32;
+                return NpgsqlDbType.Integer;
             }
             else if(type == typeof(bool))
             {
-                return MySqlDbType.Bit;
+                return NpgsqlDbType.Boolean;
             }
             else if(type == typeof(DateTime))
             {
-                return MySqlDbType.DateTime;
+                return NpgsqlDbType.Date;
             }
             else
             {
-                return MySqlDbType.VarChar;
+                return NpgsqlDbType.Varchar;
             }
         }
     }

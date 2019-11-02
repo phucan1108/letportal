@@ -134,7 +134,7 @@ export class DynamicListBuilderPage implements OnInit {
             }
             else {
                 this.dynamicListClient.create(submittingDynamicList).subscribe(rep => {
-                    this.router.navigateByUrl('/portal/dynamic-list/builder/')
+                    this.router.navigateByUrl('/portal/page/dynamic-list-management')
                     this.shortcutUtil.notifyMessage("Save successfully!", ToastType.Success)
                 },
                     err => {
