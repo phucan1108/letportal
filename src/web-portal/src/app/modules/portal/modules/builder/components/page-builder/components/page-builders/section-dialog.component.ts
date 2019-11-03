@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { BuilderDnDComponent } from './builder-dnd.component';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { StaticResources } from 'portal/resources/static-resources';
-import { DynamicListClient, DynamicList, SectionContructionType, StandardComponent, StandardComponentClient } from 'services/portal.service';
+import { DynamicListClient, DynamicList, SectionContructionType, StandardComponent, StandardComponentClient, ChartsClient, Chart } from 'services/portal.service';
 import { Observable } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -19,6 +19,7 @@ export class SectionDialogComponent implements OnInit {
 
     dynamicLists$: Observable<DynamicList[]>;
     standards$: Observable<StandardComponent[]>;
+    charts$: Observable<Chart[]>;
     isEditMode = false;
 
     _sectionLayouts = StaticResources.sectionLayoutTypes()
@@ -30,6 +31,7 @@ export class SectionDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<BuilderDnDComponent>,
         private dyanmicListsClient: DynamicListClient,
         private standardsClient: StandardComponentClient,
+        private chartsClient: ChartsClient,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef
@@ -42,6 +44,7 @@ export class SectionDialogComponent implements OnInit {
         this.populatedFormValues()        
         this.dynamicLists$ = this.dyanmicListsClient.getAll();
         this.standards$ = this.standardsClient.getManys('');
+        this.charts$ = this.chartsClient.getMany();
 
         this.standards$.subscribe(standards => {
             this.standards = standards

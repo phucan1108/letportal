@@ -15,9 +15,10 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const PORTAL_BASE_URL = new InjectionToken<string>('PORTAL_BASE_URL');
 
 export interface IChartsClient {
+    getMany(): Observable<Chart[]>;
+    create(chart: Chart): Observable<Chart>;
     getOne(id: string | null): Observable<Chart>;
     update(id: string | null, chart: Chart): Observable<FileResponse>;
-    create(chart: Chart): Observable<Chart>;
     checkExist(name: string | null): Observable<boolean>;
     extraction(model: ExtractingChartQueryModel): Observable<ExtractionChartFilter>;
     execution(model: ExecutionChartRequestModel): Observable<ExecutionChartResponseModel>;
@@ -32,6 +33,104 @@ export class ChartsClient implements IChartsClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(PORTAL_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "http://localhost:53508";
+    }
+
+    getMany(): Observable<Chart[]> {
+        let url_ = this.baseUrl + "/api/charts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMany(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMany(<any>response_);
+                } catch (e) {
+                    return <Observable<Chart[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Chart[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMany(response: HttpResponseBase): Observable<Chart[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Chart[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Chart[]>(<any>null);
+    }
+
+    create(chart: Chart): Observable<Chart> {
+        let url_ = this.baseUrl + "/api/charts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(chart);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<Chart>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Chart>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<Chart> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Chart>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Chart>(<any>null);
     }
 
     getOne(id: string | null): Observable<Chart> {
@@ -135,57 +234,6 @@ export class ChartsClient implements IChartsClient {
             }));
         }
         return _observableOf<FileResponse>(<any>null);
-    }
-
-    create(chart: Chart): Observable<Chart> {
-        let url_ = this.baseUrl + "/api/charts";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(chart);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<Chart>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<Chart>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<Chart> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : <Chart>JSON.parse(_responseText, this.jsonParseReviver);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<Chart>(<any>null);
     }
 
     checkExist(name: string | null): Observable<boolean> {
@@ -3891,6 +3939,7 @@ export enum SectionContructionType {
     Standard = 0, 
     Array = 1, 
     DynamicList = 2, 
+    Chart = 3, 
 }
 
 export interface SectionDatasource {

@@ -33,6 +33,7 @@ namespace LetPortal.Portal.Entities.Pages
     {
         Standard,
         Array,
-        DynamicList
+        DynamicList,
+        Chart
     }
 }

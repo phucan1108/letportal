@@ -41,6 +41,15 @@
                     </mat-select>
                 </mat-form-field>
             </div>
+            <div class="col-lg-12" *ngIf="sectionForm.value.constructionType === constructionType.Chart">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Choose Chart" formControlName="componentId">
+                        <mat-option *ngFor="let chart of charts$ | async" [value]="chart.id">
+                            {{ chart.displayName }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
         </div>
     </form>
 </mat-dialog-content>

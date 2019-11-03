@@ -87,9 +87,18 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<StandardComponent>), 200)]
         public async Task<IActionResult> GetManys([FromQuery] string ids)
         {
-            var result = await _standardRepository.GetAllByIdsAsync(ids.Split(";").ToList());
-            _logger.Info("Get bulk standard components: {@result}", result);
-            return Ok(result);
+            if(!string.IsNullOrEmpty(ids))
+            {
+                var result = await _standardRepository.GetAllByIdsAsync(ids.Split(";").ToList());
+                _logger.Info("Get bulk standard components: {@result}", result);
+                return Ok(result);
+            }
+            else
+            {
+                var result = await _standardRepository.GetAllAsync();
+                _logger.Info("Get bulk standard components: {@result}", result);
+                return Ok(result);
+            }
         }
 
         [HttpGet("check-exist/{name}")]

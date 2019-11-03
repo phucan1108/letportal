@@ -115,9 +115,9 @@ export class BuilderDnDComponent implements OnInit {
     }
 
     onRemove(formSection: ExtendedPageSection) {
-        let index = _.findIndex(this.pageSections, element => element.id === formSection.id)
-        if (index > -1)
-            this.pageSections.slice(index, 1)
+        this.pageSections = ArrayUtils.removeOneItem(this.pageSections, a => a.id === formSection.id)
+        this.logger.debug('after deleting section', this.pageSections)
+        this.cd.detectChanges()
     }
 
     addNewSection() {

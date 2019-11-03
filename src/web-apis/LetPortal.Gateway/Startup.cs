@@ -27,11 +27,11 @@ namespace LetPortal.Gateway
             {
                 options.AddPolicy("DevCors", builder =>
                 {   
-                    builder.AllowAnyHeader();
-                    builder.AllowAnyMethod();
-                    builder.AllowAnyOrigin();
-                    builder.AllowCredentials();
-                    builder.WithExposedHeaders("X-Token-Expired");
+                    builder.AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowAnyOrigin()
+                           .AllowCredentials()
+                           .WithExposedHeaders("X-Token-Expired");
                 });
 
                 options.AddPolicy("ProdCors", builder =>

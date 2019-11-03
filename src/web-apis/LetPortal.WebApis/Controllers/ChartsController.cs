@@ -5,6 +5,7 @@ using LetPortal.Portal.Models.Charts;
 using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Services.Components;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LetPortal.PortalApis.Controllers
@@ -27,6 +28,13 @@ namespace LetPortal.PortalApis.Controllers
             _chartService = chartService;
             _chartRepository = chartRepository;
             _logger = logger;
+        }
+
+        [HttpGet("")]
+        [ProducesResponseType(typeof(IEnumerable<Chart>), 200)]
+        public async Task<IActionResult> GetMany()
+        {
+            return Ok(await _chartRepository.GetAllAsync());
         }
 
         [HttpGet("{id}")]
