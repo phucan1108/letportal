@@ -35,10 +35,10 @@ namespace LetPortal.Portal.Providers.Databases
             return await _databaseRepository.GetOneAsync(databaseId);
         }
 
-        public async Task<ExtractingSchemaQueryModel> GetSchemasByQuery(string databaseId, string queryJsonString)
+        public async Task<ExtractingSchemaQueryModel> GetSchemasByQuery(string databaseId, string queryJsonString, IEnumerable<ExecuteParamModel> parameters)
         {
             var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
-            return await _databaseService.ExtractColumnSchema(databaseConnection, queryJsonString);
+            return await _databaseService.ExtractColumnSchema(databaseConnection, queryJsonString, parameters);
         }
     }
 }

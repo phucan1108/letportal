@@ -89,7 +89,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
             var mongoExtractionDatabaseMock = new Mock<IExtractionDatabase>();
             mongoExtractionDatabaseMock.Setup(a => a.ConnectionType).Returns(Core.Persistences.ConnectionType.MongoDB);
             mongoExtractionDatabaseMock
-                .Setup(a => a.Extract(It.IsAny<DatabaseConnection>(), It.IsAny<string>()))
+                .Setup(a => a.Extract(It.IsAny<DatabaseConnection>(), It.IsAny<string>(), It.IsAny<IEnumerable<ExecuteParamModel>>()))
                 .Returns(Task.FromResult(new ExtractingSchemaQueryModel
                 {
                     ColumnFields = new System.Collections.Generic.List<LetPortal.Portal.Models.Shared.ColumnField>
@@ -111,7 +111,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
                 ConnectionString = "mongodb://localhost:27017",
                 DatabaseConnectionType = "mongodb",
                 DataSource = "letportal"
-            }, "");
+            }, "", null);
 
             // Assert
             Assert.True(result.ColumnFields.Count > 0);

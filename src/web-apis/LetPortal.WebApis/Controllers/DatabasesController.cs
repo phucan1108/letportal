@@ -41,6 +41,13 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Found database connections: {@result}", result);
             if(!result.Any())
                 return NotFound();
+
+            // Empty all connection strings for security risks
+            foreach(var databaseConnection in result)
+            {
+                databaseConnection.ConnectionString = string.Empty;
+                databaseConnection.DataSource = string.Empty;
+            }
             return Ok(result);
         }
 
@@ -53,6 +60,9 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Found database = {@result}", result);
             if(result == null)
                 return NotFound();
+
+            result.ConnectionString = string.Empty;
+            result.DataSource = string.Empty;
             return Ok(result);
         }
         [HttpPost]
@@ -111,9 +121,9 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{databaseId}/extract-raw")]
         [ProducesResponseType(typeof(ExtractingSchemaQueryModel), 200)]
-        public async Task<IActionResult> ExtractingQuery(string databaseId, [FromBody] dynamic content)
+        public async Task<IActionResult> ExtractingQuery(string databaseId, [FromBody] ExtractionDatabaseRequestModel model)
         {
-            _logger.Info("Extracting query dynamic in database id = {databaseId} with content = {@content}", databaseId, content);
+            _logger.Info("Extracting query dynamic in database id = {databaseId} with model = {@model}", databaseId, model);
             var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
             if(databaseConnection == null)
                 return BadRequest();
@@ -121,13 +131,13 @@ namespace LetPortal.WebApis.Controllers
             string formattedContent;
             if(databaseConnection.GetConnectionType() != Core.Persistences.ConnectionType.MongoDB)
             {
-                formattedContent = content;
+                formattedContent = model.Content;
             }
             else
             {
-                formattedContent = ConvertUtil.SerializeObject(content);
+                formattedContent = ConvertUtil.SerializeObject(model.Content);
             }
-            var result = await _databaseService.ExtractColumnSchema(databaseConnection, formattedContent);
+            var result = await _databaseService.ExtractColumnSchema(databaseConnection, formattedContent, model.Parameters);
             _logger.Info("Result of extracting dynamic: {@result}", result);
             return Ok(result);
         }

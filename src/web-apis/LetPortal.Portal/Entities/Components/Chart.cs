@@ -1,12 +1,11 @@
-﻿using LetPortal.Portal.Entities.Pages;
-using LetPortal.Portal.Entities.SectionParts;
+﻿using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 using System.Collections.Generic;
 
 namespace LetPortal.Portal.Entities.Components
 {
     public class Chart : Component
-    { 
+    {
         public ChartDefinitions Definitions { get; set; }
 
         public DatabaseOptions DatabaseOptions { get; set; }
@@ -29,7 +28,7 @@ namespace LetPortal.Portal.Entities.Components
     }
 
     public enum ChartType
-    {                    
+    {
         VerticalBarChart,
         HorizontalBarChart,
         GroupedVerticalBarChart,
@@ -39,7 +38,7 @@ namespace LetPortal.Portal.Entities.Components
         PieGrid,
         LineChart,
         AreaChart,
-        Gauge        
+        Gauge
     }
 
     public class ChartFilter
@@ -62,12 +61,28 @@ namespace LetPortal.Portal.Entities.Components
         public string RangeValue { get; set; }
 
         /// <summary>
+        /// There are some default values that can be set. According to FilterType:
+        /// Checkbox: true/false (not 0/1)
+        /// Select: any value that matchs Datasource, allow ['a','b'] for multiple filtertype
+        /// NumberPicker: 10 or [10,20,30] when it is multiple
+        /// DatePicker: '12/10/2019' or ['12/9/2019','12/20/2019'] for multiple DatePicker
+        /// MonthYearPicker: '12/2019' or ['9/2019','12/2020'] for multiple MonthYearPicker
+        /// </summary>
+        public string DefaultValue { get; set; }
+
+        /// <summary>
+        /// When this mode is true, DefaultValue will be used to query data
+        /// </summary>
+        public bool AllowDefaultValue { get; set; }
+
+        /// <summary>
         /// Support some filter type with Range and Select. Allow user choose multiple option
         /// Ex: 
         /// Select: Allow multiple options: ['A','B']
         /// NumberPicker: Can pick multiple number: [10,20] or [10-20,20-30]
         /// DatePicker: Can pick StartDate - EndDate: ['10/20/2018','10/20/2019']
         /// MonthPicker: Can pick StartMonthYear - EndMonthYear: ['10/2018','12/2019']
+        /// Note: Only DatePicker and MonthPicker can use Now for generating current DateTime.Now
         /// </summary>
         public bool IsMultiple { get; set; }
 

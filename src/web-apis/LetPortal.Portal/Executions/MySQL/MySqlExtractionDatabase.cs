@@ -3,6 +3,7 @@ using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Databases;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -12,8 +13,23 @@ namespace LetPortal.Portal.Executions.MySQL
     {
         public ConnectionType ConnectionType => ConnectionType.MySQL;
 
-        public Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString)
+        public Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
+            if(parameters != null)
+            {
+                foreach(var param in parameters)
+                {
+                    if(param.RemoveQuotes)
+                    {
+                        formattedString = formattedString.Replace("'{{" + param.Name + "}}'", param.ReplaceValue);
+                    }
+                    else
+                    {
+                        formattedString = formattedString.Replace("{{" + param.Name + "}}", param.ReplaceValue);
+                    }
+
+                }
+            }
             var extractModel = new ExtractingSchemaQueryModel
             {
                 ColumnFields = new System.Collections.Generic.List<Models.Shared.ColumnField>()
@@ -27,16 +43,18 @@ namespace LetPortal.Portal.Executions.MySQL
                 {
                     using(var reader = command.ExecuteReader())
                     {
-                        DataTable dt = new DataTable();
-                        dt.Load(reader);
-                        foreach(DataColumn dc in dt.Columns)
+                        using(DataTable dt = new DataTable())
                         {
-                            extractModel.ColumnFields.Add(new Models.Shared.ColumnField
+                            dt.Load(reader);
+                            foreach(DataColumn dc in dt.Columns)
                             {
-                                Name = dc.ColumnName,
-                                DisplayName = dc.ColumnName,
-                                FieldType = GetType(dc.DataType)
-                            });
+                                extractModel.ColumnFields.Add(new Models.Shared.ColumnField
+                                {
+                                    Name = dc.ColumnName,
+                                    DisplayName = dc.ColumnName,
+                                    FieldType = GetType(dc.DataType)
+                                });
+                            }
                         }
                     }
                 }

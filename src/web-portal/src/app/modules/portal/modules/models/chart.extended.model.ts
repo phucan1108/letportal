@@ -5,10 +5,12 @@ import * as _ from 'lodash';
 export class ChartOptions{
 
     allowrealtime: boolean
+    timetorefresh: number
 
     public static getChartOptions(options: ShellOption[]): ChartOptions {
         return {
-            allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'sizeoptions').value)
+            allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'allowrealtime').value),
+            timetorefresh: JSON.parse(_.find(options, opt => opt.key === 'timetorefresh').value)
         }
     }
 
@@ -20,9 +22,18 @@ export class ChartOptions{
         value: 'false'
     }
 
+    public static TimeToRefresh: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'Time to refresh data in Chart, Allow Real-time must be enable, in second. Default: 30',
+        key: 'timetorefresh',
+        value: '30'
+    }
+
     public static getDefaultShellOptionsForChart(): ExtendedShellOption[] {
         return [
-            this.AllowRealTime
+            this.AllowRealTime,
+            this.TimeToRefresh
         ]
     }
 
@@ -39,6 +50,7 @@ export class ChartOptions{
     }    
 
     public static DefaultListOptions: ChartOptions =  {
-        allowrealtime: false
+        allowrealtime: false,
+        timetorefresh: 30
     }
 }

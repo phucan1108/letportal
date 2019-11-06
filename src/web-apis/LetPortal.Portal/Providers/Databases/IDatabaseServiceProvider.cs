@@ -10,7 +10,10 @@ namespace LetPortal.Portal.Providers.Databases
     {
         Task<DatabaseConnection> GetOneDatabaseConnectionAsync(string databaseId);
 
-        Task<ExtractingSchemaQueryModel> GetSchemasByQuery(string databaseId, string queryJsonString);
+        Task<ExtractingSchemaQueryModel> GetSchemasByQuery(
+            string databaseId, 
+            string queryJsonString,
+            IEnumerable<ExecuteParamModel> parameters);
 
         Task<ExecuteDynamicResultModel> ExecuteDatabase(string databaseId, string formattedCommand, IEnumerable<ExecuteParamModel> parameters);
     }

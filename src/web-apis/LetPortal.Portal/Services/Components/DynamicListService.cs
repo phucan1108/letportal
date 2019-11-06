@@ -32,14 +32,10 @@ namespace LetPortal.Portal.Services.Components
         }
 
         public async Task<PopulateQueryModel> ExtractingQuery(ExtractingQueryModel extractingQuery)
-        {
-            var query = extractingQuery.Query;
-            foreach(var param in extractingQuery.Parameters)
-            {
-                query = query.Replace("{{" + param.Name + "}}", param.Value);
-            }
-
-            var extractingResult = await _databaseServiceProvider.GetSchemasByQuery(extractingQuery.DatabaseId, query);
+        {  
+            var extractingResult = await 
+                _databaseServiceProvider
+                .GetSchemasByQuery(extractingQuery.DatabaseId, extractingQuery.Query, extractingQuery.Parameters.Select(a => new Models.Databases.ExecuteParamModel { Name = a.Name, ReplaceValue = a.Value }));
 
             return new PopulateQueryModel { ColumnFields = extractingResult.ColumnFields };
         }

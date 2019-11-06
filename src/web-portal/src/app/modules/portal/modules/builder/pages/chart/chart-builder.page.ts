@@ -89,9 +89,11 @@ export class ChartBuilderPage implements OnInit {
         // Auto-generated name
         this.componentInfo.get('displayName').valueChanges.subscribe(newValue => {
             if (newValue && !this.isEditMode) {
-                // Apply this change to list name 
+                // Apply this change to name 
                 const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '-')
                 this.componentInfo.get('name').setValue(listNameValue)
+
+                this.componentInfo.get('chartTitle').setValue(newValue)
             }
         })
     }

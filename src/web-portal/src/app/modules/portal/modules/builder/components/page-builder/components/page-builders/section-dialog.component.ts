@@ -26,6 +26,7 @@ export class SectionDialogComponent implements OnInit {
     _constructionTypes = StaticResources.constructionTypes()
     standards: StandardComponent[]
     dynamicLists: DynamicList[]
+    charts: Chart[]
     constructionType = SectionContructionType
     constructor(
         public dialogRef: MatDialogRef<BuilderDnDComponent>,
@@ -52,6 +53,10 @@ export class SectionDialogComponent implements OnInit {
 
         this.dynamicLists$.subscribe(dynamicLists => {
             this.dynamicLists = dynamicLists
+        })
+
+        this.charts$.subscribe(charts => {
+            this.charts = charts
         })
     }
 
@@ -85,6 +90,7 @@ export class SectionDialogComponent implements OnInit {
             sectionDatasource: this.currentExtendedFormSection.sectionDatasource,
             relatedDynamicList: !!formValues.componentId ? _.find(this.dynamicLists, dynamicList => dynamicList.id === formValues.componentId) : this.currentExtendedFormSection.relatedDynamicList,
             relatedStandard: !!formValues.componentId ? _.find(this.standards, standard => standard.id === formValues.componentId) : this.currentExtendedFormSection.relatedStandard,
+            relatedChart: !!formValues.componentId ? _.find(this.charts, chart => chart.id === formValues.componentId) : this.currentExtendedFormSection.relatedChart,
             isLoaded: false
         }
 

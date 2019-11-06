@@ -135,7 +135,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { postgreExtractionDatabase });
             // Act
             var warpQuery = "Select * From databases";
-            var result = await databaseService.ExtractColumnSchema(_context.PostgreSqlDatabaseConnection, warpQuery);
+            var result = await databaseService.ExtractColumnSchema(_context.PostgreSqlDatabaseConnection, warpQuery, null);
 
             // Assert
             Assert.NotEmpty(result.ColumnFields);
@@ -299,7 +299,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { sqlServerExtractionDatabase });
             // Act
             var warpQuery = "Select * From databases";
-            var result = await databaseService.ExtractColumnSchema(_context.SqlServerDatabaseConnection, warpQuery);
+            var result = await databaseService.ExtractColumnSchema(_context.SqlServerDatabaseConnection, warpQuery, null);
 
             // Assert
             Assert.NotEmpty(result.ColumnFields);
@@ -463,7 +463,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { mysqlExtractionDatabase });
             // Act
             var warpQuery = "Select * From `databases`";
-            var result = await databaseService.ExtractColumnSchema(_context.MySqlDatabaseConnection, warpQuery);
+            var result = await databaseService.ExtractColumnSchema(_context.MySqlDatabaseConnection, warpQuery, null);
 
             // Assert
             Assert.NotEmpty(result.ColumnFields);

@@ -1,4 +1,4 @@
-import { PageControl, PageSection, PageButton, PageControlValidator, StandardComponent, DynamicList, PageControlEvent } from 'services/portal.service';
+import { PageControl, PageSection, PageButton, PageControlValidator, StandardComponent, DynamicList, PageControlEvent, Chart } from 'services/portal.service';
 import { PageRenderedControl, DefaultControlOptions } from './page.model';
 
 
@@ -19,6 +19,7 @@ export interface ExtendedStandardComponent extends StandardComponent{
 export interface ExtendedPageSection extends PageSection {
     relatedStandard: StandardComponent
     relatedDynamicList: DynamicList
+    relatedChart: Chart
     isLoaded: boolean
 }
 

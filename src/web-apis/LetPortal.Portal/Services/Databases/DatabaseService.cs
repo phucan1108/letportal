@@ -38,12 +38,12 @@ namespace LetPortal.Portal.Services.Databases
             throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
         }
 
-        public async Task<ExtractingSchemaQueryModel> ExtractColumnSchema(DatabaseConnection databaseConnection, string formattedString)
+        public async Task<ExtractingSchemaQueryModel> ExtractColumnSchema(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             var connectionType = databaseConnection.GetConnectionType();
             var extractionDatabase = _extractionDatabases.First(a => a.ConnectionType == connectionType);
 
-            return await extractionDatabase.Extract(databaseConnection, formattedString);
+            return await extractionDatabase.Extract(databaseConnection, formattedString, parameters);
         }
     }
 }

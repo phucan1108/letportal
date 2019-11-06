@@ -16,7 +16,7 @@ namespace LetPortal.Portal.Executions.Mongo
     {
         public ConnectionType ConnectionType => ConnectionType.MongoDB;
 
-        public async Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString)
+        public async Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             // queryJsonString sample
             // { "$query" : { 
@@ -25,6 +25,21 @@ namespace LetPortal.Portal.Executions.Mongo
             //      ]
             //  }}
             // Note: we just support aggreation framework only
+            if(parameters != null)
+            {
+                foreach(var param in parameters)
+                {
+                    if(param.RemoveQuotes)
+                    {
+                        formattedString = formattedString.Replace("\"{{" + param.Name + "}}\"", param.ReplaceValue);                        
+                    }
+                    else
+                    {
+                        formattedString = formattedString.Replace("{{" + param.Name + "}}", param.ReplaceValue);
+                    }
+                    
+                }
+            }
             var result = new ExtractingSchemaQueryModel();
 
             JObject parsingObject = JObject.Parse(formattedString);

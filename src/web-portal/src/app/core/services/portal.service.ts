@@ -825,7 +825,7 @@ export interface IDatabasesClient {
     put(id: string | null, databaseConnection: DatabaseConnection): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
     executionDynamic(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel>;
-    extractingQuery(databaseId: string | null, content: any): Observable<ExtractingSchemaQueryModel>;
+    extractingQuery(databaseId: string | null, model: ExtractionDatabaseRequestModel): Observable<ExtractingSchemaQueryModel>;
     executeQueryDatasource(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel>;
 }
 
@@ -1144,14 +1144,14 @@ export class DatabasesClient implements IDatabasesClient {
         return _observableOf<ExecuteDynamicResultModel>(<any>null);
     }
 
-    extractingQuery(databaseId: string | null, content: any): Observable<ExtractingSchemaQueryModel> {
+    extractingQuery(databaseId: string | null, model: ExtractionDatabaseRequestModel): Observable<ExtractingSchemaQueryModel> {
         let url_ = this.baseUrl + "/api/databases/{databaseId}/extract-raw";
         if (databaseId === undefined || databaseId === null)
             throw new Error("The parameter 'databaseId' must be defined.");
         url_ = url_.replace("{databaseId}", encodeURIComponent("" + databaseId)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(content);
+        const content_ = JSON.stringify(model);
 
         let options_ : any = {
             body: content_,
@@ -3454,6 +3454,8 @@ export interface ChartFilter {
     type?: FilterType;
     datasourceOptions?: DatasourceOptions | undefined;
     rangeValue?: string | undefined;
+    defaultValue?: string | undefined;
+    allowDefaultValue?: boolean;
     isMultiple?: boolean;
     isHidden?: boolean;
 }
@@ -3593,6 +3595,17 @@ export interface ColumnField {
     name?: string | undefined;
     displayName?: string | undefined;
     fieldType?: string | undefined;
+}
+
+export interface ExtractionDatabaseRequestModel {
+    content?: any | undefined;
+    parameters?: ExecuteParamModel[] | undefined;
+}
+
+export interface ExecuteParamModel {
+    name?: string | undefined;
+    replaceValue?: string | undefined;
+    removeQuotes?: boolean;
 }
 
 export interface Datasource extends BackupableEntity {

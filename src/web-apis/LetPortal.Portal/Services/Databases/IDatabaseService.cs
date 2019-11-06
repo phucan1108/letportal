@@ -10,6 +10,9 @@ namespace LetPortal.Portal.Services.Databases
     {
         Task<ExecuteDynamicResultModel> ExecuteDynamic(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters);
 
-        Task<ExtractingSchemaQueryModel> ExtractColumnSchema(DatabaseConnection databaseConnection, string formattedString);
+        Task<ExtractingSchemaQueryModel> ExtractColumnSchema(
+            DatabaseConnection databaseConnection,
+            string formattedString,
+            IEnumerable<ExecuteParamModel> parameters);
     }
 }

@@ -111,14 +111,14 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             }
             else {
                 this.code = this.databaseOptions.query
-            }            
-             
-            if(this.isEditMode){
+            }
+
+            if (this.isEditMode) {
                 this.entityClient.getAllFromOneDatabase(this.databaseOptionForm.get('databaseId').value).subscribe(result => {
                     this.shallowedEntitySchemas = result
                     this.entities.next(result)
                 })
-                
+
                 this.enablePopulateButton()
             }
         })
@@ -132,11 +132,11 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         this.onValueChanges()
     }
 
-    private enablePopulateButton(){
-        if(ObjectUtils.isNotNull(this.databaseOptionForm.get('query').value)){
+    private enablePopulateButton() {
+        if (ObjectUtils.isNotNull(this.databaseOptionForm.get('query').value)) {
             this.isEnablePopulate = true
         }
-        else{
+        else {
             this.isEnablePopulate = false
         }
     }
@@ -156,10 +156,11 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         let callDialog = !!tempDcurly && tempDcurly.length > 0
         if (callDialog) {
             _.forEach(tempDcurly, (param) => {
-                this.params.push({
-                    name: param,
-                    value: ''
-                })
+                if (this.params.findIndex(a => a.name === param) < 0)
+                    this.params.push({
+                        name: param,
+                        value: ''
+                    })
             })
 
             const dialogRef = this.dialog.open(ParamsDialogComponent, {
@@ -225,23 +226,23 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 this.afterSelectingEntityName.emit(newValue)
                 _.forEach(this.shallowedEntitySchemas, (element) => {
                     if (element.name === newValue) {
-                        let elementName = 
+                        let elementName =
                             this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'postgresql'
-                            || this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'sqlserver' ? `"${element.name}"` : `\`${element.name}\``
-                        let defaultQuery = 
-                            this.ismongodb ? 
-                                `{ "$query": { "${element.name}": [ ] } }` : 
+                                || this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'sqlserver' ? `"${element.name}"` : `\`${element.name}\``
+                        let defaultQuery =
+                            this.ismongodb ?
+                                `{ "$query": { "${element.name}": [ ] } }` :
                                 `SELECT * FROM ${elementName}`
 
-                        if(this.ismongodb){
+                        if (this.ismongodb) {
                             this.editor.set(JSON.parse(defaultQuery))
                         }
-                        else{
+                        else {
                             this.code = defaultQuery
                         }
                         this.databaseOptionForm.get('query').setValue(defaultQuery)
-                        
-                        if(this.isAutoPopulate){
+
+                        if (this.isAutoPopulate) {
                             this.dynamicListClient.extractingQuery({ query: defaultQuery, databaseId: this.databaseOptionForm.get('databaseId').value, parameters: [] }).subscribe(
                                 result => {
                                     this.logger.debug('Parsing response', result)
@@ -251,7 +252,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                                     this.shortcutUtil.notifyMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
                                 }
                             )
-                        }                        
+                        }
 
                         return false;
                     }
@@ -260,7 +261,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         })
 
         this.databaseOptionForm.get('query').valueChanges.subscribe(newValue => {
-            if(!this.ismongodb){
+            if (!this.ismongodb) {
                 this.code = newValue
             }
             this.enablePopulateButton()

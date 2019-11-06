@@ -55,6 +55,8 @@ export class ChartFilterDialogComponent implements OnInit {
            displayName: [this.selectedChartFilter.displayName, [Validators.required, Validators.maxLength(250)]],
            type: [this.selectedChartFilter.type, Validators.required],
            rangeValue: [this.selectedChartFilter.rangeValue],
+           defaultValue: [this.selectedChartFilter.defaultValue, Validators.maxLength(250)],
+           allowDefaultValue: [this.selectedChartFilter.allowDefaultValue],
            isMultiple: [this.selectedChartFilter.isMultiple],
            isHidden: [this.selectedChartFilter.isHidden] 
         })
@@ -78,6 +80,8 @@ export class ChartFilterDialogComponent implements OnInit {
             displayName: formValues.displayName,
             type: formValues.type,
             datasourceOptions: this.selectedChartFilter.datasourceOptions,
+            defaultValue: formValues.defaultValue,
+            allowDefaultValue: formValues.allowDefaultValue,
             isHidden: formValues.isHidden,
             isMultiple: formValues.isMultiple,
             rangeValue: formValues.rangeValue

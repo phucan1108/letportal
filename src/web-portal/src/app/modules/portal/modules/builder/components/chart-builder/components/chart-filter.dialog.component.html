@@ -29,10 +29,14 @@
             <label class="col-lg-2 col-form-label">Range Value</label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Enter Range Value" #rangeValueInput formControlName="rangeValue" maxlength="250" />
+                    <input matInput placeholder="Enter Range Value" #rangeValueInput formControlName="rangeValue"
+                        maxlength="250" />
                     <mat-hint align="end">
                         {{rangeValueInput.value?.length || 0}}/250
                     </mat-hint>
+                    <mat-icon matSuffix
+                        matTooltip="Range Value supports NumberPicker, DatePicker, MonthYearPicker. 'Now' is supporting to get a current date. Ex: [10,20,30], [10..20], [10..2..20] or [10-20,20-30] for only NumberPicker with multiple">help
+                    </mat-icon>
                 </mat-form-field>
             </div>
         </div>
@@ -40,6 +44,28 @@
             <label class="col-lg-2 col-form-label">Is Multiple</label>
             <div class="col-lg-1 pt-3 align-center">
                 <mat-checkbox formControlName="isMultiple">
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Default Value</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter Default Value" #defaultValueInput formControlName="defaultValue"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{defaultValueInput.value?.length || 0}}/250
+                    </mat-hint>
+                    <mat-icon matSuffix
+                        matTooltip="When Allow Default Value is true, this field will be used for querying data. Still support multiple values such as [10,20,30] according to Filter Control Type">help
+                    </mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Allow Default Value</label>
+            <div class="col-lg-1 pt-3 align-center">
+                <mat-checkbox formControlName="allowDefaultValue">
                 </mat-checkbox>
             </div>
         </div>

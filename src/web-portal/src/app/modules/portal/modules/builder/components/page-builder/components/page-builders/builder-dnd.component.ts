@@ -134,6 +134,7 @@ export class BuilderDnDComponent implements OnInit {
             },
             relatedStandard: null,
             relatedDynamicList: null,
+            relatedChart: null,
             isLoaded: false
         }
         const dialogRef = this.dialog.open(SectionDialogComponent, { data: newSection });
