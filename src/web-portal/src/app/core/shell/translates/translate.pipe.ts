@@ -32,18 +32,29 @@ export class Translator {
         let foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
         let foundReplacedConfigs: Array<ShellConfig> = [];
         _.forEach(foundReplacingConfigs, config => {
-            let shellConfig = this.getShellConfig(config, pageShellData)
+            // New changes: we add one pipe for defining parameter type such as "data.ticks|long"
+            // We need to detect this parameter has type
+            let splitted = config.split('|')
+            let configName = ''
+            if(splitted.length == 2){
+                configName = splitted[0]
+            }
+            else{
+                configName = config
+            }
+            let shellConfig = this.getShellConfig(configName, pageShellData)            
             if (shellConfig) {
                 foundReplacedConfigs.push(shellConfig)
+                shellConfig.key = config
             }
             else {
-                let builtInMethod = this.isBuiltInMethod(config)
+                let builtInMethod = this.isBuiltInMethod(configName)
                 if (builtInMethod) {
                     // Find all parameters in built-in method
-                    let padLeft = config.indexOf('(')
-                    let padRight = config.indexOf(')')
+                    let padLeft = configName.indexOf('(')
+                    let padRight = configName.indexOf(')')
                     if (padRight - 1 > padLeft) {
-                        let allMid = config.substr(padLeft + 1, padRight - padLeft - 1)
+                        let allMid = configName.substr(padLeft + 1, padRight - padLeft - 1)
                         let builtInMethodExecute = new Function('user', 'claims', 'options', 'data', 'configs', 'appsettings', 'queryparams', 'builtInMethod', 'return builtInMethod.execute(' + allMid + ')')
                         foundReplacedConfigs.push({ key: config, value: builtInMethodExecute(pageShellData.user, pageShellData.claims, pageShellData.options, pageShellData.data, pageShellData.configs, pageShellData.appsettings, pageShellData.queryparams, builtInMethod), type: ShellConfigType.Method, replaceDQuote: builtInMethod.replaceDQuote })
                     }
@@ -73,18 +84,29 @@ export class Translator {
         let foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
         let foundReplacedConfigs: Array<ShellConfig> = [];
         _.forEach(foundReplacingConfigs, config => {
-            let shellConfig = this.getShellConfig(config, pageShellData)
+            // New changes: we add one pipe for defining parameter type such as "data.ticks|long"
+            // We need to detect this parameter has type
+            let splitted = config.split('|')
+            let configName = ''
+            if(splitted.length == 2){
+                configName = splitted[0]
+            }
+            else{
+                configName = config
+            }
+            let shellConfig = this.getShellConfig(configName, pageShellData)            
             if (shellConfig) {
                 foundReplacedConfigs.push(shellConfig)
+                shellConfig.key = config
             }
             else {
-                let builtInMethod = this.isBuiltInMethod(config)
+                let builtInMethod = this.isBuiltInMethod(configName)
                 if (builtInMethod) {
                     // Find all parameters in built-in method
-                    let padLeft = config.indexOf('(')
-                    let padRight = config.indexOf(')')
+                    let padLeft = configName.indexOf('(')
+                    let padRight = configName.indexOf(')')
                     if (padRight - 1 > padLeft) {
-                        let allMid = config.substr(padLeft + 1, padRight - padLeft - 1)
+                        let allMid = configName.substr(padLeft + 1, padRight - padLeft - 1)
                         let builtInMethodExecute = new Function('user', 'claims', 'options', 'data', 'configs', 'appsettings', 'queryparams', 'builtInMethod', 'return builtInMethod.execute(' + allMid + ')')
                         foundReplacedConfigs.push({ key: config, value: builtInMethodExecute(pageShellData.user, pageShellData.claims, pageShellData.options, pageShellData.data, pageShellData.configs, pageShellData.appsettings, pageShellData.queryparams, builtInMethod), type: ShellConfigType.Method, replaceDQuote: builtInMethod.replaceDQuote })
                     }

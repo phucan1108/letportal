@@ -11,17 +11,23 @@ namespace LetPortal.Portal.Mappers
             switch(type)
             {
                 case "decimal":
-                    return decimal.Parse(value);
+                    decimal.TryParse(value, out decimal tempDecimal);
+                    return tempDecimal;
                 case "double":
-                    return double.Parse(value);
+                    double.TryParse(value, out double tempDouble);
+                    return tempDouble;
                 case "float":
-                    return float.Parse(value);
+                    float.TryParse(value, out float tempFloat);
+                    return tempFloat;
                 case "timespan":
-                    return TimeSpan.Parse(value);
+                    TimeSpan.TryParse(value, out TimeSpan timeSpan);
+                    return timeSpan;
                 case "long":
-                    return long.Parse(value);
+                    long.TryParse(value, out long tempLong);
+                    return tempLong;
                 case "int":
-                    return int.Parse(value);
+                    int.TryParse(value, out int tempInt);
+                    return tempInt;
                 case "bool":
                     if(value == "1" || value == "0")
                     {
@@ -29,10 +35,12 @@ namespace LetPortal.Portal.Mappers
                     }
                     else
                     {
-                        return bool.Parse(value);
+                        bool.TryParse(value, out bool tempBool);
+                        return tempBool;
                     }
                 case "date":
-                    return DateTime.Parse(value);
+                    DateTime.TryParse(value, out DateTime dateTime);
+                    return dateTime;
                 default:
                     return value;
             }
