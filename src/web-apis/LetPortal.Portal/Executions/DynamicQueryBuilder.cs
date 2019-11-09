@@ -1,4 +1,5 @@
 ﻿using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Models.DynamicLists;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace LetPortal.Portal.Executions
     {
         private DynamicQueryBuilderOptions builderOptions;
 
-        private DynamicQuery dynamicQuery;
+        private readonly DynamicQuery dynamicQuery;
 
         private string filterString;
 
@@ -47,11 +48,13 @@ namespace LetPortal.Portal.Executions
             {
                 var fieldParam = StringUtil.GenerateUniqueName();
                 dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace("{{" + param.Name + "}}", builderOptions.ParamSign + fieldParam);
+                var splitted = param.Name.Split("|");
                 dynamicQuery.Parameters.Add(new DynamicQueryParameter
                 {
                     Name = fieldParam,
                     Value = param.Value,
-                    ValueType = Entities.SectionParts.FieldValueType.Text
+                    IsReplacedValue = true,
+                    ReplaceValueType = MapperConstants.String
                 });
             }
 

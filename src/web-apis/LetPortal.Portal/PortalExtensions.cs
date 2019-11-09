@@ -6,6 +6,10 @@ using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.MySQL;
+using LetPortal.Portal.Mappers.PostgreSql;
+using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Options.Files;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Providers.Databases;
@@ -26,6 +30,7 @@ using LetPortal.Portal.Services.EntitySchemas;
 using LetPortal.Portal.Services.Files;
 using LetPortal.Portal.Services.Files.Validators;
 using LetPortal.Portal.Services.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -35,6 +40,7 @@ namespace LetPortal.Portal
     {
         public static ILetPortalBuilder AddPortalService(
             this ILetPortalBuilder builder,
+
             Action<PortalOptions> action = null)
         {
             var portalOptions = new PortalOptions();
@@ -42,6 +48,10 @@ namespace LetPortal.Portal
             {
                 action.Invoke(portalOptions);
             }
+
+            builder.Services.Configure<MapperOptions>(builder.Configuration.GetSection("MapperOptions"));
+            var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();
+            builder.Services.AddSingleton(mapperOptions);
             if(builder.ConnectionType == ConnectionType.MongoDB)
             {
                 MongoDbRegistry.RegisterEntities();
@@ -111,6 +121,8 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
                 builder.Services.AddTransient<IExecutionChartReport, PostgreExecutionChartReport>();
                 builder.Services.AddTransient<IExtractionChartQuery, PostgreExtractionChartQuery>();
+
+                builder.Services.AddSingleton<IPostgreSqlMapper, PostgreSqlMapper>();
             }
             else if(builder.ConnectionType == ConnectionType.SQLServer)
             {
@@ -121,6 +133,8 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IExtractionDatasource, SqlServerExtractionDatasource>();
                 builder.Services.AddTransient<IExecutionChartReport, SqlServerExecutionChartReport>();
                 builder.Services.AddTransient<IExtractionChartQuery, SqlServerExtractionChartQuery>();
+
+                builder.Services.AddSingleton<ISqlServerMapper, SqlServerMapper>();
             }
             else if(builder.ConnectionType == ConnectionType.MySQL)
             {
@@ -131,7 +145,10 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IExtractionDatasource, MySqlExtractionDatasource>();
                 builder.Services.AddTransient<IExecutionChartReport, MySqlExecutionChartReport>();
                 builder.Services.AddTransient<IExtractionChartQuery, MySqlExtractionChartQuery>();
+
+                builder.Services.AddSingleton<IMySqlMapper, MySqlMapper>();
             }
+            builder.Services.AddSingleton<ICSharpMapper, CSharpMapper>();
 
             builder.Services.AddTransient<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
             builder.Services.AddTransient<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();

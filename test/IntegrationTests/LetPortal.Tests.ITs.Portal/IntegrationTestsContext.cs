@@ -63,6 +63,14 @@ namespace LetPortal.Tests.ITs.Portal
             }
         }
 
+        public MapperOptions MapperOptions
+        {
+            get
+            {
+                return intergrationTestOptions.MapperOptions;
+            }
+        }
+
         public static bool isRegistered;
 
         private static readonly object _lockObject = new object();
@@ -411,6 +419,8 @@ namespace LetPortal.Tests.ITs.Portal
     internal class IntergrationTestOptions
     {
         public List<DatabaseConnection> DatabasesList { get; set; }
+
+        public MapperOptions MapperOptions { get; set; }
 
         public List<ConnectionType> RunningConnectionTypes { get; set; }
     }

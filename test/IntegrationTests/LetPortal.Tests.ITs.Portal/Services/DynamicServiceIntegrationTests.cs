@@ -5,6 +5,10 @@ using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.MySQL;
+using LetPortal.Portal.Mappers.PostgreSql;
+using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Services.Components;
 using Moq;
@@ -167,7 +171,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new PostgreDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new PostgreDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -218,7 +225,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new PostgreDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new PostgreDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -293,7 +303,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new PostgreDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new PostgreDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -377,7 +390,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new PostgreDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new PostgreDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -464,7 +480,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new SqlServerDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new SqlServerDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -515,7 +534,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new SqlServerDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new SqlServerDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -590,7 +612,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new SqlServerDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new SqlServerDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -674,7 +699,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new SqlServerDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new SqlServerDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFDynamicList();
@@ -761,7 +789,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MySqlDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new MySqlDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(), 
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFMySqlDynamicList();
@@ -812,7 +843,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MySqlDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new MySqlDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFMySqlDynamicList();
@@ -887,7 +921,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MySqlDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new MySqlDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFMySqlDynamicList();
@@ -971,7 +1008,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             var dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MySqlDynamicListQueryDatabase(new DynamicQueryBuilder())
+                new MySqlDynamicListQueryDatabase(
+                    new DynamicQueryBuilder(),
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper())
             };
 
             var databaseListSectionPart = SampleEFMySqlDynamicList();

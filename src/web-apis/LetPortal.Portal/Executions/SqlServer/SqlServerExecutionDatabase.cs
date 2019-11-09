@@ -1,13 +1,14 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.SqlServer
@@ -15,6 +16,16 @@ namespace LetPortal.Portal.Executions.SqlServer
     public class SqlServerExecutionDatabase : IExecutionDatabase
     {
         public ConnectionType ConnectionType => ConnectionType.SQLServer;
+
+        private readonly ISqlServerMapper _sqlServerMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public SqlServerExecutionDatabase(ISqlServerMapper sqlServerMapper, ICSharpMapper cSharpMapper)
+        {
+            _sqlServerMapper = sqlServerMapper;
+            _cSharpMapper = cSharpMapper;
+        }
 
         public async Task<ExecuteDynamicResultModel> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
@@ -38,9 +49,8 @@ namespace LetPortal.Portal.Executions.SqlServer
                         {
                             var fieldParam = StringUtil.GenerateUniqueName();
                             formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
-                            object castObject;
                             listParams.Add(
-                                new SqlParameter(fieldParam, GetSqlDbType(parameter.ReplaceValue, out castObject))
+                                new SqlParameter(fieldParam, GetSqlDbType(parameter.Name, parameter.ReplaceValue, out object castObject))
                                 {
                                     Value = castObject,
                                     Direction = ParameterDirection.Input
@@ -86,42 +96,18 @@ namespace LetPortal.Portal.Executions.SqlServer
             return result;
         }
 
-        private SqlDbType GetSqlDbType(string value, out object castObj)
+        private SqlDbType GetSqlDbType(string paramName, string value, out object castObj)
         {
-            if(decimal.TryParse(value, out decimal tempDecimal))
+            var splitted = paramName.Split("|");
+            if(splitted.Length == 1)
             {
-                castObj = tempDecimal;
-                return SqlDbType.Decimal;
-            }
-            else if(long.TryParse(value, out long tempLong))
-            {
-                castObj = tempLong;
-                return SqlDbType.BigInt;
-            }
-            else if(int.TryParse(value, out int tempInt))
-            {
-                castObj = tempInt;
-                return SqlDbType.Int;
-            }
-            else if(DateTime.TryParse(value, out DateTime tempDateTime))
-            {
-                castObj = tempDateTime;
-                return SqlDbType.DateTime2;
-            }
-            else if(bool.TryParse(value, out bool tempBool))
-            {
-                castObj = tempBool;
-                return SqlDbType.Bit;
-            }
-            else if(TimeSpan.TryParse(value, out TimeSpan tempTimeSpan))
-            {
-                castObj = tempTimeSpan;
-                return SqlDbType.Timestamp;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, MapperConstants.String);
+                return _sqlServerMapper.GetSqlDbType(MapperConstants.String);
             }
             else
             {
-                castObj = value;
-                return SqlDbType.NVarChar;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, splitted[1]);
+                return _sqlServerMapper.GetSqlDbType(splitted[1]);
             }
         }
     }

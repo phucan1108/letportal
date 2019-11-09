@@ -1,5 +1,7 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Charts;
 using MySql.Data.MySqlClient;
 using System;
@@ -18,10 +20,20 @@ namespace LetPortal.Portal.Executions.MySQL
 
         private readonly IChartReportProjection _chartReportProjection;
 
-        public MySqlExecutionChartReport(IChartReportQueryBuilder chartReportQueryBuilder, IChartReportProjection chartReportProjection)
+        private readonly IMySqlMapper _mySqlMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public MySqlExecutionChartReport(
+            IChartReportQueryBuilder chartReportQueryBuilder, 
+            IChartReportProjection chartReportProjection,
+            IMySqlMapper mySqlMapper,
+            ICSharpMapper cSharpMapper)
         {
             _chartReportQueryBuilder = chartReportQueryBuilder;
             _chartReportProjection = chartReportProjection;
+            _mySqlMapper = mySqlMapper;
+            _cSharpMapper = cSharpMapper;
         }
 
         public async Task<ExecutionChartResponseModel> Execute(
@@ -48,6 +60,10 @@ namespace LetPortal.Portal.Executions.MySQL
                                             })
                                             .AddFilters(filterValues)
                                             .AddParameters(parameters)
+                                            .AddMapper((a,b) =>
+                                            {
+                                                return _cSharpMapper.GetCSharpObjectByType(a, b);
+                                            })
                                             .Build();
                     command.CommandText = chartQuery.CombinedQuery;
 
@@ -82,43 +98,11 @@ namespace LetPortal.Portal.Executions.MySQL
         {
             foreach(var param in parameters)
             {
-                var mysqlParam = new MySqlParameter(param.Name, ConvertTypeToMySql(param.ValueType))
+                var mysqlParam = new MySqlParameter(param.Name, _mySqlMapper.GetMySqlDbType(param.ValueType))
                 {
                     Value = param.CastedValue
                 };
                 yield return mysqlParam;
-            }
-        }
-
-        private MySqlDbType ConvertTypeToMySql(Type type)
-        {
-            if(type == typeof(decimal))
-            {
-                return MySqlDbType.Decimal;
-            }
-            else if(type == typeof(double))
-            {
-                return MySqlDbType.Double;
-            }
-            else if(type == typeof(long))
-            {
-                return MySqlDbType.Int64;
-            }
-            else if(type == typeof(int))
-            {
-                return MySqlDbType.Int32;
-            }
-            else if(type == typeof(bool))
-            {
-                return MySqlDbType.Bit;
-            }
-            else if(type == typeof(DateTime))
-            {
-                return MySqlDbType.DateTime;
-            }
-            else
-            {
-                return MySqlDbType.VarChar;
             }
         }
     }

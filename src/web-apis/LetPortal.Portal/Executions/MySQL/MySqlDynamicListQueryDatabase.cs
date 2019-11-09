@@ -1,7 +1,10 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.DynamicLists;
 using MySql.Data.MySqlClient;
 using System;
@@ -14,9 +17,19 @@ namespace LetPortal.Portal.Executions.MySQL
     public class MySqlDynamicListQueryDatabase : IDynamicListQueryDatabase
     {
         private readonly IDynamicQueryBuilder _builder;
-        public MySqlDynamicListQueryDatabase(IDynamicQueryBuilder builder)
+
+        private readonly IMySqlMapper _mySqlMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public MySqlDynamicListQueryDatabase(
+            IDynamicQueryBuilder builder,
+            IMySqlMapper mySqlMapper,
+            ICSharpMapper cSharpMapper)
         {
             _builder = builder;
+            _mySqlMapper = mySqlMapper;
+            _cSharpMapper = cSharpMapper;
         }
 
         public ConnectionType ConnectionType => ConnectionType.MySQL;
@@ -48,14 +61,28 @@ namespace LetPortal.Portal.Executions.MySQL
                 {
                     foreach(var param in combinedQuery.Parameters)
                     {
-                        object castObj;
-                        cmd.Parameters.Add(
-                            new MySqlParameter(
-                                param.Name, GetMySqlDbType(param, out castObj))
-                            {
-                                Value = castObj,
-                                Direction = System.Data.ParameterDirection.Input
-                            });
+                        if(param.IsReplacedValue)
+                        {
+                            var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
+                            cmd.Parameters.Add(
+                                new MySqlParameter(
+                                    param.Name, _mySqlMapper.GetMySqlDbType(param.ReplaceValueType))
+                                {
+                                    Value = castObject,
+                                    Direction = System.Data.ParameterDirection.Input
+                                });
+                        }
+                        else
+                        {
+                            cmd.Parameters.Add(
+                                new MySqlParameter(
+                                    param.Name, GetMySqlDbType(param, out object castObj))
+                                {
+                                    Value = castObj,
+                                    Direction = System.Data.ParameterDirection.Input
+                                });
+                        }
+                        
                     }
                     using(var reader = cmd.ExecuteReader())
                     {
@@ -75,23 +102,21 @@ namespace LetPortal.Portal.Executions.MySQL
             switch(param.ValueType)
             {
                 case FieldValueType.Number:
-                    castObj = int.Parse(param.Value);
-                    return MySqlDbType.Int64;
+                    castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Long);
+                    return _mySqlMapper.GetMySqlDbType(MapperConstants.Long);
                 case FieldValueType.DatePicker:
-                    DateTime tempDt = DateTime.Parse(param.Value);
-                    tempDt = tempDt.Date;
-                    castObj = tempDt;
-                    return MySqlDbType.DateTime;
+                    castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Date);
+                    return _mySqlMapper.GetMySqlDbType(MapperConstants.Date);
                 case FieldValueType.Checkbox:
                 case FieldValueType.Slide:
                     bool temp = bool.Parse(param.Value);
                     castObj = temp ? 1 : 0;
-                    return MySqlDbType.Bit;
+                    return _mySqlMapper.GetMySqlDbType(MapperConstants.Bool);
                 case FieldValueType.Select:
                 case FieldValueType.Text:
                 default:
                     castObj = param.Value;
-                    return MySqlDbType.LongText;
+                    return _mySqlMapper.GetMySqlDbType(MapperConstants.String);
             }
         }
     }

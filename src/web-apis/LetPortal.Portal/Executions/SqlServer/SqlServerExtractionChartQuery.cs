@@ -6,8 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Models.Charts;
 
 namespace LetPortal.Portal.Executions.SqlServer
@@ -15,6 +18,16 @@ namespace LetPortal.Portal.Executions.SqlServer
     public class SqlServerExtractionChartQuery : IExtractionChartQuery
     {
         public ConnectionType ConnectionType => ConnectionType.SQLServer;
+
+        private readonly ISqlServerMapper _sqlServerMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public SqlServerExtractionChartQuery(ISqlServerMapper sqlServerMapper, ICSharpMapper cSharpMapper)
+        {
+            _sqlServerMapper = sqlServerMapper;
+            _cSharpMapper = cSharpMapper;
+        }
 
         public Task<ExtractionChartFilter> Extract(
             DatabaseConnection databaseConnection,
@@ -36,10 +49,9 @@ namespace LetPortal.Portal.Executions.SqlServer
                     foreach(var parameter in parameterValues)
                     {
                         var fieldParam = StringUtil.GenerateUniqueName();
-                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
-                        object castObject;
+                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);                        
                         listParams.Add(
-                            new SqlParameter(fieldParam, GetSqlDbType(parameter.Value, out castObject))
+                            new SqlParameter(fieldParam, GetSqlDbType(parameter.Name, parameter.Value, out object castObject))
                             {
                                 Value = castObject,
                                 Direction = ParameterDirection.Input
@@ -71,42 +83,18 @@ namespace LetPortal.Portal.Executions.SqlServer
             return Task.FromResult(chartFilters);
         }
 
-        private SqlDbType GetSqlDbType(string value, out object castObj)
+        private SqlDbType GetSqlDbType(string paramName, string value, out object castObj)
         {
-            if(decimal.TryParse(value, out decimal tempDecimal))
+            var splitted = paramName.Split("|");
+            if(splitted.Length == 1)
             {
-                castObj = tempDecimal;
-                return SqlDbType.Decimal;
-            }
-            else if(long.TryParse(value, out long tempLong))
-            {
-                castObj = tempLong;
-                return SqlDbType.BigInt;
-            }
-            else if(int.TryParse(value, out int tempInt))
-            {
-                castObj = tempInt;
-                return SqlDbType.Int;
-            }
-            else if(DateTime.TryParse(value, out DateTime tempDateTime))
-            {
-                castObj = tempDateTime;
-                return SqlDbType.Date;
-            }
-            else if(bool.TryParse(value, out bool tempBool))
-            {
-                castObj = tempBool;
-                return SqlDbType.Bit;
-            }
-            else if(TimeSpan.TryParse(value, out TimeSpan tempTimeSpan))
-            {
-                castObj = tempTimeSpan;
-                return SqlDbType.Timestamp;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, MapperConstants.String);
+                return _sqlServerMapper.GetSqlDbType(MapperConstants.String);
             }
             else
             {
-                castObj = value;
-                return SqlDbType.NVarChar;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, splitted[1]);
+                return _sqlServerMapper.GetSqlDbType(splitted[1]);
             }
         }
 

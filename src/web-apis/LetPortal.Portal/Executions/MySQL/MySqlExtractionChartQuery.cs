@@ -1,7 +1,10 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Charts;
 using MySql.Data.MySqlClient;
 using System;
@@ -14,6 +17,16 @@ namespace LetPortal.Portal.Executions.MySQL
     public class MySqlExtractionChartQuery : IExtractionChartQuery
     {
         public ConnectionType ConnectionType => ConnectionType.MySQL;
+
+        private readonly IMySqlMapper _mySqlMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public MySqlExtractionChartQuery(IMySqlMapper mySqlMapper, ICSharpMapper cSharpMapper)
+        {
+            _mySqlMapper = mySqlMapper;
+            _cSharpMapper = cSharpMapper;
+        }
 
         public Task<ExtractionChartFilter> Extract(
             DatabaseConnection databaseConnection, 
@@ -35,10 +48,9 @@ namespace LetPortal.Portal.Executions.MySQL
                     foreach(var parameter in parameterValues)
                     {
                         var fieldParam = StringUtil.GenerateUniqueName();
-                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
-                        object castObject;
+                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);                        
                         listParams.Add(
-                            new MySqlParameter(fieldParam, GetMySqlDbType(parameter.Value, out castObject))
+                            new MySqlParameter(fieldParam, GetMySqlDbType(parameter.Name, parameter.Value, out object castObject))
                             {
                                 Value = castObject,
                                 Direction = ParameterDirection.Input
@@ -70,42 +82,18 @@ namespace LetPortal.Portal.Executions.MySQL
             return Task.FromResult(chartFilters);
         }
 
-        private MySqlDbType GetMySqlDbType(string value, out object castObj)
+        private MySqlDbType GetMySqlDbType(string paramName, string value, out object castObj)
         {
-            if(decimal.TryParse(value, out decimal tempDecimal))
+            var splitted = paramName.Split("|");
+            if(splitted.Length == 1)
             {
-                castObj = tempDecimal;
-                return MySqlDbType.Decimal;
-            }
-            else if(long.TryParse(value, out long tempLong))
-            {
-                castObj = tempLong;
-                return MySqlDbType.Int64;
-            }
-            else if(int.TryParse(value, out int tempInt))
-            {
-                castObj = tempInt;
-                return MySqlDbType.Int32;
-            }
-            else if(DateTime.TryParse(value, out DateTime tempDateTime))
-            {
-                castObj = tempDateTime;
-                return MySqlDbType.DateTime;
-            }
-            else if(bool.TryParse(value, out bool tempBool))
-            {
-                castObj = tempBool;
-                return MySqlDbType.Bit;
-            }
-            else if(TimeSpan.TryParse(value, out TimeSpan tempTimeSpan))
-            {
-                castObj = tempTimeSpan;
-                return MySqlDbType.Timestamp;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, MapperConstants.String);
+                return _mySqlMapper.GetMySqlDbType(MapperConstants.String);
             }
             else
             {
-                castObj = value;
-                return MySqlDbType.VarChar;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, splitted[1]);
+                return _mySqlMapper.GetMySqlDbType(splitted[1]);
             }
         }
 

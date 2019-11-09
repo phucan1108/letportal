@@ -1,6 +1,11 @@
 ﻿using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
+using LetPortal.Portal.Executions.SqlServer;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.MySQL;
+using LetPortal.Portal.Mappers.PostgreSql;
+using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Services.Components;
 using Moq;
@@ -36,7 +41,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
             var extractionCharts = new List<IExtractionChartQuery>
             {
-                new PostgreExtractionChartQuery()
+                new PostgreExtractionChartQuery(new PostgreSqlMapper(_context.MapperOptions), new CSharpMapper())
             };
             var chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
             // Act
@@ -74,7 +79,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
             var executionCharts = new List<IExecutionChartReport>()
             {
-               new PostgreExecutionChartReport(new ChartReportQueryBuilder(), new ChartReportProjection())
+               new PostgreExecutionChartReport(
+                   new ChartReportQueryBuilder(), 
+                   new ChartReportProjection(),
+                   new PostgreSqlMapper(_context.MapperOptions),
+                   new CSharpMapper())
             };
             var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
@@ -136,7 +145,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
             var extractionCharts = new List<IExtractionChartQuery>
             {
-                new MySqlExtractionChartQuery()
+                new MySqlExtractionChartQuery(new MySqlMapper(_context.MapperOptions), new CSharpMapper())
             };
             var chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
             // Act
@@ -174,7 +183,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
             var executionCharts = new List<IExecutionChartReport>()
             {
-               new MySqlExecutionChartReport(new ChartReportQueryBuilder(), new ChartReportProjection())
+               new MySqlExecutionChartReport(
+                   new ChartReportQueryBuilder(), 
+                   new ChartReportProjection(),
+                   new MySqlMapper(_context.MapperOptions),
+                   new CSharpMapper())
             };
             var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
@@ -236,7 +249,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
             var extractionCharts = new List<IExtractionChartQuery>
             {
-                new PostgreExtractionChartQuery()
+                new PostgreExtractionChartQuery(new PostgreSqlMapper(_context.MapperOptions), new CSharpMapper())
             };
             var chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
             // Act
@@ -271,10 +284,14 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
+                .Returns(Task.FromResult(_context.SqlServerDatabaseConnection));
             var executionCharts = new List<IExecutionChartReport>()
             {
-               new PostgreExecutionChartReport(new ChartReportQueryBuilder(), new ChartReportProjection())
+               new SqlServerExecutionChartReport(
+                   new ChartReportQueryBuilder(), 
+                   new ChartReportProjection(),
+                   new SqlServerMapper(_context.MapperOptions),
+                   new CSharpMapper())
             };
             var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 

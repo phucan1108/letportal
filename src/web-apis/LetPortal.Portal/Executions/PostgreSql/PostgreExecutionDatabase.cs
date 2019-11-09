@@ -6,7 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using Npgsql;
@@ -17,6 +20,16 @@ namespace LetPortal.Portal.Executions.PostgreSql
     public class PostgreExecutionDatabase : IExecutionDatabase
     {
         public ConnectionType ConnectionType => ConnectionType.PostgreSQL;
+
+        private readonly IPostgreSqlMapper _postgreSqlMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public PostgreExecutionDatabase(IPostgreSqlMapper postgreSqlMapper, ICSharpMapper cSharpMapper)
+        {
+            _postgreSqlMapper = postgreSqlMapper;
+            _cSharpMapper = cSharpMapper;
+        }
 
         public async Task<ExecuteDynamicResultModel> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
@@ -37,12 +50,11 @@ namespace LetPortal.Portal.Executions.PostgreSql
                     if(parameters != null)
                     {
                         foreach(var parameter in parameters)
-                        {
+                        {                               
                             var fieldParam = StringUtil.GenerateUniqueName();
-                            formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
-                            object castObject;
+                            formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);                            
                             listParams.Add(
-                                new NpgsqlParameter(fieldParam, GetNpgsqlDbType(parameter.ReplaceValue, out castObject))
+                                new NpgsqlParameter(fieldParam, GetNpgsqlDbType(parameter.Name, parameter.ReplaceValue, out object castObject))
                                 {
                                     Value = castObject,
                                     Direction = ParameterDirection.Input
@@ -88,42 +100,18 @@ namespace LetPortal.Portal.Executions.PostgreSql
             return result;
         }
 
-        private NpgsqlDbType GetNpgsqlDbType(string value, out object castObj)
+        private NpgsqlDbType GetNpgsqlDbType(string paramName, string value, out object castObj)
         {
-            if(decimal.TryParse(value, out decimal tempDecimal))
+            var splitted = paramName.Split("|");
+            if(splitted.Length == 1)
             {
-                castObj = tempDecimal;
-                return NpgsqlDbType.Numeric;
-            }
-            else if(int.TryParse(value, out int tempInt))
-            {
-                castObj = tempInt;
-                return NpgsqlDbType.Integer;
-            }
-            else if(long.TryParse(value, out long tempLong))
-            {
-                castObj = tempLong;
-                return NpgsqlDbType.Bigint;
-            }
-            else if(DateTime.TryParse(value, out DateTime tempDateTime))
-            {
-                castObj = tempDateTime;
-                return NpgsqlDbType.Date;
-            }
-            else if(bool.TryParse(value, out bool tempBool))
-            {
-                castObj = tempBool;
-                return NpgsqlDbType.Boolean;
-            }
-            else if(TimeSpan.TryParse(value, out TimeSpan tempTimeSpan))
-            {
-                castObj = tempTimeSpan;
-                return NpgsqlDbType.Timestamp;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, MapperConstants.String);
+                return _postgreSqlMapper.GetNpgsqlDbType(MapperConstants.String);
             }
             else
             {
-                castObj = value;
-                return NpgsqlDbType.Varchar;
+                castObj = _cSharpMapper.GetCSharpObjectByType(value, splitted[1]);
+                return _postgreSqlMapper.GetNpgsqlDbType(splitted[1]);
             }
         }
     }

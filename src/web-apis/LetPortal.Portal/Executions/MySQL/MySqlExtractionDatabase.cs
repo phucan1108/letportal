@@ -1,5 +1,9 @@
 ﻿using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Databases;
 using MySql.Data.MySqlClient;
 using System;
@@ -13,21 +17,50 @@ namespace LetPortal.Portal.Executions.MySQL
     {
         public ConnectionType ConnectionType => ConnectionType.MySQL;
 
+        private readonly IMySqlMapper _mySqlMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public MySqlExtractionDatabase(
+            IMySqlMapper mySqlMapper,
+            ICSharpMapper cSharpMapper)
+        {
+            _mySqlMapper = mySqlMapper;
+            _cSharpMapper = cSharpMapper;
+        }
+
         public Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
+            var paramsList = new List<MySqlParameter>();
             if(parameters != null)
             {
                 foreach(var param in parameters)
                 {
-                    if(param.RemoveQuotes)
+                    // We need to detect a parameter type and then re-mapping to db type
+                    var splitted = param.Name.Split("|");
+                    MySqlDbType paramDbType = MySqlDbType.LongText;
+                    object parsedValue;
+                    if(splitted.Length == 1)
                     {
-                        formattedString = formattedString.Replace("'{{" + param.Name + "}}'", param.ReplaceValue);
+                        // Default: string type
+                        paramDbType = _mySqlMapper.GetMySqlDbType(MapperConstants.String);
+                        parsedValue = param.ReplaceValue;
                     }
                     else
                     {
-                        formattedString = formattedString.Replace("{{" + param.Name + "}}", param.ReplaceValue);
+                        // It must contain 2 words
+                        paramDbType = _mySqlMapper.GetMySqlDbType(splitted[1]);
+                        parsedValue = _cSharpMapper.GetCSharpObjectByType(param.ReplaceValue, splitted[1]);
                     }
 
+                    var fieldParam = StringUtil.GenerateUniqueName();
+                    formattedString = formattedString.Replace("{{" + param.Name + "}}", "@" + fieldParam);
+                    paramsList.Add(
+                        new MySqlParameter(fieldParam, paramDbType)
+                        {
+                            Value = parsedValue,
+                            Direction = ParameterDirection.Input
+                        });
                 }
             }
             var extractModel = new ExtractingSchemaQueryModel
@@ -41,6 +74,10 @@ namespace LetPortal.Portal.Executions.MySQL
                 warpQuery = string.Format(warpQuery, formattedString);
                 using(var command = new MySqlCommand(formattedString, mysqlDbConnection))
                 {
+                    if(paramsList.Count > 0)
+                    {
+                        command.Parameters.AddRange(paramsList.ToArray());
+                    }
                     using(var reader = command.ExecuteReader())
                     {
                         using(DataTable dt = new DataTable())

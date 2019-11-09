@@ -1,5 +1,7 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Models.Charts;
 using System;
 using System.Collections.Generic;
@@ -18,10 +20,20 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         private readonly IChartReportProjection _chartReportProjection;
 
-        public SqlServerExecutionChartReport(IChartReportQueryBuilder chartReportQueryBuilder, IChartReportProjection chartReportProjection)
+        private readonly ISqlServerMapper _sqlServerMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public SqlServerExecutionChartReport(
+            IChartReportQueryBuilder chartReportQueryBuilder, 
+            IChartReportProjection chartReportProjection,
+            ISqlServerMapper sqlServerMapper,
+            ICSharpMapper cSharpMapper)
         {
             _chartReportQueryBuilder = chartReportQueryBuilder;
             _chartReportProjection = chartReportProjection;
+            _sqlServerMapper = sqlServerMapper;
+            _cSharpMapper = cSharpMapper;
         }
 
         public async Task<ExecutionChartResponseModel> Execute(
@@ -42,12 +54,16 @@ namespace LetPortal.Portal.Executions.SqlServer
                                             {
                                                 options.FieldFormat = "[{0}]";
                                                 options.AllowBoolIsInt = false;
-                                                options.DateCompare = "date({0}){1}date({2})";
+                                                options.DateCompare = "cast({0} as date){1}cast({2} as date)";
                                                 options.MonthCompare = "month({0}){1}month({2})";
                                                 options.YearCompare = "year({0}){1}year({2})";
                                             })
                                             .AddFilters(filterValues)
                                             .AddParameters(parameters)
+                                            .AddMapper((a, b) =>
+                                            {
+                                                return _cSharpMapper.GetCSharpObjectByType(a, b);
+                                            })
                                             .Build();
                     command.CommandText = chartQuery.CombinedQuery;
 
@@ -82,7 +98,7 @@ namespace LetPortal.Portal.Executions.SqlServer
         {
             foreach(var param in parameters)
             {
-                var postgreParam = new SqlParameter(param.Name, ConvertTypeToSql(param.ValueType))
+                var postgreParam = new SqlParameter(param.Name, _sqlServerMapper.GetSqlDbType(param.ValueType))
                 {
                     Value = param.CastedValue
                 };

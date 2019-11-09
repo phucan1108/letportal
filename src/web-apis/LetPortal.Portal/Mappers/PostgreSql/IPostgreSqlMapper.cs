@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NpgsqlTypes;
 
 namespace LetPortal.Portal.Mappers.PostgreSql
 {
-    interface IPostgreSqlMapper
+    public interface IPostgreSqlMapper
     {
+        NpgsqlDbType GetNpgsqlDbType(string type);
     }
 }

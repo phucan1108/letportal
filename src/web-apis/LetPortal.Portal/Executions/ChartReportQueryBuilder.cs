@@ -18,6 +18,8 @@ namespace LetPortal.Portal.Executions
 
         private IEnumerable<ChartParameterValue> parameterValues;
 
+        private Func<string, string, object> mapperFunc;
+
         public ChartReportQueryBuilder()
         {
             options = new ChartReportQueryOptions();
@@ -47,6 +49,12 @@ namespace LetPortal.Portal.Executions
             return this;
         }
 
+        public IChartReportQueryBuilder AddMapper(Func<string, string, object> mapperFunc)
+        {
+            this.mapperFunc = mapperFunc;
+            return this;
+        }
+
         public ChartReportQuery Build()
         {
             var listParams = new List<ChartReportParameter>();
@@ -58,7 +66,7 @@ namespace LetPortal.Portal.Executions
                 {
                     var fieldParam = StringUtil.GenerateUniqueName();
                     formattedString = formattedString.Replace("{{" + param.Name + "}}", GetFieldWithParamSign(fieldParam));
-                    var paramType = GetValueDbType(param.Value, out object castObject);
+                    var paramType = GetValueDbType(param.Name, param.Value, out object castObject);
                     listParams.Add(new ChartReportParameter
                     {
                         Name = fieldParam,
@@ -112,43 +120,19 @@ namespace LetPortal.Portal.Executions
             return columnStr;
         }
 
-        private Type GetValueDbType(string value, out object castObj)
+        private string GetValueDbType(string paramName, string value, out object castObj)
         {
-            if(decimal.TryParse(value, out decimal tempDecimal))
+            var splitted = paramName.Split("|");
+            if(splitted.Length == 1)
             {
-                castObj = tempDecimal;
-                return typeof(decimal);
-            }
-            else if(TimeSpan.TryParse(value, out TimeSpan tempTimeSpan))
-            {
-                castObj = tempTimeSpan;
-                return typeof(TimeSpan);
-            }
-            else if(long.TryParse(value, out long tempLong))
-            {
-                castObj = tempLong;
-                return typeof(long);
-            }
-            else if(int.TryParse(value, out int tempInt))
-            {
-                castObj = tempInt;
-                return typeof(int);
-            }
-            else if(DateTime.TryParse(value, out DateTime tempDateTime))
-            {
-                castObj = tempDateTime;
-                return typeof(DateTime);
-            }
-            else if(bool.TryParse(value, out bool tempBool))
-            {
-                castObj = tempBool;
-                return typeof(bool);
+                castObj = mapperFunc.Invoke("string", value);
+                return "string";
             }
             else
             {
-                castObj = value;
-                return typeof(string);
-            }
+                castObj = mapperFunc.Invoke(splitted[1], value);
+                return splitted[1];
+            }                                  
         }
 
         private string GenerateFilterColumns(IEnumerable<ChartFilterValue> filterValues, ref List<ChartReportParameter> parameters)
@@ -178,7 +162,7 @@ namespace LetPortal.Portal.Executions
                         {
                             Name = tempCheckBoxParam,
                             CastedValue = passValue == 1,
-                            ValueType = typeof(bool)
+                            ValueType = "bool"
                         });
                         break;
                     case Entities.Components.FilterType.Select:
@@ -199,7 +183,7 @@ namespace LetPortal.Portal.Executions
                             {
                                 Name = tempSelectParam,
                                 CastedValue = selectValue,
-                                ValueType = typeof(long)
+                                ValueType = "long"
                             };
                         }
                         else
@@ -208,7 +192,7 @@ namespace LetPortal.Portal.Executions
                             {
                                 Name = tempSelectParam,
                                 CastedValue = filter.Value,
-                                ValueType = typeof(string)
+                                ValueType = "string"
                             };
                         }
                         parameters.Add(selectMySqlParameter);
@@ -246,13 +230,13 @@ namespace LetPortal.Portal.Executions
                                     {
                                         Name = tempStartNumParam,
                                         CastedValue = long.Parse(splitted[0]),
-                                        ValueType = typeof(long)
+                                        ValueType = "long"
                                     });
                                     parameters.Add(new ChartReportParameter
                                     {
                                         Name = tempEndNumParam,
                                         CastedValue = long.Parse(splitted[1]),
-                                        ValueType = typeof(long)
+                                        ValueType = "long"
                                     });
                                 }
 
@@ -282,13 +266,13 @@ namespace LetPortal.Portal.Executions
                                 {
                                     Name = tempStartNumParam,
                                     CastedValue = long.Parse(splitted[0]),
-                                    ValueType = typeof(long)
+                                    ValueType = "long"
                                 });
                                 parameters.Add(new ChartReportParameter
                                 {
                                     Name = tempEndNumParam,
                                     CastedValue = long.Parse(splitted[1]),
-                                    ValueType = typeof(long)
+                                    ValueType = "long"
                                 });
                             }
                             else
@@ -300,7 +284,7 @@ namespace LetPortal.Portal.Executions
                                 {
                                     Name = tempNumberRangeParam,
                                     CastedValue = long.Parse(filter.Value),
-                                    ValueType = typeof(long)
+                                    ValueType = "long"
                                 });
                             }
                         }
@@ -330,13 +314,13 @@ namespace LetPortal.Portal.Executions
                             {
                                 Name = tempStartDateParam,
                                 CastedValue = startDatePickerDt,
-                                ValueType = typeof(DateTime)
+                                ValueType = "date"
                             });
                             parameters.Add(new ChartReportParameter
                             {
                                 Name = tempEndDateParam,
                                 CastedValue = endDatePickerDt,
-                                ValueType = typeof(DateTime)
+                                ValueType = "date"
                             });
                         }
                         else
@@ -353,7 +337,7 @@ namespace LetPortal.Portal.Executions
                             {
                                 Name = tempDatePickerParam,
                                 CastedValue = datePickerDt,
-                                ValueType = typeof(DateTime)
+                                ValueType = "date"
                             });
                         }
                         break;
@@ -382,13 +366,13 @@ namespace LetPortal.Portal.Executions
                             {
                                 Name = tempStartDateParam,
                                 CastedValue = startDatePickerDt,
-                                ValueType = typeof(DateTime)
+                                ValueType = "date"
                             });
                             parameters.Add(new ChartReportParameter
                             {
                                 Name = tempEndDateParam,
                                 CastedValue = endDatePickerDt,
-                                ValueType = typeof(DateTime)
+                                ValueType = "date"
                             });
                         }
                         else
@@ -413,13 +397,13 @@ namespace LetPortal.Portal.Executions
                             {
                                 Name = tempMonthPickerParam,
                                 CastedValue = dateMonthPickerDt,
-                                ValueType = typeof(DateTime)
+                                ValueType = "date"
                             });
                             parameters.Add(new ChartReportParameter
                             {
                                 Name = tempYearPickerParam,
                                 CastedValue = dateMonthPickerDt,
-                                ValueType = typeof(DateTime)
+                                ValueType = "date"
                             });
                         }
                         break;

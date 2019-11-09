@@ -1,5 +1,7 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Models.Charts;
 using Npgsql;
 using NpgsqlTypes;
@@ -19,10 +21,20 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
         private readonly IChartReportProjection _chartReportProjection;
 
-        public PostgreExecutionChartReport(IChartReportQueryBuilder chartReportQueryBuilder, IChartReportProjection chartReportProjection)
+        private readonly IPostgreSqlMapper _postgreSqlMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public PostgreExecutionChartReport(
+            IChartReportQueryBuilder chartReportQueryBuilder, 
+            IChartReportProjection chartReportProjection,
+            IPostgreSqlMapper postgreSqlMapper,
+            ICSharpMapper cSharpMapper)
         {
             _chartReportQueryBuilder = chartReportQueryBuilder;
             _chartReportProjection = chartReportProjection;
+            _postgreSqlMapper = postgreSqlMapper;
+            _cSharpMapper = cSharpMapper;
         }
 
         public async Task<ExecutionChartResponseModel> Execute(
@@ -33,15 +45,19 @@ namespace LetPortal.Portal.Executions.PostgreSql
             IEnumerable<ChartFilterValue> filterValues)
         {
             var result = new ExecutionChartResponseModel();
-            using(var mysqlDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
+            using(var postgreDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
             {
-                mysqlDbConnection.Open();
-                using(var command = new NpgsqlCommand(formattedString, mysqlDbConnection))
+                postgreDbConnection.Open();
+                using(var command = new NpgsqlCommand(formattedString, postgreDbConnection))
                 {
                     var chartQuery = _chartReportQueryBuilder
                                             .Init(formattedString, mappingProjection)
                                             .AddFilters(filterValues)
                                             .AddParameters(parameters)
+                                            .AddMapper((a,b) =>
+                                            {
+                                                return _cSharpMapper.GetCSharpObjectByType(a, b);
+                                            })
                                             .Build();
                     command.CommandText = chartQuery.CombinedQuery;
 
@@ -76,43 +92,11 @@ namespace LetPortal.Portal.Executions.PostgreSql
         {
             foreach(var param in parameters)
             {
-                var postgreParam = new NpgsqlParameter(param.Name, ConvertTypeToPostgre(param.ValueType))
+                var postgreParam = new NpgsqlParameter(param.Name, _postgreSqlMapper.GetNpgsqlDbType(param.ValueType))
                 {
                     Value = param.CastedValue
                 };
                 yield return postgreParam;
-            }
-        }
-
-        private NpgsqlDbType ConvertTypeToPostgre(Type type)
-        {
-            if(type == typeof(decimal))
-            {
-                return NpgsqlDbType.Numeric;
-            }
-            else if(type == typeof(double))
-            {
-                return NpgsqlDbType.Double;
-            }
-            else if(type == typeof(long))
-            {
-                return NpgsqlDbType.Bigint;
-            }
-            else if(type == typeof(int))
-            {
-                return NpgsqlDbType.Integer;
-            }
-            else if(type == typeof(bool))
-            {
-                return NpgsqlDbType.Boolean;
-            }
-            else if(type == typeof(DateTime))
-            {
-                return NpgsqlDbType.Date;
-            }
-            else
-            {
-                return NpgsqlDbType.Varchar;
             }
         }
     }

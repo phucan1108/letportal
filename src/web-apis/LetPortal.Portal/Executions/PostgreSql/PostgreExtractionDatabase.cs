@@ -1,7 +1,12 @@
 ﻿using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Models.Databases;
 using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,21 +18,48 @@ namespace LetPortal.Portal.Executions.PostgreSql
     {
         public ConnectionType ConnectionType => ConnectionType.PostgreSQL;
 
+        private readonly IPostgreSqlMapper _postgreSqlMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public PostgreExtractionDatabase(IPostgreSqlMapper postgreSqlMapper, ICSharpMapper cSharpMapper)
+        {
+            _postgreSqlMapper = postgreSqlMapper;
+            _cSharpMapper = cSharpMapper;
+        }
+
         public Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
+            var paramsList = new List<NpgsqlParameter>();
             if(parameters != null)
             {
                 foreach(var param in parameters)
                 {
-                    if(param.RemoveQuotes)
+                    // We need to detect a parameter type and then re-mapping to db type
+                    var splitted = param.Name.Split("|");
+                    NpgsqlDbType paramDbType = NpgsqlDbType.Text;
+                    object parsedValue;
+                    if(splitted.Length == 1)
                     {
-                        formattedString = formattedString.Replace("'{{" + param.Name + "}}'", param.ReplaceValue);
+                        // Default: string type
+                        paramDbType = _postgreSqlMapper.GetNpgsqlDbType(MapperConstants.String);
+                        parsedValue = param.ReplaceValue;
                     }
                     else
                     {
-                        formattedString = formattedString.Replace("{{" + param.Name + "}}", param.ReplaceValue);
+                        // It must contain 2 words
+                        paramDbType = _postgreSqlMapper.GetNpgsqlDbType(splitted[1]);
+                        parsedValue = _cSharpMapper.GetCSharpObjectByType(param.ReplaceValue, splitted[1]);
                     }
 
+                    var fieldParam = StringUtil.GenerateUniqueName();
+                    formattedString = formattedString.Replace("{{" + param.Name + "}}", "@" + fieldParam);
+                    paramsList.Add(
+                        new NpgsqlParameter(fieldParam, paramDbType)
+                        {
+                            Value = parsedValue,
+                            Direction = ParameterDirection.Input
+                        });
                 }
             }
 
@@ -42,6 +74,10 @@ namespace LetPortal.Portal.Executions.PostgreSql
                 warpQuery = string.Format(warpQuery, formattedString);
                 using(var command = new NpgsqlCommand(formattedString, postgreDbConnection))
                 {
+                    if(paramsList.Count > 0)
+                    {
+                        command.Parameters.AddRange(paramsList.ToArray());
+                    }
                     using(var reader = command.ExecuteReader())
                     {
                         using(DataTable dt = new DataTable())

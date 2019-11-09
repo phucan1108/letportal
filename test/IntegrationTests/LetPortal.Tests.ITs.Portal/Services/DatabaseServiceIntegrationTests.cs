@@ -11,6 +11,10 @@ using LetPortal.Portal.Models.Databases;
 using System;
 using LetPortal.Portal.Executions.SqlServer;
 using LetPortal.Portal.Executions.MySQL;
+using LetPortal.Portal.Mappers.MySQL;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.PostgreSql;
+using LetPortal.Portal.Mappers.SqlServer;
 
 namespace LetPortal.Tests.ITs.Portal.Services
 {
@@ -130,7 +134,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var postgreExtractionDatabase = new PostgreExtractionDatabase();
+            var postgreExtractionDatabase = new PostgreExtractionDatabase(
+                new PostgreSqlMapper(_context.MapperOptions),
+                new CSharpMapper());
 
             var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { postgreExtractionDatabase });
             // Act
@@ -150,7 +156,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+            var postgreExecutionDatabase = 
+                new PostgreExecutionDatabase(
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
@@ -170,7 +179,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+            var postgreExecutionDatabase = 
+                new PostgreExecutionDatabase(
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
@@ -190,7 +202,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+            var postgreExecutionDatabase = 
+                new PostgreExecutionDatabase(
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
@@ -198,13 +213,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var result =
                 await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
-                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
                         new List<ExecuteParamModel>
                         {
                             new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
                             new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
                             new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
-                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "currentTick()|long", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
@@ -223,7 +238,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+            var postgreExecutionDatabase = 
+                new PostgreExecutionDatabase(
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
@@ -251,20 +269,23 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var postgreExecutionDatabase = new PostgreExecutionDatabase();
+            var postgreExecutionDatabase = 
+                new PostgreExecutionDatabase(
+                    new PostgreSqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
             var insertId = Guid.NewGuid().ToString();
             // Act
             await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
-                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
+                        "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
                         new List<ExecuteParamModel>
                         {
                             new ExecuteParamModel { Name = "guid()", ReplaceValue = insertId },
                             new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase1" },
                             new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
-                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+                            new ExecuteParamModel { Name = "currentTick()|long", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
@@ -294,7 +315,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var sqlServerExtractionDatabase = new SqlServerExtractionDatabase();
+            var sqlServerExtractionDatabase = 
+                new SqlServerExtractionDatabase(
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { sqlServerExtractionDatabase });
             // Act
@@ -314,7 +338,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+            var sqlServerExecutionDatabase = 
+                new SqlServerExecutionDatabase(
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
@@ -334,7 +361,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+            var sqlServerExecutionDatabase = 
+                new SqlServerExecutionDatabase(
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
@@ -354,7 +384,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+            var sqlServerExecutionDatabase = 
+                new SqlServerExecutionDatabase(
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
@@ -387,7 +420,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+            var sqlServerExecutionDatabase = 
+                new SqlServerExecutionDatabase(
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
@@ -415,7 +451,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var sqlServerExecutionDatabase = new SqlServerExecutionDatabase();
+            var sqlServerExecutionDatabase = 
+                new SqlServerExecutionDatabase(
+                    new SqlServerMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
             var insertId = Guid.NewGuid().ToString();
@@ -458,12 +497,18 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mysqlExtractionDatabase = new MySqlExtractionDatabase();
+            var mysqlExtractionDatabase = 
+                new MySqlExtractionDatabase(new MySqlMapper(_context.MapperOptions), new CSharpMapper());
 
             var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { mysqlExtractionDatabase });
             // Act
-            var warpQuery = "Select * From `databases`";
-            var result = await databaseService.ExtractColumnSchema(_context.MySqlDatabaseConnection, warpQuery, null);
+            var warpQuery = "Select * From `apps` Where date(`dateCreated`)={{queryparams.date|date}}";
+            var result = await databaseService
+                                .ExtractColumnSchema(_context.MySqlDatabaseConnection, warpQuery, 
+                                    new List<ExecuteParamModel>
+                                    {
+                                        new ExecuteParamModel { Name = "queryparams.date|date", ReplaceValue = DateTime.UtcNow.ToString() }
+                                    });
 
             // Assert
             Assert.NotEmpty(result.ColumnFields);
@@ -478,7 +523,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+            var mysqlExecutionDatabase =
+                new MySqlExecutionDatabase(
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
@@ -498,7 +546,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+            var mysqlExecutionDatabase = 
+                new MySqlExecutionDatabase(
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
@@ -518,7 +569,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+            var mysqlExecutionDatabase = 
+                new MySqlExecutionDatabase(
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
@@ -551,7 +605,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+            var mysqlExecutionDatabase = 
+                new MySqlExecutionDatabase(
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
@@ -579,7 +636,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mysqlExecutionDatabase = new MySqlExecutionDatabase();
+            var mysqlExecutionDatabase =
+                new MySqlExecutionDatabase(
+                    new MySqlMapper(_context.MapperOptions),
+                    new CSharpMapper());
 
             var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
             var insertId = Guid.NewGuid().ToString();

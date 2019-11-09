@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Data;
 
 namespace LetPortal.Portal.Mappers.SqlServer
 {
-    interface ISqlServerMapper
+    public interface ISqlServerMapper
     {
+        SqlDbType GetSqlDbType(string type);
     }
 }

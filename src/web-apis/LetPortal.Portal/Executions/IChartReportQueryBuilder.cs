@@ -17,6 +17,8 @@ namespace LetPortal.Portal.Executions
 
         IChartReportQueryBuilder AddFilters(IEnumerable<ChartFilterValue> filterValues);
 
+        IChartReportQueryBuilder AddMapper(Func<string, string, object> mapperFunc);
+
         ChartReportQuery Build();
     }
 
@@ -53,7 +55,7 @@ namespace LetPortal.Portal.Executions
     {
         public string Name { get; set; }
 
-        public Type ValueType { get; set; }
+        public string ValueType { get; set; }
 
         public object CastedValue { get; set; }
     }

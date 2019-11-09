@@ -1,7 +1,10 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Models.DynamicLists;
 using System;
 using System.Collections.Generic;
@@ -16,9 +19,19 @@ namespace LetPortal.Portal.Executions.SqlServer
     public class SqlServerDynamicListQueryDatabase : IDynamicListQueryDatabase
     {
         private readonly IDynamicQueryBuilder _builder;
-        public SqlServerDynamicListQueryDatabase(IDynamicQueryBuilder builder)
+
+        private readonly ISqlServerMapper _sqlServerMapper;
+
+        private readonly ICSharpMapper _cSharpMapper;
+
+        public SqlServerDynamicListQueryDatabase(
+            IDynamicQueryBuilder builder,
+            ISqlServerMapper sqlServerMapper,
+            ICSharpMapper cSharpMapper)
         {
             _builder = builder;
+            _sqlServerMapper = sqlServerMapper;
+            _cSharpMapper = cSharpMapper;
         }
 
         public ConnectionType ConnectionType => ConnectionType.SQLServer;
@@ -51,13 +64,27 @@ namespace LetPortal.Portal.Executions.SqlServer
                 {
                     foreach(var param in combinedQuery.Parameters)
                     {
-                        cmd.Parameters.Add(
-                            new SqlParameter(
-                                param.Name, GetSqlDbType(param.ValueType))
-                            {
-                                Value = param.Value,
-                                Direction = System.Data.ParameterDirection.Input
-                            });
+                        if(param.IsReplacedValue)
+                        {
+                            var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
+                            cmd.Parameters.Add(
+                                new SqlParameter(
+                                    param.Name, _sqlServerMapper.GetSqlDbType(param.ReplaceValueType))
+                                {
+                                    Value = castObject,
+                                    Direction = System.Data.ParameterDirection.Input
+                                });
+                        }
+                        else
+                        {
+                            cmd.Parameters.Add(
+                              new SqlParameter(
+                                  param.Name, GetSqlDbType(param, out object castObject))
+                              {
+                                  Value = castObject,
+                                  Direction = System.Data.ParameterDirection.Input
+                              });
+                        }                        
                     }
                     using(var reader = cmd.ExecuteReader())
                     {
@@ -72,20 +99,24 @@ namespace LetPortal.Portal.Executions.SqlServer
             return Task.FromResult(response);
         }
 
-        private SqlDbType GetSqlDbType(FieldValueType fieldValueType)
+        private SqlDbType GetSqlDbType(DynamicQueryParameter param, out object castObj)
         {
-            switch(fieldValueType)
+            switch(param.ValueType)
             {
                 case FieldValueType.Number:
+                    castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Long);
                     return SqlDbType.Int;
                 case FieldValueType.DatePicker:
+                    castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Date);
                     return SqlDbType.Date;
                 case FieldValueType.Checkbox:
                 case FieldValueType.Slide:
+                    castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Bool);
                     return SqlDbType.Bit;
                 case FieldValueType.Select:
                 case FieldValueType.Text:
                 default:
+                    castObj = param.Value;
                     return SqlDbType.NVarChar;
             }
         }

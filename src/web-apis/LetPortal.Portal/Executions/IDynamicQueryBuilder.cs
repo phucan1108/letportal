@@ -72,6 +72,10 @@ namespace LetPortal.Portal.Executions
 
         public FieldValueType ValueType { get; set; }
 
+        public string ReplaceValueType { get; set; }
+
+        public bool IsReplacedValue { get; set; }
+
         public string Value { get; set; }
     }
 }
