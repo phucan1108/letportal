@@ -11,6 +11,10 @@ namespace LetPortal.ServiceManagement.Repositories
     {
         Task<int> GetLastInstanceNoOfService(string serviceName);
 
-        Task UpdateShutdownStateForAllServices();
+        Task UpdateShutdownStateForAllServices(int durationShutdown);
+
+        Task UpdateLostStateForAllLosingServices(int durationLost);
+
+        Task ForceShutdownAllServices();
     }
 }

@@ -22,9 +22,11 @@
                 </mat-card-header>
                 <mat-card-content class="align-center">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-12 pl-4 pr-4">
                             <mat-form-field class="field-full-width">
-                                <input matInput placeholder="Type group claim here..." (input)="filter($event.target.value)">
+                                <input matInput placeholder="Search the claims..."
+                                    (input)="filter($event.target.value)">
+                                <mat-icon matSuffix>search</mat-icon>
                             </mat-form-field>
                         </div>
                         <div class="col-lg-12">

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Portal.Mappers
 {
@@ -11,23 +9,41 @@ namespace LetPortal.Portal.Mappers
             switch(type)
             {
                 case "decimal":
-                    decimal.TryParse(value, out decimal tempDecimal);
-                    return tempDecimal;
+                    if(decimal.TryParse(value, out decimal tempDecimal))
+                    {
+                        return tempDecimal;
+                    }
+                    break;
                 case "double":
-                    double.TryParse(value, out double tempDouble);
-                    return tempDouble;
+                    if(double.TryParse(value, out double tempDouble))
+                    {
+                        return tempDouble;
+                    }
+                    break;
                 case "float":
-                    float.TryParse(value, out float tempFloat);
-                    return tempFloat;
+                    if(float.TryParse(value, out float tempFloat))
+                    {
+                        return tempFloat;
+                    }
+                    break;
                 case "timespan":
-                    TimeSpan.TryParse(value, out TimeSpan timeSpan);
-                    return timeSpan;
+                    if(TimeSpan.TryParse(value, out TimeSpan timeSpan))
+                    {
+                        return timeSpan;
+                    }
+                    break;
                 case "long":
-                    long.TryParse(value, out long tempLong);
-                    return tempLong;
+                    if(long.TryParse(value, out long tempLong))
+                    {
+                        return tempLong;
+                    }
+                    break;
                 case "int":
-                    int.TryParse(value, out int tempInt);
-                    return tempInt;
+                    if(int.TryParse(value, out int tempInt))
+                    {
+                        return tempInt;
+                    }
+                    break;
                 case "bool":
                     if(value == "1" || value == "0")
                     {
@@ -35,15 +51,23 @@ namespace LetPortal.Portal.Mappers
                     }
                     else
                     {
-                        bool.TryParse(value, out bool tempBool);
-                        return tempBool;
+                        if(bool.TryParse(value, out bool tempBool))
+                        {
+                            return tempBool;
+                        }
                     }
+                    break;
                 case "date":
-                    DateTime.TryParse(value, out DateTime dateTime);
-                    return dateTime;
+                    if(DateTime.TryParse(value, out DateTime dateTime))
+                    {
+                        return dateTime;
+                    }
+                    break;
                 default:
                     return value;
             }
+
+            return null;
         }
     }
 }

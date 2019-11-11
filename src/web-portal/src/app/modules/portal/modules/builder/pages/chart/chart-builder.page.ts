@@ -90,7 +90,7 @@ export class ChartBuilderPage implements OnInit {
         this.componentInfo.get('displayName').valueChanges.subscribe(newValue => {
             if (newValue && !this.isEditMode) {
                 // Apply this change to name 
-                const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '-')
+                const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
                 this.componentInfo.get('name').setValue(listNameValue)
 
                 this.componentInfo.get('chartTitle').setValue(newValue)
@@ -145,7 +145,7 @@ export class ChartBuilderPage implements OnInit {
     }
 
     onCancel() {
-
+        this.router.navigateByUrl('/portal/page/charts-management')
     }
 
     onChangingOptions($event) {

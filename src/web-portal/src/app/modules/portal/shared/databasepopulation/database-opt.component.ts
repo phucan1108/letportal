@@ -7,7 +7,7 @@ import { NGXLogger } from 'ngx-logger';
 import StringUtils from 'app/core/utils/string-util';
 import { MatDialog } from '@angular/material';
 import { ParamsDialogComponent } from './params-dialog.component';
-import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions } from 'services/portal.service';
+import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions, ExecuteParamModel } from 'services/portal.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { ObjectUtils } from 'app/core/utils/object-util';
@@ -66,7 +66,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
     isEnablePopulate = false
 
-    private params: FilledParameter[] = []
+    private params: ExecuteParamModel[] = []
 
     constructor(
         private dynamicListClient: DynamicListClient,
@@ -159,7 +159,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 if (this.params.findIndex(a => a.name === param) < 0)
                     this.params.push({
                         name: param,
-                        value: ''
+                        replaceValue: ''
                     })
             })
 
@@ -182,10 +182,11 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
     }
 
-    private extractingQuery(query: string, databaseId: string, params: FilledParameter[]) {
-        _.each(params, param => {
-            query = query.replace("{{" + param.name + "}}", param.value);
-        })
+    private extractingQuery(query: string, databaseId: string, params: ExecuteParamModel[]) {
+        this.logger.debug('Filled parameters', params)
+        // _.each(params, param => {
+        //     query = query.replace("{{" + param.name + "}}", param.value);
+        // })
         this.databaseClient.extractingQuery(databaseId, {
             content: query,
             parameters: params

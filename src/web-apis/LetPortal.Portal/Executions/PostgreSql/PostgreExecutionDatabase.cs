@@ -39,11 +39,11 @@ namespace LetPortal.Portal.Executions.PostgreSql
                 postgreDbConnection.Open();
                 using(var command = new NpgsqlCommand(formattedString, postgreDbConnection))
                 {
-                    string upperFormat = formattedString.ToUpper();
-                    bool isQuery = upperFormat.Contains("SELECT ") && upperFormat.Contains("FROM ");
-                    bool isInsert = upperFormat.Contains("INSERT INTO ");
-                    bool isUpdate = upperFormat.Contains("UPDATE ");
-                    bool isDelete = upperFormat.Contains("DELETE ");
+                    string upperFormat = formattedString.ToUpper().Trim();
+                    bool isQuery = upperFormat.StartsWith("SELECT ") && upperFormat.Contains("FROM ");
+                    bool isInsert = upperFormat.StartsWith("INSERT INTO ");
+                    bool isUpdate = upperFormat.StartsWith("UPDATE ");
+                    bool isDelete = upperFormat.StartsWith("DELETE ");
                     bool isStoreProcedure = upperFormat.StartsWith("CALL");
 
                     var listParams = new List<NpgsqlParameter>();

@@ -184,7 +184,7 @@ export class DynamicListBuilderPage implements OnInit {
         this.componentInfo.get('displayName').valueChanges.subscribe(newValue => {
             if (newValue && !this.isEditMode) {
                 // Apply this change to list name and url path
-                const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '-')
+                const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
                 this.componentInfo.get('name').setValue(listNameValue)
             }
         })

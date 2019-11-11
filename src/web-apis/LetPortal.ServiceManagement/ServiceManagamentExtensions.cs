@@ -1,4 +1,5 @@
 ﻿using LetPortal.Core.Persistences;
+using LetPortal.ServiceManagement.Options;
 using LetPortal.ServiceManagement.Providers;
 using LetPortal.ServiceManagement.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,9 @@ namespace LetPortal.ServiceManagement
         {
             services.Configure<DatabaseOptions>(configuration.GetSection("DatabaseOptions"));
             var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
+
+            services.Configure<ServiceManagementOptions>(configuration.GetSection("ServiceManagementOptions"));
+
             services.AddSingleton(databaseOptions);
             if(databaseOptions.ConnectionType == ConnectionType.MongoDB)
             {
@@ -37,6 +41,8 @@ namespace LetPortal.ServiceManagement
             services.AddTransient<ILogEventProvider, LogEventProvider>();
             services.AddTransient<IMonitorProvider, MonitorProvider>();
 
+            services.AddHostedService<CheckingLostServicesBackgroundTask>();
+            services.AddHostedService<CheckingShutdownServicesBackgroundTask>();
         }
     }
 }

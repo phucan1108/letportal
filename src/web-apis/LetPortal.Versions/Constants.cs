@@ -9,6 +9,7 @@ namespace LetPortal.Versions
     {
         public const string CoreDatabaseId = "5c17b4df7cf5e34530d103b9";
         public const string CoreAppId = "5c162e9005924c1c741bfdc2";
+        public const string ServiceManagementDatabaseId = "5dc786a40f4b6b13e0a909f2";
 
         public const string GeneralInsertWorkflowId = "5d3161aee7fefb62d805bf6f";
         public const string GeneralUpdateWorkflowId = "5d31634fe7fefb62d805bf74";
@@ -52,5 +53,24 @@ namespace LetPortal.Versions
                     Value = "true"
                 }
             };
+
+        public static List<ShellOption> ChartOptions = new List<ShellOption>
+        {
+           new ShellOption
+           {
+                Key = "allowrealtime",
+                Value = "true"
+           },
+           new ShellOption
+           {
+               Key = "timetorefresh",
+               Value = "30"
+           },
+           new ShellOption
+           {
+               Key = "colors",
+               Value = "['horizon']"
+           }
+        };
     }
 }

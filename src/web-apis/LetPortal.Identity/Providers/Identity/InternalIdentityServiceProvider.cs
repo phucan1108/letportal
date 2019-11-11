@@ -293,7 +293,7 @@ namespace LetPortal.Identity.Providers.Identity
         {
             var dicClaims = await _roleRepository.GetBaseClaims(new string[] { roleName });
 
-            var claims = dicClaims.SelectMany(a => a.Value).GroupBy(a => a.ClaimType).Select(g => new RolePortalClaimModel { Name = g.Key, Claims = g.Select(k => k.ClaimValue).Distinct().ToList() }).ToList();
+            var claims = dicClaims.Where(b => b.Value != null).SelectMany(a => a.Value).GroupBy(a => a.ClaimType ).Select(g => new RolePortalClaimModel { Name = g.Key, Claims = g.Select(k => k.ClaimValue).Distinct().ToList() }).ToList();
 
             return claims;
         }

@@ -9,9 +9,9 @@ namespace LetPortal.Core.Versions
 {
     public class MongoVersionContext : IVersionContext
     {
-        private IMongoClient mongoClient;
+        private readonly IMongoClient mongoClient;
 
-        private IMongoDatabase mongoDatabase;
+        private readonly IMongoDatabase mongoDatabase;
 
         public MongoVersionContext(DatabaseOptions databaseOptions)
         {
@@ -22,6 +22,7 @@ namespace LetPortal.Core.Versions
 
         public ConnectionType ConnectionType { get; set; } = ConnectionType.MongoDB;
         public object DatabaseOptions { get; set; }
+        public object ServiceManagementOptions { get; set; }
 
         public void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity
         {

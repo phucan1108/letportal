@@ -35,11 +35,11 @@ namespace LetPortal.Portal.Executions.SqlServer
                 sqlDbConnection.Open();
                 using(var command = new SqlCommand(formattedString, sqlDbConnection))
                 {
-                    string upperFormat = formattedString.ToUpper();
-                    bool isQuery = upperFormat.Contains("SELECT ") && upperFormat.Contains("FROM ");
-                    bool isInsert = upperFormat.Contains("INSERT INTO ");
-                    bool isUpdate = upperFormat.Contains("UPDATE ");
-                    bool isDelete = upperFormat.Contains("DELETE ");
+                    string upperFormat = formattedString.ToUpper().Trim();
+                    bool isQuery = upperFormat.StartsWith("SELECT ") && upperFormat.Contains("FROM ");
+                    bool isInsert = upperFormat.StartsWith("INSERT INTO ");
+                    bool isUpdate = upperFormat.StartsWith("UPDATE ");
+                    bool isDelete = upperFormat.StartsWith("DELETE ");
                     bool isStoreProcedure = upperFormat.StartsWith("EXEC ");
 
                     var listParams = new List<SqlParameter>();

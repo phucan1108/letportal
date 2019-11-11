@@ -24,6 +24,9 @@ namespace LET.Tools.Installation
         [Option("-c|--connection", Description = "A connection string to indicate the database")]
         public string Connection { get; set; }
 
+        [Option("-s|--s-management", Description = "A connection string to indicate the Service Management Database")]
+        public string ServiceManagementConnection { get; set; }
+
         [Option("-db|--db-type", Description = "Database type, support specific parameter: mongodb | sqlserver")]
         public string DatabseType { get; set; } = "mongodb";
 
@@ -56,6 +59,13 @@ namespace LET.Tools.Installation
                 Datasource = "letportal"
             };
 
+            var serviceManagementOption = new DatabaseOptions
+            {
+                ConnectionString = !string.IsNullOrEmpty(ServiceManagementConnection) ? ServiceManagementConnection : GetDefaultConnectionStringForServiceManagement(dbType),
+                ConnectionType = dbType,
+                Datasource = "letportalservices"
+            };
+
             var runningCommand = GetAvailableCommands().FirstOrDefault(a => a.CommandName.ToLower() == Mode.ToLower());
 
             if(runningCommand != null)
@@ -69,6 +79,7 @@ namespace LET.Tools.Installation
                         var portalMongoRepository = new PortalVersionMongoRepository(mongoConnection);
                         mongoVersionContext.ConnectionType = ConnectionType.MongoDB;
                         mongoVersionContext.DatabaseOptions = databaseOption;
+                        mongoVersionContext.ServiceManagementOptions = serviceManagementOption;
                         var latestVersion = portalMongoRepository.GetAsQueryable().ToList().LastOrDefault();
 
                         toolsContext = new ToolsContext
@@ -89,12 +100,14 @@ namespace LET.Tools.Installation
                         letportalContext.Database.EnsureCreated();
 
                         var letportalContextForRepo = new LetPortalVersionDbContext(databaseOption);
-                        var sqlEFVersionContext = new EFVersionContext(letportalContext);
-                        sqlEFVersionContext.ConnectionType = dbType;
-                        sqlEFVersionContext.DatabaseOptions = databaseOption;
+                        var sqlEFVersionContext = new EFVersionContext(letportalContext)
+                        {
+                            ConnectionType = dbType,
+                            DatabaseOptions = databaseOption
+                        };
                         var portalVersionRepository = new PortalVersionEFRepository(letportalContextForRepo);
                         var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
-
+                        sqlEFVersionContext.ServiceManagementOptions = serviceManagementOption;
                         toolsContext = new ToolsContext
                         {
                             LatestVersion = latestVersionEF,
@@ -138,6 +151,23 @@ namespace LET.Tools.Installation
                     return "Host=localhost;Port=5432;Database=letportal;Username=postgres;Password=123456";
                 case ConnectionType.MySQL:
                     return "server=localhost;uid=root;pwd=123456;database=letportal";
+                default:
+                    return "";
+            }
+        }
+
+        private string GetDefaultConnectionStringForServiceManagement(ConnectionType connectionType)
+        {
+            switch(connectionType)
+            {
+                case ConnectionType.MongoDB:
+                    return "mongodb://localhost:27017/letportalservices";
+                case ConnectionType.SQLServer:
+                    return "Server=.;Database=letportalservices;User Id=sa;Password=123456;";
+                case ConnectionType.PostgreSQL:
+                    return "Host=localhost;Port=5432;Database=letportalservices;Username=postgres;Password=123456";
+                case ConnectionType.MySQL:
+                    return "server=localhost;uid=root;pwd=123456;database=letportalservices";
                 default:
                     return "";
             }

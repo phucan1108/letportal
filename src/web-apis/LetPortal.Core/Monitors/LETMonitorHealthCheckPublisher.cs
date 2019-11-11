@@ -24,6 +24,9 @@ namespace LetPortal.Core.Monitors
             var pulse = healthcheck.Data[Constants.LetPortalHealthCheckData] as PushHealthCheckModel;
             _serviceContext.PushHealthCheck(pulse);
 
+            // Keep updating run state
+            _serviceContext.Run(null);
+
             return Task.CompletedTask;
         }
     }

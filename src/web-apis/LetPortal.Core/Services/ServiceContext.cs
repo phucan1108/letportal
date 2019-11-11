@@ -29,7 +29,7 @@ namespace LetPortal.Core.Services
         private readonly HttpClient _httpClient;
 
         public ServiceContext(
-            IOptionsMonitor<ServiceOptions> serviceOptions, 
+            IOptionsMonitor<ServiceOptions> serviceOptions,
             IOptionsMonitor<LoggerOptions> loggerOptions,
             IOptionsMonitor<MonitorOptions> monitorOptions,
             ILogRepository logRepository,
@@ -62,10 +62,10 @@ namespace LetPortal.Core.Services
                 var httpResponseMessage = task.Result;
                 httpResponseMessage.EnsureSuccessStatusCode();
                 serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                if (postAction != null)
+                if(postAction != null)
                     postAction.Invoke();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw new Exception("There are some erros when trying to connect Service Management, please check stack trace.", ex);
             }
@@ -80,10 +80,10 @@ namespace LetPortal.Core.Services
                 httpResponseMessage.EnsureSuccessStatusCode();
                 serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-                if (postAction != null)
+                if(postAction != null)
                     postAction.Invoke();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw new Exception("There are some erros when trying to notify stop behavior in Service Management, please check stack trace.", ex);
             }
@@ -93,15 +93,14 @@ namespace LetPortal.Core.Services
         {
             try
             {
-                var task = _httpClient.GetAsync(_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/services/" + serviceId);
+                var task = _httpClient.PutAsync(_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/services/" + serviceId, new StringContent(string.Empty));
                 var httpResponseMessage = task.Result;
                 httpResponseMessage.EnsureSuccessStatusCode();
-                serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-                if (postAction != null)
+                if(postAction != null)
                     postAction.Invoke();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw new Exception("There are some erros when trying to notify stop behavior in Service Management, please check stack trace.", ex);
             }
@@ -109,7 +108,7 @@ namespace LetPortal.Core.Services
 
         public void PushLog(PushLogModel pushLogModel)
         {
-            if (_loggerOptions.CurrentValue.NotifyOptions.Enable)
+            if(_loggerOptions.CurrentValue.NotifyOptions.Enable)
             {
                 var allLogTraces = _logRepository.GetAllLogs(_serviceOptions.CurrentValue.Name, pushLogModel.UserSessionId, pushLogModel.TraceId).Result;
                 pushLogModel.RegisteredServiceId = serviceId;
@@ -121,7 +120,7 @@ namespace LetPortal.Core.Services
                     var httpResponseMessage = task.Result;
                     httpResponseMessage.EnsureSuccessStatusCode();
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     throw new Exception("There are some erros when trying to notify log behavior in Service Management, please check stack trace.", ex);
                 }
@@ -130,18 +129,18 @@ namespace LetPortal.Core.Services
 
         public void PushHealthCheck(PushHealthCheckModel pushHealthCheckModel)
         {
-            if (_monitorOptions.CurrentValue.NotifyOptions.Enable)
+            if(_monitorOptions.CurrentValue.NotifyOptions.Enable)
             {
                 try
                 {
                     pushHealthCheckModel.ServiceId = serviceId;
                     var task = _httpClient.PostAsJsonAsync(
-                        (!string.IsNullOrEmpty(_monitorOptions.CurrentValue.NotifyOptions.HealthcheckEndpoint) 
+                        (!string.IsNullOrEmpty(_monitorOptions.CurrentValue.NotifyOptions.HealthcheckEndpoint)
                             ? _monitorOptions.CurrentValue.NotifyOptions.HealthcheckEndpoint : (_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/monitors")), pushHealthCheckModel);
                     var httpResponseMessage = task.Result;
                     httpResponseMessage.EnsureSuccessStatusCode();
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     throw new Exception("There are some erros when trying to notify monitor behavior in Service Management, please check stack trace.", ex);
                 }

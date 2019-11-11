@@ -16,6 +16,16 @@ namespace LetPortal.ServiceManagement.Providers
             _serviceRepository = serviceRepository;
         }
 
+        public async Task CheckAndShutdownAllLostServices(int durationShutdown)
+        {
+            await _serviceRepository.UpdateShutdownStateForAllServices(durationShutdown);
+        }
+
+        public async Task CheckAndUpdateAllLostServices(int durationLost)
+        {
+            await _serviceRepository.UpdateLostStateForAllLosingServices(durationLost);
+        }
+
         public async Task<string> RegisterService(RegisterServiceModel registerServiceModel)
         {
             var service = new Service
@@ -39,7 +49,7 @@ namespace LetPortal.ServiceManagement.Providers
 
         public async Task ShutdownAllServices()
         {
-            await _serviceRepository.UpdateShutdownStateForAllServices();
+            await _serviceRepository.ForceShutdownAllServices();
         }
 
         public async Task ShutdownService(string serviceId)

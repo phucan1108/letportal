@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -320,6 +320,9 @@ export class PageService {
         let translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
 
         return translated
+    }
+    retrieveParameters(translateStr: string, data: any = null): PageParameterModel[]{
+        return this.translator.retrieveParameters(translateStr, this.getPageShellData())
     }
 
     getPageShellData(): PageShellData{

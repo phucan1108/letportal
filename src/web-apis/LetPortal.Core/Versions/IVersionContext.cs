@@ -10,6 +10,8 @@ namespace LetPortal.Core.Versions
 
         object DatabaseOptions { get; set; }
 
+        object ServiceManagementOptions { get; set; }
+
         void ExecuteRaw(string rawCommand);
 
         void DropAll<T>() where T : Entity;

@@ -14,8 +14,19 @@ namespace LetPortal.Portal.Entities.SectionParts
 
         public List<ShellOption> Options { get; set; }
 
+        public PageSectionLayoutType LayoutType { get; set; } = PageSectionLayoutType.OneColumn;
+
         public bool AllowOverrideOptions { get; set; }
 
         public bool AllowPassingDatasource { get; set; }
+    }
+
+    public enum PageSectionLayoutType
+    {
+        OneColumn,
+        TwoColumns,
+        ThreeColumns,
+        FourColumns,
+        SixColumns
     }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChildren, QueryList, OnDestroy } from '@angular/core';
 import { SectionTemplate } from './section-template.directive';
-import { PageSection, SectionContructionType, StandardComponentClient, DynamicListClient } from 'services/portal.service';
+import { PageSection, SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient } from 'services/portal.service';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { NGXLogger } from 'ngx-logger';
 import { debounceTime, tap, delay, filter } from 'rxjs/operators';
@@ -27,6 +27,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
     pageState$: Observable<PageStateModel>
     subcription$: Subscription
     constructor(
+        private chartsClient: ChartsClient,
         private store: Store,
         private standardClient: StandardComponentClient,
         private dynamicsClient: DynamicListClient,
@@ -68,6 +69,24 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                     tap(
                         dynamicList => {
                             this.pageSection.relatedDynamicList = dynamicList
+                            this.pageSection.isLoaded = true
+                            this.readyToRender = true
+                            this.store.dispatch(new RenderedPageSectionAction({
+                                sectionName: this.pageSection.name,
+                                state: RenderingSectionState.Complete
+                            }))
+                        },
+                        err => {
+
+                        }
+                    )
+                ).subscribe()
+                break
+            case SectionContructionType.Chart:
+                this.chartsClient.getOne(this.pageSection.componentId).pipe(
+                    tap(
+                        chart =>{
+                            this.pageSection.relatedChart = chart
                             this.pageSection.isLoaded = true
                             this.readyToRender = true
                             this.store.dispatch(new RenderedPageSectionAction({

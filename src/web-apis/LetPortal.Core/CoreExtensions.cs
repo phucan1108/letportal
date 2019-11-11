@@ -135,8 +135,7 @@ namespace LetPortal.Core
                 app.UseMiddleware<NotifyExceptionLogMiddleware>();
                 app.UseMiddleware<AddRequestMonitorMiddleware>();
             }
-
-
+                           
             app.UseMiddleware<CatchGlobalExceptionMiddleware>();
         }
 
@@ -164,9 +163,7 @@ namespace LetPortal.Core
 
             return builder.Add(new IntegratorConfigurationServiceSource(configurationServiceOptions, serviceOptions.Name, serviceOptions.Version));
         }
-
-
-
+                             
         /// <summary>
         /// Notify to Service Management when service is starting or stopping
         /// </summary>
@@ -178,6 +175,7 @@ namespace LetPortal.Core
                 applicationLifetime.ApplicationStarted.Register(() =>
                 {
                     serviceContext.Start(postStartAction);
+                    serviceContext.Run(postStartAction);
                 });
 
                 applicationLifetime.ApplicationStopping.Register(() =>

@@ -1,4 +1,5 @@
 ﻿using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Models.Charts;
 using System;
 using System.Collections.Generic;
@@ -125,8 +126,8 @@ namespace LetPortal.Portal.Executions
             var splitted = paramName.Split("|");
             if(splitted.Length == 1)
             {
-                castObj = mapperFunc.Invoke("string", value);
-                return "string";
+                castObj = mapperFunc.Invoke(value, MapperConstants.String);
+                return MapperConstants.String;
             }
             else
             {

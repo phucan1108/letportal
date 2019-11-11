@@ -1,5 +1,6 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement.Entities;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,19 +15,7 @@ namespace LetPortal.ServiceManagement.Repositories
             _context = context;
         }
 
-        public Task<int> GetLastInstanceNoOfService(string serviceName)
-        {
-            var allRegisteredServices = _context.Services.Where(a => (a.ServiceState != ServiceState.Shutdown && a.ServiceState != ServiceState.Lost) && a.Name == serviceName).ToList();
-
-            if(allRegisteredServices != null && allRegisteredServices.Count > 0)
-            {
-                return Task.FromResult(allRegisteredServices.OrderByDescending(a => a.InstanceNo).First().InstanceNo);
-            }
-
-            return Task.FromResult(1);
-        }
-
-        public Task UpdateShutdownStateForAllServices()
+        public Task ForceShutdownAllServices()
         {
             var allRunningServices = _context.Services.Where(a => a.ServiceState == ServiceState.Start || a.ServiceState == ServiceState.Run);
             foreach(var service in allRunningServices)
@@ -34,6 +23,65 @@ namespace LetPortal.ServiceManagement.Repositories
                 service.ServiceState = ServiceState.Shutdown;
             }
             _context.SaveChanges();
+            return Task.CompletedTask;
+        }
+
+        public Task<int> GetLastInstanceNoOfService(string serviceName)
+        {
+            var allInstanceNos = _context.Services
+                    .Where(a => a.ServiceState != ServiceState.Shutdown && a.Name == serviceName)
+                    .OrderByDescending(a => a.InstanceNo).Select(b => b.InstanceNo).ToList();
+
+            if(allInstanceNos != null && allInstanceNos.Count > 0)
+            {
+                var counter = 1;
+                var temp = allInstanceNos.OrderBy(a => a);
+                foreach(var no in temp)
+                {
+                    if(counter < no)
+                    {
+                        // This service no has been terminated or lost
+                        break;
+                    }
+                    counter++;
+                }
+
+                return Task.FromResult(counter);
+            }
+
+            return Task.FromResult(1);
+        }
+
+        public Task UpdateLostStateForAllLosingServices(int durationLost)
+        {
+            var lostDate = DateTime.UtcNow.AddSeconds(durationLost * -1);
+            var allLosingServices = _context.Services
+                                    .Where(a => (a.ServiceState == ServiceState.Run || a.ServiceState == ServiceState.Start) && a.LastCheckingDate <= lostDate).ToList();
+
+            foreach(var service in allLosingServices)
+            {
+                service.ServiceState = ServiceState.Lost;
+                service.LastCheckingDate = DateTime.UtcNow;
+            }
+
+            _context.SaveChanges();
+
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateShutdownStateForAllServices(int durationShutdown)
+        {
+            var lostDate = DateTime.UtcNow.AddSeconds(durationShutdown * -1);
+            var allLosingServices = _context.Services
+                                    .Where(a => a.ServiceState == ServiceState.Lost && a.LastCheckingDate <= lostDate).ToList();
+            foreach(var service in allLosingServices)
+            {
+                service.ServiceState = ServiceState.Shutdown;
+                service.LastCheckingDate = DateTime.UtcNow;
+            }
+
+            _context.SaveChanges();
+
             return Task.CompletedTask;
         }
     }

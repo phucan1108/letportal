@@ -1,0 +1,37 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            {{ displayName ? displayName : chart.displayName }}
+            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="onRefresh()">
+                    <mat-icon>cached</mat-icon>
+                    Refresh
+                </button>
+            </mat-menu>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="align-center">
+        <ng-container *ngIf="readyToRender else loading">
+            <div class="row">
+                <div class="col-lg-6 p-0" [ngSwitch]="chart.definitions.chartType">
+                    <ng-container *ngSwitchCase="chartType.VerticalBarChart">
+                        <ngx-charts-bar-vertical [results]="chartData" [xAxis]="true" [yAxis]="true"
+                            [showXAxisLabel]="true" [showYAxisLabel]="true">
+                        </ngx-charts-bar-vertical>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </mat-card-content>
+</mat-card>
+
+<ng-template #loading>
+    <mat-card>
+        <mat-card-content>
+            <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
+        </mat-card-content>
+    </mat-card>
+</ng-template>

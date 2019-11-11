@@ -14,6 +14,12 @@ namespace LetPortal.ServiceManagement.Repositories
             Connection = mongoConnection;
         }
 
+        public async Task ForceShutdownAllServices()
+        {
+            var updateBuilder = Builders<Service>.Update.Set(a => a.ServiceState, ServiceState.Shutdown);
+            await Collection.UpdateManyAsync(a => a.ServiceState == ServiceState.Start || a.ServiceState == ServiceState.Run, updateBuilder);
+        }
+
         public async Task<int> GetLastInstanceNoOfService(string serviceName)
         {
             var allRegisteredServices = await Collection.AsQueryable().Where(a => (a.ServiceState != ServiceState.Shutdown && a.ServiceState != ServiceState.Lost) && a.Name == serviceName).ToListAsync();
@@ -26,10 +32,14 @@ namespace LetPortal.ServiceManagement.Repositories
             return 1;
         }
 
-        public async Task UpdateShutdownStateForAllServices()
+        public Task UpdateLostStateForAllLosingServices(int durationLost)
         {
-            var updateBuilder = Builders<Service>.Update.Set(a => a.ServiceState, ServiceState.Shutdown);
-            await Collection.UpdateManyAsync(a => a.ServiceState == ServiceState.Start || a.ServiceState == ServiceState.Run, updateBuilder);
+            throw new System.NotImplementedException();
+        }
+
+        public Task UpdateShutdownStateForAllServices(int durationShutdown)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

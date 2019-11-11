@@ -65,6 +65,8 @@ import { DynamicListFiltersComponent } from './components/dynamic-list/component
 import { DynamicListGridComponent } from './components/dynamic-list/components/dynamic-list.grid.component';
 import { QuillModule } from 'ngx-quill';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { NgxChartsModule } from '@swimlane/ngx-charts'
+import { ChartRenderComponent } from './components/chart/chart-render.component';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -134,7 +136,8 @@ export const FULL_MONTH_FORMATS = {
                     ['link', 'image']
                 ]
             }
-        })
+		}),
+		NgxChartsModule
 	],
 	entryComponents: [
 		DynamicListDataDialogComponent
@@ -167,7 +170,10 @@ export const FULL_MONTH_FORMATS = {
 		DynamicListDataDialogComponent,
 		DynamicListCommandComponent,
 		DynamicListFiltersComponent,
-		DynamicListGridComponent
+		DynamicListGridComponent,
+
+		// Chart Render
+		ChartRenderComponent
 	]
 })
 export class PortalRenderModule { }

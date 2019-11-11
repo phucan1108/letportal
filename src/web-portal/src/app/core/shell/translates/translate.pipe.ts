@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { TranslateConfigs } from './translate.configs';
 import { PageShellData } from 'app/core/models/page.model';
 import { PageParameterModel } from 'services/portal.service';
+import { ArrayUtils } from 'app/core/utils/array-util';
 
 let shellConfigs: Array<ShellConfig> = []
 @Injectable({
@@ -30,6 +31,9 @@ export class Translator {
 
     retrieveParameters(text: string, pageShellData: PageShellData) {
         let foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
+        if(foundReplacingConfigs){
+            foundReplacingConfigs = _.uniq(foundReplacingConfigs)
+        }
         let foundReplacedConfigs: Array<ShellConfig> = [];
         _.forEach(foundReplacingConfigs, config => {
             // New changes: we add one pipe for defining parameter type such as "data.ticks|long"

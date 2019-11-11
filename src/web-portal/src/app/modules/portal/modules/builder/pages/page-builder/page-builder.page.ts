@@ -242,14 +242,15 @@ export class PageBuilderPage implements OnInit {
                     if (this.isEditMode) {
                         this.store.dispatch(new EditPageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.notifyMessage("Update Dynamic Form Successfully", ToastType.Success)
+                                this.shortcutUtil.notifyMessage("Update Page Successfully", ToastType.Success)
                             }
                         );
                     }
                     else {
                         this.store.dispatch(new CreatePageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.notifyMessage("Create Dynamic Form Successfully", ToastType.Success)
+                                this.shortcutUtil.notifyMessage("Create Page Successfully", ToastType.Success)
+                                this.router.navigateByUrl('portal/page/pages-management')
                             }
                         );
                     }

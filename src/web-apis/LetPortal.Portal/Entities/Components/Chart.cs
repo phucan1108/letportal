@@ -11,6 +11,17 @@ namespace LetPortal.Portal.Entities.Components
         public DatabaseOptions DatabaseOptions { get; set; }
 
         public List<ChartFilter> ChartFilters { get; set; }
+
+        public void TurnOffRealTime()
+        {
+            foreach(var option in Options)
+            {
+                if(option.Key == "allowrealtime")
+                {
+                    option.Value = "false";
+                }
+            }
+        }
     }
 
     public class ChartDefinitions

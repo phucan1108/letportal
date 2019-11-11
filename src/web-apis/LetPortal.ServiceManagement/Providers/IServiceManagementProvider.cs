@@ -10,6 +10,10 @@ namespace LetPortal.ServiceManagement.Providers
     {
         Task<string> RegisterService(RegisterServiceModel registerServiceModel);
 
+        Task CheckAndUpdateAllLostServices(int durationLost);
+
+        Task CheckAndShutdownAllLostServices(int durationShutdown);
+
         Task UpdateRunningState(string serviceId);
 
         Task ShutdownService(string serviceId);

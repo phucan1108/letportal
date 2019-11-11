@@ -8,6 +8,11 @@
         <let-dynamic-list-render [section]="pageSection" [dynamicList]="pageSection.relatedDynamicList"
             [displayName]="pageSection.displayName" *ngIf="readyToRender else loading"></let-dynamic-list-render>
     </ng-container>
+    <ng-container *ngSwitchCase="constructionType.Chart">
+        <let-chart-render [section]="pageSection" [chart]="pageSection.relatedChart"
+        [displayName]="pageSection.displayName" *ngIf="readyToRender else loading"></let-chart-render>
+    </ng-container>
+    
 </div>
 
 <ng-template #loading>
