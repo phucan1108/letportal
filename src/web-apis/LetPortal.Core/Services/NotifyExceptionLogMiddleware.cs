@@ -37,7 +37,6 @@ namespace LetPortal.Core.Services
                         .Any(a => httpContext.Request.Path.ToString().Contains(a.UrlPath) && a.Enable && a.StatusCodes.Contains(httpContext.Response.StatusCode))))
             {
                 Process currentProcess = Process.GetCurrentProcess();
-                object reponseErrorBody;
                 var rawBody = await httpContext.Request.GetRawBodyAsync();
                 var pushLogModel = new PushLogModel
                 {
@@ -46,7 +45,7 @@ namespace LetPortal.Core.Services
                     HttpRequestUrl = httpContext.Request.Path.ToUriComponent(),
                     HttpHeaders = ConvertUtil.SerializeObject(httpContext.Request.Headers),
                     HttpRequestBody = rawBody,
-                    ResponseBody = httpContext.Items.TryGetValue(Constants.OccurredException, out reponseErrorBody) ? reponseErrorBody.ToString() : await httpContext.Response.GetRawBodyAsync(),
+                    ResponseBody = httpContext.Items.TryGetValue(Constants.OccurredException, out object reponseErrorBody) ? reponseErrorBody.ToString() : await httpContext.Response.GetRawBodyAsync(),
                     ResponseStatusCode = httpContext.Response.StatusCode
                 };
 

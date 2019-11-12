@@ -2,9 +2,6 @@
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers

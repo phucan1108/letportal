@@ -45,7 +45,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
     @Output()
     onRendered = new EventEmitter()
 
-    commandOutList: Array<CommandButtonInList>;
+    commandOutList: Array<CommandButtonInList> = [];
 
     loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     pageState$: Observable<PageStateModel>
@@ -113,10 +113,15 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                 )
                 .subscribe()
                                 
-
-        this.commandOutList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
-            return element.commandPositionType === CommandPositionType.OutList
-        })
+        if(this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0){
+            const commandOutList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
+                return element.commandPositionType === CommandPositionType.OutList
+            })
+            if(commandOutList){
+                this.commandOutList = commandOutList
+            }
+        }        
+        
         this.redirectRoute.routeReuseStrategy.shouldReuseRoute = () => false;
     }
     ngAfterViewInit(): void {
@@ -127,7 +132,9 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
     }
 
     ngOnDestroy(): void {
-        this.subscription.unsubscribe()
+        if(this.subscription){
+            this.subscription.unsubscribe()
+        }        
     }
 
     onCommandClicked(commandClicked: CommandClicked) {
@@ -248,9 +255,11 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
     }
 
     private gatherAllButtonFullNames(){
-        _.forEach(this.dynamicList.commandsList.commandButtonsInList, command => {
-            this.buttonFullNames.push(this.section.name + '_' + command.name)
-        })
+        if(this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0){
+            _.forEach(this.dynamicList.commandsList.commandButtonsInList, command => {
+                this.buttonFullNames.push(this.section.name + '_' + command.name)
+            })
+        }        
     }
 
     private gatherListName(){

@@ -170,6 +170,38 @@ namespace LetPortal.Versions.Apps
                                 MenuPath = "~/5cf61767db0f4125341873c1"
                             }
                         }
+                    } ,
+                    new Menu
+                    {
+                        Id = "5dcac739be0b4e533408344b",
+                        DisplayName = "Services",
+                        Icon = "memory",
+                        Url = "#",
+                        MenuPath = "~",
+                        Order = 1,
+                        SubMenus= new List<Menu>
+                        {
+                            new Menu
+                            {
+                                Id = "5cf61827f2a8d9aa14fab275",
+                                DisplayName = "Services Monitor",
+                                Icon = "system_update_alt",
+                                Url = "/portal/page/services-monitor",
+                                Order = 0,
+                                ParentId = "5dcac739be0b4e533408344b",
+                                MenuPath = "~/5dcac739be0b4e533408344b"
+                            },
+                            new Menu
+                            {
+                                Id = "5cf6188388edcca91ef04879",
+                                DisplayName = "Service Logs",
+                                Icon = "event_note",
+                                Url = "/portal/page/service-logs",
+                                Order = 1,
+                                ParentId = "5dcac739be0b4e533408344b",
+                                MenuPath = "~/5dcac739be0b4e533408344b"
+                            }
+                        }
                     }
                 }
             };

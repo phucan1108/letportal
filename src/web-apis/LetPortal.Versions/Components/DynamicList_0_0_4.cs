@@ -1,9 +1,7 @@
 ﻿using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Versions.Components
 {
@@ -14,6 +12,7 @@ namespace LetPortal.Versions.Components
         public void Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<DynamicList>("5dc786a40f4b6b13e0a909f4");
+            versionContext.DeleteData<DynamicList>("5dcac739be0b4e533408344f");
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -21,18 +20,17 @@ namespace LetPortal.Versions.Components
             var serviceMonitorsList = new DynamicList
             {
                 Id = "5dc786a40f4b6b13e0a909f4",
-                Name = "servicemonitorslist",
-                DisplayName = "Service Monitors List",
+                Name = "servicesmonitorlist",
+                DisplayName = "Services Monitor List",
                 Options = Constants.DynamicListOptions,
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
                         DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
-                        EntityName = "components",
-                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL 
-                        ? "Select * from `services` Where `serviceState`=1" 
-                        : "Select * from services Where \"serviceState\"=1"
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                        ? "SELECT * FROM services s join servicehardwareinfos i on s.id = i.`serviceId` where s.`serviceState` = 1 or s.`serviceState` = 3"
+                        : "SELECT * FROM services s join servicehardwareinfos i on s.id = i.\"serviceId\" where s.\"serviceState\" = 1 or s.\"serviceState\" = 3"
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -95,6 +93,19 @@ namespace LetPortal.Versions.Components
                         },
                         new ColumndDef
                         {
+                            Name = "ipAddress",
+                            DisplayName = "IP Address",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = false
+                            },
+                            Order = 4
+                        },                         
+                        new ColumndDef
+                        {
                             Name = "lastCheckingDate",
                             DisplayName = "Last Checking Date",
                             AllowSort = false,
@@ -105,7 +116,7 @@ namespace LetPortal.Versions.Components
                                 FieldValueType = FieldValueType.DatePicker,
                                 AllowTextSearch = false
                             },
-                            Order = 4
+                            Order = 5
                         },
                         new ColumndDef
                         {
@@ -113,6 +124,7 @@ namespace LetPortal.Versions.Components
                             DisplayName = "State",
                             AllowSort = false,
                             DisplayFormat = "{0}",
+                            DisplayFormatAsHtml = true,
                             SearchOptions = new SearchOptions
                             {
                                 AllowInAdvancedMode = true,
@@ -127,7 +139,20 @@ namespace LetPortal.Versions.Components
                                     JsonResource = "[\r\n  { \r\n    \"name\":\"Start\",\r\n    \"value\": 0\r\n  },\r\n  {\r\n    \"name\":\"Run\",\r\n    \"value\": 1\r\n  },\r\n  {\r\n    \"name\":\"Shutdown\",\r\n    \"value\": 2\r\n  },\r\n  {\r\n    \"name\":\"Lost\",\r\n    \"value\": 3\r\n  }\r\n]"
                                 }
                             },
-                            Order = 5
+                            Order = 6
+                        },
+                        new ColumndDef
+                        {
+                            Name = versionContext.ConnectionType != Core.Persistences.ConnectionType.MongoDB ? "os" : "servicehardwareinfos.os",
+                            DisplayName = "OS",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = false
+                            },
+                            Order = 7
                         }
                     }
                 },
@@ -175,7 +200,136 @@ namespace LetPortal.Versions.Components
                 }
             };
 
+            var serviceLogsList = new DynamicList
+            {
+                Id = "5dcac739be0b4e533408344f",
+                Name = "servicelogs",
+                DisplayName = "Service Logs List",
+                Options = Constants.DynamicListOptions,
+                ListDatasource = new DynamicListDatasource
+                {
+                    DatabaseConnectionOptions = new DatabaseOptions
+                    {
+                        DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
+                        Query = "SELECT * FROM logevents"
+                    },
+                    SourceType = DynamicListSourceType.Database
+                },
+                ColumnsList = new ColumnsList
+                {
+                    ColumndDefs = new List<ColumndDef>
+                    {
+                        new ColumndDef
+                        {
+                            Name = "id",
+                            DisplayName = "Id",
+                            IsHidden = true,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
+                                AllowTextSearch = false
+                            },
+                            Order = 0
+                        },
+                        new ColumndDef
+                        {
+                            Name = "traceId",
+                            DisplayName = "Trace Id",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = true
+                            },
+                            Order = 1
+                        },
+                        new ColumndDef
+                        {
+                            Name = "source",
+                            DisplayName = "Service Name",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = true
+                            },
+                            Order = 2
+                        },
+                        new ColumndDef
+                        {
+                            Name = "sourceId",
+                            DisplayName = "Service Id",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = true
+                            },
+                            Order = 3
+                        },
+                        new ColumndDef
+                        {
+                            Name = "httpRequestUrl",
+                            DisplayName = "Request Url",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = true
+                            },
+                            Order = 4
+                        },
+                        new ColumndDef
+                        {
+                            Name = "httpResponseStatusCode",
+                            DisplayName = "Response Code",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = true
+                            },
+                            Order = 5
+                        },
+                        new ColumndDef
+                        {
+                            Name = "beginRequest",
+                            DisplayName = "Begin Request",
+                            AllowSort = true,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                FieldValueType = FieldValueType.DatePicker,
+                                AllowTextSearch = false
+                            },
+                            Order = 6
+                        },
+                        new ColumndDef
+                        {
+                            Name = "stackTrace",
+                            DisplayName = "stackTrace",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
+                                AllowTextSearch = false
+                            },                             
+                            Order = 7
+                        }
+                    }
+                }
+            };
 
+            versionContext.InsertData(serviceMonitorsList);
+            versionContext.InsertData(serviceLogsList);
         }
     }
 }

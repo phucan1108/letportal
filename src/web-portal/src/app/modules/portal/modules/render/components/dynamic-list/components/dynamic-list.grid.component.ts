@@ -161,14 +161,18 @@ export class DynamicListGridComponent implements OnInit {
                 }
             }
         })
-        this.defaultSortColumn = (_.find(this.headers, (element: ColumndDef) => {
+        const foundSort = _.find(this.headers, (element: ColumndDef) => {
             return element.allowSort;
-        })).name
+        });
+        if(foundSort){
+            this.defaultSortColumn = foundSort.name
+        }        
 
-        this.commandsInList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
-            return element.commandPositionType === CommandPositionType.InList
-        })
-
+        if(this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0){
+            this.commandsInList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
+                return element.commandPositionType === CommandPositionType.InList
+            })
+        }        
 
         _.forEach(this.headers, (element) => {
             if (!element.isHidden && !element.inDetailMode)
@@ -247,11 +251,19 @@ export class DynamicListGridComponent implements OnInit {
             pageSize: this.listOptions.enablePagination ? this.paginator.pageSize : this.listOptions.defaultPageSize,
             needTotalItems: !this.isAlreadyFetchedTotal
         }
-        this.fetchDataQuery.sortOptions = {
-            sortableFields: [
-                { fieldName: this.sort.active, sortType: this.sort.direction === 'asc' ? SortType.Asc : SortType.Desc }
-            ]
+        if(this.sort.active){
+            this.fetchDataQuery.sortOptions = {
+                sortableFields: [
+                    { fieldName: this.sort.active, sortType: this.sort.direction === 'asc' ? SortType.Asc : SortType.Desc }
+                ]
+            }
         }
+        else{
+            this.fetchDataQuery.sortOptions = {
+                sortableFields: [ ]
+            }
+        }
+        
 
         return this.fetchDataQuery
     }
