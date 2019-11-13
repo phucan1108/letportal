@@ -36,9 +36,7 @@ namespace LetPortal.ServiceManagement.Providers
                     MemoryUsed = pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed,
                     IsCpuBottleneck = pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck,
                     IsMemoryThreshold = pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold
-                } ,
-                Hour = pushHealthCheckModel.BeatDate.Hour,
-                Minute = pushHealthCheckModel.BeatDate.Minute
+                }
             });
         }
     }

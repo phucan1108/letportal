@@ -56,12 +56,12 @@ namespace LetPortal.ServiceManagement.Repositories
         {
             var lostDate = DateTime.UtcNow.AddSeconds(durationLost * -1);
             var allLosingServices = _context.Services
-                                    .Where(a => (a.ServiceState == ServiceState.Run || a.ServiceState == ServiceState.Start) && a.LastCheckingDate <= lostDate).ToList();
+                                    .Where(a => (a.ServiceState == ServiceState.Run || a.ServiceState == ServiceState.Start) && a.LastCheckedDate <= lostDate).ToList();
 
             foreach(var service in allLosingServices)
             {
                 service.ServiceState = ServiceState.Lost;
-                service.LastCheckingDate = DateTime.UtcNow;
+                service.LastCheckedDate = DateTime.UtcNow;
             }
 
             _context.SaveChanges();
@@ -73,11 +73,11 @@ namespace LetPortal.ServiceManagement.Repositories
         {
             var lostDate = DateTime.UtcNow.AddSeconds(durationShutdown * -1);
             var allLosingServices = _context.Services
-                                    .Where(a => a.ServiceState == ServiceState.Lost && a.LastCheckingDate <= lostDate).ToList();
+                                    .Where(a => a.ServiceState == ServiceState.Lost && a.LastCheckedDate <= lostDate).ToList();
             foreach(var service in allLosingServices)
             {
                 service.ServiceState = ServiceState.Shutdown;
-                service.LastCheckingDate = DateTime.UtcNow;
+                service.LastCheckedDate = DateTime.UtcNow;
             }
 
             _context.SaveChanges();

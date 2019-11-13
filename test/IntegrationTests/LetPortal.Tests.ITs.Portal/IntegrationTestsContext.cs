@@ -390,8 +390,6 @@ namespace LetPortal.Tests.ITs.Portal
                     BeatDate = beatDate,
                     ServiceId = serviceId,
                     ServiceName = serviceName,
-                    Hour = beatDate.Hour,
-                    Minute = beatDate.Minute,
                     HardwareCounter = new HardwareCounter
                     {
                         Id = DataUtil.GenerateUniqueId(),

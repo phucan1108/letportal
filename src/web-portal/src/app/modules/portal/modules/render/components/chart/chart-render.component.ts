@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, AfterViewChecked, OnDestroy } from '@angular/core';
-import { Chart, ChartsClient, ChartType, ExecuteParamModel, ChartParameterValue } from 'services/portal.service';
+import { Chart, ChartsClient, ChartType, ExecuteParamModel, ChartParameterValue, PageSectionLayoutType } from 'services/portal.service';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { PageService } from 'services/page.service';
 import { NGXLogger } from 'ngx-logger';
@@ -34,11 +34,14 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     subscription: Subscription
 
     chartData: any
-    readyToRender = false
-    
+    readyToRender = true
+
     chartOptions: ChartOptions
 
+    chartColors: any
     interval: any
+
+    colClass = 'col-lg-12'
 
     constructor(
         private pageService: PageService,
@@ -72,21 +75,48 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         ).subscribe()
 
         this.chartOptions = ChartOptions.getChartOptions(this.chart.options)
+        if (this.chartOptions.colors.length == 1) {
+            this.chartColors = this.chartOptions.colors[0]
+        }
+        else {
+            this.chartColors = {
+                domain: this.chartOptions.colors
+            }
+        }
+
+        switch (this.chart.layoutType) {
+            case PageSectionLayoutType.OneColumn:
+                this.colClass = 'col-lg-12'
+                break
+            case PageSectionLayoutType.TwoColumns:
+                this.colClass = 'col-lg-6'
+                break
+            case PageSectionLayoutType.ThreeColumns:
+                this.colClass = 'col-lg-4'
+                break
+            case PageSectionLayoutType.FourColumns:
+                this.colClass = 'col-lg-3'
+                break
+            case PageSectionLayoutType.SixColumns:
+                this.colClass = 'col-lg-2'
+                break
+        }
+
         this.fetchDataForChart()
 
         this.setupOptions()
     }
 
-    private setupOptions(){
-        if(this.chartOptions.allowrealtime){
+    private setupOptions() {
+        if (this.chartOptions.allowrealtime) {
             this.interval = setInterval(() => {
-                this.readyToRender = false
+                //this.readyToRender = false
                 this.fetchDataForChart()
             }, this.chartOptions.timetorefresh * 1000)
         }
     }
 
-    private fetchDataForChart(){
+    private fetchDataForChart() {
         const params = this.pageService.retrieveParameters(this.chart.databaseOptions.query)
         let executeParamModels: ChartParameterValue[] = []
         params.map(a => {
@@ -100,27 +130,27 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         this.chartsClient.execution({
             chartId: this.chart.id,
             chartFilterValues: [],
-            chartParameterValues: executeParamModels  
+            chartParameterValues: executeParamModels
         }).subscribe(
             res => {
-                this.chartData = res.isSuccess ? res.result : null
-                this.readyToRender = true
+                this.chartData = res.isSuccess ? [...res.result] : null
+                //this.readyToRender = true
             }
         )
     }
 
-    onRefresh(){
-        this.readyToRender = false
+    onRefresh() {
+        //this.readyToRender = false
         this.fetchDataForChart()
     }
-    
+
     ngAfterViewChecked(): void {
         this.onRendered.emit()
     }
 
     ngOnDestroy(): void {
         this.subscription.unsubscribe()
-        if(this.interval){
+        if (this.interval) {
             clearInterval(this.interval)
         }
     }

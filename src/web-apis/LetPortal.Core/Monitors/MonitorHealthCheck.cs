@@ -122,5 +122,18 @@ namespace LetPortal.Core.Monitors
                 Monitor.Exit(sessionLock);
             }
         }
+
+        public void CleanUp()
+        {
+            Monitor.Enter(sessionLock);
+            try
+            {
+                requestMonitors.Clear();
+            }
+            finally
+            {
+                Monitor.Exit(sessionLock);
+            }
+        }
     }
 }

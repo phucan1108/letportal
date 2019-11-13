@@ -69,7 +69,7 @@ namespace LetPortal.Versions
            new ShellOption
            {
                Key = "colors",
-               Value = "['horizon']"
+               Value = "[\"horizon\"]"
            }
         };
     }

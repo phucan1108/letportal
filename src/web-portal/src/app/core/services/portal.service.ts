@@ -3413,6 +3413,7 @@ export interface BackupableEntity extends Entity {
 export interface Component extends BackupableEntity {
     datasourceName?: string | undefined;
     options?: ShellOption[] | undefined;
+    layoutType?: PageSectionLayoutType;
     allowOverrideOptions?: boolean;
     allowPassingDatasource?: boolean;
 }
@@ -3499,6 +3500,14 @@ export interface ShellOption {
     key?: string | undefined;
     value?: string | undefined;
     description?: string | undefined;
+}
+
+export enum PageSectionLayoutType {
+    OneColumn = 0, 
+    TwoColumns = 1, 
+    ThreeColumns = 2, 
+    FourColumns = 3, 
+    SixColumns = 4, 
 }
 
 export interface ExtractionChartFilter {
@@ -4043,16 +4052,7 @@ export interface PageRequestDatasourceModel {
 }
 
 export interface StandardComponent extends Component {
-    layoutType?: PageSectionLayoutType;
     controls?: PageControl[] | undefined;
-}
-
-export enum PageSectionLayoutType {
-    OneColumn = 0, 
-    TwoColumns = 1, 
-    ThreeColumns = 2, 
-    FourColumns = 3, 
-    SixColumns = 4, 
 }
 
 export interface PageControl {

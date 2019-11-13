@@ -56,7 +56,7 @@
     "quill-emoji": "^0.1.7",
     "quill-mention": "^2.1.2",
     "rxjs": "~6.3.3",
-    "tslib": "^1.9.0",
+    "tslib": "^1.10.0",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

@@ -37,11 +37,13 @@ namespace LetPortal.ServiceManagement.Providers
                 ServiceHardwareInfo = registerServiceModel.ServiceHardwareInfo,
                 LoggerNotifyEnable = registerServiceModel.LoggerNotifyEnable,
                 HealthCheckNotifyEnable = registerServiceModel.HealthCheckNotifyEnable,
-                LastCheckingDate = DateTime.UtcNow,
+                LastCheckedDate = DateTime.UtcNow,
+                RegisteredDate = DateTime.UtcNow,                
                 RunningVersion = registerServiceModel.Version,
                 InstanceNo = await _serviceRepository.GetLastInstanceNoOfService(registerServiceModel.ServiceName)
             };
 
+            service.CalculateRunningTime();
             await _serviceRepository.AddAsync(service);
 
             return service.Id;
@@ -57,7 +59,7 @@ namespace LetPortal.ServiceManagement.Providers
             var service = await _serviceRepository.GetOneAsync(serviceId);
 
             service.ServiceState = ServiceState.Shutdown;
-            service.LastCheckingDate = DateTime.UtcNow;
+            service.LastCheckedDate = DateTime.UtcNow;
 
             await _serviceRepository.UpdateAsync(serviceId, service);
         }
@@ -67,8 +69,8 @@ namespace LetPortal.ServiceManagement.Providers
             var service = await _serviceRepository.GetOneAsync(serviceId);
 
             service.ServiceState = ServiceState.Run;
-            service.LastCheckingDate = DateTime.UtcNow;
-
+            service.LastCheckedDate = DateTime.UtcNow;
+            service.CalculateRunningTime();
             await _serviceRepository.UpdateAsync(serviceId, service);
         }
     }

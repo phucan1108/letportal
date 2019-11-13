@@ -20,11 +20,6 @@ namespace LetPortal.ServiceManagement.Entities
         public HardwareCounter HardwareCounter { get; set; }
 
         public DateTime BeatDate { get; set; }
-
-        // Support Report tool
-        public int Hour { get; set; }
-
-        public int Minute { get; set; }
     }
 
     [Table("hardwarecounters")]

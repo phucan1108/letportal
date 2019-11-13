@@ -22,6 +22,10 @@ namespace LetPortal.ServiceManagement.Repositories
 
         public DbSet<HardwareCounter> HardwareCounters { get; set; }
 
+        public DbSet<MonitorHttpReport> MonitorHttpReports { get; set; }
+
+        public DbSet<MonitorHardwareReport> MonitorHardwareReports { get; set; }
+
         private readonly DatabaseOptions _options;
 
         public LetPortalServiceManagementDbContext(DatabaseOptions options)

@@ -90,30 +90,30 @@ namespace LetPortal.Versions.Components
                                 AllowTextSearch = false
                             },
                             Order = 3
-                        },
+                        },                                                 
                         new ColumndDef
                         {
-                            Name = "ipAddress",
-                            DisplayName = "IP Address",
-                            AllowSort = false,
-                            DisplayFormat = "{0}",
-                            SearchOptions = new SearchOptions
-                            {
-                                AllowInAdvancedMode = true,
-                                AllowTextSearch = false
-                            },
-                            Order = 4
-                        },                         
-                        new ColumndDef
-                        {
-                            Name = "lastCheckingDate",
-                            DisplayName = "Last Checking Date",
+                            Name = "lastCheckedDate",
+                            DisplayName = "Last Checked Date",
                             AllowSort = false,
                             DisplayFormat = "{0}",
                             SearchOptions = new SearchOptions
                             {
                                 AllowInAdvancedMode = true,
                                 FieldValueType = FieldValueType.DatePicker,
+                                AllowTextSearch = false
+                            },
+                            Order = 4
+                        },
+                        new ColumndDef
+                        {
+                            Name = "totalRunningTime",
+                            DisplayName = "Total Running Time",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
                                 AllowTextSearch = false
                             },
                             Order = 5
@@ -143,6 +143,19 @@ namespace LetPortal.Versions.Components
                         },
                         new ColumndDef
                         {
+                            Name = "ipAddress",
+                            DisplayName = "IP Address",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = false
+                            },
+                            Order = 7
+                        },
+                        new ColumndDef
+                        {
                             Name = versionContext.ConnectionType != Core.Persistences.ConnectionType.MongoDB ? "os" : "servicehardwareinfos.os",
                             DisplayName = "OS",
                             AllowSort = false,
@@ -152,7 +165,7 @@ namespace LetPortal.Versions.Components
                                 AllowInAdvancedMode = true,
                                 AllowTextSearch = false
                             },
-                            Order = 7
+                            Order = 8
                         }
                     }
                 },
@@ -162,39 +175,22 @@ namespace LetPortal.Versions.Components
                     {
                         new CommandButtonInList
                         {
-                            Name = "create",
-                            DisplayName = "Create",
+                            Name = "dashboard",
+                            DisplayName = "Dashboard",
                             Color = "primary",
-                            CommandPositionType = CommandPositionType.OutList,
+                            Icon = "developer_board",
+                            CommandPositionType = CommandPositionType.InList,
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 RedirectOptions = new RedirectOptions
                                 {
-                                    RedirectUrl = "portal/builder/chart",
+                                    RedirectUrl = "portal/page/service-dashboard?serviceId={{data.id}}",
                                     IsSameDomain = true,
                                     RedirectType = RedirectType.ThroughUrl
                                 },
                                 ActionType = ActionType.Redirect
                             },
                             Order = 0
-                        },
-                        new CommandButtonInList
-                        {
-                            Name = "edit",
-                            DisplayName = "Edit",
-                            Color = "primary",
-                            Icon = "create",
-                            ActionCommandOptions = new ActionCommandOptions
-                            {
-                                RedirectOptions = new RedirectOptions
-                                {
-                                    RedirectUrl = "portal/builder/chart/{{data.id}}",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
-                                },
-                                ActionType = ActionType.Redirect
-                            },
-                            Order = 1
                         }
                     }
                 }
