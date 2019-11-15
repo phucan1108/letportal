@@ -29,6 +29,8 @@ namespace LetPortal.ServiceManagement.Entities
 
         public string MonitorCounterId { get; set; }
 
+        public string ServiceId { get; set; }
+
         public double CpuUsage { get; set; }
 
         public long MemoryUsed { get; set; }
@@ -36,6 +38,8 @@ namespace LetPortal.ServiceManagement.Entities
         public bool IsCpuBottleneck { get; set; }
 
         public bool IsMemoryThreshold { get; set; }
+
+        public DateTime MeansureDate { get; set; }
     }
 
     [Table("httpcounters")]
@@ -45,7 +49,9 @@ namespace LetPortal.ServiceManagement.Entities
 
         public string MonitorCounterId { get; set; }
 
-        public DateTime MeansureDateTime { get; set; }
+        public string ServiceId { get; set; }
+
+        public DateTime MeansureDate { get; set; }
 
         public int TotalRequestsPerDay { get; set; }
 

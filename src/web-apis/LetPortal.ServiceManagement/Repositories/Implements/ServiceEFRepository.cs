@@ -1,10 +1,11 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement.Entities;
+using LetPortal.ServiceManagement.Repositories.Abstractions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetPortal.ServiceManagement.Repositories
+namespace LetPortal.ServiceManagement.Repositories.Implements
 {
     public class ServiceEFRepository : EFGenericRepository<Service>, IServiceRepository
     {

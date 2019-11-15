@@ -1,11 +1,12 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement.Entities;
+using LetPortal.ServiceManagement.Repositories.Abstractions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LetPortal.ServiceManagement.Repositories
+namespace LetPortal.ServiceManagement.Repositories.Implements
 {
     public class ServiceMongoRepository : MongoGenericRepository<Service>, IServiceRepository
     {

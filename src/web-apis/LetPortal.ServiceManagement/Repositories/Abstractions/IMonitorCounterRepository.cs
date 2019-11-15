@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LetPortal.ServiceManagement.Repositories
+namespace LetPortal.ServiceManagement.Repositories.Abstractions
 {
-    public interface ILogEventRepository : IGenericRepository<LogEvent>
+    public interface IMonitorCounterRepository : IGenericRepository<MonitorCounter>
     {
     }
 }

@@ -17,6 +17,8 @@ namespace LetPortal.ServiceManagement.Entities
 
         public int TotalRequests { get; set; }
 
+        public double AvgDuration { get; set; }
+
         public DateTime ReportedDate { get; set; }
     }
 }

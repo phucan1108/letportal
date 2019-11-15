@@ -2,6 +2,7 @@
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories;
+using LetPortal.ServiceManagement.Repositories.Abstractions;
 using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers

@@ -43,7 +43,7 @@ namespace LetPortal.ServiceManagement
 
                 await serviceManagement.CheckAndShutdownAllLostServices(_options.CurrentValue.DurationShutdown);
 
-                await Task.Delay(_options.CurrentValue.IntervalTime * 1000, stoppingToken);
+                await Task.Delay(_options.CurrentValue.IntervalShutdown * 1000, stoppingToken);
 
                 numberRun++;
 

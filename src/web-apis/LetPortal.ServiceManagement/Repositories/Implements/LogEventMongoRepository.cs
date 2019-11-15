@@ -1,10 +1,8 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using LetPortal.ServiceManagement.Repositories.Abstractions;
 
-namespace LetPortal.ServiceManagement.Repositories
+namespace LetPortal.ServiceManagement.Repositories.Implements
 {
     public class LogEventMongoRepository : MongoGenericRepository<LogEvent>, ILogEventRepository
     {

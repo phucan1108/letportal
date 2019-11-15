@@ -69,6 +69,15 @@ namespace LetPortal.ServiceManagement.Repositories
                 hardwareBuilder.Property(a => a.IsMemoryThreshold).HasColumnType("BIT");
             }
 
+            var monitorHardwareBuilder = modelBuilder.Entity<MonitorHardwareReport>();
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                monitorHardwareBuilder.Property(a => a.IsCpuBottleneck).HasColumnType("BIT");
+                monitorHardwareBuilder.Property(a => a.IsMemoryThreshold).HasColumnType("BIT");
+            }
+
+            var monitorHttpBuilder = modelBuilder.Entity<MonitorHttpReport>();
+
             foreach(var entity in modelBuilder.Model.GetEntityTypes())
             {
                 foreach(var property in entity.GetProperties())

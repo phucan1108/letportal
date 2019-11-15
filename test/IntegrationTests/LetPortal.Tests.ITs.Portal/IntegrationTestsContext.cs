@@ -395,7 +395,8 @@ namespace LetPortal.Tests.ITs.Portal
                         Id = DataUtil.GenerateUniqueId(),
                         CpuUsage = randomCpuUsage,
                         MemoryUsed = memoryUsage,
-                        MonitorCounterId = monitorCounterId
+                        MonitorCounterId = monitorCounterId,
+                        ServiceId = serviceId
                     },
                     HttpCounter = new HttpCounter
                     {
@@ -404,7 +405,7 @@ namespace LetPortal.Tests.ITs.Portal
                         AvgDuration = 100,
                         SuccessRequests = successRequest,
                         FailedRequests = failRequest,
-                        MeansureDateTime = beatDate,
+                        MeansureDate = beatDate,
                         TotalRequestsPerDay = 999999
                     }
                 });

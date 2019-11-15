@@ -41,7 +41,7 @@ namespace LetPortal.ServiceManagement
 
                 await serviceManagement.CheckAndUpdateAllLostServices(_options.CurrentValue.DurationLost);
                 
-                await Task.Delay(_options.CurrentValue.IntervalTime * 1000, stoppingToken);
+                await Task.Delay(_options.CurrentValue.IntervalLost * 1000, stoppingToken);
 
                 numberRun++;
 
