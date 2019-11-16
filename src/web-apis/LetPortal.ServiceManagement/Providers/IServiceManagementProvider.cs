@@ -8,6 +8,8 @@ namespace LetPortal.ServiceManagement.Providers
 {
     public interface IServiceManagementProvider
     {
+        Task<string[]> GetAllRunningServices();
+
         Task<string> RegisterService(RegisterServiceModel registerServiceModel);
 
         Task CheckAndUpdateAllLostServices(int durationLost);

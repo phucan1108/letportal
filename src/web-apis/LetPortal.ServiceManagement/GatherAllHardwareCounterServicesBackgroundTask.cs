@@ -36,11 +36,12 @@ namespace LetPortal.ServiceManagement
             while(!stoppingToken.IsCancellationRequested)
             {
                 var monitorService = _services.GetService<IMonitorServiceReportProvider>();
-
+                var serviceManagement = _services.GetService<IServiceManagementProvider>();
                 try
                 {
-                    await monitorService.CollectAndReportHardware(_options.CurrentValue.DurationMonitorReport);
-                    await monitorService.CollectAndReportHttp(_options.CurrentValue.DurationMonitorReport);
+                    var allRunningServiceIds = await serviceManagement.GetAllRunningServices();
+                    await monitorService.CollectAndReportHardware(allRunningServiceIds, _options.CurrentValue.DurationMonitorReport);
+                    await monitorService.CollectAndReportHttp(allRunningServiceIds, _options.CurrentValue.DurationMonitorReport);
                 }
                 catch(Exception ex)
                 {

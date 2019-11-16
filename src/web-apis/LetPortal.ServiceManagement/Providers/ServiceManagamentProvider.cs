@@ -4,6 +4,7 @@ using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
@@ -25,6 +26,11 @@ namespace LetPortal.ServiceManagement.Providers
         public async Task CheckAndUpdateAllLostServices(int durationLost)
         {
             await _serviceRepository.UpdateLostStateForAllLosingServices(durationLost);
+        }
+
+        public Task<string[]> GetAllRunningServices()
+        {
+            return Task.FromResult(_serviceRepository.GetAsQueryable().Where(a => a.ServiceState == ServiceState.Run).Select(b => b.Id).ToArray());
         }
 
         public async Task<string> RegisterService(RegisterServiceModel registerServiceModel)

@@ -18,7 +18,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
             _context = context;
         }
 
-        public Task CollectDataAsync(DateTime reportDate, int duration, bool roundDate = true)
+        public Task CollectDataAsync(string[] collectServiceIds, DateTime reportDate, int duration, bool roundDate = true)
         {
             duration /= 60;
             var allInsertCounters = new List<MonitorHttpReport>();
@@ -47,7 +47,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         DateTimeKind.Utc);
 
             DateTime startDate = endDate.AddMinutes(duration * -1);
-            var lastestRecord = _context.MonitorHardwareReports.OrderByDescending(a => a.ReportedDate).FirstOrDefault();
+            var lastestRecord = _context.MonitorHttpReports.Where(a => collectServiceIds.Contains(a.ServiceId)).OrderByDescending(a => a.ReportedDate).FirstOrDefault();
             if(lastestRecord != null)
             {
                 var lastMinute = lastestRecord.ReportedDate.Minute;
@@ -64,7 +64,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         0,
                                         DateTimeKind.Utc);
 
-                    allRequiredCounters = _context.HttpCounters.Where(a => a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
+                    allRequiredCounters = _context.HttpCounters.Where(a => collectServiceIds.Contains(a.ServiceId) && a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
                 }
             }
             else
@@ -78,7 +78,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         0,
                                         DateTimeKind.Utc);
 
-                allRequiredCounters = _context.HttpCounters.Where(a => a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
+                allRequiredCounters = _context.HttpCounters.Where(a => collectServiceIds.Contains(a.ServiceId) && a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
             }
 
 
@@ -118,17 +118,37 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                         if(proceedingCounters.Any())
                         {
                             counter -= proceedingCounters.Count();
+                            var firstCounter = proceedingCounters.First();
+                            var lastCounter = proceedingCounters.Last();
+                            var successRequests = firstCounter.Id != lastCounter.Id ? lastCounter.SuccessRequests - firstCounter.SuccessRequests : firstCounter.SuccessRequests;
+                            var failedRequests = firstCounter.Id != lastCounter.Id ? lastCounter.FailedRequests - firstCounter.FailedRequests : firstCounter.FailedRequests;
+                            var avgDuration = 
+                                firstCounter.Id != lastCounter.Id && (successRequests + failedRequests) > 0? 
+                                proceedingCounters.Average(a => a.AvgDuration) : 0;
                             var newReportCounter = new MonitorHttpReport
                             {
                                 Id = DataUtil.GenerateUniqueId(),
-                                SuccessRequests = proceedingCounters.Sum(a => a.SuccessRequests),
-                                FailRequests = proceedingCounters.Sum(a => a.FailedRequests),
-                                AvgDuration = proceedingCounters.Average(a => a.AvgDuration),
+                                SuccessRequests = successRequests,
+                                FailRequests = failedRequests,
+                                AvgDuration = avgDuration,
                                 ReportedDate = startCompareDate,
                                 ServiceId = service.Key
                             };
 
                             newReportCounter.TotalRequests = newReportCounter.SuccessRequests + newReportCounter.FailRequests;
+                            allInsertCounters.Add(newReportCounter);
+                        }
+                        else
+                        {
+                            var newReportCounter = new MonitorHttpReport
+                            {
+                                Id = DataUtil.GenerateUniqueId(),
+                                SuccessRequests = 0,
+                                FailRequests = 0,
+                                AvgDuration = 0,
+                                ReportedDate = startCompareDate,
+                                ServiceId = service.Key
+                            };
                             allInsertCounters.Add(newReportCounter);
                         }
                     }

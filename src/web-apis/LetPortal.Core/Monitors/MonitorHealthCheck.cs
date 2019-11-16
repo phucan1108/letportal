@@ -69,9 +69,9 @@ namespace LetPortal.Core.Monitors
             {
                 if(groupedByToday.Count() > 0)
                 {
-                    // Only count status code != 500 Internal Server Error
-                    currentHttpHealthCheck.SuccessRequests += groupedByToday.Where(a => a.StatusCode != 500).Count();
-                    currentHttpHealthCheck.FailedRequests += groupedByToday.Where(a => a.StatusCode == 500).Count();
+                    // Only count status code != 200 Internal Server Error
+                    currentHttpHealthCheck.SuccessRequests += groupedByToday.Where(a => a.StatusCode == 200 || a.StatusCode == 204).Count();
+                    currentHttpHealthCheck.FailedRequests += groupedByToday.Where(a => a.StatusCode != 200 && a.StatusCode != 204).Count();
                     var avgDuration = groupedByToday.Sum(b => b.ElapsedTime) / groupedByToday.Count();
                     currentHttpHealthCheck.AvgDuration = (currentHttpHealthCheck.AvgDuration + avgDuration) / 2;
                     currentHttpHealthCheck.MeansureDateTime = DateTime.UtcNow;

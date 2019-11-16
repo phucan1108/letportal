@@ -18,7 +18,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
             _context = context;
         }
 
-        public Task CollectDataAsync(DateTime reportDate, int duration, bool roundDate = true)
+        public Task CollectDataAsync(string[] collectServiceIds, DateTime reportDate, int duration, bool roundDate = true)
         {
             duration /= 60;
             var allInsertCounters = new List<MonitorHardwareReport>();
@@ -47,7 +47,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         DateTimeKind.Utc);
 
             DateTime startDate = endDate.AddMinutes(duration * -1);
-            var lastestRecord = _context.MonitorHardwareReports.OrderByDescending(a => a.ReportedDate).FirstOrDefault();
+            var lastestRecord = _context.MonitorHardwareReports.Where(a => collectServiceIds.Contains(a.ServiceId)).OrderByDescending(a => a.ReportedDate).FirstOrDefault();
             if(lastestRecord != null)
             {
                 var lastMinute = lastestRecord.ReportedDate.Minute;
@@ -64,7 +64,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         0,
                                         DateTimeKind.Utc);
 
-                    allRequiredCounters = _context.HardwareCounters.Where(a => a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
+                    allRequiredCounters = _context.HardwareCounters.Where(a => collectServiceIds.Contains(a.ServiceId) && a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
                 }
             }
             else
@@ -78,7 +78,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         0,
                                         DateTimeKind.Utc);
 
-                allRequiredCounters = _context.HardwareCounters.Where(a => a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
+                allRequiredCounters = _context.HardwareCounters.Where(a => collectServiceIds.Contains(a.ServiceId) && a.MeansureDate >= startDate && a.MeansureDate < endDate).OrderBy(b => b.MeansureDate).ToList();
             }
 
             

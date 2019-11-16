@@ -18,14 +18,14 @@ namespace LetPortal.ServiceManagement.Providers
             _monitorHttpReportRepository = monitorHttpReportRepository;
         }
 
-        public async Task CollectAndReportHardware(int duration, bool roundMinute = true)
+        public async Task CollectAndReportHardware(string[] serviceIds, int duration, bool roundMinute = true)
         {
-            await _monitorHardwareReportRepository.CollectDataAsync(DateTime.UtcNow, duration, roundMinute);
+            await _monitorHardwareReportRepository.CollectDataAsync(serviceIds, DateTime.UtcNow, duration, roundMinute);
         }
 
-        public async Task CollectAndReportHttp(int duration, bool roundMinute = true)
+        public async Task CollectAndReportHttp(string[] serviceIds, int duration, bool roundMinute = true)
         {
-            await _monitorHttpReportRepository.CollectDataAsync(DateTime.UtcNow, duration);
+            await _monitorHttpReportRepository.CollectDataAsync(serviceIds, DateTime.UtcNow, duration);
         }
     }
 }

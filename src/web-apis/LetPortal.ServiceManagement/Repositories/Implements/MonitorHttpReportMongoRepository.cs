@@ -13,7 +13,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
             Connection = mongoConnection;
         }
 
-        public Task CollectDataAsync(DateTime reportDate, int duration, bool roundDate = true)
+        public Task CollectDataAsync(string[] collectServiceIds, DateTime reportDate, int duration, bool roundDate = true)
         {
             throw new NotImplementedException();
         }

@@ -9,6 +9,6 @@ namespace LetPortal.ServiceManagement.Repositories.Abstractions
 {
     public interface IMonitorHardwareReportRepository : IGenericRepository<MonitorHardwareReport>
     {
-        Task CollectDataAsync(DateTime reportDate, int duration, bool roundDate = true);
+        Task CollectDataAsync(string[] collectServiceIds, DateTime reportDate, int duration, bool roundDate = true);
     }
 }

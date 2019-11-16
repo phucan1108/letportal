@@ -26,7 +26,7 @@ namespace LetPortal.ServiceManagement.Providers
                 {
                     AvgDuration = pushHealthCheckModel.HttpHealthCheck.AvgDuration,
                     FailedRequests = pushHealthCheckModel.HttpHealthCheck.FailedRequests,
-                    MeansureDate = pushHealthCheckModel.HttpHealthCheck.MeansureDateTime,
+                    MeansureDate = pushHealthCheckModel.BeatDate,
                     SuccessRequests = pushHealthCheckModel.HttpHealthCheck.SuccessRequests,
                     TotalRequestsPerDay = pushHealthCheckModel.HttpHealthCheck.TotalRequestsPerDay,
                     ServiceId = pushHealthCheckModel.ServiceId
