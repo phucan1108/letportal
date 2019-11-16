@@ -13,6 +13,7 @@ import { ExtendedColDef } from '../models/extended.model';
 import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
 import { ListOptions, ExtendedFilterField } from 'portal/modules/models/dynamiclist.extended.model';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'dynamic-list-grid',
@@ -320,7 +321,7 @@ export class DynamicListGridComponent implements OnInit {
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-            return _.find(datasource.data, elem => elem.value === displayData).name
+            return _.find(datasource.data, elem => elem.value.toString() === displayData).name
         }
         return displayData
     }
@@ -373,7 +374,7 @@ export class DynamicListGridComponent implements OnInit {
     getClassForChip(renderingData: any, currentColumn: ExtendedColDef) {
         let displayData = renderingData[currentColumn.name]
         const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-        let foundIndex = _.findIndex(datasource.data, (elem: any) => elem.value === displayData)
+        let foundIndex = _.findIndex(datasource.data, (elem: any) => elem.value.toString() === displayData)
         return 'mat-chip-' + (foundIndex % 4)
     }
 

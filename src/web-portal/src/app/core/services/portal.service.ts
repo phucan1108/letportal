@@ -3533,6 +3533,9 @@ export interface ExecutionChartResponseModel {
 
 export interface ExecutionChartRequestModel {
     chartId?: string | undefined;
+    isRealTime?: boolean;
+    lastRealTimeComparedDate?: Date | undefined;
+    realTimeField?: string | undefined;
     chartParameterValues?: ChartParameterValue[] | undefined;
     chartFilterValues?: ChartFilterValue[] | undefined;
 }

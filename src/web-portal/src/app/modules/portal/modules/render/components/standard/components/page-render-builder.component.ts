@@ -1,6 +1,6 @@
 import { Component, OnInit, ContentChildren, ViewChildren, QueryList, Input, AfterViewInit, AfterContentInit, ChangeDetectorRef, AfterViewChecked, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { PageRenderSectionWrapperComponent } from './page-render-section-wrapper.component';
-import { Page, PageButton } from 'services/portal.service';
+import { Page, PageButton, PageSection } from 'services/portal.service';
 import { Store } from '@ngxs/store';
 import { Observable, of, Subscription } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
@@ -32,6 +32,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     counterRenderedSection = 0
     counterBuildSectionData = 0
 
+    renderingSections: RenderingPageSectionState[] = []
     actionCommands: PageButton[] = []
     isSmallDevice = false
     constructor(
@@ -58,6 +59,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     }
     data: any
     readyToRenderButtons = false
+    readyToRenderAllSections = false
     ngOnInit(): void {
         this.logger.debug('Init render builder')
         this.actionCommands = this.page.commands
@@ -87,13 +89,14 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                             this.counterBuildSectionData = this.page.builder.sections.length
                             this.store.dispatch(new BeginRenderingPageSectionsAction(this.prepareRenderingPageSectionsStates(this.page)))
                             break
-                        case RenderedPageSectionAction:
+                        case RenderedPageSectionAction:                            
                             this.counterRenderedSection--
                             if (this.counterRenderedSection === 0) {
                                 const timer$ = of(true).pipe(
                                     delay(500),
                                     tap(
                                         () => {
+                                            this.readyToRenderAllSections = true
                                             this.store.dispatch(new EndRenderingPageSectionsAction())
                                             this.store.dispatch(new BeginBuildingBoundData())
                                             timer$.unsubscribe()
@@ -135,18 +138,27 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     }
 
     prepareRenderingPageSectionsStates(page: Page) {
-        let renderingSections: RenderingPageSectionState[] = []
         _.forEach(page.builder.sections, section => {
-            renderingSections.push({
+            this.renderingSections.push({
                 sectionName: section.name,
+                sectionClass: 'col-lg-12',
                 state: RenderingSectionState.Init
             })
         })
 
-        return renderingSections
+        return this.renderingSections
     }
 
     onCommandClick(command: ExtendedPageButton) {
         this.pageService.executeCommand(command)
+    }
+
+    getSectionClass(section: PageSection){
+        if(this.readyToRenderAllSections){
+            return this.renderingSections.find(a => a.sectionName == section.name).sectionClass
+        }
+        else{
+            return 'hidden'
+        }
     }
 }

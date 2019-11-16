@@ -21,6 +21,14 @@ namespace LetPortal.Portal.Executions
 
         private Func<string, string, object> mapperFunc;
 
+        private bool allowRealTime;
+
+        private string comparedRealTimeField;
+
+        private DateTime lastComparedDate;
+
+        private DateTime comparedDate;
+
         public ChartReportQueryBuilder()
         {
             options = new ChartReportQueryOptions();
@@ -56,6 +64,15 @@ namespace LetPortal.Portal.Executions
             return this;
         }
 
+        public IChartReportQueryBuilder AddRealTime(string comparedField, DateTime lastComparedDate, DateTime comparedDate)
+        {
+            allowRealTime = true;
+            comparedRealTimeField = comparedField;
+            this.lastComparedDate = lastComparedDate;
+            this.comparedDate = comparedDate;
+            return this;
+        }
+
         public ChartReportQuery Build()
         {
             var listParams = new List<ChartReportParameter>();
@@ -81,7 +98,17 @@ namespace LetPortal.Portal.Executions
 
             if(filterValues != null && filterValues.Any())
             {
-                warpperString += " WHERE " + GenerateFilterColumns(filterValues, ref listParams);
+                warpperString += 
+                    " WHERE " 
+                    + (allowRealTime ? GenerateRealTimeComparision(comparedRealTimeField, lastComparedDate, comparedDate, ref listParams) + " AND " : string.Empty)
+                    + GenerateFilterColumns(filterValues, ref listParams);
+            }
+            else
+            {
+                if(allowRealTime)
+                {
+                    warpperString += " WHERE " + GenerateRealTimeComparision(comparedRealTimeField, lastComparedDate, comparedDate, ref listParams);
+                }
             }
 
             chartReportQuery.CombinedQuery = warpperString;
@@ -92,6 +119,29 @@ namespace LetPortal.Portal.Executions
         private string GetFieldFormat(string fieldName)
         {
             return string.Format(options.FieldFormat, fieldName);
+        }
+
+        private string GenerateRealTimeComparision(string comparedField, DateTime startDate, DateTime endDate, ref List<ChartReportParameter> parameters)
+        {
+            var startDateParam = StringUtil.GenerateUniqueName();
+            var endDateParam = StringUtil.GenerateUniqueName();
+            parameters.Add(new ChartReportParameter
+            {
+                Name = startDateParam,
+                ValueType = "date",
+                CastedValue = startDate
+            });
+
+            parameters.Add(new ChartReportParameter
+            {
+                Name = endDateParam,
+                ValueType = "date",
+                CastedValue = endDate
+            });
+
+            return string.Format("({0} AND {1})",
+                string.Format(options.DateCompare, GetFieldFormat(comparedField), ">", GetFieldWithParamSign(startDateParam)),
+                string.Format(options.DateCompare, GetFieldFormat(comparedField), "<=", GetFieldWithParamSign(endDateParam)));
         }
 
         private string GetFieldWithParamSign(string fieldName)

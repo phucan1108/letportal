@@ -61,7 +61,7 @@ export class DynamicListDataDialogComponent implements OnInit {
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-            return _.find(datasource.data, elem => elem.value === displayData).name
+            return _.find(datasource.data, elem => elem.value.toString() === displayData).name
         }
         return displayData
     }

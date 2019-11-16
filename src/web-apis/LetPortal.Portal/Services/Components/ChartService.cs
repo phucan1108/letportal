@@ -31,7 +31,17 @@ namespace LetPortal.Portal.Services.Components
             var databaseConnection = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(chart.DatabaseOptions.DatabaseConnectionId);
             var foundExecution = _executionChartReports.First(a => a.ConnectionType == databaseConnection.GetConnectionType());
 
-            return await foundExecution.Execute(databaseConnection, chart.DatabaseOptions.Query, chart.Definitions.MappingProjection, model.ChartParameterValues, model.ChartFilterValues);
+            return await foundExecution.Execute(new ExecutionChartReportModel
+            {
+                DatabaseConnection = databaseConnection,
+                FilterValues = model.ChartFilterValues,
+                Parameters = model.ChartParameterValues,
+                FormattedString = chart.DatabaseOptions.Query,
+                MappingProjection = chart.Definitions.MappingProjection,
+                IsRealTime = model.IsRealTime,
+                LastComparedDate = model.LastRealTimeComparedDate,
+                ComparedRealTimeField = model.RealTimeField
+            });
         }
 
         public async Task<ExtractionChartFilter> Extract(ExtractingChartQueryModel model)

@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Common;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
@@ -6,7 +7,9 @@ using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Models.DynamicLists;
+using Newtonsoft.Json;
 using Npgsql;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,13 +83,18 @@ namespace LetPortal.Portal.Executions.PostgreSql
                     {
                         DataTable dt = new DataTable();
                         dt.Load(reader);
-                        response.Data = ConvertUtil.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true));
+                        response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
                     }
                 }
                 postgreDbConnection.Close();
             }
 
             return Task.FromResult(response);
+        }
+
+        private List<FieldFormatCompare> GetFormatFields(List<ColumndDef> columndDefs)
+        {
+            return columndDefs.Where(a => !string.IsNullOrEmpty(a.DisplayFormat)).Select(b => new FieldFormatCompare { FieldFormat = b.DisplayFormat, FieldName = b.Name }).ToList();
         }
 
         private NpgsqlTypes.NpgsqlDbType GetNpgsqlDbType(DynamicQueryParameter param, out object castObj)

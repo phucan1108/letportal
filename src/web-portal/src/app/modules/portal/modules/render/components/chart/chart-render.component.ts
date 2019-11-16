@@ -9,6 +9,7 @@ import { PageStateModel } from 'stores/pages/page.state';
 import { filter, tap } from 'rxjs/operators';
 import { BeginBuildingBoundData, GatherSectionValidations, AddSectionBoundData, SectionValidationStateAction } from 'stores/pages/page.actions';
 import { ChartOptions } from 'portal/modules/models/chart.extended.model';
+import { DateUtils } from 'app/core/utils/date-util';
 
 @Component({
     selector: 'let-chart-render',
@@ -41,6 +42,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     chartColors: any
     interval: any
 
+    lastComparedDate: Date
     colClass = 'col-lg-12'
 
     constructor(
@@ -130,11 +132,14 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         this.chartsClient.execution({
             chartId: this.chart.id,
             chartFilterValues: [],
-            chartParameterValues: executeParamModels
+            chartParameterValues: executeParamModels,
+            isRealTime: this.chartOptions.allowrealtime,
+            realTimeField: this.chartOptions.comparerealtimefield,
+            lastRealTimeComparedDate: this.lastComparedDate ? this.lastComparedDate : null
         }).subscribe(
             res => {
                 this.chartData = res.isSuccess ? [...res.result] : null
-                //this.readyToRender = true
+                this.lastComparedDate = DateUtils.getUTCNow()
             }
         )
     }

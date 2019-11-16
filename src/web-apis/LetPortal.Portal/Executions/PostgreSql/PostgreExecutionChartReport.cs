@@ -37,28 +37,30 @@ namespace LetPortal.Portal.Executions.PostgreSql
             _cSharpMapper = cSharpMapper;
         }
 
-        public async Task<ExecutionChartResponseModel> Execute(
-            DatabaseConnection databaseConnection,
-            string formattedString,
-            string mappingProjection,
-            IEnumerable<ChartParameterValue> parameters,
-            IEnumerable<ChartFilterValue> filterValues)
+        public async Task<ExecutionChartResponseModel> Execute(ExecutionChartReportModel model)
         {
             var result = new ExecutionChartResponseModel();
-            using(var postgreDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
+            using(var postgreDbConnection = new NpgsqlConnection(model.DatabaseConnection.ConnectionString))
             {
                 postgreDbConnection.Open();
-                using(var command = new NpgsqlCommand(formattedString, postgreDbConnection))
+                using(var command = new NpgsqlCommand(model.FormattedString, postgreDbConnection))
                 {
-                    var chartQuery = _chartReportQueryBuilder
-                                            .Init(formattedString, mappingProjection)
-                                            .AddFilters(filterValues)
-                                            .AddParameters(parameters)
-                                            .AddMapper((a,b) =>
+                    _chartReportQueryBuilder
+                                            .Init(model.FormattedString, model.MappingProjection)
+                                            .AddFilters(model.FilterValues)
+                                            .AddParameters(model.Parameters)
+                                            .AddMapper((a, b) =>
                                             {
                                                 return _cSharpMapper.GetCSharpObjectByType(a, b);
-                                            })
-                                            .Build();
+                                            });
+
+                    if(model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
+                    {
+                        _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
+                    }
+
+                    var chartQuery = _chartReportQueryBuilder.Build();
+
                     command.CommandText = chartQuery.CombinedQuery;
 
                     if(chartQuery.DbParameters.Count > 0)
@@ -73,7 +75,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                             result.IsSuccess = true;
                             if(dt.Rows.Count > 0)
                             {
-                                result.Result = await _chartReportProjection.ProjectionFromDataTable(dt, mappingProjection);
+                                result.Result = await _chartReportProjection.ProjectionFromDataTable(dt, model.MappingProjection);
                                 result.IsSuccess = true;
                             }
                             else

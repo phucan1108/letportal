@@ -36,21 +36,16 @@ namespace LetPortal.Portal.Executions.SqlServer
             _cSharpMapper = cSharpMapper;
         }
 
-        public async Task<ExecutionChartResponseModel> Execute(
-            DatabaseConnection databaseConnection,
-            string formattedString,
-            string mappingProjection,
-            IEnumerable<ChartParameterValue> parameters,
-            IEnumerable<ChartFilterValue> filterValues)
+        public async Task<ExecutionChartResponseModel> Execute(ExecutionChartReportModel model)
         {
             var result = new ExecutionChartResponseModel();
-            using(var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
+            using(var sqlDbConnection = new SqlConnection(model.DatabaseConnection.ConnectionString))
             {
                 sqlDbConnection.Open();
-                using(var command = new SqlCommand(formattedString, sqlDbConnection))
+                using(var command = new SqlCommand(model.FormattedString, sqlDbConnection))
                 {
-                    var chartQuery = _chartReportQueryBuilder
-                                            .Init(formattedString, mappingProjection, options =>
+                    _chartReportQueryBuilder
+                                            .Init(model.FormattedString, model.MappingProjection, options =>
                                             {
                                                 options.FieldFormat = "[{0}]";
                                                 options.AllowBoolIsInt = false;
@@ -58,13 +53,19 @@ namespace LetPortal.Portal.Executions.SqlServer
                                                 options.MonthCompare = "month({0}){1}month({2})";
                                                 options.YearCompare = "year({0}){1}year({2})";
                                             })
-                                            .AddFilters(filterValues)
-                                            .AddParameters(parameters)
+                                            .AddFilters(model.FilterValues)
+                                            .AddParameters(model.Parameters)
                                             .AddMapper((a, b) =>
                                             {
                                                 return _cSharpMapper.GetCSharpObjectByType(a, b);
-                                            })
-                                            .Build();
+                                            });
+
+                    if(model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
+                    {
+                        _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
+                    }
+
+                    var chartQuery = _chartReportQueryBuilder.Build();
                     command.CommandText = chartQuery.CombinedQuery;
 
                     if(chartQuery.DbParameters.Count > 0)
@@ -79,7 +80,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                             result.IsSuccess = true;
                             if(dt.Rows.Count > 0)
                             {
-                                result.Result = await _chartReportProjection.ProjectionFromDataTable(dt, mappingProjection);
+                                result.Result = await _chartReportProjection.ProjectionFromDataTable(dt, model.MappingProjection);
                                 result.IsSuccess = true;
                             }
                             else

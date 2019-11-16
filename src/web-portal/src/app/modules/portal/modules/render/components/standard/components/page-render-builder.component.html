@@ -13,10 +13,12 @@
                 </mat-menu>
             </div>
         </div>
-        <div class="row" *ngFor="let section of page.builder.sections">
-            <div class="col-lg-12">
-                <let-section-wrapper [pageSection]="section"></let-section-wrapper>
-            </div>
+        <div class="row">
+            <ng-container *ngFor="let section of page.builder.sections">
+                <div [ngClass]="getSectionClass(section)" [hidden]="!readyToRenderAllSections">
+                    <let-section-wrapper [pageSection]="section"></let-section-wrapper>
+                </div>
+            </ng-container>
         </div>
     </div>
 

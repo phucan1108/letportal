@@ -191,6 +191,7 @@ export class PageState {
         _.forEach(cloneRenderingSections, s => {
             if (s.sectionName === renderedSection.sectionName) {
                 s.state = renderedSection.state
+                s.sectionClass = renderedSection.sectionClass
             }
         })
 

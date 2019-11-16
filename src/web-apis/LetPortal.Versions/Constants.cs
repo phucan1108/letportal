@@ -59,12 +59,17 @@ namespace LetPortal.Versions
            new ShellOption
            {
                 Key = "allowrealtime",
-                Value = "true"
+                Value = "false"
            },
            new ShellOption
            {
                Key = "timetorefresh",
                Value = "30"
+           },
+           new ShellOption
+           {
+               Key = "comparerealtimefield",
+               Value = ""
            },
            new ShellOption
            {

@@ -34,10 +34,19 @@ namespace LetPortal.Versions.Pages
                         {
                             Id = "5d0c7da473e71f3330054792",
                             Name = "servicehttpcounter",
-                            DisplayName = "HTTP Counter",
+                            DisplayName = "HTTP Counters",
                             ComponentId = "5dc786a40f4b6b13e0a909f3",
                             ConstructionType = SectionContructionType.Chart,
                             Order = 0
+                        },
+                        new PageSection
+                        {
+                            Id = "5dd02c6d1558c56c40d795e8",
+                            Name = "servicehardwarecounter",
+                            DisplayName = "Hardware Counters",
+                            ComponentId = "5dd02c6d1558c56c40d795e7",
+                            ConstructionType = SectionContructionType.Chart,
+                            Order = 1 
                         }
                     }
                 }

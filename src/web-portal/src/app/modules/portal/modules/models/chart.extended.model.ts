@@ -6,12 +6,15 @@ export class ChartOptions {
 
     allowrealtime: boolean
     timetorefresh: number
+    comparerealtimefield: string
     colors: string[]
 
     public static getChartOptions(options: ShellOption[]): ChartOptions {
+        let comparedField = _.find(options, opt => opt.key === 'comparerealtimefield')
         return {
             allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'allowrealtime').value),
             timetorefresh: JSON.parse(_.find(options, opt => opt.key === 'timetorefresh').value),
+            comparerealtimefield: comparedField.value ? comparedField.value : '',
             colors: JSON.parse(_.find(options, opt => opt.key === 'colors').value)
         }
     }
@@ -32,6 +35,14 @@ export class ChartOptions {
         value: '30'
     }
 
+    public static CompareRealTimeField: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'By default, if this field is blank, chart with real-time just refreshes a data. But if we set it to one field, this field (Must be DateTime type) will be compared between (Now - timetorefresh) and Now',
+        key: 'comparerealtimefield',
+        value: '30'
+    }
+
     public static Colors: ExtendedShellOption = {
         id: '',
         allowDelete: false,
@@ -44,6 +55,7 @@ export class ChartOptions {
         return [
             this.AllowRealTime,
             this.TimeToRefresh,
+            this.CompareRealTimeField,
             this.Colors
         ]
     }
@@ -63,6 +75,7 @@ export class ChartOptions {
     public static DefaultListOptions: ChartOptions = {
         allowrealtime: false,
         timetorefresh: 30,
+        comparerealtimefield: '',
         colors: ['horizon']
     }
 }

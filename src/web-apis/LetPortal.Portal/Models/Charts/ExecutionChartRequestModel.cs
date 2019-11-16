@@ -9,6 +9,12 @@ namespace LetPortal.Portal.Models.Charts
     {
         public string ChartId { get; set; }
 
+        public bool IsRealTime { get; set; }
+
+        public DateTime? LastRealTimeComparedDate { get; set; }
+
+        public string RealTimeField { get; set; }
+
         public List<ChartParameterValue> ChartParameterValues { get; set; }
 
         public List<ChartFilterValue> ChartFilterValues { get; set; }

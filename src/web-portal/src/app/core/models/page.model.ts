@@ -10,6 +10,7 @@ export interface PageResponse{
 
 export interface RenderingPageSectionState{
     sectionName: string,
+    sectionClass: string,
     state: RenderingSectionState
 }
 

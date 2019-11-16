@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Common;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
@@ -7,7 +8,9 @@ using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.DynamicLists;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,13 +91,18 @@ namespace LetPortal.Portal.Executions.MySQL
                     {
                         DataTable dt = new DataTable();
                         dt.Load(reader);
-                        response.Data = ConvertUtil.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true));
+                        response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
                     }
                 }
                 sqlDbConnection.Close();
             }
 
             return Task.FromResult(response);
+        }
+
+        private List<FieldFormatCompare> GetFormatFields(List<ColumndDef> columndDefs)
+        {
+            return columndDefs.Where(a => !string.IsNullOrEmpty(a.DisplayFormat)).Select(b => new FieldFormatCompare { FieldFormat = b.DisplayFormat, FieldName = b.Name }).ToList();
         }
 
         private MySqlDbType GetMySqlDbType(DynamicQueryParameter param, out object castObj)

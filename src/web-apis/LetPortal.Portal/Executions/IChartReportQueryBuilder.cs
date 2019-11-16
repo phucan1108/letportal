@@ -17,6 +17,8 @@ namespace LetPortal.Portal.Executions
 
         IChartReportQueryBuilder AddFilters(IEnumerable<ChartFilterValue> filterValues);
 
+        IChartReportQueryBuilder AddRealTime(string comparedField, DateTime lastComparedDate, DateTime comparedDate);
+
         IChartReportQueryBuilder AddMapper(Func<string, string, object> mapperFunc);
 
         ChartReportQuery Build();
