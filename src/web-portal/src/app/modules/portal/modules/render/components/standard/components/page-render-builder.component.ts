@@ -32,6 +32,8 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     counterRenderedSection = 0
     counterBuildSectionData = 0
 
+    sectionClasses: string[] = []
+
     renderingSections: RenderingPageSectionState[] = []
     actionCommands: PageButton[] = []
     isSmallDevice = false
@@ -62,6 +64,9 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     readyToRenderAllSections = false
     ngOnInit(): void {
         this.logger.debug('Init render builder')
+        _.forEach(this.page.builder.sections, sec =>{
+            this.sectionClasses.push('col-lg-12')
+        })
         this.actionCommands = this.page.commands
         const sub$ = this.pageService.listenDataChange$().subscribe(
             data => {
@@ -97,6 +102,10 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                                     tap(
                                         () => {
                                             this.readyToRenderAllSections = true
+                                            _.forEach(pageState.renderingSections, sec => {
+                                                const index = _.findIndex(this.page.builder.sections, a => a.name === sec.sectionName)
+                                                this.sectionClasses[index] = sec.sectionClass
+                                            })
                                             this.store.dispatch(new EndRenderingPageSectionsAction())
                                             this.store.dispatch(new BeginBuildingBoundData())
                                             timer$.unsubscribe()

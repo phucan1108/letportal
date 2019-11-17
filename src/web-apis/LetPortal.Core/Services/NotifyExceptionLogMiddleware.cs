@@ -40,8 +40,8 @@ namespace LetPortal.Core.Services
                 var rawBody = await httpContext.Request.GetRawBodyAsync();
                 var pushLogModel = new PushLogModel
                 {
-                    TraceId = httpContext.Request.Headers[Constants.TraceIdHeader].ToString(),
-                    UserSessionId = httpContext.Request.Headers[Constants.UserSessionIdHeader].ToString(),
+                    TraceId = StringUtil.DecodeBase64ToUTF8(httpContext.Request.Headers[Constants.TraceIdHeader].ToString()),
+                    UserSessionId = StringUtil.DecodeBase64ToUTF8(httpContext.Request.Headers[Constants.UserSessionIdHeader].ToString()),
                     HttpRequestUrl = httpContext.Request.Path.ToUriComponent(),
                     HttpHeaders = ConvertUtil.SerializeObject(httpContext.Request.Headers),
                     HttpRequestBody = rawBody,

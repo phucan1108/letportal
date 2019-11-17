@@ -14,8 +14,8 @@
             </div>
         </div>
         <div class="row">
-            <ng-container *ngFor="let section of page.builder.sections">
-                <div [ngClass]="getSectionClass(section)" [hidden]="!readyToRenderAllSections">
+            <ng-container *ngFor="let section of page.builder.sections; index as i">
+                <div [ngClass]="sectionClasses[i]" [hidden]="!readyToRenderAllSections">
                     <let-section-wrapper [pageSection]="section"></let-section-wrapper>
                 </div>
             </ng-container>

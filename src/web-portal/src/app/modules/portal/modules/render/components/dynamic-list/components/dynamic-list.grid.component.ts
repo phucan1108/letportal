@@ -180,7 +180,7 @@ export class DynamicListGridComponent implements OnInit {
                 this.displayedColumns.push(element.name)
         })
         // Check we have any command in list        
-        if (this.commandsInList.length > 0) {
+        if (this.commandsInList.length > 0 || this.hasDetailCols) {
             this.displayedColumns.push('actions')
         }
 
