@@ -22,7 +22,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d4d8adfae5f5b68b811ec1d",
                 Name = "dynamiclistcomponent",
                 DisplayName = "Dynamic Lists List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
@@ -116,7 +116,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d4d8adfae5f5b68b811ec1e",
                 Name = "standardlistcomponent",
                 DisplayName = "Standards List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions

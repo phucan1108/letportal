@@ -14,6 +14,9 @@ namespace LetPortal.Versions.Components
         {
             versionContext.DeleteData<Chart>("5dc786a40f4b6b13e0a909f3");
             versionContext.DeleteData<Chart>("5dd02c6d1558c56c40d795e7");
+            versionContext.DeleteData<Chart>("5dd2a66d5aa5f917603f05c5");
+            versionContext.DeleteData<Chart>("5dd2a66d5aa5f917603f05c6");
+            versionContext.DeleteData<Chart>("5dd2a66d5aa5f917603f05ca");
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -35,10 +38,10 @@ namespace LetPortal.Versions.Components
                 Definitions = new ChartDefinitions
                 {
                     ChartTitle = "HTTP Counters",
-                    ChartType = ChartType.VerticalBarChart,
+                    ChartType = ChartType.NumberCard,
                     MappingProjection = "name=name;value=value"
                 },
-                Options = Constants.ChartOptions,
+                Options = Constants.ChartOptions(),
                 TimeSpan = DateTime.UtcNow.Ticks
             };
 
@@ -59,15 +62,94 @@ namespace LetPortal.Versions.Components
                 Definitions = new ChartDefinitions
                 {
                     ChartTitle = "Hardware Counters",
-                    ChartType = ChartType.VerticalBarChart,
+                    ChartType = ChartType.NumberCard,
                     MappingProjection = "name=name;value=value"
                 },
-                Options = Constants.ChartOptions,
+                Options = Constants.ChartOptions(),
                 TimeSpan = DateTime.UtcNow.Ticks
             };
 
+            var hardwareCPURealTimeChart = new Chart
+            {
+                Id = "5dd2a66d5aa5f917603f05c5",
+                Name = "hardwarecpurealtime",
+                DisplayName = "CPU Monitor",
+                LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.FourColumns,
+                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                {
+                    DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
+                    Query =
+                      versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                      ? "SELECT 'CPU Usage(%)' as `group`, reportedDate as name, cpuUsage as value FROM monitorhardwarereports WHERE `serviceId`={{queryparams.serviceId}} order by reportedDate desc limit 60"
+                      : "SELECT 'CPU Usage(%)' as \"group\", \"reportedDate\" as name, \"cpuUsage\" as value FROM monitorhardwarereports WHERE \"serviceId\"={{queryparams.serviceId}} order by \"reportedDate\" desc limit 60"
+                },
+                Definitions = new ChartDefinitions
+                {
+                    ChartTitle = "CPU Monitor",
+                    ChartType = ChartType.LineChart,
+                    MappingProjection = "name=name;value=value;group=group"
+                },
+                Options = Constants.ChartOptions(),
+                TimeSpan = DateTime.UtcNow.Ticks
+            };
+            hardwareCPURealTimeChart.SetRealTimeField("reportedDate");
+
+            var hardwareMemoryRealTimeChart = new Chart
+            {
+                Id = "5dd2a66d5aa5f917603f05c8",
+                Name = "hardwarememoryrealtime",
+                DisplayName = "Memory Monitor",
+                LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.FourColumns,
+                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                {
+                    DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
+                    Query =
+                     versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                     ? "SELECT 'Memory Usage(Mb)' as `group`,reportedDate as name ,  round(`memoryUsed` / 1024, 0) as value FROM monitorhardwarereports WHERE `serviceId`={{queryparams.serviceId}} order by reportedDate desc limit 60"
+                     : "SELECT 'Memory Usage(Mb)' as \"group\", \"reportedDate\" as name , round(\"memoryUsed\" / 1024, 0) as value FROM monitorhardwarereports WHERE \"serviceId\"={{queryparams.serviceId}} order by \"reportedDate\" desc limit 60"
+                },
+                Definitions = new ChartDefinitions
+                {
+                    ChartTitle = "Memory Monitor",
+                    ChartType = ChartType.LineChart,
+                    MappingProjection = "name=name;value=value;group=group"
+                },
+                Options = Constants.ChartOptions(),
+                TimeSpan = DateTime.UtcNow.Ticks
+            };
+            hardwareMemoryRealTimeChart.SetRealTimeField("reportedDate");
+
+            var httpRealTimeChart = new Chart
+            {
+                Id = "5dd2a66d5aa5f917603f05c6",
+                Name = "httprealtime",
+                DisplayName = "HTTP Real Time Monitor",
+                LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
+                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                {
+                    DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
+                    Query =
+                      versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                      ? "(SELECT 'Success Requests' as `group`, reportedDate as name, successRequests as value FROM monitorhttpreports WHERE `serviceId`={{queryparams.serviceId}} order by reportedDate desc limit 60) UNION ALL (SELECT 'Failed Requests' as `group`, reportedDate as name , failRequests as value FROM monitorhttpreports WHERE `serviceId`={{queryparams.serviceId}} order by reportedDate desc limit 60) UNION ALL (SELECT 'Total Requests' as `group`, reportedDate as name , totalRequests as value FROM monitorhttpreports WHERE `serviceId`={{queryparams.serviceId}} order by reportedDate desc limit 60)"
+                      : "(SELECT 'Success Requests' as \"group\", \"reportedDate\" as name, \"successRequests\" as value FROM monitorhttpreports WHERE \"serviceId\"={{queryparams.serviceId}} order by \"reportedDate\" desc limit 60) UNION ALL (SELECT 'Failed Requests' as \"group\", \"reportedDate\" as name , \"failRequests\" as value FROM monitorhttpreports WHERE \"serviceId\"={{queryparams.serviceId}} order by \"reportedDate\" desc limit 60) UNION ALL (SELECT 'Total Requests' as \"group\", \"reportedDate\" as name , \"totalRequests\" as value FROM monitorhttpreports WHERE \"serviceId\"={{queryparams.serviceId}} order by \"reportedDate\" desc limit 60)"
+                },
+                Definitions = new ChartDefinitions
+                {
+                    ChartTitle = "HTTP Real-Time Monitor",
+                    ChartType = ChartType.LineChart,
+                    MappingProjection = "name=name;value=value;group=group"
+                },
+                Options = Constants.ChartOptions(),
+                TimeSpan = DateTime.UtcNow.Ticks
+            };
+            httpRealTimeChart.SetRealTimeField("reportedDate");
+
             versionContext.InsertData(httpCounterChart);
             versionContext.InsertData(hardwareCounterChart);
+
+            versionContext.InsertData(hardwareCPURealTimeChart);
+            versionContext.InsertData(hardwareMemoryRealTimeChart);
+            versionContext.InsertData(httpRealTimeChart);
         }
     }
 }

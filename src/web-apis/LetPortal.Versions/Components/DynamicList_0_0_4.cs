@@ -22,7 +22,7 @@ namespace LetPortal.Versions.Components
                 Id = "5dc786a40f4b6b13e0a909f4",
                 Name = "servicesmonitorlist",
                 DisplayName = "Services Monitor List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
@@ -201,7 +201,7 @@ namespace LetPortal.Versions.Components
                 Id = "5dcac739be0b4e533408344f",
                 Name = "servicelogs",
                 DisplayName = "Service Logs List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions

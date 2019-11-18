@@ -21,7 +21,7 @@ namespace LetPortal.Versions.Components
                 Id = "5dabf30467cb8d0bd02643f8",
                 Name = "chartlistcomponent",
                 DisplayName = "Charts List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions

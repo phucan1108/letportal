@@ -30,9 +30,9 @@ export class ChartOptions {
     public static TimeToRefresh: ExtendedShellOption = {
         id: '',
         allowDelete: false,
-        description: 'Time to refresh data in Chart, Allow Real-time must be enable, in second. Default: 30',
+        description: 'Time to refresh data in Chart, Allow Real-time must be enable, in second. Default: 60',
         key: 'timetorefresh',
-        value: '30'
+        value: '60'
     }
 
     public static CompareRealTimeField: ExtendedShellOption = {
@@ -74,7 +74,7 @@ export class ChartOptions {
 
     public static DefaultListOptions: ChartOptions = {
         allowrealtime: false,
-        timetorefresh: 30,
+        timetorefresh: 60,
         comparerealtimefield: '',
         colors: ['horizon']
     }

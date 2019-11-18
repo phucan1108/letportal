@@ -22,6 +22,17 @@ namespace LetPortal.Portal.Entities.Components
                 }
             }
         }
+
+        public void SetRealTimeField(string fieldName)
+        {
+            foreach(var option in Options)
+            {
+                if(option.Key == "comparerealtimefield")
+                {
+                    option.Value = fieldName;
+                }
+            }
+        }
     }
 
     public class ChartDefinitions
@@ -49,7 +60,8 @@ namespace LetPortal.Portal.Entities.Components
         PieGrid,
         LineChart,
         AreaChart,
-        Gauge
+        Gauge,
+        NumberCard
     }
 
     public class ChartFilter

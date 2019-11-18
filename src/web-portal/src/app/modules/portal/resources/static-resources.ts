@@ -159,7 +159,8 @@ export class StaticResources {
             { name: 'Pie Grid', value: ChartType.PieGrid },
             { name: 'Line Chart', value: ChartType.LineChart },
             { name: 'Area Chart', value: ChartType.AreaChart },
-            { name: 'Gauge', value: ChartType.Gauge }
+            { name: 'Gauge', value: ChartType.Gauge },
+            { name: 'Number Card', value: ChartType.NumberCard }
         ]
     }
 

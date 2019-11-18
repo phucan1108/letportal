@@ -47,6 +47,33 @@ namespace LetPortal.Versions.Pages
                             ComponentId = "5dd02c6d1558c56c40d795e7",
                             ConstructionType = SectionContructionType.Chart,
                             Order = 1 
+                        },
+                        new PageSection
+                        {
+                            Id = "5dd2a66d5aa5f917603f05c7",
+                            Name = "httprealtimemonitor",
+                            DisplayName = "HTTP Requests",
+                            ComponentId = "5dd2a66d5aa5f917603f05c6",
+                            ConstructionType = SectionContructionType.Chart,
+                            Order = 2
+                        },
+                        new PageSection
+                        {
+                            Id = "5dd2a66d5aa5f917603f05c8",
+                            Name = "hardwarecpurealtimemonitor",
+                            DisplayName = "CPU(%)",
+                            ComponentId = "5dd2a66d5aa5f917603f05c5",
+                            ConstructionType = SectionContructionType.Chart,
+                            Order = 3
+                        },
+                        new PageSection
+                        {
+                            Id = "5dd2a66d5aa5f917603f05ca",
+                            Name = "hardwarememoryrealtimemonitor",
+                            DisplayName = "Memory(Mb)",
+                            ComponentId = "5dd2a66d5aa5f917603f05c8",
+                            ConstructionType = SectionContructionType.Chart,
+                            Order = 3
                         }
                     }
                 }

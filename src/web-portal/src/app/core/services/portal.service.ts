@@ -3441,6 +3441,7 @@ export enum ChartType {
     LineChart = 7, 
     AreaChart = 8, 
     Gauge = 9, 
+    NumberCard = 10, 
 }
 
 export interface DatabaseOptions {

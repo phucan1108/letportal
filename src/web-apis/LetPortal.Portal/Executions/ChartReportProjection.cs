@@ -19,7 +19,7 @@ namespace LetPortal.Portal.Executions
                 {
                     var data =
                         group
-                            .Select(a => new { name = a.Field<string>("name"), value = a.Field<object>("value") })
+                            .Select(a => new { name = a.Field<object>("name"), value = a.Field<object>("value") })
                             .ToList();
                     JObject groupObject = JObject.FromObject(new
                     {
@@ -33,7 +33,7 @@ namespace LetPortal.Portal.Executions
             else
             {
                 var jObjects = dataTable.AsEnumerable()
-                            .Select(a => new { name = a.Field<string>("name"), value = a.Field<object>("value") })
+                            .Select(a => new { name = a.Field<object>("name"), value = a.Field<object>("value") })
                             .Select(b => JObject.FromObject(b));
                 foreach(var jObject in jObjects)
                 {

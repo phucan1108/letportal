@@ -38,9 +38,11 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     readyToRender = true
 
     chartOptions: ChartOptions
-
     chartColors: any
-    interval: any
+    interval: any   
+
+    deferRender = 500
+    isDoneDefer = false
 
     lastComparedDate: Date
     colClass = 'col-lg-12'
@@ -110,7 +112,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     }
 
     private setupOptions() {
-        if (this.chartOptions.allowrealtime) {
+        if (this.chartOptions.allowrealtime) {            
             this.interval = setInterval(() => {
                 //this.readyToRender = false
                 this.fetchDataForChart()
@@ -140,6 +142,9 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
             res => {
                 this.chartData = res.isSuccess ? [...res.result] : null
                 this.lastComparedDate = DateUtils.getUTCNow()
+                setTimeout(() =>{
+                    this.isDoneDefer = true
+                }, this.deferRender)                
             }
         )
     }

@@ -28,7 +28,7 @@ namespace LetPortal.Versions.SectionParts
                 Id = "5d0f09de62c8371c183c8c6f",
                 Name = "database-list-section-part",
                 DisplayName = "Databases List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
@@ -208,7 +208,7 @@ namespace LetPortal.Versions.SectionParts
                 Id = "5d0f2dca6ba2fd4ca49e3741",
                 Name = "app-list-section-part",
                 DisplayName = "Apps List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
@@ -375,7 +375,7 @@ namespace LetPortal.Versions.SectionParts
                 Id = "5d0f2dca6ba2fd4ca49e3742",
                 Name = "page-list-section-part",
                 DisplayName = "Pages List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
@@ -495,7 +495,7 @@ namespace LetPortal.Versions.SectionParts
                 Id = "5d0f2dca6ba2fd4ca49e3743",
                 Name = "user-list-section-part",
                 DisplayName = "Users List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
@@ -626,7 +626,7 @@ namespace LetPortal.Versions.SectionParts
                 Id = "5d0f2dca6ba2fd4ca49e3746",
                 Name = "roles-list-section-part",
                 DisplayName = "Roles List",
-                Options = Constants.DynamicListOptions,
+                Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
                     DatabaseConnectionOptions = new DatabaseOptions

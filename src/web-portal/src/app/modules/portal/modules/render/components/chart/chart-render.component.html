@@ -17,14 +17,29 @@
         <ng-container *ngIf="readyToRender else loading">
             <div class="row" *ngIf="chartData else nodata">
                 <div class="col-lg-12" [ngSwitch]="chart.definitions.chartType">
-                    <div style="width: 100%; height: 100%;">
-                        <ng-container *ngSwitchCase="chartType.VerticalBarChart">
+                    <ng-container *ngSwitchCase="chartType.VerticalBarChart">
+                        <div style="width: 100%; height: 100%;">
                             <ngx-charts-bar-vertical [results]="chartData" [xAxis]="true" [yAxis]="true"
                                 [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
-                                [legendPosition]="'below'" [showDataLabel]="true">
+                                [legendPosition]="'below'" [showDataLabel]="true" *ngIf="isDoneDefer else deferData">
                             </ngx-charts-bar-vertical>
-                        </ng-container>
-                    </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="chartType.LineChart">
+                        <div style="width: 100%; height: 100%;">
+                            <ngx-charts-line-chart [results]="chartData" [xAxis]="true" [yAxis]="true"
+                                [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
+                                [legendPosition]="'below'" *ngIf="isDoneDefer else deferData">
+                            </ngx-charts-line-chart>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="chartType.NumberCard">
+                        <div style="width: 100%; height: 200px;">
+                            <ngx-charts-number-card [results]="chartData" [scheme]="chartColors"
+                                *ngIf="isDoneDefer else deferData">
+                            </ngx-charts-number-card>
+                        </div>
+                    </ng-container>
                 </div>
             </div>
         </ng-container>
@@ -41,4 +56,8 @@
 
 <ng-template #nodata>
     No data
+</ng-template>
+
+<ng-template #deferData>
+    <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
 </ng-template>

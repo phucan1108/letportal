@@ -16,6 +16,7 @@ import { RouterExtService } from '../ext-service/routerext.service';
 @Injectable()
 export class JwtTokenInterceptor implements HttpInterceptor {
 
+    private isOpenningUnlock = false
     constructor(
         private routerEx: RouterExtService,
         private security: SecurityService,
@@ -53,14 +54,16 @@ export class JwtTokenInterceptor implements HttpInterceptor {
                             this.session.clearUserSession()
                             this.session.clearUserToken()
                             // Popup dialog for letting user types his password
-                            const dialogRef = this.dialog.open(UnlockScreenDialogComponent, {
-                                disableClose: true                                
-                            });
-                            dialogRef.afterClosed().subscribe(res => {
-                                if (res) {
-                                    this.router.navigateByUrl(this.routerEx.getCurrentUrl())
-                                }
-                            })
+                            if(!this.isOpenningUnlock){
+                                const dialogRef = this.dialog.open(UnlockScreenDialogComponent, {
+                                    disableClose: true                                
+                                });
+                                dialogRef.afterClosed().subscribe(res => {
+                                    if (res) {
+                                        this.router.navigateByUrl(this.routerEx.getCurrentUrl())
+                                    }
+                                })
+                            }                           
                         }
                         else {
                             // There are some hacking cheats, force back to login page

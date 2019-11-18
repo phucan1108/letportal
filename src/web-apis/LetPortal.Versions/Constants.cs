@@ -15,7 +15,9 @@ namespace LetPortal.Versions
         public const string GeneralUpdateWorkflowId = "5d31634fe7fefb62d805bf74";
         public const string GeneralDeleteWorkflowId = "5d316607e7fefb62d805bf79";
 
-        public static List<ShellOption> DynamicListOptions = new List<ShellOption>
+        public static List<ShellOption> DynamicListOptions()
+        {
+            return new List<ShellOption>
             {
                 new ShellOption
                 {
@@ -53,29 +55,33 @@ namespace LetPortal.Versions
                     Value = "true"
                 }
             };
+        }
 
-        public static List<ShellOption> ChartOptions = new List<ShellOption>
+        public static List<ShellOption> ChartOptions()
         {
-           new ShellOption
-           {
-                Key = "allowrealtime",
-                Value = "false"
-           },
-           new ShellOption
-           {
-               Key = "timetorefresh",
-               Value = "30"
-           },
-           new ShellOption
-           {
-               Key = "comparerealtimefield",
-               Value = ""
-           },
-           new ShellOption
-           {
-               Key = "colors",
-               Value = "[\"horizon\"]"
-           }
-        };
+            return new List<ShellOption>
+            {
+                new ShellOption
+                {
+                    Key = "allowrealtime",
+                    Value = "true"
+                },
+                new ShellOption
+                {
+                    Key = "timetorefresh",
+                    Value = "60"
+                },
+                new ShellOption
+                {
+                    Key = "comparerealtimefield",
+                    Value = ""
+                },
+                new ShellOption
+                {
+                    Key = "colors",
+                    Value = "[\"horizon\"]"
+                }
+            };
+        }
     }
 }

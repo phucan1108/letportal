@@ -140,8 +140,8 @@ namespace LetPortal.Portal.Executions
             });
 
             return string.Format("({0} AND {1})",
-                string.Format(options.DateCompare, GetFieldFormat(comparedField), ">", GetFieldWithParamSign(startDateParam)),
-                string.Format(options.DateCompare, GetFieldFormat(comparedField), "<=", GetFieldWithParamSign(endDateParam)));
+                string.Format(options.DateCompare, "s." + GetFieldFormat(comparedField), ">", GetFieldWithParamSign(startDateParam)),
+                string.Format(options.DateCompare, "s." + GetFieldFormat(comparedField), "<=", GetFieldWithParamSign(endDateParam)));
         }
 
         private string GetFieldWithParamSign(string fieldName)
