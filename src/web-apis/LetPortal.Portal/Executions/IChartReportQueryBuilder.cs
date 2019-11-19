@@ -26,6 +26,14 @@ namespace LetPortal.Portal.Executions
 
     public class ChartReportQueryOptions
     {
+        public string RealTimeWord { get; set; } = "{{REAL_TIME}}";
+
+        public string FilterWord { get; set; } = "{{FILTER}}";
+
+        public string DefaultRealTimeNull { get; set; } = "1=1";
+
+        public string DefaultFilterNull { get; set; } = "1=1";
+
         public string WrapperQuery { get; set; } = "SELECT {0} FROM ({1}) s";
 
         public string FieldFormat { get; set; } = "\"{0}\"";

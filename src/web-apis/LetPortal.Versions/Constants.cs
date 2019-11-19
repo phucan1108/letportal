@@ -78,6 +78,11 @@ namespace LetPortal.Versions
                 },
                 new ShellOption
                 {
+                    Key = "datarange",
+                    Value = ""
+                },
+                new ShellOption
+                {
                     Key = "colors",
                     Value = "[\"horizon\"]"
                 }

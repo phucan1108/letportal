@@ -7,14 +7,17 @@ export class ChartOptions {
     allowrealtime: boolean
     timetorefresh: number
     comparerealtimefield: string
+    datarange: string
     colors: string[]
 
     public static getChartOptions(options: ShellOption[]): ChartOptions {
         let comparedField = _.find(options, opt => opt.key === 'comparerealtimefield')
+        let datarange = _.find(options, opt => opt.key === 'datarange')
         return {
             allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'allowrealtime').value),
             timetorefresh: JSON.parse(_.find(options, opt => opt.key === 'timetorefresh').value),
             comparerealtimefield: comparedField.value ? comparedField.value : '',
+            datarange: datarange ? datarange.value : '',
             colors: JSON.parse(_.find(options, opt => opt.key === 'colors').value)
         }
     }
@@ -43,6 +46,14 @@ export class ChartOptions {
         value: '30'
     }
 
+    public static DataRange: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'By default, if this field is blank. We can set a min-max value for xAxis and yAxis as x=[0,100];y=[0,200]. It supports number only',
+        key: 'datarange',
+        value: ''
+    }
+
     public static Colors: ExtendedShellOption = {
         id: '',
         allowDelete: false,
@@ -56,6 +67,7 @@ export class ChartOptions {
             this.AllowRealTime,
             this.TimeToRefresh,
             this.CompareRealTimeField,
+            this.DataRange,
             this.Colors
         ]
     }
@@ -76,6 +88,7 @@ export class ChartOptions {
         allowrealtime: false,
         timetorefresh: 60,
         comparerealtimefield: '',
+        datarange: '',
         colors: ['horizon']
     }
 }

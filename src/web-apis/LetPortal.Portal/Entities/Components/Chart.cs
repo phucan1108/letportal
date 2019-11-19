@@ -33,6 +33,17 @@ namespace LetPortal.Portal.Entities.Components
                 }
             }
         }
+
+        public void SetDataRange(string dataRange)
+        {
+            foreach(var option in Options)
+            {
+                if(option.Key == "datarange")
+                {
+                    option.Value = dataRange;
+                }
+            }
+        }
     }
 
     public class ChartDefinitions

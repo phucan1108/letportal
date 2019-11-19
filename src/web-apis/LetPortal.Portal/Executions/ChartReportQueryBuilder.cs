@@ -96,18 +96,28 @@ namespace LetPortal.Portal.Executions
 
             var warpperString = string.Format("SELECT {0} FROM ({1}) s", GenerateChartColumns(mappingProjection), formattedString);
 
-            if(filterValues != null && filterValues.Any())
+            if(filterValues != null && filterValues.Any() && warpperString.Contains(options.FilterWord))
             {
-                warpperString += 
-                    " WHERE " 
-                    + (allowRealTime ? GenerateRealTimeComparision(comparedRealTimeField, lastComparedDate, comparedDate, ref listParams) + " AND " : string.Empty)
-                    + GenerateFilterColumns(filterValues, ref listParams);
+                warpperString = warpperString.Replace(options.FilterWord, GenerateFilterColumns(filterValues, ref listParams));
             }
             else
             {
-                if(allowRealTime)
+                if(warpperString.Contains(options.FilterWord))
                 {
-                    warpperString += " WHERE " + GenerateRealTimeComparision(comparedRealTimeField, lastComparedDate, comparedDate, ref listParams);
+                    warpperString = warpperString.Replace(options.FilterWord, options.DefaultFilterNull);
+                    
+                }
+            }
+
+            if(allowRealTime && !string.IsNullOrEmpty(comparedRealTimeField) && warpperString.Contains(options.RealTimeWord))
+            {
+                warpperString = warpperString.Replace(options.RealTimeWord, GenerateRealTimeComparision(comparedRealTimeField, lastComparedDate, comparedDate, ref listParams));
+            }
+            else
+            {
+                if(warpperString.Contains(options.RealTimeWord))
+                {
+                    warpperString = warpperString.Replace(options.RealTimeWord, options.DefaultRealTimeNull);
                 }
             }
 
@@ -140,8 +150,8 @@ namespace LetPortal.Portal.Executions
             });
 
             return string.Format("({0} AND {1})",
-                string.Format(options.DateCompare, "s." + GetFieldFormat(comparedField), ">", GetFieldWithParamSign(startDateParam)),
-                string.Format(options.DateCompare, "s." + GetFieldFormat(comparedField), "<=", GetFieldWithParamSign(endDateParam)));
+                string.Format("{0}{1}{2}", GetFieldFormat(comparedField), ">", GetFieldWithParamSign(startDateParam)),
+                string.Format("{0}{1}{2}", GetFieldFormat(comparedField), "<=", GetFieldWithParamSign(endDateParam)));
         }
 
         private string GetFieldWithParamSign(string fieldName)

@@ -121,17 +121,25 @@ namespace LetPortal.Core.Utils
             return plain;
         }
 
-        public static string[] GetAllDoubleCurlyBraces(string str, bool keptCurlyBraces = false)
+        public static string[] GetAllDoubleCurlyBraces(string str, bool keptCurlyBraces = false, IEnumerable<string> removeList = null)
         {
             var matches = Regex.Matches(str, @"{{(.*?)}}");
             if(keptCurlyBraces)
             {
                 var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().Select(b => "{{" + b + "}}").ToArray();
+                if(removeList != null)
+                {
+                    results = results.AsQueryable().Where(a => !removeList.Any(b => b.Equals(a))).ToArray();
+                }
                 return results;
             }
             else
             {
                 var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().ToArray();
+                if(removeList != null)
+                {
+                    results = results.AsQueryable().Where(a => !removeList.Any(b => b.Equals(a))).ToArray();
+                }
                 return results;
             }
         }

@@ -43,10 +43,17 @@ namespace LetPortal.PortalApis.Controllers
         {
             _logger.Info("Getting Chart with Id = {id}", id);
             var result = await _chartRepository.GetOneAsync(id);
-            _logger.Info("Found chart: {@result}", result);
-            if(result == null)
+                        if(result == null)
                 return NotFound();
 
+            // Hide infos when datasource is database
+            result.DatabaseOptions.Query = 
+                string.Join(';', 
+                    StringUtil
+                        .GetAllDoubleCurlyBraces(
+                            result.DatabaseOptions.Query, true,
+                                new List<string> { "{{REAL_TIME}}", "{{FILTER}}" }));
+            _logger.Info("Found chart: {@result}", result);
             return Ok(result);
         }
 

@@ -21,7 +21,8 @@
                         <div style="width: 100%; height: 100%;">
                             <ngx-charts-bar-vertical [results]="chartData" [xAxis]="true" [yAxis]="true"
                                 [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
-                                [legendPosition]="'below'" [showDataLabel]="true" *ngIf="isDoneDefer else deferData">
+                                [legendPosition]="'below'" [showDataLabel]="true" [yScaleMin]="yScaleMin" [yScaleMax]="yScaleMax"
+                                *ngIf="isDoneDefer else deferData">
                             </ngx-charts-bar-vertical>
                         </div>
                     </ng-container>
@@ -29,7 +30,9 @@
                         <div style="width: 100%; height: 100%;">
                             <ngx-charts-line-chart [results]="chartData" [xAxis]="true" [yAxis]="true"
                                 [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
-                                [legendPosition]="'below'" *ngIf="isDoneDefer else deferData">
+                                [legendPosition]="'below'" [animations]="true" [xScaleMin]="xScaleMin"
+                                [xScaleMax]="xScaleMax" [yScaleMin]="yScaleMin" [yScaleMax]="yScaleMax"
+                                *ngIf="isDoneDefer else deferData">
                             </ngx-charts-line-chart>
                         </div>
                     </ng-container>

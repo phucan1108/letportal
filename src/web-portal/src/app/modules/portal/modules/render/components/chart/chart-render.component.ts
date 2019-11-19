@@ -6,10 +6,12 @@ import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
-import { filter, tap } from 'rxjs/operators';
+import { filter, tap, toArray } from 'rxjs/operators';
 import { BeginBuildingBoundData, GatherSectionValidations, AddSectionBoundData, SectionValidationStateAction } from 'stores/pages/page.actions';
 import { ChartOptions } from 'portal/modules/models/chart.extended.model';
 import { DateUtils } from 'app/core/utils/date-util';
+import * as _ from 'lodash';
+import { ArrayUtils } from 'app/core/utils/array-util';
 
 @Component({
     selector: 'let-chart-render',
@@ -39,13 +41,20 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
 
     chartOptions: ChartOptions
     chartColors: any
-    interval: any   
+    interval: any
 
     deferRender = 500
     isDoneDefer = false
 
     lastComparedDate: Date
     colClass = 'col-lg-12'
+
+    isMultiData = false
+
+    xScaleMin: any
+    xScaleMax: any
+    yScaleMin: any
+    yScaleMax: any
 
     constructor(
         private pageService: PageService,
@@ -79,6 +88,8 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         ).subscribe()
 
         this.chartOptions = ChartOptions.getChartOptions(this.chart.options)
+        this.setupDataRange(this.chartOptions.datarange)
+        this.isMultiData = this.chart.definitions.mappingProjection.indexOf('group=') > 0
         if (this.chartOptions.colors.length == 1) {
             this.chartColors = this.chartOptions.colors[0]
         }
@@ -111,8 +122,44 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         this.setupOptions()
     }
 
+    onRefresh() {
+        //this.readyToRender = false
+        this.fetchDataForChart()
+    }
+
+    ngAfterViewChecked(): void {
+        this.onRendered.emit()
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe()
+        if (this.interval) {
+            clearInterval(this.interval)
+        }
+    }
+
+    private setupDataRange(dataRange: string) {
+        if (dataRange) {
+            const splitted = dataRange.split(';')
+            _.forEach(splitted, s => {
+                const subSplitted = s.split('=')
+                if (subSplitted[0] === 'x') {
+                    const minMaxRange = JSON.parse(subSplitted[1])
+                    this.xScaleMin = minMaxRange[0]
+                    this.xScaleMax = minMaxRange[1]
+                }
+
+                if (subSplitted[0] === 'y') {
+                    const minMaxRange = JSON.parse(subSplitted[1])
+                    this.yScaleMin = minMaxRange[0]
+                    this.yScaleMax = minMaxRange[1]
+                }
+            })
+        }
+    }
+
     private setupOptions() {
-        if (this.chartOptions.allowrealtime) {            
+        if (this.chartOptions.allowrealtime) {
             this.interval = setInterval(() => {
                 //this.readyToRender = false
                 this.fetchDataForChart()
@@ -140,28 +187,46 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
             lastRealTimeComparedDate: this.lastComparedDate ? this.lastComparedDate : null
         }).subscribe(
             res => {
-                this.chartData = res.isSuccess ? [...res.result] : null
-                this.lastComparedDate = DateUtils.getUTCNow()
-                setTimeout(() =>{
-                    this.isDoneDefer = true
-                }, this.deferRender)                
+                if (this.chartData) {
+                    if (res.isSuccess && this.chartOptions.allowrealtime && this.chartOptions.comparerealtimefield) {
+                        if (!this.isMultiData) {
+                            _.forEach(res.result, a => {
+                                this.chartData.push(a)
+                            })
+                            this.chartData = [...this.chartData]
+                        }
+                        else {
+                            _.forEach(res.result, a => {
+                                let found = _.find(this.chartData, b => b.name === a.name)
+                                if (found) {
+                                    _.forEach(a.series, b => {
+                                        found.series.push(b)
+                                    })
+                                }
+                                else {
+                                    this.chartData.push(a)
+                                }
+                            })
+
+                            this.chartData = [...this.chartData]
+                        }
+                    }
+                    else {
+                        this.chartData = res.isSuccess ? [...res.result] : [...this.chartData]
+                    }
+                }
+                else {
+                    this.chartData = res.isSuccess ? [...res.result] : null
+                }
+                if (res.isSuccess && res.result) {
+                    this.lastComparedDate = DateUtils.getUTCNow()
+                }
+                if (!this.isDoneDefer) {
+                    setTimeout(() => {
+                        this.isDoneDefer = true
+                    }, this.deferRender)
+                }
             }
         )
-    }
-
-    onRefresh() {
-        //this.readyToRender = false
-        this.fetchDataForChart()
-    }
-
-    ngAfterViewChecked(): void {
-        this.onRendered.emit()
-    }
-
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe()
-        if (this.interval) {
-            clearInterval(this.interval)
-        }
     }
 }
