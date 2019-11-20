@@ -28,6 +28,7 @@ export class ChartBuilderPage implements OnInit {
     chartFilters: ChartFilter[] = []
     isEditMode = false
     isCanSubmit = false
+    _layoutTypes = StaticResources.sectionLayoutTypes()
     constructor(
         private chartsClient: ChartsClient,
         private pageService: PageService,
@@ -53,6 +54,7 @@ export class ChartBuilderPage implements OnInit {
                 displayName: [this.edittingChart.displayName, [Validators.required, Validators.maxLength(250)]],
                 chartTitle: [this.edittingChart.definitions.chartTitle, [Validators.required, Validators.maxLength(250)]],
                 chartType: [this.edittingChart.definitions.chartType, Validators.required],
+                layoutType: [this.edittingChart.layoutType, Validators.required],
                 mappingProjection: [this.edittingChart.definitions.mappingProjection, Validators.required]
             })
             this.shellOptions = this.edittingChart.options as ExtendedShellOption[]
@@ -113,6 +115,7 @@ export class ChartBuilderPage implements OnInit {
                     chartType: formValues.chartType,
                     mappingProjection: formValues.mappingProjection
                 },
+                layoutType: formValues.layoutType,
                 chartFilters: this.chartFilters,
                 options: this.shellOptions,
                 databaseOptions: this.databaseOptions

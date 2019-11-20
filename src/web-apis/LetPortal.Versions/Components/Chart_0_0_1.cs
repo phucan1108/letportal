@@ -1,8 +1,6 @@
 ﻿using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Components;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Versions.Components
 {
@@ -30,10 +28,10 @@ namespace LetPortal.Versions.Components
                 DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                 {
                     DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
-                    Query = 
-                      versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL 
-                      ? "(SELECT 'Success' as `name`, h.successRequests as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1) UNION ALL (SELECT 'Fail' as `name`, h.failedRequests as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1) UNION ALL (SELECT 'Total' as `name`, h.totalRequestsPerDay as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1) UNION ALL (SELECT 'Avg Duration(ms)' as `name`, round(h.avgDuration,0) as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1)"
-                      : "(SELECT \"Success\" as \"name\", h.\"successRequests\" as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1) UNION ALL (SELECT \"Fail\" as \"name\", h.\"failedRequests\" as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1) UNION ALL (SELECT \"Total\" as \"name\", h.\"totalRequestsPerDay\" as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1) UNION ALL (SELECT \"Avg Duration(ms)\" as \"name\", round(h.\"avgDuration\",0) as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1)"
+                    Query =
+                      versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                      ? "(SELECT 'Success' as `name`, h.successRequests as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1) UNION ALL (SELECT 'Fail' as `name`, h.failedRequests as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1) UNION ALL (SELECT 'Total' as `name`, h.totalRequestsPerDay as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1) UNION ALL (SELECT 'ms' as `name`, round(h.avgDuration,0) as `value` FROM httpcounters h join monitorcounters m on h.monitorCounterId = m.id where m.serviceId={{queryparams.serviceId}} order by h.meansureDate desc limit 1)"
+                      : "(SELECT \"Success\" as \"name\", h.\"successRequests\" as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1) UNION ALL (SELECT \"Fail\" as \"name\", h.\"failedRequests\" as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1) UNION ALL (SELECT \"Total\" as \"name\", h.\"totalRequestsPerDay\" as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1) UNION ALL (SELECT \"ms\" as \"name\", round(h.\"avgDuration\",0) as \"value\" FROM httpcounters h join monitorcounters m on h.\"monitorCounterId\" = m.id where m.\"serviceId\"={{queryparams.serviceId}} order by h.\"meansureDate\" desc limit 1)"
                 },
                 Definitions = new ChartDefinitions
                 {
@@ -94,6 +92,7 @@ namespace LetPortal.Versions.Components
             };
             hardwareCPURealTimeChart.SetRealTimeField("reportedDate");
             hardwareCPURealTimeChart.SetDataRange("y=[0,100]");
+            hardwareCPURealTimeChart.SetXFormatDate("HH:mm");
 
             var hardwareMemoryRealTimeChart = new Chart
             {
@@ -120,7 +119,7 @@ namespace LetPortal.Versions.Components
             };
             hardwareMemoryRealTimeChart.SetRealTimeField("reportedDate");
             hardwareMemoryRealTimeChart.SetDataRange("y=[0,2048]");
-
+            hardwareMemoryRealTimeChart.SetXFormatDate("HH:mm");
             var httpRealTimeChart = new Chart
             {
                 Id = "5dd2a66d5aa5f917603f05c6",
@@ -145,6 +144,7 @@ namespace LetPortal.Versions.Components
                 TimeSpan = DateTime.UtcNow.Ticks
             };
             httpRealTimeChart.SetRealTimeField("reportedDate");
+            httpRealTimeChart.SetXFormatDate("HH:mm");
 
             versionContext.InsertData(httpCounterChart);
             versionContext.InsertData(hardwareCounterChart);

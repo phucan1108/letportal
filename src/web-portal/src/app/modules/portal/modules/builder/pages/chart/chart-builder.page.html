@@ -72,6 +72,18 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Layout Type:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <mat-select placeholder="Pick one layout type" formControlName="layoutType">
+                                        <mat-option *ngFor="let type of _layoutTypes" [value]="type.value">
+                                            {{ type.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-lg-2 col-form-label">Chart Type:</label>
                             <div class="col-lg-6">
                                 <mat-form-field class="field-full-width">
@@ -83,6 +95,7 @@
                                 </mat-form-field>
                             </div>
                         </div>
+
                         <div class="form-group row">
                             <label class="col-lg-2 col-form-label">Mapping Projection:</label>
                             <div class="col-lg-6">
@@ -117,7 +130,8 @@
                         (afterSelectingEntity)="afterSelectingEntity($event)"
                         (afterPopulatingQuery)="afterPopulatingQuery($event)"
                         (changed)="databaseOptionsChanged($event)"></let-chart-datasource>
-                    <let-chart-filter-grid [chartFilters]="chartFilters" (chartFiltersChanged)="chartFiltersChanged($event)"></let-chart-filter-grid>
+                    <let-chart-filter-grid [chartFilters]="chartFilters"
+                        (chartFiltersChanged)="chartFiltersChanged($event)"></let-chart-filter-grid>
                 </mat-step>
             </mat-horizontal-stepper>
         </mat-card-content>

@@ -57,6 +57,18 @@ namespace LetPortal.PortalApis.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}/builder")]
+        [ProducesResponseType(typeof(Chart), 200)]
+        public async Task<IActionResult> GetOneForBuilder(string id)
+        {
+            _logger.Info("Getting Chart with Id = {id}", id);
+            var result = await _chartRepository.GetOneAsync(id);
+            if(result == null)
+                return NotFound();
+            _logger.Info("Found chart: {@result}", result);
+            return Ok(result);
+        }
+
         [HttpPost("")]
         [ProducesResponseType(typeof(Chart), 200)]
         public async Task<IActionResult> Create([FromBody] Chart chart)

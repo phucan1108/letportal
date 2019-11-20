@@ -58,6 +58,7 @@ export class JwtTokenInterceptor implements HttpInterceptor {
                                 const dialogRef = this.dialog.open(UnlockScreenDialogComponent, {
                                     disableClose: true                                
                                 });
+                                this.isOpenningUnlock = true
                                 dialogRef.afterClosed().subscribe(res => {
                                     if (res) {
                                         this.router.navigateByUrl(this.routerEx.getCurrentUrl())

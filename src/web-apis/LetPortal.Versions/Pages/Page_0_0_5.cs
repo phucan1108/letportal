@@ -1,6 +1,7 @@
 ﻿using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Entities.Shared;
 using System.Collections.Generic;
 
 namespace LetPortal.Versions.Pages
@@ -74,6 +75,41 @@ namespace LetPortal.Versions.Pages
                             ComponentId = "5dd2a66d5aa5f917603f05c8",
                             ConstructionType = SectionContructionType.Chart,
                             Order = 3
+                        }
+                    }
+                },
+                Commands = new List<PageButton>
+                {
+                    new PageButton
+                    {
+                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Name = "Cancel",
+                        Icon = "close",
+                        Color = "basic",
+                        AllowHidden = "false",
+                        ButtonOptions = new ButtonOptions
+                        {
+                            ConfirmationOptions = new ConfirmationOptions
+                            {
+                                IsEnable = false
+                            },
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                IsEnable = false
+                            },
+                            RouteOptions = new RouteOptions
+                            {
+                                IsEnable = true,
+                                Routes = new List<Route>
+                                {
+                                    new Route
+                                    {
+                                        RouteType = RouteType.ThroughUrl,
+                                        TargetUrl = "portal/page/services-monitor",
+                                        Condition = "true"
+                                    }
+                                }
+                            }
                         }
                     }
                 }

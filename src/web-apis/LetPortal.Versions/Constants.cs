@@ -83,6 +83,11 @@ namespace LetPortal.Versions
                 },
                 new ShellOption
                 {
+                    Key = "xformatdate",
+                    Value = ""
+                },
+                new ShellOption
+                {
                     Key = "colors",
                     Value = "[\"horizon\"]"
                 }

@@ -16,7 +16,7 @@ export class ChartBuilderResolve implements Resolve<any> {
         state: RouterStateSnapshot
     ) {
         if(route.paramMap.get('chartid')){
-            return this.chartsClient.getOne(route.paramMap.get('chartid')).pipe(
+            return this.chartsClient.getOneForBuilder(route.paramMap.get('chartid')).pipe(
                 catchError(err => {
                     this.router.navigateByUrl('/404')
                     return EMPTY

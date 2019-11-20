@@ -8,16 +8,19 @@ export class ChartOptions {
     timetorefresh: number
     comparerealtimefield: string
     datarange: string
+    xformatdate: string
     colors: string[]
 
     public static getChartOptions(options: ShellOption[]): ChartOptions {
         let comparedField = _.find(options, opt => opt.key === 'comparerealtimefield')
         let datarange = _.find(options, opt => opt.key === 'datarange')
+        let xformatDate = _.find(options, opt => opt.key === 'xformatdate')
         return {
             allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'allowrealtime').value),
             timetorefresh: JSON.parse(_.find(options, opt => opt.key === 'timetorefresh').value),
             comparerealtimefield: comparedField.value ? comparedField.value : '',
             datarange: datarange ? datarange.value : '',
+            xformatdate: xformatDate ? xformatDate.value : '',
             colors: JSON.parse(_.find(options, opt => opt.key === 'colors').value)
         }
     }
@@ -54,6 +57,14 @@ export class ChartOptions {
         value: ''
     }
 
+    public static XFormatDate: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'This format will use momentjs for displaying date value in X axis. Default: empty',
+        key: 'xformatdate',
+        value: ''
+    }
+
     public static Colors: ExtendedShellOption = {
         id: '',
         allowDelete: false,
@@ -68,6 +79,7 @@ export class ChartOptions {
             this.TimeToRefresh,
             this.CompareRealTimeField,
             this.DataRange,
+            this.XFormatDate,
             this.Colors
         ]
     }
@@ -89,6 +101,7 @@ export class ChartOptions {
         timetorefresh: 60,
         comparerealtimefield: '',
         datarange: '',
+        xformatdate: '',
         colors: ['horizon']
     }
 }

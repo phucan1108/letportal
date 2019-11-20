@@ -12,7 +12,10 @@ import { ChartOptions } from 'portal/modules/models/chart.extended.model';
 import { DateUtils } from 'app/core/utils/date-util';
 import * as _ from 'lodash';
 import { ArrayUtils } from 'app/core/utils/array-util';
-
+import * as moment from 'moment'
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { ObjectUtils } from 'app/core/utils/object-util';
 @Component({
     selector: 'let-chart-render',
     templateUrl: './chart-render.component.html',
@@ -60,6 +63,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         private pageService: PageService,
         private logger: NGXLogger,
         private chartsClient: ChartsClient,
+        private shortcutUtil: ShortcutUtil,
         private store: Store
     ) { }
 
@@ -160,11 +164,15 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
 
     private setupOptions() {
         if (this.chartOptions.allowrealtime) {
-            this.interval = setInterval(() => {
-                //this.readyToRender = false
-                this.fetchDataForChart()
-            }, this.chartOptions.timetorefresh * 1000)
+            this.interval = this.fetchInterval()
         }
+    }
+
+    private fetchInterval(){
+        return setInterval(() => {
+            //this.readyToRender = false
+            this.fetchDataForChart()
+        }, this.chartOptions.timetorefresh * 1000)
     }
 
     private fetchDataForChart() {
@@ -187,6 +195,9 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
             lastRealTimeComparedDate: this.lastComparedDate ? this.lastComparedDate : null
         }).subscribe(
             res => {
+                if(res.isSuccess){
+                    res.result = this.convertResNameToDate(res.result, this.isMultiData, this.chartOptions.xformatdate)
+                }
                 if (this.chartData) {
                     if (res.isSuccess && this.chartOptions.allowrealtime && this.chartOptions.comparerealtimefield) {
                         if (!this.isMultiData) {
@@ -226,7 +237,42 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                         this.isDoneDefer = true
                     }, this.deferRender)
                 }
+            },
+            err => {
+                if (this.interval) {
+                    clearInterval(this.interval)
+                }
+
+                this.shortcutUtil.notifyMessage("Oops! Something went wrong, please check data or refresh F5 again", ToastType.Error)
             }
         )
+    }
+
+    private convertResNameToDate(result: any, isMultiData: boolean, xFormatDate: string){
+        if(!!xFormatDate){
+            if(isMultiData){
+                _.forEach(result, r => {
+                    const isDate = moment(r.series[0].name).isValid()
+                    if(isDate){
+                        _.forEach(r.series, e => {
+                            e.name = moment(e.name).format(xFormatDate)
+                        })
+                    }
+                })
+            }
+            else{
+                const isDate = moment(result[0].name).isValid()
+                if(isDate){
+                    _.forEach(result, e => {
+                        e.name = moment(e.name).format(xFormatDate)
+                    })
+                }            
+            }   
+    
+            return result
+        }
+        else{
+            return result
+        }        
     }
 }

@@ -44,6 +44,17 @@ namespace LetPortal.Portal.Entities.Components
                 }
             }
         }
+
+        public void SetXFormatDate(string xFormatDate)
+        {
+            foreach(var option in Options)
+            {
+                if(option.Key == "xformatdate")
+                {
+                    option.Value = xFormatDate;
+                }
+            }
+        }
     }
 
     public class ChartDefinitions
