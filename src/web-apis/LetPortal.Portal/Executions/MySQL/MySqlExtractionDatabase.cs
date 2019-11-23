@@ -71,6 +71,7 @@ namespace LetPortal.Portal.Executions.MySQL
             {
                 mysqlDbConnection.Open();
                 var warpQuery = @"Select * from ({0}) s limit 1";
+                warpQuery = ReplaceAllConstants(warpQuery);
                 warpQuery = string.Format(warpQuery, formattedString);
                 using(var command = new MySqlCommand(formattedString, mysqlDbConnection))
                 {
@@ -98,6 +99,18 @@ namespace LetPortal.Portal.Executions.MySQL
             }
 
             return Task.FromResult(extractModel);
+        }
+
+        private string ReplaceAllConstants(string query)
+        {
+            query = query.Replace(Constants.REAL_TIME_KEY, Constants.TRUE_COMPARE_KEY);
+            query = query.Replace(Constants.FILTER_KEY, Constants.TRUE_COMPARE_KEY);
+            query = query.Replace(Constants.FILTER_LIST_KEY, Constants.TRUE_COMPARE_KEY);
+            query = query.Replace(Constants.SEARCH_KEY, string.Empty);
+            query = query.Replace(Constants.CURRENT_PAGE_KEY, "0");
+            query = query.Replace(Constants.PAGE_NUM_KEY, "0");
+            query = query.Replace(Constants.PAGE_START_KEY, "0");
+            return query;
         }
 
         private string GetType(Type type)

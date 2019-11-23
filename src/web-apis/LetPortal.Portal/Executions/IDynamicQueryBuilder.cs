@@ -32,17 +32,17 @@ namespace LetPortal.Portal.Executions
 
         public string FieldFormat { get; set; } = "\"{0}\"";
 
-        public string SearchWord { get; set; } = "{{SEARCH}}";
+        public string SearchWord { get; set; } = Constants.SEARCH_KEY;
 
-        public string FilterWord { get; set; } = "{{FILTER}}";
+        public string FilterWord { get; set; } = Constants.FILTER_LIST_KEY;
 
-        public string OrderWord { get; set; } = "{{ORDER}}";
+        public string OrderWord { get; set; } = Constants.ORDER_KEY;
 
-        public string CurrentPageWord { get; set; } = "{{PAGECURRENT}}";
+        public string CurrentPageWord { get; set; } = Constants.CURRENT_PAGE_KEY;
 
-        public string StartRowWord { get; set; } = "{{PAGESTART}}";
+        public string StartRowWord { get; set; } = Constants.PAGE_START_KEY;
 
-        public string NumberPageWord { get; set; } = "{{PAGENUM}}";
+        public string NumberPageWord { get; set; } = Constants.PAGE_NUM_KEY;
 
         public string DefaultSearchNull { get; set; } = "1=1";
 

@@ -156,7 +156,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         let callDialog = !!tempDcurly && tempDcurly.length > 0
         if (callDialog) {
             _.forEach(tempDcurly, (param) => {
-                if (this.params.findIndex(a => a.name === param) < 0)
+                if (this.params.findIndex(a => a.name === param) < 0 && !StringUtils.isAllUpperCase(param))
                     this.params.push({
                         name: param,
                         replaceValue: ''

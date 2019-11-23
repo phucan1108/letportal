@@ -42,6 +42,9 @@ namespace LetPortal.Portal.Executions.MySQL
                 mysqlDbConnection.Open();
                 var warpQuery = @"Select * from ({0}) s limit 1";
                 warpQuery = string.Format(warpQuery, formattedString);
+
+                warpQuery = warpQuery.Replace("{{REAL_TIME}}", "1=1");
+                warpQuery = warpQuery.Replace("{{FILTER}}", "1=1");
                 var listParams = new List<MySqlParameter>();
                 if(parameterValues != null)
                 {

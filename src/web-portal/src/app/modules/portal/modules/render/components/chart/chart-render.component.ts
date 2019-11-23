@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewChecked, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Chart, ChartsClient, ChartType, ExecuteParamModel, ChartParameterValue, PageSectionLayoutType } from 'services/portal.service';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { PageService } from 'services/page.service';
@@ -48,10 +48,11 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
 
     deferRender = 500
     isDoneDefer = false
+    isOpenningFilter = false
 
     lastComparedDate: Date
     colClass = 'col-lg-12'
-
+    hasFilters = false
     isMultiData = false
 
     xScaleMin: any
@@ -64,7 +65,8 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         private logger: NGXLogger,
         private chartsClient: ChartsClient,
         private shortcutUtil: ShortcutUtil,
-        private store: Store
+        private store: Store,
+        private cd: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -91,6 +93,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
             )
         ).subscribe()
 
+        this.hasFilters = this.chart.chartFilters && this.chart.chartFilters.length > 0
         this.chartOptions = ChartOptions.getChartOptions(this.chart.options)
         this.setupDataRange(this.chartOptions.datarange)
         this.isMultiData = this.chart.definitions.mappingProjection.indexOf('group=') > 0
@@ -140,6 +143,14 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         if (this.interval) {
             clearInterval(this.interval)
         }
+    }
+
+    applied($event){
+
+    }
+
+    openFilters(){
+        this.isOpenningFilter = !this.isOpenningFilter
     }
 
     private setupDataRange(dataRange: string) {

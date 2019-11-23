@@ -77,6 +77,8 @@ export class ChartDatasourceComponent implements OnInit {
                     displayName: element.displayName,
                     isHidden: (element.name === '_id' || element.name === 'id'),
                     isMultiple: false,
+                    allowDefaultValue: false,
+                    defaultValue: '',
                     rangeValue: '',
                     type: this.convertFieldType(element.fieldType)
                 }

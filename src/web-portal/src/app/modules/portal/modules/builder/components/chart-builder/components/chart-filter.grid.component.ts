@@ -84,6 +84,12 @@ export class ChartFilterGridComponent implements OnInit {
         })
     }
 
+    deleteFilter(row: ChartFilter){
+        const index = this.chartFilters.indexOf(row)
+        this.chartFilters.splice(index, 1)
+        this.refreshTable()
+    }
+
     refreshTable(){
         this.chartFiltersChanged.emit(this.chartFilters)
     }

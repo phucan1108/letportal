@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -287,6 +287,17 @@ export class PageService {
             fullEventType: controlEvent
         }
         this.store.dispatch(new TriggerControlChangeValueEvent(event))
+    }
+
+    fetchDatasourceOptions(datasourceOpts: DatasourceOptions): Observable<any>{
+        switch(datasourceOpts.type){
+            case DatasourceControlType.StaticResource:
+                return  of(JSON.parse(datasourceOpts.datasourceStaticOptions.jsonResource))
+            case DatasourceControlType.Database:
+                return this.fetchDatasource(datasourceOpts.databaseOptions.databaseConnectionId, datasourceOpts.databaseOptions.query)
+            case DatasourceControlType.WebService:
+                return of(null)
+        }
     }
 
     fetchDatasource(databaseId: string, query: string): Observable<any> {

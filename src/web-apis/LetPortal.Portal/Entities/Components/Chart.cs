@@ -100,8 +100,8 @@ namespace LetPortal.Portal.Entities.Components
         /// Support for NumberPicker/ DatePicker/ MonthPicker 
         /// Guide: 
         /// * For NumberPicker: [10,20,30] or [10..20] or [10..2..20] or [10-20,20-30,30-40]
-        /// * For DatePicker: ['10/10/2019','Now']
-        /// * For MonthPicker: ['10/2018', 'Now']
+        /// * For DatePicker: ['10/10/2019'] or ['10/10/2019', '10/10/3000'] or ['10/10/2019','Now']
+        /// * For MonthPicker: ['10/2018'] or ['10/2018', '10/3000'] or ['10/2018', 'Now']
         /// </summary>
         public string RangeValue { get; set; }
 

@@ -1,0 +1,9 @@
+<div [formGroup]="formGroup">
+    <mat-form-field class="field-full-width">
+        <mat-select [formControlName]="'chartFilter'" [multiple]="filter.isMultiple">
+            <mat-option *ngFor="let option of optionsList | async" [value]="option.value">
+                {{ option.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>

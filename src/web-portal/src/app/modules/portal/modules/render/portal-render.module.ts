@@ -67,6 +67,11 @@ import { QuillModule } from 'ngx-quill';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { NgxChartsModule } from '@swimlane/ngx-charts'
 import { ChartRenderComponent } from './components/chart/chart-render.component';
+import { ChartFilterRenderComponent } from './components/chart/chart-filter-render.component';
+import { FilterCheckboxComponent } from './components/chart/controls/filter-checkbox.component';
+import { FilterDatepickerComponent } from './components/chart/controls/filter-datepicker.component';
+import { FilterSelectComponent } from './components/chart/controls/filter-select.component';
+import { FilterNumberComponent } from './components/chart/controls/filter-number.component';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -173,7 +178,12 @@ export const FULL_MONTH_FORMATS = {
 		DynamicListGridComponent,
 
 		// Chart Render
-		ChartRenderComponent
+		ChartRenderComponent,
+		ChartFilterRenderComponent,
+		FilterCheckboxComponent,
+		FilterDatepickerComponent,
+		FilterSelectComponent,
+		FilterNumberComponent
 	]
 })
 export class PortalRenderModule { }

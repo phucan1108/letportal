@@ -1,0 +1,14 @@
+<ng-container *ngFor="let filter of chartFilters; index as i">
+    <ng-container [ngSwitch]="filter.type">
+        <filter-checkbox [filter]="filter" *ngSwitchCase="filterType.Checkbox" (changed)="filterChanged($event)">
+        </filter-checkbox>
+        <filter-select [filter]="filter" *ngSwitchCase="filterType.Select" (changed)="filterChanged($event)">
+        </filter-select>
+        <filter-datepicker [filter]="filter" *ngSwitchCase="filterType.DatePicker" (changed)="filterChanged($event)">
+        </filter-datepicker>
+        <filter-datepicker [filter]="filter" *ngSwitchCase="filterType.MonthYearPicker"
+            (changed)="filterChanged($event)"></filter-datepicker>
+        <filter-number [filter]="filter" *ngSwitchCase="filterType.NumberPicker" (changed)="filterChanged($event)">
+        </filter-number>
+    </ng-container>
+</ng-container>

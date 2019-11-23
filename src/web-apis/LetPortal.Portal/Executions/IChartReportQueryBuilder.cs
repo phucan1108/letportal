@@ -26,9 +26,9 @@ namespace LetPortal.Portal.Executions
 
     public class ChartReportQueryOptions
     {
-        public string RealTimeWord { get; set; } = "{{REAL_TIME}}";
+        public string RealTimeWord { get; set; } = Constants.REAL_TIME_KEY;
 
-        public string FilterWord { get; set; } = "{{FILTER}}";
+        public string FilterWord { get; set; } = Constants.FILTER_KEY;
 
         public string DefaultRealTimeNull { get; set; } = "1=1";
 

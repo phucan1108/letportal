@@ -1,5 +1,5 @@
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import { ShellOption } from 'services/portal.service';
+import { ShellOption, ChartFilter } from 'services/portal.service';
 import * as _ from 'lodash';
 
 export class ChartOptions {
@@ -104,4 +104,11 @@ export class ChartOptions {
         xformatdate: '',
         colors: ['horizon']
     }
+}
+
+export interface ExtendedChartFilter extends ChartFilter{
+   datasource: any
+   minDate: any
+   maxDate: any
+   defaultObj: any 
 }
