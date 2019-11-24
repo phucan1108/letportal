@@ -2,7 +2,7 @@
     <label class="col-form-label col-lg-2 font-weight-bold">{{filter.displayName}}</label>
     <div [formGroup]="formGroup" class="col-lg-4">
         <mat-form-field class="field-full-width">
-            <input matInput [matDatepicker]="minPicker" [formControlName]="'minDate'">
+            <input matInput [matDatepicker]="minPicker" [formControlName]="filter.name">
             <mat-datepicker-toggle matSuffix [for]="minPicker"></mat-datepicker-toggle>
             <mat-datepicker #minPicker></mat-datepicker>
         </mat-form-field>

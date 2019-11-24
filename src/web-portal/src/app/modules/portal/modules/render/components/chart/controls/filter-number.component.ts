@@ -11,11 +11,12 @@ import { Observable } from 'rxjs';
 export class FilterNumberComponent implements OnInit {
     @Input()
     filter: ExtendedChartFilter
+    
+    @Input()
+    formGroup: FormGroup
 
     @Output()
     changed = new EventEmitter<any>()
-
-    formGroup: FormGroup
 
     optionsList: Observable<any>
 
@@ -25,15 +26,5 @@ export class FilterNumberComponent implements OnInit {
 
     ngOnInit() { 
         this.optionsList = this.filter.datasource
-        this.formGroup = this.fb.group({
-            chartFilter: [false]
-        })
-
-        this.formGroup.get('chartFilter').valueChanges.subscribe(newVal => {
-            this.changed.emit({
-                filter: this.filter,
-                value: newVal
-            })
-        })
     }
 }

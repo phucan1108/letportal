@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ExtendedChartFilter } from 'portal/modules/models/chart.extended.model';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -11,11 +11,13 @@ import { Observable } from 'rxjs';
 export class FilterSelectComponent implements OnInit {
     @Input()
     filter: ExtendedChartFilter
+    
+    @Input()
+    formGroup: FormGroup
 
     @Output()
     changed = new EventEmitter<any>()
 
-    formGroup: FormGroup
     optionsList: Observable<any>
     
     constructor(
@@ -24,15 +26,5 @@ export class FilterSelectComponent implements OnInit {
 
     ngOnInit() { 
         this.optionsList = this.filter.datasource
-        this.formGroup = this.fb.group({
-            chartFilter: [false]
-        })
-
-        this.formGroup.get('chartFilter').valueChanges.subscribe(newVal => {
-            this.changed.emit({
-                filter: this.filter,
-                value: newVal
-            })
-        })
     }
 }

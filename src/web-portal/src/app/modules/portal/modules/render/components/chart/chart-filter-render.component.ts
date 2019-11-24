@@ -1,10 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Chart, ChartsClient, FilterType } from 'services/portal.service';
+import { Chart, ChartsClient, FilterType, ChartFilterValue } from 'services/portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { ChartOptions, ExtendedChartFilter } from 'portal/modules/models/chart.extended.model';
 import * as _ from 'lodash';
 import { PageService } from 'services/page.service';
 import { DateUtils } from 'app/core/utils/date-util';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import StringUtils from 'app/core/utils/string-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'chart-filter-render',
@@ -21,26 +24,46 @@ export class ChartFilterRenderComponent implements OnInit {
     @Output()
     applied = new EventEmitter<any>()
 
+    formGroup: FormGroup
     filterType = FilterType
     chartFilters: ExtendedChartFilter[] = []
-    
+
+    filterValues: ChartFilterValue[] = []
+
     constructor(
         private pageService: PageService,
+        private fb: FormBuilder,
         private chartsClient: ChartsClient,
         private logger: NGXLogger
     ) { }
 
     ngOnInit() {
         if (this.chart.chartFilters && this.chart.chartFilters.length > 0) {
+            let formControls: any = []
             _.forEach(this.chart.chartFilters, c => {
                 let temp: ExtendedChartFilter = <ExtendedChartFilter>c
                 temp.defaultObj = this.getDefaultObject(c.defaultValue, c.type, c.isMultiple)
                 switch (c.type) {
+                    case FilterType.Checkbox:
+                        formControls[c.name] = new FormControl(
+                            ObjectUtils.isNotNull(c.defaultValue) && c.allowDefaultValue ?
+                                c.defaultValue.toUpperCase() === 'TRUE' : false)
+                        break
                     case FilterType.Select:
                         temp.datasource = this.pageService.fetchDatasourceOptions(c.datasourceOptions)
+                        let defaultValSelect: any
+                        defaultValSelect = ObjectUtils.isNotNull(c.defaultValue) && c.allowDefaultValue ?
+                            (c.isMultiple ? JSON.parse(c.defaultValue) : c.defaultValue)
+                            : ''
+                        formControls[c.name] = new FormControl(defaultValSelect, Validators.required)
                         break
                     case FilterType.NumberPicker:
                         temp.datasource = this.generateDatasourceForNumberRange(c.rangeValue, c.isMultiple)
+                        let defaultValNum: any
+                        defaultValNum = ObjectUtils.isNotNull(c.defaultValue) && c.allowDefaultValue ?
+                            (c.isMultiple ? JSON.parse(c.defaultValue) : parseInt(c.defaultValue))
+                            : 0
+                        formControls[c.name] = new FormControl(defaultValNum, Validators.required)
                         break
                     case FilterType.DatePicker:
                         if (c.rangeValue) {
@@ -53,6 +76,26 @@ export class ChartFilterRenderComponent implements OnInit {
                                 temp.minDate = this.convertNowWords(tempDates[0], false)
                                 temp.maxDate = this.convertNowWords(tempDates[1], false)
                             }
+                        }
+
+                        if (c.isMultiple) {
+                            let defaultMinDate: any
+                            let defaultMaxDate: any
+                            let tempDates: string[] = JSON.parse(c.defaultValue)
+                            if (tempDates.length == 1) {
+                                defaultMinDate = this.convertNowWords(tempDates[0], false)
+                            }
+                            else if (tempDates.length == 2) {
+                                defaultMinDate = this.convertNowWords(tempDates[0], false)
+                                defaultMaxDate = this.convertNowWords(tempDates[1], false)
+                            }
+                            formControls[c.name + '_min'] = new FormControl(defaultMinDate, Validators.required)
+                            formControls[c.name + '_max'] = new FormControl(defaultMaxDate, Validators.required)
+                        }
+                        else {
+                            let defaultMinDate: any
+                            defaultMinDate = ObjectUtils.isNotNull(c.defaultValue) && c.allowDefaultValue ? this.convertNowWords(c.defaultValue, false) : new Date()
+                            formControls[c.name] = new FormControl(defaultMinDate.toISOString(), Validators.required)
                         }
                         break
                     case FilterType.MonthYearPicker:
@@ -67,16 +110,102 @@ export class ChartFilterRenderComponent implements OnInit {
                                 temp.maxDate = this.convertNowWords(tempDates[1], true)
                             }
                         }
+                        if (c.isMultiple) {
+                            let defaultMinDate: any
+                            let defaultMaxDate: any
+                            let tempDates: string[] = JSON.parse(c.defaultValue)
+                            if (tempDates.length == 1) {
+                                defaultMinDate = this.convertNowWords(tempDates[0], true)
+                            }
+                            else if (tempDates.length == 2) {
+                                defaultMinDate = this.convertNowWords(tempDates[0], true)
+                                defaultMaxDate = this.convertNowWords(tempDates[1], true)
+                            }
+                            formControls[c.name + '_min'] = new FormControl(defaultMinDate, Validators.required)
+                            formControls[c.name + '_max'] = new FormControl(defaultMaxDate, Validators.required)
+                        }
+                        else {
+                            let defaultMinDate: any
+                            defaultMinDate = ObjectUtils.isNotNull(c.defaultValue) && c.allowDefaultValue ? this.convertNowWords(c.defaultValue, true) : new Date()
+                            formControls[c.name] = new FormControl(defaultMinDate, Validators.required)
+                        }
                         break
                 }
 
                 this.chartFilters.push(temp)
             })
+            this.formGroup = new FormGroup(formControls)
         }
     }
 
-    filterChanged($event){
-       this.logger.debug('Filter changed', $event) 
+    submit() {
+        if (this.formGroup.valid) {
+            this.filterValues = []
+            _.forEach(this.chartFilters, filter => {
+                this.filterValues.push({
+                    filterType: filter.type,
+                    isMultiple: filter.isMultiple,
+                    name: filter.name,
+                    value: this.getFilterValue(filter, this.formGroup)
+                })
+            })
+            this.applied.emit(this.filterValues)
+        }
+    }
+
+    filterChanged($event) {
+        this.logger.debug('Filter changed', $event)
+        const filterChanged: ExtendedChartFilter = $event.filter
+        switch (filterChanged.type) {
+            case FilterType.Checkbox:
+                break
+            case FilterType.DatePicker:
+                break
+            case FilterType.MonthYearPicker:
+                break
+            case FilterType.NumberPicker:
+                break
+            case FilterType.Select:
+                break
+        }
+    }
+
+    private getFilterValue(filter: ExtendedChartFilter, formGroup: FormGroup) {
+        switch (filter.type) {
+            case FilterType.Checkbox:
+                return formGroup.get(filter.name).value.toString()
+            case FilterType.Select:
+                return filter.isMultiple ? JSON.parse(formGroup.get(filter.name).value) : formGroup.get(filter.name).value.toString()
+            case FilterType.NumberPicker:
+                return filter.isMultiple ? JSON.parse(formGroup.get(filter.name).value) : formGroup.get(filter.name).value.toString()
+            case FilterType.DatePicker:
+                if (filter.isMultiple) {
+                    let minDate = new Date(formGroup.get(filter.name + '_min').value)
+                    let maxDate = new Date(formGroup.get(filter.name + '_max').value)
+                    let groupDates: string[] = []
+                    groupDates.push(minDate.toDateString())
+                    groupDates.push(maxDate.toDateString())
+                    return JSON.stringify(groupDates)
+                }
+                else {
+                    let minDate = new Date(formGroup.get(filter.name).value)
+                    return minDate.toDateString()
+                }
+            case FilterType.MonthYearPicker:
+                if (filter.isMultiple) {
+                    let minDate = new Date(formGroup.get(filter.name + '_min').value)
+                    let maxDate = new Date(formGroup.get(filter.name + '_max').value)
+                    let groupDates: string[] = []
+                    groupDates.push(minDate.toDateString())
+                    groupDates.push(maxDate.toDateString())
+                    return JSON.stringify(groupDates)
+                }
+                else {
+                    let minDate = new Date(formGroup.get(filter.name).value)
+                    return minDate.toDateString()
+                }
+        }
+        return null
     }
 
     private convertNowWords(nowStr: string, isMonthPicker: boolean) {
@@ -90,30 +219,30 @@ export class ChartFilterRenderComponent implements OnInit {
                 let splitMinus = nowStr.split('-')
                 let splitPlus = nowStr.split('+')
                 if (splitMinus.length > 1) {
-                    if(isMonthPicker){
+                    if (isMonthPicker) {
                         nowDate.setMonth(nowDate.getMonth() - parseInt(splitMinus[1]))
                     }
-                    else{
+                    else {
                         nowDate.setDate(nowDate.getDate() - parseInt(splitMinus[1]))
                     }
                 }
                 else if (splitPlus.length > 1) {
-                    if(isMonthPicker){
+                    if (isMonthPicker) {
                         nowDate.setMonth(nowDate.getMonth() + parseInt(splitMinus[1]))
                     }
-                    else{
+                    else {
                         nowDate.setDate(nowDate.getDate() + parseInt(splitMinus[1]))
-                    }                    
+                    }
                 }
                 return nowDate
             }
         }
         else {
-            if(isMonthPicker){
+            if (isMonthPicker) {
                 let splitted = nowStr.split('/')
                 return new Date(parseInt(splitted[1]), parseInt(splitted[0]), 1)
             }
-            else{
+            else {
                 return new Date(nowStr)
             }
         }

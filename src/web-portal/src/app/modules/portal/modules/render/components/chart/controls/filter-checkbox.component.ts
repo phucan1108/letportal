@@ -11,26 +11,17 @@ export class FilterCheckboxComponent implements OnInit {
 
     @Input()
     filter: ExtendedChartFilter
+    
+    @Input()
+    formGroup: FormGroup
 
     @Output()
     changed = new EventEmitter<any>()
-
-    formGroup: FormGroup
 
     constructor(
         private fb: FormBuilder
     ) { }
 
     ngOnInit() {
-        this.formGroup = this.fb.group({
-            chartFilter: [false]
-        })
-
-        this.formGroup.get('chartFilter').valueChanges.subscribe(newVal => {
-            this.changed.emit({
-                filter: this.filter,
-                value: newVal
-            })
-        })
     }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, AfterViewChecked, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { Chart, ChartsClient, ChartType, ExecuteParamModel, ChartParameterValue, PageSectionLayoutType } from 'services/portal.service';
+import { Chart, ChartsClient, ChartType, ExecuteParamModel, ChartParameterValue, PageSectionLayoutType, ChartFilterValue } from 'services/portal.service';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { PageService } from 'services/page.service';
 import { NGXLogger } from 'ngx-logger';
@@ -45,7 +45,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     chartOptions: ChartOptions
     chartColors: any
     interval: any
-
+    filterValues: ChartFilterValue[] = []
     deferRender = 500
     isDoneDefer = false
     isOpenningFilter = false
@@ -124,14 +124,14 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                 break
         }
 
-        this.fetchDataForChart()
+        this.fetchDataForChart(this.filterValues)
 
         this.setupOptions()
     }
 
     onRefresh() {
         //this.readyToRender = false
-        this.fetchDataForChart()
+        this.fetchDataForChart(this.filterValues)
     }
 
     ngAfterViewChecked(): void {
@@ -145,8 +145,9 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         }
     }
 
-    applied($event){
-
+    applied($event: ChartFilterValue[]){
+        this.filterValues = $event
+        this.fetchDataForChart(this.filterValues)
     }
 
     openFilters(){
@@ -182,11 +183,11 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     private fetchInterval(){
         return setInterval(() => {
             //this.readyToRender = false
-            this.fetchDataForChart()
+            this.fetchDataForChart(this.filterValues)
         }, this.chartOptions.timetorefresh * 1000)
     }
 
-    private fetchDataForChart() {
+    private fetchDataForChart(chartFilterValues: ChartFilterValue[]) {
         const params = this.pageService.retrieveParameters(this.chart.databaseOptions.query)
         let executeParamModels: ChartParameterValue[] = []
         params.map(a => {
@@ -199,7 +200,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
 
         this.chartsClient.execution({
             chartId: this.chart.id,
-            chartFilterValues: [],
+            chartFilterValues: chartFilterValues,
             chartParameterValues: executeParamModels,
             isRealTime: this.chartOptions.allowrealtime,
             realTimeField: this.chartOptions.comparerealtimefield,

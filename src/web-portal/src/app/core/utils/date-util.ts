@@ -6,6 +6,12 @@ export class DateUtils {
         return new Date(now_utc);
     }
 
+    public static getUTCNowByDate(date: Date) {
+        var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+            date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+        return new Date(now_utc);
+    }
+
     public static toDateMMDDYYYYString(date: Date) {
         let dd = date.getDate();
         let dayStr = ''

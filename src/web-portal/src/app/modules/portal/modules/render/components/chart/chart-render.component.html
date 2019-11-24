@@ -2,9 +2,9 @@
     <mat-card-header>
         <mat-card-title>
             {{ displayName ? displayName : chart.displayName }} &nbsp;
-             <button mat-icon-button *ngIf="hasFilters" (click)="openFilters()" color="primary" matTooltip="Open Filter">
+            <!-- <button mat-icon-button *ngIf="hasFilters" (click)="openFilters()" color="primary" matTooltip="Open Filter">
                 <mat-icon style="font-size: 25px;">flash_on</mat-icon>
-            </button>
+            </button> -->
             <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                 <mat-icon>more_vert</mat-icon>
             </button>
@@ -17,43 +17,79 @@
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="align-center">
-        <div class="row">
-            <div class="col-lg-12">
-                <chart-filter-render *ngIf="isOpenningFilter" [chart]="chart" [chartOptions]="chartOptions"
-                    (applied)="applied($event)">
+        <mat-tab-group [dynamicHeight]="true" *ngIf="hasFilters">
+            <mat-tab label="Chart">
+                <div class="row" *ngIf="chartData else nodata">
+                    <div class="col-lg-12" [ngSwitch]="chart.definitions.chartType">
+                        <ng-container *ngSwitchCase="chartType.VerticalBarChart">
+                            <div style="width: 100%; height: 100%;">
+                                <ngx-charts-bar-vertical [results]="chartData" [xAxis]="true" [yAxis]="true"
+                                    [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors"
+                                    [legend]="true" [legendPosition]="'below'" [showDataLabel]="true"
+                                    [yScaleMin]="yScaleMin" [yScaleMax]="yScaleMax" *ngIf="isDoneDefer else deferData">
+                                </ngx-charts-bar-vertical>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="chartType.LineChart">
+                            <div style="width: 100%; height: 100%;">
+                                <ngx-charts-line-chart [results]="chartData" [xAxis]="true" [yAxis]="true"
+                                    [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors"
+                                    [legend]="true" [legendPosition]="'below'" [animations]="true"
+                                    [xScaleMin]="xScaleMin" [xScaleMax]="xScaleMax" [yScaleMin]="yScaleMin"
+                                    [yScaleMax]="yScaleMax"
+                                    [roundDomains]="true"
+                                     *ngIf="isDoneDefer else deferData">
+                                </ngx-charts-line-chart>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="chartType.NumberCard">
+                            <div style="width: 100%; height: 200px;">
+                                <ngx-charts-number-card [results]="chartData" [scheme]="chartColors"
+                                    *ngIf="isDoneDefer else deferData">
+                                </ngx-charts-number-card>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="Filter">
+                <chart-filter-render [chart]="chart" [chartOptions]="chartOptions" (applied)="applied($event)">
                 </chart-filter-render>
+            </mat-tab>
+        </mat-tab-group>
+        <ng-container *ngIf="!hasFilters">
+            <div class="row" *ngIf="chartData else nodata">
+                <div class="col-lg-12" [ngSwitch]="chart.definitions.chartType">
+                    <ng-container *ngSwitchCase="chartType.VerticalBarChart">
+                        <div style="width: 100%; height: 100%;">
+                            <ngx-charts-bar-vertical [results]="chartData" [xAxis]="true" [yAxis]="true"
+                                [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
+                                [legendPosition]="'below'" [showDataLabel]="true" [yScaleMin]="yScaleMin"
+                                [yScaleMax]="yScaleMax" *ngIf="isDoneDefer else deferData">
+                            </ngx-charts-bar-vertical>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="chartType.LineChart">
+                        <div style="width: 100%; height: 100%;">
+                            <ngx-charts-line-chart [results]="chartData" [xAxis]="true" [yAxis]="true"
+                                [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
+                                [legendPosition]="'below'" [animations]="true" [xScaleMin]="xScaleMin"
+                                [xScaleMax]="xScaleMax" [yScaleMin]="yScaleMin" [yScaleMax]="yScaleMax"
+                                *ngIf="isDoneDefer else deferData">
+                            </ngx-charts-line-chart>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="chartType.NumberCard">
+                        <div style="width: 100%; height: 200px;">
+                            <ngx-charts-number-card [results]="chartData" [scheme]="chartColors"
+                                *ngIf="isDoneDefer else deferData">
+                            </ngx-charts-number-card>
+                        </div>
+                    </ng-container>
+                </div>
             </div>
-        </div>
-        <div class="row" *ngIf="chartData else nodata">
-            <div class="col-lg-12" [ngSwitch]="chart.definitions.chartType">
-                <ng-container *ngSwitchCase="chartType.VerticalBarChart">
-                    <div style="width: 100%; height: 100%;">
-                        <ngx-charts-bar-vertical [results]="chartData" [xAxis]="true" [yAxis]="true"
-                            [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
-                            [legendPosition]="'below'" [showDataLabel]="true" [yScaleMin]="yScaleMin"
-                            [yScaleMax]="yScaleMax" *ngIf="isDoneDefer else deferData">
-                        </ngx-charts-bar-vertical>
-                    </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="chartType.LineChart">
-                    <div style="width: 100%; height: 100%;">
-                        <ngx-charts-line-chart [results]="chartData" [xAxis]="true" [yAxis]="true"
-                            [showXAxisLabel]="true" [showYAxisLabel]="true" [scheme]="chartColors" [legend]="true"
-                            [legendPosition]="'below'" [animations]="true" [xScaleMin]="xScaleMin"
-                            [xScaleMax]="xScaleMax" [yScaleMin]="yScaleMin" [yScaleMax]="yScaleMax"
-                            *ngIf="isDoneDefer else deferData">
-                        </ngx-charts-line-chart>
-                    </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="chartType.NumberCard">
-                    <div style="width: 100%; height: 200px;">
-                        <ngx-charts-number-card [results]="chartData" [scheme]="chartColors"
-                            *ngIf="isDoneDefer else deferData">
-                        </ngx-charts-number-card>
-                    </div>
-                </ng-container>
-            </div>
-        </div>
+        </ng-container>
+
     </mat-card-content>
 </mat-card>
 
