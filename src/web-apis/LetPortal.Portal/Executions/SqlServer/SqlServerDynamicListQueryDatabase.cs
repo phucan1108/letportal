@@ -41,6 +41,7 @@ namespace LetPortal.Portal.Executions.SqlServer
         public Task<DynamicListResponseDataModel> Query(DatabaseConnection databaseConnection, DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
             var response = new DynamicListResponseDataModel();
+            bool hasRows = false;
             using(var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
             {
                 var combinedQuery =
@@ -92,7 +93,43 @@ namespace LetPortal.Portal.Executions.SqlServer
                     {
                         DataTable dt = new DataTable();
                         dt.Load(reader);
-                        response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
+                        if(dt.Rows.Count > 0)
+                        {
+                            hasRows = true;
+                            response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
+                        }
+                    }
+                }
+
+                if(fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
+                {
+                    using(var cmd = new SqlCommand(combinedQuery.CombinedQuery, sqlDbConnection))
+                    {
+                        foreach(var param in combinedQuery.Parameters)
+                        {
+                            if(param.IsReplacedValue)
+                            {
+                                var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
+                                cmd.Parameters.Add(
+                                    new SqlParameter(
+                                        param.Name, _sqlServerMapper.GetSqlDbType(param.ReplaceValueType))
+                                    {
+                                        Value = castObject,
+                                        Direction = System.Data.ParameterDirection.Input
+                                    });
+                            }
+                            else
+                            {
+                                cmd.Parameters.Add(
+                                  new SqlParameter(
+                                      param.Name, GetSqlDbType(param, out object castObject))
+                                  {
+                                      Value = castObject,
+                                      Direction = System.Data.ParameterDirection.Input
+                                  });
+                            }
+                        }
+                        response.TotalItems = (long)cmd.ExecuteScalar();
                     }
                 }
                 sqlDbConnection.Close();

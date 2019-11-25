@@ -813,7 +813,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 },
                 PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
                 {
-                    NeedTotalItems = false,
+                    NeedTotalItems = true,
                     PageNumber = 0,
                     PageSize = 10
                 },

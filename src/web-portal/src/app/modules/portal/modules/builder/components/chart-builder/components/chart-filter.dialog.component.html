@@ -2,6 +2,18 @@
 <mat-dialog-content>
     <form class="dialog-width" [formGroup]="chartFilterFormGroup" (ngSubmit)="onSubmit()">
         <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Name</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter Name" #nameInput formControlName="name"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{nameInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
             <label class="col-lg-2 col-form-label">Display Name</label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
@@ -35,7 +47,8 @@
                         {{rangeValueInput.value?.length || 0}}/250
                     </mat-hint>
                     <mat-icon matSuffix
-                        matTooltip="Range Value supports NumberPicker, DatePicker, MonthYearPicker. 'Now' is supporting to get a current date. Ex: [10,20,30], [10..20], [10..2..20] or [10-20,20-30] for only NumberPicker with multiple">help
+                        matTooltip="Range Value supports NumberPicker, DatePicker, MonthYearPicker. 'Now' is supporting to get a current date. Ex: [10,20,30], [10..20], [10..2..20] or [10-20,20-30] for only NumberPicker with multiple">
+                        help
                     </mat-icon>
                 </mat-form-field>
             </div>
@@ -57,7 +70,8 @@
                         {{defaultValueInput.value?.length || 0}}/250
                     </mat-hint>
                     <mat-icon matSuffix
-                        matTooltip="When Allow Default Value is true, this field will be used for querying data. Still support multiple values such as [10,20,30] according to Filter Control Type">help
+                        matTooltip="When Allow Default Value is true, this field will be used for querying data. Still support multiple values such as [10,20,30] according to Filter Control Type">
+                        help
                     </mat-icon>
                 </mat-form-field>
             </div>

@@ -63,6 +63,8 @@ namespace LetPortal.Portal.Executions
     {
         public string CombinedQuery { get; set; }
 
+        public string CombinedTotalQuery { get; set; }
+
         public List<DynamicQueryParameter> Parameters { get; set; }
     }
 

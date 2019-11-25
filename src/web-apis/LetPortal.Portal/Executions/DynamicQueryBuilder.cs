@@ -160,6 +160,7 @@ namespace LetPortal.Portal.Executions
         public DynamicQuery Build()
         {
             string warpQuery;
+            string totalWrapQuery;
             var whereIndex = dynamicQuery.CombinedQuery.ToUpper().IndexOf(" WHERE ");
             var closeTagIndex = dynamicQuery.CombinedQuery.IndexOf(")");
 
@@ -253,7 +254,8 @@ namespace LetPortal.Portal.Executions
                 warpQuery = @"Select * From ({0}) s Where (({1}) AND ({2})) {3} {4}";
             }
 
-
+            totalWrapQuery = string.Format("SELECT COUNT(1) FROM ({0}) total", warpQuery);
+            var tempCombineQuery = dynamicQuery.CombinedQuery;
             dynamicQuery.CombinedQuery =
                    string.Format(
                        warpQuery,
@@ -262,6 +264,14 @@ namespace LetPortal.Portal.Executions
                        filterString,
                        orderString,
                        paginationString);
+
+            dynamicQuery.CombinedTotalQuery =
+                string.Format(totalWrapQuery,
+                        tempCombineQuery.Trim(),
+                        searchString,
+                        filterString,
+                        string.Empty,
+                        string.Empty);
             return dynamicQuery;
         }
 

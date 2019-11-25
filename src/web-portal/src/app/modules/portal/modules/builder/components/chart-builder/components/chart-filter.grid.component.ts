@@ -1,28 +1,32 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ChartFilter, FilterType, DatasourceControlType } from 'services/portal.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTable } from '@angular/material';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { NGXLogger } from 'ngx-logger';
 import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
 import { ChartFilterDialogComponent } from './chart-filter.dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-chart-filter-grid',
     templateUrl: './chart-filter.grid.component.html'
 })
-export class ChartFilterGridComponent implements OnInit {
+export class ChartFilterGridComponent implements OnInit {    
     @Input()
     chartFilters: Array<ChartFilter>
 
     @Output()
     chartFiltersChanged = new EventEmitter<any>()
 
+    currentIndex = 0
     isSmallDevice = false
-    
+    isAddDialog = true
+
     constructor(
         private dialog: MatDialog,
         private breakpointObserver: BreakpointObserver,
+        private cd: ChangeDetectorRef,
         private logger: NGXLogger
     ) { 
         this.breakpointObserver.observe([
@@ -40,10 +44,40 @@ export class ChartFilterGridComponent implements OnInit {
         });
     }
 
-    ngOnInit(): void { }
+    ngOnInit(): void { 
+        if(!ObjectUtils.isNotNull(this.chartFilters)){
+            this.chartFilters = []
+        }
+    }
 
     enableDatasource(row: ChartFilter){
         return row.type === FilterType.Select && !row.isHidden 
+    }
+    add(){
+        let newFilter: ChartFilter = {
+            name: '',
+            displayName: '',
+            allowDefaultValue: false,
+            defaultValue: '',
+            isHidden: false,
+            isMultiple: false,
+            rangeValue: '',
+            type: FilterType.Select
+        }
+        this.isAddDialog = true
+        const dialogRef = this.dialog.open(ChartFilterDialogComponent, {
+            disableClose: true,
+            data: newFilter
+        })
+        
+        dialogRef.afterClosed().subscribe(result => {
+            if(!result){
+                return
+            }
+
+            this.chartFilters.push(result)            
+            this.refreshTable()
+        })
     }
 
     editDatasource(row: ChartFilter){
@@ -70,6 +104,8 @@ export class ChartFilterGridComponent implements OnInit {
     }
 
     editFilter(row: ChartFilter){
+        this.currentIndex = this.chartFilters.indexOf(row)
+        this.isAddDialog = false
         const dialogRef = this.dialog.open(ChartFilterDialogComponent, {
             disableClose: true,
             data: row
@@ -79,7 +115,7 @@ export class ChartFilterGridComponent implements OnInit {
             if(!result){
                 return
             }
-            this.chartFilters = ArrayUtils.updateOneItem(this.chartFilters, result, (chartFilter: ChartFilter) => { return chartFilter.name === result.name})            
+            this.chartFilters = ArrayUtils.updateOneItemByIndex(this.chartFilters, result, this.currentIndex)
             this.refreshTable()
         })
     }
@@ -91,6 +127,7 @@ export class ChartFilterGridComponent implements OnInit {
     }
 
     refreshTable(){
+        this.cd.detectChanges()
         this.chartFiltersChanged.emit(this.chartFilters)
     }
 }

@@ -31,18 +31,18 @@ export class ChartFilterDialogComponent implements OnInit {
             Breakpoints.HandsetPortrait,
             Breakpoints.HandsetLandscape
         ]).subscribe(result => {
-            if (result.matches) {                
+            if (result.matches) {
                 this.isSmallDevice = true
                 this.logger.debug('Small device', this.isSmallDevice)
             }
-            else{
+            else {
                 this.isSmallDevice = false
                 this.logger.debug('Small device', this.isSmallDevice)
             }
         });
-     }
+    }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.selectedChartFilter = this.data
         this.logger.debug('Sent data chart filter', this.selectedChartFilter)
         this.isEditMode = this.selectedChartFilter.name ? true : false;
@@ -50,33 +50,34 @@ export class ChartFilterDialogComponent implements OnInit {
         this.createChartFilterForm()
     }
 
-    createChartFilterForm(){
+    createChartFilterForm() {
         this.chartFilterFormGroup = this.fb.group({
-           displayName: [this.selectedChartFilter.displayName, [Validators.required, Validators.maxLength(250)]],
-           type: [this.selectedChartFilter.type, Validators.required],
-           rangeValue: [this.selectedChartFilter.rangeValue],
-           defaultValue: [this.selectedChartFilter.defaultValue, Validators.maxLength(250)],
-           allowDefaultValue: [this.selectedChartFilter.allowDefaultValue],
-           isMultiple: [this.selectedChartFilter.isMultiple],
-           isHidden: [this.selectedChartFilter.isHidden] 
+            name: [this.selectedChartFilter.name, [Validators.required, Validators.maxLength(250)]],
+            displayName: [this.selectedChartFilter.displayName, [Validators.required, Validators.maxLength(250)]],
+            type: [this.selectedChartFilter.type, Validators.required],
+            rangeValue: [this.selectedChartFilter.rangeValue],
+            defaultValue: [this.selectedChartFilter.defaultValue, Validators.maxLength(250)],
+            allowDefaultValue: [this.selectedChartFilter.allowDefaultValue],
+            isMultiple: [this.selectedChartFilter.isMultiple],
+            isHidden: [this.selectedChartFilter.isHidden]
         })
     }
 
-    enableRangeValue(){
+    enableRangeValue() {
         let currentType = this.chartFilterFormGroup.get('type').value as FilterType
         return currentType !== FilterType.None && currentType !== FilterType.Checkbox && currentType !== FilterType.Select
     }
 
-    onSubmit(){
-        if(this.chartFilterFormGroup.valid){
+    onSubmit() {
+        if (this.chartFilterFormGroup.valid) {
             this.dialogRef.close(this.combiningChartFilter())
         }
     }
 
-    combiningChartFilter(){
+    combiningChartFilter() {
         let formValues = this.chartFilterFormGroup.value
         let combiningChartFilter: ChartFilter = {
-            name: this.selectedChartFilter.name,
+            name: formValues.name,
             displayName: formValues.displayName,
             type: formValues.type,
             datasourceOptions: this.selectedChartFilter.datasourceOptions,

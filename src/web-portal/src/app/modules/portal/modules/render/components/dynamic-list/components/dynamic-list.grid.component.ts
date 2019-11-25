@@ -43,7 +43,7 @@ export class DynamicListGridComponent implements OnInit {
     displayedColumns: Array<string> = [];
 
     loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    isAlreadyFetchedTotal = true;
+    isAlreadyFetchedTotal = false;
     totalItems = 0;
 
     datasourceCache: Array<DatasourceCache> = []
@@ -62,7 +62,7 @@ export class DynamicListGridComponent implements OnInit {
     };
 
     isHandset = false
-    isContructedGrid = false;
+    isContructedGrid = false
     hasDetailCols = false
     constructor(
         private datasoureOptsService: DatasourceOptionsService,
@@ -280,6 +280,7 @@ export class DynamicListGridComponent implements OnInit {
                     this.dataSource$.next(readyData)
                     if (!this.isAlreadyFetchedTotal) {
                         this.totalItems = res.totalItems;
+                        this.isAlreadyFetchedTotal = true // stop getting another total items
                     }
                     this.readyToRender = true
                     this.logger.debug('Unblock loading for table')

@@ -60,6 +60,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     yScaleMin: any
     yScaleMax: any
 
+    selectedTab = 0
     constructor(
         private pageService: PageService,
         private logger: NGXLogger,
@@ -183,11 +184,11 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     private fetchInterval(){
         return setInterval(() => {
             //this.readyToRender = false
-            this.fetchDataForChart(this.filterValues)
+            this.fetchDataForChart(this.filterValues, true)
         }, this.chartOptions.timetorefresh * 1000)
     }
 
-    private fetchDataForChart(chartFilterValues: ChartFilterValue[]) {
+    private fetchDataForChart(chartFilterValues: ChartFilterValue[], isInterval = false) {
         const params = this.pageService.retrieveParameters(this.chart.databaseOptions.query)
         let executeParamModels: ChartParameterValue[] = []
         params.map(a => {
@@ -243,6 +244,12 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                 }
                 if (res.isSuccess && res.result) {
                     this.lastComparedDate = DateUtils.getUTCNow()
+                    this.selectedTab = 0
+                }
+                else{
+                    if(!isInterval){
+                        this.shortcutUtil.notifyMessage('No data found, please try again', ToastType.Warning)
+                    }                    
                 }
                 if (!this.isDoneDefer) {
                     setTimeout(() => {

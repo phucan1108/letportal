@@ -39,6 +39,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
         public Task<DynamicListResponseDataModel> Query(DatabaseConnection databaseConnection, DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
             var response = new DynamicListResponseDataModel();
+            bool hasRows = false;
             using(var postgreDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
             {
                 var combinedQuery =
@@ -81,9 +82,48 @@ namespace LetPortal.Portal.Executions.PostgreSql
                     }
                     using(var reader = cmd.ExecuteReader())
                     {
-                        DataTable dt = new DataTable();
-                        dt.Load(reader);
-                        response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
+                        using(DataTable dt = new DataTable())
+                        {
+                            dt.Load(reader);
+                            if(dt.Rows.Count > 0)
+                            {
+                                hasRows = true;
+                                response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
+                            }
+                        }
+                    }
+                }
+
+                if(fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
+                {
+                    using(var cmd = new NpgsqlCommand(combinedQuery.CombinedTotalQuery, postgreDbConnection))
+                    {
+                        foreach(var param in combinedQuery.Parameters)
+                        {
+                            if(param.IsReplacedValue)
+                            {
+                                var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
+                                cmd.Parameters.Add(
+                                    new NpgsqlParameter(
+                                        param.Name, _postgreSqlMapper.GetNpgsqlDbType(param.ReplaceValueType))
+                                    {
+                                        Value = castObject,
+                                        Direction = System.Data.ParameterDirection.Input
+                                    });
+                            }
+                            else
+                            {
+                                cmd.Parameters.Add(
+                                  new NpgsqlParameter(
+                                      param.Name, GetNpgsqlDbType(param, out object castObject))
+                                  {
+                                      Value = castObject,
+                                      Direction = System.Data.ParameterDirection.Input
+                                  });
+                            }
+                        }
+
+                        response.TotalItems = (long)cmd.ExecuteScalar();
                     }
                 }
                 postgreDbConnection.Close();
