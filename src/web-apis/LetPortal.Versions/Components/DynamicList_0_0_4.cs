@@ -28,7 +28,10 @@ namespace LetPortal.Versions.Components
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
                         DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
-                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                        Query = 
+                        versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                        "{ \"$query\": { \"services\": [{ \r\n \"$match\" : {\r\n  \"$or\": [\r\n    { \"serviceState\" : 1 },\r\n    { \"serviceState\" : 3 }\r\n  ]\r\n}}] }}" : 
+                        versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                         ? "SELECT * FROM services s join servicehardwareinfos i on s.id = i.`serviceId` where s.`serviceState` = 1 or s.`serviceState` = 3"
                         : "SELECT * FROM services s join servicehardwareinfos i on s.id = i.\"serviceId\" where s.\"serviceState\" = 1 or s.\"serviceState\" = 3"
                     },
@@ -207,7 +210,7 @@ namespace LetPortal.Versions.Components
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
                         DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
-                        Query = "SELECT * FROM logevents"
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? "{ \"$query\": { \"logevents\": [ ] } }" : "SELECT * FROM logevents"
                     },
                     SourceType = DynamicListSourceType.Database
                 },

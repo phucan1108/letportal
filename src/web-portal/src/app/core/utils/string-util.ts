@@ -40,4 +40,8 @@ export default class StringUtils {
     public static isAllUpperCase(text: string): boolean {
         return text === text.toUpperCase()
     }
+
+    public static replaceAllOccurences(text: string, replaceStr: string, replacedStr: string){
+        return text.split(replaceStr).join(replacedStr)
+    }
 }

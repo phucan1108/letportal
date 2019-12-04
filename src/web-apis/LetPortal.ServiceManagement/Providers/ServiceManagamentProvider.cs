@@ -50,6 +50,7 @@ namespace LetPortal.ServiceManagement.Providers
                 InstanceNo = await _serviceRepository.GetLastInstanceNoOfService(registerServiceModel.ServiceName)
             };
 
+            service.ServiceHardwareInfo.ServiceId = service.Id;
             service.CalculateRunningTime();
             await _serviceRepository.AddAsync(service);
 

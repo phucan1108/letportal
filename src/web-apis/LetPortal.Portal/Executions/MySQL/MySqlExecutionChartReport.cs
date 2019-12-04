@@ -1,5 +1,4 @@
 ﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Charts;
@@ -25,7 +24,7 @@ namespace LetPortal.Portal.Executions.MySQL
         private readonly ICSharpMapper _cSharpMapper;
 
         public MySqlExecutionChartReport(
-            IChartReportQueryBuilder chartReportQueryBuilder, 
+            IChartReportQueryBuilder chartReportQueryBuilder,
             IChartReportProjection chartReportProjection,
             IMySqlMapper mySqlMapper,
             ICSharpMapper cSharpMapper)
@@ -61,7 +60,7 @@ namespace LetPortal.Portal.Executions.MySQL
                                             });
                     if(model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
                     {
-                       _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
+                        _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
                     }
 
                     var chartQuery = _chartReportQueryBuilder.Build();

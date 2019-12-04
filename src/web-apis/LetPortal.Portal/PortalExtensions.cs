@@ -67,6 +67,8 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IStandardRepository, StandardMongoRepository>();
                 builder.Services.AddSingleton<IFileRepository, FileMongoRepository>();
                 builder.Services.AddSingleton<IChartRepository, ChartMongoRepository>();
+
+                builder.Services.AddSingleton<IMongoQueryExecution, MongoQueryExecution>();
             }
 
             if(builder.ConnectionType == ConnectionType.SQLServer

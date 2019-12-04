@@ -1,4 +1,5 @@
 ﻿using LetPortal.Portal.Executions;
+using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
@@ -24,6 +25,69 @@ namespace LetPortal.Tests.ITs.Portal.Services
         {
             _context = context;
         }
+
+        #region UTs for Mongo
+
+        [Fact]
+        public async Task Execution_Chart_Report_In_Mongo_Test()
+        {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
+
+            // Arrange
+            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            mockDatabaseServiceProvider
+                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(_context.MongoDatabaseConenction));
+            var executionCharts = new List<IExecutionChartReport>()
+            {
+               new MongoExecutionChartReport(new MongoQueryExecution())
+            };
+            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+
+            // Act
+            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            {
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                {
+                    Query = "{\r\n  \"$query\":{\r\n    \"apps\":[]\r\n  }\r\n}"
+                },
+                Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
+                {
+                    ChartTitle = "aaa",
+                    ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
+                    MappingProjection = "name=name;value=dateCreated;group=name"
+                }
+            }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
+            {
+                ChartId = "asdas",
+                ChartFilterValues = new List<LetPortal.Portal.Models.Charts.ChartFilterValue>
+                {
+                    new LetPortal.Portal.Models.Charts.ChartFilterValue
+                    {
+                        FilterType = LetPortal.Portal.Entities.Components.FilterType.NumberPicker,
+                        Name = "timeSpan",
+                        IsMultiple = true,
+                        Value = "['1000-837076877586810630','10000-737076877586810630']"
+                    },
+                    new LetPortal.Portal.Models.Charts.ChartFilterValue
+                    {
+                        FilterType = LetPortal.Portal.Entities.Components.FilterType.DatePicker,
+                        Name = "dateCreated",
+                        IsMultiple = true,
+                        Value = string.Format("['{0}','{1}']",DateTime.UtcNow.AddDays(-1).ToString("o"), DateTime.UtcNow.AddDays(1).ToString("o"))
+                    }
+                }
+            });
+
+            // Assert
+            Assert.NotEmpty(result.Result);
+        }
+
+        #endregion
 
         #region UTs for Postgre
         [Fact]

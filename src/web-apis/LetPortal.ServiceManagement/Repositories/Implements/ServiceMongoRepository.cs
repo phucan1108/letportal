@@ -3,6 +3,7 @@ using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,26 +22,58 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
             await Collection.UpdateManyAsync(a => a.ServiceState == ServiceState.Start || a.ServiceState == ServiceState.Run, updateBuilder);
         }
 
-        public async Task<int> GetLastInstanceNoOfService(string serviceName)
+        public Task<int> GetLastInstanceNoOfService(string serviceName)
         {
-            var allRegisteredServices = await Collection.AsQueryable().Where(a => (a.ServiceState != ServiceState.Shutdown && a.ServiceState != ServiceState.Lost) && a.Name == serviceName).ToListAsync();
+            var allInstanceNos = Collection.AsQueryable()
+                    .Where(a => a.ServiceState != ServiceState.Shutdown && a.Name == serviceName)
+                    .OrderByDescending(a => a.InstanceNo).Select(b => b.InstanceNo).ToList();
 
-            if (allRegisteredServices != null && allRegisteredServices.Count > 0)
+            if(allInstanceNos != null && allInstanceNos.Count > 0)
             {
-                return allRegisteredServices.OrderByDescending(a => a.InstanceNo).First().InstanceNo;
+                var counter = 1;
+                var temp = allInstanceNos.OrderBy(a => a);
+                foreach(var no in temp)
+                {
+                    if(counter < no)
+                    {
+                        // This service no has been terminated or lost
+                        break;
+                    }
+                    counter++;
+                }
+
+                return Task.FromResult(counter);
             }
 
-            return 1;
+            return Task.FromResult(1);
         }
 
         public Task UpdateLostStateForAllLosingServices(int durationLost)
         {
-            throw new System.NotImplementedException();
+            var lostDate = DateTime.UtcNow.AddSeconds(durationLost * -1);
+
+            var updateFilterBuilder = Builders<Service>.Filter;
+            var updateFilter = updateFilterBuilder.Where(a => (a.ServiceState == ServiceState.Run || a.ServiceState == ServiceState.Start) && a.LastCheckedDate <= lostDate);
+
+            var updateDefBuider = Builders<Service>.Update;
+            var updateDef = updateDefBuider.Set(a => a.ServiceState, ServiceState.Lost).Set(b => b.LastCheckedDate, DateTime.UtcNow);
+            Collection.UpdateMany(updateFilter, updateDef);
+
+            return Task.CompletedTask;
         }
 
         public Task UpdateShutdownStateForAllServices(int durationShutdown)
         {
-            throw new System.NotImplementedException();
+            var shutdownDate = DateTime.UtcNow.AddSeconds(durationShutdown * -1);
+
+            var updateFilterBuilder = Builders<Service>.Filter;
+            var updateFilter = updateFilterBuilder.Where(a => a.ServiceState == ServiceState.Lost && a.LastCheckedDate <= shutdownDate);
+
+            var updateDefBuider = Builders<Service>.Update;
+            var updateDef = updateDefBuider.Set(a => a.ServiceState, ServiceState.Shutdown).Set(b => b.LastCheckedDate, DateTime.UtcNow);
+            Collection.UpdateMany(updateFilter, updateDef);
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -90,8 +90,6 @@ namespace LET.Tools.Installation
                             Versions = allVersions,
                             PortalVersionRepository = portalMongoRepository
                         };
-
-                        await runningCommand.RunAsync(toolsContext);
                         break;
                     case ConnectionType.PostgreSQL:
                     case ConnectionType.MySQL:

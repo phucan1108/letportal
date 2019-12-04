@@ -40,14 +40,14 @@ namespace LetPortal.Portal.Executions.Mongo
             string executingQuery = dynamicList.ListDatasource.DatabaseConnectionOptions.Query;
 
             JObject parsingObject = JObject.Parse(executingQuery);
-            string executingCollectionName = (parsingObject["$query"].First as JProperty).Name;
+            string executingCollectionName = (parsingObject[Constants.QUERY_KEY].First as JProperty).Name;
 
             // 2.  Prepare execution query
             // 2.2 Combine with Text Search, Filters and Sort           
             IMongoCollection<BsonDocument> mongoCollection = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource).GetCollection<BsonDocument>(executingCollectionName);
             FilterDefinition<BsonDocument> filterDefinitionOptions = FilterDefinition<BsonDocument>.Empty;
 
-            string collectionQuery = parsingObject["$query"][executingCollectionName].ToString(Newtonsoft.Json.Formatting.Indented);
+            string collectionQuery = parsingObject[Constants.QUERY_KEY][executingCollectionName].ToString(Newtonsoft.Json.Formatting.Indented);
 
             foreach(var filledParam in fetchDataModel.FilledParameterOptions.FilledParameters)
             {

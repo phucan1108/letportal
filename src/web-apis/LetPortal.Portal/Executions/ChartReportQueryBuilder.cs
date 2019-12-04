@@ -105,7 +105,7 @@ namespace LetPortal.Portal.Executions
                 if(warpperString.Contains(options.FilterWord))
                 {
                     warpperString = warpperString.Replace(options.FilterWord, options.DefaultFilterNull);
-                    
+
                 }
             }
 
@@ -193,7 +193,7 @@ namespace LetPortal.Portal.Executions
             {
                 castObj = mapperFunc.Invoke(splitted[1], value);
                 return splitted[1];
-            }                                  
+            }
         }
 
         private string GenerateFilterColumns(IEnumerable<ChartFilterValue> filterValues, ref List<ChartReportParameter> parameters)
@@ -227,36 +227,99 @@ namespace LetPortal.Portal.Executions
                         });
                         break;
                     case Entities.Components.FilterType.Select:
-                        var tempSelectParam = StringUtil.GenerateUniqueName();
-                        filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempSelectParam));
-
-                        // Check value is int or string
-                        long selectValue = 0;
-                        bool isLong = false;
-                        if(long.TryParse(filter.Value, out selectValue))
+                        if(filter.IsMultiple)
                         {
-                            isLong = true;
-                        }
-                        ChartReportParameter selectMySqlParameter;
-                        if(isLong)
-                        {
-                            selectMySqlParameter = new ChartReportParameter
+                            bool isArrayStr = filter.Value.Any(a => a == '\'' || a == '"');
+                            if(isArrayStr)
                             {
-                                Name = tempSelectParam,
-                                CastedValue = selectValue,
-                                ValueType = "long"
-                            };
+                                var arrayStr = ConvertUtil.DeserializeObject<List<string>>(filter.Value);
+                                foreach(var str in arrayStr)
+                                {
+                                    if(arrayStr.IndexOf(str) == 0)
+                                    {
+                                        filterStr += "(";
+                                    }
+                                    var tempSelectParam = StringUtil.GenerateUniqueName();
+                                    filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempSelectParam));
+                                    if(arrayStr.IndexOf(str) < arrayStr.Count - 1)
+                                    {
+                                        filterStr += " OR ";
+                                    }
+                                    else
+                                    {
+                                        filterStr += ")";
+                                    }
+
+                                    parameters.Add(new ChartReportParameter
+                                    {
+                                        Name = tempSelectParam,
+                                        CastedValue = str,
+                                        ValueType = "string"
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                var longStr = ConvertUtil.DeserializeObject<List<long>>(filter.Value);
+                                foreach(var longElem in longStr)
+                                {
+                                    if(longStr.IndexOf(longElem) == 0)
+                                    {
+                                        filterStr += "(";
+                                    }
+                                    var tempSelectParam = StringUtil.GenerateUniqueName();
+                                    filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempSelectParam));
+                                    if(longStr.IndexOf(longElem) < longStr.Count - 1)
+                                    {
+                                        filterStr += " OR ";
+                                    }
+                                    else
+                                    {
+                                        filterStr += ")";
+                                    }
+
+                                    parameters.Add(new ChartReportParameter
+                                    {
+                                        Name = tempSelectParam,
+                                        CastedValue = longElem,
+                                        ValueType = "long"
+                                    });
+                                }
+                            }
                         }
                         else
                         {
-                            selectMySqlParameter = new ChartReportParameter
+                            var tempSelectParam = StringUtil.GenerateUniqueName();
+                            filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempSelectParam));
+
+                            // Check value is int or string
+                            long selectValue = 0;
+                            bool isLong = false;
+                            if(long.TryParse(filter.Value, out selectValue))
                             {
-                                Name = tempSelectParam,
-                                CastedValue = filter.Value,
-                                ValueType = "string"
-                            };
+                                isLong = true;
+                            }
+                            ChartReportParameter selectMySqlParameter;
+                            if(isLong)
+                            {
+                                selectMySqlParameter = new ChartReportParameter
+                                {
+                                    Name = tempSelectParam,
+                                    CastedValue = selectValue,
+                                    ValueType = "long"
+                                };
+                            }
+                            else
+                            {
+                                selectMySqlParameter = new ChartReportParameter
+                                {
+                                    Name = tempSelectParam,
+                                    CastedValue = filter.Value,
+                                    ValueType = "string"
+                                };
+                            }
+                            parameters.Add(selectMySqlParameter);
                         }
-                        parameters.Add(selectMySqlParameter);
                         break;
                     case Entities.Components.FilterType.NumberPicker:
                         var tempNumberRangeParam = StringUtil.GenerateUniqueName();
@@ -320,8 +383,8 @@ namespace LetPortal.Portal.Executions
                                 var tempEndNumParam = StringUtil.GenerateUniqueName();
                                 filterStr += string.Format(
                                     options.NumberRangeCompare,
-                                    GetFieldFormat(filter.Name), 
-                                    GetFieldWithParamSign(tempStartNumParam), 
+                                    GetFieldFormat(filter.Name),
+                                    GetFieldWithParamSign(tempStartNumParam),
                                     GetFieldWithParamSign(tempEndNumParam));
                                 parameters.Add(new ChartReportParameter
                                 {
@@ -338,8 +401,8 @@ namespace LetPortal.Portal.Executions
                             }
                             else
                             {
-                                filterStr += string.Format("{0}={1}", 
-                                    GetFieldFormat(filter.Name), 
+                                filterStr += string.Format("{0}={1}",
+                                    GetFieldFormat(filter.Name),
                                     GetFieldWithParamSign(tempNumberRangeParam));
                                 parameters.Add(new ChartReportParameter
                                 {

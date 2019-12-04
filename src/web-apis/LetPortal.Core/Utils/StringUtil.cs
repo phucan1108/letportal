@@ -146,6 +146,11 @@ namespace LetPortal.Core.Utils
 
         public static string ReplaceDoubleCurlyBraces(string str, IEnumerable<Tuple<string, string, bool>> tuples)
         {
+            if(tuples == null)
+            {
+                return str;
+            }
+
             foreach(var tuple in tuples)
             {
                 if(tuple.Item3)

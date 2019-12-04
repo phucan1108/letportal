@@ -21,6 +21,12 @@ namespace LetPortal.Core.Persistences
 
         protected IMongoCollection<T> Collection => Connection.GetDatabaseConnection().GetCollection<T>(CollectionName);
 
+        protected IMongoCollection<TEntity> GetAnotherCollection<TEntity>() where TEntity : Entity
+        {
+            var collectionName = typeof(TEntity).GetEntityCollectionAttribute().Name;
+            return Connection.GetDatabaseConnection().GetCollection<TEntity>(collectionName);
+        }
+
         public async Task AddAsync(T entity)
         {
             entity.Check();

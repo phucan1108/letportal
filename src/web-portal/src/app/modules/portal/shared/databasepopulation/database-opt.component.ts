@@ -94,7 +94,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
             if (this.ismongodb) {
                 this.jsonOptions.mode = 'code';
-                this.queryJsonData = this.databaseOptions.query ? JSON.parse(this.databaseOptions.query) : {}
+                this.queryJsonData = this.databaseOptions.query ? this.databaseOptions.query : {}
                 this.jsonOptions.onChange = () => {
                     try {
                         this.onJsonEditorChange(this.editor.get())
@@ -106,7 +106,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 }
                 this.logger.debug('current json data', this.queryJsonData)
                 if (this.isEditMode) {
-                    this.queryJsonData = JSON.parse(this.databaseOptionForm.get('query').value)
+                    this.queryJsonData = this.databaseOptionForm.get('query').value
                 }
             }
             else {

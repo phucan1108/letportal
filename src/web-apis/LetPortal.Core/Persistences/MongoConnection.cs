@@ -10,12 +10,6 @@ namespace LetPortal.Core.Persistences
         protected string DatabaseName;
 
         private IMongoClient mongoClient;
-                
-        public MongoConnection(IOptionsMonitor<DatabaseOptions> databaseOptions)
-        {
-            ConnectionString = databaseOptions.CurrentValue.ConnectionString;
-            DatabaseName = databaseOptions.CurrentValue.Datasource;
-        }
 
         public MongoConnection(DatabaseOptions databaseOptions)
         {

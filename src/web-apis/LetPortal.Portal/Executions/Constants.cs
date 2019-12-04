@@ -9,6 +9,8 @@
         public const string DELETE_KEY = "$delete";
         public const string DATA_KEY = "$data";
         public const string WHERE_KEY = "$where";
+        public const string UNION_KEY = "$union";
+        public const string JOIN_KEY = "$join";
 
         // Chart
         public const string REAL_TIME_KEY = "{{REAL_TIME}}";
