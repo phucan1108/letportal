@@ -15,6 +15,8 @@ namespace LetPortal.ServiceManagement.Entities
 
         public long MemoryUsed { get; set; }
 
+        public int MemoryUsedInMb { get; set; }
+
         public bool IsCpuBottleneck { get; set; }
 
         public bool IsMemoryThreshold { get; set; }

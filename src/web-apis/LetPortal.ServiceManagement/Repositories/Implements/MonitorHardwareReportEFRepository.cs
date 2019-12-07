@@ -121,13 +121,14 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                             var newReportCounter = new MonitorHardwareReport
                             {
                                 Id = DataUtil.GenerateUniqueId(),
-                                CpuUsage = proceedingCounters.Average(b => b.CpuUsage),
+                                CpuUsage = Math.Round(proceedingCounters.Average(b => b.CpuUsage), 0, MidpointRounding.AwayFromZero),
                                 MemoryUsed = Convert.ToInt64(proceedingCounters.Average(a => a.MemoryUsed)),
                                 IsCpuBottleneck = proceedingCounters.Any(a => a.IsCpuBottleneck),
                                 IsMemoryThreshold = proceedingCounters.Any(a => a.IsMemoryThreshold),
                                 ReportedDate = startCompareDate,
                                 ServiceId = service.Key
                             };
+                            newReportCounter.MemoryUsedInMb = (int)Math.Round((double)(newReportCounter.MemoryUsed / 1024), 0, MidpointRounding.AwayFromZero);
                             allInsertCounters.Add(newReportCounter);
                         }
                     }

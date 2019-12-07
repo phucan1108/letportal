@@ -123,6 +123,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                             var avgDuration =
                                 firstCounter.Id != lastCounter.Id && (successRequests + failedRequests) > 0 ?
                                 proceedingCounters.Average(a => a.AvgDuration) : 0;
+                            avgDuration = Math.Round(avgDuration, 0, MidpointRounding.AwayFromZero);
                             var newReportCounter = new MonitorHttpReport
                             {
                                 Id = DataUtil.GenerateUniqueId(),

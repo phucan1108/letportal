@@ -68,6 +68,7 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IFileRepository, FileMongoRepository>();
                 builder.Services.AddSingleton<IChartRepository, ChartMongoRepository>();
 
+                builder.Services.AddSingleton<IExecutionChartReport, MongoExecutionChartReport>();
                 builder.Services.AddSingleton<IMongoQueryExecution, MongoQueryExecution>();
             }
 

@@ -212,7 +212,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                     res.result = this.convertResNameToDate(res.result, this.isMultiData, this.chartOptions.xformatdate)
                 }
                 if (this.chartData) {
-                    if (res.isSuccess && this.chartOptions.allowrealtime && this.chartOptions.comparerealtimefield) {
+                    if (res.isSuccess && res.result.length > 0 && this.chartOptions.allowrealtime && this.chartOptions.comparerealtimefield) {
                         if (!this.isMultiData) {
                             _.forEach(res.result, a => {
                                 this.chartData.push(a)
@@ -236,13 +236,13 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                         }
                     }
                     else {
-                        this.chartData = res.isSuccess ? [...res.result] : [...this.chartData]
+                        this.chartData = res.isSuccess && res.result.length > 0 ? [...res.result] : [...this.chartData]
                     }
                 }
                 else {
-                    this.chartData = res.isSuccess ? [...res.result] : null
+                    this.chartData = res.isSuccess && res.result.length > 0 ? [...res.result] : null
                 }
-                if (res.isSuccess && res.result) {
+                if (res.isSuccess && res.result.length > 0) {
                     this.lastComparedDate = DateUtils.getUTCNow()
                     this.selectedTab = 0
                 }

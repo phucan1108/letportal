@@ -1,6 +1,7 @@
 ﻿using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
+using System;
 using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
@@ -24,7 +25,7 @@ namespace LetPortal.ServiceManagement.Providers
                 ServiceName = pushHealthCheckModel.ServiceName,
                 HttpCounter = new Entities.HttpCounter
                 {
-                    AvgDuration = pushHealthCheckModel.HttpHealthCheck.AvgDuration,
+                    AvgDuration = Math.Round(pushHealthCheckModel.HttpHealthCheck.AvgDuration, 0, MidpointRounding.AwayFromZero),
                     FailedRequests = pushHealthCheckModel.HttpHealthCheck.FailedRequests,
                     MeansureDate = pushHealthCheckModel.BeatDate,
                     SuccessRequests = pushHealthCheckModel.HttpHealthCheck.SuccessRequests,
@@ -33,8 +34,9 @@ namespace LetPortal.ServiceManagement.Providers
                 },
                 HardwareCounter = new Entities.HardwareCounter
                 {
-                    CpuUsage = pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage,
+                    CpuUsage = Math.Round(pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage, 0, MidpointRounding.AwayFromZero),
                     MemoryUsed = pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed,
+                    MemoryUsedInMb = (int)Math.Round((double)(pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed / 1024), 0, MidpointRounding.AwayFromZero),
                     IsCpuBottleneck = pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck,
                     IsMemoryThreshold = pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold,
                     MeansureDate = pushHealthCheckModel.BeatDate,

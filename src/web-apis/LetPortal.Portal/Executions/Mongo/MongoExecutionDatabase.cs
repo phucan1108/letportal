@@ -144,6 +144,16 @@ namespace LetPortal.Portal.Executions.Mongo
                 indexISODate = query.IndexOf("\"ISODate(");
             }
 
+            // Eliminate NumberLong
+            var indexNumberLong = query.IndexOf("\"NumberLong(");
+            while(indexNumberLong > 0)
+            {
+                var closedCurly = query.IndexOf(")", indexNumberLong);
+                query = query.Remove(closedCurly + 1, 1);
+                query = query.Remove(indexNumberLong, 1);
+                indexNumberLong = query.IndexOf("\"NumberLong(");
+            }
+
             return query;
         }
 

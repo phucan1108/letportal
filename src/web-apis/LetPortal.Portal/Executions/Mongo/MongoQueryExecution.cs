@@ -91,9 +91,9 @@ namespace LetPortal.Portal.Executions.Mongo
             bool hasProjection = CheckMappingProjection(mappingProjection);
             var projection = hasProjection ? ConvertMappingProjection(mappingProjection) : null;
             // 1) Check $union/$join or normal 
-            if(parsingBson[Constants.QUERY_KEY].AsBsonDocument.Elements.FirstOrDefault(a => a.Value == Constants.UNION_KEY).Value != null)
+            if(parsingBson[Constants.QUERY_KEY].AsBsonDocument.Elements.First().Name == Constants.UNION_KEY)
             {
-                var arrayUnions = parsingBson[Constants.QUERY_KEY][Constants.UPDATE_KEY];
+                var arrayUnions = parsingBson[Constants.QUERY_KEY][Constants.UNION_KEY];
                 if(arrayUnions != null && arrayUnions.IsBsonArray)
                 {
                     var arrayUnionCollections = arrayUnions.AsBsonArray;
@@ -104,12 +104,27 @@ namespace LetPortal.Portal.Executions.Mongo
                         var mongoCollection = mongoDatabase.GetCollection<BsonDocument>(collection.First().Name);
                         List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = collection.First().Value.AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
                         IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
-                         
+
+                        int indexMatchStage = -1;
+                        var lastMatchStage = aggregatePipes.LastOrDefault(a => a.OperatorName == "$match");
+                        if(lastMatchStage != null)
+                        {
+                            indexMatchStage = aggregatePipes.LastIndexOf(lastMatchStage);
+                        }
                         if(filterStages != null)
                         {
+                            bool needToAppendByIndex = indexMatchStage > -1;
                             foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in filterStages)
                             {
-                                aggregateFluent = aggregateFluent.AppendStage(pipe);
+                                if(needToAppendByIndex)
+                                {
+                                    aggregatePipes.Insert(indexMatchStage + 1, pipe);
+                                    indexMatchStage++;
+                                }
+                                else
+                                {
+                                    aggregatePipes.Add(pipe);
+                                }
                             }
                         }
                         foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
@@ -153,13 +168,28 @@ namespace LetPortal.Portal.Executions.Mongo
                 var mongoCollection = GetCollection(mongoDatabase, parsingBson, Constants.QUERY_KEY);
                 List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = parsingBson[Constants.QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
                 IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
+                int indexMatchStage = -1;
+                var lastMatchStage = aggregatePipes.LastOrDefault(a => a.OperatorName == "$match");
+                if(lastMatchStage != null)
+                {
+                    indexMatchStage = aggregatePipes.LastIndexOf(lastMatchStage);
+                }
                 if(filterStages != null)
                 {
+                    bool needToAppendByIndex = indexMatchStage > -1;
                     foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in filterStages)
                     {
-                        aggregateFluent = aggregateFluent.AppendStage(pipe);
+                        if(needToAppendByIndex)
+                        {
+                            aggregatePipes.Insert(indexMatchStage + 1, pipe);
+                            indexMatchStage++;
+                        }
+                        else
+                        {
+                            aggregatePipes.Add(pipe);
+                        }
                     }
-                }
+                }                                
                 foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
                 {
                     aggregateFluent = aggregateFluent.AppendStage(pipe);
@@ -240,6 +270,16 @@ namespace LetPortal.Portal.Executions.Mongo
                 query = query.Remove(closedCurly + 1, 1);
                 query = query.Remove(indexISODate, 1);
                 indexISODate = query.IndexOf("\"ISODate(");
+            }
+
+            // Eliminate NumberLong
+            var indexNumberLong = query.IndexOf("\"NumberLong(");
+            while(indexNumberLong > 0)
+            {
+                var closedCurly = query.IndexOf(")", indexNumberLong);
+                query = query.Remove(closedCurly + 1, 1);
+                query = query.Remove(indexNumberLong, 1);
+                indexNumberLong = query.IndexOf("\"NumberLong(");
             }
 
             return query;
