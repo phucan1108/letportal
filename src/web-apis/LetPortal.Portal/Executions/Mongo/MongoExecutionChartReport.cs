@@ -116,7 +116,7 @@ namespace LetPortal.Portal.Executions.Mongo
                     }
                     if(hasGroup)
                     {
-                        result = tempResult.GroupBy(a => a.group).Select(a => new { series = a.Select(b => new { b.name, b.value }), name = a.Key });
+                        result = tempResult.GroupBy(a => a.group).Where(a => a != null).Select(a => new { series = a.Select(b => new { b.name, b.value }), name = a.Key });
                     }                    
                 }
             }
