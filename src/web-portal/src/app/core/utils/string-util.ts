@@ -44,4 +44,8 @@ export default class StringUtils {
     public static replaceAllOccurences(text: string, replaceStr: string, replacedStr: string){
         return text.split(replaceStr).join(replacedStr)
     }
+
+    public static getNumberOccurencesOfStr(text: string, occurStr: string){
+        return text.split(occurStr).length - 1
+    }
 }

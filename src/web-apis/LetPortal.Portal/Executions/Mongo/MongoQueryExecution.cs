@@ -139,9 +139,10 @@ namespace LetPortal.Portal.Executions.Mongo
                         fluentCollectionsList.Add(aggregateFluent);
                     }
                     var allDynamics = new List<dynamic>();
-                    fluentCollectionsList.AsParallel().ForAll((element) =>
+                    List<Task> parallelTasks = new List<Task>();
+                    foreach(var collect in fluentCollectionsList)
                     {
-                        using(IAsyncCursor<BsonDocument> executingCursor = element.ToCursor())
+                        using(IAsyncCursor<BsonDocument> executingCursor = collect.ToCursor())
                         {
                             while(executingCursor.MoveNext())
                             {
@@ -159,7 +160,7 @@ namespace LetPortal.Portal.Executions.Mongo
                                 }
                             }
                         }
-                    });
+                    }
                     return allDynamics;
                 }
             }

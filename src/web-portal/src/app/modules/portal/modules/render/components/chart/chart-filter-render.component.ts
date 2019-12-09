@@ -190,9 +190,9 @@ export class ChartFilterRenderComponent implements OnInit {
             case FilterType.Checkbox:
                 return formGroup.get(tempName).value.toString()
             case FilterType.Select:
-                return filter.isMultiple ? JSON.parse(formGroup.get(tempName).value) : formGroup.get(tempName).value.toString()
+                return filter.isMultiple ? JSON.stringify(formGroup.get(tempName).value) : formGroup.get(tempName).value.toString()
             case FilterType.NumberPicker:
-                return filter.isMultiple ? JSON.parse(formGroup.get(tempName).value) : formGroup.get(tempName).value.toString()
+                return filter.isMultiple ? JSON.stringify(formGroup.get(tempName).value) : formGroup.get(tempName).value.toString()
             case FilterType.DatePicker:
                 if (filter.isMultiple) {
                     let minDate = new Date(formGroup.get(tempName + '_min').value)
@@ -267,7 +267,7 @@ export class ChartFilterRenderComponent implements OnInit {
         const hasDoublePoints = numberRange.indexOf('..') > 0
         const hasMinus = numberRange.indexOf('-') > 0
         if (hasDoublePoints) {
-            let count = (numberRange.match(/../g) || []).length;
+            let count = StringUtils.getNumberOccurencesOfStr(numberRange, '..')
             if (count == 2) {
                 // Case [10..2..20]
                 let splitted = numberRange.substr(1, numberRange.length - 2).split('..')
@@ -325,7 +325,7 @@ export class ChartFilterRenderComponent implements OnInit {
             }
         }
         else if (hasMinus) {
-            let arrayStr: string[] = JSON.parse(numberRange)
+            let arrayStr: string[] = numberRange.slice(1, numberRange.length - 1).slice(0, numberRange.length - 2).split(',')
             return arrayStr.map(a => ({
                 name: a,
                 value: a

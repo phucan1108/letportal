@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ExtendedChartFilter } from 'portal/modules/models/chart.extended.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import StringUtils from 'app/core/utils/string-util';
 
 @Component({
     selector: 'filter-select',
@@ -17,7 +18,7 @@ export class FilterSelectComponent implements OnInit {
 
     @Output()
     changed = new EventEmitter<any>()
-
+    controlName = ''
     optionsList: Observable<any>
     
     constructor(
@@ -25,6 +26,12 @@ export class FilterSelectComponent implements OnInit {
     ) { }
 
     ngOnInit() { 
+        if(this.filter.name.indexOf('.') > 0){
+            this.controlName = StringUtils.replaceAllOccurences(this.filter.name, '.','')
+        }
+        else{
+            this.controlName = this.filter.name 
+        }
         this.optionsList = this.filter.datasource
     }
 }
