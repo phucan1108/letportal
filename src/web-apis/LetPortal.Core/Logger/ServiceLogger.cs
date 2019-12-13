@@ -25,6 +25,7 @@ namespace LetPortal.Core.Logger
             var userSessionId = StringUtil.DecodeBase64ToUTF8(_httpContextAccessor.HttpContext.Request.Headers[Constants.UserSessionIdHeader].ToString());
             logEvent.AddPropertyIfAbsent(new LogEventProperty("TraceId", new ScalarValue(traceId)));
             logEvent.AddPropertyIfAbsent(new LogEventProperty("UserSessionId", new ScalarValue(userSessionId)));
+
         }
 
         public void Debug(string message, params object[] logObjects)

@@ -22,5 +22,12 @@ namespace LetPortal.ServiceManagementApis.Controllers
             await _logEventProvider.AddLogEvent(pushLogModel);
             return Ok();
         }
+
+        [HttpGet("gather/{traceId}")]
+        public async Task<IActionResult> GatherLog(string traceId)
+        {
+            await _logEventProvider.GatherAllLogs(traceId);
+            return Ok();
+        }
     }
 }

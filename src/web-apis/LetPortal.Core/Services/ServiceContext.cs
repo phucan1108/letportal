@@ -1,13 +1,10 @@
 ﻿using LetPortal.Core.Logger;
 using LetPortal.Core.Logger.Models;
-using LetPortal.Core.Logger.Repositories;
 using LetPortal.Core.Monitors;
 using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Services.Models;
-using LetPortal.Core.Utils;
 using Microsoft.Extensions.Options;
 using System;
-using System.Linq;
 using System.Net.Http;
 
 namespace LetPortal.Core.Services
@@ -24,21 +21,17 @@ namespace LetPortal.Core.Services
 
         private readonly IOptionsMonitor<MonitorOptions> _monitorOptions;
 
-        private readonly ILogRepository _logRepository;
-
         private readonly HttpClient _httpClient;
 
         public ServiceContext(
             IOptionsMonitor<ServiceOptions> serviceOptions,
-            IOptionsMonitor<LoggerOptions> loggerOptions,
             IOptionsMonitor<MonitorOptions> monitorOptions,
-            ILogRepository logRepository,
+            IOptionsMonitor<LoggerOptions> loggerOptions,
             HttpClient httpClient)
         {
             _serviceOptions = serviceOptions;
-            _loggerOptions = loggerOptions;
             _monitorOptions = monitorOptions;
-            _logRepository = logRepository;
+            _loggerOptions = loggerOptions;
             _httpClient = httpClient;
         }
 
@@ -110,10 +103,8 @@ namespace LetPortal.Core.Services
         {
             if(_loggerOptions.CurrentValue.NotifyOptions.Enable)
             {
-                var allLogTraces = _logRepository.GetAllLogs(_serviceOptions.CurrentValue.Name, pushLogModel.UserSessionId, pushLogModel.TraceId).Result;
                 pushLogModel.RegisteredServiceId = serviceId;
                 pushLogModel.ServiceName = _serviceOptions.CurrentValue.Name;
-                pushLogModel.StackTraces = allLogTraces.ToList();
                 try
                 {
                     var task = _httpClient.PostAsJsonAsync(_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/logs", pushLogModel);

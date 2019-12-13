@@ -42,6 +42,16 @@ namespace LetPortal.Versions.Components
                     MappingProjection = "name=name;value=value"
                 },
                 Options = Constants.ChartOptions(),
+                ChartFilters = new System.Collections.Generic.List<ChartFilter>
+                {
+                    new ChartFilter
+                    {
+                        Name = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? "httpCounter.meansureDate" : "meansureDate",
+                        DisplayName = "Counter Date",
+                        IsMultiple = true,
+                        Type = FilterType.DatePicker
+                    }   
+                },
                 TimeSpan = DateTime.UtcNow.Ticks
             };
 
@@ -68,6 +78,16 @@ namespace LetPortal.Versions.Components
                     MappingProjection = "name=name;value=value"
                 },
                 Options = Constants.ChartOptions(),
+                ChartFilters = new System.Collections.Generic.List<ChartFilter>
+                {
+                    new ChartFilter
+                    {
+                        Name = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? "hardwareCounter.meansureDate" : "meansureDate",
+                        DisplayName = "Counter Date",
+                        IsMultiple = true,
+                        Type = FilterType.DatePicker
+                    }
+                },
                 TimeSpan = DateTime.UtcNow.Ticks
             };
 

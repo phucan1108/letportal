@@ -324,6 +324,37 @@ namespace LetPortal.Versions.Components
                             Order = 7
                         }
                     }
+                }   ,
+                CommandsList = new CommandsList
+                {
+                    CommandButtonsInList = new List<CommandButtonInList>
+                    {
+                        new CommandButtonInList
+                        {
+                            Name = "collect",
+                            DisplayName = "Collect Logs",
+                            Icon = "sync",
+                            Color = "accent",
+                            CommandPositionType = CommandPositionType.InList,
+                            AllowRefreshList = true,
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpMethod = "GET",
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/logs/gather/{{data.traceId}}",
+                                    HttpSuccessCode = "200;204"                                    
+                                },
+                                IsEnable = true,
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "System has collected all logs that belongs to trace id.",
+                                    FailedMessage = "Oops! Something went wrong, please check again."
+                                }
+                            }
+                        }
+                    }
                 }
             };
 

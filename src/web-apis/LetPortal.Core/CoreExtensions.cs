@@ -77,8 +77,7 @@ namespace LetPortal.Core
                     .CreateLogger();
 
                 builder.Services.AddSingleton(Log.Logger);
-                builder.Services.AddTransient(typeof(IServiceLogger<>), typeof(ServiceLogger<>));
-                builder.Services.AddSingleton<ILogRepository, LogMongoRepository>();
+                builder.Services.AddTransient(typeof(IServiceLogger<>), typeof(ServiceLogger<>));                
             }
 
             return builder;

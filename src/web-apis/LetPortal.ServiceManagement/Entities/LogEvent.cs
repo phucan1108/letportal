@@ -16,7 +16,7 @@ namespace LetPortal.ServiceManagement.Entities
 
         public string SourceId { get; set; }
 
-        public List<string> StackTrace { get; set; }
+        public IEnumerable<string> StackTrace { get; set; }
 
         public string HttpRequestUrl { get; set; }
 

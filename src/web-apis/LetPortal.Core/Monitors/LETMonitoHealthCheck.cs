@@ -71,37 +71,6 @@ namespace LetPortal.Core.Monitors
                 pushHealthCheckModel.DatabaseHealthy = true;
             }
 
-            if(_monitorOptions.CurrentValue.CheckDatabaseLoggerOption
-                && _loggerOptions.CurrentValue != null)
-            {
-                switch(_loggerOptions.CurrentValue.Type)
-                {
-                    case LoggerStorageType.Mongodb:
-                        try
-                        {
-                            var mongoClient = new MongoClient(_loggerOptions.CurrentValue.MongoOptions.ConnectionString);
-                            var databaseName = MongoUrl.Create(_loggerOptions.CurrentValue.MongoOptions.ConnectionString).DatabaseName;
-                            var mongoDatabase = mongoClient.GetDatabase(databaseName);
-                            var ping = await mongoDatabase.RunCommandAsync<BsonDocument>(new BsonDocument { { "ping", 1 } });
-                            if(ping.Contains("ok") &&
-                                    (ping["ok"].IsDouble && (int)ping["ok"].AsDouble == 1 ||
-                                    ping["ok"].IsInt32 && ping["ok"].AsInt32 == 1))
-                            {
-                                pushHealthCheckModel.LoggerDatabaseHealthy = true;
-                            }
-                        }
-                        catch(Exception ex)
-                        {
-                            pushHealthCheckModel.LoggerDatabaseHealthy = false;
-                            pushHealthCheckModel.ErrorStack += ex.ToString();
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                pushHealthCheckModel.LoggerDatabaseHealthy = true;
-            }
             _monitorHealthCheck.CalculateAvg();
             var hardwareCheck = _monitorHealthCheck.GetCurrentHardwareInfoHealthCheck();
             pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage = hardwareCheck.CpuUsage;

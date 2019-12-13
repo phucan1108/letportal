@@ -17,6 +17,7 @@ namespace LetPortal.ServiceManagement
             var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
 
             services.Configure<ServiceManagementOptions>(configuration.GetSection("ServiceManagementOptions"));
+            services.Configure<CentralizedLogOptions>(configuration.GetSection("CentralizedLogOptions"));
 
             services.AddSingleton(databaseOptions);
             if(databaseOptions.ConnectionType == ConnectionType.MongoDB)

@@ -6,5 +6,7 @@ namespace LetPortal.ServiceManagement.Providers
     public interface ILogEventProvider
     {
         Task AddLogEvent(PushLogModel pushLogModel);
+
+        Task GatherAllLogs(string traceId);
     }
 }
