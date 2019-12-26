@@ -3,6 +3,8 @@ using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Core.Utils;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,9 +73,13 @@ namespace LetPortal.Core.Persistences
             return Collection.AsQueryable();
         }
 
-        public async Task<IEnumerable<T>> GetAllByIdsAsync(List<string> ids)
+        public async Task<IEnumerable<T>> GetAllByIdsAsync(IEnumerable<string> ids)
         {
-            return await Collection.AsQueryable().Where(a => ids.Contains(a.Id)).ToListAsync();
+            if(ids != null && ids.Any())
+            {
+                return await Collection.AsQueryable().Where(a => ids.Contains(a.Id)).ToListAsync();
+            }
+            return null;            
         }
 
         public async Task<T> GetOneAsync(string id)
@@ -129,6 +135,78 @@ namespace LetPortal.Core.Persistences
         public async Task<bool> IsExistAsync(Expression<Func<T, bool>> expression)
         {
             return await Collection.AsQueryable().AnyAsync(expression);
+        }
+
+        public async Task<ComparisonResult> Compare(T comparedEntity)
+        {
+            var foundEntity = await GetOneAsync(comparedEntity.Id);
+            if(foundEntity != null)
+            {
+                var jObject = JObject.FromObject(foundEntity);
+                var comparedJObject = JObject.FromObject(comparedEntity);
+                var children = jObject.Children();
+                var comparedChildren = comparedJObject.Children();
+                var result = new ComparisonResult
+                {
+                    Result = new ComparisonEntity { Properties = new List<ComparisonProperty>() }
+                };
+                foreach(JProperty jprop in comparedChildren)
+                {
+                    var foundChild = children.FirstOrDefault(a => (a as JProperty).Name == jprop.Name);
+                    if(foundChild != null)
+                    {
+                        var resultProperty = new ComparisonProperty
+                        {
+                          Name = jprop.Name,
+                          SourceValue = jprop.Value?.ToString(),
+                          TargetValue = (foundChild as JProperty).Value?.ToString()
+                        };
+
+                        resultProperty.SourceValue = resultProperty.SourceValue ?? string.Empty;
+                        resultProperty.TargetValue = resultProperty.TargetValue ?? string.Empty;
+
+                        // In case the same string length, compare each char
+                        if(resultProperty.SourceValue.Length == resultProperty.TargetValue.Length)
+                        {
+                            for(int i = 0; i < resultProperty.SourceValue.Length; i++)
+                            {
+                                if(resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
+                                {
+                                    resultProperty.ComparedState = ComparedState.Change;
+                                    break;
+                                }                                
+                            }
+                        }
+                        else
+                        {
+                            resultProperty.ComparedState = ComparedState.Change;
+                        }
+
+                        result.Result.Properties.Append(resultProperty);
+                    }
+                    else
+                    {
+                        result.Result.Properties.Append(
+                            new ComparisonProperty
+                            {
+                                Name = jprop.Name,
+                                SourceValue = jprop.Value?.ToString(),
+                                ComparedState = ComparedState.New
+                            }); 
+                    }
+                }
+
+                return result;
+            }
+            else
+            {
+                return new ComparisonResult { IsTotallyNew = true };
+            }
+        }
+
+        public async Task ForceUpdateAsync(string id, T forceEntity)
+        {
+            await Collection.FindOneAndReplaceAsync(a => a.Id == id, forceEntity);
         }
     }
 }

@@ -11,7 +11,10 @@ using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Options.Files;
+using LetPortal.Portal.Options.Recoveries;
 using LetPortal.Portal.Persistences;
+using LetPortal.Portal.Providers.Apps;
+using LetPortal.Portal.Providers.Components;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.EntitySchemas;
 using LetPortal.Portal.Providers.Pages;
@@ -23,6 +26,7 @@ using LetPortal.Portal.Repositories.Datasources;
 using LetPortal.Portal.Repositories.EntitySchemas;
 using LetPortal.Portal.Repositories.Files;
 using LetPortal.Portal.Repositories.Pages;
+using LetPortal.Portal.Repositories.Recoveries;
 using LetPortal.Portal.Services.Components;
 using LetPortal.Portal.Services.Databases;
 using LetPortal.Portal.Services.Datasources;
@@ -30,6 +34,7 @@ using LetPortal.Portal.Services.EntitySchemas;
 using LetPortal.Portal.Services.Files;
 using LetPortal.Portal.Services.Files.Validators;
 using LetPortal.Portal.Services.Http;
+using LetPortal.Portal.Services.Recoveries;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -50,6 +55,7 @@ namespace LetPortal.Portal
             }
 
             builder.Services.Configure<MapperOptions>(builder.Configuration.GetSection("MapperOptions"));
+            builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("BackupOptions"));
             var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();
             builder.Services.AddSingleton(mapperOptions);
             if(builder.ConnectionType == ConnectionType.MongoDB)
@@ -66,8 +72,8 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IDynamicListRepository, DynamicListMongoRepository>();
                 builder.Services.AddSingleton<IStandardRepository, StandardMongoRepository>();
                 builder.Services.AddSingleton<IFileRepository, FileMongoRepository>();
-                builder.Services.AddSingleton<IChartRepository, ChartMongoRepository>();
-
+                builder.Services.AddSingleton<IChartRepository, ChartMongoRepository>();  
+                builder.Services.AddSingleton<IBackupRepository, BackupMongoRepository>();
                 builder.Services.AddSingleton<IExecutionChartReport, MongoExecutionChartReport>();
                 builder.Services.AddSingleton<IMongoQueryExecution, MongoQueryExecution>();
             }
@@ -87,6 +93,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IStandardRepository, StandardEFRepository>();
                 builder.Services.AddTransient<IFileRepository, FileEFRepository>();
                 builder.Services.AddTransient<IChartRepository, ChartEFRepository>();
+                builder.Services.AddTransient<IBackupRepository, BackupEFRepository>();
             }
 
             if(portalOptions.EnableFileServer)
@@ -156,6 +163,10 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();            
             builder.Services.AddTransient<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();
             builder.Services.AddTransient<IPageServiceProvider, InternalPageServiceProvider>();
+            builder.Services.AddTransient<IAppServiceProvider, InternalAppServiceProvider>();
+            builder.Services.AddTransient<IStandardServiceProvider, InternalStandardServiceProvider>();
+            builder.Services.AddTransient<IChartServiceProvider, InternalChartServiceProvider>();
+            builder.Services.AddTransient<IDynamicListServiceProvider, InternalDynamicListServiceProvider>();
 
             builder.Services.AddTransient<IDynamicQueryBuilder, DynamicQueryBuilder>();
             builder.Services.AddTransient<IChartReportProjection, ChartReportProjection>();
@@ -167,6 +178,7 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IDatabaseService, DatabaseService>();
             builder.Services.AddTransient<IFileService, FileService>();
             builder.Services.AddTransient<IChartService, ChartService>();
+            builder.Services.AddTransient<IBackupService, BackupService>();
 
             builder.Services.AddTransient<HttpService>();
             builder.Services.AddHttpClient<HttpService>();

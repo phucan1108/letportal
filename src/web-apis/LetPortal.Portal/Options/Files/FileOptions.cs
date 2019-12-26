@@ -30,8 +30,6 @@ namespace LetPortal.Portal.Options.Files
     public class DiskStorageOptions
     {  
         public bool IsStoredInTempFolder { get; set; }
-
-        public bool AllowDeleteOlder { get; set; }
               
         public bool AllowDayFolder { get; set; }
 

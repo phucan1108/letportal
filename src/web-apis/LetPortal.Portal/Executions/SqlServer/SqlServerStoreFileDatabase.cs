@@ -41,6 +41,16 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         public async Task<StoredFile> StoreFileAsync(IFormFile file, string tempFilePath, DatabaseOptions databaseOptions)
         {
+            return await StoreFileSqlServer(file.FileName, tempFilePath, databaseOptions);
+        }
+
+        public async Task<StoredFile> StoreFileAsync(string localFilePath, DatabaseOptions databaseOptions)
+        {
+            return await StoreFileSqlServer(Path.GetFileName(localFilePath), localFilePath, databaseOptions);
+        }
+
+        private async Task<StoredFile> StoreFileSqlServer(string fileName, string localFilePath, DatabaseOptions databaseOptions)
+        {
             using(var sqlDbConnection = new SqlConnection(databaseOptions.ConnectionString))
             {
                 sqlDbConnection.Open();
@@ -49,7 +59,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                 {
                     using(var sqlCommand = new SqlCommand("INSERT INTO uploadFiles ([id], [file]) Values (@id, @File)", sqlDbConnection, transaction))
                     {
-                        var bytes = await File.ReadAllBytesAsync(tempFilePath);
+                        var bytes = await File.ReadAllBytesAsync(localFilePath);
                         sqlCommand.Parameters.Add("@id", System.Data.SqlDbType.NVarChar).Value = oid;
                         sqlCommand.Parameters.Add("@File", System.Data.SqlDbType.VarBinary, bytes.Length).Value = bytes;
                         sqlCommand.ExecuteNonQuery();

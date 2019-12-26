@@ -41,6 +41,16 @@ namespace LetPortal.Portal.Executions.MySQL
 
         public async Task<StoredFile> StoreFileAsync(IFormFile file, string tempFilePath, DatabaseOptions databaseOptions)
         {
+            return await StoreFileMySQL(tempFilePath, databaseOptions);
+        }
+
+        public async Task<StoredFile> StoreFileAsync(string localFilePath, DatabaseOptions databaseOptions)
+        {
+            return await StoreFileMySQL(localFilePath, databaseOptions);
+        }
+
+        private async Task<StoredFile> StoreFileMySQL(string localFilePath, DatabaseOptions databaseOptions)
+        {
             using(var mysqlDbConnection = new MySqlConnection(databaseOptions.ConnectionString))
             {
                 mysqlDbConnection.Open();
@@ -49,7 +59,7 @@ namespace LetPortal.Portal.Executions.MySQL
                 {
                     using(var mysqlCommand = new MySqlCommand("INSERT INTO uploadFiles (id, file) Values (@id, @File)", mysqlDbConnection, transaction))
                     {
-                        var bytes = await File.ReadAllBytesAsync(tempFilePath);
+                        var bytes = await File.ReadAllBytesAsync(localFilePath);
                         mysqlCommand.Parameters.Add("@id", MySqlDbType.VarChar).Value = oid;
                         mysqlCommand.Parameters.Add("@File", MySqlDbType.MediumBlob, bytes.Length).Value = bytes;
                         mysqlCommand.ExecuteNonQuery();

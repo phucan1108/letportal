@@ -6,5 +6,7 @@ namespace LetPortal.Core.Files
     public interface IFileValidatorRule
     {
         Task Validate(IFormFile file, string tempFilePath);
+
+        Task Validate(string filePath);
     }
 }

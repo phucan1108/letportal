@@ -35,6 +35,11 @@ namespace LetPortal.Core.Persistences
             return Task.CompletedTask;
         }
 
+        public Task<ComparisonResult> Compare(T comparedEntity)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task DeleteAsync(string id)
         {
             var entity = _context.Set<T>().Where(a => a.Id == id).First();
@@ -55,6 +60,11 @@ namespace LetPortal.Core.Persistences
             return Task.CompletedTask;
         }
 
+        public Task ForceUpdateAsync(string id, T forceEntity)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool isRequiredDiscriminator = false)
         {
             if(expression != null)
@@ -69,10 +79,14 @@ namespace LetPortal.Core.Persistences
             }
         }
 
-        public Task<IEnumerable<T>> GetAllByIdsAsync(List<string> ids)
+        public Task<IEnumerable<T>> GetAllByIdsAsync(IEnumerable<string> ids)
         {
-            var entities = _context.Set<T>().Where(a => ids.Contains(a.Id));
-            return Task.FromResult(entities.AsEnumerable());
+            if(ids != null || ids.Any())
+            {
+                var entities = _context.Set<T>().Where(a => ids.Contains(a.Id));
+                return Task.FromResult(entities.AsEnumerable());
+            }
+            return null;
         }
 
         public IQueryable<T> GetAsQueryable()

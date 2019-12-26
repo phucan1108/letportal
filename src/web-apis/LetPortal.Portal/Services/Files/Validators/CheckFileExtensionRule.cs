@@ -21,11 +21,25 @@ namespace LetPortal.Portal.Services.Files.Validators
 
         public Task Validate(IFormFile file, string tempFilePath)
         {
+            CheckFileExt(Path.GetFileName(file.FileName), tempFilePath);
+
+            return Task.CompletedTask;
+        }
+
+        public Task Validate(string filePath)
+        {
+            CheckFileExt(Path.GetFileName(filePath), filePath);
+
+            return Task.CompletedTask;
+        }
+
+        private void CheckFileExt(string fileName, string filePath)
+        {
             if(_fileValidatorOptions.CurrentValue.CheckFileExtension)
-            {    
+            {
                 // Read 32 bytes for checking signature
                 string firstBytes = string.Empty;
-                using(var fileStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                using(var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     using(var reader = new BinaryReader(fileStream))
                     {
@@ -36,7 +50,7 @@ namespace LetPortal.Portal.Services.Files.Validators
                     }
                 }
                 // Get correct magic number by ext
-                var ext = file.FileName.Split(".")[1];
+                var ext = fileName.Split(".")[1];
                 var magicNumbers = _fileValidatorOptions
                                     .CurrentValue
                                     .ExtensionMagicNumbers
@@ -49,8 +63,6 @@ namespace LetPortal.Portal.Services.Files.Validators
                     throw new FileException(FileErrorCodes.WrongFileExtension);
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

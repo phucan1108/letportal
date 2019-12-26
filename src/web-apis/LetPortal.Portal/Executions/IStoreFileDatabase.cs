@@ -11,6 +11,8 @@ namespace LetPortal.Portal.Executions
 
         Task<StoredFile> StoreFileAsync(IFormFile file, string tempFilePath, DatabaseOptions databaseOptions);
 
+        Task<StoredFile> StoreFileAsync(string localFilePath, DatabaseOptions databaseOptions);
+
         Task<byte[]> GetFileAsync(StoredFile storedFile, DatabaseOptions databaseOptions);
     }
 }

@@ -107,6 +107,48 @@ namespace LetPortal.Portal.Services.Files
             };
         }
 
+        public async Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader)
+        {
+            // 1. Check all rules
+            foreach(var rule in _fileValidatorRules)
+            {
+                await rule.Validate(localFilePath);
+            }
+
+            // 2. Call Media Connector to upload
+            var storedFile = await 
+                _fileConnectorExecutions
+                    .First(a => a.FileStorageType == _fileOptions.CurrentValue.FileStorageType)
+                    .StoreFileAsync(localFilePath);
+
+            // 3. Store its into database
+            var createdId = DataUtil.GenerateUniqueId();
+            var file = new FileInfo(localFilePath);
+            var createFile = new Entities.Files.File
+            {
+                Id = createdId,
+                Name = file.Name,
+                DateUploaded = DateTime.UtcNow,
+                Uploader = uploader,
+                MIMEType = await GetFileMIMEType(localFilePath),
+                FileSize = file.Length,
+                FileStorageType = _fileOptions.CurrentValue.FileStorageType,
+                IdentifierOptions = storedFile.FileIdentifierOptions,
+                DownloadableUrl = storedFile.UseServerHost
+                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId
+                        : storedFile.DownloadableUrl
+            };
+
+            await _fileRepository.AddAsync(createFile);
+
+            System.IO.File.Delete(localFilePath);
+            return new ResponseUploadFile
+            {
+                FileId = createFile.Id,
+                DownloadableUrl = createFile.DownloadableUrl
+            };
+        }
+
         private async Task<string> SaveFormFileAsync(IFormFile file)
         {
             var tempFileName = Path.GetRandomFileName();

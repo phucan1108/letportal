@@ -41,6 +41,16 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
         public async Task<StoredFile> StoreFileAsync(IFormFile file, string tempFilePath, DatabaseOptions databaseOptions)
         {
+            return await StoreFilePostgreSQL(file.FileName, tempFilePath, databaseOptions);
+        }
+
+        public async Task<StoredFile> StoreFileAsync(string localFilePath, DatabaseOptions databaseOptions)
+        {
+            return await StoreFilePostgreSQL(Path.GetFileName(localFilePath), localFilePath, databaseOptions);
+        }
+
+        private async Task<StoredFile> StoreFilePostgreSQL(string fileName, string localFilePath, DatabaseOptions databaseOptions)
+        {
             using(var postgreDbConnection = new NpgsqlConnection(databaseOptions.ConnectionString))
             {
                 postgreDbConnection.Open();
@@ -52,7 +62,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                     // Open the file for reading and writing
                     using(var stream = manager.OpenReadWrite(oid))
                     {
-                        using(var fileStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                        using(var fileStream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
                         {
                             await fileStream.CopyToAsync(stream);
                         }

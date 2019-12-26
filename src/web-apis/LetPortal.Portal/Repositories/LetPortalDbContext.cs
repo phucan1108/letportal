@@ -9,6 +9,7 @@ using LetPortal.Portal.Entities.EntitySchemas;
 using LetPortal.Portal.Entities.Files;
 using LetPortal.Portal.Entities.Menus;
 using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Entities.Recoveries;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.SectionParts.Controls;
 using LetPortal.Portal.Entities.Versions;
@@ -49,6 +50,8 @@ namespace LetPortal.Portal.Repositories
         public DbSet<File> Files { get; set; }
 
         public DbSet<PortalVersion> PortalVersions { get; set; }
+
+        public DbSet<Backup> Backups { get; set; }
 
         private readonly DatabaseOptions _options;
 
@@ -192,6 +195,13 @@ namespace LetPortal.Portal.Repositories
 
             var fileBuilder = modelBuilder.Entity<File>();
             fileBuilder.HasKey(a => a.Id);
+
+            var backupBuilder = modelBuilder.Entity<Backup>();
+            backupBuilder.HasKey(a => a.Id);
+            var jsonBackupElementsConverter = new ValueConverter<BackupElements, string>(
+                v => ConvertUtil.SerializeObject(v, true),
+                v => ConvertUtil.DeserializeObject<BackupElements>(v));
+            backupBuilder.Property(a => a.BackupElements).HasConversion(jsonBackupElementsConverter);
 
             foreach(var entity in modelBuilder.Model.GetEntityTypes())
             {

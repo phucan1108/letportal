@@ -55,5 +55,17 @@ namespace LetPortal.Portal.Services.Files
             var foundStoreFileDatabase = _storeFileDatabases.First(a => a.ConnectionType == databaseOptions.ConnectionType);
             return await foundStoreFileDatabase.StoreFileAsync(file, tempFilePath, databaseOptions);
         }
+
+        public async Task<StoredFile> StoreFileAsync(string localFilePath)
+        {
+            var databaseOptions = _databaseOptions.CurrentValue;
+            if(!_databaseStorageOptions.CurrentValue.SameAsPortal)
+            {
+                databaseOptions = _databaseStorageOptions.CurrentValue.DatabaseOptions;
+            }
+
+            var foundStoreFileDatabase = _storeFileDatabases.First(a => a.ConnectionType == databaseOptions.ConnectionType);
+            return await foundStoreFileDatabase.StoreFileAsync(localFilePath, databaseOptions);
+        }
     }
 }

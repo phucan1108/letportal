@@ -7,7 +7,7 @@ namespace LetPortal.Core.Utils
 {
     public class CryptoUtil
     {
-        private const string EncryptKey = "FIU.Social";
+        private const string EncryptKey = "LetPortal";
 
         public static string EncryptString(string text, string keyString = EncryptKey)
         {

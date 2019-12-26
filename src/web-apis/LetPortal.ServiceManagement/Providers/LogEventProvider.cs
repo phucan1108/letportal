@@ -56,6 +56,9 @@ namespace LetPortal.ServiceManagement.Providers
             {
                 foreach(var trace in allTraceLogs)
                 {
+                    // Note: because of performance when we are using RDBMS to log
+                    // So we only support MongoDB for main centralized log by now
+                    // We will have a plan for other DBs in future 
                     switch(_options.CurrentValue.Database.ConnectionType)
                     {
                         case Core.Persistences.ConnectionType.MongoDB:

@@ -594,5 +594,76 @@ namespace LetPortal.Tests.ITs.Portal.Services
             Assert.NotNull(response.FileBytes);
         }
         #endregion
+
+        #region UTs for Local Disk
+        [Fact]
+        public async Task Upload_File_And_Save_Local_Disk_Test()
+        {
+            if(!_context.AllowMySQL)
+            {
+                Assert.True(true);
+                return;
+            }
+
+            // 1. Arrange
+            var mockFile = new Mock<IFormFile>();
+            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            var memoryStream = new MemoryStream();
+            await sourceImg.CopyToAsync(memoryStream);
+            sourceImg.Close();
+            memoryStream.Position = 0;
+            var fileName = "connect-iot-to-internet.jpg";
+            mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
+            mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
+            mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
+            mockFile
+                .Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
+                .Verifiable();
+
+            var diskOptions = new DiskStorageOptions
+            {
+                AllowDayFolder = true,
+                IsStoredInTempFolder = false,
+                Path = "~"
+            };
+
+            var databaseOptions = new Core.Persistences.DatabaseOptions
+            {
+                ConnectionString = _context.MySqlDatabaseConnection.ConnectionString,
+                ConnectionType = Core.Persistences.ConnectionType.MySQL,
+                Datasource = _context.MySqlDatabaseConnection.DataSource
+            };
+
+            var localFileOptions = FileOptions;
+            localFileOptions.DiskStorageOptions = diskOptions;
+            localFileOptions.FileStorageType = FileStorageType.Disk;
+
+            var fileRepository = new FileEFRepository(_context.GetMySQLContext());
+            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == localFileOptions);
+            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == localFileOptions.ValidatorOptions);       
+            var diskStorageOptionsMock = Mock.Of<IOptionsMonitor<DiskStorageOptions>>(_ => _.CurrentValue == diskOptions);
+            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+
+            var diskStorage = new DiskFileConnectorExecution(diskStorageOptionsMock);
+
+            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            {
+               diskStorage
+            }, new List<IFileValidatorRule>
+            {
+               checkFileExtensionRule,
+               checkFileSizeRule
+            }, fileRepository);
+
+            // Act
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            memoryStream.Close();
+
+            // 3. Assert
+            Assert.True(!string.IsNullOrEmpty(result.FileId));
+        }           
+        #endregion
     }
 }

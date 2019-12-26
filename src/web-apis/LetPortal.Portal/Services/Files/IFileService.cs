@@ -13,6 +13,8 @@ namespace LetPortal.Portal.Services.Files
 
         Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader);
 
+        Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader);
+
         Task<ResponseDownloadFile> DownloadFileAsync(string fileId);
     }
 }

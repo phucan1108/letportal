@@ -23,11 +23,21 @@ namespace LetPortal.Portal.Executions.Mongo
 
         public async Task<StoredFile> StoreFileAsync(IFormFile file, string tempFilePath, DatabaseOptions databaseOptions)
         {
+            return await StoreInMongo(file.FileName, tempFilePath, databaseOptions);
+        }
+
+        public async Task<StoredFile> StoreFileAsync(string localFilePath, DatabaseOptions databaseOptions)
+        {
+            return await StoreInMongo(Path.GetFileName(localFilePath), localFilePath, databaseOptions);
+        }
+
+        private async Task<StoredFile> StoreInMongo(string fileName, string localFilePath, DatabaseOptions databaseOptions)
+        {
             var bucket = GetMongoBucket(databaseOptions);
             ObjectId fileId = ObjectId.Empty;
-            using(var fileStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+            using(var fileStream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
             {
-                fileId = await bucket.UploadFromStreamAsync(file.FileName, fileStream);
+                fileId = await bucket.UploadFromStreamAsync(fileName, fileStream);
             }
             return new StoredFile
             {

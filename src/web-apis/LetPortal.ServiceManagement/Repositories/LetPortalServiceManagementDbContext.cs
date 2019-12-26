@@ -50,9 +50,9 @@ namespace LetPortal.ServiceManagement.Repositories
             var logEventBuilder = modelBuilder.Entity<LogEvent>();
             logEventBuilder.HasKey(a => a.Id);
 
-            var jsonStackTracesConverter = new ValueConverter<List<string>, string>(
+            var jsonStackTracesConverter = new ValueConverter<IEnumerable<string>, string>(
                 v => ConvertUtil.SerializeObject(v, true),
-                v => ConvertUtil.DeserializeObject<List<string>>(v));
+                v => ConvertUtil.DeserializeObject<IEnumerable<string>>(v));
             logEventBuilder.Property(a => a.StackTrace).HasConversion(jsonStackTracesConverter);
 
             var monitorCounterBuilder = modelBuilder.Entity<MonitorCounter>();
