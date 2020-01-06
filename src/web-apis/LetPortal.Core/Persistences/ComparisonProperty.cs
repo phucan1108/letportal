@@ -14,7 +14,8 @@
     public enum ComparedState
     {
         New,
-        Change,
-        Delete
+        Unchanged,
+        Changed,
+        Deleted
     }
 }

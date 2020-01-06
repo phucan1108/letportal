@@ -12,5 +12,7 @@ namespace LetPortal.Portal.Providers.Components
         Task<IEnumerable<DynamicList>> GetDynamicListsByIds(IEnumerable<string> ids);
 
         Task<IEnumerable<ComparisonResult>> CompareDynamicLists(IEnumerable<DynamicList> dynamicLists);
+
+        Task ForceUpdateDynamicLists(IEnumerable<DynamicList> dynamicLists);
     }
 }

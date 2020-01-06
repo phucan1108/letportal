@@ -25,6 +25,14 @@ namespace LetPortal.Portal.Providers.Apps
             return results;
         }
 
+        public async Task ForceUpdateApps(IEnumerable<App> apps)
+        {
+            foreach(var app in apps)
+            {
+                await _appRepository.ForceUpdateAsync(app.Id, app);
+            }
+        }
+
         public async Task<IEnumerable<App>> GetAppsByIds(IEnumerable<string> ids)
         {
             return await _appRepository.GetAllByIdsAsync(ids);

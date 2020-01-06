@@ -1,13 +1,28 @@
-﻿using LetPortal.Portal.Models.Recoveries;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using LetPortal.Portal.Exceptions.Recoveries;
+using LetPortal.Portal.Models.Recoveries;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Recoveries
 {
     public interface IBackupService
     {
-        Task<BackupResponseModel> CreateBackupFile(BackupRequestModel model);   
+        /// <summary>
+        /// Unzip a package and then restore a backup point
+        /// </summary>
+        /// <param name="uploadFile"></param>
+        /// <returns></returns>
+        Task<RestoreBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader);
+
+        /// <summary>
+        /// Create a json file and store it into FileService
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task<BackupResponseModel> CreateBackupFile(BackupRequestModel model);
+
+        Task<PreviewRestoreModel> PreviewBackup(string backupId);
+
+        Task RestoreBackupPoint(string backupId);
     }
 }

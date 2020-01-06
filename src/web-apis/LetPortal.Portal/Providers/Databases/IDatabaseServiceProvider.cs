@@ -21,5 +21,7 @@ namespace LetPortal.Portal.Providers.Databases
             IEnumerable<ExecuteParamModel> parameters);
 
         Task<ExecuteDynamicResultModel> ExecuteDatabase(string databaseId, string formattedCommand, IEnumerable<ExecuteParamModel> parameters);
+
+        Task ForceUpdateDatabases(IEnumerable<DatabaseConnection> databases);
     }
 }

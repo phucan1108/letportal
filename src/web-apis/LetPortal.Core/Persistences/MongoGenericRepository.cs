@@ -168,25 +168,37 @@ namespace LetPortal.Core.Persistences
                         // In case the same string length, compare each char
                         if(resultProperty.SourceValue.Length == resultProperty.TargetValue.Length)
                         {
-                            for(int i = 0; i < resultProperty.SourceValue.Length; i++)
+                            if(resultProperty.SourceValue.Length == 0)
                             {
-                                if(resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
-                                {
-                                    resultProperty.ComparedState = ComparedState.Change;
-                                    break;
-                                }                                
+                                resultProperty.ComparedState = ComparedState.Unchanged;
                             }
+                            else
+                            {
+                                for(int i = 0; i < resultProperty.SourceValue.Length; i++)
+                                {
+                                    if(resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
+                                    {
+                                        resultProperty.ComparedState = ComparedState.Changed;                                        
+                                        break;
+                                    }
+                                }
+
+                                if(resultProperty.ComparedState != ComparedState.Changed)
+                                {
+                                    resultProperty.ComparedState = ComparedState.Unchanged;
+                                }
+                            }                             
                         }
                         else
                         {
-                            resultProperty.ComparedState = ComparedState.Change;
+                            resultProperty.ComparedState = ComparedState.Changed;
                         }
 
-                        result.Result.Properties.Append(resultProperty);
+                        result.Result.Properties.Add(resultProperty);
                     }
                     else
                     {
-                        result.Result.Properties.Append(
+                        result.Result.Properties.Add(
                             new ComparisonProperty
                             {
                                 Name = jprop.Name,

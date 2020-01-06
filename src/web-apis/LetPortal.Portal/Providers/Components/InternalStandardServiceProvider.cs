@@ -25,6 +25,14 @@ namespace LetPortal.Portal.Providers.Components
             return results;
         }
 
+        public async Task ForceUpdateStandards(IEnumerable<StandardComponent> standards)
+        {
+            foreach(var standard in standards)
+            {
+                await _standardRepository.ForceUpdateAsync(standard.Id, standard);
+            }
+        }
+
         public async Task<IEnumerable<StandardComponent>> GetStandardComponentsByIds(IEnumerable<string> ids)
         {
             return await _standardRepository.GetAllByIdsAsync(ids);

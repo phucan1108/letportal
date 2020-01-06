@@ -29,7 +29,7 @@ namespace LetPortal.WebApis.Controllers
         public async Task<IActionResult> Upload(IFormFile formFile)
         {
             _logger.Info("Upload file with name = {name} size = {size}", formFile.FileName, formFile.Length);
-            var result = await _fileService.UploadFileAsync(formFile, "");
+            var result = await _fileService.UploadFileAsync(formFile, "", false);
             _logger.Info("Uploaded file: {@result}", result);
             return Ok(result);
         }
@@ -44,9 +44,9 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpGet("download/{fileId}")]
-        public async Task<IActionResult> GetFile(string fileId)
+        public async Task<IActionResult> GetFile(string fileId,[FromQuery] bool? compress)
         {
-            var response = await _fileService.DownloadFileAsync(fileId);
+            var response = await _fileService.DownloadFileAsync(fileId, compress.HasValue ? compress.Value : false);
             _logger.Info("Responsed file when downloading: {fileName} {size}", response.FileName, response.FileBytes.Length);
             return File(response.FileBytes, response.MIMEType, response.FileName);
         }

@@ -11,10 +11,14 @@ namespace LetPortal.Portal.Services.Files
 
         Task<string> GetFileMIMEType(string fileName);
 
-        Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader);
+        Task<bool> ValidateFile(IFormFile file);
 
-        Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader);
+        Task<bool> ValidateFile(string localFilePath);
 
-        Task<ResponseDownloadFile> DownloadFileAsync(string fileId);
+        Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader, bool allowCompress);
+
+        Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader, bool allowCompress);
+
+        Task<ResponseDownloadFile> DownloadFileAsync(string fileId, bool wantCompress);
     }
 }

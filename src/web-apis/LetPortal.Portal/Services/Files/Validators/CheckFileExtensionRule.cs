@@ -37,31 +37,44 @@ namespace LetPortal.Portal.Services.Files.Validators
         {
             if(_fileValidatorOptions.CurrentValue.CheckFileExtension)
             {
-                // Read 32 bytes for checking signature
-                string firstBytes = string.Empty;
-                using(var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    using(var reader = new BinaryReader(fileStream))
+                bool isValid = false;
+                var extFile = fileName.Split(".")[1].ToLower();
+                if(_fileValidatorOptions.CurrentValue.ExtensionMagicNumbers.ContainsKey(extFile))
+                {       
+                    // Get correct magic number by ext
+                    var magicNumbers = _fileValidatorOptions
+                                        .CurrentValue
+                                        .ExtensionMagicNumbers
+                                        .First(a => a.Key == extFile)
+                                        .Value;
+                    if(!string.IsNullOrEmpty(magicNumbers))
                     {
-                        reader.BaseStream.Position = 0;
-                        byte[] data = reader.ReadBytes(32);
-                        firstBytes = BitConverter.ToString(data);
-                        reader.Close();
+                        // Read 32 bytes for checking signature
+                        string firstBytes = string.Empty;
+                        using(var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                        {
+                            using(var reader = new BinaryReader(fileStream))
+                            {
+                                reader.BaseStream.Position = 0;
+                                byte[] data = reader.ReadBytes(32);
+                                firstBytes = BitConverter.ToString(data);
+                                reader.Close();
+                            }
+                        }
+
+                        //  Validate extension
+                        isValid = firstBytes.IndexOf(magicNumbers) == 0;
+                    }
+                    else
+                    {
+                        isValid = true;
                     }
                 }
-                // Get correct magic number by ext
-                var ext = fileName.Split(".")[1];
-                var magicNumbers = _fileValidatorOptions
-                                    .CurrentValue
-                                    .ExtensionMagicNumbers
-                                    .First(a => a.Key == ext.ToLower())
-                                    .Value;
 
-                //  Validate extension
-                if(firstBytes.IndexOf(magicNumbers) != 0)
+                if(!isValid)
                 {
                     throw new FileException(FileErrorCodes.WrongFileExtension);
-                }
+                }                 
             }
         }
     }

@@ -4,7 +4,7 @@ namespace LetPortal.Core.Persistences
 {
     public class ComparisonEntity
     {
-        public IEnumerable<ComparisonProperty> Properties { get; set; }
+        public IList<ComparisonProperty> Properties { get; set; }
     }
 
     public class ComparisonResult

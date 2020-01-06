@@ -25,6 +25,14 @@ namespace LetPortal.Portal.Providers.Components
             return results;
         }
 
+        public async Task ForceUpdateCharts(IEnumerable<Chart> charts)
+        {
+            foreach(var chart in charts)
+            {
+                await _chartRepository.ForceUpdateAsync(chart.Id, chart);
+            }
+        }
+
         public async Task<IEnumerable<Chart>> GetChartsByIds(IEnumerable<string> ids)
         {
             return await _chartRepository.GetAllByIdsAsync(ids);

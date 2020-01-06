@@ -195,6 +195,10 @@ namespace LetPortal.Portal.Repositories
 
             var fileBuilder = modelBuilder.Entity<File>();
             fileBuilder.HasKey(a => a.Id);
+            if(_options.ConnectionType == ConnectionType.MySQL)
+            {
+                fileBuilder.Property(a => a.AllowCompress).HasColumnType("BIT");
+            }
 
             var backupBuilder = modelBuilder.Entity<Backup>();
             backupBuilder.HasKey(a => a.Id);

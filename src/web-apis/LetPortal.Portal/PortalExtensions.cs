@@ -107,6 +107,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IFileConnectorExecution, DatabaseFileConnectorExecution>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileExtensionRule>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
+                builder.Services.AddTransient<IFileValidatorRule, CheckAllowedExtensionFileRule>();
 
                 builder.Services.AddTransient<IStoreFileDatabase, MySqlStoreFileDatabase>();
                 builder.Services.AddTransient<IStoreFileDatabase, SqlServerStoreFileDatabase>();

@@ -26,14 +26,12 @@ namespace LetPortal.Portal.Providers.Pages
             return results;
         }
 
-        public async Task CreateAsync(Page page)
+        public async Task ForceUpdatePages(IEnumerable<Page> pages)
         {
-            await _pageRepository.AddAsync(page);
-        }
-
-        public async Task DeleteAsync(string id)
-        {
-            await _pageRepository.DeleteAsync(id);
+            foreach(var page in pages)
+            {
+                await _pageRepository.ForceUpdateAsync(page.Id, page);
+            }
         }
 
         public async Task<List<ShortPageModel>> GetAllPages()
@@ -41,19 +39,9 @@ namespace LetPortal.Portal.Providers.Pages
             return await _pageRepository.GetAllShortPagesAsync();
         }
 
-        public async Task<Page> GetOne(string id)
-        {
-            return await _pageRepository.GetOneAsync(id);
-        }
-
         public async Task<IEnumerable<Page>> GetPagesByIds(IEnumerable<string> ids)
         {
             return await _pageRepository.GetAllByIdsAsync(ids);
-        }
-
-        public async Task UpdateAsync(string id, Page page)
-        {
-            await _pageRepository.UpdateAsync(id, page);
         }
     }
 }

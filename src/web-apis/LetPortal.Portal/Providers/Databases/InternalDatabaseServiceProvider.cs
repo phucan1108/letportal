@@ -39,6 +39,14 @@ namespace LetPortal.Portal.Providers.Databases
             return await _databaseService.ExecuteDynamic(databaseConnection, formattedCommand, parameters);
         }
 
+        public async Task ForceUpdateDatabases(IEnumerable<DatabaseConnection> databases)
+        {
+            foreach(var database in databases)
+            {
+                await _databaseRepository.ForceUpdateAsync(database.Id, database);
+            }
+        }
+
         public async Task<IEnumerable<DatabaseConnection>> GetDatabaseConnectionsByIds(IEnumerable<string> ids)
         {
             return await _databaseRepository.GetAllByIdsAsync(ids);

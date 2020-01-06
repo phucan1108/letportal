@@ -25,6 +25,14 @@ namespace LetPortal.Portal.Providers.Components
             return results;
         }
 
+        public async Task ForceUpdateDynamicLists(IEnumerable<DynamicList> dynamicLists)
+        {
+            foreach(var dynamicList in dynamicLists)
+            {
+                await _dynamicListRepository.ForceUpdateAsync(dynamicList.Id, dynamicList);
+            }
+        }
+
         public async Task<IEnumerable<DynamicList>> GetDynamicListsByIds(IEnumerable<string> ids)
         {
             return await _dynamicListRepository.GetAllByIdsAsync(ids);

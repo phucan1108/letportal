@@ -25,6 +25,8 @@ namespace LetPortal.Portal.Options.Files
         public bool CheckFileExtension { get; set; }  
 
         public Dictionary<string, string> ExtensionMagicNumbers { get; set; }
+
+        public string WhiteLists { get; set; }
     }
 
     public class DiskStorageOptions

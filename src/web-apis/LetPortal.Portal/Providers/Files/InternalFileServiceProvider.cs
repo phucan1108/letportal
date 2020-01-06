@@ -1,5 +1,6 @@
 ﻿using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Services.Files;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Providers.Files
@@ -14,11 +15,27 @@ namespace LetPortal.Portal.Providers.Files
             _fileService = fileService;
         }
 
+        public async Task<ResponseDownloadFile> DownloadFileAsync(string fileId)
+        {
+            return await _fileService.DownloadFileAsync(fileId, false);
+        }
+
         public async Task<ResponseUploadFile> UploadFileAsync(
             string localFilePath,
-            string uploader)
+            string uploader,
+            bool allowCompress)
         {
-            return await _fileService.UploadFileAsync(localFilePath, uploader);
+            return await _fileService.UploadFileAsync(localFilePath, uploader, allowCompress);
+        }
+
+        public async Task<bool> ValidateFile(IFormFile file)
+        {
+            return await _fileService.ValidateFile(file);
+        }
+
+        public async Task<bool> ValidateFile(string localFilePath)
+        {
+            return await _fileService.ValidateFile(localFilePath);
         }
     }
 }

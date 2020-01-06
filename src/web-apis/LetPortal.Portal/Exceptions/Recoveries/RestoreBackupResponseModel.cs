@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace LetPortal.Portal.Exceptions.Recoveries
+{
+    public class RestoreBackupResponseModel
+    {
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public string Creator { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+
+        public int TotalObjects { get; set; }        
+
+        public bool IsFileValid { get; set; }
+    }
+}

@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Artifacts\637136665426993102.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Artifacts\connect-iot-to-internet.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

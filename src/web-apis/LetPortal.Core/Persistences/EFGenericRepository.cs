@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,9 +36,83 @@ namespace LetPortal.Core.Persistences
             return Task.CompletedTask;
         }
 
-        public Task<ComparisonResult> Compare(T comparedEntity)
+        public async Task<ComparisonResult> Compare(T comparedEntity)
         {
-            throw new NotImplementedException();
+            var foundEntity = await GetOneAsync(comparedEntity.Id);
+            if(foundEntity != null)
+            {
+                var jObject = JObject.FromObject(foundEntity);
+                var comparedJObject = JObject.FromObject(comparedEntity);
+                var children = jObject.Children();
+                var comparedChildren = comparedJObject.Children();
+                var result = new ComparisonResult
+                {
+                    Result = new ComparisonEntity { Properties = new List<ComparisonProperty>() }
+                };
+                foreach(JProperty jprop in comparedChildren)
+                {
+                    var foundChild = children.FirstOrDefault(a => (a as JProperty).Name == jprop.Name);
+                    if(foundChild != null)
+                    {
+                        var resultProperty = new ComparisonProperty
+                        {
+                            Name = jprop.Name,
+                            SourceValue = jprop.Value?.ToString(),
+                            TargetValue = (foundChild as JProperty).Value?.ToString()
+                        };
+
+                        resultProperty.SourceValue = resultProperty.SourceValue ?? string.Empty;
+                        resultProperty.TargetValue = resultProperty.TargetValue ?? string.Empty;
+
+                        // In case the same string length, compare each char
+                        if(resultProperty.SourceValue.Length == resultProperty.TargetValue.Length)
+                        {
+                            if(resultProperty.SourceValue.Length == 0)
+                            {
+                                resultProperty.ComparedState = ComparedState.Unchanged;
+                            }
+                            else
+                            {
+                                for(int i = 0; i < resultProperty.SourceValue.Length; i++)
+                                {
+                                    if(resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
+                                    {
+                                        resultProperty.ComparedState = ComparedState.Changed;
+                                        break;
+                                    }
+                                }
+
+                                if(resultProperty.ComparedState != ComparedState.Changed)
+                                {
+                                    resultProperty.ComparedState = ComparedState.Unchanged;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            resultProperty.ComparedState = ComparedState.Changed;
+                        }
+
+                        result.Result.Properties.Add(resultProperty);
+                    }
+                    else
+                    {
+                        result.Result.Properties.Add(
+                            new ComparisonProperty
+                            {
+                                Name = jprop.Name,
+                                SourceValue = jprop.Value?.ToString(),
+                                ComparedState = ComparedState.New
+                            });
+                    }
+                }
+
+                return result;
+            }
+            else
+            {
+                return new ComparisonResult { IsTotallyNew = true };
+            }
         }
 
         public Task DeleteAsync(string id)
@@ -62,7 +137,14 @@ namespace LetPortal.Core.Persistences
 
         public Task ForceUpdateAsync(string id, T forceEntity)
         {
-            throw new NotImplementedException();
+            var dbSet = _context.Set<T>();
+            var deletedEntity = dbSet.First(a => a.Id == id);
+            dbSet.Remove(deletedEntity);
+            _context.SaveChanges();
+            dbSet.Add(forceEntity);
+            _context.SaveChanges();
+
+            return Task.CompletedTask;
         }
 
         public Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool isRequiredDiscriminator = false)

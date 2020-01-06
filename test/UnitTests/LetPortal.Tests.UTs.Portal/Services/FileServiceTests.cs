@@ -97,7 +97,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
             }, mockFileRepository.Object);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
 
             // 3. Assert

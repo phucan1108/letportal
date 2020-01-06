@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -112,6 +113,49 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             // Assert
             Assert.True(true);
+        }
+
+        [Fact]
+        public async Task Compare_App_In_Mongo_Test()
+        {
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
+            // Arrange
+            var databaseOptions = new DatabaseOptions
+            {
+                ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
+                ConnectionType = ConnectionType.MongoDB,
+                Datasource = _context.MongoDatabaseConenction.DataSource
+            };
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+
+            var appMongoRepository = new AppMongoRepository(new Core.Persistences.MongoConnection(databaseOptionsMock.CurrentValue));
+            // Act
+            var app = new App
+            {
+                Id = DataUtil.GenerateUniqueId(),
+                Name = "testapp123456",
+                DisplayName = "Test App"
+            };
+            await appMongoRepository.AddAsync(app);
+
+            var menus = new List<Menu>
+            {
+                new Menu
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DisplayName = "Core"
+                }
+            };
+
+            app.Menus = menus;
+            var result = await appMongoRepository.Compare(app);
+
+            // Assert
+            Assert.True(result.Result.Properties.First(a => a.Name == "Menus").ComparedState == ComparedState.Changed);
         }
     }
 }

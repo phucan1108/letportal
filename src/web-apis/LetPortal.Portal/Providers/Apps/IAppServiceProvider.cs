@@ -10,5 +10,7 @@ namespace LetPortal.Portal.Providers.Apps
         Task<IEnumerable<App>> GetAppsByIds(IEnumerable<string> ids);
 
         Task<IEnumerable<ComparisonResult>> CompareEntities(IEnumerable<App> apps);
+
+        Task ForceUpdateApps(IEnumerable<App> apps);
     }
 }

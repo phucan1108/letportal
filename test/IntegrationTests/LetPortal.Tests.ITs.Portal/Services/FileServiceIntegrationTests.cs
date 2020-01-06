@@ -32,6 +32,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 CheckFileExtension = true,
                 MaximumFileSize = 16777216,
+                WhiteLists = "jpg;jpeg;png;zip;json",
                 ExtensionMagicNumbers = new Dictionary<string, string>
                     {
                         { "jpg", "FF-D8" }
@@ -109,7 +110,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
 
             // 3. Assert
@@ -176,9 +177,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close(); 
-            var response = await fileService.DownloadFileAsync(result.FileId);
+            var response = await fileService.DownloadFileAsync(result.FileId, false);
             // 3. Assert
 
             // 3. Assert
@@ -246,7 +247,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
 
             // 3. Assert
@@ -312,9 +313,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-            var response = await fileService.DownloadFileAsync(result.FileId);
+            var response = await fileService.DownloadFileAsync(result.FileId, false);
             // 3. Assert
 
             // 3. Assert
@@ -382,7 +383,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
 
             // 3. Assert
@@ -448,9 +449,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-            var response = await fileService.DownloadFileAsync(result.FileId);
+            var response = await fileService.DownloadFileAsync(result.FileId, false);
             // 3. Assert
 
             // 3. Assert
@@ -519,7 +520,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
 
             // 3. Assert
@@ -585,9 +586,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", true);
             memoryStream.Close();
-            var response = await fileService.DownloadFileAsync(result.FileId);
+            var response = await fileService.DownloadFileAsync(result.FileId, true);
             // 3. Assert
 
             // 3. Assert
@@ -658,7 +659,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester");
+            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
 
             // 3. Assert

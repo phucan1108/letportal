@@ -1,10 +1,11 @@
-﻿ using LetPortal.Core.Utils;
+﻿using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Recoveries;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Exceptions.Recoveries;
 using LetPortal.Portal.Models.Recoveries;
 using LetPortal.Portal.Options.Recoveries;
 using LetPortal.Portal.Providers.Apps;
@@ -13,6 +14,7 @@ using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.Files;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories.Recoveries;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,13 @@ namespace LetPortal.Portal.Services.Recoveries
 {
     public class BackupService : IBackupService
     {
+        private const string APP_FILE = "apps.json";
+        private const string CHART_FILE = "charts.json";
+        private const string DATABASE_FILE = "databases.json";
+        private const string STANDARD_FILE = "standards.json";
+        private const string DYNAMICLIST_FILE = "dynamiclists.json";
+        private const string PAGE_FILE = "pages.json";
+
         private readonly IAppServiceProvider _appServiceProvider;
 
         private readonly IStandardServiceProvider _standardServiceProvider;
@@ -68,6 +77,21 @@ namespace LetPortal.Portal.Services.Recoveries
 
         public async Task<BackupResponseModel> CreateBackupFile(BackupRequestModel model)
         {
+            Directory.CreateDirectory(_backupOptions.CurrentValue.BackupFolderPath);
+            // Ensure a total number of objects less than MaximumObjects
+            var appCount = model.Apps != null ? model.Apps.Count() : 0;
+            var standardCount = model.Standards != null ? model.Standards.Count() : 0;
+            var chartCount = model.Charts != null ? model.Charts.Count() : 0;
+            var dynamicCount = model.DynamicLists != null ? model.DynamicLists.Count() : 0;
+            var databaseCount = model.Databases != null ? model.Databases.Count() : 0;
+            var pageCount = model.Pages != null ? model.Pages.Count() : 0;
+
+            var totalBackupCount = appCount + standardCount + chartCount + dynamicCount + databaseCount + pageCount;
+
+            if(totalBackupCount > _backupOptions.CurrentValue.MaximumObjects)
+            {
+                throw new BackupException(BackupErrorCodes.ReachMaximumBackupObjects);
+            }
             Task<IEnumerable<App>> collectApp = _appServiceProvider.GetAppsByIds(model.Apps);
             Task<IEnumerable<StandardComponent>> collectStandards = _standardServiceProvider.GetStandardComponentsByIds(model.Standards);
             Task<IEnumerable<Chart>> collectCharts = _chartServiceProvider.GetChartsByIds(model.Charts);
@@ -79,47 +103,17 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var backupFileModel = new BackupFlatternFileModel
             {
+                TotalObjects = totalBackupCount,
+                ChainingFiles = new List<string>()
+            };
+
+            var backup = new Backup
+            {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = model.Name,
                 Description = model.Description,
                 CreatedDate = DateTime.UtcNow,
-                Apps = collectApp.Result?.ToList(),
-                Charts = collectCharts.Result?.ToList(),
                 Creator = model.Creator,
-                Databases = collectDatabases.Result?.ToList(),
-                DynamicLists = collectDynamicLists.Result?.ToList(),
-                Pages = collectPages.Result?.ToList(),
-                StandardComponents = collectStandards.Result?.ToList()
-            };
-
-            var jsonFlattern = ConvertUtil.SerializeObject(backupFileModel, true);
-            var compressString = StringUtil.CompressionString(jsonFlattern);
-
-            // Write to file
-            var fileName = DateTime.UtcNow.Ticks.ToString();
-            var folderPath = !string.IsNullOrEmpty(_backupOptions.CurrentValue.FolderPath) ? _backupOptions.CurrentValue.FolderPath : Environment.CurrentDirectory;
-            var fileNameTxt = fileName + ".txt";
-            var fileNameZip = fileName + ".zip";
-            folderPath = Path.Combine(folderPath, fileName);
-            Directory.CreateDirectory(folderPath);
-            using(StreamWriter sw = new StreamWriter(Path.Combine(folderPath, fileNameTxt)))
-            {
-                sw.Write(compressString);
-            }
-
-            // Compress to zip with encrypt password
-            ZipFile.CreateFromDirectory(folderPath, fileNameZip);
-
-            // Store it into file server
-            var uploadResponse = await _fileSeviceProvider.UploadFileAsync(Path.Combine(folderPath, fileNameZip), model.Creator);
-
-            await _backupRepository.AddAsync(new Backup
-            {
-                Id = backupFileModel.Id,
-                Name= backupFileModel.Name,
-                Description = backupFileModel.Description,
-                CreatedDate = backupFileModel.CreatedDate,
-                Creator = backupFileModel.Creator,
                 BackupElements = new BackupElements
                 {
                     Apps = model.Apps,
@@ -128,37 +122,328 @@ namespace LetPortal.Portal.Services.Recoveries
                     DynamicLists = model.DynamicLists,
                     Pages = model.Pages,
                     Standards = model.Standards
-                },
-                FileId = uploadResponse.FileId,
-                DownloadableUrl = uploadResponse.DownloadableUrl
-            });
+                }
+            };
+            backupFileModel.Backup = backup;
 
+            // Write to file
+            var fileName = DateTime.UtcNow.Ticks.ToString();
+            var jsonFilePath = !string.IsNullOrEmpty(_backupOptions.CurrentValue.BackupFolderPath) ? _backupOptions.CurrentValue.BackupFolderPath : Environment.CurrentDirectory;
+            var jsonFileName = fileName + ".json";
+            jsonFilePath = Path.Combine(jsonFilePath, fileName);
+            Directory.CreateDirectory(jsonFilePath);
+
+            if(collectApp.Result != null)
+            {
+                var jsonApps = ConvertUtil.SerializeObject(collectApp.Result, true);
+                using(StreamWriter sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, APP_FILE)))
+                {
+                    sw.Write(jsonApps);
+                }
+
+                backupFileModel.ChainingFiles.Add(APP_FILE);
+            }
+
+            if(collectStandards.Result != null)
+            {
+                var jsonStandards = ConvertUtil.SerializeObject(collectStandards.Result, true);
+                using(StreamWriter sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, STANDARD_FILE)))
+                {
+                    sw.Write(jsonStandards);
+                }
+                backupFileModel.ChainingFiles.Add(STANDARD_FILE);
+            }
+
+            if(collectDynamicLists.Result != null)
+            {
+                var jsonDynamicLists = ConvertUtil.SerializeObject(collectDynamicLists.Result, true);
+                using(StreamWriter sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, DYNAMICLIST_FILE)))
+                {
+                    sw.Write(jsonDynamicLists);
+                }
+                backupFileModel.ChainingFiles.Add(DYNAMICLIST_FILE);
+            }
+
+            if(collectDatabases.Result != null)
+            {
+                var jsonDatabases = ConvertUtil.SerializeObject(collectDatabases.Result, true);
+                using(StreamWriter sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, DATABASE_FILE)))
+                {
+                    sw.Write(jsonDatabases);
+                }
+                backupFileModel.ChainingFiles.Add(DATABASE_FILE);
+            }
+
+            if(collectCharts.Result != null)
+            {
+                var jsonCharts = ConvertUtil.SerializeObject(collectCharts.Result, true);
+                using(StreamWriter sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, CHART_FILE)))
+                {
+                    sw.Write(jsonCharts);
+                }
+                backupFileModel.ChainingFiles.Add(CHART_FILE);
+            }
+
+            if(collectPages.Result != null)
+            {
+                var jsonPages = ConvertUtil.SerializeObject(collectPages.Result, true);
+                using(StreamWriter sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, PAGE_FILE)))
+                {
+                    sw.Write(jsonPages);
+                }
+                backupFileModel.ChainingFiles.Add(PAGE_FILE);
+            }
+
+            var jsonFlattern = ConvertUtil.SerializeObject(backupFileModel, true);
+
+            using(StreamWriter sw = new StreamWriter(Path.Combine(jsonFilePath, jsonFileName)))
+            {
+                sw.Write(jsonFlattern);
+            }
+
+            ZipFile.CreateFromDirectory(jsonFilePath, fileName + ".zip");
+
+            // Store zip file into file server, allow to create zip file when downloading
+            var uploadResponse = await _fileSeviceProvider
+                .UploadFileAsync(
+                    Path.Combine(jsonFilePath, fileName + ".zip"),
+                    model.Creator,
+                    true);
+
+            backup.FileId = uploadResponse.FileId;
+            backup.DownloadableUrl = uploadResponse.DownloadableUrl;
+            await _backupRepository.AddAsync(backup);
             return new BackupResponseModel { DownloadableUrl = uploadResponse.DownloadableUrl };
+        }
+
+        public async Task<RestoreBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader)
+        {
+            var isFileValid = await _fileSeviceProvider.ValidateFile(uploadFile);
+            if(isFileValid)
+            {
+                Directory.CreateDirectory(_backupOptions.CurrentValue.RestoreFolderPath);
+                var tempFilePath = await SaveFormFileAsync(uploadFile, _backupOptions.CurrentValue.RestoreFolderPath);
+                var unzipFileName = Path.GetFileNameWithoutExtension(tempFilePath);
+                var unzipFolderPath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, Path.GetFileNameWithoutExtension(tempFilePath));
+                if(Directory.Exists(unzipFolderPath))
+                {
+                    // Delete old directory
+                    Directory.Delete(unzipFolderPath, true);
+                }
+
+                Directory.CreateDirectory(unzipFolderPath);
+                ZipFile.ExtractToDirectory(tempFilePath, unzipFolderPath);
+                var jsonFilePath = Path.Combine(unzipFolderPath, unzipFileName + ".json");
+                var jsonFound = File.ReadAllText(jsonFilePath);
+
+                var backupFlatternModel = ConvertUtil.DeserializeObject<BackupFlatternFileModel>(jsonFound);
+                // Save zip file into file service
+                var storedFile = await _fileSeviceProvider.UploadFileAsync(tempFilePath, uploader, true);
+
+                // Restore backup 
+                var backup = backupFlatternModel.Backup;
+                backup.Id = DataUtil.GenerateUniqueId();
+                backup.FileId = storedFile.FileId;
+                backup.DownloadableUrl = storedFile.DownloadableUrl;
+                await _backupRepository.AddAsync(backup);
+
+                return new RestoreBackupResponseModel
+                {
+                    Id = backup.Id,
+                    Name = backup.Name,
+                    Description = backup.Description,
+                    Creator = backup.Creator,
+                    CreatedDate = backup.CreatedDate,
+                    TotalObjects = backupFlatternModel.TotalObjects,
+                    IsFileValid = true
+                };
+            }
+            else
+            {
+                return new RestoreBackupResponseModel { IsFileValid = false };
+            }
+        }
+         
+        public async Task<PreviewRestoreModel> PreviewBackup(string backupId)
+        {
+            var previewModel = new PreviewRestoreModel();
+            var backup = await _backupRepository.GetOneAsync(backupId);
+
+            var zipFile = await _fileSeviceProvider.DownloadFileAsync(backup.FileId);
+
+            var fileNameWithoutExt = zipFile.FileName.Split(".")[0];
+            var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
+            using(var fileStream = File.Create(restoreFilePath))
+            {
+                fileStream.Write(zipFile.FileBytes, 0, zipFile.FileBytes.Length);
+            }
+
+            // Release file in memory
+            zipFile.FileBytes = null;
+            var folderExtractingPath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, fileNameWithoutExt);
+            if(Directory.Exists(folderExtractingPath))
+            {
+                Directory.Delete(folderExtractingPath, true);
+            }
+            ZipFile.ExtractToDirectory(restoreFilePath, folderExtractingPath);
+                        
+            var jsonBackupFilePath = Path.Combine(folderExtractingPath, fileNameWithoutExt + ".json");
+
+            var jsonBackupString = File.ReadAllText(jsonBackupFilePath);
+            var backupFlatternModel = ConvertUtil.DeserializeObject<BackupFlatternFileModel>(jsonBackupString);
+
+            foreach(var chainingFile in backupFlatternModel.ChainingFiles)
+            {
+                switch(chainingFile)
+                {
+                    case APP_FILE:
+                        var appFilePath = Path.Combine(folderExtractingPath, APP_FILE);
+                        var appsListString = File.ReadAllText(appFilePath);
+                        var appsList = ConvertUtil.DeserializeObject<IEnumerable<App>>(appsListString);
+                        previewModel.Apps = await _appServiceProvider.CompareEntities(appsList);
+                        break;
+                    case STANDARD_FILE:
+                        var standardFilePath = Path.Combine(folderExtractingPath, STANDARD_FILE);
+                        var standardsString = File.ReadAllText(standardFilePath);
+                        var standarsList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(standardsString);
+                        previewModel.Standards = await _standardServiceProvider.CompareStandardComponent(standarsList);
+                        break;
+                    case CHART_FILE:
+                        var chartFilePath = Path.Combine(folderExtractingPath, CHART_FILE);
+                        var chartsString = File.ReadAllText(chartFilePath);
+                        var chartsList = ConvertUtil.DeserializeObject<IEnumerable<Chart>>(chartsString);
+                        previewModel.Charts = await _chartServiceProvider.CompareCharts(chartsList);
+                        break;
+                    case DATABASE_FILE:
+                        var databaseFilePath = Path.Combine(folderExtractingPath, DATABASE_FILE);
+                        var databasesString = File.ReadAllText(databaseFilePath);
+                        var databasesList = ConvertUtil.DeserializeObject<IEnumerable<DatabaseConnection>>(databasesString);
+                        previewModel.Databases = await _databaseServiceProvider.CompareDatabases(databasesList);
+                        break;
+                    case PAGE_FILE:
+                        var pageFilePath = Path.Combine(folderExtractingPath, PAGE_FILE);
+                        var pagesString = File.ReadAllText(pageFilePath);
+                        var pagesList = ConvertUtil.DeserializeObject<IEnumerable<Page>>(pagesString);
+                        previewModel.Pages = await _pageServiceProvider.ComparePages(pagesList);
+                        break;
+                    case DYNAMICLIST_FILE:
+                        var dynamicListFilePath = Path.Combine(folderExtractingPath, DYNAMICLIST_FILE);
+                        var dynamicListString = File.ReadAllText(dynamicListFilePath);
+                        var dynamicListsList = ConvertUtil.DeserializeObject<IEnumerable<DynamicList>>(dynamicListString);
+                        previewModel.DynamicLists = await _dynamicListServiceProvider.CompareDynamicLists(dynamicListsList);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            Directory.Delete(folderExtractingPath, true);
+            File.Delete(restoreFilePath);
+
+            return previewModel;
+        }
+                   
+        public async Task RestoreBackupPoint(string backupId)
+        {
+            var backup = await _backupRepository.GetOneAsync(backupId);
+
+            var zipFile = await _fileSeviceProvider.DownloadFileAsync(backup.FileId);
+
+            var fileNameWithoutExt = zipFile.FileName.Split(".")[0];
+            var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
+            using(var fileStream = File.Create(restoreFilePath))
+            {
+                fileStream.Write(zipFile.FileBytes, 0, zipFile.FileBytes.Length);
+            }
+
+            // Release file in memory
+            zipFile.FileBytes = null;
+            var folderExtractingPath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, fileNameWithoutExt);
+            if(Directory.Exists(folderExtractingPath))
+            {
+                Directory.Delete(folderExtractingPath, true);
+            }
+            ZipFile.ExtractToDirectory(restoreFilePath, folderExtractingPath);
+
+            var jsonBackupFilePath = Path.Combine(folderExtractingPath, fileNameWithoutExt + ".json");
+
+            var jsonBackupString = File.ReadAllText(jsonBackupFilePath);
+            var backupFlatternModel = ConvertUtil.DeserializeObject<BackupFlatternFileModel>(jsonBackupString);
+
+            foreach(var chainingFile in backupFlatternModel.ChainingFiles)
+            {
+                switch(chainingFile)
+                {
+                    case APP_FILE:
+                        var appFilePath = Path.Combine(folderExtractingPath, APP_FILE);
+                        var appsListString = File.ReadAllText(appFilePath);
+                        var appsList = ConvertUtil.DeserializeObject<IEnumerable<App>>(appsListString);
+                        await _appServiceProvider.ForceUpdateApps(appsList); 
+                        break;
+                    case STANDARD_FILE:
+                        var standardFilePath = Path.Combine(folderExtractingPath, STANDARD_FILE);
+                        var standardsString = File.ReadAllText(standardFilePath);
+                        var standardsList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(standardsString);
+                        await _standardServiceProvider.ForceUpdateStandards(standardsList);
+                        break;
+                    case CHART_FILE:
+                        var chartFilePath = Path.Combine(folderExtractingPath, CHART_FILE);
+                        var chartsString = File.ReadAllText(chartFilePath);
+                        var chartsList = ConvertUtil.DeserializeObject<IEnumerable<Chart>>(chartsString);
+                        await _chartServiceProvider.ForceUpdateCharts(chartsList);
+                        break;
+                    case DATABASE_FILE:
+                        var databaseFilePath = Path.Combine(folderExtractingPath, DATABASE_FILE);
+                        var databasesString = File.ReadAllText(databaseFilePath);
+                        var databasesList = ConvertUtil.DeserializeObject<IEnumerable<DatabaseConnection>>(databasesString);
+                        await _databaseServiceProvider.ForceUpdateDatabases(databasesList);
+                        break;
+                    case PAGE_FILE:
+                        var pageFilePath = Path.Combine(folderExtractingPath, PAGE_FILE);
+                        var pagesString = File.ReadAllText(pageFilePath);
+                        var pagesList = ConvertUtil.DeserializeObject<IEnumerable<Page>>(pagesString);
+                        await _pageServiceProvider.ForceUpdatePages(pagesList);
+                        break;
+                    case DYNAMICLIST_FILE:
+                        var dynamicListFilePath = Path.Combine(folderExtractingPath, DYNAMICLIST_FILE);
+                        var dynamicListString = File.ReadAllText(dynamicListFilePath);
+                        var dynamicListsList = ConvertUtil.DeserializeObject<IEnumerable<DynamicList>>(dynamicListString);
+                        await _dynamicListServiceProvider.ForceUpdateDynamicLists(dynamicListsList);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            Directory.Delete(folderExtractingPath, true);
+            File.Delete(restoreFilePath);
+        }
+
+        private async Task<string> SaveFormFileAsync(IFormFile file, string saveFolderPath)
+        {
+            var tempFileName = file.FileName;
+            var fullTempFilePath = Path.Combine(saveFolderPath, tempFileName);
+            using(var stream = new FileStream(fullTempFilePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return fullTempFilePath;
         }
     }
 
     class BackupFlatternFileModel
     {
-        public string Id { get; set; }
+        public Backup Backup { get; set; }
 
-        public string Name { get; set; }
+        public int TotalObjects { get; set; }
 
-        public string Description { get; set; }
-
-        public string Creator { get; set; }
-
-        public DateTime CreatedDate { get; set; }
-
-        public List<App> Apps { get; set; }
-
-        public List<StandardComponent> StandardComponents { get; set; }
-
-        public List<DynamicList> DynamicLists { get; set; }
-
-        public List<Chart> Charts { get; set; }
-
-        public List<Page> Pages { get; set; }
-
-        public List<DatabaseConnection> Databases { get; set; }
+        public List<string> ChainingFiles { get; set; }
     }
 }

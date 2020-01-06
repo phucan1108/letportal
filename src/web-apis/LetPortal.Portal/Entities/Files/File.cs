@@ -23,6 +23,8 @@ namespace LetPortal.Portal.Entities.Files
 
         public long FileSize { get; set; }
 
+        public bool AllowCompress { get; set; }
+
         public FileStorageType FileStorageType { get; set; }
 
         public DateTime DateUploaded { get; set; }
