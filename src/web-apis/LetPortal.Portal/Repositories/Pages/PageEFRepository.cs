@@ -2,6 +2,8 @@
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models.Pages;
+using LetPortal.Portal.Models.Shared;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,6 +66,19 @@ namespace LetPortal.Portal.Repositories.Pages
                 }                
             }
             return Task.FromResult(page);
+        }
+
+        public async Task<IEnumerable<ShortEntityModel>> GetShortPages(string keyWord = null)
+        {
+            if(!string.IsNullOrEmpty(keyWord))
+            {
+                var pages = await _context.Pages.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                return pages?.AsEnumerable();
+            }
+            else
+            {
+                return (await _context.Pages.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+            }
         }
 
         public Task<List<ShortPortalClaimModel>> GetShortPortalClaimModelsAsync()

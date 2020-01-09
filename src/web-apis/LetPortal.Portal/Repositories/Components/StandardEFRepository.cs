@@ -1,5 +1,10 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Models.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace LetPortal.Portal.Repositories.Components
 {
@@ -11,6 +16,19 @@ namespace LetPortal.Portal.Repositories.Components
             : base(context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null)
+        {
+            if(!string.IsNullOrEmpty(keyWord))
+            {
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                return standards?.AsEnumerable();
+            }
+            else
+            {
+                return (await _context.StandardComponents.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.DynamicLists;
+using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Services.Components;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,13 @@ namespace LetPortal.WebApis.Controllers
                 return Ok(result);
 
             return NotFound();
+        }
+
+        [HttpGet("short-dynamiclists")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetShortDynamicLists([FromQuery] string keyWord = null)
+        {
+            return Ok(await _dynamicListRepository.GetShortDynamicLists(keyWord));
         }
 
         [HttpPost("")]

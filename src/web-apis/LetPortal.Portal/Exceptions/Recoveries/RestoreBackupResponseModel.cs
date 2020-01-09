@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LetPortal.Portal.Exceptions.Recoveries
 {
-    public class RestoreBackupResponseModel
+    public class UploadBackupResponseModel
     {
         public string Id { get; set; }
 

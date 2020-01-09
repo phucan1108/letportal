@@ -3,6 +3,7 @@ using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
+using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Services.Databases;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +66,14 @@ namespace LetPortal.WebApis.Controllers
             result.DataSource = string.Empty;
             return Ok(result);
         }
+
+        [HttpGet("short-databases")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetShortDatabases([FromQuery] string keyWord = null)
+        {
+            return Ok(await _databaseRepository.GetShortDatatabases(keyWord));
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(DatabaseConnection), 200)]
         public async Task<IActionResult> Post([FromBody] DatabaseConnection databaseConnection)

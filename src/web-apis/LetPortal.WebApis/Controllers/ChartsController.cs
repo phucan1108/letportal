@@ -2,6 +2,7 @@
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Charts;
+using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Services.Components;
 using Microsoft.AspNetCore.Mvc;
@@ -67,6 +68,13 @@ namespace LetPortal.PortalApis.Controllers
                 return NotFound();
             _logger.Info("Found chart: {@result}", result);
             return Ok(result);
+        }
+
+        [HttpGet("short-charts")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetShortCharts([FromQuery] string keyWord = null)
+        {
+            return Ok(await _chartRepository.GetShortCharts(keyWord));
         }
 
         [HttpPost("")]

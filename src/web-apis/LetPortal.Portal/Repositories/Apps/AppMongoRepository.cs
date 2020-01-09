@@ -1,6 +1,7 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
+using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,17 @@ namespace LetPortal.Portal.Repositories.Apps
         public AppMongoRepository(MongoConnection mongoConnection)
         {
             Connection = mongoConnection;
+        }
+
+        public Task<IEnumerable<ShortEntityModel>> GetShortApps(string keyWord = null)
+        {
+            if(!string.IsNullOrEmpty(keyWord))
+            {
+                var filterBuilder = Builders<App>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
+
+                return Task.FromResult(Collection.Find(filterBuilder).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            }
+            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
         }
 
         public async Task UpdateMenuAsync(string appId, List<Menu> menus)

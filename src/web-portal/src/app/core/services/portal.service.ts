@@ -14,12 +14,238 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 
 export const PORTAL_BASE_URL = new InjectionToken<string>('PORTAL_BASE_URL');
 
+export interface IBackupsClient {
+    uploadBackupFile(formFile: FileParameter | null | undefined): Observable<UploadBackupResponseModel>;
+    create(model: BackupRequestModel): Observable<BackupResponseModel>;
+    previewBackup(id: string | null): Observable<PreviewRestoreModel>;
+    restoreBackup(id: string, model: RestoreRequestModel): Observable<FileResponse>;
+}
+
+@Injectable()
+export class BackupsClient implements IBackupsClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(PORTAL_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "http://localhost:53508";
+    }
+
+    uploadBackupFile(formFile: FileParameter | null | undefined): Observable<UploadBackupResponseModel> {
+        let url_ = this.baseUrl + "/api/backups/upload";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (formFile !== null && formFile !== undefined)
+            content_.append("formFile", formFile.data, formFile.fileName ? formFile.fileName : "formFile");
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUploadBackupFile(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUploadBackupFile(<any>response_);
+                } catch (e) {
+                    return <Observable<UploadBackupResponseModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UploadBackupResponseModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUploadBackupFile(response: HttpResponseBase): Observable<UploadBackupResponseModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <UploadBackupResponseModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UploadBackupResponseModel>(<any>null);
+    }
+
+    create(model: BackupRequestModel): Observable<BackupResponseModel> {
+        let url_ = this.baseUrl + "/api/backups";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<BackupResponseModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BackupResponseModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<BackupResponseModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <BackupResponseModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BackupResponseModel>(<any>null);
+    }
+
+    previewBackup(id: string | null): Observable<PreviewRestoreModel> {
+        let url_ = this.baseUrl + "/api/backups/{id}/preview";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPreviewBackup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPreviewBackup(<any>response_);
+                } catch (e) {
+                    return <Observable<PreviewRestoreModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PreviewRestoreModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPreviewBackup(response: HttpResponseBase): Observable<PreviewRestoreModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <PreviewRestoreModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PreviewRestoreModel>(<any>null);
+    }
+
+    restoreBackup(id: string, model: RestoreRequestModel): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/backups/{id}/restore";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRestoreBackup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRestoreBackup(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRestoreBackup(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
+    }
+}
+
 export interface IChartsClient {
     getMany(): Observable<Chart[]>;
     create(chart: Chart): Observable<Chart>;
     getOne(id: string | null): Observable<Chart>;
     update(id: string | null, chart: Chart): Observable<FileResponse>;
     getOneForBuilder(id: string | null): Observable<Chart>;
+    getShortCharts(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     checkExist(name: string | null): Observable<boolean>;
     extraction(model: ExtractingChartQueryModel): Observable<ExtractionChartFilter>;
     execution(model: ExecutionChartRequestModel): Observable<ExecutionChartResponseModel>;
@@ -287,6 +513,55 @@ export class ChartsClient implements IChartsClient {
         return _observableOf<Chart>(<any>null);
     }
 
+    getShortCharts(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
+        let url_ = this.baseUrl + "/api/charts/short-charts?";
+        if (keyWord !== undefined)
+            url_ += "keyWord=" + encodeURIComponent("" + keyWord) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetShortCharts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetShortCharts(<any>response_);
+                } catch (e) {
+                    return <Observable<ShortEntityModel[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShortEntityModel[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetShortCharts(response: HttpResponseBase): Observable<ShortEntityModel[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ShortEntityModel[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShortEntityModel[]>(<any>null);
+    }
+
     checkExist(name: string | null): Observable<boolean> {
         let url_ = this.baseUrl + "/api/charts/check-exist/{name}";
         if (name === undefined || name === null)
@@ -444,6 +719,7 @@ export interface IAppsClient {
     getOne(id: string | null): Observable<App>;
     update(id: string | null, app: App): Observable<FileResponse>;
     getMany(ids: string | null | undefined): Observable<App[]>;
+    getShortApps(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     getAvailableUrls(id: string | null): Observable<AvailableUrl[]>;
     create(app: App): Observable<App>;
     getAllApps(): Observable<App[]>;
@@ -612,6 +888,55 @@ export class AppsClient implements IAppsClient {
             }));
         }
         return _observableOf<App[]>(<any>null);
+    }
+
+    getShortApps(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
+        let url_ = this.baseUrl + "/api/apps/short-apps?";
+        if (keyWord !== undefined)
+            url_ += "keyWord=" + encodeURIComponent("" + keyWord) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetShortApps(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetShortApps(<any>response_);
+                } catch (e) {
+                    return <Observable<ShortEntityModel[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShortEntityModel[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetShortApps(response: HttpResponseBase): Observable<ShortEntityModel[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ShortEntityModel[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShortEntityModel[]>(<any>null);
     }
 
     getAvailableUrls(id: string | null): Observable<AvailableUrl[]> {
@@ -875,6 +1200,7 @@ export interface IDatabasesClient {
     get(id: string | null): Observable<DatabaseConnection>;
     put(id: string | null, databaseConnection: DatabaseConnection): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
+    getShortDatabases(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     executionDynamic(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel>;
     extractingQuery(databaseId: string | null, model: ExtractionDatabaseRequestModel): Observable<ExtractingSchemaQueryModel>;
     executeQueryDatasource(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel>;
@@ -1139,6 +1465,55 @@ export class DatabasesClient implements IDatabasesClient {
             }));
         }
         return _observableOf<FileResponse>(<any>null);
+    }
+
+    getShortDatabases(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
+        let url_ = this.baseUrl + "/api/databases/short-databases?";
+        if (keyWord !== undefined)
+            url_ += "keyWord=" + encodeURIComponent("" + keyWord) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetShortDatabases(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetShortDatabases(<any>response_);
+                } catch (e) {
+                    return <Observable<ShortEntityModel[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShortEntityModel[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetShortDatabases(response: HttpResponseBase): Observable<ShortEntityModel[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ShortEntityModel[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShortEntityModel[]>(<any>null);
     }
 
     executionDynamic(databaseId: string | null, content: any): Observable<ExecuteDynamicResultModel> {
@@ -1633,6 +2008,7 @@ export interface IDynamicListClient {
     getOne(id: string | null): Observable<DynamicList>;
     update(id: string | null, dynamicList: DynamicList): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
+    getShortDynamicLists(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     executeQuery(id: string | null, fetchDataModel: DynamicListFetchDataModel): Observable<DynamicListResponseDataModel>;
     extractingQuery(extractingQuery: ExtractingQueryModel): Observable<PopulateQueryModel>;
     checkExist(name: string | null): Observable<boolean>;
@@ -1897,6 +2273,55 @@ export class DynamicListClient implements IDynamicListClient {
             }));
         }
         return _observableOf<FileResponse>(<any>null);
+    }
+
+    getShortDynamicLists(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
+        let url_ = this.baseUrl + "/api/dynamiclists/short-dynamiclists?";
+        if (keyWord !== undefined)
+            url_ += "keyWord=" + encodeURIComponent("" + keyWord) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetShortDynamicLists(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetShortDynamicLists(<any>response_);
+                } catch (e) {
+                    return <Observable<ShortEntityModel[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShortEntityModel[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetShortDynamicLists(response: HttpResponseBase): Observable<ShortEntityModel[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ShortEntityModel[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShortEntityModel[]>(<any>null);
     }
 
     executeQuery(id: string | null, fetchDataModel: DynamicListFetchDataModel): Observable<DynamicListResponseDataModel> {
@@ -2331,7 +2756,7 @@ export class EntitySchemasClient implements IEntitySchemasClient {
 export interface IFilesClient {
     upload(formFile: FileParameter | null | undefined): Observable<ResponseUploadFile>;
     getFileInfo(fileId: string | null): Observable<File>;
-    getFile(fileId: string | null): Observable<FileResponse>;
+    getFile(fileId: string | null, compress: boolean | null | undefined): Observable<FileResponse>;
 }
 
 @Injectable()
@@ -2447,11 +2872,13 @@ export class FilesClient implements IFilesClient {
         return _observableOf<File>(<any>null);
     }
 
-    getFile(fileId: string | null): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/files/download/{fileId}";
+    getFile(fileId: string | null, compress: boolean | null | undefined): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/files/download/{fileId}?";
         if (fileId === undefined || fileId === null)
             throw new Error("The parameter 'fileId' must be defined.");
         url_ = url_.replace("{fileId}", encodeURIComponent("" + fileId)); 
+        if (compress !== undefined)
+            url_ += "compress=" + encodeURIComponent("" + compress) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -2503,6 +2930,7 @@ export interface IPagesClient {
     getOneById(id: string | null): Observable<Page>;
     getOne(name: string | null): Observable<Page>;
     getOneForRender(name: string | null): Observable<Page>;
+    getShortPages(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     create(page: Page): Observable<string>;
     update(id: string | null, page: Page): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
@@ -2764,6 +3192,55 @@ export class PagesClient implements IPagesClient {
             }));
         }
         return _observableOf<Page>(<any>null);
+    }
+
+    getShortPages(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
+        let url_ = this.baseUrl + "/api/pages/short-pages?";
+        if (keyWord !== undefined)
+            url_ += "keyWord=" + encodeURIComponent("" + keyWord) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetShortPages(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetShortPages(<any>response_);
+                } catch (e) {
+                    return <Observable<ShortEntityModel[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShortEntityModel[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetShortPages(response: HttpResponseBase): Observable<ShortEntityModel[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ShortEntityModel[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShortEntityModel[]>(<any>null);
     }
 
     create(page: Page): Observable<string> {
@@ -3081,6 +3558,7 @@ export class PagesClient implements IPagesClient {
 export interface IStandardComponentClient {
     getOne(id: string | null): Observable<StandardComponent>;
     updateOne(id: string | null, standardComponent: StandardComponent): Observable<FileResponse>;
+    getSortStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     createOne(standardComponent: StandardComponent): Observable<string>;
     createBulk(standardComponents: StandardComponent[]): Observable<FileResponse>;
     deleteBulk(ids: string | null | undefined): Observable<FileResponse>;
@@ -3200,6 +3678,55 @@ export class StandardComponentClient implements IStandardComponentClient {
             }));
         }
         return _observableOf<FileResponse>(<any>null);
+    }
+
+    getSortStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
+        let url_ = this.baseUrl + "/api/standards/short-standards?";
+        if (keyWord !== undefined)
+            url_ += "keyWord=" + encodeURIComponent("" + keyWord) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSortStandards(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSortStandards(<any>response_);
+                } catch (e) {
+                    return <Observable<ShortEntityModel[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShortEntityModel[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSortStandards(response: HttpResponseBase): Observable<ShortEntityModel[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ShortEntityModel[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShortEntityModel[]>(<any>null);
     }
 
     createOne(standardComponent: StandardComponent): Observable<string> {
@@ -3451,6 +3978,70 @@ export class StandardComponentClient implements IStandardComponentClient {
     }
 }
 
+export interface UploadBackupResponseModel {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    creator?: string | undefined;
+    createdDate?: Date;
+    totalObjects?: number;
+    isFileValid?: boolean;
+}
+
+export interface BackupResponseModel {
+    downloadableUrl?: string | undefined;
+}
+
+export interface BackupRequestModel {
+    apps?: string[] | undefined;
+    databases?: string[] | undefined;
+    standards?: string[] | undefined;
+    dynamicLists?: string[] | undefined;
+    charts?: string[] | undefined;
+    pages?: string[] | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    creator?: string | undefined;
+    encryptKey?: string | undefined;
+}
+
+export interface PreviewRestoreModel {
+    apps?: ComparisonResult[] | undefined;
+    standards?: ComparisonResult[] | undefined;
+    databases?: ComparisonResult[] | undefined;
+    charts?: ComparisonResult[] | undefined;
+    dynamicLists?: ComparisonResult[] | undefined;
+    pages?: ComparisonResult[] | undefined;
+}
+
+export interface ComparisonResult {
+    result?: ComparisonEntity | undefined;
+    isTotallyNew?: boolean;
+}
+
+export interface ComparisonEntity {
+    properties?: ComparisonProperty[] | undefined;
+}
+
+export interface ComparisonProperty {
+    name?: string | undefined;
+    sourceValue?: string | undefined;
+    targetValue?: string | undefined;
+    comparedState?: ComparedState;
+}
+
+export enum ComparedState {
+    New = 0, 
+    Unchanged = 1, 
+    Changed = 2, 
+    Deleted = 3, 
+}
+
+export interface RestoreRequestModel {
+    id?: string | undefined;
+    requestor?: string | undefined;
+}
+
 export interface Entity {
     id?: string | undefined;
 }
@@ -3560,6 +4151,11 @@ export enum PageSectionLayoutType {
     ThreeColumns = 2, 
     FourColumns = 3, 
     SixColumns = 4, 
+}
+
+export interface ShortEntityModel {
+    id?: string | undefined;
+    displayName?: string | undefined;
 }
 
 export interface ExtractionChartFilter {
@@ -3952,6 +4548,7 @@ export interface File extends Entity {
     identifierOptions?: string | undefined;
     mimeType?: string | undefined;
     fileSize?: number;
+    allowCompress?: boolean;
     fileStorageType?: FileStorageType;
     dateUploaded?: Date;
 }

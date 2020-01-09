@@ -167,7 +167,7 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IAppServiceProvider, InternalAppServiceProvider>();
             builder.Services.AddTransient<IStandardServiceProvider, InternalStandardServiceProvider>();
             builder.Services.AddTransient<IChartServiceProvider, InternalChartServiceProvider>();
-            builder.Services.AddTransient<IDynamicListServiceProvider, InternalDynamicListServiceProvider>();
+            builder.Services.AddTransient<IDynamicListServiceProvider, InternalDynamicListServiceProvider>();            
 
             builder.Services.AddTransient<IDynamicQueryBuilder, DynamicQueryBuilder>();
             builder.Services.AddTransient<IChartReportProjection, ChartReportProjection>();

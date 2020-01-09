@@ -2,6 +2,7 @@
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models.Pages;
+using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Collections.Generic;
@@ -62,6 +63,17 @@ namespace LetPortal.Portal.Repositories.Pages
                 }                
             }
             return page;
+        }
+
+        public Task<IEnumerable<ShortEntityModel>> GetShortPages(string keyWord = null)
+        {
+            if(!string.IsNullOrEmpty(keyWord))
+            {
+                var filterBuilder = Builders<Page>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
+                var pages = Collection.Find(filterBuilder).ToList();
+                return Task.FromResult(pages?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }));
+            }
+            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
         }
 
         public async Task<List<ShortPortalClaimModel>> GetShortPortalClaimModelsAsync()

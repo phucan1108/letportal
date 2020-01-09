@@ -1,6 +1,7 @@
 ﻿using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -32,6 +33,13 @@ namespace LetPortal.WebApis.Controllers
             var result = await _standardRepository.GetOneAsync(id);
             _logger.Info("Found standard component: {@result}", result);
             return Ok(result);
+        }
+
+        [HttpGet("short-standards")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetSortStandards([FromQuery] string keyWord = null)
+        {
+            return Ok(await _standardRepository.GetShortStandards(keyWord));
         }
 
         [HttpPost("")]

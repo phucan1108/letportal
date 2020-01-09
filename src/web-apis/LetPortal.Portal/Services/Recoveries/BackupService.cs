@@ -222,7 +222,7 @@ namespace LetPortal.Portal.Services.Recoveries
             return new BackupResponseModel { DownloadableUrl = uploadResponse.DownloadableUrl };
         }
 
-        public async Task<RestoreBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader)
+        public async Task<UploadBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader)
         {
             var isFileValid = await _fileSeviceProvider.ValidateFile(uploadFile);
             if(isFileValid)
@@ -253,7 +253,7 @@ namespace LetPortal.Portal.Services.Recoveries
                 backup.DownloadableUrl = storedFile.DownloadableUrl;
                 await _backupRepository.AddAsync(backup);
 
-                return new RestoreBackupResponseModel
+                return new UploadBackupResponseModel
                 {
                     Id = backup.Id,
                     Name = backup.Name,
@@ -266,7 +266,7 @@ namespace LetPortal.Portal.Services.Recoveries
             }
             else
             {
-                return new RestoreBackupResponseModel { IsFileValid = false };
+                return new UploadBackupResponseModel { IsFileValid = false };
             }
         }
          

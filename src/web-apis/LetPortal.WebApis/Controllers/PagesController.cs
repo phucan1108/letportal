@@ -4,6 +4,7 @@ using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Pages;
+using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Repositories.Pages;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,13 @@ namespace LetPortal.WebApis.Controllers
             var result = await _pageRepository.GetOneByNameForRenderAsync(name);
             _logger.Info("Found page: {@result}", result);
             return Ok(result);
+        }
+
+        [HttpGet("short-pages")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetShortPages([FromQuery] string keyWord = null)
+        {
+            return Ok(await _pageRepository.GetShortPages(keyWord));
         }
 
         [HttpPost("")]

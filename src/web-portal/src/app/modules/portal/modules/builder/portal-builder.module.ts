@@ -70,6 +70,7 @@ import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
 import { ChartDatasourceComponent } from './components/chart-builder/components/chart-datasource.component';
 import { ChartFilterGridComponent } from './components/chart-builder/components/chart-filter.grid.component';
 import { ChartFilterDialogComponent } from './components/chart-builder/components/chart-filter.dialog.component';
+import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -123,7 +124,8 @@ import { ChartFilterDialogComponent } from './components/chart-builder/component
 		ChartBuilderPage,
 		ChartDatasourceComponent,
 		ChartFilterGridComponent,
-		ChartFilterDialogComponent
+		ChartFilterDialogComponent,
+		BackupBuilderPage
 	],
 	imports: [
 		PortalBuilderRoutingModule,

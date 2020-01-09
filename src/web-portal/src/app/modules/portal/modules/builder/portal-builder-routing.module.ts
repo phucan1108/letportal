@@ -15,6 +15,7 @@ import { DynamicListBuilderResolve } from './resolve/dynamic-list.builder.resolv
 import { StandardResolve } from './resolve/standard.resolve';
 import { ChartBuilderPage } from './pages/chart/chart-builder.page';
 import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
+import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 
 const routes: Routes = [
     {
@@ -85,7 +86,15 @@ const routes: Routes = [
 				resolve: {
 					chart: ChartBuilderResolve
 				}
-            },
+			},
+			{
+				path: 'backup',
+				redirectTo: 'backup/'
+			},
+			{
+				path: 'backup/:backupid',
+				component: BackupBuilderPage
+			}
         ]
     }
 ]

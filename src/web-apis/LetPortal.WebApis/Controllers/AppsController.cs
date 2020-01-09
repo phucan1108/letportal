@@ -3,6 +3,7 @@ using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
 using LetPortal.Portal.Models.Apps;
+using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories.Apps;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,16 @@ namespace LetPortal.WebApis.Controllers
             if(result == null)
                 return NotFound();
 
+            return Ok(result);
+        }
+
+        [HttpGet("short-apps")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetShortApps([FromQuery] string keyWord)
+        {
+            _logger.Info("Get short apps by keyword = {keyword}", keyWord);
+            var result = await _appRepository.GetShortApps(keyWord);
+            _logger.Info("Found short apps by keyword {keyword}: {@result}", keyWord, result);
             return Ok(result);
         }
 
