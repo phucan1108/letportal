@@ -71,6 +71,7 @@ import { ChartDatasourceComponent } from './components/chart-builder/components/
 import { ChartFilterGridComponent } from './components/chart-builder/components/chart-filter.grid.component';
 import { ChartFilterDialogComponent } from './components/chart-builder/components/chart-filter.dialog.component';
 import { BackupBuilderPage } from './pages/backup/backup-builder.page';
+import { BackupSelectionComponent } from './components/backup-builder/components/backup-selection.component';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -125,7 +126,8 @@ import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 		ChartDatasourceComponent,
 		ChartFilterGridComponent,
 		ChartFilterDialogComponent,
-		BackupBuilderPage
+		BackupBuilderPage,
+		BackupSelectionComponent
 	],
 	imports: [
 		PortalBuilderRoutingModule,
@@ -219,7 +221,8 @@ import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 		AsyncValidatorDialogComponent,
 		ChartDatasourceComponent,
 		ChartFilterGridComponent,
-		ChartFilterDialogComponent
+		ChartFilterDialogComponent,
+		BackupSelectionComponent
 	],
 	exports: [RouterModule],
 	providers: [
