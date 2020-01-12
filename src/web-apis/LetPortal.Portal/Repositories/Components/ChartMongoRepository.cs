@@ -20,9 +20,10 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if(!string.IsNullOrEmpty(keyWord))
             {                   
-                var filterBuilder = Builders<Chart>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));                
-                
-                return Task.FromResult(Collection.Find(filterBuilder).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+                var regexFilter = Builders<Chart>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
+                var discriminatorFilter = Builders<Chart>.Filter.Eq("_t", typeof(Chart).Name);
+                var combineFilter = Builders<Chart>.Filter.And(discriminatorFilter, regexFilter);
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
             }
             return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
         }

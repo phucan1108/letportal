@@ -17,6 +17,7 @@ using LetPortal.Portal.Providers.Apps;
 using LetPortal.Portal.Providers.Components;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.EntitySchemas;
+using LetPortal.Portal.Providers.Files;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories;
 using LetPortal.Portal.Repositories.Apps;
@@ -56,7 +57,7 @@ namespace LetPortal.Portal
 
             builder.Services.Configure<MapperOptions>(builder.Configuration.GetSection("MapperOptions"));
             builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("BackupOptions"));
-            var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();
+            var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();            
             builder.Services.AddSingleton(mapperOptions);
             if(builder.ConnectionType == ConnectionType.MongoDB)
             {
@@ -167,7 +168,8 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IAppServiceProvider, InternalAppServiceProvider>();
             builder.Services.AddTransient<IStandardServiceProvider, InternalStandardServiceProvider>();
             builder.Services.AddTransient<IChartServiceProvider, InternalChartServiceProvider>();
-            builder.Services.AddTransient<IDynamicListServiceProvider, InternalDynamicListServiceProvider>();            
+            builder.Services.AddTransient<IDynamicListServiceProvider, InternalDynamicListServiceProvider>();
+            builder.Services.AddTransient<IFileSeviceProvider, InternalFileServiceProvider>();
 
             builder.Services.AddTransient<IDynamicQueryBuilder, DynamicQueryBuilder>();
             builder.Services.AddTransient<IChartReportProjection, ChartReportProjection>();

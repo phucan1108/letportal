@@ -207,12 +207,12 @@ namespace LetPortal.Portal.Services.Recoveries
                 sw.Write(jsonFlattern);
             }
 
-            ZipFile.CreateFromDirectory(jsonFilePath, fileName + ".zip");
+            ZipFile.CreateFromDirectory(jsonFilePath, Path.Combine(_backupOptions.CurrentValue.BackupFolderPath, fileName + ".zip"));
 
             // Store zip file into file server, allow to create zip file when downloading
             var uploadResponse = await _fileSeviceProvider
                 .UploadFileAsync(
-                    Path.Combine(jsonFilePath, fileName + ".zip"),
+                    Path.Combine(_backupOptions.CurrentValue.BackupFolderPath, fileName + ".zip"),
                     model.Creator,
                     true);
 

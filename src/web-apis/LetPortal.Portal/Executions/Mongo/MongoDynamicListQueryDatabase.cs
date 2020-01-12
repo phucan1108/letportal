@@ -68,7 +68,7 @@ namespace LetPortal.Portal.Executions.Mongo
             }
 
             // Add Filter Options if had
-            if(fetchDataModel.FilterGroupOptions.FilterGroups != null)
+            if(fetchDataModel.FilterGroupOptions.FilterGroups[0].FilterOptions.Count > 0)
             {
                 aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Match(BuildFilters(fetchDataModel.FilterGroupOptions.FilterGroups)));
             }
@@ -86,7 +86,7 @@ namespace LetPortal.Portal.Executions.Mongo
             aggregateFluent = aggregateFluent.AppendStage((PipelineStageDefinition<BsonDocument, BsonDocument>)projection);
 
             // Add Sort if had
-            if(fetchDataModel.SortOptions.SortableFields != null)
+            if(fetchDataModel.SortOptions.SortableFields != null && fetchDataModel.SortOptions.SortableFields.Count > 0)
             {
                 SortableField sortField = fetchDataModel.SortOptions.SortableFields[0];
                 FieldDefinition<BsonDocument, string> field = sortField.FieldName;

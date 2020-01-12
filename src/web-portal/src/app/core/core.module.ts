@@ -6,7 +6,7 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { Translator } from './shell/translates/translate.pipe';
 import { ConfigurationProvider } from './configs/configProvider';
 import { ShellConfigProvider } from './shell/shellconfig.provider';
-import { DatabasesClient, DatasourceClient, EntitySchemasClient, AppsClient, StandardComponentClient, PagesClient, DynamicListClient, ChartsClient } from 'services/portal.service';
+import { DatabasesClient, DatasourceClient, EntitySchemasClient, AppsClient, StandardComponentClient, PagesClient, DynamicListClient, ChartsClient, BackupsClient } from 'services/portal.service';
 import { RouterExtService } from './ext-service/routerext.service';
 import { SessionService } from 'services/session.service';
 import { AccountsClient, UserSessionClient, RolesClient } from 'services/identity.service';
@@ -58,7 +58,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     PagesClient,
     PageService,
     UploadFileService,
-    ChartsClient
+    ChartsClient,
+    BackupsClient
   ],
 })
 export class CoreModule {

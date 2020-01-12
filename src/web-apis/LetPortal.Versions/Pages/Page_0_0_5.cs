@@ -13,6 +13,7 @@ namespace LetPortal.Versions.Pages
         public void Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Page>("5dcb80b166b49d4b78923a54");
+            versionContext.DeleteData<Page>("5e1aa91e3c107562acf358b5");
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -115,7 +116,70 @@ namespace LetPortal.Versions.Pages
                 }
             };
 
+            var backupManagementPage = new Page
+            {
+                Id = "5e1aa91e3c107562acf358b5",
+                Name = "backup-management",
+                DisplayName = "Backup Management",
+                UrlPath = "portal/page/backup-management",
+                Claims = new List<PortalClaim>
+                    {
+                        PortalClaimStandards.AllowAccess
+                    },
+                Builder = new PageBuilder
+                {
+                    Sections = new List<PageSection>
+                    {
+                        new PageSection
+                        {
+                            Id = "5e1aa91e3c107562acf358b5",
+                            Name = "backupslist",
+                            DisplayName = "Backups List",
+                            ComponentId = "5e1aa91e3c107562acf358b2",
+                            ConstructionType = SectionContructionType.DynamicList,
+                            Order = 0
+                        }
+                    }
+                },
+                Commands = new List<PageButton>
+                {
+                    new PageButton
+                    {
+                        Id = "5e1aa91e3c107562acf358bb",
+                        Name = "Create",
+                        Icon = "create",
+                        Color = "basic",
+                        AllowHidden = "false",
+                        ButtonOptions = new ButtonOptions
+                        {
+                            ConfirmationOptions = new ConfirmationOptions
+                            {
+                                IsEnable = false
+                            },
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                IsEnable = false
+                            },
+                            RouteOptions = new RouteOptions
+                            {
+                                IsEnable = true,
+                                Routes = new List<Route>
+                                {
+                                    new Route
+                                    {
+                                        RouteType = RouteType.ThroughUrl,
+                                        TargetUrl = "portal/builder/backup",
+                                        Condition = "true"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
             versionContext.InsertData(serviceDashboardPage);
+            versionContext.InsertData(backupManagementPage);
         }
     }
 }

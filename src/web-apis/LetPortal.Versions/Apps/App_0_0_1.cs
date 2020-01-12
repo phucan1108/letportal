@@ -48,19 +48,7 @@ namespace LetPortal.Versions.Apps
                                 Url = "/portal/page/apps-management",
                                 Order = 0,
                                 ParentId = "5cf616bc462b56ee3bc2c7e1",
-                                MenuPath = "~/5cf616bc462b56ee3bc2c7e1",
-                                SubMenus = new List<Portal.Entities.Menus.Menu>
-                                {
-                                    new Portal.Entities.Menus.Menu
-                                    {
-                                        Id = "3a035505-871a-9c26-41a3-9314ee5c080d",
-                                        DisplayName = "App Form",
-                                        Url = "portal/page/app-form",
-                                        Hide = true,
-                                        ParentId = "cc0efc5d-f80a-f33e-35e2-5d0c12b818c5",
-                                        MenuPath = "~/5cf616bc462b56ee3bc2c7e1/cc0efc5d-f80a-f33e-35e2-5d0c12b818c5"
-                                    }
-                                }
+                                MenuPath = "~/5cf616bc462b56ee3bc2c7e1"
                             },
                             new Menu
                             {
@@ -70,20 +58,17 @@ namespace LetPortal.Versions.Apps
                                 Url = "/portal/page/databases-management",
                                 Order = 1,
                                 ParentId = "5cf616bc462b56ee3bc2c7e1",
-                                MenuPath = "~/5cf616bc462b56ee3bc2c7e1",
-                                SubMenus = new List<Portal.Entities.Menus.Menu>
-                                {
-                                    new Portal.Entities.Menus.Menu
-                                    {
-                                        Id = "578f1999-6d82-6d22-596d-b94827ded210",
-                                        DisplayName = "Database Form",
-                                        Url = "portal/page/database-form",
-                                        Order = 0,
-                                        Hide = true,
-                                        ParentId = "172fd9c3-0168-90d1-5de7-60b0acaa24ea",
-                                        MenuPath = "~/5cf616bc462b56ee3bc2c7e1/172fd9c3-0168-90d1-5de7-60b0acaa24ea"
-                                    }
-                                }
+                                MenuPath = "~/5cf616bc462b56ee3bc2c7e1"
+                            },
+                            new Menu
+                            {
+                                Id = "5e1aa91e3c107562acf358b3",
+                                DisplayName = "Backup Management",
+                                Icon = "backup",
+                                Url = "/portal/page/backup-management",
+                                Order = 1,
+                                ParentId = "5cf616bc462b56ee3bc2c7e1",
+                                MenuPath = "~/5cf616bc462b56ee3bc2c7e1"
                             }
                         }
                     },
