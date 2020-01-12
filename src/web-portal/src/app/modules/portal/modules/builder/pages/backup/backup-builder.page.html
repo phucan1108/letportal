@@ -1,0 +1,143 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Backup Builder
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onSubmit()" *ngIf="!isSubmitted">Create</button>
+                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div *ngIf="!isSubmitted">
+                <div class="row row-heading">
+                    <h3>Backup Info:</h3>
+                </div>
+                <form [formGroup]="backupFormGroup">
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Name:</label>
+                        <div class="col-lg-6">
+                            <mat-form-field class="field-full-width">
+                                <input formControlName="name" matInput #formNameInput placeholder="Backup Name"
+                                    maxlength="250">
+                                <mat-hint align="end">
+                                    {{formNameInput.value?.length || 0}}/250
+                                </mat-hint>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Description:</label>
+                        <div class="col-lg-6">
+                            <mat-form-field class="field-full-width">
+                                <input formControlName="description" matInput #formDesInput placeholder="Description"
+                                    maxlength="500">
+                                <mat-hint align="end">
+                                    {{formDesInput.value?.length || 0}}/500
+                                </mat-hint>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </form>
+                <div class="separator-dashed"></div>
+                <div class="row row-heading">
+                    <h3>Selection:</h3>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <mat-accordion>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Apps
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Apps'" [icon]="'camera_enhance'" [data]="apps$"
+                                    (searchChanged)="onSeachAppChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectAppChanged($event)"></let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Databases
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Databases'" [icon]="'ballot'" [data]="databases$"
+                                    (searchChanged)="onSeachDatabaseChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectDatabaseChanged($event)"></let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Standards
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Standards'" [icon]="'category'" [data]="standards$"
+                                    (searchChanged)="onSeachStandardChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectStandardChanged($event)"></let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Dynamic Lists
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Dynamic Lists'" [icon]="'view_module'"
+                                    [data]="dynamicLists$" (searchChanged)="onSeachDynamicListChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectDynamicListChanged($event)">
+                                </let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Charts
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Charts'" [icon]="'bar_chart'" [data]="charts$"
+                                    (searchChanged)="onSeachChartChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectChartChanged($event)"></let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        Pages
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Pages'" [icon]="'receipt'" [data]="pages$"
+                                    (searchChanged)="onSeachPageChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectPageChanged($event)"></let-backup-selection>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="isSubmitted">
+                <div class="row row-heading" *ngIf="isCreated else loading">
+                    <div class="col-lg-12 pl-0">
+                        <p>
+                            Backup completely! Please click on this <b><a (click)="download()"
+                                    style="cursor: pointer;"> link </a></b> to download
+                        </p>
+                        <p>
+                            Or pressing <b><a (click)="refresh()" style="cursor: pointer;">this</a></b> to create new
+                            backup
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<ng-template #loading>
+    <div class="row">
+        <div class="col-lg-12">
+            <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
+        </div>
+    </div>
+
+</ng-template>
