@@ -16,6 +16,9 @@ import { StandardResolve } from './resolve/standard.resolve';
 import { ChartBuilderPage } from './pages/chart/chart-builder.page';
 import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
 import { BackupBuilderPage } from './pages/backup/backup-builder.page';
+import { BackupUploadpage } from './pages/backup/backup-upload.page';
+import { BackupRestorePage } from './pages/backup/backup-restore.page';
+import { BackupResolve } from './resolve/backup.resolve';
 
 const routes: Routes = [
     {
@@ -89,11 +92,18 @@ const routes: Routes = [
 			},
 			{
 				path: 'backup',
-				redirectTo: 'backup/'
+				component: BackupBuilderPage
 			},
 			{
-				path: 'backup/:backupid',
-				component: BackupBuilderPage
+				path: 'backup/upload',
+				component: BackupUploadpage
+			},
+			{
+				path: 'backup/restore/:backupid',
+				component: BackupRestorePage,
+				resolve: {
+					backup: BackupResolve
+				}
 			}
         ]
     }

@@ -140,41 +140,6 @@ namespace LetPortal.Versions.Pages
                             Order = 0
                         }
                     }
-                },
-                Commands = new List<PageButton>
-                {
-                    new PageButton
-                    {
-                        Id = "5e1aa91e3c107562acf358bb",
-                        Name = "Create",
-                        Icon = "create",
-                        Color = "basic",
-                        AllowHidden = "false",
-                        ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = false
-                            },
-                            ActionCommandOptions = new ActionCommandOptions
-                            {
-                                IsEnable = false
-                            },
-                            RouteOptions = new RouteOptions
-                            {
-                                IsEnable = true,
-                                Routes = new List<Route>
-                                {
-                                    new Route
-                                    {
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/builder/backup",
-                                        Condition = "true"
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             };
 

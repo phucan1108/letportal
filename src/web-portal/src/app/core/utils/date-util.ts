@@ -1,3 +1,5 @@
+import * as moment from 'moment'
+
 export class DateUtils {
     public static getUTCNow() {
         var date = new Date();
@@ -10,6 +12,10 @@ export class DateUtils {
         var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
             date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
         return new Date(now_utc);
+    }
+
+    public static toDateFormat(date: Date, format: string){
+        return moment(date).format(format)
     }
 
     public static toDateMMDDYYYYString(date: Date) {

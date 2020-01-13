@@ -72,6 +72,10 @@ import { ChartFilterGridComponent } from './components/chart-builder/components/
 import { ChartFilterDialogComponent } from './components/chart-builder/components/chart-filter.dialog.component';
 import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 import { BackupSelectionComponent } from './components/backup-builder/components/backup-selection.component';
+import { BackupUploadpage } from './pages/backup/backup-upload.page';
+import { MatProgressButtonsModule } from 'mat-progress-buttons';
+import { BackupResolve } from './resolve/backup.resolve';
+import { BackupRestorePage } from './pages/backup/backup-restore.page';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -127,7 +131,9 @@ import { BackupSelectionComponent } from './components/backup-builder/components
 		ChartFilterGridComponent,
 		ChartFilterDialogComponent,
 		BackupBuilderPage,
-		BackupSelectionComponent
+		BackupSelectionComponent,
+		BackupUploadpage,
+		BackupRestorePage
 	],
 	imports: [
 		PortalBuilderRoutingModule,
@@ -171,6 +177,7 @@ import { BackupSelectionComponent } from './components/backup-builder/components
 		MomentumTableModule,
 		ScrollDispatchModule,
 		MatMomentDateModule,
+		MatProgressButtonsModule,
 		QuillModule.forRoot({
 			modules: {
 				syntax: true,
@@ -234,6 +241,7 @@ import { BackupSelectionComponent } from './components/backup-builder/components
 		RoleClaimsResolve,
 		StandardResolve,
 		ChartBuilderResolve,
+		BackupResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
 	],

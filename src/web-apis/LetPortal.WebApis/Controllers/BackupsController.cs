@@ -1,4 +1,5 @@
 ﻿using LetPortal.Core.Logger;
+using LetPortal.Portal.Entities.Recoveries;
 using LetPortal.Portal.Exceptions.Recoveries;
 using LetPortal.Portal.Models.Recoveries;
 using LetPortal.Portal.Repositories.Recoveries;
@@ -27,6 +28,13 @@ namespace LetPortal.PortalApis.Controllers
             _backupRepository = backupRepository;
             _backupService = backupService;
             _logger = logger;
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Backup), 200)]
+        public async Task<IActionResult> GetOne(string id)
+        {
+            return Ok(await _backupRepository.GetOneAsync(id));
         }
 
         [HttpPost("upload")]

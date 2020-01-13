@@ -1,0 +1,83 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Backup Preview
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="row row-heading">
+                <h3>Backup Info</h3>
+            </div>
+            <div class="row">
+                <label class="col-lg-2 col-form-label font-weight-bold">Name</label>
+                <p class="float-left col-form-label">{{backup.name}}</p>
+            </div>
+            <div class="row">
+                <label class="col-lg-2 col-form-label font-weight-bold">Description</label>
+                <p class="float-left col-form-label">{{backup.description}}</p>
+            </div>
+            <div class="row">
+                <label class="col-lg-2 col-form-label font-weight-bold">Creator</label>
+                <p class="float-left col-form-label">{{backup.creator}}</p>
+            </div>
+            <div class="row">
+                <label class="col-lg-2 col-form-label font-weight-bold">Created Date</label>
+                <p class="float-left col-form-label">{{getCreatedDate()}}</p>
+            </div>
+            <div class="separator-dashed"></div>
+            <div class="row row-heading">
+                <h3>Preview list</h3>
+            </div>
+            <div class="row row-heading">
+                <mat-bar-button (btnClick)="onPreview()" [options]="btnOption"></mat-bar-button>
+            </div>
+            <div class="row row-heading" *ngIf="isPreviewed">
+                <div class="col-lg-12 pl-0">
+                    <mat-accordion>
+                        <mat-expansion-panel *ngIf="preview.apps">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Apps
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="row">
+                                <div class="col-lg-2 border-right">
+                                    <h5>Property Name</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Source</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Target</h5>
+                                </div>
+                            </div>
+                            <div class="row" *ngFor="let app of preview.apps">
+                                <div class="col-lg-12" *ngFor="let property of app.result.properties">
+                                    <div class="row border-top">
+                                        <div class="col-lg-2 border-right">
+                                            <b>{{property.name}}</b>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code  [ngClass]="{'removed-code': property.comparedState === 3, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator-dashed"></div>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

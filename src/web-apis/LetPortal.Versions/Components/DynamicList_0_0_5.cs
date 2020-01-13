@@ -124,6 +124,46 @@ namespace LetPortal.Versions.Components
                     {
                         new CommandButtonInList
                         {
+                            Name = "create",
+                            DisplayName = "Create",
+                            Icon = "create",
+                            Color = "primary",
+                            CommandPositionType = CommandPositionType.OutList,
+                            AllowRefreshList = false,
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                   IsSameDomain = true,
+                                   RedirectType = RedirectType.ThroughUrl,
+                                   RedirectUrl = "portal/builder/backup"
+                                },
+                                IsEnable = true
+                            }
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "upload",
+                            DisplayName = "Restore",
+                            Icon = "restore",
+                            Color = "primary",
+                            CommandPositionType = CommandPositionType.OutList,
+                            AllowRefreshList = false,
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                   IsSameDomain = true,
+                                   RedirectType = RedirectType.ThroughUrl,
+                                   RedirectUrl = "portal/builder/backup/upload"
+                                },
+                                IsEnable = true
+                            }
+                        },
+                        new CommandButtonInList
+                        {
                             Name = "download",
                             DisplayName = "Download File",
                             Icon = "save_alt",
@@ -138,6 +178,26 @@ namespace LetPortal.Versions.Components
                                    IsSameDomain = false,
                                    RedirectType = RedirectType.ThroughUrl,
                                    RedirectUrl = "{{data.downloadableUrl}}"
+                                },
+                                IsEnable = true
+                            }
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "restorepoint",
+                            DisplayName = "Preview&Restore",
+                            Icon = "restore",
+                            Color = "primary",
+                            CommandPositionType = CommandPositionType.InList,
+                            AllowRefreshList = false,
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                   IsSameDomain = true,
+                                   RedirectType = RedirectType.ThroughUrl,
+                                   RedirectUrl = "portal/builder/backup/restore/{{data.id}}"
                                 },
                                 IsEnable = true
                             }

@@ -1,0 +1,57 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Restore Backup
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="row row-heading">
+                <h3>Upload File</h3>
+            </div>
+            <div [formGroup]="form" class="row">
+                <label class="col-lg-2 col-form-label">Select one file</label>
+                <div class="col-lg-6 pt-2">
+                    <button mat-stroked-button color="primary" class="float-left" [disabled]="disabled">Choose
+                        File</button>
+                    <input class="file-input" type="file" #fileInput (change)="onFileChange($event)"
+                        [disabled]="disabled">
+
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-2 offset-lg-2"
+                            [hidden]="!(hasSelectedFile && form.get(uploadFormName).invalid)">
+                            <mat-form-field class="field-full-width fileupload-wrapper">
+                                <input [formControlName]="uploadFormName" matInput [hidden]="true">
+                                <mat-error *ngIf="isInvalid('required')">
+                                    {{getErrorMessage('required')}}
+                                </mat-error>
+                                <mat-error *ngIf="isInvalid('maximumsize')">
+                                    {{getErrorMessage('maximumsize')}}
+                                </mat-error>
+                                <mat-error *ngIf="isInvalid('fileextensions')">
+                                    {{getErrorMessage('fileextensions')}}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-lg-3 offset-lg-2" *ngIf="hasSelectedFile && form.get(uploadFormName).valid">
+                            Chosen file: {{selectedFile.name}} - {{selectedFile.size}} bytes
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row pt-3">
+                <div class="col-lg-2 offset-lg-2">
+                    <mat-bar-button (btnClick)="onUpload()" [options]="btnOption"></mat-bar-button>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
