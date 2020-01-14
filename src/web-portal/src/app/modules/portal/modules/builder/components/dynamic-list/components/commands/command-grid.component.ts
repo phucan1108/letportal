@@ -75,7 +75,7 @@ export class CommandGridComponent implements OnInit {
         const _title = "Delete Commands"
         const _description = "Are you sure to delete all selected commands?"
         const _waitDesciption = "Waiting..."
-        const dialogRef = this.shortcutUtil.actionEntityElement(_title, _description, _waitDesciption, MessageType.Delete);
+        const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption, MessageType.Delete);
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
                 return;
@@ -154,7 +154,7 @@ export class CommandGridComponent implements OnInit {
             return elem.name !== deletingCommand.name
         })
         this.refreshCommandTable();
-        this.shortcutUtil.notifyMessage("Delete command successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage("Delete command successfully!", ToastType.Success);
     }
 
     setCommands(commands: CommandButtonInList[]) {

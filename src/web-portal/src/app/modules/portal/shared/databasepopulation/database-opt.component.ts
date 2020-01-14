@@ -253,7 +253,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                                     this.afterSelectingEntity.emit(result)
                                 },
                                 err => {
-                                    this.shortcutUtil.notifyMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
+                                    this.shortcutUtil.toastMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
                                 }
                             )
                         }

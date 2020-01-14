@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShortcutUtil } from './components/shortcuts/shortcut-util';
-import { CustomActionEntityDialogComponent } from './components/shortcuts/custom-action-dialog/custom-action-dialog.component';
+import { ConfirmationDialogComponent } from './components/shortcuts/custom-action-dialog/custom-action-dialog.component';
 import { MatProgressBarModule, MatSnackBarModule, MatDialogModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { ActionNotificationComponent } from './components/shortcuts/action-natification/action-notification.component';
 
 @NgModule({
     declarations: [
-        CustomActionEntityDialogComponent,
+        ConfirmationDialogComponent,
         ActionNotificationComponent,
     ],
     imports: [ 
@@ -19,11 +19,11 @@ import { ActionNotificationComponent } from './components/shortcuts/action-natif
         MatIconModule
     ],
     entryComponents: [
-        CustomActionEntityDialogComponent,
+        ConfirmationDialogComponent,
         ActionNotificationComponent
     ],
     exports: [
-        CustomActionEntityDialogComponent
+        ConfirmationDialogComponent
     ],
     providers: [
         ShortcutUtil

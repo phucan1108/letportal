@@ -146,7 +146,7 @@ export class BackupUploadpage implements OnInit {
                 this.router.navigateByUrl('portal/builder/backup/restore/' + res.id)
             },
             err => {
-                this.shortcutUtil.notifyMessage("Oops! Something went wrong when uploading a file, plese try again.", ToastType.Error)
+                this.shortcutUtil.toastMessage("Oops! Something went wrong when uploading a file, plese try again.", ToastType.Error)
                 this.btnOption.active = false
             }
         )

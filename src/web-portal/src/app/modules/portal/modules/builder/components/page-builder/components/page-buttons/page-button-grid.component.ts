@@ -164,7 +164,7 @@ export class PageButtonGridComponent implements OnInit {
         this.currentActionCommands = _.filter(this.currentActionCommands, (elem) => {
             return elem.id !== command.id
         })
-        this.shortcutUtil.notifyMessage('Delete command successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage('Delete command successfully!', ToastType.Success);
 
         this.refreshControlTable()
     }
@@ -226,7 +226,7 @@ export class PageButtonGridComponent implements OnInit {
         const _title = "Delete Action Commands"
         const _description = "Are you sure to delete all selected commands?"
         const _waitDesciption = "Waiting..."
-        const dialogRef = this.shortcutUtil.actionEntityElement(_title, _description, _waitDesciption);
+        const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption);
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
                 return;

@@ -69,7 +69,7 @@ export class ClaimTableComponent implements OnInit {
         this.claims = _.filter(this.claims, (elem) => {
             return elem.name !== claim.name
         })
-        this.shortcutUtil.notifyMessage("Delete claim successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage("Delete claim successfully!", ToastType.Success);
 
         this.refreshTable()
     }

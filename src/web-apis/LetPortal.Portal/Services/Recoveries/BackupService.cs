@@ -346,6 +346,33 @@ namespace LetPortal.Portal.Services.Recoveries
             Directory.Delete(folderExtractingPath, true);
             File.Delete(restoreFilePath);
 
+            previewModel.TotalObjects =
+                (previewModel.Apps != null ? previewModel.Apps.Count() : 0) +
+                (previewModel.Charts != null ? previewModel.Charts.Count() : 0) +
+                (previewModel.Databases != null ? previewModel.Databases.Count() : 0) +
+                (previewModel.DynamicLists != null ? previewModel.DynamicLists.Count() : 0) +
+                (previewModel.Pages != null ? previewModel.Pages.Count() : 0) +
+                (previewModel.Standards != null ? previewModel.Standards.Count() : 0);
+
+            previewModel.TotalNewObjects =
+                (previewModel.Apps != null ? previewModel.Apps.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.Charts != null ? previewModel.Charts.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.Databases != null ? previewModel.Databases.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.DynamicLists != null ? previewModel.DynamicLists.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.Pages != null ? previewModel.Pages.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.Standards != null ? previewModel.Standards.Count(a => a.IsTotallyNew) : 0);
+
+            previewModel.TotalUnchangedObjects =
+                (previewModel.Apps != null ? previewModel.Apps.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.Charts != null ? previewModel.Charts.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.Databases != null ? previewModel.Databases.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.DynamicLists != null ? previewModel.DynamicLists.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.Pages != null ? previewModel.Pages.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.Standards != null ? previewModel.Standards.Count(a => a.IsUnchanged) : 0);
+
+            previewModel.TotalChangedObjects = 
+                previewModel.TotalObjects - previewModel.TotalNewObjects - previewModel.TotalUnchangedObjects;
+
             return previewModel;
         }
                    

@@ -208,6 +208,8 @@ namespace LetPortal.Core.Persistences
                     }
                 }
 
+                result.IsUnchanged = result.Result.Properties.All(a => a.ComparedState == ComparedState.Unchanged);
+
                 return result;
             }
             else

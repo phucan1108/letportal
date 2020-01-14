@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar, MatDialog, MatSnackBarRef } from '@angular/material';
 import { ActionNotificationComponent } from './action-natification/action-notification.component';
 import { MessageType, ToastType } from './shortcut.models';
-import { CustomActionEntityDialogComponent } from './custom-action-dialog/custom-action-dialog.component';
+import { ConfirmationDialogComponent } from './custom-action-dialog/custom-action-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 
 
@@ -41,14 +41,19 @@ export class ShortcutUtil {
 	}
 
 	// Method returns instance of MatDialog
-	actionEntityElement(title: string = '', description: string = '', waitDesciption: string = '', messType: MessageType = MessageType.Create) {
-		return this.dialog.open(CustomActionEntityDialogComponent, {
-			data: { title, description, waitDesciption, messType },
+	confirmationDialog(
+		title: string = '', 
+		description: string = '', 
+		waitDesciption: string = '', 
+		messType: MessageType = MessageType.Create,
+		confirmText: string = '') {
+		return this.dialog.open(ConfirmationDialogComponent, {
+			data: { title, description, waitDesciption, messType, confirmText },
 			width: '440px',
 		});
 	}
 
-	notifyMessage(
+	toastMessage(
 		message: string,
 		type: ToastType = ToastType.Info,
 		title?: string,

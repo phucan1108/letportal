@@ -117,7 +117,7 @@ export class StandardPagePage implements OnInit {
             if (!this.isEditMode) {
                 this.standardsClient.createOne(this.standardComponent).subscribe(
                     result => {
-                        this.shortcutUtil.notifyMessage('Create standard successfully', ToastType.Success)
+                        this.shortcutUtil.toastMessage('Create standard successfully', ToastType.Success)
                         this.router.navigateByUrl('portal/standard/builder/' + result)
                     },
                     err => {
@@ -128,7 +128,7 @@ export class StandardPagePage implements OnInit {
             else {
                 this.standardsClient.updateOne(this.standardComponent.id, this.standardComponent).subscribe(
                     result => {
-                        this.shortcutUtil.notifyMessage('Update standard successfully', ToastType.Success)
+                        this.shortcutUtil.toastMessage('Update standard successfully', ToastType.Success)
                     },
                     err => {
 

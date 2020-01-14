@@ -129,19 +129,19 @@ export class ChartBuilderPage implements OnInit {
                 combiningChart.datasourceName = this.edittingChart.datasourceName
                 combiningChart.timeSpan = this.edittingChart.timeSpan
                 this.chartsClient.update(this.edittingChart.id, combiningChart).subscribe(rep => {
-                    this.shortcutUtil.notifyMessage("Update successfully!", ToastType.Success)
+                    this.shortcutUtil.toastMessage("Update successfully!", ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.notifyMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                        this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
                     })
             }
             else {
                 this.chartsClient.create(combiningChart).subscribe(rep => {
                     this.router.navigateByUrl('/portal/page/charts-management')
-                    this.shortcutUtil.notifyMessage("Save successfully!", ToastType.Success)
+                    this.shortcutUtil.toastMessage("Save successfully!", ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.notifyMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                        this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
                     })
             }
         }

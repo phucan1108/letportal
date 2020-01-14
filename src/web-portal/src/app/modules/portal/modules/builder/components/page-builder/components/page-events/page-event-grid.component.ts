@@ -140,7 +140,7 @@ export class PageEventGridComponent implements OnInit {
         this.currentEvents = _.filter(this.currentEvents, (elem) => {
             return elem.eventName !== event.eventName
         })
-        this.shortcutUtil.notifyMessage('Delete event successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage('Delete event successfully!', ToastType.Success);
 
         this.table.renderRows()
     }

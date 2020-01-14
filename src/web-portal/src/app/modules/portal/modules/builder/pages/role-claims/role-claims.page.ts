@@ -233,7 +233,7 @@ export class RoleClaimsPage implements OnInit {
     saveChange() {
         this.roleClient.addPortalClaims(this.selectedRole, this.mapToPortalClaimModel()).subscribe(
             result => {
-                this.shortcutUtil.notifyMessage('Update successfully', ToastType.Success)
+                this.shortcutUtil.toastMessage('Update successfully', ToastType.Success)
             },
             err => {
             })

@@ -248,7 +248,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                 }
                 else{
                     if(!isInterval){
-                        this.shortcutUtil.notifyMessage('No data found, please try again', ToastType.Warning)
+                        this.shortcutUtil.toastMessage('No data found, please try again', ToastType.Warning)
                     }                    
                 }
                 if (!this.isDoneDefer) {
@@ -262,7 +262,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                     clearInterval(this.interval)
                 }
 
-                this.shortcutUtil.notifyMessage("Oops! Something went wrong, please check data or refresh F5 again", ToastType.Error)
+                this.shortcutUtil.toastMessage("Oops! Something went wrong, please check data or refresh F5 again", ToastType.Error)
             }
         )
     }

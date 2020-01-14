@@ -126,19 +126,19 @@ export class DynamicListBuilderPage implements OnInit {
             if (this.isEditMode) {
                 this.dynamicListClient.update(this.edittingDynamicList.id, submittingDynamicList)
                     .subscribe(rep => {
-                        this.shortcutUtil.notifyMessage("Update successfully!", ToastType.Success)
+                        this.shortcutUtil.toastMessage("Update successfully!", ToastType.Success)
                     },
                         err => {
-                            this.shortcutUtil.notifyMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                            this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
                         })
             }
             else {
                 this.dynamicListClient.create(submittingDynamicList).subscribe(rep => {
                     this.router.navigateByUrl('/portal/page/dynamic-list-management')
-                    this.shortcutUtil.notifyMessage("Save successfully!", ToastType.Success)
+                    this.shortcutUtil.toastMessage("Save successfully!", ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.notifyMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                        this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
                     })
             }
         }

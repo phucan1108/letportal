@@ -70,7 +70,7 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
         this.shellOptions = _.filter(this.shellOptions, (elem) => {
             return elem.id !== shell.id
         })
-        this.shortcutUtil.notifyMessage("Delete option successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage("Delete option successfully!", ToastType.Success);
         this.changed.emit(this.shellOptions)
     }
 

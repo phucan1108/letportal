@@ -280,7 +280,7 @@ export class BackupBuilderPage implements OnInit {
                     this.downloadableUrl = res.downloadableUrl
                 },
                 err => {
-                    this.shortcutUtil.notifyMessage("Oops! Something went wrong, please try again", ToastType.Error)
+                    this.shortcutUtil.toastMessage("Oops! Something went wrong, please try again", ToastType.Error)
                 }
             )
         }

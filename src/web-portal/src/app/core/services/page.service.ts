@@ -74,12 +74,12 @@ export class PageService {
             tap(
                 result => {
                     if (!result.allowAccess) {
-                        this.shortcutUtil.notifyMessage(`Sorry, you can access ${result.page.displayName} page !`, ToastType.Warning)
+                        this.shortcutUtil.toastMessage(`Sorry, you can access ${result.page.displayName} page !`, ToastType.Warning)
                         this.router.navigateByUrl(this.session.getDefaultAppPage())
                     }
                 },
                 err => {
-                    this.shortcutUtil.notifyMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                    this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
                     this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
             )
@@ -151,7 +151,7 @@ export class PageService {
                                     this.executingCommandHit(state.clickingButton)
                                 }
                                 else {
-                                    this.shortcutUtil.notifyMessage('Please complete all required fields', ToastType.Warning)
+                                    this.shortcutUtil.toastMessage('Please complete all required fields', ToastType.Warning)
                                 }
                                 break
                         }
@@ -487,7 +487,7 @@ export class PageService {
             const _title = 'Confirmation'
             const _description = command.buttonOptions.confirmationOptions.confirmationText
             const _waitDesciption = "Waiting..."
-            const dialogRef = this.shortcutUtil.actionEntityElement(_title, _description, _waitDesciption);
+            const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption);
             dialogRef.afterClosed().subscribe(res => {
                 if (!res) {
                     return
@@ -513,11 +513,11 @@ export class PageService {
                             parameters: params
                         }).subscribe(
                             res => {
-                                this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
                                 this.routingCommand(command)
                             },
                             err => {
-                                this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
                             })
                     break
                 case ActionType.CallHttpService:
@@ -545,11 +545,11 @@ export class PageService {
                         command.buttonOptions.actionCommandOptions.httpServiceOptions.httpSuccessCode,
                         command.buttonOptions.actionCommandOptions.httpServiceOptions.outputProjection).subscribe(
                             res => {
-                                this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
                                 this.routingCommand(command)
                             },
                             err => {
-                                this.shortcutUtil.notifyMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
                             }
                         )
 

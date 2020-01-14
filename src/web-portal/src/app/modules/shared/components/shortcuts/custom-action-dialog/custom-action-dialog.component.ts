@@ -6,13 +6,13 @@ import { MessageType } from '../shortcut.models';
 	selector: 'm-custom-action-entity-dialog',
 	templateUrl: './custom-action-dialog.component.html'
 })
-export class CustomActionEntityDialogComponent implements OnInit {
+export class ConfirmationDialogComponent implements OnInit {
 	viewLoading: boolean = false;
 
 	messType: MessageType = MessageType.Create;
 	saveButtonText = 'Create';
 	constructor(
-		public dialogRef: MatDialogRef<CustomActionEntityDialogComponent>,
+		public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) { }
 
@@ -28,6 +28,8 @@ export class CustomActionEntityDialogComponent implements OnInit {
 			case MessageType.Delete:
 				this.saveButtonText = 'Delete'
 				break
+			case MessageType.Custom:
+				this.saveButtonText = this.data.confirmText
 			default:
 				this.saveButtonText = 'Save'			
 		}

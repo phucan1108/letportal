@@ -230,7 +230,7 @@ export class PageBuilderPage implements OnInit {
             const _title = "Save changes"
             const _description = "Are you sure to save all changes?"
             const _waitDesciption = "Waiting..."
-            const dialogRef = this.shortcutUtil.actionEntityElement(_title, _description, _waitDesciption, MessageType.Delete);
+            const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption, MessageType.Delete);
             dialogRef.afterClosed().subscribe(res => {
                 if (!res) {
                     return;
@@ -242,14 +242,14 @@ export class PageBuilderPage implements OnInit {
                     if (this.isEditMode) {
                         this.store.dispatch(new EditPageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.notifyMessage("Update Page Successfully", ToastType.Success)
+                                this.shortcutUtil.toastMessage("Update Page Successfully", ToastType.Success)
                             }
                         );
                     }
                     else {
                         this.store.dispatch(new CreatePageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.notifyMessage("Create Page Successfully", ToastType.Success)
+                                this.shortcutUtil.toastMessage("Create Page Successfully", ToastType.Success)
                                 this.router.navigateByUrl('portal/page/pages-management')
                             }
                         );

@@ -152,7 +152,7 @@ export class ControlsGridComponent implements OnInit {
         const _title = "Delete Controls"
         const _description = "Are you sure to delete all selected controls?"
         const _waitDesciption = "Waiting..."
-        const dialogRef = this.shortcutUtil.actionEntityElement(_title, _description, _waitDesciption);
+        const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption);
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
                 return;
@@ -334,7 +334,7 @@ export class ControlsGridComponent implements OnInit {
         this.controls = _.filter(this.controls, (elem) => {
             return elem.id !== control.id
         })
-        this.shortcutUtil.notifyMessage('Delete control successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage('Delete control successfully!', ToastType.Success);
         this.refreshControlTable()
     }
 

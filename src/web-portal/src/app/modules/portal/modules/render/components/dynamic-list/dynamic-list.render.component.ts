@@ -187,13 +187,13 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                             }), observe: 'response'
                         }).pipe(
                             tap(result => {
-                                this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
                                 if (commandClicked.command.allowRefreshList) {
                                     this.refreshList()
                                 }
                             },
                                 err => {
-                                    this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
                                 })
                         ).subscribe()
                         break
@@ -204,13 +204,13 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                             }), observe: 'response'
                         }).pipe(
                             tap(result => {
-                                this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
                                 if (commandClicked.command.allowRefreshList) {
                                     this.refreshList()
                                 }
                             },
                                 err => {
-                                    this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
                                 })
                         ).subscribe()
                         break
@@ -221,13 +221,13 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                             }), observe: 'response'
                         }).pipe(
                             tap(result => {
-                                this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
                                 if (commandClicked.command.allowRefreshList) {
                                     this.refreshList()
                                 }
                             },
                                 err => {
-                                    this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
                                 })
                         ).subscribe()
                         break
@@ -238,13 +238,13 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                             }), observe: 'response'
                         }).pipe(
                             tap(result => {
-                                this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
                                 if (commandClicked.command.allowRefreshList) {
                                     this.refreshList()
                                 }
                             },
                                 err => {
-                                    this.shortcutUtil.notifyMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
                                 })
                         ).subscribe()
                         break

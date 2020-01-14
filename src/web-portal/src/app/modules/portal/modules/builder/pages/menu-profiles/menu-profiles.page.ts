@@ -104,13 +104,13 @@ export class MenuProfilesPage implements OnInit {
         if (this.menuProfile && this.selectedRole) {
             this.appClient.asssignRolesToMenu( this.app.id, this.menuProfile).subscribe(
                 result => {
-                    this.shortcutUtil.notifyMessage('Update successfully', ToastType.Success)
+                    this.shortcutUtil.toastMessage('Update successfully', ToastType.Success)
                 },
                 err => {
                 })
         }
         else {
-            this.shortcutUtil.notifyMessage('Please select one role', ToastType.Warning)
+            this.shortcutUtil.toastMessage('Please select one role', ToastType.Warning)
         }
     }
 

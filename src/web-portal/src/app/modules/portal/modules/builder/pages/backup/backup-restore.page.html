@@ -7,6 +7,7 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onRestore()">Restore</button>
                     <button mat-menu-item (click)="onCancel()">Cancel</button>
                 </mat-menu>
             </mat-card-title>
@@ -38,6 +39,22 @@
             <div class="row row-heading">
                 <mat-bar-button (btnClick)="onPreview()" [options]="btnOption"></mat-bar-button>
             </div>
+            <div class="row" *ngIf="isPreviewed">
+                <label class="col-lg-2 col-form-label font-weight-bold">Total Objects</label>
+                <p class="float-left col-form-label">{{preview.totalObjects}}</p>
+            </div>
+            <div class="row" *ngIf="isPreviewed">
+                <label class="col-lg-2 col-form-label font-weight-bold">Total New Objects</label>
+                <p class="float-left col-form-label">{{preview.totalNewObjects}}</p>
+            </div>
+            <div class="row" *ngIf="isPreviewed">
+                <label class="col-lg-2 col-form-label font-weight-bold">Total Unchanged Objects</label>
+                <p class="float-left col-form-label">{{preview.totalUnchangedObjects}}</p>
+            </div>
+            <div class="row" *ngIf="isPreviewed">
+                <label class="col-lg-2 col-form-label font-weight-bold">Total Changed Objects</label>
+                <p class="float-left col-form-label">{{preview.totalChangedObjects}}</p>
+            </div>
             <div class="row row-heading" *ngIf="isPreviewed">
                 <div class="col-lg-12 pl-0">
                     <mat-accordion>
@@ -65,10 +82,192 @@
                                             <b>{{property.name}}</b>
                                         </div>
                                         <div class="col-lg-5">
-                                            <code  [ngClass]="{'removed-code': property.comparedState === 3, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                                            <code
+                                                [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
                                         </div>
                                         <div class="col-lg-5">
-                                            <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                                            <code
+                                                [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator-dashed"></div>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel *ngIf="preview.databases">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Databases
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="row">
+                                <div class="col-lg-2 border-right">
+                                    <h5>Property Name</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Source</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Target</h5>
+                                </div>
+                            </div>
+                            <div class="row" *ngFor="let database of preview.databases">
+                                <div class="col-lg-12" *ngFor="let property of database.result.properties">
+                                    <div class="row border-top">
+                                        <div class="col-lg-2 border-right">
+                                            <b>{{property.name}}</b>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator-dashed"></div>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel *ngIf="preview.standards">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Standards
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="row">
+                                <div class="col-lg-2 border-right">
+                                    <h5>Property Name</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Source</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Target</h5>
+                                </div>
+                            </div>
+                            <div class="row" *ngFor="let standard of preview.standards">
+                                <div class="col-lg-12" *ngFor="let property of standard.result.properties">
+                                    <div class="row border-top">
+                                        <div class="col-lg-2 border-right">
+                                            <b>{{property.name}}</b>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator-dashed"></div>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel *ngIf="preview.dynamicLists">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Dynamic List
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="row">
+                                <div class="col-lg-2 border-right">
+                                    <h5>Property Name</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Source</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Target</h5>
+                                </div>
+                            </div>
+                            <div class="row" *ngFor="let dynamicList of preview.dynamicLists">
+                                <div class="col-lg-12" *ngFor="let property of dynamicList.result.properties">
+                                    <div class="row border-top">
+                                        <div class="col-lg-2 border-right">
+                                            <b>{{property.name}}</b>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator-dashed"></div>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel *ngIf="preview.charts">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Charts
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="row">
+                                <div class="col-lg-2 border-right">
+                                    <h5>Property Name</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Source</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Target</h5>
+                                </div>
+                            </div>
+                            <div class="row" *ngFor="let chart of preview.charts">
+                                <div class="col-lg-12" *ngFor="let property of chart.result.properties">
+                                    <div class="row border-top">
+                                        <div class="col-lg-2 border-right">
+                                            <b>{{property.name}}</b>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separator-dashed"></div>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel *ngIf="preview.pages">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Pages
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="row">
+                                <div class="col-lg-2 border-right">
+                                    <h5>Property Name</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Source</h5>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h5>Target</h5>
+                                </div>
+                            </div>
+                            <div class="row" *ngFor="let page of preview.pages">
+                                <div class="col-lg-12" *ngFor="let property of page.result.properties">
+                                    <div class="row border-top">
+                                        <div class="col-lg-2 border-right">
+                                            <b>{{property.name}}</b>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <code
+                                                [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
                                         </div>
                                     </div>
                                 </div>

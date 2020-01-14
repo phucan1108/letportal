@@ -4087,10 +4087,15 @@ export interface PreviewRestoreModel {
     charts?: ComparisonResult[] | undefined;
     dynamicLists?: ComparisonResult[] | undefined;
     pages?: ComparisonResult[] | undefined;
+    totalObjects?: number;
+    totalChangedObjects?: number;
+    totalUnchangedObjects?: number;
+    totalNewObjects?: number;
 }
 
 export interface ComparisonResult {
     result?: ComparisonEntity | undefined;
+    isUnchanged?: boolean;
     isTotallyNew?: boolean;
 }
 

@@ -11,6 +11,8 @@ namespace LetPortal.Core.Persistences
     {
         public ComparisonEntity Result { get; set; }
 
+        public bool IsUnchanged { get; set; }
+
         public bool IsTotallyNew { get; set; }
     }
 }

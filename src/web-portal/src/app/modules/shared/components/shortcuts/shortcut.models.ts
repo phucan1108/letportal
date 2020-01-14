@@ -2,7 +2,8 @@ export enum MessageType {
     Create,
     Read,
     Update,
-    Delete
+    Delete,
+    Custom
 }
 
 export enum ToastType{

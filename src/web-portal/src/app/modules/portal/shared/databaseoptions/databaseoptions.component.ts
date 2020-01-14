@@ -134,7 +134,7 @@ export class DatabaseOptionsComponent implements OnInit {
     }
 
     copy(){
-        this.shortcutUtil.notifyMessage('Copied content', ToastType.Info)
+        this.shortcutUtil.toastMessage('Copied content', ToastType.Info)
         this.clipboardService.copyFromContent(this.hintText)
     }
 
