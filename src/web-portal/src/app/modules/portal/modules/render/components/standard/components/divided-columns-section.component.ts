@@ -163,6 +163,22 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                     isLineBreaker: false
                 }
             }
+            else if (control.type === ControlType.MarkdownEditor) {
+                counterFlag = 0;
+                this.controlsGroups.push(tempGroupControls)
+                let standaloneGroup: GroupControls = {
+                    controlsList: [],
+                    numberOfColumns: 1,
+                    isLineBreaker: false
+                }
+                standaloneGroup.controlsList.push(control)
+                this.controlsGroups.push(standaloneGroup)
+                tempGroupControls = {
+                    controlsList: [],
+                    numberOfColumns: this._numberOfColumns,
+                    isLineBreaker: false
+                }
+            }
             else {
 
                 tempGroupControls.controlsList.push(control)

@@ -35,10 +35,12 @@
               "./node_modules/quill/dist/quill.bubble.css",
               "./node_modules/quill/dist/quill.snow.css",
               "./node_modules/quill-emoji/dist/quill-emoji.css",
-              "./node_modules/quill-mention/dist/quill.mention.min.css"
+              "./node_modules/quill-mention/dist/quill.mention.min.css",
+              "./node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css"
             ],
             "scripts": [
-              "./node_modules/quill/dist/quill.min.js"
+              "./node_modules/quill/dist/quill.min.js",
+              "./node_modules/bootstrap-markdown/js/bootstrap-markdown.js"
             ],
             "es5BrowserSupport": true
           },

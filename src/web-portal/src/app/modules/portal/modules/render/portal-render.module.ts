@@ -72,6 +72,7 @@ import { FilterCheckboxComponent } from './components/chart/controls/filter-chec
 import { FilterDatepickerComponent } from './components/chart/controls/filter-datepicker.component';
 import { FilterSelectComponent } from './components/chart/controls/filter-select.component';
 import { FilterNumberComponent } from './components/chart/controls/filter-number.component';
+import { AngularMarkdownEditorModule } from 'angular-markdown-editor'
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -142,7 +143,14 @@ export const FULL_MONTH_FORMATS = {
                 ]
             }
 		}),
-		NgxChartsModule
+		NgxChartsModule,
+		AngularMarkdownEditorModule.forRoot({ 
+			iconlibrary: 'fa',
+			fullscreen: {
+				enable: false,
+				icons: null
+			}
+		})
 	],
 	entryComponents: [
 		DynamicListDataDialogComponent

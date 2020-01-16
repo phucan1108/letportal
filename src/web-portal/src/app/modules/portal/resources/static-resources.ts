@@ -75,7 +75,8 @@ export class StaticResources {
             { name: 'Rich Text Editor', value: ControlType.RichTextEditor },
             { name: 'Uploader', value: ControlType.Uploader },
             { name: 'MultiUploader', value: ControlType.MultiUploader },
-            { name: 'Icon Picker', value: ControlType.IconPicker }
+            { name: 'Icon Picker', value: ControlType.IconPicker },            
+            { name: 'Markdown Editor', value: ControlType.MarkdownEditor }
         ];
     }
 

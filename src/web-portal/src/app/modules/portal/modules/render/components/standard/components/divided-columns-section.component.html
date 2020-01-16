@@ -9,6 +9,7 @@
             <div class="form-group row" *ngIf="!groupControl.isLineBreaker">
                 <ng-container *ngFor="let control of groupControl.controlsList">
                     <ng-container *ngIf="control.type !== controlType.RichTextEditor
+                                        && control.type !== controlType.MarkdownEditor
                                         && control.type !== controlType.Label">
                         <label [ngClass]="_labelClass"
                             class="font-weight-bold">{{ control.defaultOptions.label }}</label>
@@ -19,6 +20,14 @@
                         </div>
                     </ng-container>
                     <ng-container *ngIf="control.type === controlType.RichTextEditor">
+                        <label
+                            class="col-lg-2 col-form-label font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div class="col-lg-10">
+                            <let-general-control [section]="section" [formGroup]="builderFormGroup" [control]="control">
+                            </let-general-control>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="control.type === controlType.MarkdownEditor">
                         <label
                             class="col-lg-2 col-form-label font-weight-bold">{{ control.defaultOptions.label }}</label>
                         <div class="col-lg-10">

@@ -190,5 +190,15 @@
             <quill-editor [formControlName]="control.name" [readOnly]="control.defaultOptions.checkDisabled">
             </quill-editor>
         </div>
+        <div *ngSwitchCase="controlType.MarkdownEditor">
+            <!-- <md-editor [ngModelOptions]="{standalone: true}" name="Content" [upload]="markdownUpload"
+                [(ngModel)]="markdownContent" [height]="'200px'" [mode]="markdownMode" [options]="markdownOptions"
+                [maxlength]="maxLength"
+                [hideToolbar]="false">
+            </md-editor> -->
+            <angular-markdown-editor 
+            textareaId="editor1" rows="12" name="markdownText" [(ngModel)]="markdownContent" [ngModelOptions]="{standalone: true}" >
+            </angular-markdown-editor>
+        </div>
     </ng-container>
 </div>

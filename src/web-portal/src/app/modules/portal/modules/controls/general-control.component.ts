@@ -4,7 +4,7 @@ import { StaticResources } from 'portal/resources/static-resources';
 import { ExtendedFormValidator, ExtendedControlValidator, ExtendedPageSection } from '../../../../core/models/extended.models';
 import * as _ from 'lodash';
 import { ObjectUtils } from 'app/core/utils/object-util';
-import { PageControl, ControlType, ValidatorType, DatasourceControlType, EventActionType, PageControlAsyncValidator } from 'services/portal.service';
+import { PageControl, ControlType, ValidatorType, DatasourceControlType, EventActionType, PageControlAsyncValidator, FilesClient } from 'services/portal.service';
 import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 import { Observable, of, Subscription } from 'rxjs';
 import { Store } from '@ngxs/store';
@@ -15,6 +15,8 @@ import { PageControlEventStateModel } from 'stores/pages/pagecontrol.state';
 import { PageService } from 'services/page.service';
 import { NGXLogger } from 'ngx-logger';
 import { EventsProvider } from 'app/core/events/event.provider';
+import { UploadResult } from 'ngx-markdown-editor';
+import { UploadFileService } from 'services/uploadfile.service';
 
 @Component({
     selector: 'let-general-control',
@@ -46,12 +48,28 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
     asyncValidators: PageControlAsyncValidator[] = []
     currentAsyncErrorName: string
     hasAsyncInvalid: boolean = false
+
+    markdownContent: string
+    markdownMode = 'editor'
+    markdownOptions = {
+        showPreviewPanel: true,    // Show preview panel, Default is true
+        showBorder: false,          // Show editor component's border. Default is true
+        hideIcons: ['FullScreen'], //['Bold', 'Italic', 'Heading', 'Refrence', 'Link', 'Image', 'Ul', 'Ol', 'Code', 'TogglePreview', 'FullScreen'],
+        usingFontAwesome5: false,   // Using font awesome with version 5, Default is false
+        scrollPastEnd: 0,        // The option for ace editor. Default is 0
+        enablePreviewContentClick: false,  // Allow user fire the click event on the preview panel, like href etc. Default is false
+        resizable: false,           // Allow resize the editor
+        markedjsOp: null  // The markedjs option, see https://marked.js.org/#/USING_ADVANCED.md#options
+    }
     constructor(
         @Optional() private eventsProvider: EventsProvider,
         private pageService: PageService,
+        private uploadService: UploadFileService,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef
-    ) { }
+    ) { 
+        this.markdownUpload = this.markdownUpload.bind(this)
+    }
 
     ngOnInit(): void {
         this.controlEventSubscription = this.pageService.listenTriggeringControlEvent$().pipe(
@@ -83,7 +101,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
                             break
                         default:
                             const eventExecution = this.eventsProvider.getEvent(state.eventType)
-                            if(eventExecution != null){
+                            if (eventExecution != null) {
                                 eventExecution.execute(
                                     this.formGroup.get(this.control.name) as FormControl,
                                     this.formGroup,
@@ -122,20 +140,20 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
             tap(
                 newValue => {
                     this.hasAsyncInvalid = this.isInvalidAsync()
-                    if(this.control.type == ControlType.Checkbox || this.control.type == ControlType.Slide){
-                        if(this.control.defaultOptions.allowZero){
+                    if (this.control.type == ControlType.Checkbox || this.control.type == ControlType.Slide) {
+                        if (this.control.defaultOptions.allowZero) {
                             this.pageService.changeControlValue(this.controlFullName, newValue ? 1 : 0)
                         }
-                        else if(this.control.defaultOptions.allowYesNo){
+                        else if (this.control.defaultOptions.allowYesNo) {
                             this.pageService.changeControlValue(this.controlFullName, newValue ? 'Y' : 'N')
                         }
-                        else{
+                        else {
                             this.pageService.changeControlValue(this.controlFullName, newValue)
                         }
                     }
-                    else{
+                    else {
                         this.pageService.changeControlValue(this.controlFullName, newValue)
-                    }                   
+                    }
                     // Check with chaining events must be notified
                     _.forEach(this.control.pageControlEvents, event => {
                         switch (event.eventActionType) {
@@ -206,6 +224,12 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
         }
         return -1
     }
+
+    markdownUpload(files: Array<File>): Promise<Array<UploadResult>> {
+        // do upload file by yourself
+        this.uploadService.upload(new Set<File>(files))
+        return Promise.resolve([{ name: 'xxx', url: 'xxx.png', isImg: true }]);
+      }
 
     private generateValidators() {
         _.forEach(this.control.validators, validator => {

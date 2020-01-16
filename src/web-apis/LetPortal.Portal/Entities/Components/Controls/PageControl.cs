@@ -67,6 +67,7 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
         RichTextEditor,
         Uploader,
         MultiUploader,
-        IconPicker
+        IconPicker,    
+        MarkdownEditor
     }
 }

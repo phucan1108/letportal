@@ -4814,6 +4814,7 @@ export enum ControlType {
     Uploader = 14,
     MultiUploader = 15,
     IconPicker = 16,
+    MarkdownEditor = 17,
 }
 
 export interface PageControlValidator {
