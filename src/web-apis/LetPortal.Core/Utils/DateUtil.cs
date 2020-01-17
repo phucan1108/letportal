@@ -1,4 +1,5 @@
 ﻿using System;
+using TimeZoneConverter;
 
 namespace LetPortal.Core.Utils
 {
@@ -6,13 +7,15 @@ namespace LetPortal.Core.Utils
     {
         public static DateTime GetCurrentSystemDateByTz(string timezone)
         {
-            var tz = TimeZoneInfo.FindSystemTimeZoneById(timezone);
+            // Due to TimeZone problem per OS, we need to use another lib to exchange corresponding TZ
+            var tz = TZConvert.GetTimeZoneInfo(timezone);
             return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
         }
         
         public static DateTime GetDateByTz(DateTime convert, string timezone)
         {
-            var tz = TimeZoneInfo.FindSystemTimeZoneById(timezone);
+            // Due to TimeZone problem per OS, we need to use another lib to exchange corresponding TZ
+            var tz = TZConvert.GetTimeZoneInfo(timezone);
             return TimeZoneInfo.ConvertTimeFromUtc(convert, tz);
         }
 

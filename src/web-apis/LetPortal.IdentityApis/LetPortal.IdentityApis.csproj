@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AssemblyName>LetPortal.IdentityService</AssemblyName>
-    <RootNamespace>LetPortal.IdentityService</RootNamespace>
+    <AssemblyName>LetPortal.IdentityApis</AssemblyName>
+    <RootNamespace>LetPortal.IdentityApis</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
     <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.0.6" />
   </ItemGroup>

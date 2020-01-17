@@ -63,12 +63,22 @@ namespace LetPortal.Core.Monitors
                         }
                         break;
                     case ConnectionType.SQLServer:
+                        pushHealthCheckModel.DatabaseHealthy = true;
+                        break;
+                    default:
+                        pushHealthCheckModel.DatabaseHealthy = true;
                         break;
                 }
             }
             else
             {
                 pushHealthCheckModel.DatabaseHealthy = true;
+            }
+
+            if(_monitorOptions.CurrentValue.CheckDatabaseLoggerOption
+                && _databaseOptions.CurrentValue != null)
+            {
+                pushHealthCheckModel.LoggerDatabaseHealthy = true;
             }
 
             _monitorHealthCheck.CalculateAvg();

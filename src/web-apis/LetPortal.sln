@@ -49,7 +49,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.UTs.Portal"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Portal", "..\..\test\IntegrationTests\LetPortal.Tests.ITs.Portal\LetPortal.Tests.ITs.Portal.csproj", "{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetPortal.Tests.ITs.Identity", "..\..\test\IntegrationTests\LetPortal.Tests.ITs.Identity\LetPortal.Tests.ITs.Identity.csproj", "{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Identity", "..\..\test\IntegrationTests\LetPortal.Tests.ITs.Identity\LetPortal.Tests.ITs.Identity.csproj", "{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{768D0C05-5520-40C6-851D-CF4F2E490BD5}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
