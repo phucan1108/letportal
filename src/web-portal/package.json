@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "debug": "ng serve --disable-host-check",
+    "docker": "ng build --docker",
+    "docker-debug": "ng serve --configuration=dockerlocal --disable-host-check",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

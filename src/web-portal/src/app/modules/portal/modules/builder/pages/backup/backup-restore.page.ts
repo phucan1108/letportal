@@ -82,4 +82,8 @@ export class BackupRestorePage implements OnInit {
             }
         )
     }
+
+    onCancel(){
+        this.router.navigateByUrl('portal/page/backup-management')
+    }
 }

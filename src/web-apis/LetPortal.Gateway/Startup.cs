@@ -34,6 +34,15 @@ namespace LetPortal.Gateway
                            .WithExposedHeaders("X-Token-Expired");
                 });
 
+                options.AddPolicy("DockerLocalCors", builder =>
+                {
+                    builder.AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowAnyOrigin()
+                           .AllowCredentials()
+                           .WithExposedHeaders("X-Token-Expired");
+                });
+
                 options.AddPolicy("ProdCors", builder =>
                 {
                     builder.WithExposedHeaders("X-Token-Expired");
@@ -57,8 +66,13 @@ namespace LetPortal.Gateway
             {
                 app.UseCors("DevCors");                
             }
+            else if(env.IsEnvironment("DockerLocal"))
+            {
+                app.UseCors("DockerLocalCors");
+            }
             else
             {
+                app.UseHsts();
                 app.UseCors("ProdCors");
             }
                

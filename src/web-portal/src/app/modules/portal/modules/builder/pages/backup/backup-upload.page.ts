@@ -151,4 +151,8 @@ export class BackupUploadpage implements OnInit {
             }
         )
     }
+
+    onCancel(){
+        this.router.navigateByUrl('portal/page/backup-management')
+    }
 }

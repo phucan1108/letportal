@@ -73,6 +73,7 @@ import { FilterDatepickerComponent } from './components/chart/controls/filter-da
 import { FilterSelectComponent } from './components/chart/controls/filter-select.component';
 import { FilterNumberComponent } from './components/chart/controls/filter-number.component';
 import { AngularMarkdownEditorModule } from 'angular-markdown-editor'
+import { FilterRadioComponent } from './components/chart/controls/filter-radio.component';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -191,7 +192,8 @@ export const FULL_MONTH_FORMATS = {
 		FilterCheckboxComponent,
 		FilterDatepickerComponent,
 		FilterSelectComponent,
-		FilterNumberComponent
+		FilterNumberComponent,
+		FilterRadioComponent
 	]
 })
 export class PortalRenderModule { }
