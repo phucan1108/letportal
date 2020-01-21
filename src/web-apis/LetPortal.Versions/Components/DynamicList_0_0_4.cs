@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LetPortal.Versions.Components
 {
-    public class DynamicList_0_0_4 : IVersion
+    public class DynamicList_0_0_4 : IPortalVersion
     {
         public string VersionNumber => "0.0.4";
 

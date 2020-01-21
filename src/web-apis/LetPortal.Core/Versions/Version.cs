@@ -4,11 +4,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LetPortal.Portal.Entities.Versions
+namespace LetPortal.Core.Versions
 {
-    [EntityCollection(Name = "portalversions")]
-    [Table("portalversions")]
-    public class PortalVersion : Entity
+    [EntityCollection(Name = "versions")]
+    [Table("versions")]
+    public class Version : Entity
     {
         [StringLength(100)]
         [Required]
@@ -16,7 +16,7 @@ namespace LetPortal.Portal.Entities.Versions
 
         public string AffectiveList { get; set; }
 
-        public DateTime CreatedDate { get; set; }  
+        public DateTime CreatedDate { get; set; }
 
         public int GetNumber()
         {
@@ -29,4 +29,3 @@ namespace LetPortal.Portal.Entities.Versions
         }
     }
 }
-

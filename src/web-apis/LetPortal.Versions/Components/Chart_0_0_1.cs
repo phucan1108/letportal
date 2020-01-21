@@ -4,7 +4,7 @@ using System;
 
 namespace LetPortal.Versions.Components
 {
-    public class Chart_0_0_1 : IVersion
+    public class Chart_0_0_1 : IPortalVersion
     {
         public string VersionNumber => "0.0.1";
 

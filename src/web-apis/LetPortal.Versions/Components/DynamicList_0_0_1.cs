@@ -8,7 +8,7 @@ using LetPortal.Portal.Entities.Shared;
 
 namespace LetPortal.Versions.SectionParts
 {
-    public class DynamicList_0_0_1 : IVersion
+    public class DynamicList_0_0_1 : IPortalVersion
     {
         public string VersionNumber => "0.0.1";
 

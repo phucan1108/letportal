@@ -4,7 +4,7 @@ using System;
 
 namespace LetPortal.Versions.Datasources
 {
-    public class Datasource_0_0_1 : IVersion
+    public class Datasource_0_0_1 : IPortalVersion
     {
         public string VersionNumber => "0.0.1";
 

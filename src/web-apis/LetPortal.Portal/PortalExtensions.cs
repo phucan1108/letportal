@@ -1,6 +1,7 @@
 ﻿using LetPortal.Core;
 using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Executions.MySQL;
@@ -75,6 +76,8 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IFileRepository, FileMongoRepository>();
                 builder.Services.AddSingleton<IChartRepository, ChartMongoRepository>();  
                 builder.Services.AddSingleton<IBackupRepository, BackupMongoRepository>();
+                builder.Services.AddSingleton<IVersionRepository, VersionMongoRepository>();
+
                 builder.Services.AddSingleton<IExecutionChartReport, MongoExecutionChartReport>();
                 builder.Services.AddSingleton<IMongoQueryExecution, MongoQueryExecution>();
             }
@@ -95,6 +98,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IFileRepository, FileEFRepository>();
                 builder.Services.AddTransient<IChartRepository, ChartEFRepository>();
                 builder.Services.AddTransient<IBackupRepository, BackupEFRepository>();
+                builder.Services.AddTransient<IVersionRepository, VersionEFRepository>();
             }
 
             if(portalOptions.EnableFileServer)

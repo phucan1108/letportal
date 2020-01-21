@@ -40,11 +40,6 @@
         /// Check Database connection in DatabaseOptions, if not found, no data is sent
         /// </summary>
         public bool CheckDatabaseOption { get; set; } = false;
-
-        /// <summary>
-        /// Check Database connection in LoggerOptions, if not found, no data is sent
-        /// </summary>
-        public bool CheckDatabaseLoggerOption { get; set; } = false;
     }
 
     public class MonitorNotifyOptions

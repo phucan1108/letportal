@@ -1,11 +1,11 @@
 ﻿using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
-using LetPortal.Portal.Entities.Versions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Version = LetPortal.Core.Versions.Version;
 
 namespace LetPortal.Tools.Features
 {
@@ -24,15 +24,15 @@ namespace LetPortal.Tools.Features
                          a => a.GetNumber() <= context.LatestVersion.GetNumber()
                              && a.GetNumber() > requestingVersionNumber);
 
-                    var portalVersions = DowngradingVersion(matchingVersions, context);                    
+                    var portalVersions = DowngradingVersion(matchingVersions, context);
                     foreach(var portalVersion in portalVersions)
                     {
-                        var storedVersion = context.PortalVersionRepository.GetAsQueryable().Where(a => a.VersionNumber == portalVersion.VersionNumber).FirstOrDefault();
+                        var storedVersion = context.VersionRepository.GetAsQueryable().Where(a => a.VersionNumber == portalVersion.VersionNumber).FirstOrDefault();
 
                         if(storedVersion != null)
                         {
-                            await context.PortalVersionRepository.DeleteAsync(storedVersion.Id);
-                        }                        
+                            await context.VersionRepository.DeleteAsync(storedVersion.Id);
+                        }
                     }
                 }
                 else
@@ -46,9 +46,9 @@ namespace LetPortal.Tools.Features
             }
         }
 
-        private List<PortalVersion> DowngradingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
+        private List<Version> DowngradingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
         {
-            var effectivePortalVersions = new List<PortalVersion>();
+            var effectivePortalVersions = new List<Version>();
             var dicVersions = new Dictionary<string, List<string>>();
 
             var availableGroupVersions = versions.OrderByDescending(b => b.GetNumber()).Select(a => a.VersionNumber).Distinct();
@@ -71,7 +71,7 @@ namespace LetPortal.Tools.Features
 
             foreach(var kvp in dicVersions)
             {
-                effectivePortalVersions.Add(new PortalVersion
+                effectivePortalVersions.Add(new Version
                 {
                     Id = DataUtil.GenerateUniqueId(),
                     VersionNumber = kvp.Key,

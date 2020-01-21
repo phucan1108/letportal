@@ -15,4 +15,10 @@
     <ProjectReference Include="..\LetPortal.Portal\LetPortal.Portal.csproj" />
     <ProjectReference Include="..\LetPortal.Versions\LetPortal.Versions.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="tools.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

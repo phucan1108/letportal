@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace LetPortal.Versions.Pages
 {
-    public class Page_0_0_5 : IVersion
+    public class Page_0_0_5 : IPortalVersion
     {
         public string VersionNumber => "0.0.5";
 

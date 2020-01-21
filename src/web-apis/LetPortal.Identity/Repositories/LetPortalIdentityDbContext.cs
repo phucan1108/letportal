@@ -1,5 +1,6 @@
 ﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Core.Versions;
 using LetPortal.Identity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -26,6 +27,8 @@ namespace LetPortal.Identity.Repositories
         public DbSet<UserSession> UserSessions { get; set; }
 
         public DbSet<UserActivity> UserActivities { get; set; }
+
+        public DbSet<Version> Versions { get; set; }
 
         private readonly DatabaseOptions _options;
 
@@ -74,6 +77,9 @@ namespace LetPortal.Identity.Repositories
 
             var userActivityBuilder = modelBuilder.Entity<UserActivity>();
             userActivityBuilder.HasKey(a => a.Id);
+
+            var versionBuilder = modelBuilder.Entity<Version>();
+            versionBuilder.HasKey(a => a.Id);
 
             foreach(var entity in modelBuilder.Model.GetEntityTypes())
             {

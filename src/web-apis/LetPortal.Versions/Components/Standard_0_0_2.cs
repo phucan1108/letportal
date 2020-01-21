@@ -6,7 +6,7 @@ using System.Text;
 
 namespace LetPortal.Versions.Components
 {
-    public class Standard_0_0_2 : IVersion
+    public class Standard_0_0_2 : IPortalVersion
     {
         public string VersionNumber => "0.0.2";
 

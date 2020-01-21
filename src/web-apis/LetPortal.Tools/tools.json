@@ -1,0 +1,20 @@
+{
+  "StoringConnections": {
+    "PortalConnection": {
+      "ConnectionString": "mongodb://localhost:27017",
+      "DataSource": "letportal",
+      "ConnectionType": "MongoDB"
+    },
+    "IdentityConnection": {
+      "ConnectionString": "mongodb://localhost:27017",
+      "DataSource": "letportal",
+      "ConnectionType": "MongoDB"
+    },
+    "ServiceManagementConnection": {
+      "ConnectionString": "mongodb://localhost:27017",
+      "DataSource": "letportal",
+      "ConnectionType": "MongoDB"
+    }
+  },
+  "PatchesFolderPath": "Patches"
+}

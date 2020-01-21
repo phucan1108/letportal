@@ -4,7 +4,7 @@ using System;
 
 namespace LetPortal.Versions.EntitySchemas
 {
-    public class EntitySchema_0_0_1 : IVersion
+    public class EntitySchema_0_0_1 : IPortalVersion
     {
         public string VersionNumber => "0.0.1";
 

@@ -1,5 +1,6 @@
 ﻿using LetPortal.Core;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Versions;
 using LetPortal.Identity.Configurations;
 using LetPortal.Identity.Entities;
 using LetPortal.Identity.Persistences;
@@ -34,6 +35,7 @@ namespace LetPortal.Identity
                 builder.Services.AddSingleton<IRoleRepository, RoleMongoRepository>();
                 builder.Services.AddSingleton<IIssuedTokenRepository, IssuedTokenMongoRepository>();
                 builder.Services.AddSingleton<IUserSessionRepository, UserSessionMongoRepository>();
+                builder.Services.AddSingleton<IVersionRepository, VersionMongoRepository>();
             }
 
             if(builder.ConnectionType == ConnectionType.PostgreSQL
@@ -45,6 +47,7 @@ namespace LetPortal.Identity
                 builder.Services.AddTransient<IRoleRepository, RoleEFRepository>();
                 builder.Services.AddTransient<IIssuedTokenRepository, IssuedTokenEFRepository>();
                 builder.Services.AddTransient<IUserSessionRepository, UserSessionEFRepository>();
+                builder.Services.AddTransient<IVersionRepository, VersionEFRepository>();
             }
 
             builder.Services.AddTransient<IIdentityServiceProvider, InternalIdentityServiceProvider>();

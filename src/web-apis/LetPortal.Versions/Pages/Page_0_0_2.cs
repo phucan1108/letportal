@@ -8,7 +8,7 @@ using System.Text;
 
 namespace LetPortal.Versions.Pages
 {
-    public class Page_0_0_2 : IVersion
+    public class Page_0_0_2 : IPortalVersion
     {
         public string VersionNumber => "0.0.2";
 

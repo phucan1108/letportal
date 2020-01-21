@@ -2,9 +2,9 @@
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
+using LetPortal.Identity.Repositories;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Repositories;
-using LetPortal.Portal.Repositories.PortalVersions;
 using LetPortal.Tools;
 using LetPortal.Tools.Features;
 using LetPortal.Versions;
@@ -12,6 +12,7 @@ using McMaster.Extensions.CommandLineUtils;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -24,19 +25,19 @@ namespace LET.Tools.Installation
         [Option("-c|--connection", Description = "A connection string to indicate the database")]
         public string Connection { get; set; }
 
-        [Option("-s|--s-management", Description = "A connection string to indicate the Service Management Database")]
-        public string ServiceManagementConnection { get; set; }
-
         [Option("-db|--db-type", Description = "Database type, support specific parameter: mongodb | sqlserver")]
         public string DatabseType { get; set; } = "mongodb";
 
-        [Option("-f|--force", Description = "Force run without asking")]
-        public bool Force { get; set; } = false;
+        [Option("-f|--file", Description = "File config path. Ex: C:\\tools.json. Default: tools.json")]
+        public string FilePath { get; set; } = "tools.json";
 
-        [Argument(0, Name = "mode", Description = "Supports: info | install | uninstall | up | down")]
+        [Argument(0, Name = "app", Description = "Supports: portal | identity")]
+        public string App { get; set; }
+
+        [Argument(1, Name = "mode", Description = "Supports: info | install | uninstall | up | down")]
         public string Mode { get; set; }
 
-        [Argument(1, Name = "version", Description = "Version number is needed to run with mode. Ex: 0.0.1")]
+        [Argument(2, Name = "version", Description = "Version number is needed to run with mode. Ex: 0.0.1")]
         public string VersionNumber { get; set; }
 
         public static async Task<int> Main(string[] args)
@@ -46,24 +47,14 @@ namespace LET.Tools.Installation
 
         private async Task OnExecuteAsync()
         {
+            var toolsOption = GetToolsOptions(FilePath);
             ConventionPackDefault.Register();
             MongoDbRegistry.RegisterEntities();
             var dbType = DatabseType.ToEnum<ConnectionType>(true);
-
-            var allVersions = Scanner.GetAllVersions();
-
             var databaseOption = new DatabaseOptions
             {
                 ConnectionString = !string.IsNullOrEmpty(Connection) ? Connection : GetDefaultConnectionString(dbType),
-                ConnectionType = dbType,
-                Datasource = "letportal"
-            };
-
-            var serviceManagementOption = new DatabaseOptions
-            {
-                ConnectionString = !string.IsNullOrEmpty(ServiceManagementConnection) ? ServiceManagementConnection : GetDefaultConnectionStringForServiceManagement(dbType),
-                ConnectionType = dbType,
-                Datasource = "letportalservices"
+                ConnectionType = dbType
             };
 
             var runningCommand = GetAvailableCommands().FirstOrDefault(a => a.CommandName.ToLower() == Mode.ToLower());
@@ -76,11 +67,21 @@ namespace LET.Tools.Installation
                     case ConnectionType.MongoDB:
                         var mongoConnection = new MongoConnection(databaseOption);
                         var mongoVersionContext = new MongoVersionContext(databaseOption);
-                        var portalMongoRepository = new PortalVersionMongoRepository(mongoConnection);
+                        var versionMongoRepository = new VersionMongoRepository(mongoConnection);
                         mongoVersionContext.ConnectionType = ConnectionType.MongoDB;
                         mongoVersionContext.DatabaseOptions = databaseOption;
-                        mongoVersionContext.ServiceManagementOptions = serviceManagementOption;
-                        var latestVersion = portalMongoRepository.GetAsQueryable().ToList().LastOrDefault();
+                        mongoVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
+                        var latestVersion = versionMongoRepository.GetAsQueryable().ToList().LastOrDefault();
+
+                        IEnumerable<IVersion> allVersions = Enumerable.Empty<IVersion>();
+                        if(IsPortal())
+                        {
+                            allVersions = Scanner.GetAllPortalVersions();
+                        }
+                        else if(IsIdentity())
+                        {
+                            allVersions = Scanner.GetAllIdentityVersions();
+                        }
 
                         toolsContext = new ToolsContext
                         {
@@ -88,32 +89,65 @@ namespace LET.Tools.Installation
                             VersionContext = mongoVersionContext,
                             VersionNumber = VersionNumber,
                             Versions = allVersions,
-                            PortalVersionRepository = portalMongoRepository
+                            VersionRepository = versionMongoRepository
                         };
                         break;
                     case ConnectionType.PostgreSQL:
                     case ConnectionType.MySQL:
                     case ConnectionType.SQLServer:
-                        var letportalContext = new LetPortalVersionDbContext(databaseOption);
-                        letportalContext.Database.EnsureCreated();
 
-                        var letportalContextForRepo = new LetPortalVersionDbContext(databaseOption);
-                        var sqlEFVersionContext = new EFVersionContext(letportalContext)
+                        if(IsPortal())
                         {
-                            ConnectionType = dbType,
-                            DatabaseOptions = databaseOption
-                        };
-                        var portalVersionRepository = new PortalVersionEFRepository(letportalContextForRepo);
-                        var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
-                        sqlEFVersionContext.ServiceManagementOptions = serviceManagementOption;
-                        toolsContext = new ToolsContext
+                            var letportalContext = new LetPortalDbContext(databaseOption);
+                            letportalContext.Database.EnsureCreated();
+
+                            var letportalContextForRepo = new LetPortalDbContext(databaseOption);
+                            var sqlEFVersionContext = new EFVersionContext(letportalContext)
+                            {
+                                ConnectionType = dbType,
+                                DatabaseOptions = databaseOption
+                            };
+                            var portalVersionRepository = new VersionEFRepository(letportalContextForRepo);
+                            var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
+                            sqlEFVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
+
+                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
+                            toolsContext = new ToolsContext
+                            {
+                                LatestVersion = latestVersionEF,
+                                VersionContext = sqlEFVersionContext,
+                                VersionNumber = VersionNumber,
+                                Versions = allSQLVersions,
+                                VersionRepository = portalVersionRepository
+                            };
+                        }
+                        else if(IsIdentity())
                         {
-                            LatestVersion = latestVersionEF,
-                            VersionContext = sqlEFVersionContext,
-                            VersionNumber = VersionNumber,
-                            Versions = allVersions,
-                            PortalVersionRepository = portalVersionRepository
-                        };
+                            var letIdentityContext = new LetPortalIdentityDbContext(databaseOption);
+                            letIdentityContext.Database.EnsureCreated();
+
+                            var letportalContextForRepo = new LetPortalIdentityDbContext(databaseOption);
+                            var sqlEFVersionContext = new EFVersionContext(letportalContextForRepo)
+                            {
+                                ConnectionType = dbType,
+                                DatabaseOptions = databaseOption
+                            };
+                            var portalVersionRepository = new VersionEFRepository(letportalContextForRepo);
+                            var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
+                            sqlEFVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
+
+                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
+
+                            toolsContext = new ToolsContext
+                            {
+                                LatestVersion = latestVersionEF,
+                                VersionContext = sqlEFVersionContext,
+                                VersionNumber = VersionNumber,
+                                Versions = allSQLVersions,
+                                VersionRepository = portalVersionRepository
+                            };
+                        }
+
                         break;
                 }
 
@@ -128,6 +162,22 @@ namespace LET.Tools.Installation
             {
                 Console.WriteLine("Oops! We don't find any matching command to execute. If you don't know how to run, please type '--help'");
             }
+        }
+
+        private bool IsPortal()
+        {
+            return App == "portal";
+        }
+
+        private bool IsIdentity()
+        {
+            return App == "identity";
+        }
+
+        private ToolsOptions GetToolsOptions(string filePath)
+        {
+            var foundText = File.ReadAllText(filePath);
+            return ConvertUtil.DeserializeObject<ToolsOptions>(foundText);
         }
 
         private IEnumerable<IFeatureCommand> GetAvailableCommands()

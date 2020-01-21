@@ -12,7 +12,6 @@ using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Recoveries;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.SectionParts.Controls;
-using LetPortal.Portal.Entities.Versions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
@@ -49,7 +48,7 @@ namespace LetPortal.Portal.Repositories
 
         public DbSet<File> Files { get; set; }
 
-        public DbSet<PortalVersion> PortalVersions { get; set; }
+        public DbSet<LetPortal.Core.Versions.Version> Versions { get; set; }
 
         public DbSet<Backup> Backups { get; set; }
 
@@ -76,7 +75,7 @@ namespace LetPortal.Portal.Repositories
             appBuilder.Property(a => a.Menus).HasConversion(jsonMenusConverter);
             appBuilder.Property(a => a.MenuProfiles).HasConversion(jsonMenuProfilesConverter);
 
-            var portalVersionBuilder = modelBuilder.Entity<PortalVersion>();
+            var portalVersionBuilder = modelBuilder.Entity<LetPortal.Core.Versions.Version>();
             portalVersionBuilder.HasKey(a => a.Id);
 
             var componentBuilder = modelBuilder.Entity<Component>();

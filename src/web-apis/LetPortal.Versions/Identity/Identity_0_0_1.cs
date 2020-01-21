@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LetPortal.Versions.Identity
 {
-    public class Identity_0_0_1 : IVersion
+    public class Identity_0_0_1 : IIdentityVersion
     {
         public string VersionNumber => "0.0.1";
 

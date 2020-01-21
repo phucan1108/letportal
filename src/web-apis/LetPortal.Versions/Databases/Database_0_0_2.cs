@@ -5,7 +5,7 @@ using System;
 
 namespace LetPortal.Versions.Databases
 {
-    public class Database_0_0_2 : IVersion
+    public class Database_0_0_2 : IPortalVersion
     {
         public string VersionNumber => "0.0.2";
 

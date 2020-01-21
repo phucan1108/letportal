@@ -1,6 +1,4 @@
 ﻿using LetPortal.Core.Versions;
-using LetPortal.Portal.Entities.Versions;
-using LetPortal.Portal.Repositories.PortalVersions;
 using System.Collections.Generic;
 
 namespace LetPortal.Tools
@@ -11,9 +9,9 @@ namespace LetPortal.Tools
 
         public IVersionContext VersionContext { get; set; }
 
-        public PortalVersion LatestVersion { get; set; }
+        public Version LatestVersion { get; set; }
 
-        public IPortalVersionRepository PortalVersionRepository { get; set; }
+        public IVersionRepository VersionRepository { get; set; }
 
         public string VersionNumber { get; set; }
     }

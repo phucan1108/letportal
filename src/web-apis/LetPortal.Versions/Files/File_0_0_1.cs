@@ -3,7 +3,7 @@ using System;
 
 namespace LetPortal.Versions.Files
 {
-    public class File_0_0_1 : IVersion
+    public class File_0_0_1 : IPortalVersion
     {
         public string VersionNumber => "0.0.1";
 

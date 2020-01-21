@@ -1,12 +1,11 @@
 ﻿using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
-using LetPortal.Portal.Entities.Versions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
+using Version = LetPortal.Core.Versions.Version;
 
 namespace LetPortal.Tools.Features
 {
@@ -25,7 +24,7 @@ namespace LetPortal.Tools.Features
                     var portalVersions = InstallingVersion(matchingVersions, context);
                     foreach(var portalVersion in portalVersions)
                     {
-                        await context.PortalVersionRepository.AddAsync(portalVersion);
+                        await context.VersionRepository.AddAsync(portalVersion);
                     }
                 }
                 else
@@ -35,7 +34,7 @@ namespace LetPortal.Tools.Features
                     var portalVersions = InstallingVersion(matchingVersions, context);
                     foreach(var portalVersion in portalVersions)
                     {
-                        await context.PortalVersionRepository.AddAsync(portalVersion);
+                        await context.VersionRepository.AddAsync(portalVersion);
                     }
                 }
             }
@@ -45,9 +44,9 @@ namespace LetPortal.Tools.Features
             }
         }
 
-        private List<PortalVersion> InstallingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
+        private List<Version> InstallingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
         {
-            var effectivePortalVersions = new List<PortalVersion>();
+            var effectivePortalVersions = new List<Version>();
             var dicVersions = new Dictionary<string, List<string>>();
 
             var availableGroupVersions = versions.Select(a => a.VersionNumber).Distinct();
@@ -71,12 +70,12 @@ namespace LetPortal.Tools.Features
 
             foreach(var kvp in dicVersions)
             {
-                effectivePortalVersions.Add(new PortalVersion
+                effectivePortalVersions.Add(new Version
                 {
-                   Id = DataUtil.GenerateUniqueId(),
-                   VersionNumber = kvp.Key,
-                   AffectiveList = ConvertUtil.SerializeObject(kvp.Value),
-                   CreatedDate = DateTime.UtcNow
+                    Id = DataUtil.GenerateUniqueId(),
+                    VersionNumber = kvp.Key,
+                    AffectiveList = ConvertUtil.SerializeObject(kvp.Value),
+                    CreatedDate = DateTime.UtcNow
                 });
             }
 

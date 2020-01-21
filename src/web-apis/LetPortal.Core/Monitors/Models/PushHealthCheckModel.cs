@@ -12,8 +12,6 @@ namespace LetPortal.Core.Monitors.Models
 
         public bool DatabaseHealthy { get; set; }
 
-        public bool LoggerDatabaseHealthy { get; set; }
-
         public HttpHealthCheckModel HttpHealthCheck { get; set; } = new HttpHealthCheckModel();
 
         public HardwareInfoHealthCheckModel HardwareInfoHealthCheck { get; set; } = new HardwareInfoHealthCheckModel();
