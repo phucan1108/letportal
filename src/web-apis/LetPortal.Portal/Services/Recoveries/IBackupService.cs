@@ -12,7 +12,7 @@ namespace LetPortal.Portal.Services.Recoveries
         /// </summary>
         /// <param name="uploadFile"></param>
         /// <returns></returns>
-        Task<UploadBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader);
+        Task<UploadBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader);        
 
         /// <summary>
         /// Create a json file and store it into FileService

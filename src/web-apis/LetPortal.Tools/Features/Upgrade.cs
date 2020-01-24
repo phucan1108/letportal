@@ -70,7 +70,7 @@ namespace LetPortal.Tools.Features
                 {
                     Id = DataUtil.GenerateUniqueId(),
                     VersionNumber = kvp.Key,
-                    AffectiveList = ConvertUtil.SerializeObject(kvp.Value),
+                    AffectiveFiles = ConvertUtil.SerializeObject(kvp.Value),
                     CreatedDate = DateTime.UtcNow
                 });
             }

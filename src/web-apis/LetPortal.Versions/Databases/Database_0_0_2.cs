@@ -12,21 +12,33 @@ namespace LetPortal.Versions.Databases
         public void Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<DatabaseConnection>(Constants.ServiceManagementDatabaseId);
+            versionContext.DeleteData<DatabaseConnection>(Constants.IdentityDatabaseId);
         }
 
         public void Upgrade(IVersionContext versionContext)
         {
-            DatabaseOptions databaseOptions = versionContext.ServiceManagementOptions as DatabaseOptions;
-            var databaseManagement = new DatabaseConnection
+            DatabaseOptions databaseSMOptions = versionContext.ServiceManagementOptions as DatabaseOptions;
+            DatabaseOptions databseIdOptions = versionContext.IdentityDbOptions as DatabaseOptions;
+            var smDatabase = new DatabaseConnection
             {
                 Id = Constants.ServiceManagementDatabaseId,
-                ConnectionString = databaseOptions.ConnectionString,
-                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseOptions.ConnectionType).ToLower(),
-                DataSource = databaseOptions.Datasource,
+                ConnectionString = databaseSMOptions.ConnectionString,
+                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseSMOptions.ConnectionType).ToLower(),
+                DataSource = databaseSMOptions.Datasource,
                 Name = "Service Management"
             };
 
-            versionContext.InsertData(databaseManagement);
+            var identityDatabase = new DatabaseConnection
+            {
+                Id = Constants.IdentityDatabaseId,
+                ConnectionString = databseIdOptions.ConnectionString,
+                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databseIdOptions.ConnectionType).ToLower(),
+                DataSource = databseIdOptions.Datasource,
+                Name = "Identity Database"
+            };
+
+            versionContext.InsertData(smDatabase);
+            versionContext.InsertData(identityDatabase);
         }
     }
 }

@@ -5,6 +5,15 @@
     <AssemblyName>LetPortal.Gateway</AssemblyName>
     <RootNamespace>LetPortal.Gateway</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>0.0.5</Version>
+    <Company>LetPortal</Company>
+    <Product>LetPortal</Product>
+    <Authors>An Le Quang Phuc</Authors>
+    <Description>LetPortal is an internal web platform which helps small company to manage their data. The project is open-source project. There are no fee charged to use or modify.</Description>
+    <Copyright>An Le Quang Phuc</Copyright>
+    <PackageProjectUrl>http://letportal.app</PackageProjectUrl>
+    <PackageTags>Web Portal; .NET Core;</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

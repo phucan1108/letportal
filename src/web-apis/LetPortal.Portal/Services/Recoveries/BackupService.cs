@@ -27,12 +27,12 @@ namespace LetPortal.Portal.Services.Recoveries
 {
     public class BackupService : IBackupService
     {
-        private const string APP_FILE = "apps.json";
-        private const string CHART_FILE = "charts.json";
-        private const string DATABASE_FILE = "databases.json";
-        private const string STANDARD_FILE = "standards.json";
-        private const string DYNAMICLIST_FILE = "dynamiclists.json";
-        private const string PAGE_FILE = "pages.json";
+        public const string APP_FILE = "apps.json";
+        public const string CHART_FILE = "charts.json";
+        public const string DATABASE_FILE = "databases.json";
+        public const string STANDARD_FILE = "standards.json";
+        public const string DYNAMICLIST_FILE = "dynamiclists.json";
+        public const string PAGE_FILE = "pages.json";
 
         private readonly IAppServiceProvider _appServiceProvider;
 
@@ -450,7 +450,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             Directory.Delete(folderExtractingPath, true);
             File.Delete(restoreFilePath);
-        }
+        }         
 
         private async Task<string> SaveFormFileAsync(IFormFile file, string saveFolderPath)
         {
@@ -465,7 +465,7 @@ namespace LetPortal.Portal.Services.Recoveries
         }
     }
 
-    class BackupFlatternFileModel
+    public class BackupFlatternFileModel
     {
         public Backup Backup { get; set; }
 

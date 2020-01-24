@@ -220,7 +220,15 @@ namespace LetPortal.Core.Persistences
 
         public async Task ForceUpdateAsync(string id, T forceEntity)
         {
-            await Collection.FindOneAndReplaceAsync(a => a.Id == id, forceEntity);
+            var oldOne = await Collection.FindAsync(a => a.Id == id);
+            if(oldOne != null)
+            {
+                await Collection.FindOneAndReplaceAsync(a => a.Id == id, forceEntity);
+            }
+            else
+            {
+                await Collection.InsertOneAsync(forceEntity);
+            }                                                            
         }
     }
 }

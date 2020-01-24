@@ -1,7 +1,10 @@
-﻿using LetPortal.Core.Utils;
+﻿using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
+using LetPortal.Versions.Patches;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -20,7 +23,9 @@ namespace LetPortal.Tools.Features
                 var matchingVersions = context.Versions.OrderBy(a => a.GetNumber());
                 if(string.IsNullOrEmpty(context.VersionNumber))
                 {
-                    Console.WriteLine("Install latest versions: " + matchingVersions.Last().VersionNumber);
+                    Console.WriteLine("-----------------------INSTALL PROGRESS-------------------------");
+                    Console.WriteLine("INSTALLING VERSION: " + matchingVersions.Last().VersionNumber);
+                    Console.WriteLine("-----------------------++++++++++++++++-------------------------");
                     var portalVersions = InstallingVersion(matchingVersions, context);
                     foreach(var portalVersion in portalVersions)
                     {
@@ -51,9 +56,13 @@ namespace LetPortal.Tools.Features
 
             var availableGroupVersions = versions.Select(a => a.VersionNumber).Distinct();
 
+            IPatchProcessor patchProcessor = new PatchProcessor();
             foreach(var groupVersion in availableGroupVersions)
             {
-                Console.WriteLine($"Installing Version: {groupVersion}");
+                Console.WriteLine("");
+                Console.WriteLine("----------------------------------------------------------------");                
+                Console.WriteLine($"------------------Installing Version: {groupVersion}---------------------");
+                Console.WriteLine("----------------------------------------------------------------");
                 var matchingVersions = versions.Where(a => a.VersionNumber == groupVersion);
 
                 var executingVersions = new List<string>();
@@ -65,16 +74,27 @@ namespace LetPortal.Tools.Features
                     Console.WriteLine(string.Format("Installing {0} Version {1} Completely!", executionName, version.VersionNumber));
                 }
 
-                dicVersions.Add(groupVersion, executingVersions);
-            }
+                if(toolsContext.AllowPatch)
+                {
+                    var result = patchProcessor.Proceed(Path.Combine(toolsContext.PatchesFolder, groupVersion), toolsContext.VersionContext.DatabaseOptions as DatabaseOptions).Result;
+                    if(result.Any())
+                    {
+                       foreach(var file in result)
+                        {
+                            Console.WriteLine(string.Format("Patched file: {0}", file));
+                        }
+                    }
+                }
 
+                dicVersions.Add(groupVersion, executingVersions);
+            }            
             foreach(var kvp in dicVersions)
             {
                 effectivePortalVersions.Add(new Version
                 {
                     Id = DataUtil.GenerateUniqueId(),
                     VersionNumber = kvp.Key,
-                    AffectiveList = ConvertUtil.SerializeObject(kvp.Value),
+                    AffectiveFiles = ConvertUtil.SerializeObject(kvp.Value),
                     CreatedDate = DateTime.UtcNow
                 });
             }

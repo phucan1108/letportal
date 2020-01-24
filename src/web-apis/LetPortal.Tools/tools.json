@@ -15,6 +15,5 @@
       "DataSource": "letportal",
       "ConnectionType": "MongoDB"
     }
-  },
-  "PatchesFolderPath": "Patches"
+  }
 }

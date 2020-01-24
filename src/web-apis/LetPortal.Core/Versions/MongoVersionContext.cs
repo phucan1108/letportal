@@ -23,6 +23,7 @@ namespace LetPortal.Core.Versions
         public ConnectionType ConnectionType { get; set; } = ConnectionType.MongoDB;
         public object DatabaseOptions { get; set; }
         public object ServiceManagementOptions { get; set; }
+        public object IdentityDbOptions { get; set; }
 
         public void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity
         {

@@ -31,6 +31,9 @@ namespace LET.Tools.Installation
         [Option("-f|--file", Description = "File config path. Ex: C:\\tools.json. Default: tools.json")]
         public string FilePath { get; set; } = "tools.json";
 
+        [Option("-p|--patch", Description = "Patches folder path. Ex: C:\\Patches. Available only for portal app")]
+        public string PatchesFolder { get; set; }
+
         [Argument(0, Name = "app", Description = "Supports: portal | identity")]
         public string App { get; set; }
 
@@ -42,18 +45,30 @@ namespace LET.Tools.Installation
 
         public static async Task<int> Main(string[] args)
         {
-            return await CommandLineApplication.ExecuteAsync<Program>(args);
+            try
+            {
+                Console.WriteLine("--------------------++++LETPORTAL CLI++++-----------------------");
+                Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");                
+                Console.WriteLine("");
+                return await CommandLineApplication.ExecuteAsync<Program>(args);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Oops, something went wrong. Exception stack: " + ex.ToString());
+                return 0;
+            }
+            
         }
 
         private async Task OnExecuteAsync()
-        {
+        {  
             var toolsOption = GetToolsOptions(FilePath);
             ConventionPackDefault.Register();
             MongoDbRegistry.RegisterEntities();
             var dbType = DatabseType.ToEnum<ConnectionType>(true);
             var databaseOption = new DatabaseOptions
             {
-                ConnectionString = !string.IsNullOrEmpty(Connection) ? Connection : GetDefaultConnectionString(dbType),
+                ConnectionString = !string.IsNullOrEmpty(Connection) ? Connection : GetDefaultConnectionString(dbType, App),
                 ConnectionType = dbType
             };
 
@@ -71,6 +86,7 @@ namespace LET.Tools.Installation
                         mongoVersionContext.ConnectionType = ConnectionType.MongoDB;
                         mongoVersionContext.DatabaseOptions = databaseOption;
                         mongoVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
+                        mongoVersionContext.IdentityDbOptions = toolsOption.StoringConnections.IdentityConnection;
                         var latestVersion = versionMongoRepository.GetAsQueryable().ToList().LastOrDefault();
 
                         IEnumerable<IVersion> allVersions = Enumerable.Empty<IVersion>();
@@ -89,7 +105,9 @@ namespace LET.Tools.Installation
                             VersionContext = mongoVersionContext,
                             VersionNumber = VersionNumber,
                             Versions = allVersions,
-                            VersionRepository = versionMongoRepository
+                            VersionRepository = versionMongoRepository,
+                            PatchesFolder = PatchesFolder,
+                            AllowPatch = !string.IsNullOrEmpty(PatchesFolder)
                         };
                         break;
                     case ConnectionType.PostgreSQL:
@@ -110,6 +128,7 @@ namespace LET.Tools.Installation
                             var portalVersionRepository = new VersionEFRepository(letportalContextForRepo);
                             var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
                             sqlEFVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
+                            sqlEFVersionContext.IdentityDbOptions = toolsOption.StoringConnections.IdentityConnection;
 
                             IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
                             toolsContext = new ToolsContext
@@ -118,7 +137,8 @@ namespace LET.Tools.Installation
                                 VersionContext = sqlEFVersionContext,
                                 VersionNumber = VersionNumber,
                                 Versions = allSQLVersions,
-                                VersionRepository = portalVersionRepository
+                                VersionRepository = portalVersionRepository,
+                                AllowPatch = !string.IsNullOrEmpty(PatchesFolder)
                             };
                         }
                         else if(IsIdentity())
@@ -135,6 +155,7 @@ namespace LET.Tools.Installation
                             var portalVersionRepository = new VersionEFRepository(letportalContextForRepo);
                             var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
                             sqlEFVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
+                            sqlEFVersionContext.IdentityDbOptions = toolsOption.StoringConnections.IdentityConnection;
 
                             IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
 
@@ -144,7 +165,8 @@ namespace LET.Tools.Installation
                                 VersionContext = sqlEFVersionContext,
                                 VersionNumber = VersionNumber,
                                 Versions = allSQLVersions,
-                                VersionRepository = portalVersionRepository
+                                VersionRepository = portalVersionRepository,
+                                AllowPatch = !string.IsNullOrEmpty(PatchesFolder)
                             };
                         }
 
@@ -156,7 +178,7 @@ namespace LET.Tools.Installation
                     await runningCommand.RunAsync(toolsContext);
                 }
 
-                Console.WriteLine("====Done====");
+                Console.WriteLine("-----------------------++++++DONE++++++-------------------------");
             }
             else
             {
@@ -187,35 +209,18 @@ namespace LET.Tools.Installation
             return ReflectionUtil.GetAllInstances<IFeatureCommand>(currentAssembly);
         }
 
-        private string GetDefaultConnectionString(ConnectionType connectionType)
+        private string GetDefaultConnectionString(ConnectionType connectionType, string app)
         {
             switch(connectionType)
             {
                 case ConnectionType.MongoDB:
-                    return "mongodb://localhost:27017/letportal";
+                    return string.Format("mongodb://localhost:27017/{0}", app == "portal" ? "letportal" : "letportalidentity");
                 case ConnectionType.SQLServer:
-                    return "Server=.;Database=letportal;User Id=sa;Password=123456;";
+                    return string.Format("Server=.;Database={0};User Id=sa;Password=123456;", app == "portal" ? "letportal" : "letportalidentity");
                 case ConnectionType.PostgreSQL:
-                    return "Host=localhost;Port=5432;Database=letportal;Username=postgres;Password=123456";
+                    return string.Format("Host=localhost;Port=5432;Database={0};Username=postgres;Password=123456", app == "portal" ? "letportal" : "letportalidentity");                    
                 case ConnectionType.MySQL:
-                    return "server=localhost;uid=root;pwd=123456;database=letportal";
-                default:
-                    return "";
-            }
-        }
-
-        private string GetDefaultConnectionStringForServiceManagement(ConnectionType connectionType)
-        {
-            switch(connectionType)
-            {
-                case ConnectionType.MongoDB:
-                    return "mongodb://localhost:27017/letportalservices";
-                case ConnectionType.SQLServer:
-                    return "Server=.;Database=letportalservices;User Id=sa;Password=123456;";
-                case ConnectionType.PostgreSQL:
-                    return "Host=localhost;Port=5432;Database=letportalservices;Username=postgres;Password=123456";
-                case ConnectionType.MySQL:
-                    return "server=localhost;uid=root;pwd=123456;database=letportalservices";
+                    return string.Format("server=localhost;uid=root;pwd=123456;database={0}", app == "portal" ? "letportal" : "letportalidentity");                    
                 default:
                     return "";
             }

@@ -140,11 +140,19 @@ namespace LetPortal.Core.Persistences
         public Task ForceUpdateAsync(string id, T forceEntity)
         {
             var dbSet = _context.Set<T>();
-            var deletedEntity = dbSet.First(a => a.Id == id);
-            dbSet.Remove(deletedEntity);
-            _context.SaveChanges();
-            dbSet.Add(forceEntity);
-            _context.SaveChanges();
+            var deletedEntity = dbSet.FirstOrDefault(a => a.Id == id);
+            if(deletedEntity != null)
+            {
+                dbSet.Remove(deletedEntity);
+                _context.SaveChanges();
+                dbSet.Add(forceEntity);
+                _context.SaveChanges();
+            }
+            else
+            {
+                dbSet.Add(forceEntity);
+                _context.SaveChanges();
+            }               
 
             return Task.CompletedTask;
         }

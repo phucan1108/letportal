@@ -14,7 +14,11 @@ namespace LetPortal.Core.Versions
         [Required]
         public string VersionNumber { get; set; }
 
-        public string AffectiveList { get; set; }
+        public string AffectiveFiles { get; set; }
+
+        public string PatchFiles { get; set; }
+
+        public string Executor { get; set; } = "CLI";
 
         public DateTime CreatedDate { get; set; }
 

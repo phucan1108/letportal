@@ -14,5 +14,9 @@ namespace LetPortal.Tools
         public IVersionRepository VersionRepository { get; set; }
 
         public string VersionNumber { get; set; }
+
+        public string PatchesFolder { get; set; }
+
+        public bool AllowPatch { get; set; }
     }
 }
