@@ -24,6 +24,10 @@ namespace LetPortal.Tools.Features
                          a => a.GetNumber() <= context.LatestVersion.GetNumber()
                              && a.GetNumber() > requestingVersionNumber);
 
+                    Console.WriteLine("----------------------DOWNGRADE PROGRESS------------------------");
+                    Console.WriteLine("DOWNGRADE VERSION: " + matchingVersions.Last().VersionNumber);
+                    Console.WriteLine("-----------------------++++++++++++++++-------------------------");
+
                     var portalVersions = DowngradingVersion(matchingVersions, context);
                     foreach(var portalVersion in portalVersions)
                     {

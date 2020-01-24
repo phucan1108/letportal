@@ -15,8 +15,6 @@ namespace LetPortal.Tools.Features
             {
                 Console.WriteLine($"Current Version: {context.LatestVersion.VersionNumber}");                
                 Console.WriteLine($"Last Modified Date: {context.LatestVersion.CreatedDate}");
-
-
             }
             else
             {

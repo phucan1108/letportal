@@ -23,6 +23,9 @@ namespace LetPortal.Tools.Features
                     var matchingVersions = context.Versions.Where(
                         a => a.GetNumber() > context.LatestVersion.GetNumber()
                             && a.GetNumber() <= requestingVersionNumber);
+                    Console.WriteLine("---------------------UPGRADE PROGRESS-----------------------");
+                    Console.WriteLine("UPGRADE VERSION: " + matchingVersions.Last().VersionNumber);
+                    Console.WriteLine("-----------------------++++++++++++++++-------------------------");
 
                     var portalVersions = UpgradingVersion(matchingVersions, context);
                     foreach(var portalVersion in portalVersions)
