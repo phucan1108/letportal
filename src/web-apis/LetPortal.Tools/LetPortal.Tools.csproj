@@ -12,6 +12,7 @@
     <Copyright>An Le Quang Phuc</Copyright>
     <PackageProjectUrl>http://letportal.app</PackageProjectUrl>
     <PackageTags>Web Portal; .NET Core;</PackageTags>
+    <AssemblyName>letportal</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -50,11 +50,14 @@ namespace LET.Tools.Installation
                 Console.WriteLine("--------------------++++LETPORTAL CLI++++-----------------------");
                 Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");                
                 Console.WriteLine("");
-                return await CommandLineApplication.ExecuteAsync<Program>(args);
+                await CommandLineApplication.ExecuteAsync<Program>(args);
+                Console.ReadLine();
+                return 0;
             }
             catch(Exception ex)
             {
                 Console.WriteLine("Oops, something went wrong. Exception stack: " + ex.ToString());
+                Console.ReadLine();
                 return 0;
             }
             
@@ -184,6 +187,8 @@ namespace LET.Tools.Installation
             {
                 Console.WriteLine("Oops! We don't find any matching command to execute. If you don't know how to run, please type '--help'");
             }
+
+            Console.ReadLine();
         }
 
         private bool IsPortal()
