@@ -22,7 +22,7 @@ namespace LetPortal.Core.Configurations
         public override void Load()
         {
             var loadingDic = _configurationServiceProvider.GetConfiguration(_serviceName, _version).Result;
-            foreach (var kvp in loadingDic)
+            foreach(var kvp in loadingDic)
             {
                 Data.Add(kvp);
             }

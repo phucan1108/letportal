@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LetPortal.Core.Persistences;
+using System;
 using System.Linq.Expressions;
-using LetPortal.Core.Persistences;
 
 namespace LetPortal.Core.Versions
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
@@ -10,6 +6,10 @@ using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Databases;
 using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.MySQL
 {
@@ -32,15 +32,15 @@ namespace LetPortal.Portal.Executions.MySQL
         public Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             var paramsList = new List<MySqlParameter>();
-            if (parameters != null)
+            if(parameters != null)
             {
-                foreach (var param in parameters)
+                foreach(var param in parameters)
                 {
                     // We need to detect a parameter type and then re-mapping to db type
                     var splitted = param.Name.Split("|");
-                    var paramDbType = MySqlDbType.LongText;
+                    MySqlDbType paramDbType = MySqlDbType.LongText;
                     object parsedValue;
-                    if (splitted.Length == 1)
+                    if(splitted.Length == 1)
                     {
                         // Default: string type
                         paramDbType = _mySqlMapper.GetMySqlDbType(MapperConstants.String);
@@ -67,24 +67,24 @@ namespace LetPortal.Portal.Executions.MySQL
             {
                 ColumnFields = new System.Collections.Generic.List<Models.Shared.ColumnField>()
             };
-            using (var mysqlDbConnection = new MySqlConnection(database.ConnectionString))
+            using(var mysqlDbConnection = new MySqlConnection(database.ConnectionString))
             {
                 mysqlDbConnection.Open();
                 var warpQuery = @"Select * from ({0}) s limit 1";
                 warpQuery = ReplaceAllConstants(warpQuery);
                 warpQuery = string.Format(warpQuery, formattedString);
-                using (var command = new MySqlCommand(formattedString, mysqlDbConnection))
+                using(var command = new MySqlCommand(formattedString, mysqlDbConnection))
                 {
-                    if (paramsList.Count > 0)
+                    if(paramsList.Count > 0)
                     {
                         command.Parameters.AddRange(paramsList.ToArray());
                     }
-                    using (var reader = command.ExecuteReader())
+                    using(var reader = command.ExecuteReader())
                     {
-                        using (var dt = new DataTable())
+                        using(DataTable dt = new DataTable())
                         {
                             dt.Load(reader);
-                            foreach (DataColumn dc in dt.Columns)
+                            foreach(DataColumn dc in dt.Columns)
                             {
                                 extractModel.ColumnFields.Add(new Models.Shared.ColumnField
                                 {
@@ -115,11 +115,11 @@ namespace LetPortal.Portal.Executions.MySQL
 
         private string GetType(Type type)
         {
-            if (type == typeof(DateTime))
+            if(type == typeof(DateTime))
             {
                 return "datetime";
             }
-            else if (type == typeof(int)
+            else if(type == typeof(int)
                 || type == typeof(float)
                 || type == typeof(double)
                 || type == typeof(decimal)
@@ -127,7 +127,7 @@ namespace LetPortal.Portal.Executions.MySQL
             {
                 return "number";
             }
-            else if (type == typeof(bool))
+            else if(type == typeof(bool))
             {
                 return "boolean";
             }

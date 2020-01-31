@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace LetPortal.Core.Logger
 {
@@ -17,7 +17,7 @@ namespace LetPortal.Core.Logger
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var traceId = httpContext.Request.Headers[Constants.TraceIdHeader].ToString();
-            if (!string.IsNullOrEmpty(traceId) || environment == "Development")
+            if(!string.IsNullOrEmpty(traceId) || environment == "Development")
             {
                 await _next.Invoke(httpContext);
             }

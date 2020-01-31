@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Repositories.Components;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Providers.Components
 {
@@ -19,7 +19,7 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<ComparisonResult>> CompareDynamicLists(IEnumerable<DynamicList> dynamicLists)
         {
             var results = new List<ComparisonResult>();
-            foreach (var dynamicList in dynamicLists)
+            foreach(var dynamicList in dynamicLists)
             {
                 results.Add(await _dynamicListRepository.Compare(dynamicList));
             }
@@ -28,7 +28,7 @@ namespace LetPortal.Portal.Providers.Components
 
         public async Task ForceUpdateDynamicLists(IEnumerable<DynamicList> dynamicLists)
         {
-            foreach (var dynamicList in dynamicLists)
+            foreach(var dynamicList in dynamicLists)
             {
                 await _dynamicListRepository.ForceUpdateAsync(dynamicList.Id, dynamicList);
             }

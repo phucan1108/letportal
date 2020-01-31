@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using LetPortal.Core.Persistences;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
 
 namespace LetPortal.Versions.Patches
 {

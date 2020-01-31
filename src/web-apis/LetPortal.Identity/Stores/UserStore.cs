@@ -1,13 +1,13 @@
-﻿using System;
+﻿using LetPortal.Core.Utils;
+using LetPortal.Identity.Entities;
+using LetPortal.Identity.Repositories.Identity;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using LetPortal.Core.Utils;
-using LetPortal.Identity.Entities;
-using LetPortal.Identity.Repositories.Identity;
-using Microsoft.AspNetCore.Identity;
 
 namespace LetPortal.Identity.Stores
 {
@@ -41,7 +41,7 @@ namespace LetPortal.Identity.Stores
         public Task AddToRoleAsync(User user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (user.Roles.Contains(roleName))
+            if(user.Roles.Contains(roleName))
             {
                 throw new InvalidOperationException("User has already registered with Role");
             }
@@ -67,14 +67,14 @@ namespace LetPortal.Identity.Stores
             await _userRepository.DeleteAsync(user.Id);
 
             return IdentityResult.Success;
-        }
+        }        
 
         public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var user = _userRepository.GetAsQueryable().FirstOrDefault(a => a.NormalizedEmail == normalizedEmail);
-            if (user != null)
+            if(user != null)
             {
                 return Task.FromResult(user);
             }
@@ -87,7 +87,7 @@ namespace LetPortal.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
 
             var user = await _userRepository.GetOneAsync(userId);
-            if (user != null)
+            if(user != null)
             {
                 return user;
             }
@@ -100,7 +100,7 @@ namespace LetPortal.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
 
             var user = _userRepository.GetAsQueryable().FirstOrDefault(a => a.NormalizedUserName == normalizedUserName);
-            if (user != null)
+            if(user != null)
             {
                 return Task.FromResult(user);
             }
@@ -212,7 +212,7 @@ namespace LetPortal.Identity.Stores
         {
             var claimsList = new List<BaseClaim>();
 
-            foreach (var claim in claims)
+            foreach(var claim in claims)
             {
                 var userClaim = new BaseClaim
                 {

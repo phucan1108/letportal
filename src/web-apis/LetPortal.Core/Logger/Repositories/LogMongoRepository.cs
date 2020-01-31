@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 
 namespace LetPortal.Core.Logger.Repositories
 {

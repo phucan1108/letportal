@@ -24,12 +24,12 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
         public async Task Log_User_Action_Activity_Mongo_Test()
         {
             // Arrange
-            DatabaseOptions databaseOptions = _context.MongoDatabaseOptions;
-            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            UserSessionMongoRepository userSessionRepository = new UserSessionMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            var databaseOptions = _context.MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var userSessionRepository = new UserSessionMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
 
             // Act
-            UserSession userSession = new UserSession
+            var userSession = new UserSession
             {
                 Id = DataUtil.GenerateUniqueId(),
                 UserId = "5c06a15e4cc9a850bca44488",

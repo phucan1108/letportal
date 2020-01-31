@@ -20,11 +20,11 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
         public async Task Find_User_By_Normalized_Name_Mongo_Test()
         {
             // Arrange
-            DatabaseOptions databaseOptions = _context.MongoDatabaseOptions;
-            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            UserMongoRepository userRepository = new UserMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            var databaseOptions = _context.MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var userRepository = new UserMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
             // Act
-            LetPortal.Identity.Entities.User result = await userRepository.FindByNormalizedUsername("ADMIN");
+            var result = await userRepository.FindByNormalizedUsername("ADMIN");
             userRepository.Dispose();
             // Assert
             Assert.NotNull(result);

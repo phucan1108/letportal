@@ -30,22 +30,46 @@ namespace LetPortal.Tests.ITs.Portal
 
         public DatabaseConnection MySqlDatabaseConnection { get; }
 
-        public bool AllowMongoDB => intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.MongoDB);
+        public bool AllowMongoDB
+        {
+            get
+            {
+                return intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.MongoDB);
+            }
+        }
 
-        public bool AllowPostgreSQL => intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.PostgreSQL);
+        public bool AllowPostgreSQL
+        {
+            get
+            {
+                return intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.PostgreSQL);
+            }
+        }
 
         public bool AllowSQLServer
         {
             get
             {
-                bool allow = intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.SQLServer);
+                var allow = intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.SQLServer);
                 return allow;
             }
         }
 
-        public bool AllowMySQL => intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.MySQL);
+        public bool AllowMySQL
+        {
+            get
+            {
+                return intergrationTestOptions.RunningConnectionTypes.Any(a => a == ConnectionType.MySQL);
+            }
+        }
 
-        public MapperOptions MapperOptions => intergrationTestOptions.MapperOptions;
+        public MapperOptions MapperOptions
+        {
+            get
+            {
+                return intergrationTestOptions.MapperOptions;
+            }
+        }
 
         public static bool isRegistered;
 
@@ -61,7 +85,7 @@ namespace LetPortal.Tests.ITs.Portal
             {
                 if(!isRegistered)
                 {
-                    JObject jObject = JObject.Parse(File.ReadAllText(@"Artifacts\settings.json"));
+                    var jObject = JObject.Parse(File.ReadAllText(@"Artifacts\settings.json"));
                     intergrationTestOptions = jObject.ToObject<IntergrationTestOptions>();
 
                     if(AllowMongoDB)
@@ -93,13 +117,13 @@ namespace LetPortal.Tests.ITs.Portal
                     DatabaseConnectionType = "mongodb",
                     DataSource = GenerateUniqueDatasourceName()
                 };
-                DatabaseConnection mongoOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.MongoDB);
+                var mongoOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.MongoDB);
                 MongoDatabaseConenction.ConnectionString = mongoOptions.ConnectionString;
             }
 
             if(AllowSQLServer)
             {
-                string sqlDatasourceName = GenerateUniqueDatasourceName();
+                var sqlDatasourceName = GenerateUniqueDatasourceName();
                 SqlServerDatabaseConnection = new DatabaseConnection
                 {
                     Id = DataUtil.GenerateUniqueId(),
@@ -110,13 +134,13 @@ namespace LetPortal.Tests.ITs.Portal
                     DatabaseConnectionType = "sqlserver",
                     DataSource = sqlDatasourceName
                 };
-                DatabaseConnection sqlOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.SQLServer);
+                var sqlOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.SQLServer);
                 SqlServerDatabaseConnection.ConnectionString = string.Format(sqlOptions.ConnectionString, sqlDatasourceName);
             }
 
             if(AllowPostgreSQL)
             {
-                string postgresqlDatasourceName = GenerateUniqueDatasourceName();
+                var postgresqlDatasourceName = GenerateUniqueDatasourceName();
                 PostgreSqlDatabaseConnection = new DatabaseConnection
                 {
                     Id = DataUtil.GenerateUniqueId(),
@@ -127,13 +151,13 @@ namespace LetPortal.Tests.ITs.Portal
                     DatabaseConnectionType = "postgresql",
                     DataSource = postgresqlDatasourceName
                 };
-                DatabaseConnection postgreOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.PostgreSQL);
+                var postgreOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.PostgreSQL);
                 PostgreSqlDatabaseConnection.ConnectionString = string.Format(postgreOptions.ConnectionString, postgresqlDatasourceName);
             }
 
             if(AllowMySQL)
             {
-                string mysqlDatasourceName = GenerateUniqueDatasourceName();
+                var mysqlDatasourceName = GenerateUniqueDatasourceName();
                 MySqlDatabaseConnection = new DatabaseConnection
                 {
                     Id = DataUtil.GenerateUniqueId(),
@@ -144,7 +168,7 @@ namespace LetPortal.Tests.ITs.Portal
                     DatabaseConnectionType = "mysql",
                     DataSource = mysqlDatasourceName
                 };
-                DatabaseConnection mysqlOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.MySQL);
+                var mysqlOptions = intergrationTestOptions.DatabasesList.First(a => a.DatabaseConnectionType.ToEnum<ConnectionType>(true) == ConnectionType.MySQL);
                 MySqlDatabaseConnection.ConnectionString = string.Format(mysqlOptions.ConnectionString, mysqlDatasourceName);
             }
 
@@ -156,39 +180,39 @@ namespace LetPortal.Tests.ITs.Portal
             // Remove all created databases
             if(AllowMongoDB)
             {
-                MongoClient mongoClient = new MongoClient(MongoDatabaseConenction.ConnectionString);
+                var mongoClient = new MongoClient(MongoDatabaseConenction.ConnectionString);
                 mongoClient.DropDatabase(MongoDatabaseConenction.DataSource);
             }
 
             if(AllowPostgreSQL)
             {
-                LetPortalDbContext postgreContext = GetPostgreSQLContext();
+                var postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureDeleted();
                 postgreContext.Dispose();
 
-                LetPortalServiceManagementDbContext postgreServiceContext = GetPostgreServiceContext();
+                var postgreServiceContext = GetPostgreServiceContext();
                 postgreServiceContext.Database.EnsureDeleted();
                 postgreServiceContext.Dispose();
             }
 
             if(AllowSQLServer)
             {
-                LetPortalDbContext sqlContext = GetSQLServerContext();
+                var sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureDeleted();
                 sqlContext.Dispose();
 
-                LetPortalServiceManagementDbContext sqlServiceContext = GetSQLServerServiceContext();
+                var sqlServiceContext = GetSQLServerServiceContext();
                 sqlServiceContext.Database.EnsureDeleted();
                 sqlServiceContext.Dispose();
             }
 
             if(AllowMySQL)
             {
-                LetPortalDbContext mysqlContext = GetMySQLContext();
+                var mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureDeleted();
                 mysqlContext.Dispose();
 
-                LetPortalServiceManagementDbContext mysqlServiceContext = GetMySQLServiceContext();
+                var mysqlServiceContext = GetMySQLServiceContext();
                 mysqlServiceContext.Database.EnsureDeleted();
                 mysqlServiceContext.Dispose();
             }
@@ -198,97 +222,97 @@ namespace LetPortal.Tests.ITs.Portal
 
         public MongoConnection GetMongoConnection()
         {
-            DatabaseOptions databaseOptions = new DatabaseOptions
+            var databaseOptions = new DatabaseOptions
             {
                 ConnectionString = MongoDatabaseConenction.ConnectionString,
                 ConnectionType = ConnectionType.MongoDB,
                 Datasource = MongoDatabaseConenction.DataSource
             };
-            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
 
             return new MongoConnection(databaseOptionsMock.CurrentValue);
         }
 
         public LetPortalDbContext GetPostgreSQLContext()
         {
-            DatabaseOptions databaseOptions = new DatabaseOptions
+            var databaseOptions = new DatabaseOptions
             {
                 ConnectionString = PostgreSqlDatabaseConnection.ConnectionString,
                 ConnectionType = ConnectionType.PostgreSQL,
                 Datasource = PostgreSqlDatabaseConnection.DataSource
             };
-            LetPortalDbContext letportalDbContext = new LetPortalDbContext(databaseOptions);
+            var letportalDbContext = new LetPortalDbContext(databaseOptions);
             return letportalDbContext;
         }
 
         public LetPortalServiceManagementDbContext GetPostgreServiceContext()
         {
-            DatabaseOptions databaseOptions = new DatabaseOptions
+            var databaseOptions = new DatabaseOptions
             {
                 ConnectionString = PostgreSqlDatabaseConnection.ConnectionString,
                 ConnectionType = ConnectionType.PostgreSQL,
                 Datasource = PostgreSqlDatabaseConnection.DataSource
             };
-            LetPortalServiceManagementDbContext letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
+            var letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
             return letportalDbContext;
         }
 
         public LetPortalDbContext GetSQLServerContext()
         {
-            DatabaseOptions databaseOptions = new DatabaseOptions
+            var databaseOptions = new DatabaseOptions
             {
                 ConnectionString = SqlServerDatabaseConnection.ConnectionString,
                 ConnectionType = ConnectionType.SQLServer,
                 Datasource = SqlServerDatabaseConnection.DataSource
             };
-            LetPortalDbContext letportalDbContext = new LetPortalDbContext(databaseOptions);
+            var letportalDbContext = new LetPortalDbContext(databaseOptions);
             return letportalDbContext;
         }
 
         public LetPortalServiceManagementDbContext GetSQLServerServiceContext()
         {
-            DatabaseOptions databaseOptions = new DatabaseOptions
+            var databaseOptions = new DatabaseOptions
             {
                 ConnectionString = SqlServerDatabaseConnection.ConnectionString,
                 ConnectionType = ConnectionType.SQLServer,
                 Datasource = SqlServerDatabaseConnection.DataSource
             };
-            LetPortalServiceManagementDbContext letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
+            var letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
             return letportalDbContext;
         }
 
         public LetPortalDbContext GetMySQLContext()
         {
-            DatabaseOptions databaseOptions = new DatabaseOptions
+            var databaseOptions = new DatabaseOptions
             {
                 ConnectionString = MySqlDatabaseConnection.ConnectionString,
                 ConnectionType = ConnectionType.MySQL,
                 Datasource = MySqlDatabaseConnection.DataSource
             };
-            LetPortalDbContext letportalDbContext = new LetPortalDbContext(databaseOptions);
+            var letportalDbContext = new LetPortalDbContext(databaseOptions);
             return letportalDbContext;
         }
 
         public LetPortalServiceManagementDbContext GetMySQLServiceContext()
         {
-            DatabaseOptions databaseOptions = new DatabaseOptions
+            var databaseOptions = new DatabaseOptions
             {
                 ConnectionString = MySqlDatabaseConnection.ConnectionString,
                 ConnectionType = ConnectionType.MySQL,
                 Datasource = MySqlDatabaseConnection.DataSource
             };
-            LetPortalServiceManagementDbContext letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
+            var letportalDbContext = new LetPortalServiceManagementDbContext(databaseOptions);
             return letportalDbContext;
         }
 
         private string GenerateUniqueDatasourceName()
         {
-            char[] suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-            int lengthOfName = 20;
-            string datasourceName = string.Empty;
+            var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var lengthOfName = 20;
+            var datasourceName = string.Empty;
             for(int i = 0; i < lengthOfName; i++)
             {
-                int randomIndx = (new Random()).Next(0, 45);
+                var randomIndx = (new Random()).Next(0, 45);
                 datasourceName += suppliedVars[randomIndx];
             }
 
@@ -299,18 +323,18 @@ namespace LetPortal.Tests.ITs.Portal
         {
             if(AllowMongoDB)
             {
-                MongoClient mongoClient = new MongoClient(MongoDatabaseConenction.ConnectionString);
-                IMongoDatabase mongoDatabase = mongoClient.GetDatabase(MongoDatabaseConenction.DataSource);
-                IMongoCollection<DatabaseConnection> mongoCollection = mongoDatabase.GetCollection<DatabaseConnection>("databases");
+                var mongoClient = new MongoClient(MongoDatabaseConenction.ConnectionString);
+                var mongoDatabase = mongoClient.GetDatabase(MongoDatabaseConenction.DataSource);
+                var mongoCollection = mongoDatabase.GetCollection<DatabaseConnection>("databases");
                 mongoCollection.InsertOne(MongoDatabaseConenction);
 
-                IMongoCollection<App> mongoAppCollection = mongoDatabase.GetCollection<App>("apps");
+                var mongoAppCollection = mongoDatabase.GetCollection<App>("apps");
                 mongoAppCollection.InsertOne(SampleApp());
             }
 
             if(AllowPostgreSQL)
             {
-                LetPortalDbContext postgreContext = GetPostgreSQLContext();
+                var postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureCreated();
                 postgreContext.Databases.Add(PostgreSqlDatabaseConnection);
                 postgreContext.Apps.Add(SampleApp());
@@ -320,7 +344,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowSQLServer)
             {
-                LetPortalDbContext sqlContext = GetSQLServerContext();
+                var sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureCreated();
                 sqlContext.Databases.Add(SqlServerDatabaseConnection);
                 sqlContext.Apps.Add(SampleApp());
@@ -332,7 +356,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowMySQL)
             {
-                LetPortalDbContext mysqlContext = GetMySQLContext();
+                var mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureCreated();
                 mysqlContext.Databases.Add(MySqlDatabaseConnection);
                 mysqlContext.Apps.Add(SampleApp());
@@ -360,7 +384,7 @@ namespace LetPortal.Tests.ITs.Portal
         }
         private IEnumerable<MonitorCounter> GenerateCounters(string serviceId, string serviceName)
         {
-            List<MonitorCounter> countersList = new List<MonitorCounter>();
+            var countersList = new List<MonitorCounter>();
             int random = RandomUtil.NextInt(20, 50);
             for(int i = 0; i < random; i++)
             {
@@ -369,8 +393,8 @@ namespace LetPortal.Tests.ITs.Portal
                 int memoryUsage = RandomUtil.NextInt(1, 99);
                 int successRequest = RandomUtil.NextInt(100, 3000);
                 int failRequest = RandomUtil.NextInt(100, successRequest);
-                DateTime beatDate = DateTime.UtcNow.AddHours(randomBeatHour);
-                string monitorCounterId = DataUtil.GenerateUniqueId();
+                var beatDate = DateTime.UtcNow.AddHours(randomBeatHour);
+                var monitorCounterId = DataUtil.GenerateUniqueId();
                 countersList.Add(new MonitorCounter
                 {
                     Id = monitorCounterId,

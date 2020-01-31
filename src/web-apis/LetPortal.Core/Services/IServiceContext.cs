@@ -1,6 +1,6 @@
-﻿using System;
-using LetPortal.Core.Logger.Models;
+﻿using LetPortal.Core.Logger.Models;
 using LetPortal.Core.Monitors.Models;
+using System;
 
 namespace LetPortal.Core.Services
 {

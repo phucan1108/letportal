@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Utils;
+﻿using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Providers.Databases;
 using MongoDB.Driver;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Datasources
 {
@@ -26,9 +26,9 @@ namespace LetPortal.Portal.Services.Datasources
 
         public async Task<ExecutedDataSourceModel> GetDatasourceService(Datasource datasource)
         {
-            var datasourceModels = new List<DatasourceModel>();
+            List<DatasourceModel> datasourceModels = new List<DatasourceModel>();
 
-            if (datasource.DatasourceType == DatasourceType.Static)
+            if(datasource.DatasourceType == DatasourceType.Static)
             {
                 datasourceModels = ConvertUtil.DeserializeObject<List<DatasourceModel>>(datasource.Query);
             }

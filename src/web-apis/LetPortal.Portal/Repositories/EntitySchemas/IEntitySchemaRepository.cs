@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.EntitySchemas;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Repositories.EntitySchemas
 {

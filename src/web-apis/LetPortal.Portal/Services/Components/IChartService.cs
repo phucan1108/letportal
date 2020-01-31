@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Portal.Entities.Components;
+﻿using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Charts;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Components
 {

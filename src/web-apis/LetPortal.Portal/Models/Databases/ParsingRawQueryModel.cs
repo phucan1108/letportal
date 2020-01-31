@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using LetPortal.Portal.Entities.EntitySchemas;
+﻿using LetPortal.Portal.Entities.EntitySchemas;
+using System.Collections.Generic;
 
 namespace LetPortal.Portal.Databases.Models
 {

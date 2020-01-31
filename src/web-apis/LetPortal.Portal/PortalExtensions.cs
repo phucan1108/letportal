@@ -1,5 +1,4 @@
-﻿using System;
-using LetPortal.Core;
+﻿using LetPortal.Core;
 using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Versions;
@@ -40,6 +39,7 @@ using LetPortal.Portal.Services.Http;
 using LetPortal.Portal.Services.Recoveries;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace LetPortal.Portal
 {
@@ -51,7 +51,7 @@ namespace LetPortal.Portal
             Action<PortalOptions> action = null)
         {
             var portalOptions = new PortalOptions();
-            if (action != null)
+            if(action != null)
             {
                 action.Invoke(portalOptions);
             }
@@ -60,7 +60,7 @@ namespace LetPortal.Portal
             builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("BackupOptions"));
             var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();
             builder.Services.AddSingleton(mapperOptions);
-            if (builder.ConnectionType == ConnectionType.MongoDB)
+            if(builder.ConnectionType == ConnectionType.MongoDB)
             {
                 MongoDbRegistry.RegisterEntities();
 
@@ -82,7 +82,7 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IMongoQueryExecution, MongoQueryExecution>();
             }
 
-            if (builder.ConnectionType == ConnectionType.SQLServer
+            if(builder.ConnectionType == ConnectionType.SQLServer
                 || builder.ConnectionType == ConnectionType.PostgreSQL
                 || builder.ConnectionType == ConnectionType.MySQL)
             {
@@ -101,7 +101,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IVersionRepository, VersionEFRepository>();
             }
 
-            if (portalOptions.EnableFileServer)
+            if(portalOptions.EnableFileServer)
             {
                 builder.Services.Configure<FileOptions>(builder.Configuration.GetSection("FileOptions"));
                 builder.Services.Configure<FileValidatorOptions>(builder.Configuration.GetSection("FileOptions").GetSection("FileValidatorOptions"));
@@ -120,7 +120,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IStoreFileDatabase, MongoStoreFileDatabase>();
             }
 
-            if (builder.ConnectionType == ConnectionType.MongoDB)
+            if(builder.ConnectionType == ConnectionType.MongoDB)
             {
                 builder.Services.AddTransient<IExecutionDatabase, MongoExecutionDatabase>();
                 builder.Services.AddTransient<IExtractionDatabase, MongoExtractionDatabase>();
@@ -128,7 +128,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();
                 builder.Services.AddTransient<IAnalyzeDatabase, MongoAnalyzeDatabase>();
             }
-            else if (builder.ConnectionType == ConnectionType.PostgreSQL)
+            else if(builder.ConnectionType == ConnectionType.PostgreSQL)
             {
                 builder.Services.AddTransient<IAnalyzeDatabase, PostgreAnalyzeDatabase>();
                 builder.Services.AddTransient<IExecutionDatabase, PostgreExecutionDatabase>();
@@ -140,7 +140,7 @@ namespace LetPortal.Portal
 
                 builder.Services.AddSingleton<IPostgreSqlMapper, PostgreSqlMapper>();
             }
-            else if (builder.ConnectionType == ConnectionType.SQLServer)
+            else if(builder.ConnectionType == ConnectionType.SQLServer)
             {
                 builder.Services.AddTransient<IAnalyzeDatabase, SqlServerAnalyzeDatabase>();
                 builder.Services.AddTransient<IExecutionDatabase, SqlServerExecutionDatabase>();
@@ -152,7 +152,7 @@ namespace LetPortal.Portal
 
                 builder.Services.AddSingleton<ISqlServerMapper, SqlServerMapper>();
             }
-            else if (builder.ConnectionType == ConnectionType.MySQL)
+            else if(builder.ConnectionType == ConnectionType.MySQL)
             {
                 builder.Services.AddTransient<IAnalyzeDatabase, MySqlAnalyzeDatabase>();
                 builder.Services.AddTransient<IExecutionDatabase, MySqlExecutionDatabase>();

@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Files;
+﻿using LetPortal.Core.Files;
 using LetPortal.Portal.Exceptions.Files;
 using LetPortal.Portal.Options.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Files.Validators
 {
@@ -35,11 +35,11 @@ namespace LetPortal.Portal.Services.Files.Validators
 
         private void CheckFileExt(string fileName, string filePath)
         {
-            if (_fileValidatorOptions.CurrentValue.CheckFileExtension)
+            if(_fileValidatorOptions.CurrentValue.CheckFileExtension)
             {
-                var isValid = false;
+                bool isValid = false;
                 var extFile = fileName.Split(".")[1].ToLower();
-                if (_fileValidatorOptions.CurrentValue.ExtensionMagicNumbers.ContainsKey(extFile))
+                if(_fileValidatorOptions.CurrentValue.ExtensionMagicNumbers.ContainsKey(extFile))
                 {
                     // Get correct magic number by ext
                     var magicNumbers = _fileValidatorOptions
@@ -47,16 +47,16 @@ namespace LetPortal.Portal.Services.Files.Validators
                                         .ExtensionMagicNumbers
                                         .First(a => a.Key == extFile)
                                         .Value;
-                    if (!string.IsNullOrEmpty(magicNumbers))
+                    if(!string.IsNullOrEmpty(magicNumbers))
                     {
                         // Read 32 bytes for checking signature
-                        var firstBytes = string.Empty;
-                        using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                        string firstBytes = string.Empty;
+                        using(var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
                         {
-                            using (var reader = new BinaryReader(fileStream))
+                            using(var reader = new BinaryReader(fileStream))
                             {
                                 reader.BaseStream.Position = 0;
-                                var data = reader.ReadBytes(32);
+                                byte[] data = reader.ReadBytes(32);
                                 firstBytes = BitConverter.ToString(data);
                                 reader.Close();
                             }
@@ -71,7 +71,7 @@ namespace LetPortal.Portal.Services.Files.Validators
                     }
                 }
 
-                if (!isValid)
+                if(!isValid)
                 {
                     throw new FileException(FileErrorCodes.WrongFileExtension);
                 }

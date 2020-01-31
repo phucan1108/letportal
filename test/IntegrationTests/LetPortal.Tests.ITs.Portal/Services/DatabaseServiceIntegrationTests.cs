@@ -37,12 +37,12 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
-            LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
-            DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
-            string formattedQueryString = "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('" + _context.MongoDatabaseConenction.Id + "')\"}}]}}";
+            var mongoExecutionDatabase = new MongoExecutionDatabase();
+            var mongoDatabaseConnection = _context.MongoDatabaseConenction;
+            var databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
+            var formattedQueryString = "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('" + _context.MongoDatabaseConenction.Id + "')\"}}]}}";
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedQueryString, new List<ExecuteParamModel>());
+            var result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedQueryString, new List<ExecuteParamModel>());
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -57,17 +57,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
-            LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
-            DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
+            var mongoExecutionDatabase = new MongoExecutionDatabase();
+            var mongoDatabaseConnection = _context.MongoDatabaseConenction;
+            var databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
 
             // fake insert data
-            LetPortal.Portal.Entities.Databases.DatabaseConnection cloneConnection = mongoDatabaseConnection.Copy();
+            var cloneConnection = mongoDatabaseConnection.Copy();
             cloneConnection.Id = "";
-            string insertingDataString = ConvertUtil.SerializeObject(cloneConnection, true);
-            string formattedInsertString = "{\"$insert\":{\"databases\":{ \"$data\": " + insertingDataString + "}}}";
+            var insertingDataString = ConvertUtil.SerializeObject(cloneConnection, true);
+            var formattedInsertString = "{\"$insert\":{\"databases\":{ \"$data\": " + insertingDataString + "}}}";
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedInsertString, new List<ExecuteParamModel>());
+            var result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedInsertString, new List<ExecuteParamModel>());
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -82,13 +82,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
-            LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
-            DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
+            var mongoExecutionDatabase = new MongoExecutionDatabase();
+            var mongoDatabaseConnection = _context.MongoDatabaseConenction;
+            var databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
 
-            string formattedUpdateString = "{\"$update\":{\"databases\":{\"$data\": { \"displayName\" : \"Test2 Database\" },\"$where\":{\"_id\":\"ObjectId('" + mongoDatabaseConnection.Id + "')\"}}}}";
+            var formattedUpdateString = "{\"$update\":{\"databases\":{\"$data\": { \"displayName\" : \"Test2 Database\" },\"$where\":{\"_id\":\"ObjectId('" + mongoDatabaseConnection.Id + "')\"}}}}";
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedUpdateString, new List<ExecuteParamModel>());
+            var result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedUpdateString, new List<ExecuteParamModel>());
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -103,20 +103,20 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
-            LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
-            DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
+            var mongoExecutionDatabase = new MongoExecutionDatabase();
+            var mongoDatabaseConnection = _context.MongoDatabaseConenction;
+            var databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
 
             // fake insert data
-            LetPortal.Portal.Entities.Databases.DatabaseConnection cloneConnection = mongoDatabaseConnection.Copy();
+            var cloneConnection = mongoDatabaseConnection.Copy();
             cloneConnection.Id = "";
-            string insertingDataString = ConvertUtil.SerializeObject(cloneConnection, true);
-            string formattedInsertString = "{\"$insert\":{\"databases\":{ \"$data\": " + insertingDataString + "}}}";
-            LetPortal.Portal.Models.ExecuteDynamicResultModel insertResult = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedInsertString, new List<ExecuteParamModel>());
+            var insertingDataString = ConvertUtil.SerializeObject(cloneConnection, true);
+            var formattedInsertString = "{\"$insert\":{\"databases\":{ \"$data\": " + insertingDataString + "}}}";
+            var insertResult = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedInsertString, new List<ExecuteParamModel>());
 
-            dynamic formattedQueryString = "{\"$delete\":{\"databases\":{\"$where\":{\"_id\":\"ObjectId('" + insertResult.Result.Id + "')\"}}}}";
+            var formattedQueryString = "{\"$delete\":{\"databases\":{\"$where\":{\"_id\":\"ObjectId('" + insertResult.Result.Id + "')\"}}}}";
             // Act
-            dynamic result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedQueryString, new List<ExecuteParamModel>());
+            var result = await databaserService.ExecuteDynamic(mongoDatabaseConnection, formattedQueryString, new List<ExecuteParamModel>());
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -134,14 +134,14 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            PostgreExtractionDatabase postgreExtractionDatabase = new PostgreExtractionDatabase(
+            var postgreExtractionDatabase = new PostgreExtractionDatabase(
                 new PostgreSqlMapper(_context.MapperOptions),
                 new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(null, new List<IExtractionDatabase> { postgreExtractionDatabase });
+            var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { postgreExtractionDatabase });
             // Act
-            string warpQuery = "Select * From databases";
-            ExtractingSchemaQueryModel result = await databaseService.ExtractColumnSchema(_context.PostgreSqlDatabaseConnection, warpQuery, null);
+            var warpQuery = "Select * From databases";
+            var result = await databaseService.ExtractColumnSchema(_context.PostgreSqlDatabaseConnection, warpQuery, null);
 
             // Assert
             Assert.NotEmpty(result.ColumnFields);
@@ -156,15 +156,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            PostgreExecutionDatabase postgreExecutionDatabase =
+            var postgreExecutionDatabase =
                 new PostgreExecutionDatabase(
                     new PostgreSqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from databases", null);
+            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from databases", null);
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -179,15 +179,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            PostgreExecutionDatabase postgreExecutionDatabase =
+            var postgreExecutionDatabase =
                 new PostgreExecutionDatabase(
                     new PostgreSqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from databases Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
+            var result = await databaseService.ExecuteDynamic(_context.PostgreSqlDatabaseConnection, "Select * from databases Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -202,15 +202,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            PostgreExecutionDatabase postgreExecutionDatabase =
+            var postgreExecutionDatabase =
                 new PostgreExecutionDatabase(
                     new PostgreSqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
                         "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
@@ -238,15 +238,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            PostgreExecutionDatabase postgreExecutionDatabase =
+            var postgreExecutionDatabase =
                 new PostgreExecutionDatabase(
                     new PostgreSqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
                         "Update databases SET \"displayName\"={{data.displayName}} WHERE id={{data.id}}",
@@ -269,13 +269,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            PostgreExecutionDatabase postgreExecutionDatabase =
+            var postgreExecutionDatabase =
                 new PostgreExecutionDatabase(
                     new PostgreSqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
-            string insertId = Guid.NewGuid().ToString();
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { postgreExecutionDatabase }, null);
+            var insertId = Guid.NewGuid().ToString();
             // Act
             await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
@@ -290,7 +290,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
                         });
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.PostgreSqlDatabaseConnection,
                         "DELETE From databases Where id={{data.id}}",
@@ -315,15 +315,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            SqlServerExtractionDatabase sqlServerExtractionDatabase =
+            var sqlServerExtractionDatabase =
                 new SqlServerExtractionDatabase(
                     new SqlServerMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(null, new List<IExtractionDatabase> { sqlServerExtractionDatabase });
+            var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { sqlServerExtractionDatabase });
             // Act
-            string warpQuery = "Select * From databases";
-            ExtractingSchemaQueryModel result = await databaseService.ExtractColumnSchema(_context.SqlServerDatabaseConnection, warpQuery, null);
+            var warpQuery = "Select * From databases";
+            var result = await databaseService.ExtractColumnSchema(_context.SqlServerDatabaseConnection, warpQuery, null);
 
             // Assert
             Assert.NotEmpty(result.ColumnFields);
@@ -338,15 +338,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            SqlServerExecutionDatabase sqlServerExecutionDatabase =
+            var sqlServerExecutionDatabase =
                 new SqlServerExecutionDatabase(
                     new SqlServerMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(_context.SqlServerDatabaseConnection, "Select * from databases", null);
+            var result = await databaseService.ExecuteDynamic(_context.SqlServerDatabaseConnection, "Select * from databases", null);
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -361,15 +361,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            SqlServerExecutionDatabase sqlServerExecutionDatabase =
+            var sqlServerExecutionDatabase =
                 new SqlServerExecutionDatabase(
                     new SqlServerMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(_context.SqlServerDatabaseConnection, "Select * from databases Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
+            var result = await databaseService.ExecuteDynamic(_context.SqlServerDatabaseConnection, "Select * from databases Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -384,15 +384,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            SqlServerExecutionDatabase sqlServerExecutionDatabase =
+            var sqlServerExecutionDatabase =
                 new SqlServerExecutionDatabase(
                     new SqlServerMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.SqlServerDatabaseConnection,
                         "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
@@ -420,15 +420,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            SqlServerExecutionDatabase sqlServerExecutionDatabase =
+            var sqlServerExecutionDatabase =
                 new SqlServerExecutionDatabase(
                     new SqlServerMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.SqlServerDatabaseConnection,
                         "Update databases SET \"displayName\"={{data.displayName}} WHERE id={{data.id}}",
@@ -451,13 +451,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            SqlServerExecutionDatabase sqlServerExecutionDatabase =
+            var sqlServerExecutionDatabase =
                 new SqlServerExecutionDatabase(
                     new SqlServerMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
-            string insertId = Guid.NewGuid().ToString();
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { sqlServerExecutionDatabase }, null);
+            var insertId = Guid.NewGuid().ToString();
             // Act
             await databaseService.ExecuteDynamic(
                     _context.SqlServerDatabaseConnection,
@@ -472,7 +472,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
                         });
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.SqlServerDatabaseConnection,
                         "DELETE From databases Where id={{data.id}}",
@@ -497,13 +497,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MySqlExtractionDatabase mysqlExtractionDatabase =
+            var mysqlExtractionDatabase =
                 new MySqlExtractionDatabase(new MySqlMapper(_context.MapperOptions), new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(null, new List<IExtractionDatabase> { mysqlExtractionDatabase });
+            var databaseService = new DatabaseService(null, new List<IExtractionDatabase> { mysqlExtractionDatabase });
             // Act
-            string warpQuery = "Select * From `apps` Where date(`dateCreated`)={{queryparams.date|date}}";
-            ExtractingSchemaQueryModel result = await databaseService
+            var warpQuery = "Select * From `apps` Where date(`dateCreated`)={{queryparams.date|date}}";
+            var result = await databaseService
                                 .ExtractColumnSchema(_context.MySqlDatabaseConnection, warpQuery,
                                     new List<ExecuteParamModel>
                                     {
@@ -523,15 +523,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MySqlExecutionDatabase mysqlExecutionDatabase =
+            var mysqlExecutionDatabase =
                 new MySqlExecutionDatabase(
                     new MySqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(_context.MySqlDatabaseConnection, "Select * from `databases`", null);
+            var result = await databaseService.ExecuteDynamic(_context.MySqlDatabaseConnection, "Select * from `databases`", null);
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -546,15 +546,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MySqlExecutionDatabase mysqlExecutionDatabase =
+            var mysqlExecutionDatabase =
                 new MySqlExecutionDatabase(
                     new MySqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(_context.MySqlDatabaseConnection, "Select * from `databases` Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
+            var result = await databaseService.ExecuteDynamic(_context.MySqlDatabaseConnection, "Select * from `databases` Where name={{data.name}}", new List<ExecuteParamModel> { new ExecuteParamModel { Name = "data.name", ReplaceValue = "testdatabase" } });
 
             // Assert
             Assert.NotEmpty(result.Result);
@@ -569,15 +569,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MySqlExecutionDatabase mysqlExecutionDatabase =
+            var mysqlExecutionDatabase =
                 new MySqlExecutionDatabase(
                     new MySqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.MySqlDatabaseConnection,
                         "INSERT INTO `databases`(id, name, displayName, timeSpan, connectionString, dataSource, databaseConnectionType) VALUES({{guid()}}, {{data.name}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})",
@@ -605,15 +605,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MySqlExecutionDatabase mysqlExecutionDatabase =
+            var mysqlExecutionDatabase =
                 new MySqlExecutionDatabase(
                     new MySqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
 
             // Act
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.MySqlDatabaseConnection,
                         "Update `databases` SET `displayName`={{data.displayName}} WHERE `id`={{data.id}}",
@@ -636,13 +636,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MySqlExecutionDatabase mysqlExecutionDatabase =
+            var mysqlExecutionDatabase =
                 new MySqlExecutionDatabase(
                     new MySqlMapper(_context.MapperOptions),
                     new CSharpMapper());
 
-            DatabaseService databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
-            string insertId = Guid.NewGuid().ToString();
+            var databaseService = new DatabaseService(new List<IExecutionDatabase> { mysqlExecutionDatabase }, null);
+            var insertId = Guid.NewGuid().ToString();
             // Act
             await databaseService.ExecuteDynamic(
                     _context.MySqlDatabaseConnection,
@@ -657,7 +657,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
                         });
-            LetPortal.Portal.Models.ExecuteDynamicResultModel result =
+            var result =
                 await databaseService.ExecuteDynamic(
                     _context.MySqlDatabaseConnection,
                         "DELETE From `databases` Where id={{data.id}}",

@@ -1,10 +1,10 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using LetPortal.Core.Files;
+﻿using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.MySQL
 {
@@ -16,17 +16,17 @@ namespace LetPortal.Portal.Executions.MySQL
         {
             var fileId = ConvertUtil.DeserializeObject<DatabaseIdentifierOptions>(storedFile.FileIdentifierOptions).FileId;
             byte[] bytes = null;
-            using (var mysqlDbConnection = new MySqlConnection(databaseOptions.ConnectionString))
+            using(var mysqlDbConnection = new MySqlConnection(databaseOptions.ConnectionString))
             {
                 mysqlDbConnection.Open();
-                using (var mysqlCommand = new MySqlCommand("SELECT * FROM uploadFiles Where id=@id", mysqlDbConnection))
+                using(var mysqlCommand = new MySqlCommand("SELECT * FROM uploadFiles Where id=@id", mysqlDbConnection))
                 {
                     mysqlCommand.Parameters.Add("id", MySqlDbType.VarChar, 450).Value = fileId;
-                    using (var mysqlReader = await mysqlCommand.ExecuteReaderAsync())
+                    using(var mysqlReader = await mysqlCommand.ExecuteReaderAsync())
                     {
-                        if (mysqlReader.HasRows)
+                        if(mysqlReader.HasRows)
                         {
-                            while (mysqlReader.Read())
+                            while(mysqlReader.Read())
                             {
                                 bytes = (byte[])mysqlReader["File"];
                                 break;
@@ -51,13 +51,13 @@ namespace LetPortal.Portal.Executions.MySQL
 
         private async Task<StoredFile> StoreFileMySQL(string localFilePath, DatabaseOptions databaseOptions)
         {
-            using (var mysqlDbConnection = new MySqlConnection(databaseOptions.ConnectionString))
+            using(var mysqlDbConnection = new MySqlConnection(databaseOptions.ConnectionString))
             {
                 mysqlDbConnection.Open();
-                var oid = DataUtil.GenerateUniqueId();
-                using (var transaction = mysqlDbConnection.BeginTransaction())
+                string oid = DataUtil.GenerateUniqueId();
+                using(var transaction = mysqlDbConnection.BeginTransaction())
                 {
-                    using (var mysqlCommand = new MySqlCommand("INSERT INTO uploadFiles (id, file) Values (@id, @File)", mysqlDbConnection, transaction))
+                    using(var mysqlCommand = new MySqlCommand("INSERT INTO uploadFiles (id, file) Values (@id, @File)", mysqlDbConnection, transaction))
                     {
                         var bytes = await File.ReadAllBytesAsync(localFilePath);
                         mysqlCommand.Parameters.Add("@id", MySqlDbType.VarChar).Value = oid;

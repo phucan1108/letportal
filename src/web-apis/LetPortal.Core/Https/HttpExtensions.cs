@@ -1,7 +1,7 @@
-﻿using System.IO;
+﻿using Microsoft.AspNetCore.Http;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace LetPortal.Core.Https
 {
@@ -16,7 +16,7 @@ namespace LetPortal.Core.Https
         {
             try
             {
-                using (var reader = new StreamReader(httpRequest.Body, Encoding.UTF8))
+                using(StreamReader reader = new StreamReader(httpRequest.Body, Encoding.UTF8))
                 {
                     return await reader.ReadToEndAsync();
                 }
@@ -31,7 +31,7 @@ namespace LetPortal.Core.Https
         {
             try
             {
-                using (var reader = new StreamReader(httpResponse.Body, Encoding.UTF8))
+                using(StreamReader reader = new StreamReader(httpResponse.Body, Encoding.UTF8))
                 {
                     return await reader.ReadToEndAsync();
                 }

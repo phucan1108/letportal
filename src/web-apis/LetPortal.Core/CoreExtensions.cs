@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using LetPortal.Core.Configurations;
+﻿using LetPortal.Core.Configurations;
 using LetPortal.Core.Exceptions;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Monitors;
@@ -12,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
+using System;
+using System.IO;
 
 namespace LetPortal.Core
 {
@@ -20,40 +20,40 @@ namespace LetPortal.Core
         public static ILetPortalBuilder AddLetPortal(this IServiceCollection serviceCollection, IConfiguration configuration, Action<LetPortalOptions> action = null)
         {
             var letPortalOptions = new LetPortalOptions();
-            if (action != null)
+            if(action != null)
             {
                 action.Invoke(letPortalOptions);
             }
 
             var builder = new LetPortalBuilder(serviceCollection, configuration, letPortalOptions);
 
-            if (letPortalOptions.EnableDatabaseConnection)
+            if(letPortalOptions.EnableDatabaseConnection)
             {
                 builder.Services.Configure<DatabaseOptions>(configuration.GetSection("DatabaseOptions"));
                 var databaseOptions = configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
                 builder.Services.AddSingleton(databaseOptions);
                 builder.SetConnectionType(databaseOptions.ConnectionType);
-                if (databaseOptions.ConnectionType == ConnectionType.MongoDB)
+                if(databaseOptions.ConnectionType == ConnectionType.MongoDB)
                 {
                     ConventionPackDefault.Register();
                     builder.Services.AddSingleton<MongoConnection>();
                 }
             }
 
-            if (letPortalOptions.EnableMicroservices)
+            if(letPortalOptions.EnableMicroservices)
             {
                 builder.Services.Configure<ServiceOptions>(configuration.GetSection("ServiceOptions"));
                 builder.Services.AddHttpClient<IServiceContext, ServiceContext>();
             }
 
-            if (letPortalOptions.EnableServiceMonitor)
+            if(letPortalOptions.EnableServiceMonitor)
             {
                 builder.Services.Configure<MonitorOptions>(configuration.GetSection("MonitorOptions"));
                 builder.Services.AddSingleton<IMonitorHealthCheck, MonitorHealthCheck>();
                 var monitorOption = configuration.GetSection("MonitorOptions").Get<MonitorOptions>();
-                if (monitorOption.Enable)
+                if(monitorOption.Enable)
                 {
-                    if (monitorOption.NotifyOptions.Enable)
+                    if(monitorOption.NotifyOptions.Enable)
                     {
                         builder.Services.Configure<HealthCheckPublisherOptions>(opts =>
                         {
@@ -66,7 +66,7 @@ namespace LetPortal.Core
                 }
             }
 
-            if (letPortalOptions.EnableSerilog)
+            if(letPortalOptions.EnableSerilog)
             {
                 builder.Services.Configure<LoggerOptions>(configuration.GetSection("LoggerOptions"));
                 var serviceOptions = configuration.GetSection("ServiceOptions").Get<ServiceOptions>();
@@ -88,24 +88,24 @@ namespace LetPortal.Core
             Action<LetPortalMiddlewareOptions> options = null)
         {
             var defaultOptions = new LetPortalMiddlewareOptions();
-            if (options != null)
+            if(options != null)
             {
                 options.Invoke(defaultOptions);
             }
 
             applicationLifetime.RegisterServiceLifecycle(app);
 
-            if (defaultOptions.EnableCheckUserSession)
+            if(defaultOptions.EnableCheckUserSession)
             {
-                if (defaultOptions.SkipCheckUrls != null && defaultOptions.SkipCheckUrls.Length > 0)
+                if(defaultOptions.SkipCheckUrls != null && defaultOptions.SkipCheckUrls.Length > 0)
                 {
                     app.UseWhen(context =>
                     {
-                        var isSkipped = false;
-                        foreach (var url in defaultOptions.SkipCheckUrls)
+                        bool isSkipped = false;
+                        foreach(var url in defaultOptions.SkipCheckUrls)
                         {
                             isSkipped = context.Request.Path.ToString().Contains(url);
-                            if (isSkipped)
+                            if(isSkipped)
                             {
                                 break;
                             }
@@ -127,7 +127,7 @@ namespace LetPortal.Core
 
             }
 
-            if (defaultOptions.EnableCheckUserSession
+            if(defaultOptions.EnableCheckUserSession
                 && defaultOptions.EnableWrapException)
             {
                 app.UseMiddleware<NotifyExceptionLogMiddleware>();
@@ -154,7 +154,7 @@ namespace LetPortal.Core
             var configurationServiceOptions = configuration.GetSection("ConfigurationServiceOptions").Get<ConfigurationServiceOptions>();
             var serviceOptions = configuration.GetSection("ServiceOptions").Get<ServiceOptions>();
 
-            if (configurationServiceOptions == null || serviceOptions == null)
+            if(configurationServiceOptions == null || serviceOptions == null)
             {
                 throw new Exception("Missing ConfiguartionServiceOptions or ServiceOptions in appsettings.json, please check again!");
             }
@@ -168,7 +168,7 @@ namespace LetPortal.Core
         private static void RegisterServiceLifecycle(this Microsoft.AspNetCore.Hosting.IApplicationLifetime applicationLifetime, IApplicationBuilder applicationBuilder, Action postStartAction = null, Action postStopAction = null)
         {
             var serviceContext = applicationBuilder.ApplicationServices.GetService<IServiceContext>();
-            if (serviceContext != null)
+            if(serviceContext != null)
             {
                 applicationLifetime.ApplicationStarted.Register(() =>
                 {

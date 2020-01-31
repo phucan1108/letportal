@@ -1,10 +1,10 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using LetPortal.Core.Files;
+﻿using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Npgsql;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.PostgreSql
 {
@@ -16,17 +16,17 @@ namespace LetPortal.Portal.Executions.PostgreSql
         {
             var fileId = ConvertUtil.DeserializeObject<DatabaseIdentifierOptions>(storedFile.FileIdentifierOptions).FileId;
             byte[] bytes;
-            using (var postgreDbConnection = new NpgsqlConnection(databaseOptions.ConnectionString))
+            using(var postgreDbConnection = new NpgsqlConnection(databaseOptions.ConnectionString))
             {
                 postgreDbConnection.Open();
                 var manager = new NpgsqlLargeObjectManager(postgreDbConnection);
                 // Reading and writing Large Objects requires the use of a transaction
-                using (var transaction = postgreDbConnection.BeginTransaction())
+                using(var transaction = postgreDbConnection.BeginTransaction())
                 {
                     // Open the file for reading and writing
-                    using (var stream = manager.OpenRead(fileId))
+                    using(var stream = manager.OpenRead(fileId))
                     {
-                        using (var memoryStream = new MemoryStream())
+                        using(var memoryStream = new MemoryStream())
                         {
                             await stream.CopyToAsync(memoryStream);
                             bytes = memoryStream.GetBuffer();
@@ -51,18 +51,18 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
         private async Task<StoredFile> StoreFilePostgreSQL(string fileName, string localFilePath, DatabaseOptions databaseOptions)
         {
-            using (var postgreDbConnection = new NpgsqlConnection(databaseOptions.ConnectionString))
+            using(var postgreDbConnection = new NpgsqlConnection(databaseOptions.ConnectionString))
             {
                 postgreDbConnection.Open();
                 var manager = new NpgsqlLargeObjectManager(postgreDbConnection);
                 var oid = manager.Create();
                 // Reading and writing Large Objects requires the use of a transaction
-                using (var transaction = postgreDbConnection.BeginTransaction())
+                using(var transaction = postgreDbConnection.BeginTransaction())
                 {
                     // Open the file for reading and writing
-                    using (var stream = manager.OpenReadWrite(oid))
+                    using(var stream = manager.OpenReadWrite(oid))
                     {
-                        using (var fileStream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                        using(var fileStream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
                         {
                             await fileStream.CopyToAsync(stream);
                         }

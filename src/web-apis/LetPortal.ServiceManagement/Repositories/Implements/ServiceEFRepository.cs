@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Repositories.Implements
 {
@@ -19,7 +19,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
         public Task ForceShutdownAllServices()
         {
             var allRunningServices = _context.Services.Where(a => a.ServiceState == ServiceState.Start || a.ServiceState == ServiceState.Run);
-            foreach (var service in allRunningServices)
+            foreach(var service in allRunningServices)
             {
                 service.ServiceState = ServiceState.Shutdown;
             }
@@ -33,13 +33,13 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                     .Where(a => a.ServiceState != ServiceState.Shutdown && a.Name == serviceName)
                     .OrderByDescending(a => a.InstanceNo).Select(b => b.InstanceNo).ToList();
 
-            if (allInstanceNos != null && allInstanceNos.Count > 0)
+            if(allInstanceNos != null && allInstanceNos.Count > 0)
             {
                 var counter = 1;
                 var temp = allInstanceNos.OrderBy(a => a);
-                foreach (var no in temp)
+                foreach(var no in temp)
                 {
-                    if (counter < no)
+                    if(counter < no)
                     {
                         // This service no has been terminated or lost
                         break;
@@ -59,7 +59,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
             var allLosingServices = _context.Services
                                     .Where(a => (a.ServiceState == ServiceState.Run || a.ServiceState == ServiceState.Start) && a.LastCheckedDate <= lostDate).ToList();
 
-            foreach (var service in allLosingServices)
+            foreach(var service in allLosingServices)
             {
                 service.ServiceState = ServiceState.Lost;
                 service.LastCheckedDate = DateTime.UtcNow;
@@ -75,7 +75,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
             var lostDate = DateTime.UtcNow.AddSeconds(durationShutdown * -1);
             var allLosingServices = _context.Services
                                     .Where(a => a.ServiceState == ServiceState.Lost && a.LastCheckedDate <= lostDate).ToList();
-            foreach (var service in allLosingServices)
+            foreach(var service in allLosingServices)
             {
                 service.ServiceState = ServiceState.Shutdown;
                 service.LastCheckedDate = DateTime.UtcNow;

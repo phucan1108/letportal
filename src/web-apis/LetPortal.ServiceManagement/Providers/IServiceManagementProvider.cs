@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Core.Services.Models;
+﻿using LetPortal.Core.Services.Models;
+using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
 {

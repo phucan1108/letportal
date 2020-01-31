@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using LetPortal.Core.Configurations;
+﻿using LetPortal.Core.Configurations;
 using LetPortal.Core.Extensions;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
@@ -17,6 +10,13 @@ using LetPortal.Identity.Repositories.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LetPortal.Identity.Providers.Identity
 {
@@ -76,9 +76,9 @@ namespace LetPortal.Identity.Providers.Identity
                 }
             }, registerModel.Password);
 
-            if (!result.Succeeded)
+            if(!result.Succeeded)
             {
-                if (result.Errors.Any(a => a.Code == "DuplicateUserName"))
+                if(result.Errors.Any(a => a.Code == "DuplicateUserName"))
                 {
                     throw new IdentityException(ErrorCodes.UsernameHasBeenRegistered);
                 }
@@ -94,10 +94,10 @@ namespace LetPortal.Identity.Providers.Identity
             _serviceLogger.Info("User Login {$loginModel}", loginModel.ToJson());
             var user = await _userManager.FindByNameAsync(loginModel.Username);
 
-            if (user != null)
+            if(user != null)
             {
                 var validationResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, true);
-                if (validationResult.Succeeded)
+                if(validationResult.Succeeded)
                 {
                     var userClaims = await _userManager.GetClaimsAsync(user);
 
@@ -160,7 +160,7 @@ namespace LetPortal.Identity.Providers.Identity
         {
             var issuedToken = await _issuedTokenRepository.GetByRefreshToken(refreshToken);
             var canDeactive = await _issuedTokenRepository.DeactiveRefreshToken(refreshToken);
-            if (canDeactive)
+            if(canDeactive)
             {
                 var claimPrincipal = GetPrincipalFromExpiredToken(issuedToken.JwtToken);
                 var newToken = SignedToken(claimPrincipal.Claims);
@@ -224,9 +224,9 @@ namespace LetPortal.Identity.Providers.Identity
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if(jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("Invalid token");
             }
@@ -238,7 +238,7 @@ namespace LetPortal.Identity.Providers.Identity
         {
             var verifyingUser = await _userManager.FindByEmailAsync(email);
 
-            if (verifyingUser != null)
+            if(verifyingUser != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(verifyingUser);
 
@@ -255,12 +255,12 @@ namespace LetPortal.Identity.Providers.Identity
         {
             var verifyingUser = await _userManager.FindByIdAsync(recoveryPasswordModel.UserId);
 
-            if (verifyingUser != null)
+            if(verifyingUser != null)
             {
                 var result = await _userManager.ResetPasswordAsync(verifyingUser, recoveryPasswordModel.ValidateCode,
                     recoveryPasswordModel.NewPassword);
 
-                if (!result.Succeeded)
+                if(!result.Succeeded)
                 {
                     throw new IdentityException(new Core.Exceptions.ErrorCode { MessageCode = result.Errors.First().Code, MessageContent = result.Errors.First().Description });
                 }

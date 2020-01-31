@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LetPortal.Portal.Entities.Components;
+using System;
 using System.Collections.Generic;
-using LetPortal.Portal.Entities.Components;
 
 namespace LetPortal.Portal.Models.Charts
 {

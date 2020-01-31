@@ -1,10 +1,10 @@
-﻿using System;
+﻿using LetPortal.Core.Https;
+using Newtonsoft.Json.Linq;
+using Polly;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using LetPortal.Core.Https;
-using Newtonsoft.Json.Linq;
-using Polly;
 
 namespace LetPortal.Core.Configurations
 {
@@ -19,7 +19,7 @@ namespace LetPortal.Core.Configurations
 
         public async Task<Dictionary<string, string>> GetConfiguration(string serviceName, string version)
         {
-            var dic = new Dictionary<string, string>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
             var response = await Policy
                 .Handle<HttpRequestException>()
                 .OrResult<HttpResponseMessage>(rep => !rep.IsSuccessStatusCode)
@@ -42,18 +42,18 @@ namespace LetPortal.Core.Configurations
 
         private void RecursiveFlatten(Dictionary<string, string> dic, JToken token, string prefix)
         {
-            switch (token.Type)
+            switch(token.Type)
             {
                 case JTokenType.Object:
-                    foreach (var prop in token.Children<JProperty>())
+                    foreach(JProperty prop in token.Children<JProperty>())
                     {
                         RecursiveFlatten(dic, prop.Value, Join(prefix, prop.Name));
                     }
                     break;
 
                 case JTokenType.Array:
-                    var index = 0;
-                    foreach (var value in token.Children())
+                    int index = 0;
+                    foreach(JToken value in token.Children())
                     {
                         RecursiveFlatten(dic, value, Join(prefix, index.ToString()));
                         index++;

@@ -1,7 +1,7 @@
-﻿using System;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Databases;
+using System;
 
 namespace LetPortal.Versions.Databases
 {
@@ -16,7 +16,7 @@ namespace LetPortal.Versions.Databases
 
         public void Upgrade(IVersionContext versionContext)
         {
-            var databaseOptions = versionContext.DatabaseOptions as DatabaseOptions;
+            DatabaseOptions databaseOptions = versionContext.DatabaseOptions as DatabaseOptions;
             var databaseManagement = new DatabaseConnection
             {
                 Id = Constants.CoreDatabaseId,

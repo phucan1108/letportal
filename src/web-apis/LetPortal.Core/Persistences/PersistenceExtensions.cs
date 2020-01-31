@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LetPortal.Core.Persistences.Attributes;
+using System;
 using System.Reflection;
-using LetPortal.Core.Persistences.Attributes;
 
 namespace LetPortal.Core.Persistences
 {

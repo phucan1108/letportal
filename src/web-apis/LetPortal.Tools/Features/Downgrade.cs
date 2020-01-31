@@ -1,10 +1,10 @@
-﻿using System;
+﻿using LetPortal.Core.Utils;
+using LetPortal.Core.Versions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using LetPortal.Core.Utils;
-using LetPortal.Core.Versions;
 using Version = LetPortal.Core.Versions.Version;
 
 namespace LetPortal.Tools.Features
@@ -15,10 +15,10 @@ namespace LetPortal.Tools.Features
 
         public async Task RunAsync(ToolsContext context)
         {
-            if (context.LatestVersion != null)
+            if(context.LatestVersion != null)
             {
                 var requestingVersionNumber = context.VersionNumber.ToVersionNumber();
-                if (requestingVersionNumber < context.LatestVersion.GetNumber())
+                if(requestingVersionNumber < context.LatestVersion.GetNumber())
                 {
                     var matchingVersions = context.Versions.Where(
                          a => a.GetNumber() <= context.LatestVersion.GetNumber()
@@ -29,11 +29,11 @@ namespace LetPortal.Tools.Features
                     Console.WriteLine("-----------------------++++++++++++++++-------------------------");
 
                     var portalVersions = DowngradingVersion(matchingVersions, context);
-                    foreach (var portalVersion in portalVersions)
+                    foreach(var portalVersion in portalVersions)
                     {
                         var storedVersion = context.VersionRepository.GetAsQueryable().Where(a => a.VersionNumber == portalVersion.VersionNumber).FirstOrDefault();
 
-                        if (storedVersion != null)
+                        if(storedVersion != null)
                         {
                             await context.VersionRepository.DeleteAsync(storedVersion.Id);
                         }
@@ -57,13 +57,13 @@ namespace LetPortal.Tools.Features
 
             var availableGroupVersions = versions.OrderByDescending(b => b.GetNumber()).Select(a => a.VersionNumber).Distinct();
 
-            foreach (var groupVersion in availableGroupVersions)
+            foreach(var groupVersion in availableGroupVersions)
             {
                 Console.WriteLine($"Downgrading Version: {groupVersion}");
                 var matchingVersions = versions.Where(a => a.VersionNumber == groupVersion);
 
                 var executingVersions = new List<string>();
-                foreach (var version in matchingVersions)
+                foreach(var version in matchingVersions)
                 {
                     version.Downgrade(toolsContext.VersionContext);
                     executingVersions.Add(version.GetType().GetTypeInfo().Name);
@@ -73,7 +73,7 @@ namespace LetPortal.Tools.Features
                 dicVersions.Add(groupVersion, executingVersions);
             }
 
-            foreach (var kvp in dicVersions)
+            foreach(var kvp in dicVersions)
             {
                 effectivePortalVersions.Add(new Version
                 {

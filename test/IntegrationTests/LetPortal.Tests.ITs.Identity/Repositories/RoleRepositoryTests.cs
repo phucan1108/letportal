@@ -20,12 +20,12 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
         public async Task Get_By_Name_Mongo_Test()
         {
             // Arrange
-            DatabaseOptions databaseOptions = _context.MongoDatabaseOptions;
-            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            RoleMongoRepository roleRepository = new RoleMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            var databaseOptions = _context.MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var roleRepository = new RoleMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
 
             // Act             
-            LetPortal.Identity.Entities.Role result = await roleRepository.GetByNameAsync("SuperAdmin");
+            var result = await roleRepository.GetByNameAsync("SuperAdmin");
             roleRepository.Dispose();
             // Assert
             Assert.NotNull(result);
@@ -35,12 +35,12 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
         public async Task Get_Base_Claims_Mongo_Test()
         {
             // Arrange
-            DatabaseOptions databaseOptions = _context.MongoDatabaseOptions;
-            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            RoleMongoRepository roleRepository = new RoleMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            var databaseOptions = _context.MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var roleRepository = new RoleMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
 
             // Act             
-            System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<LetPortal.Identity.Entities.BaseClaim>> result = await roleRepository.GetBaseClaims(new string[] { "SuperAdmin" });
+            var result = await roleRepository.GetBaseClaims(new string[] { "SuperAdmin" });
             roleRepository.Dispose();
             // Assert
             Assert.NotNull(result);

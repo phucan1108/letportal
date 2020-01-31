@@ -1,11 +1,11 @@
-﻿using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Files;
+﻿using LetPortal.Core.Files;
 using LetPortal.Portal.Exceptions.Files;
 using LetPortal.Portal.Options.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Files.Validators
 {
@@ -34,7 +34,7 @@ namespace LetPortal.Portal.Services.Files.Validators
         {
             var allowFiles = _fileValidatorOptions.CurrentValue.WhiteLists.Split(";");
 
-            if (!allowFiles.Any(a => a == fileName.Split(".")[1].ToLower()))
+            if(!allowFiles.Any(a => a == fileName.Split(".")[1].ToLower()))
             {
                 throw new FileException(FileErrorCodes.NotAllowedFileExtension);
             }

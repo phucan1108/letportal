@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using LetPortal.Portal.Entities.Components.Controls;
+﻿using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Shared;
+using System.Collections.Generic;
 
 namespace LetPortal.Portal.Entities.SectionParts.Controls
 {

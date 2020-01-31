@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using LetPortal.Core.Monitors.Models;
+﻿using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
+using System;
+using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
 {

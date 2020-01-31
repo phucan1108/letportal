@@ -1,9 +1,10 @@
-﻿using System.Net;
+﻿using LetPortal.Identity.Configurations;
+using LetPortal.Identity.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using LetPortal.Identity.Configurations;
-using LetPortal.Identity.Models;
-using Microsoft.Extensions.Options;
 
 namespace LetPortal.Identity.Providers.Emails
 {
@@ -18,12 +19,12 @@ namespace LetPortal.Identity.Providers.Emails
 
         public async Task SendEmailAsync(EmailEnvelop emailEnvelop, EmailOptions emailOptions = null)
         {
-            if (emailOptions == null)
+            if(emailOptions == null)
             {
                 emailOptions = _emailOptions.CurrentValue;
             }
 
-            if (emailOptions.SkipMode)
+            if(emailOptions.SkipMode)
             {
                 return;
             }
@@ -38,7 +39,7 @@ namespace LetPortal.Identity.Providers.Emails
             await client.SendMailAsync(
                 new MailMessage(emailOptions.From, emailEnvelop?.To, emailEnvelop.Subject, emailEnvelop.Body)
                 { IsBodyHtml = true }
-            ).ConfigureAwait(false);
+            ).ConfigureAwait(false);  
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             client.Dispose();

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using MongoDB.Driver;
+using System;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace LetPortal.Core.Versions
 {
@@ -15,7 +15,7 @@ namespace LetPortal.Core.Versions
 
         public MongoVersionContext(DatabaseOptions databaseOptions)
         {
-            if (mongoClient == null)
+            if(mongoClient == null)
             {
                 mongoClient = new MongoClient(databaseOptions.ConnectionString);
             }
@@ -36,7 +36,7 @@ namespace LetPortal.Core.Versions
 
         public void BulkInsertData<T>(T[] entities) where T : Entity
         {
-            foreach (var entity in entities)
+            foreach(var entity in entities)
             {
                 entity.Check();
             }

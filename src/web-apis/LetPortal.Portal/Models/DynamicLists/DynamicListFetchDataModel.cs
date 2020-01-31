@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using LetPortal.Portal.Entities.SectionParts;
+﻿using LetPortal.Portal.Entities.SectionParts;
+using System.Collections.Generic;
 
 namespace LetPortal.Portal.Models.DynamicLists
 {

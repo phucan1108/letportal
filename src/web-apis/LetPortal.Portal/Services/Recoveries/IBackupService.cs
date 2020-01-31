@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Portal.Exceptions.Recoveries;
+﻿using LetPortal.Portal.Exceptions.Recoveries;
 using LetPortal.Portal.Models.Recoveries;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Recoveries
 {

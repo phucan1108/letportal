@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Portal.Entities.Databases;
+﻿using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Exceptions.Databases;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using MongoDB.Driver;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Databases
 {
@@ -30,7 +30,7 @@ namespace LetPortal.Portal.Services.Databases
             var connectionType = databaseConnection.GetConnectionType();
             var executionDatabase = _executionDatabases.FirstOrDefault(a => a.ConnectionType == connectionType);
 
-            if (executionDatabase != null)
+            if(executionDatabase != null)
             {
                 return await executionDatabase.Execute(databaseConnection, formattedString, parameters);
             }

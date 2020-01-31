@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LetPortal.Portal.Entities.Shared;
+using System;
 using System.Collections.Generic;
-using LetPortal.Portal.Entities.Shared;
 
 namespace LetPortal.Portal.Entities.SectionParts
 {
@@ -18,13 +18,13 @@ namespace LetPortal.Portal.Entities.SectionParts
 
         public void GenerateFilters()
         {
-            if (ColumnsList != null && ColumnsList.ColumndDefs.Count > 0)
+            if(ColumnsList != null && ColumnsList.ColumndDefs.Count > 0)
             {
                 FiltersList = new FiltersList
                 {
                     FilterFields = new List<FilterField>()
                 };
-                foreach (var col in ColumnsList.ColumndDefs)
+                foreach(var col in ColumnsList.ColumndDefs)
                 {
                     FiltersList.FilterFields.Add(new FilterField
                     {

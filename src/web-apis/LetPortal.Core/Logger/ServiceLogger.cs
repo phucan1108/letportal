@@ -1,9 +1,9 @@
-﻿using System;
-using LetPortal.Core.Utils;
+﻿using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using System;
 
 namespace LetPortal.Core.Logger
 {

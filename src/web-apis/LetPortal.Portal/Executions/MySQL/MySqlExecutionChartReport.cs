@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Charts;
 using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.MySQL
 {
@@ -38,10 +38,10 @@ namespace LetPortal.Portal.Executions.MySQL
         public async Task<ExecutionChartResponseModel> Execute(ExecutionChartReportModel model)
         {
             var result = new ExecutionChartResponseModel();
-            using (var mysqlDbConnection = new MySqlConnection(model.DatabaseConnection.ConnectionString))
+            using(var mysqlDbConnection = new MySqlConnection(model.DatabaseConnection.ConnectionString))
             {
                 mysqlDbConnection.Open();
-                using (var command = new MySqlCommand(model.FormattedString, mysqlDbConnection))
+                using(var command = new MySqlCommand(model.FormattedString, mysqlDbConnection))
                 {
                     _chartReportQueryBuilder
                                             .Init(model.FormattedString, model.MappingProjection, options =>
@@ -58,7 +58,7 @@ namespace LetPortal.Portal.Executions.MySQL
                                             {
                                                 return _cSharpMapper.GetCSharpObjectByType(a, b);
                                             });
-                    if (model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
+                    if(model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
                     {
                         _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
                     }
@@ -66,17 +66,17 @@ namespace LetPortal.Portal.Executions.MySQL
                     var chartQuery = _chartReportQueryBuilder.Build();
                     command.CommandText = chartQuery.CombinedQuery;
 
-                    if (chartQuery.DbParameters.Count > 0)
+                    if(chartQuery.DbParameters.Count > 0)
                     {
                         command.Parameters.AddRange(ConvertToParameters(chartQuery.DbParameters).ToArray());
                     }
-                    using (var reader = await command.ExecuteReaderAsync())
+                    using(var reader = await command.ExecuteReaderAsync())
                     {
-                        using (var dt = new DataTable())
+                        using(DataTable dt = new DataTable())
                         {
                             dt.Load(reader);
                             result.IsSuccess = true;
-                            if (dt.Rows.Count > 0)
+                            if(dt.Rows.Count > 0)
                             {
                                 result.Result = await _chartReportProjection.ProjectionFromDataTable(dt, model.MappingProjection);
                                 result.IsSuccess = true;
@@ -95,7 +95,7 @@ namespace LetPortal.Portal.Executions.MySQL
 
         private IEnumerable<MySqlParameter> ConvertToParameters(List<ChartReportParameter> parameters)
         {
-            foreach (var param in parameters)
+            foreach(var param in parameters)
             {
                 var mysqlParam = new MySqlParameter(param.Name, _mySqlMapper.GetMySqlDbType(param.ValueType))
                 {

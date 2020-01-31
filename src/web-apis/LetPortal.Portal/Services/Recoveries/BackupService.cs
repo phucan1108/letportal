@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Utils;
+﻿using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Databases;
@@ -22,6 +16,12 @@ using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories.Recoveries;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Recoveries
 {
@@ -88,16 +88,16 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var totalBackupCount = appCount + standardCount + chartCount + dynamicCount + databaseCount + pageCount;
 
-            if (totalBackupCount > _backupOptions.CurrentValue.MaximumObjects)
+            if(totalBackupCount > _backupOptions.CurrentValue.MaximumObjects)
             {
                 throw new BackupException(BackupErrorCodes.ReachMaximumBackupObjects);
             }
-            var collectApp = _appServiceProvider.GetAppsByIds(model.Apps);
-            var collectStandards = _standardServiceProvider.GetStandardComponentsByIds(model.Standards);
-            var collectCharts = _chartServiceProvider.GetChartsByIds(model.Charts);
-            var collectDynamicLists = _dynamicListServiceProvider.GetDynamicListsByIds(model.DynamicLists);
-            var collectDatabases = _databaseServiceProvider.GetDatabaseConnectionsByIds(model.Databases);
-            var collectPages = _pageServiceProvider.GetPagesByIds(model.Pages);
+            Task<IEnumerable<App>> collectApp = _appServiceProvider.GetAppsByIds(model.Apps);
+            Task<IEnumerable<StandardComponent>> collectStandards = _standardServiceProvider.GetStandardComponentsByIds(model.Standards);
+            Task<IEnumerable<Chart>> collectCharts = _chartServiceProvider.GetChartsByIds(model.Charts);
+            Task<IEnumerable<DynamicList>> collectDynamicLists = _dynamicListServiceProvider.GetDynamicListsByIds(model.DynamicLists);
+            Task<IEnumerable<DatabaseConnection>> collectDatabases = _databaseServiceProvider.GetDatabaseConnectionsByIds(model.Databases);
+            Task<IEnumerable<Page>> collectPages = _pageServiceProvider.GetPagesByIds(model.Pages);
 
             await Task.WhenAll(collectApp, collectStandards, collectCharts, collectDatabases, collectDynamicLists, collectPages);
 
@@ -132,10 +132,10 @@ namespace LetPortal.Portal.Services.Recoveries
             jsonFilePath = Path.Combine(jsonFilePath, fileName);
             Directory.CreateDirectory(jsonFilePath);
 
-            if (collectApp.Result != null)
+            if(collectApp.Result != null)
             {
                 var jsonApps = ConvertUtil.SerializeObject(collectApp.Result, true);
-                using (var sw = new StreamWriter(
+                using(StreamWriter sw = new StreamWriter(
                     Path.Combine(jsonFilePath, APP_FILE)))
                 {
                     sw.Write(jsonApps);
@@ -144,10 +144,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 backupFileModel.ChainingFiles.Add(APP_FILE);
             }
 
-            if (collectStandards.Result != null)
+            if(collectStandards.Result != null)
             {
                 var jsonStandards = ConvertUtil.SerializeObject(collectStandards.Result, true);
-                using (var sw = new StreamWriter(
+                using(StreamWriter sw = new StreamWriter(
                     Path.Combine(jsonFilePath, STANDARD_FILE)))
                 {
                     sw.Write(jsonStandards);
@@ -155,10 +155,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 backupFileModel.ChainingFiles.Add(STANDARD_FILE);
             }
 
-            if (collectDynamicLists.Result != null)
+            if(collectDynamicLists.Result != null)
             {
                 var jsonDynamicLists = ConvertUtil.SerializeObject(collectDynamicLists.Result, true);
-                using (var sw = new StreamWriter(
+                using(StreamWriter sw = new StreamWriter(
                     Path.Combine(jsonFilePath, DYNAMICLIST_FILE)))
                 {
                     sw.Write(jsonDynamicLists);
@@ -166,10 +166,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 backupFileModel.ChainingFiles.Add(DYNAMICLIST_FILE);
             }
 
-            if (collectDatabases.Result != null)
+            if(collectDatabases.Result != null)
             {
                 var jsonDatabases = ConvertUtil.SerializeObject(collectDatabases.Result, true);
-                using (var sw = new StreamWriter(
+                using(StreamWriter sw = new StreamWriter(
                     Path.Combine(jsonFilePath, DATABASE_FILE)))
                 {
                     sw.Write(jsonDatabases);
@@ -177,10 +177,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 backupFileModel.ChainingFiles.Add(DATABASE_FILE);
             }
 
-            if (collectCharts.Result != null)
+            if(collectCharts.Result != null)
             {
                 var jsonCharts = ConvertUtil.SerializeObject(collectCharts.Result, true);
-                using (var sw = new StreamWriter(
+                using(StreamWriter sw = new StreamWriter(
                     Path.Combine(jsonFilePath, CHART_FILE)))
                 {
                     sw.Write(jsonCharts);
@@ -188,10 +188,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 backupFileModel.ChainingFiles.Add(CHART_FILE);
             }
 
-            if (collectPages.Result != null)
+            if(collectPages.Result != null)
             {
                 var jsonPages = ConvertUtil.SerializeObject(collectPages.Result, true);
-                using (var sw = new StreamWriter(
+                using(StreamWriter sw = new StreamWriter(
                     Path.Combine(jsonFilePath, PAGE_FILE)))
                 {
                     sw.Write(jsonPages);
@@ -201,7 +201,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var jsonFlattern = ConvertUtil.SerializeObject(backupFileModel, true);
 
-            using (var sw = new StreamWriter(Path.Combine(jsonFilePath, jsonFileName)))
+            using(StreamWriter sw = new StreamWriter(Path.Combine(jsonFilePath, jsonFileName)))
             {
                 sw.Write(jsonFlattern);
             }
@@ -224,13 +224,13 @@ namespace LetPortal.Portal.Services.Recoveries
         public async Task<UploadBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader)
         {
             var isFileValid = await _fileSeviceProvider.ValidateFile(uploadFile);
-            if (isFileValid)
+            if(isFileValid)
             {
                 Directory.CreateDirectory(_backupOptions.CurrentValue.RestoreFolderPath);
                 var tempFilePath = await SaveFormFileAsync(uploadFile, _backupOptions.CurrentValue.RestoreFolderPath);
                 var unzipFileName = Path.GetFileNameWithoutExtension(tempFilePath);
                 var unzipFolderPath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, Path.GetFileNameWithoutExtension(tempFilePath));
-                if (Directory.Exists(unzipFolderPath))
+                if(Directory.Exists(unzipFolderPath))
                 {
                     // Delete old directory
                     Directory.Delete(unzipFolderPath, true);
@@ -278,7 +278,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var fileNameWithoutExt = zipFile.FileName.Split(".")[0];
             var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
-            using (var fileStream = File.Create(restoreFilePath))
+            using(var fileStream = File.Create(restoreFilePath))
             {
                 fileStream.Write(zipFile.FileBytes, 0, zipFile.FileBytes.Length);
             }
@@ -286,7 +286,7 @@ namespace LetPortal.Portal.Services.Recoveries
             // Release file in memory
             zipFile.FileBytes = null;
             var folderExtractingPath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, fileNameWithoutExt);
-            if (Directory.Exists(folderExtractingPath))
+            if(Directory.Exists(folderExtractingPath))
             {
                 Directory.Delete(folderExtractingPath, true);
             }
@@ -297,9 +297,9 @@ namespace LetPortal.Portal.Services.Recoveries
             var jsonBackupString = File.ReadAllText(jsonBackupFilePath);
             var backupFlatternModel = ConvertUtil.DeserializeObject<BackupFlatternFileModel>(jsonBackupString);
 
-            foreach (var chainingFile in backupFlatternModel.ChainingFiles)
+            foreach(var chainingFile in backupFlatternModel.ChainingFiles)
             {
-                switch (chainingFile)
+                switch(chainingFile)
                 {
                     case APP_FILE:
                         var appFilePath = Path.Combine(folderExtractingPath, APP_FILE);
@@ -383,7 +383,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var fileNameWithoutExt = zipFile.FileName.Split(".")[0];
             var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
-            using (var fileStream = File.Create(restoreFilePath))
+            using(var fileStream = File.Create(restoreFilePath))
             {
                 fileStream.Write(zipFile.FileBytes, 0, zipFile.FileBytes.Length);
             }
@@ -391,7 +391,7 @@ namespace LetPortal.Portal.Services.Recoveries
             // Release file in memory
             zipFile.FileBytes = null;
             var folderExtractingPath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, fileNameWithoutExt);
-            if (Directory.Exists(folderExtractingPath))
+            if(Directory.Exists(folderExtractingPath))
             {
                 Directory.Delete(folderExtractingPath, true);
             }
@@ -402,9 +402,9 @@ namespace LetPortal.Portal.Services.Recoveries
             var jsonBackupString = File.ReadAllText(jsonBackupFilePath);
             var backupFlatternModel = ConvertUtil.DeserializeObject<BackupFlatternFileModel>(jsonBackupString);
 
-            foreach (var chainingFile in backupFlatternModel.ChainingFiles)
+            foreach(var chainingFile in backupFlatternModel.ChainingFiles)
             {
-                switch (chainingFile)
+                switch(chainingFile)
                 {
                     case APP_FILE:
                         var appFilePath = Path.Combine(folderExtractingPath, APP_FILE);
@@ -455,7 +455,7 @@ namespace LetPortal.Portal.Services.Recoveries
         {
             var tempFileName = file.FileName;
             var fullTempFilePath = Path.Combine(saveFolderPath, tempFileName);
-            using (var stream = new FileStream(fullTempFilePath, FileMode.Create))
+            using(var stream = new FileStream(fullTempFilePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }

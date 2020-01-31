@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Portal.Entities.Datasources;
+﻿using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Models;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Datasources
 {

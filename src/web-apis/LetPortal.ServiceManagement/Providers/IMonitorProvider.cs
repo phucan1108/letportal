@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Core.Monitors.Models;
+﻿using LetPortal.Core.Monitors.Models;
+using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
 {

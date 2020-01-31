@@ -1,5 +1,5 @@
-﻿using System;
-using LetPortal.Core.Utils;
+﻿using LetPortal.Core.Utils;
+using System;
 
 namespace LetPortal.Core.Exceptions
 {

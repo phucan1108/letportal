@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using LetPortal.Portal.Entities.SectionParts.Controls;
+﻿using LetPortal.Portal.Entities.SectionParts.Controls;
+using System.Collections.Generic;
 
 namespace LetPortal.Portal.Entities.SectionParts
 {

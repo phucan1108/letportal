@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Services.Models;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Collections.Generic;
 
 namespace LetPortal.ServiceManagement.Repositories
 {
@@ -41,7 +41,7 @@ namespace LetPortal.ServiceManagement.Repositories
             serviceBuilder.HasOne(a => a.ServiceHardwareInfo).WithOne().OnDelete(DeleteBehavior.Cascade);
             serviceBuilder.HasMany(a => a.MonitorCounters).WithOne(b => b.Service).OnDelete(DeleteBehavior.Cascade);
 
-            if (_options.ConnectionType == ConnectionType.MySQL)
+            if(_options.ConnectionType == ConnectionType.MySQL)
             {
                 serviceBuilder.Property(a => a.HealthCheckNotifyEnable).HasColumnType("BIT");
                 serviceBuilder.Property(a => a.LoggerNotifyEnable).HasColumnType("BIT");
@@ -63,14 +63,14 @@ namespace LetPortal.ServiceManagement.Repositories
 
             var hardwareBuilder = modelBuilder.Entity<HardwareCounter>();
 
-            if (_options.ConnectionType == ConnectionType.MySQL)
+            if(_options.ConnectionType == ConnectionType.MySQL)
             {
                 hardwareBuilder.Property(a => a.IsCpuBottleneck).HasColumnType("BIT");
                 hardwareBuilder.Property(a => a.IsMemoryThreshold).HasColumnType("BIT");
             }
 
             var monitorHardwareBuilder = modelBuilder.Entity<MonitorHardwareReport>();
-            if (_options.ConnectionType == ConnectionType.MySQL)
+            if(_options.ConnectionType == ConnectionType.MySQL)
             {
                 monitorHardwareBuilder.Property(a => a.IsCpuBottleneck).HasColumnType("BIT");
                 monitorHardwareBuilder.Property(a => a.IsMemoryThreshold).HasColumnType("BIT");
@@ -78,9 +78,9 @@ namespace LetPortal.ServiceManagement.Repositories
 
             var monitorHttpBuilder = modelBuilder.Entity<MonitorHttpReport>();
 
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            foreach(var entity in modelBuilder.Model.GetEntityTypes())
             {
-                foreach (var property in entity.GetProperties())
+                foreach(var property in entity.GetProperties())
                 {
                     property.Relational().ColumnName = ToCamelCase(property.Relational().ColumnName);
                 }
@@ -89,15 +89,15 @@ namespace LetPortal.ServiceManagement.Repositories
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (_options.ConnectionType == ConnectionType.SQLServer)
+            if(_options.ConnectionType == ConnectionType.SQLServer)
             {
                 optionsBuilder.UseSqlServer(_options.ConnectionString);
             }
-            else if (_options.ConnectionType == ConnectionType.PostgreSQL)
+            else if(_options.ConnectionType == ConnectionType.PostgreSQL)
             {
                 optionsBuilder.UseNpgsql(_options.ConnectionString);
             }
-            else if (_options.ConnectionType == ConnectionType.MySQL)
+            else if(_options.ConnectionType == ConnectionType.MySQL)
             {
                 optionsBuilder.UseMySQL(_options.ConnectionString);
             }

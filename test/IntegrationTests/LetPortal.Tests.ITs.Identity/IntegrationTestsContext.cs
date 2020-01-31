@@ -47,12 +47,12 @@ namespace LetPortal.Tests.ITs.Identity
             };
 
             CreateSomeDummyData();
-        }
+        }   
 
         public RoleStore GetRoleStore()
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            RoleStore roleStore = new RoleStore(roleRepository: GetRoleMongoRepository());
+            var roleStore = new RoleStore(roleRepository: GetRoleMongoRepository());
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             return roleStore;
@@ -61,14 +61,14 @@ namespace LetPortal.Tests.ITs.Identity
         public UserStore GetUserStore()
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            UserStore userStore = new UserStore(userRepository: GetUserMongoRepository(), roleRepository: GetRoleMongoRepository());
+            var userStore = new UserStore(userRepository: GetUserMongoRepository(), roleRepository: GetRoleMongoRepository());
 #pragma warning restore CA2000 // Dispose objects before losing scope
             return userStore;
         }
 
         public User GenerateUser()
         {
-            string username = GenerateUniqueUserName();
+            var username = GenerateUniqueUserName();
             return new User
             {
                 Id = DataUtil.GenerateUniqueId(),
@@ -99,7 +99,7 @@ namespace LetPortal.Tests.ITs.Identity
 
         public Role GenerateRole()
         {
-            string roleName = GenerateUniqueRoleName();
+            var roleName = GenerateUniqueRoleName();
             return new Role
             {
                 Id = DataUtil.GenerateUniqueId(),
@@ -123,7 +123,7 @@ namespace LetPortal.Tests.ITs.Identity
                 if(disposing)
                 {
                     // Remove all created databases
-                    MongoClient mongoClient = new MongoClient(MongoDatabaseOptions.ConnectionString);
+                    var mongoClient = new MongoClient(MongoDatabaseOptions.ConnectionString);
                     mongoClient.DropDatabase(MongoDatabaseOptions.Datasource);
                 }
                 disposedValue = true;
@@ -138,12 +138,12 @@ namespace LetPortal.Tests.ITs.Identity
 
         private string GenerateUniqueRoleName()
         {
-            char[] suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-            int lengthOfName = 20;
-            string role = string.Empty;
+            var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var lengthOfName = 20;
+            var role = string.Empty;
             for(int i = 0; i < lengthOfName; i++)
             {
-                int randomIndx = (new Random()).Next(0, 45);
+                var randomIndx = (new Random()).Next(0, 45);
                 role += suppliedVars[randomIndx];
             }
 
@@ -152,12 +152,12 @@ namespace LetPortal.Tests.ITs.Identity
 
         private string GenerateUniqueUserName()
         {
-            char[] suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-            int lengthOfName = 20;
-            string username = string.Empty;
+            var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var lengthOfName = 20;
+            var username = string.Empty;
             for(int i = 0; i < lengthOfName; i++)
             {
-                int randomIndx = (new Random()).Next(0, 45);
+                var randomIndx = (new Random()).Next(0, 45);
                 username += suppliedVars[randomIndx];
             }
 
@@ -166,28 +166,28 @@ namespace LetPortal.Tests.ITs.Identity
 
         private UserMongoRepository GetUserMongoRepository()
         {
-            DatabaseOptions databaseOptions = MongoDatabaseOptions;
-            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            UserMongoRepository userMongoRepository = new UserMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            var databaseOptions = MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var userMongoRepository = new UserMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
             return userMongoRepository;
         }
 
         private RoleMongoRepository GetRoleMongoRepository()
         {
-            DatabaseOptions databaseOptions = MongoDatabaseOptions;
-            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            RoleMongoRepository roleMongoRepository = new RoleMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            var databaseOptions = MongoDatabaseOptions;
+            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            var roleMongoRepository = new RoleMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
             return roleMongoRepository;
         }
 
         private string GenerateUniqueDatasourceName()
         {
-            char[] suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-            int lengthOfName = 20;
-            string datasourceName = string.Empty;
+            var suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var lengthOfName = 20;
+            var datasourceName = string.Empty;
             for(int i = 0; i < lengthOfName; i++)
             {
-                int randomIndx = (new Random()).Next(0, 45);
+                var randomIndx = (new Random()).Next(0, 45);
                 datasourceName += suppliedVars[randomIndx];
             }
 
@@ -196,11 +196,11 @@ namespace LetPortal.Tests.ITs.Identity
 
         private void CreateSomeDummyData()
         {
-            MongoClient mongoClient = new MongoClient(MongoDatabaseOptions.ConnectionString);
-            IMongoDatabase mongoDatabase = mongoClient.GetDatabase(MongoDatabaseOptions.Datasource);
-            IMongoCollection<Role> roleCollection = mongoDatabase.GetCollection<Role>("roles");
-            IMongoCollection<User> userCollection = mongoDatabase.GetCollection<User>("users");
-            Role superAdminRole = new Role
+            var mongoClient = new MongoClient(MongoDatabaseOptions.ConnectionString);
+            var mongoDatabase = mongoClient.GetDatabase(MongoDatabaseOptions.Datasource);
+            var roleCollection = mongoDatabase.GetCollection<Role>("roles");
+            var userCollection = mongoDatabase.GetCollection<User>("users");
+            var superAdminRole = new Role
             {
                 Id = "5c06a15e4cc9a850bca44488",
                 Name = "SuperAdmin",
@@ -213,7 +213,7 @@ namespace LetPortal.Tests.ITs.Identity
             };
 
             // Pass: @Dm1n!
-            User adminAccount = new User
+            var adminAccount = new User
             {
                 Id = "5ce287ee569d6f23e8504cef",
                 Username = "admin",

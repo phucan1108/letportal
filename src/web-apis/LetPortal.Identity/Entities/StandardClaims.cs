@@ -31,7 +31,7 @@ namespace LetPortal.Identity.Entities
 
         public static IEnumerable<BaseClaim> TransformRoleClaims(List<string> roles)
         {
-            foreach (var role in roles)
+            foreach(var role in roles)
             {
                 yield return new BaseClaim
                 {

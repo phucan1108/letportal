@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Core.Exceptions;
+﻿using LetPortal.Core.Exceptions;
 using LetPortal.Core.Https;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Providers.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LetPortal.IdentityApis.Controllers
 {
@@ -31,7 +31,7 @@ namespace LetPortal.IdentityApis.Controllers
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
         {
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -48,12 +48,12 @@ namespace LetPortal.IdentityApis.Controllers
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
         {
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            if (registerModel.Password != registerModel.Repassword)
+            if(registerModel.Password != registerModel.Repassword)
             {
                 return BadRequest();
             }
@@ -79,7 +79,7 @@ namespace LetPortal.IdentityApis.Controllers
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
         {
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -94,7 +94,7 @@ namespace LetPortal.IdentityApis.Controllers
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> RecoveryPassword([FromBody] RecoveryPasswordModel model)
         {
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return BadRequest();
             }

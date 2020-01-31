@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using LetPortal.Core.Persistences;
+using LetPortal.Identity.Entities;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
-using LetPortal.Identity.Entities;
 
 namespace LetPortal.Identity.Repositories.Identity
 {
@@ -20,7 +20,7 @@ namespace LetPortal.Identity.Repositories.Identity
         {
             var userSession = _context.UserSessions.First(a => a.Id == userSessionId);
 
-            if (userSession.UserActivities == null)
+            if(userSession.UserActivities == null)
             {
                 userSession.UserActivities = new List<UserActivity>();
             }

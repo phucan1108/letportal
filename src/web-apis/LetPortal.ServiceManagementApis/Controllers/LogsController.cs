@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Core.Logger.Models;
+﻿using LetPortal.Core.Logger.Models;
 using LetPortal.ServiceManagement.Providers;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagementApis.Controllers
 {

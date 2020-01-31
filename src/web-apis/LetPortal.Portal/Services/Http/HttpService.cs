@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using LetPortal.Portal.Entities.Shared;
+using LetPortal.Portal.Models.Https;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using LetPortal.Portal.Entities.Shared;
-using LetPortal.Portal.Models.Https;
 
 namespace LetPortal.Portal.Services.Http
 {
@@ -21,19 +21,19 @@ namespace LetPortal.Portal.Services.Http
             var successCodes = httpServiceOptions.HttpSuccessCode.Split(";").Select(a => int.Parse(a));
             var httpResult = new HttpResultModel();
             HttpResponseMessage response = null;
-            switch (httpServiceOptions.HttpMethod)
+            switch(httpServiceOptions.HttpMethod)
             {
                 case "Get":
                     response = await _httpClient.GetAsync(httpServiceOptions.HttpServiceUrl);
                     break;
                 case "Post":
-                    using (var stringContent = new StringContent(httpServiceOptions.JsonBody, Encoding.UTF8))
+                    using(var stringContent = new StringContent(httpServiceOptions.JsonBody, Encoding.UTF8))
                     {
                         response = await _httpClient.PostAsync(httpServiceOptions.HttpServiceUrl, stringContent);
                     }
                     break;
                 case "Put":
-                    using (var stringContent = new StringContent(httpServiceOptions.JsonBody, Encoding.UTF8))
+                    using(var stringContent = new StringContent(httpServiceOptions.JsonBody, Encoding.UTF8))
                     {
                         response = await _httpClient.PutAsync(httpServiceOptions.HttpServiceUrl, stringContent);
                     }
@@ -43,7 +43,7 @@ namespace LetPortal.Portal.Services.Http
                     break;
             }
 
-            if (successCodes.Any(a => a == (int)response.StatusCode))
+            if(successCodes.Any(a => a == (int)response.StatusCode))
             {
                 httpResult.IsSuccess = true;
                 httpResult.Result = await response.Content.ReadAsAsync<dynamic>();

@@ -6,17 +6,17 @@ namespace LetPortal.Core.Extensions
     {
         public static void ForEach(this Array array, Action<Array, int[]> action)
         {
-            if (array.LongLength == 0)
+            if(array.LongLength == 0)
             {
                 return;
             }
 
-            var walker = new ArrayTraverse(array);
+            ArrayTraverse walker = new ArrayTraverse(array);
             do
             {
                 action(array, walker.Position);
             }
-            while (walker.Step());
+            while(walker.Step());
         }
     }
 
@@ -28,7 +28,7 @@ namespace LetPortal.Core.Extensions
         public ArrayTraverse(Array array)
         {
             maxLengths = new int[array.Rank];
-            for (var i = 0; i < array.Rank; ++i)
+            for(int i = 0; i < array.Rank; ++i)
             {
                 maxLengths[i] = array.GetLength(i) - 1;
             }
@@ -37,12 +37,12 @@ namespace LetPortal.Core.Extensions
 
         public bool Step()
         {
-            for (var i = 0; i < Position.Length; ++i)
+            for(int i = 0; i < Position.Length; ++i)
             {
-                if (Position[i] < maxLengths[i])
+                if(Position[i] < maxLengths[i])
                 {
                     Position[i]++;
-                    for (var j = 0; j < i; j++)
+                    for(int j = 0; j < i; j++)
                     {
                         Position[j] = 0;
                     }

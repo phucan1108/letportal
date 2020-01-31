@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Models.Charts;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -28,11 +28,11 @@ namespace LetPortal.Portal.Executions.Mongo
         {
             var mongoDatabase = new MongoClient(model.DatabaseConnection.ConnectionString).GetDatabase(model.DatabaseConnection.DataSource);
 
-            var filterStages = new List<PipelineStageDefinition<BsonDocument, BsonDocument>>();
+            List<PipelineStageDefinition<BsonDocument, BsonDocument>> filterStages = new List<PipelineStageDefinition<BsonDocument, BsonDocument>>();
 
-            if (model.IsRealTime && !string.IsNullOrEmpty(model.ComparedRealTimeField))
+            if(model.IsRealTime && !string.IsNullOrEmpty(model.ComparedRealTimeField))
             {
-                if (model.LastComparedDate.HasValue)
+                if(model.LastComparedDate.HasValue)
                 {
                     var andDoc = new BsonDocument
                                 {
@@ -83,9 +83,9 @@ namespace LetPortal.Portal.Executions.Mongo
                 }
             }
 
-            if (model.FilterValues != null && model.FilterValues.Any())
+            if(model.FilterValues != null && model.FilterValues.Any())
             {
-                foreach (var filterValue in model.FilterValues)
+                foreach(var filterValue in model.FilterValues)
                 {
                     filterStages.Add(GetFilter(filterValue));
                 }
@@ -98,14 +98,14 @@ namespace LetPortal.Portal.Executions.Mongo
                     model.Parameters?.Select(a => new Models.Databases.ExecuteParamModel { Name = a.Name, RemoveQuotes = a.ReplaceDQuotes, ReplaceValue = a.Value }),
                     filterStages);
             bool isSuccess = result != null;
-            if (isSuccess)
+            if(isSuccess)
             {
                 var tempResult = result as IEnumerable<dynamic>;
-                if (tempResult.Any())
+                if(tempResult.Any())
                 {
                     var first = tempResult.First();
-                    var hasGroup = false;
-                    if (first is ExpandoObject)
+                    bool hasGroup = false;
+                    if(first is ExpandoObject)
                     {
                         hasGroup = ((IDictionary<string, object>)first).ContainsKey("group");
                     }
@@ -113,7 +113,7 @@ namespace LetPortal.Portal.Executions.Mongo
                     {
                         hasGroup = (first as JObject).ContainsKey("group");
                     }
-                    if (hasGroup)
+                    if(hasGroup)
                     {
                         result = tempResult.GroupBy(a => a.group).Where(a => a != null).Select(a => new { series = a.Select(b => new { b.name, b.value }), name = a.Key });
                     }
@@ -125,26 +125,26 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private BsonDocument GetFilter(ChartFilterValue chartFilterValue)
         {
-            switch (chartFilterValue.FilterType)
+            switch(chartFilterValue.FilterType)
             {
                 case Entities.Components.FilterType.Checkbox:
-                    var checkboxDoc = new BsonDocument();
+                    BsonDocument checkboxDoc = new BsonDocument();
                     checkboxDoc.Add(new BsonElement(chartFilterValue.Name, new BsonBoolean(bool.Parse(chartFilterValue.Value))));
                     return new BsonDocument
                     {
                         {  "$match",checkboxDoc }
                     };
                 case Entities.Components.FilterType.Select:
-                    var selectDoc = new BsonDocument();
-                    if (decimal.TryParse(chartFilterValue.Value, out var tempDecimal))
+                    BsonDocument selectDoc = new BsonDocument();
+                    if(decimal.TryParse(chartFilterValue.Value, out decimal tempDecimal))
                     {
                         selectDoc.Add(new BsonElement(chartFilterValue.Name, new BsonDecimal128(tempDecimal)));
                     }
-                    else if (long.TryParse(chartFilterValue.Value, out var tempLong))
+                    else if(long.TryParse(chartFilterValue.Value, out long tempLong))
                     {
                         selectDoc.Add(new BsonElement(chartFilterValue.Name, new BsonInt64(tempLong)));
                     }
-                    else if (int.TryParse(chartFilterValue.Value, out var tempInt))
+                    else if(int.TryParse(chartFilterValue.Value, out int tempInt))
                     {
                         selectDoc.Add(new BsonElement(chartFilterValue.Name, new BsonInt32(tempInt)));
                     }
@@ -158,16 +158,16 @@ namespace LetPortal.Portal.Executions.Mongo
                         { "$match", selectDoc }
                     };
                 case Entities.Components.FilterType.NumberPicker:
-                    if (chartFilterValue.IsMultiple)
+                    if(chartFilterValue.IsMultiple)
                     {
-                        var orDoc = new BsonArray();
-                        var selectMultiDoc = new BsonDocument();
-                        var isArrayStr = chartFilterValue.Value.Any(a => a == '\'' || a == '"');
-                        if (isArrayStr)
+                        BsonArray orDoc = new BsonArray();
+                        BsonDocument selectMultiDoc = new BsonDocument();
+                        bool isArrayStr = chartFilterValue.Value.Any(a => a == '\'' || a == '"');
+                        if(isArrayStr)
                         {
                             var arrayStr = ConvertUtil.DeserializeObject<List<string>>(chartFilterValue.Value);
-                            var containsNumberMinMax = chartFilterValue.Value.Contains("-");
-                            foreach (var elem in arrayStr)
+                            bool containsNumberMinMax = chartFilterValue.Value.Contains("-");
+                            foreach(var elem in arrayStr)
                             {
                                 var splitted = elem.Split("-");
                                 var beginNum = long.Parse(splitted[0]);
@@ -207,7 +207,7 @@ namespace LetPortal.Portal.Executions.Mongo
                         else
                         {
                             var arrayStr = ConvertUtil.DeserializeObject<List<long>>(chartFilterValue.Value);
-                            foreach (var elem in arrayStr)
+                            foreach(var elem in arrayStr)
                             {
                                 orDoc.Add(new BsonDocument
                                 {
@@ -228,8 +228,8 @@ namespace LetPortal.Portal.Executions.Mongo
                     }
                     else
                     {
-                        var containsNumberMinMax = chartFilterValue.Value.Contains("-");
-                        if (containsNumberMinMax)
+                        bool containsNumberMinMax = chartFilterValue.Value.Contains("-");
+                        if(containsNumberMinMax)
                         {
                             // Ex: 10-30, 30-50
                             var splitted = chartFilterValue.Value.Split("-");
@@ -266,12 +266,12 @@ namespace LetPortal.Portal.Executions.Mongo
                         }
                         else
                         {
-                            var numberDoc = new BsonDocument();
-                            if (long.TryParse(chartFilterValue.Value, out var tempLong))
+                            BsonDocument numberDoc = new BsonDocument();
+                            if(long.TryParse(chartFilterValue.Value, out long tempLong))
                             {
                                 numberDoc.Add(new BsonElement(chartFilterValue.Name, new BsonInt64(tempLong)));
                             }
-                            else if (int.TryParse(chartFilterValue.Value, out var tempInt))
+                            else if(int.TryParse(chartFilterValue.Value, out int tempInt))
                             {
                                 numberDoc.Add(new BsonElement(chartFilterValue.Name, new BsonInt32(tempInt)));
                             }
@@ -283,7 +283,7 @@ namespace LetPortal.Portal.Executions.Mongo
                         }
                     }
                 case Entities.Components.FilterType.DatePicker:
-                    if (chartFilterValue.IsMultiple)
+                    if(chartFilterValue.IsMultiple)
                     {
                         var arrayDates = ConvertUtil.DeserializeObject<string[]>(chartFilterValue.Value);
                         var startDatePickerDt = DateTime.Parse(arrayDates[0]);
@@ -355,7 +355,7 @@ namespace LetPortal.Portal.Executions.Mongo
                         };
                     }
                 case Entities.Components.FilterType.MonthYearPicker:
-                    if (chartFilterValue.IsMultiple)
+                    if(chartFilterValue.IsMultiple)
                     {
                         var arrayDates = ConvertUtil.DeserializeObject<string[]>(chartFilterValue.Value);
                         var startDatePickerDt = DateTime.Parse(arrayDates[0]);

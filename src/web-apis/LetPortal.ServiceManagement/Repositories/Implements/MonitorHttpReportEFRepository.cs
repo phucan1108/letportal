@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Repositories.Implements
 {
@@ -29,9 +29,9 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
               0
             };
 
-            for (var i = duration; i < 60; i += duration)
+            for(int i = duration; i < 60; i += duration)
             {
-                if (i < reportDate.Minute)
+                if(i < reportDate.Minute)
                 {
                     nearestMinute = i;
                 }
@@ -46,14 +46,14 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         1,
                                         DateTimeKind.Utc);
 
-            var startDate = endDate.AddMinutes(duration * -1);
+            DateTime startDate = endDate.AddMinutes(duration * -1);
             var lastestRecord = _context.MonitorHttpReports.Where(a => collectServiceIds.Contains(a.ServiceId)).OrderByDescending(a => a.ReportedDate).FirstOrDefault();
-            if (lastestRecord != null)
+            if(lastestRecord != null)
             {
                 var lastMinute = lastestRecord.ReportedDate.Minute;
                 var nextStartDate = lastestRecord.ReportedDate.AddMinutes(duration);
                 // Ensure report must be over last record
-                if (nextStartDate < reportDate)
+                if(nextStartDate < reportDate)
                 {
                     startDate = new DateTime(
                                         nextStartDate.Year,
@@ -83,14 +83,14 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
 
 
 
-            if (allRequiredCounters.Any())
+            if(allRequiredCounters.Any())
             {
                 var counter = allRequiredCounters.Count;
                 var startMinute = allRequiredCounters.First().MeansureDate.Minute;
 
-                for (var i = 0; i < allowMinutes.Count; i++)
+                for(int i = 0; i < allowMinutes.Count; i++)
                 {
-                    if (allowMinutes[i] <= startMinute && allowMinutes[i + 1] > startMinute)
+                    if(allowMinutes[i] <= startMinute && allowMinutes[i + 1] > startMinute)
                     {
                         startMinute = allowMinutes[i];
                         break;
@@ -109,13 +109,13 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                 var endCompareDate = startCompareDate.AddMinutes(duration);
                 var services = allRequiredCounters.GroupBy(a => a.ServiceId);
 
-                while (counter > 0)
+                while(counter > 0)
                 {
-                    foreach (var service in services)
+                    foreach(var service in services)
                     {
                         var proceedingCounters = service.Where(a => a.MeansureDate >= startCompareDate && a.MeansureDate < endCompareDate);
 
-                        if (proceedingCounters.Any())
+                        if(proceedingCounters.Any())
                         {
                             counter -= proceedingCounters.Count();
                             var firstCounter = proceedingCounters.First();

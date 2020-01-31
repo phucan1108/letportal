@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using LetPortal.Core.Extensions;
+﻿using LetPortal.Core.Extensions;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
@@ -16,6 +10,12 @@ using LetPortal.Tools.Features;
 using LetPortal.Versions;
 using McMaster.Extensions.CommandLineUtils;
 using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace LET.Tools.Installation
 {
@@ -54,7 +54,7 @@ namespace LET.Tools.Installation
                 Console.ReadLine();
                 return 0;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine("Oops, something went wrong. Exception stack: " + ex.ToString());
                 Console.ReadLine();
@@ -77,10 +77,10 @@ namespace LET.Tools.Installation
 
             var runningCommand = GetAvailableCommands().FirstOrDefault(a => a.CommandName.ToLower() == Mode.ToLower());
 
-            if (runningCommand != null)
+            if(runningCommand != null)
             {
                 ToolsContext toolsContext = null;
-                switch (dbType)
+                switch(dbType)
                 {
                     case ConnectionType.MongoDB:
                         var mongoConnection = new MongoConnection(databaseOption);
@@ -92,12 +92,12 @@ namespace LET.Tools.Installation
                         mongoVersionContext.IdentityDbOptions = toolsOption.StoringConnections.IdentityConnection;
                         var latestVersion = versionMongoRepository.GetAsQueryable().ToList().LastOrDefault();
 
-                        var allVersions = Enumerable.Empty<IVersion>();
-                        if (IsPortal())
+                        IEnumerable<IVersion> allVersions = Enumerable.Empty<IVersion>();
+                        if(IsPortal())
                         {
                             allVersions = Scanner.GetAllPortalVersions();
                         }
-                        else if (IsIdentity())
+                        else if(IsIdentity())
                         {
                             allVersions = Scanner.GetAllIdentityVersions();
                         }
@@ -117,7 +117,7 @@ namespace LET.Tools.Installation
                     case ConnectionType.MySQL:
                     case ConnectionType.SQLServer:
 
-                        if (IsPortal())
+                        if(IsPortal())
                         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
                             var letportalContext = new LetPortalDbContext(databaseOption);
@@ -148,7 +148,7 @@ namespace LET.Tools.Installation
                                 AllowPatch = !string.IsNullOrEmpty(PatchesFolder)
                             };
                         }
-                        else if (IsIdentity())
+                        else if(IsIdentity())
                         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
                             var letIdentityContext = new LetPortalIdentityDbContext(databaseOption);
@@ -184,7 +184,7 @@ namespace LET.Tools.Installation
                         break;
                 }
 
-                if (toolsContext != null)
+                if(toolsContext != null)
                 {
                     await runningCommand.RunAsync(toolsContext);
                     toolsContext.Dispose();
@@ -213,14 +213,16 @@ namespace LET.Tools.Installation
         private ToolsOptions GetToolsOptions(string filePath)
         {
             string fullPath;
-            if (!string.IsNullOrEmpty(filePath))
+            if(!string.IsNullOrEmpty(filePath))
             {
                 fullPath = Path.GetFullPath(filePath);
             }
             else
             {
+                Console.WriteLine(">>> Location tools path: {0}", Assembly.GetEntryAssembly().Location);
                 fullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "tools.json");
             }
+            Console.WriteLine(">>> Config file path: {0}", fullPath);
             var foundText = File.ReadAllText(fullPath);
             return ConvertUtil.DeserializeObject<ToolsOptions>(foundText);
         }
@@ -234,7 +236,7 @@ namespace LET.Tools.Installation
 
         private string GetDefaultConnectionString(ConnectionType connectionType, string app)
         {
-            switch (connectionType)
+            switch(connectionType)
             {
                 case ConnectionType.MongoDB:
                     return string.Format("mongodb://localhost:27017/{0}", app == "portal" ? "letportal" : "letportalidentity");

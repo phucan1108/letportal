@@ -30,19 +30,19 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
+            var mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaserServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MongoDatabaseConenction));
 
-            List<IAnalyzeDatabase> analyzeDatabases = new List<IAnalyzeDatabase>
+            var analyzeDatabases = new List<IAnalyzeDatabase>
             {
                 new MongoAnalyzeDatabase()
             };
-            EntitySchemaService entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
+            var entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
 
             // Act
-            IEnumerable<LetPortal.Portal.Entities.EntitySchemas.EntitySchema> result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
+            var result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
 
             // Assert
             Assert.NotEmpty(result);
@@ -57,19 +57,19 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
+            var mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaserServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
 
-            List<IAnalyzeDatabase> analyzeDatabases = new List<IAnalyzeDatabase>
+            var analyzeDatabases = new List<IAnalyzeDatabase>
             {
                 new PostgreAnalyzeDatabase()
             };
-            EntitySchemaService entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
+            var entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
 
             // Act
-            IEnumerable<LetPortal.Portal.Entities.EntitySchemas.EntitySchema> result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
+            var result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
 
             // Assert
             Assert.NotEmpty(result);
@@ -84,19 +84,19 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
+            var mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaserServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.SqlServerDatabaseConnection));
 
-            List<IAnalyzeDatabase> analyzeDatabases = new List<IAnalyzeDatabase>
+            var analyzeDatabases = new List<IAnalyzeDatabase>
             {
                 new SqlServerAnalyzeDatabase()
             };
-            EntitySchemaService entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
+            var entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
 
             // Act
-            IEnumerable<LetPortal.Portal.Entities.EntitySchemas.EntitySchema> result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
+            var result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
 
             // Assert
             Assert.NotEmpty(result);
@@ -111,19 +111,19 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
+            var mockDatabaserServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaserServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
 
-            List<IAnalyzeDatabase> analyzeDatabases = new List<IAnalyzeDatabase>
+            var analyzeDatabases = new List<IAnalyzeDatabase>
             {
                 new MySqlAnalyzeDatabase()
             };
-            EntitySchemaService entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
+            var entitySchemaService = new EntitySchemaService(mockDatabaserServiceProvider.Object, analyzeDatabases);
 
             // Act
-            IEnumerable<LetPortal.Portal.Entities.EntitySchemas.EntitySchema> result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
+            var result = await entitySchemaService.FetchAllEntitiesFromDatabase("aaa");
 
             // Assert
             Assert.NotEmpty(result);

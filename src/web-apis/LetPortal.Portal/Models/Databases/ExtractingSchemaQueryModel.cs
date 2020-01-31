@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using LetPortal.Portal.Models.Shared;
+﻿using LetPortal.Portal.Models.Shared;
+using System.Collections.Generic;
 
 namespace LetPortal.Portal.Models.Databases
 {

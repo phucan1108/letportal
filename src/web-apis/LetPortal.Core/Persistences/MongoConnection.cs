@@ -13,7 +13,7 @@ namespace LetPortal.Core.Persistences
         public MongoConnection(DatabaseOptions databaseOptions)
         {
             ConnectionString = databaseOptions.ConnectionString;
-            if (string.IsNullOrEmpty(databaseOptions.Datasource))
+            if(string.IsNullOrEmpty(databaseOptions.Datasource))
             {
                 databaseOptions.Datasource = MongoUrl.Create(databaseOptions.ConnectionString).DatabaseName;
             }
@@ -22,7 +22,7 @@ namespace LetPortal.Core.Persistences
 
         public IMongoDatabase GetDatabaseConnection(string databaseName = null)
         {
-            if (mongoClient == null)
+            if(mongoClient == null)
             {
                 mongoClient = new MongoClient(ConnectionString);
             }

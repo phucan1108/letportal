@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using LetPortal.Portal.Entities.EntitySchemas;
+using LetPortal.Portal.Repositories.EntitySchemas;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetPortal.Portal.Entities.EntitySchemas;
-using LetPortal.Portal.Repositories.EntitySchemas;
 
 namespace LetPortal.Portal.Providers.EntitySchemas
 {

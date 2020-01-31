@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.EntitySchemas;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Repositories.EntitySchemas
 {
@@ -23,10 +23,10 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
 
         public async Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false)
         {
-            foreach (var entitySchema in entitySchemas)
+            foreach(EntitySchema entitySchema in entitySchemas)
             {
-                var isExisted = Collection.AsQueryable().Any(a => a.Name == entitySchema.Name);
-                if ((isExisted && isKeptSameName) == false)
+                bool isExisted = Collection.AsQueryable().Any(a => a.Name == entitySchema.Name);
+                if((isExisted && isKeptSameName) == false)
                 {
                     entitySchema.Id = DataUtil.GenerateUniqueId();
                     await AddAsync(entitySchema);

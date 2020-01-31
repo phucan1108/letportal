@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using LetPortal.Portal.Entities.SectionParts;
+﻿using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
+using System.Collections.Generic;
 
 namespace LetPortal.Portal.Entities.Components
 {
@@ -14,9 +14,9 @@ namespace LetPortal.Portal.Entities.Components
 
         public void TurnOffRealTime()
         {
-            foreach (var option in Options)
+            foreach(var option in Options)
             {
-                if (option.Key == "allowrealtime")
+                if(option.Key == "allowrealtime")
                 {
                     option.Value = "false";
                 }
@@ -25,9 +25,9 @@ namespace LetPortal.Portal.Entities.Components
 
         public void SetRealTimeField(string fieldName)
         {
-            foreach (var option in Options)
+            foreach(var option in Options)
             {
-                if (option.Key == "comparerealtimefield")
+                if(option.Key == "comparerealtimefield")
                 {
                     option.Value = fieldName;
                 }
@@ -36,9 +36,9 @@ namespace LetPortal.Portal.Entities.Components
 
         public void SetDataRange(string dataRange)
         {
-            foreach (var option in Options)
+            foreach(var option in Options)
             {
-                if (option.Key == "datarange")
+                if(option.Key == "datarange")
                 {
                     option.Value = dataRange;
                 }
@@ -47,9 +47,9 @@ namespace LetPortal.Portal.Entities.Components
 
         public void SetXFormatDate(string xFormatDate)
         {
-            foreach (var option in Options)
+            foreach(var option in Options)
             {
-                if (option.Key == "xformatdate")
+                if(option.Key == "xformatdate")
                 {
                     option.Value = xFormatDate;
                 }

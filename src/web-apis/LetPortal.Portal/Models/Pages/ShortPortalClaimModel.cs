@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using LetPortal.Core.Security;
+﻿using LetPortal.Core.Security;
+using System.Collections.Generic;
 
 namespace LetPortal.Portal.Models.Pages
 {

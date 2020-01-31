@@ -20,7 +20,7 @@ namespace LetPortal.ServiceManagement
             services.Configure<CentralizedLogOptions>(configuration.GetSection("CentralizedLogOptions"));
 
             services.AddSingleton(databaseOptions);
-            if (databaseOptions.ConnectionType == ConnectionType.MongoDB)
+            if(databaseOptions.ConnectionType == ConnectionType.MongoDB)
             {
 
                 ConventionPackDefault.Register();
@@ -32,7 +32,7 @@ namespace LetPortal.ServiceManagement
                 services.AddSingleton<IMonitorHttpReportRepository, MonitorHttpReportMongoRepository>();
             }
 
-            if (databaseOptions.ConnectionType == ConnectionType.SQLServer
+            if(databaseOptions.ConnectionType == ConnectionType.SQLServer
                 || databaseOptions.ConnectionType == ConnectionType.PostgreSQL
                 || databaseOptions.ConnectionType == ConnectionType.MySQL)
             {

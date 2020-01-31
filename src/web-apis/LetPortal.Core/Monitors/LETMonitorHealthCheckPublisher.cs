@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using LetPortal.Core.Monitors.Models;
+﻿using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Services;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LetPortal.Core.Monitors
 {

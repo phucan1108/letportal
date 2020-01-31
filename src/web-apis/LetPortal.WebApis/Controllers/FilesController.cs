@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using LetPortal.Core.Logger;
+﻿using LetPortal.Core.Logger;
 using LetPortal.Portal.Entities.Files;
 using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Services.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {

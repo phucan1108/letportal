@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.EntitySchemas;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -15,23 +15,23 @@ namespace LetPortal.Portal.Executions.Mongo
 
         public Task<IEnumerable<EntitySchema>> FetchAllEntitiesFromDatabase(DatabaseConnection databaseConnection)
         {
-            var currentDatabaseConnection = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource);
+            IMongoDatabase currentDatabaseConnection = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource);
 
-            var cursorCollectionNames = currentDatabaseConnection.ListCollectionNames();
+            IAsyncCursor<string> cursorCollectionNames = currentDatabaseConnection.ListCollectionNames();
 
             var analyzedEntitySchemas = new List<EntitySchema>();
 
-            while (cursorCollectionNames.MoveNext())
+            while(cursorCollectionNames.MoveNext())
             {
-                var currentCollectionNamesList = cursorCollectionNames.Current;
+                IEnumerable<string> currentCollectionNamesList = cursorCollectionNames.Current;
 
-                foreach (var collectionName in currentCollectionNamesList)
+                foreach(string collectionName in currentCollectionNamesList)
                 {
-                    var analyzingCollection = currentDatabaseConnection.GetCollection<BsonDocument>(collectionName);
+                    IMongoCollection<BsonDocument> analyzingCollection = currentDatabaseConnection.GetCollection<BsonDocument>(collectionName);
 
-                    var firstElem = analyzingCollection.AsQueryable().FirstOrDefault();
+                    BsonDocument firstElem = analyzingCollection.AsQueryable().FirstOrDefault();
 
-                    if (firstElem != null)
+                    if(firstElem != null)
                     {
                         analyzedEntitySchemas.Add(AnalyzeOneBsonDocument(collectionName, firstElem));
                     }
@@ -43,11 +43,11 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private EntitySchema AnalyzeOneBsonDocument(string entityName, BsonDocument bsonDocument)
         {
-            var entitySchema = new EntitySchema { Name = entityName, DisplayName = entityName };
+            EntitySchema entitySchema = new EntitySchema { Name = entityName, DisplayName = entityName };
 
-            foreach (var bsonElem in bsonDocument)
+            foreach(BsonElement bsonElem in bsonDocument)
             {
-                var entityField = new EntityField
+                EntityField entityField = new EntityField
                 {
                     Name = bsonElem.Name,
                     DisplayName = bsonElem.Name,
@@ -62,11 +62,11 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private string GetTypeByBsonDocument(BsonValue bsonValue)
         {
-            if (bsonValue.IsBoolean)
+            if(bsonValue.IsBoolean)
             {
                 return "boolean";
             }
-            if (bsonValue.IsInt32
+            if(bsonValue.IsInt32
                 || bsonValue.IsInt64
                 || bsonValue.IsNumeric
                 || bsonValue.IsDecimal128
@@ -74,15 +74,15 @@ namespace LetPortal.Portal.Executions.Mongo
             {
                 return "number";
             }
-            if (bsonValue.IsValidDateTime)
+            if(bsonValue.IsValidDateTime)
             {
                 return "datetime";
             }
-            if (bsonValue.IsBsonArray)
+            if(bsonValue.IsBsonArray)
             {
                 return "list";
             }
-            if (bsonValue.IsBsonDocument)
+            if(bsonValue.IsBsonDocument)
             {
                 return "document";
             }

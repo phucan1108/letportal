@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LetPortal.Portal.Models.Charts;
+using System;
 using System.Collections.Generic;
-using LetPortal.Portal.Models.Charts;
 
 namespace LetPortal.Portal.Executions
 {

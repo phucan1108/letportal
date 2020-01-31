@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Repositories.Apps
 {
@@ -21,7 +21,7 @@ namespace LetPortal.Portal.Repositories.Apps
 
         public async Task<IEnumerable<ShortEntityModel>> GetShortApps(string keyWord = null)
         {
-            if (!string.IsNullOrEmpty(keyWord))
+            if(!string.IsNullOrEmpty(keyWord))
             {
 
                 var shortApps = await _context.Apps.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
@@ -46,7 +46,7 @@ namespace LetPortal.Portal.Repositories.Apps
         public async Task UpdateMenuProfileAsync(string appId, MenuProfile menuProfile)
         {
             var app = await _context.Apps.FirstAsync(a => a.Id == appId);
-            if (app.MenuProfiles == null)
+            if(app.MenuProfiles == null)
             {
                 app.MenuProfiles = new List<MenuProfile>();
             }

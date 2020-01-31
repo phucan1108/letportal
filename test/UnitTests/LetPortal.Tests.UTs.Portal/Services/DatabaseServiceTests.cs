@@ -18,7 +18,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
         public async Task Execute_Dynamic_Command_In_Mongo_Test()
         {
             // Arrange
-            Mock<IExecutionDatabase> mongoExecutionDatabaseMock = new Mock<IExecutionDatabase>();
+            var mongoExecutionDatabaseMock = new Mock<IExecutionDatabase>();
             mongoExecutionDatabaseMock.Setup(a => a.ConnectionType).Returns(Core.Persistences.ConnectionType.MongoDB);
             mongoExecutionDatabaseMock
                 .Setup(a => a.Execute(It.IsAny<DatabaseConnection>(), It.IsAny<string>(), It.IsAny<IEnumerable<ExecuteParamModel>>()))
@@ -28,10 +28,10 @@ namespace LetPortal.Tests.UTs.Portal.Services
                     Result = "A"
                 }));
 
-            DatabaseService databaseService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabaseMock.Object }, null);
+            var databaseService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabaseMock.Object }, null);
 
             // Act
-            ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(new LetPortal.Portal.Entities.Databases.DatabaseConnection
+            var result = await databaseService.ExecuteDynamic(new LetPortal.Portal.Entities.Databases.DatabaseConnection
             {
                 ConnectionString = "mongodb://localhost:27017",
                 DatabaseConnectionType = "mongodb",
@@ -46,7 +46,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
         public async Task Execute_Dynamic_Command_Not_Supported_DbType_Test()
         {
             // Arrange
-            Mock<IExecutionDatabase> mongoExecutionDatabaseMock = new Mock<IExecutionDatabase>();
+            var mongoExecutionDatabaseMock = new Mock<IExecutionDatabase>();
             mongoExecutionDatabaseMock.Setup(a => a.ConnectionType).Returns(Core.Persistences.ConnectionType.MongoDB);
             mongoExecutionDatabaseMock
                 .Setup(a => a.Execute(It.IsAny<DatabaseConnection>(), It.IsAny<string>(), It.IsAny<IEnumerable<ExecuteParamModel>>()))
@@ -56,12 +56,12 @@ namespace LetPortal.Tests.UTs.Portal.Services
                     Result = "A"
                 }));
 
-            DatabaseService databaseService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabaseMock.Object }, null);
+            var databaseService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabaseMock.Object }, null);
 
             // Act
             try
             {
-                ExecuteDynamicResultModel result = await databaseService.ExecuteDynamic(new LetPortal.Portal.Entities.Databases.DatabaseConnection
+                var result = await databaseService.ExecuteDynamic(new LetPortal.Portal.Entities.Databases.DatabaseConnection
                 {
                     DatabaseConnectionType = "SQLServer"
                 }, "", new List<ExecuteParamModel>());
@@ -85,7 +85,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
         public async Task Extract_Columns_In_Mongo_Test()
         {
             // Arrange
-            Mock<IExtractionDatabase> mongoExtractionDatabaseMock = new Mock<IExtractionDatabase>();
+            var mongoExtractionDatabaseMock = new Mock<IExtractionDatabase>();
             mongoExtractionDatabaseMock.Setup(a => a.ConnectionType).Returns(Core.Persistences.ConnectionType.MongoDB);
             mongoExtractionDatabaseMock
                 .Setup(a => a.Extract(It.IsAny<DatabaseConnection>(), It.IsAny<string>(), It.IsAny<IEnumerable<ExecuteParamModel>>()))
@@ -102,10 +102,10 @@ namespace LetPortal.Tests.UTs.Portal.Services
                     }
                 }));
 
-            DatabaseService databaseService = new DatabaseService(null, new IExtractionDatabase[] { mongoExtractionDatabaseMock.Object });
+            var databaseService = new DatabaseService(null, new IExtractionDatabase[] { mongoExtractionDatabaseMock.Object });
 
             // Act
-            ExtractingSchemaQueryModel result = await databaseService.ExtractColumnSchema(new LetPortal.Portal.Entities.Databases.DatabaseConnection
+            var result = await databaseService.ExtractColumnSchema(new LetPortal.Portal.Entities.Databases.DatabaseConnection
             {
                 ConnectionString = "mongodb://localhost:27017",
                 DatabaseConnectionType = "mongodb",

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Repositories.Pages;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Providers.Pages
 {
@@ -20,7 +20,7 @@ namespace LetPortal.Portal.Providers.Pages
         public async Task<IEnumerable<ComparisonResult>> ComparePages(IEnumerable<Page> pages)
         {
             var results = new List<ComparisonResult>();
-            foreach (var page in pages)
+            foreach(var page in pages)
             {
                 results.Add(await _pageRepository.Compare(page));
             }
@@ -29,7 +29,7 @@ namespace LetPortal.Portal.Providers.Pages
 
         public async Task ForceUpdatePages(IEnumerable<Page> pages)
         {
-            foreach (var page in pages)
+            foreach(var page in pages)
             {
                 await _pageRepository.ForceUpdateAsync(page.Id, page);
             }

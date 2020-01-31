@@ -28,10 +28,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-            // Act
-            Page pageBuilderTest = new Page
+                              // Act
+            var pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder",
@@ -46,7 +46,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            Page result = await pageRepository.GetOneByNameAsync("page-builder");
+            var result = await pageRepository.GetOneByNameAsync("page-builder");
             pageRepository.Dispose();
             // Assert
             Assert.NotNull(result);
@@ -62,10 +62,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-            // Act
-            Page pageBuilderTest = new Page
+                              // Act
+            var pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-1",
@@ -80,7 +80,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            List<LetPortal.Portal.Models.Pages.ShortPageModel> result = await pageRepository.GetAllShortPagesAsync();
+            var result = await pageRepository.GetAllShortPagesAsync();
             pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
@@ -96,10 +96,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-            // Act
-            Page pageBuilderTest = new Page
+                              // Act
+            var pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-2",
@@ -114,7 +114,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            List<LetPortal.Portal.Models.Pages.ShortPortalClaimModel> result = await pageRepository.GetShortPortalClaimModelsAsync();
+            var result = await pageRepository.GetShortPortalClaimModelsAsync();
             pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
@@ -130,11 +130,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            Page pageBuilderTest = new Page
+            var pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-3",
@@ -204,7 +204,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await pageRepository.AddAsync(pageBuilderTest);
-            Page page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
+            var page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
             pageRepository.Dispose();
             // Assert
             Assert.NotNull(page);

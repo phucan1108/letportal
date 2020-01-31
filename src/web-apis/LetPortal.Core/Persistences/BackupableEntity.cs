@@ -12,7 +12,7 @@ namespace LetPortal.Core.Persistences
 
         public override void Check()
         {
-            if (string.IsNullOrEmpty(DisplayName))
+            if(string.IsNullOrEmpty(DisplayName))
             {
                 DisplayName = Name;
             }

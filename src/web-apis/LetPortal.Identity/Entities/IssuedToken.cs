@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Identity.Entities
 {

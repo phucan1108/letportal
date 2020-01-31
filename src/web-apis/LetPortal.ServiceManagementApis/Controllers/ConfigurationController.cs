@@ -22,7 +22,7 @@ namespace LetPortal.ServiceManagementApis.Controllers
         public IActionResult Get(string serviceName, string version)
         {
             var result = _configuration.GetSection($"{serviceName}:{version}").Value;
-            if (!string.IsNullOrEmpty(result))
+            if(!string.IsNullOrEmpty(result))
             {
                 return Ok(result);
             }

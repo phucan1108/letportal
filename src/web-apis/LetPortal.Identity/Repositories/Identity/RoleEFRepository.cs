@@ -1,9 +1,9 @@
-﻿using System;
+﻿using LetPortal.Core.Persistences;
+using LetPortal.Identity.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LetPortal.Core.Persistences;
-using LetPortal.Identity.Entities;
 
 namespace LetPortal.Identity.Repositories.Identity
 {
@@ -24,7 +24,7 @@ namespace LetPortal.Identity.Repositories.Identity
             var foundRoles = _context.Roles.Where(a => roles.Contains(a.Name)).ToList();
 
             var kvps = foundRoles.Select(a => new KeyValuePair<string, List<BaseClaim>>(a.Name, a.Claims)).ToList();
-            foreach (var kv in kvps)
+            foreach(var kv in kvps)
             {
                 dic.Add(kv.Key, kv.Value);
             }

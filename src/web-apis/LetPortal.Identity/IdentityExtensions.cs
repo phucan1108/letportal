@@ -1,8 +1,4 @@
-﻿using System;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using LetPortal.Core;
+﻿using LetPortal.Core;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Versions;
 using LetPortal.Identity.Configurations;
@@ -18,6 +14,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LetPortal.Identity
 {
@@ -28,7 +28,7 @@ namespace LetPortal.Identity
             builder.Services.Configure<Core.Configurations.JwtBearerOptions>(builder.Configuration.GetSection("JwtBearerOptions"));
             builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
 
-            if (builder.ConnectionType == ConnectionType.MongoDB)
+            if(builder.ConnectionType == ConnectionType.MongoDB)
             {
                 MongoDbRegistry.RegisterEntities();
                 builder.Services.AddSingleton<IUserRepository, UserMongoRepository>();
@@ -38,7 +38,7 @@ namespace LetPortal.Identity
                 builder.Services.AddSingleton<IVersionRepository, VersionMongoRepository>();
             }
 
-            if (builder.ConnectionType == ConnectionType.PostgreSQL
+            if(builder.ConnectionType == ConnectionType.PostgreSQL
                 || builder.ConnectionType == ConnectionType.MySQL
                 || builder.ConnectionType == ConnectionType.SQLServer)
             {
@@ -101,7 +101,7 @@ namespace LetPortal.Identity
                 {
                     OnAuthenticationFailed = context =>
                     {
-                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        if(context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
                             context.Response.Headers.Add("X-Token-Expired", "true");
                         }

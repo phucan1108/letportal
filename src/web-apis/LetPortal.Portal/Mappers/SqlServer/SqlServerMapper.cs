@@ -1,8 +1,8 @@
-﻿using System;
+﻿using LetPortal.Core.Persistences;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using LetPortal.Core.Persistences;
 
 namespace LetPortal.Portal.Mappers.SqlServer
 {
