@@ -218,8 +218,7 @@ namespace LET.Tools.Installation
                 fullPath = Path.GetFullPath(filePath);
             }
             else
-            {
-                Console.WriteLine(">>> Location tools path: {0}", Assembly.GetEntryAssembly().Location);
+            {                   
                 fullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "tools.json");
             }
             Console.WriteLine(">>> Config file path: {0}", fullPath);
