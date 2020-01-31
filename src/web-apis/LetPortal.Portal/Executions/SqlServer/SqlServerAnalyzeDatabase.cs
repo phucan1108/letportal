@@ -1,13 +1,12 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Utils;
-using LetPortal.Portal.Entities.Databases;
-using LetPortal.Portal.Entities.EntitySchemas;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Entities.EntitySchemas;
 
 namespace LetPortal.Portal.Executions.SqlServer
 {
@@ -18,14 +17,14 @@ namespace LetPortal.Portal.Executions.SqlServer
         public async Task<IEnumerable<EntitySchema>> FetchAllEntitiesFromDatabase(DatabaseConnection databaseConnection)
         {
             var sqlServerInfos = new List<SqlServerSchemaInfo>();
-            using(var dbConnection = new SqlConnection(databaseConnection.ConnectionString))
+            using (var dbConnection = new SqlConnection(databaseConnection.ConnectionString))
             {
                 dbConnection.Open();
-                using(var cmd = new SqlCommand("SELECT table_catalog as 'Catalog', table_schema as 'Schema', table_name as TableName, column_name as ColumnName, data_type as Type FROM information_schema.columns WHERE table_schema = 'dbo'", dbConnection))
+                using (var cmd = new SqlCommand("SELECT table_catalog as 'Catalog', table_schema as 'Schema', table_name as TableName, column_name as ColumnName, data_type as Type FROM information_schema.columns WHERE table_schema = 'dbo'", dbConnection))
                 {
-                    using(var reader = await cmd.ExecuteReaderAsync())
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        while(reader.Read())
+                        while (reader.Read())
                         {
                             sqlServerInfos.Add(new SqlServerSchemaInfo
                             {
@@ -73,7 +72,7 @@ namespace LetPortal.Portal.Executions.SqlServer
 
             public string GetDataType()
             {
-                switch(Type)
+                switch (Type)
                 {
                     case "timestamp":
                     case "datetime2":

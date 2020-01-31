@@ -6,14 +6,13 @@ using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 namespace LetPortal.ServiceManagement.Repositories.Implements
 {
     public class MonitorHardwareReportMongoRepository : MongoGenericRepository<MonitorHardwareReport>, IMonitorHardwareReportRepository
-    {                
+    {
         public MonitorHardwareReportMongoRepository(
             MongoConnection mongoConnection)
         {
@@ -31,9 +30,9 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
               0
             };
 
-            for(int i = duration; i < 60; i += duration)
+            for (var i = duration; i < 60; i += duration)
             {
-                if(i < reportDate.Minute)
+                if (i < reportDate.Minute)
                 {
                     nearestMinute = i;
                 }
@@ -48,19 +47,19 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         1,
                                         DateTimeKind.Utc);
 
-            DateTime startDate = endDate.AddMinutes(duration * -1);
+            var startDate = endDate.AddMinutes(duration * -1);
             var hardwareCounterBuilders = Builders<MonitorHardwareReport>.Filter;
 
             var lastestRecord = Collection
                                     .Find(hardwareCounterBuilders.In(a => a.ServiceId, collectServiceIds))
                                     .Sort(Builders<MonitorHardwareReport>.Sort.Descending(b => b.ReportedDate))
                                     .ToEnumerable().FirstOrDefault();
-            if(lastestRecord != null)
+            if (lastestRecord != null)
             {
                 var lastMinute = lastestRecord.ReportedDate.Minute;
                 var nextStartDate = lastestRecord.ReportedDate.AddMinutes(duration);
                 // Ensure report must be over last record
-                if(nextStartDate < reportDate)
+                if (nextStartDate < reportDate)
                 {
                     startDate = new DateTime(
                                         nextStartDate.Year,
@@ -82,11 +81,11 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                         .Find(monitorCounterFilter)
                         .Sort(Builders<MonitorCounter>.Sort.Ascending(a => a.HardwareCounter.MeansureDate))
                         .ToList();
-                    if(allCounters != null)
+                    if (allCounters != null)
                     {
                         allRequiredCounters = allCounters.Select(a => a.HardwareCounter).ToList();
                     }
-                        
+
                 }
             }
             else
@@ -101,7 +100,7 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                                         DateTimeKind.Utc);
 
                 var monitorCountersBuilder = Builders<MonitorCounter>.Filter;
-                
+
                 var monitorCounterFilter = monitorCountersBuilder
                         .And(
                             monitorCountersBuilder
@@ -118,14 +117,14 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                     .ToList();
             }
 
-            if(allRequiredCounters.Any())
+            if (allRequiredCounters.Any())
             {
                 var counter = allRequiredCounters.Count;
                 var startMinute = allRequiredCounters.First().MeansureDate.Minute;
 
-                for(int i = 0; i < allowMinutes.Count; i++)
+                for (var i = 0; i < allowMinutes.Count; i++)
                 {
-                    if(allowMinutes[i] <= startMinute && allowMinutes[i + 1] > startMinute)
+                    if (allowMinutes[i] <= startMinute && allowMinutes[i + 1] > startMinute)
                     {
                         startMinute = allowMinutes[i];
                         break;
@@ -144,13 +143,13 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                 var endCompareDate = startCompareDate.AddMinutes(duration);
                 var services = allRequiredCounters.GroupBy(a => a.ServiceId);
 
-                while(counter > 0)
+                while (counter > 0)
                 {
-                    foreach(var service in services)
+                    foreach (var service in services)
                     {
                         var proceedingCounters = service.Where(a => a.MeansureDate >= startCompareDate && a.MeansureDate < endCompareDate);
 
-                        if(proceedingCounters.Any())
+                        if (proceedingCounters.Any())
                         {
                             counter -= proceedingCounters.Count();
                             var newReportCounter = new MonitorHardwareReport

@@ -23,12 +23,14 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
         public async Task Get_By_Refresh_Token_Mongo_Test()
         {
             // Arrange
-            var databaseOptions = _context.MongoDatabaseOptions;
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var issuedTokenRepository = new IssuedTokenMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            DatabaseOptions databaseOptions = _context.MongoDatabaseOptions;
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            IssuedTokenMongoRepository issuedTokenRepository = new IssuedTokenMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            var issuedToken = new IssuedToken
+            IssuedToken issuedToken = new IssuedToken
             {
                 Id = DataUtil.GenerateUniqueId(),
                 ExpiredJwtToken = DateTime.UtcNow.AddDays(30),
@@ -39,7 +41,8 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
                 UserSessionId = DataUtil.GenerateUniqueId()
             };
             await issuedTokenRepository.AddAsync(issuedToken);
-            var foundToken = await issuedTokenRepository.GetByRefreshToken("xyz");
+            IssuedToken foundToken = await issuedTokenRepository.GetByRefreshToken("xyz");
+            issuedTokenRepository.Dispose();
             // Assert
             Assert.NotNull(foundToken);
         }
@@ -48,12 +51,14 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
         public async Task Deactive_Refresh_Token_Mongo_Test()
         {
             // Arrange
-            var databaseOptions = _context.MongoDatabaseOptions;
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var issuedTokenRepository = new IssuedTokenMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            DatabaseOptions databaseOptions = _context.MongoDatabaseOptions;
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            IssuedTokenMongoRepository issuedTokenRepository = new IssuedTokenMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            var issuedToken = new IssuedToken
+            IssuedToken issuedToken = new IssuedToken
             {
                 Id = DataUtil.GenerateUniqueId(),
                 ExpiredJwtToken = DateTime.UtcNow.AddDays(30),
@@ -64,7 +69,9 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
                 UserSessionId = DataUtil.GenerateUniqueId()
             };
             await issuedTokenRepository.AddAsync(issuedToken);
-            var isDeactived = await issuedTokenRepository.DeactiveRefreshToken("xyzy");
+            bool isDeactived = await issuedTokenRepository.DeactiveRefreshToken("xyzy");
+
+            issuedTokenRepository.Dispose();
             // Assert
             Assert.True(isDeactived);
         }
@@ -73,12 +80,14 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
         public async Task Get_Token_By_Refresh_Token_Mongo_Test()
         {
             // Arrange
-            var databaseOptions = _context.MongoDatabaseOptions;
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var issuedTokenRepository = new IssuedTokenMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            DatabaseOptions databaseOptions = _context.MongoDatabaseOptions;
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            IssuedTokenMongoRepository issuedTokenRepository = new IssuedTokenMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            var issuedToken = new IssuedToken
+            IssuedToken issuedToken = new IssuedToken
             {
                 Id = DataUtil.GenerateUniqueId(),
                 ExpiredJwtToken = DateTime.UtcNow.AddDays(30),
@@ -89,7 +98,9 @@ namespace LetPortal.Tests.ITs.Identity.Repositories
                 UserSessionId = DataUtil.GenerateUniqueId()
             };
             await issuedTokenRepository.AddAsync(issuedToken);
-            var token = await issuedTokenRepository.GetTokenByRefreshToken("xyzy1");
+            string token = await issuedTokenRepository.GetTokenByRefreshToken("xyzy1");
+
+            issuedTokenRepository.Dispose();
             // Assert
             Assert.True(token == "abcy2");
         }

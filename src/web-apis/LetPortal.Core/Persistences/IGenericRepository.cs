@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace LetPortal.Core.Persistences
 {
-    public interface IGenericRepository<T> where T : Entity
-    {      
+    public interface IGenericRepository<T> : IDisposable where T : Entity
+    {
         Task<bool> IsExistAsync(Expression<Func<T, bool>> expression);
 
         Task AddAsync(T entity);

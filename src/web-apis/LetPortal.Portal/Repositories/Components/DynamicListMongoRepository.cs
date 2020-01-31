@@ -17,7 +17,7 @@ namespace LetPortal.Portal.Repositories.Components
 
         public Task<IEnumerable<ShortEntityModel>> GetShortDynamicLists(string keyWord = null)
         {
-            if(!string.IsNullOrEmpty(keyWord))
+            if (!string.IsNullOrEmpty(keyWord))
             {
                 var regexFilter = Builders<DynamicList>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var discriminatorFilter = Builders<DynamicList>.Filter.Eq("_t", typeof(DynamicList).Name);

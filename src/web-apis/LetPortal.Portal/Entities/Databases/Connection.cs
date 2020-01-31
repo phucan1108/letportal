@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Extensions;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Extensions;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Portal.Constants;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Databases
 {

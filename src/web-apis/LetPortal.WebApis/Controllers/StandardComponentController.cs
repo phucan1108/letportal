@@ -1,12 +1,12 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -46,7 +46,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(string), 200)]
         public async Task<IActionResult> CreateOne([FromBody] StandardComponent standardComponent)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 standardComponent.Id = DataUtil.GenerateUniqueId();
                 await _standardRepository.AddAsync(standardComponent);
@@ -60,7 +60,7 @@ namespace LetPortal.WebApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOne(string id, [FromBody] StandardComponent standardComponent)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 standardComponent.Id = id;
                 await _standardRepository.UpdateAsync(id, standardComponent);
@@ -95,7 +95,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<StandardComponent>), 200)]
         public async Task<IActionResult> GetManys([FromQuery] string ids)
         {
-            if(!string.IsNullOrEmpty(ids))
+            if (!string.IsNullOrEmpty(ids))
             {
                 var result = await _standardRepository.GetAllByIdsAsync(ids.Split(";").ToList());
                 _logger.Info("Get bulk standard components: {@result}", result);

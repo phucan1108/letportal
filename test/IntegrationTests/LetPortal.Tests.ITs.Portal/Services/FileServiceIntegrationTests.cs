@@ -59,13 +59,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -74,33 +74,35 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.MongoDB,
                 Datasource = _context.MongoDatabaseConenction.DataSource
             };
 
-            var fileRepository = new FileMongoRepository(new Core.Persistences.MongoConnection(
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileMongoRepository fileRepository = new FileMongoRepository(new Core.Persistences.MongoConnection(
                     databaseOptions));
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new MongoStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
-                databaseOptionsMock, 
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+                databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -110,9 +112,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-
+            fileRepository.Dispose();
             // 3. Assert
             Assert.True(!string.IsNullOrEmpty(result.FileId));
         }
@@ -126,13 +128,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -141,33 +143,35 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.MongoDB,
                 Datasource = _context.MongoDatabaseConenction.DataSource
             };
 
-            var fileRepository = new FileMongoRepository(new Core.Persistences.MongoConnection(
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileMongoRepository fileRepository = new FileMongoRepository(new Core.Persistences.MongoConnection(
                     databaseOptions));
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new MongoStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
-                databaseOptionsMock, 
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+                databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -177,11 +181,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
-            memoryStream.Close(); 
-            var response = await fileService.DownloadFileAsync(result.FileId, false);
-            // 3. Assert
-
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            memoryStream.Close();
+            LetPortal.Portal.Models.Files.ResponseDownloadFile response = await fileService.DownloadFileAsync(result.FileId, false);
+            fileRepository.Dispose();
             // 3. Assert
             Assert.NotNull(response.FileBytes);
         }
@@ -197,13 +200,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -212,32 +215,34 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.PostgreSqlDatabaseConnection.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.PostgreSQL,
                 Datasource = _context.PostgreSqlDatabaseConnection.DataSource
             };
 
-            var fileRepository = new FileEFRepository(_context.GetPostgreSQLContext());
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileEFRepository fileRepository = new FileEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new PostgreStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
                 databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -247,9 +252,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-
+            fileRepository.Dispose();
             // 3. Assert
             Assert.True(!string.IsNullOrEmpty(result.FileId));
         }
@@ -263,13 +268,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -278,32 +283,34 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.PostgreSqlDatabaseConnection.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.PostgreSQL,
                 Datasource = _context.PostgreSqlDatabaseConnection.DataSource
             };
 
-            var fileRepository = new FileEFRepository(_context.GetPostgreSQLContext());
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileEFRepository fileRepository = new FileEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new PostgreStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
                 databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -313,11 +320,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-            var response = await fileService.DownloadFileAsync(result.FileId, false);
-            // 3. Assert
-
+            LetPortal.Portal.Models.Files.ResponseDownloadFile response = await fileService.DownloadFileAsync(result.FileId, false);
+            fileRepository.Dispose();
             // 3. Assert
             Assert.NotNull(response.FileBytes);
         }
@@ -333,13 +339,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -348,32 +354,34 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.SqlServerDatabaseConnection.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.SQLServer,
                 Datasource = _context.SqlServerDatabaseConnection.DataSource
             };
 
-            var fileRepository = new FileEFRepository(_context.GetSQLServerContext());
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileEFRepository fileRepository = new FileEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new SqlServerStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
                 databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -383,9 +391,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-
+            fileRepository.Dispose();
             // 3. Assert
             Assert.True(!string.IsNullOrEmpty(result.FileId));
         }
@@ -399,13 +407,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -414,32 +422,34 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.SqlServerDatabaseConnection.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.SQLServer,
                 Datasource = _context.SqlServerDatabaseConnection.DataSource
             };
 
-            var fileRepository = new FileEFRepository(_context.GetSQLServerContext());
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileEFRepository fileRepository = new FileEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new SqlServerStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
                 databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -449,11 +459,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-            var response = await fileService.DownloadFileAsync(result.FileId, false);
-            // 3. Assert
-
+            LetPortal.Portal.Models.Files.ResponseDownloadFile response = await fileService.DownloadFileAsync(result.FileId, false);
+            fileRepository.Dispose();
             // 3. Assert
             Assert.NotNull(response.FileBytes);
         }
@@ -470,13 +479,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -485,32 +494,34 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.MySqlDatabaseConnection.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.MySQL,
                 Datasource = _context.MySqlDatabaseConnection.DataSource
             };
 
-            var fileRepository = new FileEFRepository(_context.GetMySQLContext());
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileEFRepository fileRepository = new FileEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new MySqlStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
                 databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -520,9 +531,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-
+            fileRepository.Dispose();
             // 3. Assert
             Assert.True(!string.IsNullOrEmpty(result.FileId));
         }
@@ -536,13 +547,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -551,32 +562,34 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.MySqlDatabaseConnection.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.MySQL,
                 Datasource = _context.MySqlDatabaseConnection.DataSource
             };
 
-            var fileRepository = new FileEFRepository(_context.GetMySQLContext());
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileEFRepository fileRepository = new FileEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseStorageOptions> databaseStorageOptionsMock = Mock.Of<IOptionsMonitor<DatabaseStorageOptions>>(_ => _.CurrentValue == FileOptions.DatabaseStorageOptions);
 
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var storeFileDatabases = new List<IStoreFileDatabase>
+            List<IStoreFileDatabase> storeFileDatabases = new List<IStoreFileDatabase>
             {
                 new MySqlStoreFileDatabase()
             };
-            var databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
+            DatabaseFileConnectorExecution databaseFileConnectorExecution = new DatabaseFileConnectorExecution(
                 databaseOptionsMock,
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -586,11 +599,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", true);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", true);
             memoryStream.Close();
-            var response = await fileService.DownloadFileAsync(result.FileId, true);
-            // 3. Assert
-
+            LetPortal.Portal.Models.Files.ResponseDownloadFile response = await fileService.DownloadFileAsync(result.FileId, true);
+            fileRepository.Dispose();
             // 3. Assert
             Assert.NotNull(response.FileBytes);
         }
@@ -607,13 +619,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // 1. Arrange
-            var mockFile = new Mock<IFormFile>();
-            var sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceImg = System.IO.File.OpenRead(@"Artifacts\connect-iot-to-internet.jpg");
+            MemoryStream memoryStream = new MemoryStream();
             await sourceImg.CopyToAsync(memoryStream);
             sourceImg.Close();
             memoryStream.Position = 0;
-            var fileName = "connect-iot-to-internet.jpg";
+            string fileName = "connect-iot-to-internet.jpg";
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -622,34 +634,36 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var diskOptions = new DiskStorageOptions
+            DiskStorageOptions diskOptions = new DiskStorageOptions
             {
                 AllowDayFolder = true,
                 IsStoredInTempFolder = false,
                 Path = "~"
             };
 
-            var databaseOptions = new Core.Persistences.DatabaseOptions
+            DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
             {
                 ConnectionString = _context.MySqlDatabaseConnection.ConnectionString,
                 ConnectionType = Core.Persistences.ConnectionType.MySQL,
                 Datasource = _context.MySqlDatabaseConnection.DataSource
             };
 
-            var localFileOptions = FileOptions;
+            LetPortal.Portal.Options.Files.FileOptions localFileOptions = FileOptions;
             localFileOptions.DiskStorageOptions = diskOptions;
             localFileOptions.FileStorageType = FileStorageType.Disk;
 
-            var fileRepository = new FileEFRepository(_context.GetMySQLContext());
-            var fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == localFileOptions);
-            var fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == localFileOptions.ValidatorOptions);       
-            var diskStorageOptionsMock = Mock.Of<IOptionsMonitor<DiskStorageOptions>>(_ => _.CurrentValue == diskOptions);
-            var checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
-            var checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            FileEFRepository fileRepository = new FileEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == localFileOptions);
+            IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == localFileOptions.ValidatorOptions);
+            IOptionsMonitor<DiskStorageOptions> diskStorageOptionsMock = Mock.Of<IOptionsMonitor<DiskStorageOptions>>(_ => _.CurrentValue == diskOptions);
+            CheckFileExtensionRule checkFileExtensionRule = new CheckFileExtensionRule(fileValidatorMock);
+            CheckFileSizeRule checkFileSizeRule = new CheckFileSizeRule(fileValidatorMock);
 
-            var diskStorage = new DiskFileConnectorExecution(diskStorageOptionsMock);
+            DiskFileConnectorExecution diskStorage = new DiskFileConnectorExecution(diskStorageOptionsMock);
 
-            var fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
             {
                diskStorage
             }, new List<IFileValidatorRule>
@@ -659,12 +673,12 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }, fileRepository);
 
             // Act
-            var result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
+            LetPortal.Portal.Models.Files.ResponseUploadFile result = await fileService.UploadFileAsync(mockFile.Object, "tester", false);
             memoryStream.Close();
-
+            fileRepository.Dispose();
             // 3. Assert
             Assert.True(!string.IsNullOrEmpty(result.FileId));
-        }           
+        }
         #endregion
     }
 }

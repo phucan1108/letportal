@@ -11,7 +11,7 @@ namespace LetPortal.Portal.Entities.Shared
         public RouteOptions RouteOptions { get; set; }
     }
 
-    public class ConfirmationOptions                                  
+    public class ConfirmationOptions
     {
         public bool IsEnable { get; set; }
 

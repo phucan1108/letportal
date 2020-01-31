@@ -1,4 +1,9 @@
-﻿using LetPortal.Core.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
@@ -8,11 +13,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -28,25 +28,25 @@ namespace LetPortal.Portal.Executions.Mongo
                 var result = new ExecuteDynamicResultModel { IsSuccess = true };
                 var query = EliminateRedundantFormat(formattedString);
                 var mongoDatabase = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource);
-                BsonDocument parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
+                var parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
                 var executionGroupType = parsingBson.First().Name;
 
-                switch(executionGroupType)
+                switch (executionGroupType)
                 {
                     case Constants.QUERY_KEY:
                         var mongoCollection = GetCollection(mongoDatabase, parsingBson, Constants.QUERY_KEY);
-                        List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = parsingBson[Constants.QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
-                        IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
-                        foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
+                        var aggregatePipes = parsingBson[Constants.QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+                        var aggregateFluent = mongoCollection.Aggregate();
+                        foreach (var pipe in aggregatePipes)
                         {
                             aggregateFluent = aggregateFluent.AppendStage(pipe);
                         }
-                        using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                        using (var executingCursor = await aggregateFluent.ToCursorAsync())
                         {
-                            while(executingCursor.MoveNext())
+                            while (executingCursor.MoveNext())
                             {
-                                BsonDocument currentDocument = executingCursor.Current.FirstOrDefault();
-                                if(currentDocument != null)
+                                var currentDocument = executingCursor.Current.FirstOrDefault();
+                                if (currentDocument != null)
                                 {
                                     // Note: Server will decrease the performance for deserializing JSON instead of client
                                     var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
@@ -62,9 +62,9 @@ namespace LetPortal.Portal.Executions.Mongo
                         break;
                     case Constants.INSERT_KEY:
                         var mongoInsertCollection = GetCollection(mongoDatabase, parsingBson, Constants.INSERT_KEY);
-                        BsonDocument collectionCreateBson = parsingBson[Constants.INSERT_KEY][0][Constants.DATA_KEY].AsBsonDocument;
+                        var collectionCreateBson = parsingBson[Constants.INSERT_KEY][0][Constants.DATA_KEY].AsBsonDocument;
                         var insertId = ObjectId.GenerateNewId();
-                        if(collectionCreateBson.Any(a => a.Name == "_id"))
+                        if (collectionCreateBson.Any(a => a.Name == "_id"))
                         {
                             collectionCreateBson["_id"] = insertId;
                         }
@@ -77,7 +77,7 @@ namespace LetPortal.Portal.Executions.Mongo
                         collectionCreateBson.Remove("id");
                         // Getting another fields
                         var anotherFields = parsingBson[Constants.INSERT_KEY][0].AsBsonDocument.Where(a => a.Name != Constants.DATA_KEY);
-                        if(anotherFields.Any())
+                        if (anotherFields.Any())
                         {
                             collectionCreateBson.AddRange(anotherFields);
                         }
@@ -89,7 +89,7 @@ namespace LetPortal.Portal.Executions.Mongo
                         break;
                     case Constants.UPDATE_KEY:
                         var mongoUpdateCollection = GetCollection(mongoDatabase, parsingBson, Constants.UPDATE_KEY);
-                        BsonDocument collectionWhereBson = parsingBson[Constants.UPDATE_KEY][0][Constants.WHERE_KEY].AsBsonDocument;
+                        var collectionWhereBson = parsingBson[Constants.UPDATE_KEY][0][Constants.WHERE_KEY].AsBsonDocument;
                         var updateData = parsingBson[Constants.UPDATE_KEY][0][Constants.DATA_KEY].AsBsonDocument;
 
                         // Important hack: because mongodb used '_id' is a primary key so that we need to convert id -> _id when update
@@ -98,25 +98,25 @@ namespace LetPortal.Portal.Executions.Mongo
                         updateData.Remove("id");
 
                         var anotherUpdateFields = parsingBson[Constants.UPDATE_KEY][0].AsBsonDocument.Where(a => a.Name != Constants.DATA_KEY && a.Name != Constants.WHERE_KEY);
-                        if(anotherUpdateFields.Any())
+                        if (anotherUpdateFields.Any())
                         {
                             updateData.AddRange(anotherUpdateFields);
                         };
 
-                        BsonDocument set = new BsonDocument("$set", updateData);
+                        var set = new BsonDocument("$set", updateData);
                         await mongoUpdateCollection.UpdateOneAsync(collectionWhereBson, set);
 
                         break;
                     case Constants.DELETE_KEY:
                         var mongoDeleteCollection = GetCollection(mongoDatabase, parsingBson, Constants.DELETE_KEY);
-                        BsonDocument collectionWhereDeleteBson = parsingBson[Constants.DELETE_KEY][0][Constants.WHERE_KEY].AsBsonDocument;
+                        var collectionWhereDeleteBson = parsingBson[Constants.DELETE_KEY][0][Constants.WHERE_KEY].AsBsonDocument;
                         var deleteResult = await mongoDeleteCollection.DeleteOneAsync(collectionWhereDeleteBson);
                         result.Result = deleteResult.DeletedCount;
                         break;
                 }
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return ExecuteDynamicResultModel.IsFailed(ex.Message);
             }
@@ -126,7 +126,7 @@ namespace LetPortal.Portal.Executions.Mongo
         {
             // Eliminate ObjectId
             var indexObjectId = query.IndexOf("\"ObjectId(");
-            while(indexObjectId > 0)
+            while (indexObjectId > 0)
             {
                 var closedCurly = query.IndexOf(")", indexObjectId);
                 query = query.Remove(closedCurly + 1, 1);
@@ -136,7 +136,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
             // Eliminate ISODate
             var indexISODate = query.IndexOf("\"ISODate(");
-            while(indexISODate > 0)
+            while (indexISODate > 0)
             {
                 var closedCurly = query.IndexOf(")", indexISODate);
                 query = query.Remove(closedCurly + 1, 1);
@@ -146,7 +146,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
             // Eliminate NumberLong
             var indexNumberLong = query.IndexOf("\"NumberLong(");
-            while(indexNumberLong > 0)
+            while (indexNumberLong > 0)
             {
                 var closedCurly = query.IndexOf(")", indexNumberLong);
                 query = query.Remove(closedCurly + 1, 1);

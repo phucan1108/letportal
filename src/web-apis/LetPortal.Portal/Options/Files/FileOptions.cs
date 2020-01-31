@@ -1,13 +1,11 @@
-﻿using LetPortal.Core.Files;
+﻿using System.Collections.Generic;
+using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Portal.Options.Files
 {
     public class FileOptions
-    {                  
+    {
         public string DownloadableHost { get; set; }
         public FileStorageType FileStorageType { get; set; }
 
@@ -19,10 +17,10 @@ namespace LetPortal.Portal.Options.Files
     }
 
     public class FileValidatorOptions
-    { 
+    {
         public long MaximumFileSize { get; set; }
 
-        public bool CheckFileExtension { get; set; }  
+        public bool CheckFileExtension { get; set; }
 
         public Dictionary<string, string> ExtensionMagicNumbers { get; set; }
 
@@ -30,9 +28,9 @@ namespace LetPortal.Portal.Options.Files
     }
 
     public class DiskStorageOptions
-    {  
+    {
         public bool IsStoredInTempFolder { get; set; }
-              
+
         public bool AllowDayFolder { get; set; }
 
         public string Path { get; set; }

@@ -1,9 +1,9 @@
-﻿using LetPortal.ServiceManagement.Providers;
+﻿using System.Threading.Tasks;
 using LetPortal.Core.Https;
 using LetPortal.Core.Services.Models;
+using LetPortal.ServiceManagement.Providers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagementApis.Controllers
 {

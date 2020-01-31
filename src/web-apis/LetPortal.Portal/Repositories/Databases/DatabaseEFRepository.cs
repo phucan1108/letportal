@@ -20,7 +20,7 @@ namespace LetPortal.Portal.Repositories.Databases
 
         public async Task<IEnumerable<ShortEntityModel>> GetShortDatatabases(string keyWord = null)
         {
-            if(!string.IsNullOrEmpty(keyWord))
+            if (!string.IsNullOrEmpty(keyWord))
             {
                 var shortDatabases = await _context.Databases.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
                 return shortDatabases?.AsEnumerable();

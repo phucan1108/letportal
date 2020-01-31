@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LetPortal.Core.Monitors.Models
+﻿namespace LetPortal.Core.Monitors.Models
 {
     public class HardwareInfoHealthCheckModel
     {

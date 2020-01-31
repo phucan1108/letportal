@@ -1,16 +1,16 @@
-﻿using LetPortal.Core.Files;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Files;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Repositories.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Files
 {
@@ -44,14 +44,14 @@ namespace LetPortal.Portal.Services.Files
 
             var fileBytes = await fileConnector.GetFileAsync(new StoredFile { FileIdentifierOptions = file.IdentifierOptions });
             byte[] returnedBytes;
-            if(wantCompress && file.AllowCompress)
+            if (wantCompress && file.AllowCompress)
             {
-                using(var ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
-                    using(var zipArchive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                    using (var zipArchive = new ZipArchive(ms, ZipArchiveMode.Create, true))
                     {
                         var zipEntry = zipArchive.CreateEntry(file.Name, CompressionLevel.Fastest);
-                        using(var zipStream = zipEntry.Open())
+                        using (var zipStream = zipEntry.Open())
                         {
                             zipStream.Write(fileBytes, 0, fileBytes.Length);
                         }
@@ -60,7 +60,7 @@ namespace LetPortal.Portal.Services.Files
                     file.Name = file.Name.Split(".")[0] + ".zip";
                     file.MIMEType = "application/zip";
                     GC.SuppressFinalize(fileBytes);
-                }                     
+                }
             }
             else
             {
@@ -82,7 +82,7 @@ namespace LetPortal.Portal.Services.Files
         public Task<string> GetFileMIMEType(string fileName)
         {
             var provider = new FileExtensionContentTypeProvider();
-            if(!provider.TryGetContentType(fileName, out string contentType))
+            if (!provider.TryGetContentType(fileName, out var contentType))
             {
                 contentType = "application/octet-stream";
             }
@@ -96,7 +96,7 @@ namespace LetPortal.Portal.Services.Files
             var localFilePath = await SaveFormFileAsync(file);
 
             // 1. Check all rules
-            foreach(var rule in _fileValidatorRules)
+            foreach (var rule in _fileValidatorRules)
             {
                 await rule.Validate(file, localFilePath);
             }
@@ -117,8 +117,8 @@ namespace LetPortal.Portal.Services.Files
                 FileStorageType = _fileOptions.CurrentValue.FileStorageType,
                 IdentifierOptions = storedFile.FileIdentifierOptions,
                 AllowCompress = allowCompress,
-                DownloadableUrl = storedFile.UseServerHost 
-                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId 
+                DownloadableUrl = storedFile.UseServerHost
+                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId
                         : storedFile.DownloadableUrl
             };
 
@@ -135,13 +135,13 @@ namespace LetPortal.Portal.Services.Files
         public async Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader, bool allowCompress)
         {
             // 1. Check all rules
-            foreach(var rule in _fileValidatorRules)
+            foreach (var rule in _fileValidatorRules)
             {
                 await rule.Validate(localFilePath);
             }
 
             // 2. Call Media Connector to upload
-            var storedFile = await 
+            var storedFile = await
                 _fileConnectorExecutions
                     .First(a => a.FileStorageType == _fileOptions.CurrentValue.FileStorageType)
                     .StoreFileAsync(localFilePath);
@@ -180,7 +180,7 @@ namespace LetPortal.Portal.Services.Files
             try
             {
                 var localFilePath = await SaveFormFileAsync(file);
-                foreach(var rule in _fileValidatorRules)
+                foreach (var rule in _fileValidatorRules)
                 {
                     await rule.Validate(file, localFilePath);
                 }
@@ -190,14 +190,14 @@ namespace LetPortal.Portal.Services.Files
             catch
             {
                 return false;
-            }             
+            }
         }
 
         public async Task<bool> ValidateFile(string localFilePath)
         {
             try
             {
-                foreach(var rule in _fileValidatorRules)
+                foreach (var rule in _fileValidatorRules)
                 {
                     await rule.Validate(localFilePath);
                 }
@@ -215,7 +215,7 @@ namespace LetPortal.Portal.Services.Files
 
             tempFileName = tempFileName.Split(".")[0] + "." + file.FileName.Split(".")[1];
 
-            using(var stream = new FileStream(tempFileName, FileMode.Create))
+            using (var stream = new FileStream(tempFileName, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }

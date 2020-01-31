@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Persistences.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Persistences.Attributes;
 
 namespace LetPortal.Portal.Entities.Recoveries
 {
@@ -13,13 +13,13 @@ namespace LetPortal.Portal.Entities.Recoveries
     {
         [StringLength(250)]
         public string Name { get; set; }
-        
+
         [StringLength(250)]
         public string Description { get; set; }
 
         [StringLength(250)]
         public string Creator { get; set; }
-             
+
         [StringLength(250)]
         public string FileId { get; set; }
 

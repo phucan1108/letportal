@@ -38,18 +38,18 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MongoDatabaseConenction));
-            var executionCharts = new List<IExecutionChartReport>()
+            List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
                new MongoExecutionChartReport(new MongoQueryExecution())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
             // Act
-            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
@@ -99,17 +99,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
-            var extractionCharts = new List<IExtractionChartQuery>
+            List<IExtractionChartQuery> extractionCharts = new List<IExtractionChartQuery>
             {
                 new PostgreExtractionChartQuery(new PostgreSqlMapper(_context.MapperOptions), new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
             // Act
-            var result = await chartService.Extract(
+            LetPortal.Portal.Models.Charts.ExtractionChartFilter result = await chartService.Extract(
                 new LetPortal.Portal.Models.Charts.ExtractingChartQueryModel
                 {
                     DatabaseId = "asda",
@@ -137,22 +137,22 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
-            var executionCharts = new List<IExecutionChartReport>()
+            List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
                new PostgreExecutionChartReport(
-                   new ChartReportQueryBuilder(), 
+                   new ChartReportQueryBuilder(),
                    new ChartReportProjection(),
                    new PostgreSqlMapper(_context.MapperOptions),
                    new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
             // Act
-            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
@@ -201,11 +201,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
-            var executionCharts = new List<IExecutionChartReport>()
+            List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
                new PostgreExecutionChartReport(
                    new ChartReportQueryBuilder(),
@@ -213,10 +213,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                    new PostgreSqlMapper(_context.MapperOptions),
                    new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
             // Act
-            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
@@ -269,17 +269,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
-            var extractionCharts = new List<IExtractionChartQuery>
+            List<IExtractionChartQuery> extractionCharts = new List<IExtractionChartQuery>
             {
                 new MySqlExtractionChartQuery(new MySqlMapper(_context.MapperOptions), new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
             // Act
-            var result = await chartService.Extract(
+            LetPortal.Portal.Models.Charts.ExtractionChartFilter result = await chartService.Extract(
                 new LetPortal.Portal.Models.Charts.ExtractingChartQueryModel
                 {
                     DatabaseId = "asda",
@@ -289,7 +289,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                        {
                            Name = "queryparams.name",
                            Value = "testdatabase"
-                       }     
+                       }
                     },
                     Query = "SELECT name, `displayName`, `timeSpan` FROM `databases` Where name={{queryparams.name}}"
                 });
@@ -307,22 +307,22 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
-            var executionCharts = new List<IExecutionChartReport>()
+            List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
                new MySqlExecutionChartReport(
-                   new ChartReportQueryBuilder(), 
+                   new ChartReportQueryBuilder(),
                    new ChartReportProjection(),
                    new MySqlMapper(_context.MapperOptions),
                    new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
             // Act
-            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
@@ -371,11 +371,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
-            var executionCharts = new List<IExecutionChartReport>()
+            List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
                new MySqlExecutionChartReport(
                    new ChartReportQueryBuilder(),
@@ -383,10 +383,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                    new MySqlMapper(_context.MapperOptions),
                    new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
             // Act
-            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
@@ -438,17 +438,17 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
-            var extractionCharts = new List<IExtractionChartQuery>
+            List<IExtractionChartQuery> extractionCharts = new List<IExtractionChartQuery>
             {
                 new PostgreExtractionChartQuery(new PostgreSqlMapper(_context.MapperOptions), new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, extractionCharts, null);
             // Act
-            var result = await chartService.Extract(
+            LetPortal.Portal.Models.Charts.ExtractionChartFilter result = await chartService.Extract(
                 new LetPortal.Portal.Models.Charts.ExtractingChartQueryModel
                 {
                     DatabaseId = "asda",
@@ -476,22 +476,22 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.SqlServerDatabaseConnection));
-            var executionCharts = new List<IExecutionChartReport>()
+            List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
                new SqlServerExecutionChartReport(
-                   new ChartReportQueryBuilder(), 
+                   new ChartReportQueryBuilder(),
                    new ChartReportProjection(),
                    new SqlServerMapper(_context.MapperOptions),
                    new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
             // Act
-            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
@@ -540,11 +540,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
             }
 
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.SqlServerDatabaseConnection));
-            var executionCharts = new List<IExecutionChartReport>()
+            List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
                new SqlServerExecutionChartReport(
                    new ChartReportQueryBuilder(),
@@ -552,10 +552,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                    new SqlServerMapper(_context.MapperOptions),
                    new CSharpMapper())
             };
-            var chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
+            ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
             // Act
-            var result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
+            LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {

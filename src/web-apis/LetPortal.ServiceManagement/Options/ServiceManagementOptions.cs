@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LetPortal.ServiceManagement.Options
+﻿namespace LetPortal.ServiceManagement.Options
 {
     public class ServiceManagementOptions
     {

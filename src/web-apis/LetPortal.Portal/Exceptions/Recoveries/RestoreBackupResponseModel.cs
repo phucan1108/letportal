@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Portal.Exceptions.Recoveries
 {
@@ -16,7 +14,7 @@ namespace LetPortal.Portal.Exceptions.Recoveries
 
         public DateTime CreatedDate { get; set; }
 
-        public int TotalObjects { get; set; }        
+        public int TotalObjects { get; set; }
 
         public bool IsFileValid { get; set; }
     }

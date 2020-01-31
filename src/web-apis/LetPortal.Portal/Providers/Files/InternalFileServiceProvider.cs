@@ -1,7 +1,7 @@
-﻿using LetPortal.Portal.Models.Files;
+﻿using System.Threading.Tasks;
+using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Services.Files;
 using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Providers.Files
 {

@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace LetPortal.Core.Persistences
 {
@@ -27,7 +27,7 @@ namespace LetPortal.Core.Persistences
 
         public Task AddBulkAsync(IEnumerable<T> entities)
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 entity.Check();
             }
@@ -39,7 +39,7 @@ namespace LetPortal.Core.Persistences
         public async Task<ComparisonResult> Compare(T comparedEntity)
         {
             var foundEntity = await GetOneAsync(comparedEntity.Id);
-            if(foundEntity != null)
+            if (foundEntity != null)
             {
                 var jObject = JObject.FromObject(foundEntity);
                 var comparedJObject = JObject.FromObject(comparedEntity);
@@ -49,10 +49,10 @@ namespace LetPortal.Core.Persistences
                 {
                     Result = new ComparisonEntity { Properties = new List<ComparisonProperty>() }
                 };
-                foreach(JProperty jprop in comparedChildren)
+                foreach (JProperty jprop in comparedChildren)
                 {
                     var foundChild = children.FirstOrDefault(a => (a as JProperty).Name == jprop.Name);
-                    if(foundChild != null)
+                    if (foundChild != null)
                     {
                         var resultProperty = new ComparisonProperty
                         {
@@ -65,24 +65,24 @@ namespace LetPortal.Core.Persistences
                         resultProperty.TargetValue = resultProperty.TargetValue ?? string.Empty;
 
                         // In case the same string length, compare each char
-                        if(resultProperty.SourceValue.Length == resultProperty.TargetValue.Length)
+                        if (resultProperty.SourceValue.Length == resultProperty.TargetValue.Length)
                         {
-                            if(resultProperty.SourceValue.Length == 0)
+                            if (resultProperty.SourceValue.Length == 0)
                             {
                                 resultProperty.ComparedState = ComparedState.Unchanged;
                             }
                             else
                             {
-                                for(int i = 0; i < resultProperty.SourceValue.Length; i++)
+                                for (var i = 0; i < resultProperty.SourceValue.Length; i++)
                                 {
-                                    if(resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
+                                    if (resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
                                     {
                                         resultProperty.ComparedState = ComparedState.Changed;
                                         break;
                                     }
                                 }
 
-                                if(resultProperty.ComparedState != ComparedState.Changed)
+                                if (resultProperty.ComparedState != ComparedState.Changed)
                                 {
                                     resultProperty.ComparedState = ComparedState.Unchanged;
                                 }
@@ -129,7 +129,7 @@ namespace LetPortal.Core.Persistences
         {
             var dbSet = _context.Set<T>();
             var entities = dbSet.Where(a => ids.Contains(a.Id));
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 dbSet.Remove(entity);
             }
@@ -141,7 +141,7 @@ namespace LetPortal.Core.Persistences
         {
             var dbSet = _context.Set<T>();
             var deletedEntity = dbSet.FirstOrDefault(a => a.Id == id);
-            if(deletedEntity != null)
+            if (deletedEntity != null)
             {
                 dbSet.Remove(deletedEntity);
                 _context.SaveChanges();
@@ -152,14 +152,14 @@ namespace LetPortal.Core.Persistences
             {
                 dbSet.Add(forceEntity);
                 _context.SaveChanges();
-            }               
+            }
 
             return Task.CompletedTask;
         }
 
         public Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool isRequiredDiscriminator = false)
         {
-            if(expression != null)
+            if (expression != null)
             {
                 var entities = _context.Set<T>().Where(expression);
                 return Task.FromResult(entities.AsEnumerable());
@@ -173,7 +173,7 @@ namespace LetPortal.Core.Persistences
 
         public Task<IEnumerable<T>> GetAllByIdsAsync(IEnumerable<string> ids)
         {
-            if(ids != null || ids.Any())
+            if (ids != null || ids.Any())
             {
                 var entities = _context.Set<T>().Where(a => ids.Contains(a.Id));
                 return Task.FromResult(entities.AsEnumerable());
@@ -205,5 +205,26 @@ namespace LetPortal.Core.Persistences
             _context.SaveChanges();
             return Task.CompletedTask;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

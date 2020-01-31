@@ -1,14 +1,13 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.Databases;
-using LetPortal.Portal.Mappers;
-using LetPortal.Portal.Mappers.SqlServer;
-using LetPortal.Portal.Models.Charts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.SqlServer;
+using LetPortal.Portal.Models.Charts;
 
 namespace LetPortal.Portal.Executions.SqlServer
 {
@@ -25,7 +24,7 @@ namespace LetPortal.Portal.Executions.SqlServer
         private readonly ICSharpMapper _cSharpMapper;
 
         public SqlServerExecutionChartReport(
-            IChartReportQueryBuilder chartReportQueryBuilder, 
+            IChartReportQueryBuilder chartReportQueryBuilder,
             IChartReportProjection chartReportProjection,
             ISqlServerMapper sqlServerMapper,
             ICSharpMapper cSharpMapper)
@@ -39,10 +38,10 @@ namespace LetPortal.Portal.Executions.SqlServer
         public async Task<ExecutionChartResponseModel> Execute(ExecutionChartReportModel model)
         {
             var result = new ExecutionChartResponseModel();
-            using(var sqlDbConnection = new SqlConnection(model.DatabaseConnection.ConnectionString))
+            using (var sqlDbConnection = new SqlConnection(model.DatabaseConnection.ConnectionString))
             {
                 sqlDbConnection.Open();
-                using(var command = new SqlCommand(model.FormattedString, sqlDbConnection))
+                using (var command = new SqlCommand(model.FormattedString, sqlDbConnection))
                 {
                     _chartReportQueryBuilder
                                             .Init(model.FormattedString, model.MappingProjection, options =>
@@ -60,7 +59,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                                                 return _cSharpMapper.GetCSharpObjectByType(a, b);
                                             });
 
-                    if(model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
+                    if (model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
                     {
                         _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
                     }
@@ -68,17 +67,17 @@ namespace LetPortal.Portal.Executions.SqlServer
                     var chartQuery = _chartReportQueryBuilder.Build();
                     command.CommandText = chartQuery.CombinedQuery;
 
-                    if(chartQuery.DbParameters.Count > 0)
+                    if (chartQuery.DbParameters.Count > 0)
                     {
                         command.Parameters.AddRange(ConvertToParameters(chartQuery.DbParameters).ToArray());
                     }
-                    using(var reader = await command.ExecuteReaderAsync())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        using(DataTable dt = new DataTable())
+                        using (var dt = new DataTable())
                         {
                             dt.Load(reader);
                             result.IsSuccess = true;
-                            if(dt.Rows.Count > 0)
+                            if (dt.Rows.Count > 0)
                             {
                                 result.Result = await _chartReportProjection.ProjectionFromDataTable(dt, model.MappingProjection);
                                 result.IsSuccess = true;
@@ -97,7 +96,7 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         private IEnumerable<SqlParameter> ConvertToParameters(List<ChartReportParameter> parameters)
         {
-            foreach(var param in parameters)
+            foreach (var param in parameters)
             {
                 var postgreParam = new SqlParameter(param.Name, _sqlServerMapper.GetSqlDbType(param.ValueType))
                 {
@@ -109,27 +108,27 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         private SqlDbType ConvertTypeToSql(Type type)
         {
-            if(type == typeof(decimal))
+            if (type == typeof(decimal))
             {
                 return SqlDbType.Decimal;
             }
-            else if(type == typeof(double))
+            else if (type == typeof(double))
             {
                 return SqlDbType.Float;
             }
-            else if(type == typeof(long))
+            else if (type == typeof(long))
             {
                 return SqlDbType.BigInt;
             }
-            else if(type == typeof(int))
+            else if (type == typeof(int))
             {
                 return SqlDbType.Int;
             }
-            else if(type == typeof(bool))
+            else if (type == typeof(bool))
             {
                 return SqlDbType.Bit;
             }
-            else if(type == typeof(DateTime))
+            else if (type == typeof(DateTime))
             {
                 return SqlDbType.DateTime2;
             }

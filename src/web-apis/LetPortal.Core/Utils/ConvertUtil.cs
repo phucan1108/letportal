@@ -27,8 +27,10 @@ namespace LetPortal.Core.Utils
                         itemProperties.FirstOrDefault(b =>
                             b.Name == a.Name && b.PropertyType.IsAssignableFrom(a.PropertyType));
 
-                    if(relevantProperty != null)
+                    if (relevantProperty != null)
+                    {
                         a.SetValue(targetObject, relevantProperty.GetValue(sourceObject));
+                    }
                 });
 
             return targetObject;
@@ -36,9 +38,9 @@ namespace LetPortal.Core.Utils
 
         public static string SerializeObject(object serializingObject, bool allowCamel = false)
         {
-            if(serializingObject != null)
+            if (serializingObject != null)
             {
-                if(allowCamel)
+                if (allowCamel)
                 {
                     var contractResolver = new DefaultContractResolver
                     {
@@ -73,8 +75,10 @@ namespace LetPortal.Core.Utils
         {
             var jObject = JObject.Parse(deserializingObject);
             var dics = new Dictionary<string, object>();
-            foreach(var elem in jObject)
+            foreach (var elem in jObject)
+            {
                 dics.Add(elem.Key, elem.Value.Value<string>());
+            }
 
             return dics;
         }

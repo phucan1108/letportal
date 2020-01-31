@@ -1,4 +1,8 @@
-﻿using LetPortal.Core.Common;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
@@ -9,10 +13,6 @@ using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Models.DynamicLists;
 using Newtonsoft.Json;
 using Npgsql;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.PostgreSql
 {
@@ -32,15 +32,15 @@ namespace LetPortal.Portal.Executions.PostgreSql
             _builder = builder;
             _postgreSqlMapper = postgreSqlMapper;
             _cSharpMapper = cSharpMapper;
-        }    
+        }
 
         public ConnectionType ConnectionType => ConnectionType.PostgreSQL;
 
         public Task<DynamicListResponseDataModel> Query(DatabaseConnection databaseConnection, DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
             var response = new DynamicListResponseDataModel();
-            bool hasRows = false;
-            using(var postgreDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
+            var hasRows = false;
+            using (var postgreDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
             {
                 var combinedQuery =
                     _builder
@@ -54,11 +54,11 @@ namespace LetPortal.Portal.Executions.PostgreSql
                         .Build();
 
                 postgreDbConnection.Open();
-                using(var cmd = new NpgsqlCommand(combinedQuery.CombinedQuery, postgreDbConnection))
+                using (var cmd = new NpgsqlCommand(combinedQuery.CombinedQuery, postgreDbConnection))
                 {
-                    foreach(var param in combinedQuery.Parameters)
+                    foreach (var param in combinedQuery.Parameters)
                     {
-                        if(param.IsReplacedValue)
+                        if (param.IsReplacedValue)
                         {
                             var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
                             cmd.Parameters.Add(
@@ -73,19 +73,19 @@ namespace LetPortal.Portal.Executions.PostgreSql
                         {
                             cmd.Parameters.Add(
                               new NpgsqlParameter(
-                                  param.Name, GetNpgsqlDbType(param, out object castObject))
+                                  param.Name, GetNpgsqlDbType(param, out var castObject))
                               {
                                   Value = castObject,
                                   Direction = System.Data.ParameterDirection.Input
                               });
-                        }                        
+                        }
                     }
-                    using(var reader = cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        using(DataTable dt = new DataTable())
+                        using (var dt = new DataTable())
                         {
                             dt.Load(reader);
-                            if(dt.Rows.Count > 0)
+                            if (dt.Rows.Count > 0)
                             {
                                 hasRows = true;
                                 response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
@@ -94,13 +94,13 @@ namespace LetPortal.Portal.Executions.PostgreSql
                     }
                 }
 
-                if(fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
+                if (fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
                 {
-                    using(var cmd = new NpgsqlCommand(combinedQuery.CombinedTotalQuery, postgreDbConnection))
+                    using (var cmd = new NpgsqlCommand(combinedQuery.CombinedTotalQuery, postgreDbConnection))
                     {
-                        foreach(var param in combinedQuery.Parameters)
+                        foreach (var param in combinedQuery.Parameters)
                         {
-                            if(param.IsReplacedValue)
+                            if (param.IsReplacedValue)
                             {
                                 var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
                                 cmd.Parameters.Add(
@@ -115,7 +115,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                             {
                                 cmd.Parameters.Add(
                                   new NpgsqlParameter(
-                                      param.Name, GetNpgsqlDbType(param, out object castObject))
+                                      param.Name, GetNpgsqlDbType(param, out var castObject))
                                   {
                                       Value = castObject,
                                       Direction = System.Data.ParameterDirection.Input
@@ -139,7 +139,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
         private NpgsqlTypes.NpgsqlDbType GetNpgsqlDbType(DynamicQueryParameter param, out object castObj)
         {
-            switch(param.ValueType)
+            switch (param.ValueType)
             {
                 case FieldValueType.Number:
                     castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Long);

@@ -63,6 +63,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{183E
 		installation.sh = installation.sh
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67C40109-BFB0-472A-B6C5-03E5DA204777}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		editorconfig.props = editorconfig.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

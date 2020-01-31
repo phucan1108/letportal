@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Data;
+﻿using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace LetPortal.Portal.Executions
 {
@@ -9,19 +9,19 @@ namespace LetPortal.Portal.Executions
     {
         public Task<object> ProjectionFromDataTable(DataTable dataTable, string mappringProjection)
         {
-            JArray array = new JArray();
+            var array = new JArray();
             // Check 'group' is in DT
-            if(dataTable.Columns.Contains("group"))
+            if (dataTable.Columns.Contains("group"))
             {
                 var grouped = dataTable.AsEnumerable()
-                                         .GroupBy(a => a.Field<string>("group"));                
-                foreach(var group in grouped)
+                                         .GroupBy(a => a.Field<string>("group"));
+                foreach (var group in grouped)
                 {
                     var data =
                         group
                             .Select(a => new { name = a.Field<object>("name"), value = a.Field<object>("value") })
                             .ToList();
-                    JObject groupObject = JObject.FromObject(new
+                    var groupObject = JObject.FromObject(new
                     {
                         name = group.Key,
                         series = data
@@ -35,11 +35,11 @@ namespace LetPortal.Portal.Executions
                 var jObjects = dataTable.AsEnumerable()
                             .Select(a => new { name = a.Field<object>("name"), value = a.Field<object>("value") })
                             .Select(b => JObject.FromObject(b));
-                foreach(var jObject in jObjects)
+                foreach (var jObject in jObjects)
                 {
                     array.Add(jObject);
                 }
-            }            
+            }
 
             var result = array.ToObject<object>();
             return Task.FromResult(result);

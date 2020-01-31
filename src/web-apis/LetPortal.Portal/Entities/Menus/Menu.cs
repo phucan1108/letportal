@@ -2,7 +2,7 @@
 
 namespace LetPortal.Portal.Entities.Menus
 {
-    public class Menu 
+    public class Menu
     {
         public string Id { get; set; }
 

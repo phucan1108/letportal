@@ -1,6 +1,6 @@
-﻿using LetPortal.Portal.Entities.Components;
+﻿using System.Threading.Tasks;
+using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Charts;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Components
 {
@@ -8,6 +8,6 @@ namespace LetPortal.Portal.Services.Components
     {
         Task<ExtractionChartFilter> Extract(ExtractingChartQueryModel model);
 
-        Task<ExecutionChartResponseModel> Execute(Chart chart,ExecutionChartRequestModel model);
+        Task<ExecutionChartResponseModel> Execute(Chart chart, ExecutionChartRequestModel model);
     }
 }

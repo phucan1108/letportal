@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace LetPortal.Core.Logger.Repositories
 {
@@ -15,7 +12,9 @@ namespace LetPortal.Core.Logger.Repositories
             _loggerOptions = loggerOptions;
         }
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         public async Task<IEnumerable<string>> GetAllLogs(string serviceName, string userSessionId, string traceId)
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             //var option = _loggerOptions.CurrentValue;
             //switch(option.Type)

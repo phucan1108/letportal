@@ -1,9 +1,7 @@
-﻿using LetPortal.Core.Utils;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using LetPortal.Core.Utils;
+using Microsoft.AspNetCore.Http;
 
 namespace LetPortal.Core.Logger
 {
@@ -19,7 +17,7 @@ namespace LetPortal.Core.Logger
         public async Task Invoke(HttpContext httpContext)
         {
             var traceId = httpContext.Request.Headers[Constants.TraceIdHeader].ToString();
-            if(string.IsNullOrEmpty(traceId))
+            if (string.IsNullOrEmpty(traceId))
             {
                 httpContext.Request.Headers.Add(Constants.TraceIdHeader, StringUtil.EncodeBase64FromUTF8(DataUtil.GenerateUniqueId()));
             }

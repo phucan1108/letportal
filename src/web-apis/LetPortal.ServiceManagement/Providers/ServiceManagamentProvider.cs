@@ -1,11 +1,10 @@
-﻿using LetPortal.Core.Services.Models;
-using LetPortal.Core.Utils;
-using LetPortal.ServiceManagement.Entities;
-using LetPortal.ServiceManagement.Repositories;
-using LetPortal.ServiceManagement.Repositories.Abstractions;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Services.Models;
+using LetPortal.Core.Utils;
+using LetPortal.ServiceManagement.Entities;
+using LetPortal.ServiceManagement.Repositories.Abstractions;
 
 namespace LetPortal.ServiceManagement.Providers
 {
@@ -45,7 +44,7 @@ namespace LetPortal.ServiceManagement.Providers
                 LoggerNotifyEnable = registerServiceModel.LoggerNotifyEnable,
                 HealthCheckNotifyEnable = registerServiceModel.HealthCheckNotifyEnable,
                 LastCheckedDate = DateTime.UtcNow,
-                RegisteredDate = DateTime.UtcNow,                
+                RegisteredDate = DateTime.UtcNow,
                 RunningVersion = registerServiceModel.Version,
                 InstanceNo = await _serviceRepository.GetLastInstanceNoOfService(registerServiceModel.ServiceName)
             };

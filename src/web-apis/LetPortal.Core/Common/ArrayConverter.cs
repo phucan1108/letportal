@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LetPortal.Core.Common
 {
@@ -24,7 +24,7 @@ namespace LetPortal.Core.Common
         {
             var jArray = JArray.Load(reader);
             var resObjects = new List<object>();
-            foreach(JObject jObject in jArray.Children<JObject>())
+            foreach (var jObject in jArray.Children<JObject>())
             {
                 // We have two problems with Bson -> json
                 // 1. ObjectId, in case we use StrictMode, Bson will return "_id" : { "$oid": "abc" }
@@ -32,16 +32,16 @@ namespace LetPortal.Core.Common
                 var replacedDic = new Dictionary<string, string>();
                 var children = jObject.Children();
                 replacedDic = new Dictionary<string, string>();
-                if(_fieldFormats?.Count > 0)
+                if (_fieldFormats?.Count > 0)
                 {
-                    foreach(JProperty child in children)
+                    foreach (JProperty child in children)
                     {
                         var formatField = _fieldFormats.FirstOrDefault(a => a.FieldName == child.Name);
-                        if(formatField != null)
+                        if (formatField != null)
                         {
                             try
                             {
-                                switch(child.Value.Type)
+                                switch (child.Value.Type)
                                 {
                                     case JTokenType.Integer:
                                         replacedDic.Add(child.Name, string.Format(formatField.FieldFormat, long.Parse(child.Value.ToString())));
@@ -67,7 +67,7 @@ namespace LetPortal.Core.Common
                     }
                 }
 
-                foreach(var kvp in replacedDic)
+                foreach (var kvp in replacedDic)
                 {
                     jObject.Remove(kvp.Key);
                     jObject.Add(kvp.Key == "_id" ? "id" : kvp.Key, JToken.FromObject(kvp.Value));

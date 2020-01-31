@@ -1,10 +1,10 @@
-﻿using LetPortal.Portal.Entities.Components;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Models.Charts;
 using LetPortal.Portal.Providers.Databases;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Components
 {
@@ -17,7 +17,7 @@ namespace LetPortal.Portal.Services.Components
         private readonly IEnumerable<IExecutionChartReport> _executionChartReports;
 
         public ChartService(
-            IDatabaseServiceProvider databaseServiceProvider, 
+            IDatabaseServiceProvider databaseServiceProvider,
             IEnumerable<IExtractionChartQuery> extractionChartQueries,
             IEnumerable<IExecutionChartReport> executionChartReports)
         {
@@ -26,7 +26,7 @@ namespace LetPortal.Portal.Services.Components
             _executionChartReports = executionChartReports;
         }
 
-        public async Task<ExecutionChartResponseModel> Execute(Chart chart,ExecutionChartRequestModel model)
+        public async Task<ExecutionChartResponseModel> Execute(Chart chart, ExecutionChartRequestModel model)
         {
             var databaseConnection = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(chart.DatabaseOptions.DatabaseConnectionId);
             var foundExecution = _executionChartReports.First(a => a.ConnectionType == databaseConnection.GetConnectionType());

@@ -1,4 +1,8 @@
-﻿using LetPortal.Core.Common;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
@@ -9,11 +13,6 @@ using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.DynamicLists;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.MySQL
 {
@@ -40,8 +39,8 @@ namespace LetPortal.Portal.Executions.MySQL
         public Task<DynamicListResponseDataModel> Query(DatabaseConnection databaseConnection, DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
             var response = new DynamicListResponseDataModel();
-            bool hasRows = false;
-            using(var mysqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
+            var hasRows = false;
+            using (var mysqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
             {
                 var combinedQuery =
                     _builder
@@ -62,11 +61,11 @@ namespace LetPortal.Portal.Executions.MySQL
 
                 mysqlDbConnection.Open();
 
-                using(var cmd = new MySqlCommand(combinedQuery.CombinedQuery, mysqlDbConnection))
+                using (var cmd = new MySqlCommand(combinedQuery.CombinedQuery, mysqlDbConnection))
                 {
-                    foreach(var param in combinedQuery.Parameters)
+                    foreach (var param in combinedQuery.Parameters)
                     {
-                        if(param.IsReplacedValue)
+                        if (param.IsReplacedValue)
                         {
                             var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
                             cmd.Parameters.Add(
@@ -81,20 +80,20 @@ namespace LetPortal.Portal.Executions.MySQL
                         {
                             cmd.Parameters.Add(
                                 new MySqlParameter(
-                                    param.Name, GetMySqlDbType(param, out object castObj))
+                                    param.Name, GetMySqlDbType(param, out var castObj))
                                 {
                                     Value = castObj,
                                     Direction = System.Data.ParameterDirection.Input
                                 });
                         }
-                        
+
                     }
-                    using(var reader = cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        using(DataTable dt = new DataTable())
+                        using (var dt = new DataTable())
                         {
                             dt.Load(reader);
-                            if(dt.Rows.Count > 0)
+                            if (dt.Rows.Count > 0)
                             {
                                 hasRows = true;
                                 response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
@@ -104,13 +103,13 @@ namespace LetPortal.Portal.Executions.MySQL
                     }
                 }
 
-                if(fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
+                if (fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
                 {
-                    using(var cmd = new MySqlCommand(combinedQuery.CombinedTotalQuery, mysqlDbConnection))
+                    using (var cmd = new MySqlCommand(combinedQuery.CombinedTotalQuery, mysqlDbConnection))
                     {
-                        foreach(var param in combinedQuery.Parameters)
+                        foreach (var param in combinedQuery.Parameters)
                         {
-                            if(param.IsReplacedValue)
+                            if (param.IsReplacedValue)
                             {
                                 var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
                                 cmd.Parameters.Add(
@@ -125,7 +124,7 @@ namespace LetPortal.Portal.Executions.MySQL
                             {
                                 cmd.Parameters.Add(
                                     new MySqlParameter(
-                                        param.Name, GetMySqlDbType(param, out object castObj))
+                                        param.Name, GetMySqlDbType(param, out var castObj))
                                     {
                                         Value = castObj,
                                         Direction = System.Data.ParameterDirection.Input
@@ -149,7 +148,7 @@ namespace LetPortal.Portal.Executions.MySQL
 
         private MySqlDbType GetMySqlDbType(DynamicQueryParameter param, out object castObj)
         {
-            switch(param.ValueType)
+            switch (param.ValueType)
             {
                 case FieldValueType.Number:
                     castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Long);
@@ -159,7 +158,7 @@ namespace LetPortal.Portal.Executions.MySQL
                     return _mySqlMapper.GetMySqlDbType(MapperConstants.Date);
                 case FieldValueType.Checkbox:
                 case FieldValueType.Slide:
-                    bool temp = bool.Parse(param.Value);
+                    var temp = bool.Parse(param.Value);
                     castObj = temp ? 1 : 0;
                     return _mySqlMapper.GetMySqlDbType(MapperConstants.Bool);
                 case FieldValueType.Select:

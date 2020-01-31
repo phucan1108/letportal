@@ -1,12 +1,13 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.SectionParts;
-using LetPortal.Portal.Repositories.Components;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Repositories.Components;
 
 namespace LetPortal.Portal.Providers.Components
 {
-    public class InternalStandardServiceProvider : IStandardServiceProvider
+    public class InternalStandardServiceProvider : IStandardServiceProvider, IDisposable
     {
         private readonly IStandardRepository _standardRepository;
 
@@ -18,7 +19,7 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<ComparisonResult>> CompareStandardComponent(IEnumerable<StandardComponent> standardComponents)
         {
             var results = new List<ComparisonResult>();
-            foreach(var standard in standardComponents)
+            foreach (var standard in standardComponents)
             {
                 results.Add(await _standardRepository.Compare(standard));
             }
@@ -27,7 +28,7 @@ namespace LetPortal.Portal.Providers.Components
 
         public async Task ForceUpdateStandards(IEnumerable<StandardComponent> standards)
         {
-            foreach(var standard in standards)
+            foreach (var standard in standards)
             {
                 await _standardRepository.ForceUpdateAsync(standard.Id, standard);
             }
@@ -37,5 +38,27 @@ namespace LetPortal.Portal.Providers.Components
         {
             return await _standardRepository.GetAllByIdsAsync(ids);
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _standardRepository.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Exceptions;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Exceptions;
 using LetPortal.Core.Https;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Providers.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LetPortal.IdentityApis.Controllers
 {
@@ -16,7 +16,7 @@ namespace LetPortal.IdentityApis.Controllers
         private readonly IIdentityServiceProvider _identityServiceProvider;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
+
         public AccountsController(
             IIdentityServiceProvider identityServiceProvider,
             IHttpContextAccessor httpContextAccessor)

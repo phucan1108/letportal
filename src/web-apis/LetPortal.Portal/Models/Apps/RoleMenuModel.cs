@@ -1,5 +1,4 @@
-﻿using LetPortal.Portal.Entities.Menus;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace LetPortal.Portal.Models.Apps
 {

@@ -1,9 +1,6 @@
-﻿using LetPortal.Portal.Entities.Databases;
-using LetPortal.Portal.Entities.EntitySchemas;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Portal.Entities.EntitySchemas;
 
 namespace LetPortal.Portal.Services.EntitySchemas
 {

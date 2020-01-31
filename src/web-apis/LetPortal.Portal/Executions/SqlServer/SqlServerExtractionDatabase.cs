@@ -1,15 +1,15 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Models.Databases;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.SqlServer
 {
@@ -30,15 +30,15 @@ namespace LetPortal.Portal.Executions.SqlServer
         public Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             var paramsList = new List<SqlParameter>();
-            if(parameters != null)
+            if (parameters != null)
             {
-                foreach(var param in parameters)
+                foreach (var param in parameters)
                 {
                     // We need to detect a parameter type and then re-mapping to db type
                     var splitted = param.Name.Split("|");
-                    SqlDbType paramDbType = SqlDbType.NVarChar;
+                    var paramDbType = SqlDbType.NVarChar;
                     object parsedValue;
-                    if(splitted.Length == 1)
+                    if (splitted.Length == 1)
                     {
                         // Default: string type
                         paramDbType = _sqlServerMapper.GetSqlDbType(MapperConstants.String);
@@ -66,23 +66,23 @@ namespace LetPortal.Portal.Executions.SqlServer
             {
                 ColumnFields = new System.Collections.Generic.List<Models.Shared.ColumnField>()
             };
-            using(var sqlDbConnection = new SqlConnection(database.ConnectionString))
+            using (var sqlDbConnection = new SqlConnection(database.ConnectionString))
             {
                 sqlDbConnection.Open();
                 var warpQuery = @"Select * from ({0}) s limit 1";
                 warpQuery = string.Format(warpQuery, formattedString);
-                using(var command = new SqlCommand(formattedString, sqlDbConnection))
+                using (var command = new SqlCommand(formattedString, sqlDbConnection))
                 {
-                    if(paramsList.Count > 0)
+                    if (paramsList.Count > 0)
                     {
                         command.Parameters.AddRange(paramsList.ToArray());
                     }
-                    using(var reader = command.ExecuteReader())
+                    using (var reader = command.ExecuteReader())
                     {
-                        using(DataTable dt = new DataTable())
+                        using (var dt = new DataTable())
                         {
                             dt.Load(reader);
-                            foreach(DataColumn dc in dt.Columns)
+                            foreach (DataColumn dc in dt.Columns)
                             {
                                 extractModel.ColumnFields.Add(new Models.Shared.ColumnField
                                 {
@@ -91,7 +91,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                                     FieldType = GetType(dc.DataType)
                                 });
                             }
-                        }                            
+                        }
                     }
                 }
             }
@@ -101,11 +101,11 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         private string GetType(Type type)
         {
-            if(type == typeof(DateTime))
+            if (type == typeof(DateTime))
             {
                 return "datetime";
             }
-            else if(type == typeof(int)
+            else if (type == typeof(int)
                 || type == typeof(float)
                 || type == typeof(double)
                 || type == typeof(decimal)
@@ -113,7 +113,7 @@ namespace LetPortal.Portal.Executions.SqlServer
             {
                 return "number";
             }
-            else if(type == typeof(bool))
+            else if (type == typeof(bool))
             {
                 return "boolean";
             }

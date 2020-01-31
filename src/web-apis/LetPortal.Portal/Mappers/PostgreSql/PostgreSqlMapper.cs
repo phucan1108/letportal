@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Persistences;
-using NpgsqlTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LetPortal.Core.Persistences;
+using NpgsqlTypes;
 
 namespace LetPortal.Portal.Mappers.PostgreSql
 {

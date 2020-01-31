@@ -4,7 +4,6 @@ using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Pages;
-using LetPortal.Portal.Entities.Recoveries;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Exceptions.Recoveries;
 using LetPortal.Portal.Models.Files;
@@ -51,22 +50,23 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
 
-            var backupOptions = new BackupOptions
+            BackupOptions backupOptions = new BackupOptions
             {
                 BackupFolderPath = "."
             };
 
-            var backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
-            var backupService = GetMockBackupService(backupRepository,backupOptions);
+            BackupMongoRepository backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
+            IBackupService backupService = GetMockBackupService(backupRepository, backupOptions);
 
             // Act
-            var result = await backupService.CreateBackupFile(new LetPortal.Portal.Models.Recoveries.BackupRequestModel
+            LetPortal.Portal.Models.Recoveries.BackupResponseModel result = await backupService.CreateBackupFile(new LetPortal.Portal.Models.Recoveries.BackupRequestModel
             {
                 Name = "BK_Test",
                 Description = "BK Test",
                 Creator = "Admin"
             });
 
+            backupRepository.Dispose();
             // Assert
             Assert.True(!string.IsNullOrEmpty(result.DownloadableUrl));
         }
@@ -81,19 +81,19 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
 
-            var backupOptions = new BackupOptions
+            BackupOptions backupOptions = new BackupOptions
             {
                 BackupFolderPath = "Backup",
                 MaximumObjects = 0
             };
 
-            var backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
-            var backupService = GetMockBackupService(backupRepository, backupOptions);
+            BackupMongoRepository backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
+            IBackupService backupService = GetMockBackupService(backupRepository, backupOptions);
 
             // Act
             try
             {
-                var result = await backupService.CreateBackupFile(new LetPortal.Portal.Models.Recoveries.BackupRequestModel
+                LetPortal.Portal.Models.Recoveries.BackupResponseModel result = await backupService.CreateBackupFile(new LetPortal.Portal.Models.Recoveries.BackupRequestModel
                 {
                     Name = "BK_Test",
                     Description = "BK Test",
@@ -103,7 +103,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
             catch(Exception ex)
             {
                 Assert.True(ex is BackupException backupException && backupException.ErrorCode.MessageCode == BackupErrorCodes.ReachMaximumBackupObjects.MessageCode);
-            }            
+            }
+            finally
+            {
+                backupRepository.Dispose();
+            }
         }
 
         [Fact]
@@ -116,13 +120,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
 
-            var mockFile = new Mock<IFormFile>();
-            var sourceZip = System.IO.File.OpenRead(@"Artifacts\" + zipFileName);
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceZip = System.IO.File.OpenRead(@"Artifacts\" + zipFileName);
+            MemoryStream memoryStream = new MemoryStream();
             await sourceZip.CopyToAsync(memoryStream);
             sourceZip.Close();
             memoryStream.Position = 0;
-            var fileName = zipFileName;
+            string fileName = zipFileName;
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -131,17 +135,20 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
 
-            var backupOptions = new BackupOptions
+            BackupOptions backupOptions = new BackupOptions
             {
                 BackupFolderPath = "Backup",
                 MaximumObjects = 0,
                 RestoreFolderPath = "Restore"
             };
 
-            var backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
-            var backupService = GetMockBackupService(backupRepository, backupOptions);
+            BackupMongoRepository backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
+            IBackupService backupService = GetMockBackupService(backupRepository, backupOptions);
             // Act
-            var result = await backupService.UploadBackupFile(mockFile.Object, "Admin");
+            UploadBackupResponseModel result = await backupService.UploadBackupFile(mockFile.Object, "Admin");
+            memoryStream.Close();
+            memoryStream.Dispose();
+            backupRepository.Dispose();
             // Assert
             Assert.NotNull(result);
         }
@@ -156,13 +163,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
 
-            var mockFile = new Mock<IFormFile>();
-            var sourceZip = System.IO.File.OpenRead(@"Artifacts\" + zipFileName);
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceZip = System.IO.File.OpenRead(@"Artifacts\" + zipFileName);
+            MemoryStream memoryStream = new MemoryStream();
             await sourceZip.CopyToAsync(memoryStream);
             sourceZip.Close();
             memoryStream.Position = 0;
-            var fileName = zipFileName;
+            string fileName = zipFileName;
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -170,20 +177,23 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
-            var backupOptions = new BackupOptions
+            BackupOptions backupOptions = new BackupOptions
             {
                 BackupFolderPath = "Backup",
                 MaximumObjects = 0,
                 RestoreFolderPath = "Restore"
             };
 
-            var backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
-            var backupService = GetMockBackupService(backupRepository, backupOptions);
+            BackupMongoRepository backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
+            IBackupService backupService = GetMockBackupService(backupRepository, backupOptions);
 
             // Act
-            var backupResponse = await backupService.UploadBackupFile(mockFile.Object, "Admin");
+            UploadBackupResponseModel backupResponse = await backupService.UploadBackupFile(mockFile.Object, "Admin");
 
-            var result = await backupService.PreviewBackup(backupResponse.Id);
+            LetPortal.Portal.Models.Recoveries.PreviewRestoreModel result = await backupService.PreviewBackup(backupResponse.Id);
+            memoryStream.Close();
+            memoryStream.Dispose();
+            backupRepository.Dispose();
 
             // Assert
             Assert.NotNull(result);
@@ -199,13 +209,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
 
-            var mockFile = new Mock<IFormFile>();
-            var sourceZip = System.IO.File.OpenRead(@"Artifacts\" + zipFileName);
-            var memoryStream = new MemoryStream();
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceZip = System.IO.File.OpenRead(@"Artifacts\" + zipFileName);
+            MemoryStream memoryStream = new MemoryStream();
             await sourceZip.CopyToAsync(memoryStream);
             sourceZip.Close();
             memoryStream.Position = 0;
-            var fileName = zipFileName;
+            string fileName = zipFileName;
             mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
             mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
             mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
@@ -213,21 +223,23 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                 .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
                 .Verifiable();
-            var backupOptions = new BackupOptions
+            BackupOptions backupOptions = new BackupOptions
             {
                 BackupFolderPath = "Backup",
                 MaximumObjects = 0,
                 RestoreFolderPath = "Restore"
             };
 
-            var backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
-            var backupService = GetMockBackupServiceForRestore(backupRepository, backupOptions);
+            BackupMongoRepository backupRepository = new BackupMongoRepository(_context.GetMongoConnection());
+            IBackupService backupService = GetMockBackupServiceForRestore(backupRepository, backupOptions);
 
             // Act
-            var backupResponse = await backupService.UploadBackupFile(mockFile.Object, "Admin");
+            UploadBackupResponseModel backupResponse = await backupService.UploadBackupFile(mockFile.Object, "Admin");
 
             await backupService.RestoreBackupPoint(backupResponse.Id);
-
+            memoryStream.Close();
+            memoryStream.Dispose();
+            backupRepository.Dispose();
             // Assert
             Assert.True(true);
         }
@@ -236,32 +248,32 @@ namespace LetPortal.Tests.ITs.Portal.Services
             IBackupRepository backupRepository,
             BackupOptions options)
         {
-            var mockAppProvider = new Mock<IAppServiceProvider>();
+            Mock<IAppServiceProvider> mockAppProvider = new Mock<IAppServiceProvider>();
             mockAppProvider
                 .Setup(a => a.GetAppsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<App>>(null));
 
-            var mockStandardProvider = new Mock<IStandardServiceProvider>();
+            Mock<IStandardServiceProvider> mockStandardProvider = new Mock<IStandardServiceProvider>();
             mockStandardProvider
                 .Setup(a => a.GetStandardComponentsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<StandardComponent>>(null));
 
-            var mockChartProvider = new Mock<IChartServiceProvider>();
+            Mock<IChartServiceProvider> mockChartProvider = new Mock<IChartServiceProvider>();
             mockChartProvider
                 .Setup(a => a.GetChartsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<Chart>>(null));
 
-            var mockDynamicListProvider = new Mock<IDynamicListServiceProvider>();
+            Mock<IDynamicListServiceProvider> mockDynamicListProvider = new Mock<IDynamicListServiceProvider>();
             mockDynamicListProvider
                 .Setup(a => a.GetDynamicListsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<DynamicList>>(null));
 
-            var mockPageProvider = new Mock<IPageServiceProvider>();
+            Mock<IPageServiceProvider> mockPageProvider = new Mock<IPageServiceProvider>();
             mockPageProvider
                 .Setup(a => a.GetPagesByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<Page>>(null));
 
-            var mockDatabaseProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseProvider
                 .Setup(a => a.GetDatabaseConnectionsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<DatabaseConnection>>(new List<DatabaseConnection> { _context.MongoDatabaseConenction }));
@@ -270,7 +282,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Setup(a => a.CompareDatabases(It.IsAny<IEnumerable<DatabaseConnection>>()))
                 .Returns(Task.FromResult<IEnumerable<ComparisonResult>>(new List<ComparisonResult> { }));
 
-            var mockFileProvider = new Mock<IFileSeviceProvider>();
+            Mock<IFileSeviceProvider> mockFileProvider = new Mock<IFileSeviceProvider>();
             mockFileProvider
                 .Setup(a => a.UploadFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(new ResponseUploadFile { DownloadableUrl = "http://localhost", FileId = DataUtil.GenerateUniqueId() }));
@@ -288,9 +300,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     MIMEType = "application/zip"
                 }));
 
-            var backupOptionsMock = Mock.Of<IOptionsMonitor<BackupOptions>>(_ => _.CurrentValue == options);
+            IOptionsMonitor<BackupOptions> backupOptionsMock = Mock.Of<IOptionsMonitor<BackupOptions>>(_ => _.CurrentValue == options);
 
-            var backupService = new BackupService(
+            BackupService backupService = new BackupService(
                 mockAppProvider.Object,
                 mockStandardProvider.Object,
                 mockChartProvider.Object,
@@ -302,41 +314,43 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 backupOptionsMock);
 
             return backupService;
-        } 
+        }
 
         private IBackupService GetMockBackupServiceForRestore(IBackupRepository backupRepository,
             BackupOptions options)
         {
-            var mockAppProvider = new Mock<IAppServiceProvider>();
+            Mock<IAppServiceProvider> mockAppProvider = new Mock<IAppServiceProvider>();
             mockAppProvider
                 .Setup(a => a.GetAppsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<App>>(null));
 
-            var mockStandardProvider = new Mock<IStandardServiceProvider>();
+            Mock<IStandardServiceProvider> mockStandardProvider = new Mock<IStandardServiceProvider>();
             mockStandardProvider
                 .Setup(a => a.GetStandardComponentsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<StandardComponent>>(null));
 
-            var mockChartProvider = new Mock<IChartServiceProvider>();
+            Mock<IChartServiceProvider> mockChartProvider = new Mock<IChartServiceProvider>();
             mockChartProvider
                 .Setup(a => a.GetChartsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<Chart>>(null));
 
-            var mockDynamicListProvider = new Mock<IDynamicListServiceProvider>();
+            Mock<IDynamicListServiceProvider> mockDynamicListProvider = new Mock<IDynamicListServiceProvider>();
             mockDynamicListProvider
                 .Setup(a => a.GetDynamicListsByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<DynamicList>>(null));
 
-            var mockPageProvider = new Mock<IPageServiceProvider>();
+            Mock<IPageServiceProvider> mockPageProvider = new Mock<IPageServiceProvider>();
             mockPageProvider
                 .Setup(a => a.GetPagesByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<Page>>(null));
 
-            var databaserProvider = new InternalDatabaseServiceProvider(
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            InternalDatabaseServiceProvider databaserProvider = new InternalDatabaseServiceProvider(
                 new DatabaseService(null, null),
-                new DatabaseMongoRepository(_context.GetMongoConnection()));           
+                new DatabaseMongoRepository(_context.GetMongoConnection()));
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
-            var mockFileProvider = new Mock<IFileSeviceProvider>();
+            Mock<IFileSeviceProvider> mockFileProvider = new Mock<IFileSeviceProvider>();
             mockFileProvider
                 .Setup(a => a.UploadFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(new ResponseUploadFile { DownloadableUrl = "http://localhost", FileId = DataUtil.GenerateUniqueId() }));
@@ -354,9 +368,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     MIMEType = "application/zip"
                 }));
 
-            var backupOptionsMock = Mock.Of<IOptionsMonitor<BackupOptions>>(_ => _.CurrentValue == options);
+            IOptionsMonitor<BackupOptions> backupOptionsMock = Mock.Of<IOptionsMonitor<BackupOptions>>(_ => _.CurrentValue == options);
 
-            var backupService = new BackupService(
+            BackupService backupService = new BackupService(
                 mockAppProvider.Object,
                 mockStandardProvider.Object,
                 mockChartProvider.Object,
@@ -367,7 +381,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 backupRepository,
                 backupOptionsMock);
 
+            databaserProvider.Dispose();
+
             return backupService;
-        } 
+        }
     }
 }

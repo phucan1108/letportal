@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Portal.Entities.Files;
 using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Services.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -44,7 +44,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpGet("download/{fileId}")]
-        public async Task<IActionResult> GetFile(string fileId,[FromQuery] bool? compress)
+        public async Task<IActionResult> GetFile(string fileId, [FromQuery] bool? compress)
         {
             var response = await _fileService.DownloadFileAsync(fileId, compress.HasValue ? compress.Value : false);
             _logger.Info("Responsed file when downloading: {fileName} {size}", response.FileName, response.FileBytes.Length);

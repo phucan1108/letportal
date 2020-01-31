@@ -1,6 +1,5 @@
 ﻿using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.EntitySchemas;
-using System;
 
 namespace LetPortal.Versions.EntitySchemas
 {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LetPortal.Tools.Features
@@ -11,9 +9,9 @@ namespace LetPortal.Tools.Features
 
         public Task RunAsync(ToolsContext context)
         {
-            if(context.LatestVersion != null)
+            if (context.LatestVersion != null)
             {
-                Console.WriteLine($"Current Version: {context.LatestVersion.VersionNumber}");                
+                Console.WriteLine($"Current Version: {context.LatestVersion.VersionNumber}");
                 Console.WriteLine($"Last Modified Date: {context.LatestVersion.CreatedDate}");
             }
             else

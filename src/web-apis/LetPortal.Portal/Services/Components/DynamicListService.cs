@@ -1,11 +1,11 @@
-﻿using LetPortal.Portal.Entities.SectionParts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Models.DynamicLists;
 using LetPortal.Portal.Providers.Databases;
 using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Components
 {
@@ -32,8 +32,8 @@ namespace LetPortal.Portal.Services.Components
         }
 
         public async Task<PopulateQueryModel> ExtractingQuery(ExtractingQueryModel extractingQuery)
-        {  
-            var extractingResult = await 
+        {
+            var extractingResult = await
                 _databaseServiceProvider
                 .GetSchemasByQuery(extractingQuery.DatabaseId, extractingQuery.Query, extractingQuery.Parameters.Select(a => new Models.Databases.ExecuteParamModel { Name = a.Name, ReplaceValue = a.Value }));
 

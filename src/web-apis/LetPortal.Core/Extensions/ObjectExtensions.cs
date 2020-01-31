@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Utils;
-using MongoDB.Bson;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LetPortal.Core.Utils;
+using MongoDB.Bson;
+using Newtonsoft.Json.Linq;
 
 namespace LetPortal.Core.Extensions
 {
@@ -14,8 +14,11 @@ namespace LetPortal.Core.Extensions
 
         public static bool IsPrimitive(this Type type)
         {
-            if(type == typeof(String))
+            if (type == typeof(String))
+            {
                 return true;
+            }
+
             return (type.IsValueType & type.IsPrimitive);
         }
 
@@ -25,22 +28,34 @@ namespace LetPortal.Core.Extensions
         }
         private static object InternalCopy(object originalObject, IDictionary<object, object> visited)
         {
-            if(originalObject == null)
+            if (originalObject == null)
+            {
                 return null;
+            }
+
             var typeToReflect = originalObject.GetType();
-            if(IsPrimitive(typeToReflect))
+            if (IsPrimitive(typeToReflect))
+            {
                 return originalObject;
-            if(visited.ContainsKey(originalObject))
+            }
+
+            if (visited.ContainsKey(originalObject))
+            {
                 return visited[originalObject];
-            if(typeof(Delegate).IsAssignableFrom(typeToReflect))
+            }
+
+            if (typeof(Delegate).IsAssignableFrom(typeToReflect))
+            {
                 return null;
+            }
+
             var cloneObject = CloneMethod.Invoke(originalObject, null);
-            if(typeToReflect.IsArray)
+            if (typeToReflect.IsArray)
             {
                 var arrayType = typeToReflect.GetElementType();
-                if(IsPrimitive(arrayType) == false)
+                if (IsPrimitive(arrayType) == false)
                 {
-                    Array clonedArray = (Array)cloneObject;
+                    var clonedArray = (Array)cloneObject;
                     clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited), indices));
                 }
 
@@ -53,7 +68,7 @@ namespace LetPortal.Core.Extensions
 
         private static void RecursiveCopyBaseTypePrivateFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect)
         {
-            if(typeToReflect.BaseType != null)
+            if (typeToReflect.BaseType != null)
             {
                 RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect.BaseType);
                 CopyFields(originalObject, visited, cloneObject, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate);
@@ -62,12 +77,18 @@ namespace LetPortal.Core.Extensions
 
         private static void CopyFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, Func<FieldInfo, bool> filter = null)
         {
-            foreach(FieldInfo fieldInfo in typeToReflect.GetFields(bindingFlags))
+            foreach (var fieldInfo in typeToReflect.GetFields(bindingFlags))
             {
-                if(filter != null && filter(fieldInfo) == false)
+                if (filter != null && filter(fieldInfo) == false)
+                {
                     continue;
-                if(IsPrimitive(fieldInfo.FieldType))
+                }
+
+                if (IsPrimitive(fieldInfo.FieldType))
+                {
                     continue;
+                }
+
                 var originalFieldValue = fieldInfo.GetValue(originalObject);
                 var clonedFieldValue = InternalCopy(originalFieldValue, visited);
                 fieldInfo.SetValue(cloneObject, clonedFieldValue);
@@ -85,42 +106,42 @@ namespace LetPortal.Core.Extensions
 
         public static BsonType GetBsonType(this string value)
         {
-            if(DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.RoundtripKind, out _))
+            if (DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.RoundtripKind, out _))
             {
                 return BsonType.DateTime;
             }
 
-            if(ObjectId.TryParse(value, out _))
+            if (ObjectId.TryParse(value, out _))
             {
                 return BsonType.ObjectId;
             }
 
-            if(value.First() == '[' && value.Last() == ']')
+            if (value.First() == '[' && value.Last() == ']')
             {
                 return BsonType.Array;
             }
 
-            if(value.First() == '{' && value.Last() == '}')
+            if (value.First() == '{' && value.Last() == '}')
             {
                 return BsonType.Document;
             }
 
-            if(int.TryParse(value, out _))
+            if (int.TryParse(value, out _))
             {
                 return BsonType.Int32;
             }
 
-            if(long.TryParse(value, out _))
+            if (long.TryParse(value, out _))
             {
                 return BsonType.Int64;
             }
 
-            if(double.TryParse(value, out _))
+            if (double.TryParse(value, out _))
             {
                 return BsonType.Double;
             }
 
-            if(decimal.TryParse(value, out _))
+            if (decimal.TryParse(value, out _))
             {
                 return BsonType.Decimal128;
             }
@@ -130,7 +151,7 @@ namespace LetPortal.Core.Extensions
 
         public static BsonType GetBsonType(this JToken jtoken)
         {
-            switch(jtoken.Type)
+            switch (jtoken.Type)
             {
                 case JTokenType.Array:
                     return BsonType.Array;
@@ -152,7 +173,7 @@ namespace LetPortal.Core.Extensions
         public static object GetValue(this JToken jToken)
         {
             var bsonType = jToken.GetBsonType();
-            switch(bsonType)
+            switch (bsonType)
             {
                 case BsonType.Int32:
                     return jToken.ToObject<int>();
@@ -180,8 +201,11 @@ namespace LetPortal.Core.Extensions
         }
         public override int GetHashCode(object obj)
         {
-            if(obj == null)
+            if (obj == null)
+            {
                 return 0;
+            }
+
             return obj.GetHashCode();
         }
     }

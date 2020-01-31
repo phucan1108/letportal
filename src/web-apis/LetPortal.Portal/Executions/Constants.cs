@@ -1,7 +1,7 @@
 ﻿namespace LetPortal.Portal.Executions
 {
     class Constants
-    {     
+    {
         // Standard
         public const string QUERY_KEY = "$query";
         public const string INSERT_KEY = "$insert";

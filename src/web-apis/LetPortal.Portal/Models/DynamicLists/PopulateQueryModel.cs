@@ -1,5 +1,5 @@
-﻿using LetPortal.Portal.Models.Shared;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LetPortal.Portal.Models.Shared;
 
 namespace LetPortal.Portal.Models.DynamicLists
 {

@@ -1,6 +1,5 @@
 ﻿using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Datasources;
-using System;
 
 namespace LetPortal.Versions.Datasources
 {
@@ -23,7 +22,7 @@ namespace LetPortal.Versions.Datasources
                 Name = "Database Connection Type",
                 DatabaseId = "",
                 DatasourceType = DatasourceType.Static,
-                Query = "[{\"name\":\"MongoDB\",\"value\":\"mongodb\"},{\"name\":\"SQL Server\",\"value\":\"sqlserver\"}]"                
+                Query = "[{\"name\":\"MongoDB\",\"value\":\"mongodb\"},{\"name\":\"SQL Server\",\"value\":\"sqlserver\"}]"
             };
 
             var appConnectionType = new Datasource
@@ -33,9 +32,9 @@ namespace LetPortal.Versions.Datasources
                 Name = "Apps List",
                 DatabaseId = Constants.CoreDatabaseId,
                 DatasourceType = DatasourceType.Database,
-                Query = 
-                    versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? 
-                    "{\"apps\":{}}" : 
+                Query =
+                    versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                    "{\"apps\":{}}" :
                     (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "SELECT `displayName` as name, id as value From `apps`" : "SELECT displayName as name, id as value From apps"),
                 OutputProjection = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? "name=displayName;value=_id" : null
             };

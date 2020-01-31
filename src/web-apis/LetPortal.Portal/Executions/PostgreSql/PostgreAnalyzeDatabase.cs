@@ -1,12 +1,12 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.EntitySchemas;
 using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.PostgreSql
 {
@@ -17,14 +17,14 @@ namespace LetPortal.Portal.Executions.PostgreSql
         public async Task<IEnumerable<EntitySchema>> FetchAllEntitiesFromDatabase(DatabaseConnection databaseConnection)
         {
             var postgreInfos = new List<PostgreSchemaInfo>();
-            using(var dbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
+            using (var dbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
             {
                 dbConnection.Open();
-                using(var cmd = new NpgsqlCommand("SELECT table_catalog as Catalog, table_schema as Schema, table_name as TableName, column_name as ColumnName, udt_name as Type FROM information_schema.columns WHERE table_schema = 'public'", dbConnection))
+                using (var cmd = new NpgsqlCommand("SELECT table_catalog as Catalog, table_schema as Schema, table_name as TableName, column_name as ColumnName, udt_name as Type FROM information_schema.columns WHERE table_schema = 'public'", dbConnection))
                 {
-                    using(var reader = await cmd.ExecuteReaderAsync())
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        while(reader.Read())
+                        while (reader.Read())
                         {
                             postgreInfos.Add(new PostgreSchemaInfo
                             {
@@ -72,7 +72,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
             public string GetDataType()
             {
-                switch(Type)
+                switch (Type)
                 {
                     case "timestamp":
                         return "datetime";

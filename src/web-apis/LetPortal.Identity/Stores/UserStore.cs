@@ -1,13 +1,13 @@
-﻿using LetPortal.Core.Utils;
-using LetPortal.Identity.Entities;
-using LetPortal.Identity.Repositories.Identity;
-using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using LetPortal.Core.Utils;
+using LetPortal.Identity.Entities;
+using LetPortal.Identity.Repositories.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace LetPortal.Identity.Stores
 {
@@ -37,12 +37,14 @@ namespace LetPortal.Identity.Stores
 
             return Task.CompletedTask;
         }
-        
+
         public Task AddToRoleAsync(User user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (user.Roles.Contains(roleName))
+            {
                 throw new InvalidOperationException("User has already registered with Role");
+            }
 
             user.Roles.Add(roleName);
 
@@ -67,17 +69,12 @@ namespace LetPortal.Identity.Stores
             return IdentityResult.Success;
         }
 
-        public void Dispose()
-        {
-            // Do nothing
-        }
-
         public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var user = _userRepository.GetAsQueryable().FirstOrDefault(a => a.NormalizedEmail == normalizedEmail);
-            if(user != null)
+            if (user != null)
             {
                 return Task.FromResult(user);
             }
@@ -115,7 +112,7 @@ namespace LetPortal.Identity.Stores
         {
             return Task.FromResult(user.AccessFailedCount);
         }
-        
+
         public Task<IList<Claim>> GetClaimsAsync(User user, CancellationToken cancellationToken)
         {
             var userClaims = new List<BaseClaim>();
@@ -173,7 +170,7 @@ namespace LetPortal.Identity.Stores
         {
             return Task.FromResult(user.SecurityStamp);
         }
-                
+
         public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.Id);
@@ -246,7 +243,7 @@ namespace LetPortal.Identity.Stores
             user.AccessFailedCount = 0;
             return Task.CompletedTask;
         }
-                
+
         public Task SetEmailAsync(User user, string email, CancellationToken cancellationToken)
         {
             user.Email = email;
@@ -294,7 +291,7 @@ namespace LetPortal.Identity.Stores
             user.SecurityStamp = stamp;
             return Task.CompletedTask;
         }
-               
+
         public Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
         {
             user.Username = userName;
@@ -311,5 +308,27 @@ namespace LetPortal.Identity.Stores
         {
             return Task.FromResult(IdentityResult.Success);
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+
+                }
+
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

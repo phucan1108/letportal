@@ -20,7 +20,7 @@ namespace LetPortal.Portal.Repositories.Components
 
         public async Task<IEnumerable<ShortEntityModel>> GetShortCharts(string keyWord = null)
         {
-            if(!string.IsNullOrEmpty(keyWord))
+            if (!string.IsNullOrEmpty(keyWord))
             {
                 var charts = await _context.Charts.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
                 return charts?.AsEnumerable();

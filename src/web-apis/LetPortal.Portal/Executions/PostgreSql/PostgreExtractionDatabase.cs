@@ -1,4 +1,8 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
@@ -7,10 +11,6 @@ using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Models.Databases;
 using Npgsql;
 using NpgsqlTypes;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.PostgreSql
 {
@@ -31,15 +31,15 @@ namespace LetPortal.Portal.Executions.PostgreSql
         public Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             var paramsList = new List<NpgsqlParameter>();
-            if(parameters != null)
+            if (parameters != null)
             {
-                foreach(var param in parameters)
+                foreach (var param in parameters)
                 {
                     // We need to detect a parameter type and then re-mapping to db type
                     var splitted = param.Name.Split("|");
-                    NpgsqlDbType paramDbType = NpgsqlDbType.Text;
+                    var paramDbType = NpgsqlDbType.Text;
                     object parsedValue;
-                    if(splitted.Length == 1)
+                    if (splitted.Length == 1)
                     {
                         // Default: string type
                         paramDbType = _postgreSqlMapper.GetNpgsqlDbType(MapperConstants.String);
@@ -67,23 +67,23 @@ namespace LetPortal.Portal.Executions.PostgreSql
             {
                 ColumnFields = new System.Collections.Generic.List<Models.Shared.ColumnField>()
             };
-            using(var postgreDbConnection = new NpgsqlConnection(database.ConnectionString))
+            using (var postgreDbConnection = new NpgsqlConnection(database.ConnectionString))
             {
                 postgreDbConnection.Open();
                 var warpQuery = @"Select * from ({0}) s limit 1";
                 warpQuery = string.Format(warpQuery, formattedString);
-                using(var command = new NpgsqlCommand(formattedString, postgreDbConnection))
+                using (var command = new NpgsqlCommand(formattedString, postgreDbConnection))
                 {
-                    if(paramsList.Count > 0)
+                    if (paramsList.Count > 0)
                     {
                         command.Parameters.AddRange(paramsList.ToArray());
                     }
-                    using(var reader = command.ExecuteReader())
+                    using (var reader = command.ExecuteReader())
                     {
-                        using(DataTable dt = new DataTable())
+                        using (var dt = new DataTable())
                         {
                             dt.Load(reader);
-                            foreach(DataColumn dc in dt.Columns)
+                            foreach (DataColumn dc in dt.Columns)
                             {
                                 extractModel.ColumnFields.Add(new Models.Shared.ColumnField
                                 {
@@ -92,7 +92,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                                     FieldType = GetType(dc.DataType)
                                 });
                             }
-                        }                         
+                        }
                     }
                 }
             }
@@ -102,11 +102,11 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
         private string GetType(Type type)
         {
-            if(type == typeof(DateTime))
+            if (type == typeof(DateTime))
             {
                 return "datetime";
             }
-            else if(type == typeof(int)
+            else if (type == typeof(int)
                 || type == typeof(float)
                 || type == typeof(double)
                 || type == typeof(decimal)
@@ -114,7 +114,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
             {
                 return "number";
             }
-            else if(type == typeof(bool))
+            else if (type == typeof(bool))
             {
                 return "boolean";
             }

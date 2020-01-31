@@ -1,8 +1,6 @@
-﻿using LetPortal.Core.Versions;
+﻿using System.Collections.Generic;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Versions.Components
 {
@@ -343,7 +341,7 @@ namespace LetPortal.Versions.Components
                 DisplayName = "Register Form",
                 LayoutType = PageSectionLayoutType.TwoColumns,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
-                {                       
+                {
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
                         Id = "b1b51c52-1312-c5ea-2e5a-8296392da949",

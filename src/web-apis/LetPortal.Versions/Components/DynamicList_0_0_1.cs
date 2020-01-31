@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using LetPortal.Core.Versions;
-using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
@@ -22,7 +19,7 @@ namespace LetPortal.Versions.SectionParts
         }
 
         public void Upgrade(IVersionContext versionContext)
-        {   
+        {
             var databaseListSectionPart = new DynamicList
             {
                 Id = "5d0f09de62c8371c183c8c6f",
@@ -35,12 +32,12 @@ namespace LetPortal.Versions.SectionParts
                     {
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "databases",
-                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB 
-                        ? "{ \"$query\": { \"databases\": [ ] } }" 
+                        Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB
+                        ? "{ \"$query\": { \"databases\": [ ] } }"
                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * From `databases`" : "Select * From databases")
                     },
                     SourceType = DynamicListSourceType.Database
-                },                   
+                },
                 CommandsList = new CommandsList
                 {
                     CommandButtonsInList = new List<CommandButtonInList>
@@ -216,7 +213,7 @@ namespace LetPortal.Versions.SectionParts
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                            "{ \"$query\": { \"apps\": [ ] } }" 
+                            "{ \"$query\": { \"apps\": [ ] } }"
                             : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `apps`" : "Select * from apps")
                     },
                     SourceType = DynamicListSourceType.Database
@@ -383,7 +380,7 @@ namespace LetPortal.Versions.SectionParts
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                        "{ \"$query\": { \"pages\": [ ] } }" 
+                        "{ \"$query\": { \"pages\": [ ] } }"
                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `pages`" : "Select * from pages")
                     },
                     SourceType = DynamicListSourceType.Database
@@ -503,11 +500,11 @@ namespace LetPortal.Versions.SectionParts
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                        "{ \"$query\": { \"users\": [ ] } }" 
+                        "{ \"$query\": { \"users\": [ ] } }"
                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `users`" : "Select * from users")
                     },
                     SourceType = DynamicListSourceType.Database
-                },                 
+                },
                 ColumnsList = new ColumnsList
                 {
                     ColumndDefs = new List<ColumndDef>
@@ -634,11 +631,11 @@ namespace LetPortal.Versions.SectionParts
                         DatabaseConnectionId = Constants.CoreDatabaseId,
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                        "{ \"$query\": { \"roles\": [ ] } }" 
+                        "{ \"$query\": { \"roles\": [ ] } }"
                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `roles`" : "Select * from roles")
                     },
                     SourceType = DynamicListSourceType.Database
-                },                  
+                },
                 ColumnsList = new ColumnsList
                 {
                     ColumndDefs = new List<ColumndDef>

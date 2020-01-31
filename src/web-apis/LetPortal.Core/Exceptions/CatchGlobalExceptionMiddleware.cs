@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Logger;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using LetPortal.Core.Logger;
+using Microsoft.AspNetCore.Http;
 
 namespace LetPortal.Core.Exceptions
 {
@@ -22,11 +22,11 @@ namespace LetPortal.Core.Exceptions
             {
                 await _next.Invoke(httpContext);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 httpContext.Response.ContentType = "application/json";
-                if(ex is CoreException coreException)
+                if (ex is CoreException coreException)
                 {
 
                     serviceLogger.Warning(coreException, "Wrong business flow with error {$coreException}", coreException);

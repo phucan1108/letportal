@@ -1,4 +1,7 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Models;
@@ -6,9 +9,6 @@ using LetPortal.Portal.Repositories.Datasources;
 using LetPortal.Portal.Services.Datasources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -60,15 +60,15 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<DatasourceModel>), 200)]
         public async Task<IActionResult> FetchDatasource(string id, [FromQuery] string keyWord)
         {
-            if(!_memoryCache.TryGetValue(id, out List<DatasourceModel> result))
+            if (!_memoryCache.TryGetValue(id, out List<DatasourceModel> result))
             {
                 // Important note: we should fetch all and cache if needed for best throughput
                 var datasource = await _datasourceRepository.GetOneAsync(id);
-                if(datasource != null)
+                if (datasource != null)
                 {
                     var executedDataSource = await _datasourceService.GetDatasourceService(datasource);
 
-                    if(executedDataSource.CanCache)
+                    if (executedDataSource.CanCache)
                     {
                         _memoryCache.Set(id, result);
                     }
@@ -80,7 +80,7 @@ namespace LetPortal.WebApis.Controllers
                     return BadRequest();
                 }
             }
-            if(!string.IsNullOrEmpty(keyWord))
+            if (!string.IsNullOrEmpty(keyWord))
             {
                 result = result.Where(a => a.Name.Contains(keyWord)).ToList();
             }
@@ -94,7 +94,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(Datasource), 200)]
         public async Task<IActionResult> Create([FromBody] Datasource datasource)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 datasource.Id = DataUtil.GenerateUniqueId();
                 await _datasourceRepository.AddAsync(datasource);
@@ -108,7 +108,7 @@ namespace LetPortal.WebApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] Datasource datasource)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 datasource.Id = id;
                 await _datasourceRepository.UpdateAsync(id, datasource);

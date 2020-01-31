@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Utils;
-using LetPortal.Portal.Entities.EntitySchemas;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Entities.EntitySchemas;
 
 namespace LetPortal.Portal.Repositories.EntitySchemas
 {
@@ -25,12 +25,12 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
 
         public Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false)
         {
-            foreach(EntitySchema entitySchema in entitySchemas)
+            foreach (var entitySchema in entitySchemas)
             {
-                bool isExisted = false;
+                var isExisted = false;
 
                 // Hotfix for MySQL issue: https://bugs.mysql.com/bug.php?id=92987
-                if(_context.ConnectionType == ConnectionType.MySQL)
+                if (_context.ConnectionType == ConnectionType.MySQL)
                 {
                     var exist = _context.EntitySchemas.FirstOrDefault(a => a.Name == entitySchema.Name);
                     isExisted = exist != null;
@@ -40,7 +40,7 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
                     isExisted = _context.EntitySchemas.Any(a => a.Name == entitySchema.Name);
                 }
 
-                if((isExisted && isKeptSameName) == false)
+                if ((isExisted && isKeptSameName) == false)
                 {
                     entitySchema.Id = DataUtil.GenerateUniqueId();
                     _context.EntitySchemas.Add(entitySchema);

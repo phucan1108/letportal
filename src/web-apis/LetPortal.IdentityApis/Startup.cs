@@ -1,5 +1,4 @@
 ﻿using LetPortal.Core;
-using LetPortal.Core.Persistences;
 using LetPortal.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,7 +53,7 @@ namespace LetPortal.IdentityApis
             services.AddOpenApiDocument();
 
             services.AddLetPortal(Configuration, options =>
-            {           
+            {
                 options.EnableMicroservices = true;
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
@@ -71,11 +70,11 @@ namespace LetPortal.IdentityApis
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
         {
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseCors("DevCors");
             }
-            else if(env.IsEnvironment("DockerLocal"))
+            else if (env.IsEnvironment("DockerLocal"))
             {
                 app.UseCors("DockerLocalCors");
             }

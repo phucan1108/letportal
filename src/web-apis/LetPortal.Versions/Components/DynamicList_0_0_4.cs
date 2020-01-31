@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Versions;
+﻿using System.Collections.Generic;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
-using System.Collections.Generic;
 
 namespace LetPortal.Versions.Components
 {
@@ -28,9 +28,9 @@ namespace LetPortal.Versions.Components
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
                         DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
-                        Query = 
+                        Query =
                         versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                        "{ \"$query\": { \"services\": [{ \r\n \"$match\" : {\r\n  \"$or\": [\r\n    { \"serviceState\" : 1 },\r\n    { \"serviceState\" : 3 }\r\n  ]\r\n}}] }}" : 
+                        "{ \"$query\": { \"services\": [{ \r\n \"$match\" : {\r\n  \"$or\": [\r\n    { \"serviceState\" : 1 },\r\n    { \"serviceState\" : 3 }\r\n  ]\r\n}}] }}" :
                         versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                         ? "SELECT * FROM services s join servicehardwareinfos i on s.id = i.`serviceId` where s.`serviceState` = 1 or s.`serviceState` = 3"
                         : "SELECT * FROM services s join servicehardwareinfos i on s.id = i.\"serviceId\" where s.\"serviceState\" = 1 or s.\"serviceState\" = 3"
@@ -93,7 +93,7 @@ namespace LetPortal.Versions.Components
                                 AllowTextSearch = false
                             },
                             Order = 3
-                        },                                                 
+                        },
                         new ColumndDef
                         {
                             Name = "lastCheckedDate",
@@ -320,11 +320,11 @@ namespace LetPortal.Versions.Components
                             {
                                 AllowInAdvancedMode = false,
                                 AllowTextSearch = false
-                            },                             
+                            },
                             Order = 7
                         }
                     }
-                }   ,
+                },
                 CommandsList = new CommandsList
                 {
                     CommandButtonsInList = new List<CommandButtonInList>
@@ -344,7 +344,7 @@ namespace LetPortal.Versions.Components
                                 {
                                     HttpMethod = "GET",
                                     HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/logs/gather/{{data.traceId}}",
-                                    HttpSuccessCode = "200;204"                                    
+                                    HttpSuccessCode = "200;204"
                                 },
                                 IsEnable = true,
                                 NotificationOptions = new NotificationOptions

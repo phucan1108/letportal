@@ -1,4 +1,8 @@
-﻿using LetPortal.Core.Logger;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
@@ -7,10 +11,6 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories.Apps;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -42,8 +42,10 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Getting App with Id = {id}", id);
             var result = await _appRepository.GetOneAsync(id);
             _logger.Info("Found app: {@result}", result);
-            if(result == null)
+            if (result == null)
+            {
                 return NotFound();
+            }
 
             return Ok(result);
         }
@@ -56,8 +58,10 @@ namespace LetPortal.WebApis.Controllers
             var idsList = ids.Split(";").ToList();
             var result = await _appRepository.GetAllByIdsAsync(idsList);
             _logger.Info("Found apps: {@result}", result);
-            if(result == null)
+            if (result == null)
+            {
                 return NotFound();
+            }
 
             return Ok(result);
         }
@@ -85,7 +89,7 @@ namespace LetPortal.WebApis.Controllers
         [HttpPost("")]
         [ProducesResponseType(typeof(App), 200)]
         public async Task<IActionResult> Create([FromBody] App app)
-        {  
+        {
             _logger.Info("Creating app: {@app}", app);
             app.Id = DataUtil.GenerateUniqueId();
             app.DateCreated = DateTime.UtcNow;
@@ -128,8 +132,10 @@ namespace LetPortal.WebApis.Controllers
         {
             var result = await _appRepository.GetAllAsync();
             _logger.Info("Found apps = {@result}", result);
-            if(!result.Any())
+            if (!result.Any())
+            {
                 return NotFound();
+            }
 
             return Ok(result);
         }

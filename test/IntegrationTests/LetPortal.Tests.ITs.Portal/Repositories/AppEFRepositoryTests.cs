@@ -27,9 +27,12 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var appEFRepository = new AppEFRepository(_context.GetPostgreSQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            AppEFRepository appEFRepository = new AppEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp",
@@ -37,7 +40,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
             await appEFRepository.AddAsync(app);
 
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -48,6 +51,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await appEFRepository.UpdateMenuAsync(app.Id, menus);
 
+            appEFRepository.Dispose();
             // Assert
             Assert.True(true);
         }
@@ -61,16 +65,18 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var appEFRepository = new AppEFRepository(_context.GetPostgreSQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            AppEFRepository appEFRepository = new AppEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp1",
                 DisplayName = "Test App"
             };
             await appEFRepository.AddAsync(app);
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -80,7 +86,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await appEFRepository.UpdateMenuAsync(app.Id, menus);
-            var menuProfile = new MenuProfile
+            MenuProfile menuProfile = new MenuProfile
             {
                 MenuIds = new List<string>
                     {
@@ -91,6 +97,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await appEFRepository.UpdateMenuProfileAsync(app.Id, menuProfile);
 
+            appEFRepository.Dispose();
             // Assert
             Assert.True(true);
         }
@@ -105,9 +112,12 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
 
             // Arrange
-            var appEFRepository = new AppEFRepository(_context.GetSQLServerContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            AppEFRepository appEFRepository = new AppEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp",
@@ -115,7 +125,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
             await appEFRepository.AddAsync(app);
 
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -126,6 +136,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await appEFRepository.UpdateMenuAsync(app.Id, menus);
 
+            appEFRepository.Dispose();
             // Assert
             Assert.True(true);
         }
@@ -139,16 +150,19 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var appEFRepository = new AppEFRepository(_context.GetSQLServerContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            AppEFRepository appEFRepository = new AppEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp1",
                 DisplayName = "Test App"
             };
             await appEFRepository.AddAsync(app);
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -158,7 +172,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await appEFRepository.UpdateMenuAsync(app.Id, menus);
-            var menuProfile = new MenuProfile
+            MenuProfile menuProfile = new MenuProfile
             {
                 MenuIds = new List<string>
                     {
@@ -169,6 +183,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await appEFRepository.UpdateMenuProfileAsync(app.Id, menuProfile);
 
+            appEFRepository.Dispose();
             // Assert
             Assert.True(true);
         }
@@ -181,10 +196,14 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 Assert.True(true);
                 return;
             }
+
             // Arrange
-            var appEFRepository = new AppEFRepository(_context.GetMySQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            AppEFRepository appEFRepository = new AppEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp",
@@ -192,7 +211,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
             await appEFRepository.AddAsync(app);
 
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -203,6 +222,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await appEFRepository.UpdateMenuAsync(app.Id, menus);
 
+            appEFRepository.Dispose();
             // Assert
             Assert.True(true);
         }
@@ -216,16 +236,19 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var appEFRepository = new AppEFRepository(_context.GetMySQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            AppEFRepository appEFRepository = new AppEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp1",
                 DisplayName = "Test App"
             };
             await appEFRepository.AddAsync(app);
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -235,7 +258,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await appEFRepository.UpdateMenuAsync(app.Id, menus);
-            var menuProfile = new MenuProfile
+            MenuProfile menuProfile = new MenuProfile
             {
                 MenuIds = new List<string>
                     {
@@ -246,6 +269,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await appEFRepository.UpdateMenuProfileAsync(app.Id, menuProfile);
 
+            appEFRepository.Dispose();
             // Assert
             Assert.True(true);
         }

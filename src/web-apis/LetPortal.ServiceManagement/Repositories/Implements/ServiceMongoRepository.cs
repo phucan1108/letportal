@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Repositories.Implements
 {
@@ -28,13 +28,13 @@ namespace LetPortal.ServiceManagement.Repositories.Implements
                     .Where(a => a.ServiceState != ServiceState.Shutdown && a.Name == serviceName)
                     .OrderByDescending(a => a.InstanceNo).Select(b => b.InstanceNo).ToList();
 
-            if(allInstanceNos != null && allInstanceNos.Count > 0)
+            if (allInstanceNos != null && allInstanceNos.Count > 0)
             {
                 var counter = 1;
                 var temp = allInstanceNos.OrderBy(a => a);
-                foreach(var no in temp)
+                foreach (var no in temp)
                 {
-                    if(counter < no)
+                    if (counter < no)
                     {
                         // This service no has been terminated or lost
                         break;

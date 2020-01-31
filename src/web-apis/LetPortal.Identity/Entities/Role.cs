@@ -1,15 +1,15 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Persistences.Attributes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Persistences.Attributes;
 
 namespace LetPortal.Identity.Entities
 {
     [EntityCollection(Name = "roles")]
     [Table("roles")]
     public class Role : Entity
-    {   
-        public string Name { get; set; }       
+    {
+        public string Name { get; set; }
 
         public string DisplayName { get; set; }
 

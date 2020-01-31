@@ -1,4 +1,6 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
@@ -14,20 +16,12 @@ using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.SectionParts.Controls;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System;
-using System.Collections.Generic;
 
 namespace LetPortal.Portal.Repositories
 {
     public class LetPortalDbContext : DbContext, IDisposable
     {
-        public ConnectionType ConnectionType
-        {
-            get
-            {
-                return _options.ConnectionType;
-            }
-        }
+        public ConnectionType ConnectionType => _options.ConnectionType;
         public DbSet<App> Apps { get; set; }
 
         public DbSet<Component> Components { get; set; }
@@ -81,7 +75,7 @@ namespace LetPortal.Portal.Repositories
             var componentBuilder = modelBuilder.Entity<Component>();
             componentBuilder.HasKey(a => a.Id);
 
-            if(_options.ConnectionType == ConnectionType.MySQL)
+            if (_options.ConnectionType == ConnectionType.MySQL)
             {
                 componentBuilder.Property(a => a.AllowOverrideOptions).HasColumnType("BIT");
                 componentBuilder.Property(a => a.AllowPassingDatasource).HasColumnType("BIT");
@@ -178,7 +172,7 @@ namespace LetPortal.Portal.Repositories
 
             var datasourceBuilder = modelBuilder.Entity<Datasource>();
             datasourceBuilder.HasKey(a => a.Id);
-            if(_options.ConnectionType == ConnectionType.MySQL)
+            if (_options.ConnectionType == ConnectionType.MySQL)
             {
                 datasourceBuilder.Property(a => a.CanCache).HasColumnType("BIT");
             }
@@ -194,7 +188,7 @@ namespace LetPortal.Portal.Repositories
 
             var fileBuilder = modelBuilder.Entity<File>();
             fileBuilder.HasKey(a => a.Id);
-            if(_options.ConnectionType == ConnectionType.MySQL)
+            if (_options.ConnectionType == ConnectionType.MySQL)
             {
                 fileBuilder.Property(a => a.AllowCompress).HasColumnType("BIT");
             }
@@ -206,9 +200,9 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.DeserializeObject<BackupElements>(v));
             backupBuilder.Property(a => a.BackupElements).HasConversion(jsonBackupElementsConverter);
 
-            foreach(var entity in modelBuilder.Model.GetEntityTypes())
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
-                foreach(var property in entity.GetProperties())
+                foreach (var property in entity.GetProperties())
                 {
                     property.Relational().ColumnName = ToCamelCase(property.Relational().ColumnName);
                 }
@@ -217,15 +211,15 @@ namespace LetPortal.Portal.Repositories
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if(_options.ConnectionType == ConnectionType.SQLServer)
+            if (_options.ConnectionType == ConnectionType.SQLServer)
             {
                 optionsBuilder.UseSqlServer(_options.ConnectionString);
             }
-            else if(_options.ConnectionType == ConnectionType.PostgreSQL)
+            else if (_options.ConnectionType == ConnectionType.PostgreSQL)
             {
                 optionsBuilder.UseNpgsql(_options.ConnectionString);
             }
-            else if(_options.ConnectionType == ConnectionType.MySQL)
+            else if (_options.ConnectionType == ConnectionType.MySQL)
             {
                 optionsBuilder.UseMySQL(_options.ConnectionString);
             }

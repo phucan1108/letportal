@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.EntitySchemas;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.EntitySchemas;
 
 namespace LetPortal.Portal.Repositories.EntitySchemas
 {
@@ -9,6 +9,6 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
     {
         Task<EntitySchema> GetOneEntitySchemaAsync(string databaseId, string name);
 
-        Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false); 
+        Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false);
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LetPortal.Portal.Models.Charts
+﻿namespace LetPortal.Portal.Models.Charts
 {
     public class ExecutionChartResponseModel
     {

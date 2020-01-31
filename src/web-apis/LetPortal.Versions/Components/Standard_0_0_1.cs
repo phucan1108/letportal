@@ -1,8 +1,6 @@
-﻿using LetPortal.Core.Versions;
+﻿using System.Collections.Generic;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Versions.Components
 {

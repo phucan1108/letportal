@@ -5,7 +5,6 @@ using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
-using MongoDB.Bson;
 
 namespace LetPortal.Portal.Repositories.Components
 {
@@ -18,8 +17,8 @@ namespace LetPortal.Portal.Repositories.Components
 
         public Task<IEnumerable<ShortEntityModel>> GetShortCharts(string keyWord = null)
         {
-            if(!string.IsNullOrEmpty(keyWord))
-            {                   
+            if (!string.IsNullOrEmpty(keyWord))
+            {
                 var regexFilter = Builders<Chart>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var discriminatorFilter = Builders<Chart>.Filter.Eq("_t", typeof(Chart).Name);
                 var combineFilter = Builders<Chart>.Filter.And(discriminatorFilter, regexFilter);

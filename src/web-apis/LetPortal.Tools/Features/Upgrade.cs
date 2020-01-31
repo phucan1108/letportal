@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Utils;
-using LetPortal.Core.Versions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using LetPortal.Core.Utils;
+using LetPortal.Core.Versions;
 using Version = LetPortal.Core.Versions.Version;
 
 namespace LetPortal.Tools.Features
@@ -15,10 +15,10 @@ namespace LetPortal.Tools.Features
 
         public async Task RunAsync(ToolsContext context)
         {
-            if(context.LatestVersion != null)
+            if (context.LatestVersion != null)
             {
                 var requestingVersionNumber = context.VersionNumber.ToVersionNumber();
-                if(context.LatestVersion.GetNumber() < requestingVersionNumber)
+                if (context.LatestVersion.GetNumber() < requestingVersionNumber)
                 {
                     var matchingVersions = context.Versions.Where(
                         a => a.GetNumber() > context.LatestVersion.GetNumber()
@@ -28,7 +28,7 @@ namespace LetPortal.Tools.Features
                     Console.WriteLine("-----------------------++++++++++++++++-------------------------");
 
                     var portalVersions = UpgradingVersion(matchingVersions, context);
-                    foreach(var portalVersion in portalVersions)
+                    foreach (var portalVersion in portalVersions)
                     {
                         await context.VersionRepository.AddAsync(portalVersion);
                     }
@@ -51,13 +51,13 @@ namespace LetPortal.Tools.Features
 
             var availableGroupVersions = versions.Select(a => a.VersionNumber).Distinct();
 
-            foreach(var groupVersion in availableGroupVersions)
+            foreach (var groupVersion in availableGroupVersions)
             {
                 Console.WriteLine($"Upgrading Version: {groupVersion}");
                 var matchingVersions = versions.Where(a => a.VersionNumber == groupVersion);
 
                 var executingVersions = new List<string>();
-                foreach(var version in matchingVersions)
+                foreach (var version in matchingVersions)
                 {
                     version.Upgrade(toolsContext.VersionContext);
                     executingVersions.Add(version.GetType().GetTypeInfo().Name);
@@ -67,7 +67,7 @@ namespace LetPortal.Tools.Features
                 dicVersions.Add(groupVersion, executingVersions);
             }
 
-            foreach(var kvp in dicVersions)
+            foreach (var kvp in dicVersions)
             {
                 effectivePortalVersions.Add(new Version
                 {

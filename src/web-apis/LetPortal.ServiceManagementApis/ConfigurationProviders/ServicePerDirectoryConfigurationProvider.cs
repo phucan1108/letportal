@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Utils;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LetPortal.Core.Utils;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace LetPortal.ServiceManagementApis.ConfigurationProviders
 {
@@ -23,7 +23,7 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
         public override void Load()
         {
             var keyValues = GetAllAvailableConfigurations(_directoryPath, _currentEnvironment);
-            foreach(var keyValue in keyValues)
+            foreach (var keyValue in keyValues)
             {
                 Data.Add(keyValue.Key, keyValue.Value);
             }
@@ -72,11 +72,11 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
 
         private static KeyValuePair<string, string> MergeJsonDataOfFiles(string fileKey, IEnumerable<FileInfo> mergingFiles)
         {
-            JObject firstObject = JObject.Parse("{}");
+            var firstObject = JObject.Parse("{}");
 
-            foreach(var file in mergingFiles)
+            foreach (var file in mergingFiles)
             {
-                JObject parsedObject = JObject.Parse(File.ReadAllText(file.FullName));
+                var parsedObject = JObject.Parse(File.ReadAllText(file.FullName));
 
                 firstObject.Merge(parsedObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             }
@@ -90,11 +90,11 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
 
             var cloningKeyValues = new List<KeyValuePair<string, string>>();
 
-            for(int i = 0; i < sortedByKeys.Count; i++)
+            for (var i = 0; i < sortedByKeys.Count; i++)
             {
                 var jsonObject = JObject.Parse(sortedByKeys[i].Value);
 
-                for(int j = 0; j < i; j++)
+                for (var j = 0; j < i; j++)
                 {
                     var tempJsonObject = JObject.Parse(sortedByKeys[j].Value);
                     tempJsonObject.Merge(jsonObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });

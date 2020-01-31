@@ -1,4 +1,7 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
@@ -7,9 +10,6 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Services.Databases;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -40,11 +40,13 @@ namespace LetPortal.WebApis.Controllers
         {
             var result = await _databaseRepository.GetAllAsync();
             _logger.Info("Found database connections: {@result}", result);
-            if(!result.Any())
+            if (!result.Any())
+            {
                 return NotFound();
+            }
 
             // Empty all connection strings for security risks
-            foreach(var databaseConnection in result)
+            foreach (var databaseConnection in result)
             {
                 databaseConnection.ConnectionString = string.Empty;
                 databaseConnection.DataSource = string.Empty;
@@ -59,8 +61,10 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Requesting to get database id = {id}", id);
             var result = await _databaseRepository.GetOneAsync(id);
             _logger.Info("Found database = {@result}", result);
-            if(result == null)
+            if (result == null)
+            {
                 return NotFound();
+            }
 
             result.ConnectionString = string.Empty;
             result.DataSource = string.Empty;
@@ -78,8 +82,8 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(DatabaseConnection), 200)]
         public async Task<IActionResult> Post([FromBody] DatabaseConnection databaseConnection)
         {
-            if(ModelState.IsValid)
-            {                   
+            if (ModelState.IsValid)
+            {
                 databaseConnection.Id = DataUtil.GenerateUniqueId();
                 _logger.Info("Creating database: {@databaseConnection}", databaseConnection);
                 await _databaseRepository.AddAsync(databaseConnection);
@@ -93,7 +97,7 @@ namespace LetPortal.WebApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(string id, [FromBody] DatabaseConnection databaseConnection)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 databaseConnection.Id = id;
                 _logger.Info("Updating database: {@databaseConnection}", databaseConnection);
@@ -120,8 +124,10 @@ namespace LetPortal.WebApis.Controllers
         {
             _logger.Info("Execution dynamic in database id = {databaseId} with content = {@content}", databaseId, content);
             var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
-            if(databaseConnection == null)
+            if (databaseConnection == null)
+            {
                 return BadRequest();
+            }
 
             var result = await _databaseService.ExecuteDynamic(databaseConnection, ConvertUtil.SerializeObject(content), new List<ExecuteParamModel>());
             _logger.Info("Result of execution dynamic: {@result}", result);
@@ -134,11 +140,13 @@ namespace LetPortal.WebApis.Controllers
         {
             _logger.Info("Extracting query dynamic in database id = {databaseId} with model = {@model}", databaseId, model);
             var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
-            if(databaseConnection == null)
+            if (databaseConnection == null)
+            {
                 return BadRequest();
+            }
 
             string formattedContent;
-            if(databaseConnection.GetConnectionType() != Core.Persistences.ConnectionType.MongoDB)
+            if (databaseConnection.GetConnectionType() != Core.Persistences.ConnectionType.MongoDB)
             {
                 formattedContent = model.Content;
             }
@@ -157,8 +165,10 @@ namespace LetPortal.WebApis.Controllers
         {
             _logger.Info("Execute query for datasource in database id = {databaseId} with content = {@content}", databaseId, content);
             var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
-            if(databaseConnection == null)
+            if (databaseConnection == null)
+            {
                 return BadRequest();
+            }
 
             var result = await _databaseService.ExecuteDynamic(databaseConnection, content, new List<ExecuteParamModel>());
             _logger.Info("Result of dynamic datasource: {@result}", result);

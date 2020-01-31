@@ -1,15 +1,16 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Services.Databases;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Providers.Databases
 {
-    public class InternalDatabaseServiceProvider : IDatabaseServiceProvider
+    public class InternalDatabaseServiceProvider : IDatabaseServiceProvider, IDisposable
     {
         private readonly IDatabaseService _databaseService;
 
@@ -26,7 +27,7 @@ namespace LetPortal.Portal.Providers.Databases
         public async Task<IEnumerable<ComparisonResult>> CompareDatabases(IEnumerable<DatabaseConnection> databaseConnections)
         {
             var results = new List<ComparisonResult>();
-            foreach(var databaseConnection in databaseConnections)
+            foreach (var databaseConnection in databaseConnections)
             {
                 results.Add(await _databaseRepository.Compare(databaseConnection));
             }
@@ -41,7 +42,7 @@ namespace LetPortal.Portal.Providers.Databases
 
         public async Task ForceUpdateDatabases(IEnumerable<DatabaseConnection> databases)
         {
-            foreach(var database in databases)
+            foreach (var database in databases)
             {
                 await _databaseRepository.ForceUpdateAsync(database.Id, database);
             }
@@ -62,5 +63,27 @@ namespace LetPortal.Portal.Providers.Databases
             var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
             return await _databaseService.ExtractColumnSchema(databaseConnection, queryJsonString, parameters);
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _databaseRepository.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

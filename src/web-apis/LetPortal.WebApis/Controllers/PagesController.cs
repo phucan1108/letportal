@@ -1,4 +1,7 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models;
@@ -8,9 +11,6 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Repositories.Pages;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -90,7 +90,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(string), 200)]
         public async Task<IActionResult> Create([FromBody] Page page)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 page.Id = DataUtil.GenerateUniqueId();
                 await _pageRepository.AddAsync(page);
@@ -103,7 +103,7 @@ namespace LetPortal.WebApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] Page page)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 page.Id = id;
                 await _pageRepository.UpdateAsync(id, page);
@@ -133,19 +133,19 @@ namespace LetPortal.WebApis.Controllers
         public async Task<IActionResult> SubmitCommand(string pageId, [FromBody] PageSubmittedButtonModel pageSubmittedButtonModel)
         {
             var page = await _pageRepository.GetOneAsync(pageId);
-            if(page != null)
+            if (page != null)
             {
                 var button = page.Commands.First(a => a.Name == pageSubmittedButtonModel.ButtonName);
-                if(button.ButtonOptions.ActionCommandOptions.ActionType == Portal.Entities.Shared.ActionType.ExecuteDatabase)
-                { 
-                    var result = 
+                if (button.ButtonOptions.ActionCommandOptions.ActionType == Portal.Entities.Shared.ActionType.ExecuteDatabase)
+                {
+                    var result =
                         await _databaseServiceProvider
                                 .ExecuteDatabase(
-                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId, 
-                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query, 
+                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId,
+                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query,
                                     pageSubmittedButtonModel
                                         .Parameters
-                                        .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue}));
+                                        .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }));
 
                     return Ok(result);
                 }
@@ -159,15 +159,15 @@ namespace LetPortal.WebApis.Controllers
         public async Task<IActionResult> GetDatasourceForPage(string pageId, [FromBody] PageRequestDatasourceModel pageRequestDatasourceModel)
         {
             var page = await _pageRepository.GetOneAsync(pageId);
-            if(page != null)
+            if (page != null)
             {
                 var datasource = page.PageDatasources.First(a => a.Id == pageRequestDatasourceModel.DatasourceId);
-                if(datasource.Options.Type == Portal.Entities.Shared.DatasourceControlType.Database)
+                if (datasource.Options.Type == Portal.Entities.Shared.DatasourceControlType.Database)
                 {
                     var result = await _databaseServiceProvider.ExecuteDatabase(datasource.Options.DatabaseOptions.DatabaseConnectionId, datasource.Options.DatabaseOptions.Query, pageRequestDatasourceModel.Parameters.Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }));
 
                     return Ok(result);
-                }                 
+                }
             }
 
             return NotFound();

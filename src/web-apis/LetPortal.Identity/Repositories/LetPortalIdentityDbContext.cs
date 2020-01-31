@@ -1,27 +1,21 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
 using LetPortal.Identity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.Collections.Generic;
 
 namespace LetPortal.Identity.Repositories
 {
     public class LetPortalIdentityDbContext : DbContext
     {
-        public ConnectionType ConnectionType
-        {
-            get
-            {
-                return _options.ConnectionType;
-            }
-        }
+        public ConnectionType ConnectionType => _options.ConnectionType;
 
         public DbSet<User> Users { get; set; }
 
         public DbSet<Role> Roles { get; set; }
-        
+
         public DbSet<IssuedToken> IssuedTokens { get; set; }
 
         public DbSet<UserSession> UserSessions { get; set; }
@@ -42,7 +36,7 @@ namespace LetPortal.Identity.Repositories
             var userBuilder = modelBuilder.Entity<User>();
             userBuilder.HasKey(a => a.Id);
 
-            if(_options.ConnectionType == ConnectionType.MySQL)
+            if (_options.ConnectionType == ConnectionType.MySQL)
             {
                 userBuilder.Property(a => a.IsConfirmedEmail).HasColumnType("BIT");
                 userBuilder.Property(a => a.IsLockoutEnabled).HasColumnType("BIT");
@@ -66,7 +60,7 @@ namespace LetPortal.Identity.Repositories
 
             var issueTokenBuilder = modelBuilder.Entity<IssuedToken>();
             issueTokenBuilder.HasKey(a => a.Id);
-            if(_options.ConnectionType == ConnectionType.MySQL)
+            if (_options.ConnectionType == ConnectionType.MySQL)
             {
                 issueTokenBuilder.Property(a => a.Deactive).HasColumnType("BIT");
             }
@@ -81,9 +75,9 @@ namespace LetPortal.Identity.Repositories
             var versionBuilder = modelBuilder.Entity<Version>();
             versionBuilder.HasKey(a => a.Id);
 
-            foreach(var entity in modelBuilder.Model.GetEntityTypes())
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
-                foreach(var property in entity.GetProperties())
+                foreach (var property in entity.GetProperties())
                 {
                     property.Relational().ColumnName = ToCamelCase(property.Relational().ColumnName);
                 }
@@ -91,15 +85,15 @@ namespace LetPortal.Identity.Repositories
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if(_options.ConnectionType == ConnectionType.SQLServer)
+            if (_options.ConnectionType == ConnectionType.SQLServer)
             {
                 optionsBuilder.UseSqlServer(_options.ConnectionString);
             }
-            else if(_options.ConnectionType == ConnectionType.PostgreSQL)
+            else if (_options.ConnectionType == ConnectionType.PostgreSQL)
             {
                 optionsBuilder.UseNpgsql(_options.ConnectionString);
             }
-            else if(_options.ConnectionType == ConnectionType.MySQL)
+            else if (_options.ConnectionType == ConnectionType.MySQL)
             {
                 optionsBuilder.UseMySQL(_options.ConnectionString);
             }

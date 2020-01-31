@@ -1,6 +1,6 @@
-﻿using LetPortal.Portal.Entities.SectionParts;
+﻿using System.Threading.Tasks;
+using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.DynamicLists;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Components
 {

@@ -28,16 +28,16 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var databaseOptions = new DatabaseOptions
+            DatabaseOptions databaseOptions = new DatabaseOptions
             {
                 ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
                 ConnectionType = ConnectionType.MongoDB,
                 Datasource = _context.MongoDatabaseConenction.DataSource
             };
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var entitySchemaRepository = new EntitySchemaMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            EntitySchemaMongoRepository entitySchemaRepository = new EntitySchemaMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
             // Act
-            var entitySchemaTest = new EntitySchema
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abc",
@@ -57,8 +57,9 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await entitySchemaRepository.AddAsync(entitySchemaTest);
 
-            var result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
+            EntitySchema result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
 
+            entitySchemaRepository.Dispose();
             // Assert
             Assert.NotNull(result);
         }
@@ -72,16 +73,16 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var databaseOptions = new DatabaseOptions
+            DatabaseOptions databaseOptions = new DatabaseOptions
             {
                 ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
                 ConnectionType = ConnectionType.MongoDB,
                 Datasource = _context.MongoDatabaseConenction.DataSource
             };
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
-            var entitySchemaRepository = new EntitySchemaMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            EntitySchemaMongoRepository entitySchemaRepository = new EntitySchemaMongoRepository(new MongoConnection(databaseOptionsMock.CurrentValue));
             // Act
-            var entitySchemaTest = new EntitySchema
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abcd",
@@ -106,6 +107,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 entitySchemaTest
             }, true);
 
+            entitySchemaRepository.Dispose();
             // Assert
             Assert.True(true);
         }

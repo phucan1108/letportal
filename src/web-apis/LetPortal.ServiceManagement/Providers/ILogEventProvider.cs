@@ -1,5 +1,5 @@
-﻿using LetPortal.Core.Logger.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Logger.Models;
 
 namespace LetPortal.ServiceManagement.Providers
 {

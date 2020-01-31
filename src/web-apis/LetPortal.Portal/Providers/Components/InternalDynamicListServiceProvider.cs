@@ -1,12 +1,13 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.SectionParts;
-using LetPortal.Portal.Repositories.Components;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Repositories.Components;
 
 namespace LetPortal.Portal.Providers.Components
 {
-    public class InternalDynamicListServiceProvider : IDynamicListServiceProvider
+    public class InternalDynamicListServiceProvider : IDynamicListServiceProvider, IDisposable
     {
         private readonly IDynamicListRepository _dynamicListRepository;
 
@@ -18,7 +19,7 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<ComparisonResult>> CompareDynamicLists(IEnumerable<DynamicList> dynamicLists)
         {
             var results = new List<ComparisonResult>();
-            foreach(var dynamicList in dynamicLists)
+            foreach (var dynamicList in dynamicLists)
             {
                 results.Add(await _dynamicListRepository.Compare(dynamicList));
             }
@@ -27,7 +28,7 @@ namespace LetPortal.Portal.Providers.Components
 
         public async Task ForceUpdateDynamicLists(IEnumerable<DynamicList> dynamicLists)
         {
-            foreach(var dynamicList in dynamicLists)
+            foreach (var dynamicList in dynamicLists)
             {
                 await _dynamicListRepository.ForceUpdateAsync(dynamicList.Id, dynamicList);
             }
@@ -37,5 +38,27 @@ namespace LetPortal.Portal.Providers.Components
         {
             return await _dynamicListRepository.GetAllByIdsAsync(ids);
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _dynamicListRepository.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

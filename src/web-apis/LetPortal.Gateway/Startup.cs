@@ -26,7 +26,7 @@ namespace LetPortal.Gateway
             services.AddCors(options =>
             {
                 options.AddPolicy("DevCors", builder =>
-                {   
+                {
                     builder.AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowAnyOrigin()
@@ -64,9 +64,9 @@ namespace LetPortal.Gateway
         {
             if (env.IsDevelopment())
             {
-                app.UseCors("DevCors");                
+                app.UseCors("DevCors");
             }
-            else if(env.IsEnvironment("DockerLocal"))
+            else if (env.IsEnvironment("DockerLocal"))
             {
                 app.UseCors("DockerLocalCors");
             }
@@ -75,7 +75,7 @@ namespace LetPortal.Gateway
                 app.UseHsts();
                 app.UseCors("ProdCors");
             }
-               
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto

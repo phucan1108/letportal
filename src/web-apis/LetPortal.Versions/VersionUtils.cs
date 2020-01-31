@@ -1,6 +1,5 @@
-﻿using LetPortal.Portal.Entities.Components;
+﻿using System.Collections.Generic;
 using LetPortal.Portal.Entities.SectionParts;
-using System.Collections.Generic;
 
 namespace LetPortal.Versions
 {
@@ -8,9 +7,9 @@ namespace LetPortal.Versions
     {
         public static void GenerateControlEvents(StandardComponent standardComponent)
         {
-            foreach(var control in standardComponent.Controls)
+            foreach (var control in standardComponent.Controls)
             {
-                switch(control.Type)
+                switch (control.Type)
                 {
                     case Portal.Entities.SectionParts.Controls.ControlType.Label:
                         control.PageControlEvents = new List<Portal.Entities.Components.Controls.PageControlEvent>();
@@ -24,7 +23,7 @@ namespace LetPortal.Versions
                                 EventActionType = Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
                                 HttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
                                 {
-                                    BoundData = new string[0],
+                                    BoundData = System.Array.Empty<string>(),
                                     HttpMethod = "Get",
                                     HttpServiceUrl = "",
                                     HttpSuccessCode = "200",
@@ -33,7 +32,7 @@ namespace LetPortal.Versions
                                 },
                                 TriggerEventOptions = new Portal.Entities.Components.Controls.TriggerEventOptions
                                 {
-                                    EventsList = new string[0]
+                                    EventsList = System.Array.Empty<string>()
                                 }
                             },
                             new Portal.Entities.Components.Controls.PageControlEvent
@@ -42,7 +41,7 @@ namespace LetPortal.Versions
                                 EventActionType = Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
                                 HttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
                                 {
-                                    BoundData = new string[0],
+                                    BoundData = System.Array.Empty<string>(),
                                     HttpMethod = "Get",
                                     HttpServiceUrl = "",
                                     HttpSuccessCode = "200",
@@ -51,7 +50,7 @@ namespace LetPortal.Versions
                                 },
                                 TriggerEventOptions = new Portal.Entities.Components.Controls.TriggerEventOptions
                                 {
-                                    EventsList = new string[0]
+                                    EventsList = System.Array.Empty<string>()
                                 }
                             }
                         };
@@ -65,7 +64,7 @@ namespace LetPortal.Versions
                                 EventActionType = Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
                                 HttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
                                 {
-                                    BoundData = new string[0],
+                                    BoundData = System.Array.Empty<string>(),
                                     HttpMethod = "Get",
                                     HttpServiceUrl = "",
                                     HttpSuccessCode = "200",
@@ -74,7 +73,7 @@ namespace LetPortal.Versions
                                 },
                                 TriggerEventOptions = new Portal.Entities.Components.Controls.TriggerEventOptions
                                 {
-                                    EventsList = new string[0]
+                                    EventsList = System.Array.Empty<string>()
                                 }
                             }
                         };

@@ -11,7 +11,7 @@ namespace LetPortal.Core.Utils
             var tz = TZConvert.GetTimeZoneInfo(timezone);
             return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
         }
-        
+
         public static DateTime GetDateByTz(DateTime convert, string timezone)
         {
             // Due to TimeZone problem per OS, we need to use another lib to exchange corresponding TZ

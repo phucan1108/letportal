@@ -1,13 +1,12 @@
-﻿using LetPortal.Core.Exceptions;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using LetPortal.Core.Exceptions;
 using LetPortal.Identity.Entities;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Providers.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.IdentityApis.Controllers
 {

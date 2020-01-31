@@ -1,15 +1,15 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Core.Security;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Pages
 {
     [EntityCollection(Name = "pages")]
     [Table("pages")]
     public class Page : BackupableEntity
-    {      
+    {
         public string UrlPath { get; set; }
 
         public List<ShellOption> ShellOptions { get; set; }
@@ -20,7 +20,7 @@ namespace LetPortal.Portal.Entities.Pages
 
         public List<PageDatasource> PageDatasources { get; set; }
 
-        public List<PageEvent> Events { get; set; }     
+        public List<PageEvent> Events { get; set; }
 
         public List<PageButton> Commands { get; set; }
     }

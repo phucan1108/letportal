@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Security;
+﻿using System.Collections.Generic;
+using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Shared;
-using System.Collections.Generic;
 
 namespace LetPortal.Versions.Pages
 {
@@ -48,7 +48,7 @@ namespace LetPortal.Versions.Pages
                             DisplayName = "Hardware Counters",
                             ComponentId = "5dd02c6d1558c56c40d795e7",
                             ConstructionType = SectionContructionType.Chart,
-                            Order = 1 
+                            Order = 1
                         },
                         new PageSection
                         {

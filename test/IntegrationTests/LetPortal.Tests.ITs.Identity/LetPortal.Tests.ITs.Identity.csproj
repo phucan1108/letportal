@@ -5,9 +5,13 @@
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
+  <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="Moq" Version="4.13.0" />

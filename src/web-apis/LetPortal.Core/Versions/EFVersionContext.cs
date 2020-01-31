@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Persistences;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using LetPortal.Core.Persistences;
+using Microsoft.EntityFrameworkCore;
 
 namespace LetPortal.Core.Versions
 {
@@ -30,9 +30,9 @@ namespace LetPortal.Core.Versions
 
         public void BulkInsertData<T>(T[] entities) where T : Entity
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
-                entity.Check();   
+                entity.Check();
             }
             var dbSet = _context.Set<T>();
             dbSet.AddRange(entities);
@@ -46,10 +46,27 @@ namespace LetPortal.Core.Versions
             _context.SaveChanges();
         }
 
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
         public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+        #endregion
 
         public void DropAll<T>() where T : Entity
         {

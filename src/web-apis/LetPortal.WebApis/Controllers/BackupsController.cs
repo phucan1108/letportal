@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Portal.Entities.Recoveries;
 using LetPortal.Portal.Exceptions.Recoveries;
 using LetPortal.Portal.Models.Recoveries;
@@ -6,7 +7,6 @@ using LetPortal.Portal.Repositories.Recoveries;
 using LetPortal.Portal.Services.Recoveries;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LetPortal.PortalApis.Controllers
 {

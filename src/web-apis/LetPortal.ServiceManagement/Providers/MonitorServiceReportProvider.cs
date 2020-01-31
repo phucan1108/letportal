@@ -1,8 +1,6 @@
-﻿using LetPortal.ServiceManagement.Repositories.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using LetPortal.ServiceManagement.Repositories.Abstractions;
 
 namespace LetPortal.ServiceManagement.Providers
 {

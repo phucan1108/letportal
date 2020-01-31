@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Files;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using LetPortal.Core.Files;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Options.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Files
 {
@@ -33,7 +33,7 @@ namespace LetPortal.Portal.Services.Files
 
         public Task<StoredFile> StoreFileAsync(string localFilePath)
         {
-            return Task.FromResult(StoreFileDisk(Path.GetFileName(localFilePath), localFilePath)); 
+            return Task.FromResult(StoreFileDisk(Path.GetFileName(localFilePath), localFilePath));
         }
 
         private StoredFile StoreFileDisk(string fileName, string localFilePath)
@@ -42,11 +42,11 @@ namespace LetPortal.Portal.Services.Files
                 !string.IsNullOrEmpty(_diskStorageOptions.CurrentValue.Path) ?
                     _diskStorageOptions.CurrentValue.Path : Directory.GetCurrentDirectory();
 
-            if(savingFilePath.StartsWith("~"))
+            if (savingFilePath.StartsWith("~"))
             {
                 savingFilePath = savingFilePath.Replace("~", Directory.GetCurrentDirectory());
             }
-            if(_diskStorageOptions.CurrentValue.AllowDayFolder)
+            if (_diskStorageOptions.CurrentValue.AllowDayFolder)
             {
                 savingFilePath += "\\" + DateTime.UtcNow.ToString("yyyyMMdd");
             }
@@ -55,7 +55,7 @@ namespace LetPortal.Portal.Services.Files
             savingFilePath += "\\" + fileName;
             File.Copy(localFilePath, savingFilePath, true);
 
-            return 
+            return
                 new StoredFile
                 {
                     FileIdentifierOptions = ConvertUtil.SerializeObject(new LocalFileOptions

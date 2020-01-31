@@ -1,17 +1,16 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Persistences.Attributes;
-using LetPortal.Core.Utils;
-using LetPortal.Portal.Entities.Menus;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Persistences.Attributes;
+using LetPortal.Portal.Entities.Menus;
 
 namespace LetPortal.Portal.Entities.Apps
 {
     [EntityCollection(Name = "apps")]
     [Table("apps")]
     public class App : BackupableEntity
-    {                                         
+    {
         public string Logo { get; set; }
 
         public string DefaultUrl { get; set; }

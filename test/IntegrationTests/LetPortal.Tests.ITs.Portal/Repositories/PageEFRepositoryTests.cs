@@ -28,9 +28,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder",
@@ -45,8 +47,9 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetOneByNameAsync("page-builder");
+            Page result = await pageRepository.GetOneByNameAsync("page-builder");
 
+            pageRepository.Dispose();
             // Assert
             Assert.NotNull(result);
         }
@@ -60,9 +63,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-1",
@@ -77,8 +82,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetAllShortPagesAsync();
-
+            List<LetPortal.Portal.Models.Pages.ShortPageModel> result = await pageRepository.GetAllShortPagesAsync();
+            pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
         }
@@ -92,9 +97,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-2",
@@ -109,8 +116,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetShortPortalClaimModelsAsync();
-
+            List<LetPortal.Portal.Models.Pages.ShortPortalClaimModel> result = await pageRepository.GetShortPortalClaimModelsAsync();
+            pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
         }
@@ -124,10 +131,12 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetPostgreSQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-3",
@@ -197,8 +206,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await pageRepository.AddAsync(pageBuilderTest);
-            var page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
-
+            Page page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
+            pageRepository.Dispose();
             // Assert
             Assert.NotNull(page);
         }
@@ -214,9 +223,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder",
@@ -231,8 +242,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetOneByNameAsync("page-builder");
-
+            Page result = await pageRepository.GetOneByNameAsync("page-builder");
+            pageRepository.Dispose();
             // Assert
             Assert.NotNull(result);
         }
@@ -246,9 +257,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-1",
@@ -263,8 +276,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetAllShortPagesAsync();
-
+            List<LetPortal.Portal.Models.Pages.ShortPageModel> result = await pageRepository.GetAllShortPagesAsync();
+            pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
         }
@@ -278,9 +291,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-2",
@@ -295,8 +310,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetShortPortalClaimModelsAsync();
-
+            List<LetPortal.Portal.Models.Pages.ShortPortalClaimModel> result = await pageRepository.GetShortPortalClaimModelsAsync();
+            pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
         }
@@ -310,10 +325,12 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetSQLServerContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-3",
@@ -383,8 +400,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await pageRepository.AddAsync(pageBuilderTest);
-            var page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
-
+            Page page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
+            pageRepository.Dispose();
             // Assert
             Assert.NotNull(page);
         }
@@ -400,9 +417,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder",
@@ -417,8 +436,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetOneByNameAsync("page-builder");
-
+            Page result = await pageRepository.GetOneByNameAsync("page-builder");
+            pageRepository.Dispose();
             // Assert
             Assert.NotNull(result);
         }
@@ -432,9 +451,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-1",
@@ -449,8 +470,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetAllShortPagesAsync();
-
+            List<LetPortal.Portal.Models.Pages.ShortPageModel> result = await pageRepository.GetAllShortPagesAsync();
+            pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
         }
@@ -464,9 +485,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-2",
@@ -481,8 +504,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetShortPortalClaimModelsAsync();
-
+            List<LetPortal.Portal.Models.Pages.ShortPortalClaimModel> result = await pageRepository.GetShortPortalClaimModelsAsync();
+            pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
         }
@@ -496,10 +519,12 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            PageEFRepository pageRepository = new PageEFRepository(_context.GetMySQLContext());
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-3",
@@ -569,8 +594,8 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await pageRepository.AddAsync(pageBuilderTest);
-            var page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
-
+            Page page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
+            pageRepository.Dispose();
             // Assert
             Assert.NotNull(page);
         }

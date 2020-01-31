@@ -6,14 +6,19 @@
     <Version>0.0.5</Version>
     <Company>LetPortal</Company>
     <Product>LetPortal</Product>
-    <Authors>An Le Quang Phuc</Authors>
+    <Authors>An Quang Phuc Le</Authors>
     <Description>LetPortal is an internal web platform which helps small company to manage their data. The project is open-source project. There are no fee charged to use or modify.</Description>
-    <Copyright>An Le Quang Phuc</Copyright>
+    <Copyright>An Quang Phuc Le</Copyright>
     <PackageProjectUrl>http://letportal.app</PackageProjectUrl>
     <PackageTags>Web Portal; .NET Core;</PackageTags>
   </PropertyGroup>
+  <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
   </ItemGroup>
   <ItemGroup>
