@@ -60,6 +60,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{183E4E42-4D6B-411B-835B-77A5EC5FC8A4}"
 	ProjectSection(SolutionItems) = preProject
 		installation.ps1 = installation.ps1
+		installation.sh = installation.sh
 	EndProjectSection
 EndProject
 Global

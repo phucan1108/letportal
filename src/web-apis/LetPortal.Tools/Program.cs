@@ -28,8 +28,8 @@ namespace LET.Tools.Installation
         [Option("-db|--db-type", Description = "Database type, support specific parameter: mongodb | sqlserver")]
         public string DatabseType { get; set; } = "mongodb";
 
-        [Option("-f|--file", Description = "File config path. Ex: C:\\tools.json. Default: tools.json")]
-        public string FilePath { get; set; } = "tools.json";
+        [Option("-f|--file", Description = "File config path. Ex: C:\\tools.json. Default: a config file of installed tools")]
+        public string FilePath { get; set; }
 
         [Option("-p|--patch", Description = "Patches folder path. Ex: C:\\Patches. Available only for portal app")]
         public string PatchesFolder { get; set; }
@@ -203,7 +203,16 @@ namespace LET.Tools.Installation
 
         private ToolsOptions GetToolsOptions(string filePath)
         {
-            var foundText = File.ReadAllText(filePath);
+            string fullPath;
+            if(!string.IsNullOrEmpty(filePath))
+            {
+                fullPath = Path.GetFullPath(filePath);
+            }
+            else
+            {
+                fullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "tools.json");
+            }
+            var foundText = File.ReadAllText(fullPath);
             return ConvertUtil.DeserializeObject<ToolsOptions>(foundText);
         }
 
