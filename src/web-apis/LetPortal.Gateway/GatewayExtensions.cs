@@ -52,6 +52,7 @@ namespace LetPortal.Gateway
                             {
                                 context.Response.Headers.Add("X-Token-Expired", "true");
                             }
+
                             return Task.CompletedTask;
                         }
                     };

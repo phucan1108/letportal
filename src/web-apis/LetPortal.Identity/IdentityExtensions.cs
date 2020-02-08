@@ -100,10 +100,14 @@ namespace LetPortal.Identity
                 x.Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = context =>
-                    {
+                    {                           
                         if(context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
                             context.Response.Headers.Add("X-Token-Expired", "true");
+                        }
+                        else
+                        {
+                            Console.WriteLine("There are some unexpected erros while trying to validate JWT token. Exception: " + context.Exception.ToString());
                         }
                         return Task.CompletedTask;
                     }
