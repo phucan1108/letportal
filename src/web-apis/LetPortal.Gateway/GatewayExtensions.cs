@@ -52,6 +52,10 @@ namespace LetPortal.Gateway
                             {
                                 context.Response.Headers.Add("X-Token-Expired", "true");
                             }
+                            else
+                            {
+                                Console.WriteLine("There are some unexpected erros while trying to validate JWT token. Exception: " + context.Exception.ToString());
+                            }
 
                             return Task.CompletedTask;
                         }

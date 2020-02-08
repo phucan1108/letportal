@@ -9,9 +9,11 @@ namespace LetPortal.Core.Logger
     {
         private readonly RequestDelegate _next;
 
-        public CheckUserSessionIdMiddleware(RequestDelegate next)
+        private readonly IServiceLogger<CheckUserSessionIdMiddleware> _logger;
+        public CheckUserSessionIdMiddleware(RequestDelegate next, IServiceLogger<CheckUserSessionIdMiddleware> logger)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -25,6 +27,7 @@ namespace LetPortal.Core.Logger
             }
             else
             {
+                _logger.Error($"A request is missing {Constants.UserSessionIdHeader} Header");
                 httpContext.Response.StatusCode = 403;
                 await httpContext.Response.WriteAsync("Missing some important headers");
             }
