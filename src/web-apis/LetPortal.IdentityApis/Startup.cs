@@ -86,7 +86,7 @@ namespace LetPortal.IdentityApis
                 options.SkipCheckUrls = new string[] { "api/accounts/login", "api/accounts/forgot-password", "api/accounts/recovery-password" };
             });
 
-            app.UseAuthentication();
+            app.UseAuthentication();            
             app.UseMvc();
             app.UseOpenApi();
             app.UseSwaggerUi3();

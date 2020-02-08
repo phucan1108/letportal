@@ -86,7 +86,7 @@ namespace LetPortal.Identity
                     ValidAudience = jwtOptions.Audience,
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidateLifetime = true,
+                    ValidateLifetime = true,                    
                     RequireExpirationTime = true,
                     RequireSignedTokens = true,
                     NameClaimType = "name",
@@ -99,6 +99,22 @@ namespace LetPortal.Identity
                 };
                 x.Events = new JwtBearerEvents
                 {
+                    OnMessageReceived = context =>
+                    {
+                        Console.WriteLine("The token has been received");
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
+                    {
+                        Console.WriteLine("The token has been challenged");
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        Console.WriteLine("The token has been validated");
+
+                        return Task.CompletedTask;
+                    },
                     OnAuthenticationFailed = context =>
                     {                           
                         if(context.Exception.GetType() == typeof(SecurityTokenExpiredException))
