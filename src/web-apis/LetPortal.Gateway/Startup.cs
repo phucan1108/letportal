@@ -75,6 +75,7 @@ namespace LetPortal.Gateway
             app.UseLetPortal(appLifetime, options =>
             {
                 options.EnableCheckUserSession = true;
+                options.EnableCheckTraceId = true;
                 options.EnableWrapException = true;
                 options.SkipCheckUrls = new string[] { "api/configurations" };
             });

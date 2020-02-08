@@ -82,6 +82,7 @@ namespace LetPortal.IdentityApis
             app.UseLetPortal(appLifetime, options =>
             {
                 options.EnableCheckUserSession = true;
+                options.EnableCheckTraceId = false;                
                 options.EnableWrapException = true;
                 options.SkipCheckUrls = new string[] { "api/accounts/login", "api/accounts/forgot-password", "api/accounts/recovery-password" };
             });

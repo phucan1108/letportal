@@ -3,10 +3,16 @@
     public class LetPortalMiddlewareOptions
     {
         /// <summary>
-        /// Ensure UserSessionId and TraceId must be provided in Header
+        /// Ensure UserSessionId must be provided in Header
         /// Default: false
         /// </summary>
         public bool EnableCheckUserSession { get; set; }
+
+        /// <summary>
+        /// Ensure TraceId must be provided in Header
+        /// Default: false
+        /// </summary>
+        public bool EnableCheckTraceId { get; set; }
 
         /// <summary>
         /// Allow to push log to Service Management, however, it requires EnableCheckUserSession is true

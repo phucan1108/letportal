@@ -66,6 +66,7 @@ namespace LetPortal.WebApis
             app.UseLetPortal(appLifetime, options =>
             {
                 options.EnableCheckUserSession = true;
+                options.EnableCheckTraceId = true;
                 options.EnableWrapException = true;
             });
             app.UseMvc();

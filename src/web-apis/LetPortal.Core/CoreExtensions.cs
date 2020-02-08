@@ -100,7 +100,7 @@ namespace LetPortal.Core
 
             applicationLifetime.RegisterServiceLifecycle(app);
 
-            if(defaultOptions.EnableCheckUserSession)
+            if(defaultOptions.EnableCheckUserSession || defaultOptions.EnableCheckTraceId)
             {
                 if(defaultOptions.SkipCheckUrls != null && defaultOptions.SkipCheckUrls.Length > 0)
                 {
@@ -120,14 +120,28 @@ namespace LetPortal.Core
 
                     }, builder =>
                     {
-                        builder.UseMiddleware<CheckUserSessionIdMiddleware>();
-                        builder.UseMiddleware<CheckTraceIdMiddleware>();
+                        if (defaultOptions.EnableCheckUserSession)
+                        {
+                            builder.UseMiddleware<CheckUserSessionIdMiddleware>();
+                        }
+
+                        if (defaultOptions.EnableCheckTraceId)
+                        {
+                            builder.UseMiddleware<CheckTraceIdMiddleware>();
+                        }
                     });
                 }
                 else
                 {
-                    app.UseMiddleware<CheckUserSessionIdMiddleware>();
-                    app.UseMiddleware<CheckTraceIdMiddleware>();
+                    if (defaultOptions.EnableCheckUserSession)
+                    {
+                        app.UseMiddleware<CheckUserSessionIdMiddleware>();
+                    }
+
+                    if (defaultOptions.EnableCheckTraceId)
+                    {
+                        app.UseMiddleware<CheckTraceIdMiddleware>();
+                    }
                 }
 
             }
