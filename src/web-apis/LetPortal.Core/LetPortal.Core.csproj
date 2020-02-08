@@ -11,6 +11,7 @@
     <Copyright>An Quang Phuc Le</Copyright>
     <PackageProjectUrl>http://letportal.app</PackageProjectUrl>
     <PackageTags>Web Portal; .NET Core;</PackageTags>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
   <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
