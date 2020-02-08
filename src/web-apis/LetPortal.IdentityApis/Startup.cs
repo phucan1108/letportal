@@ -25,27 +25,13 @@ namespace LetPortal.IdentityApis
             // Only for Development
             services.AddCors(options =>
             {
-                options.AddPolicy("DevCors", builder =>
-                {
-                    builder.AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowAnyOrigin()
-                           .AllowCredentials()
-                           .WithExposedHeaders("X-Token-Expired");
-                });
-
-                options.AddPolicy("DockerLocalCors", builder =>
-                {
-                    builder.AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowAnyOrigin()
-                           .AllowCredentials()
-                           .WithExposedHeaders("X-Token-Expired");
-                });
+                options.AddDevCors();
+                options.AddLocalCors();
+                options.AddDockerLocalCors();
 
                 options.AddPolicy("ProdCors", builder =>
                 {
-                    builder.WithExposedHeaders("X-Token-Expired");
+                    builder.WithExposedHeaders(Constants.TokenExpiredHeader);
                 });
             });
 
@@ -70,13 +56,17 @@ namespace LetPortal.IdentityApis
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
         {
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
-                app.UseCors("DevCors");
+                app.UseDevCors();
             }
-            else if(env.IsEnvironment("DockerLocal"))
+            else if (env.IsLocalEnv())
             {
-                app.UseCors("DockerLocalCors");
+                app.UseLocalCors();
+            }
+            else if (env.IsDockerLocalEnv())
+            {
+                app.UseDockerLocalCors();
             }
             else
             {

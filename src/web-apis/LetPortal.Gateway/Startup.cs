@@ -25,27 +25,13 @@ namespace LetPortal.Gateway
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("DevCors", builder =>
-                {
-                    builder.AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowAnyOrigin()
-                           .AllowCredentials()
-                           .WithExposedHeaders("X-Token-Expired");
-                });
-
-                options.AddPolicy("DockerLocalCors", builder =>
-                {
-                    builder.AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowAnyOrigin()
-                           .AllowCredentials()
-                           .WithExposedHeaders("X-Token-Expired");
-                });
+                options.AddDevCors();
+                options.AddLocalCors();
+                options.AddDockerLocalCors();
 
                 options.AddPolicy("ProdCors", builder =>
                 {
-                    builder.WithExposedHeaders("X-Token-Expired");
+                    builder.WithExposedHeaders(Constants.TokenExpiredHeader);
                 });
             });
             services.AddOcelot();
@@ -64,11 +50,15 @@ namespace LetPortal.Gateway
         {
             if(env.IsDevelopment())
             {
-                app.UseCors("DevCors");
+                app.UseDevCors();
             }
-            else if(env.IsEnvironment("DockerLocal"))
+            else if(env.IsLocalEnv())
             {
-                app.UseCors("DockerLocalCors");
+                app.UseLocalCors();
+            }
+            else if (env.IsDockerLocalEnv())
+            {
+                app.UseDockerLocalCors();
             }
             else
             {

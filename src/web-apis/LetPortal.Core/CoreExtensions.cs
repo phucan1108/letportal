@@ -5,6 +5,7 @@ using LetPortal.Core.Monitors;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,10 @@ namespace LetPortal.Core
 {
     public static class CoreExtensions
     {
+        private const string DEV_CORS = "DevCors";
+        private const string LOCAL_CORS = "LocalCors";
+        private const string DOCK_LOCAL_CORS = "DockerLocalCors";        
+
         public static ILetPortalBuilder AddLetPortal(this IServiceCollection serviceCollection, IConfiguration configuration, Action<LetPortalOptions> action = null)
         {
             var letPortalOptions = new LetPortalOptions();
@@ -162,6 +167,67 @@ namespace LetPortal.Core
             return builder.Add(new IntegratorConfigurationServiceSource(configurationServiceOptions, serviceOptions.Name, serviceOptions.Version));
         }
 
+        public static void AddDevCors(this CorsOptions options)
+        {
+            options?.AddPolicy(DEV_CORS, builder =>
+            {
+                builder.AllowAnyHeader()
+                       .AllowAnyMethod()
+                       .AllowAnyOrigin()
+                       .AllowCredentials()
+                       .WithExposedHeaders(Constants.TokenExpiredHeader);
+            });
+        }
+
+        public static void AddLocalCors(this CorsOptions options)
+        {
+            options?.AddPolicy(LOCAL_CORS, builder =>
+            {
+                builder.AllowAnyHeader()
+                       .AllowAnyMethod()
+                       .AllowAnyOrigin()
+                       .AllowCredentials()
+                       .WithExposedHeaders(Constants.TokenExpiredHeader);
+            });
+        }
+
+        public static void AddDockerLocalCors(this CorsOptions options)
+        {
+            options?.AddPolicy(DOCK_LOCAL_CORS, builder =>
+            {
+                builder.AllowAnyHeader()
+                       .AllowAnyMethod()
+                       .AllowAnyOrigin()
+                       .AllowCredentials()
+                       .WithExposedHeaders(Constants.TokenExpiredHeader);
+            });
+        }
+
+        public static bool IsLocalEnv(this IHostingEnvironment environment)
+        {
+            return environment.IsEnvironment("Local");
+        }
+
+        public static bool IsDockerLocalEnv(this IHostingEnvironment environment)
+        {
+            return environment.IsEnvironment("DockerLocal");
+        }
+
+        public static IApplicationBuilder UseDevCors(this IApplicationBuilder builder)
+        {
+            return builder.UseCors(DEV_CORS);
+        }
+
+        public static IApplicationBuilder UseLocalCors(this IApplicationBuilder builder)
+        {
+            return builder.UseCors(LOCAL_CORS);
+        }
+
+        public static IApplicationBuilder UseDockerLocalCors(this IApplicationBuilder builder)
+        {
+            return builder.UseCors(DOCK_LOCAL_CORS);
+        }
+
         /// <summary>
         /// Notify to Service Management when service is starting or stopping
         /// </summary>
@@ -181,7 +247,6 @@ namespace LetPortal.Core
                     serviceContext.Stop(postStopAction);
                 });
             }
-        }
-
+        }  
     }
 }

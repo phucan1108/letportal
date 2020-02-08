@@ -13,5 +13,7 @@
         public const string LetPortalHealthCheck = "let-healthcheck";
 
         public const string LetPortalHealthCheckData = "DataHealthCheck";
+
+        public const string TokenExpiredHeader = "X-Token-Expired";
     }
 }
