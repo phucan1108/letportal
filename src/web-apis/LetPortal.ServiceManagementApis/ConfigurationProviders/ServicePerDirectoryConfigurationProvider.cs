@@ -22,6 +22,7 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
 
         public override void Load()
         {
+            Console.WriteLine("Start getting all files");
             var keyValues = GetAllAvailableConfigurations(_directoryPath, _currentEnvironment);
             foreach(var keyValue in keyValues)
             {
@@ -42,6 +43,10 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
                                 File = file
                             };
 
+            foreach(var a in filesList)
+            {     
+                Console.WriteLine("Files List: " + a.File.FullName);
+            }
             var serviceConfigs = from file in filesList
                                  group file by file.Key into mergingFile
                                  select new
@@ -54,7 +59,7 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
                                    group versionConfig by versionConfig.ServiceName into mergeConfig
                                    select MergeJsonDataByVersions(mergeConfig.Select(con => con.Kvp));
 
-
+            Console.WriteLine("all versioned files: " + ConvertUtil.SerializeObject(versionedConfigs.ToList()));
             return versionedConfigs.SelectMany(a => a);
         }
 
