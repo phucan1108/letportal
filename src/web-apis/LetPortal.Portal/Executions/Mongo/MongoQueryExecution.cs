@@ -101,7 +101,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
                     foreach(BsonDocument collection in arrayUnionCollections)
                     {
-                        var mongoCollection = mongoDatabase.GetCollection<BsonDocument>(collection.First().Name);
+                        var mongoCollection = mongoDatabase?.GetCollection<BsonDocument>(collection.First().Name);
                         List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = collection.First().Value.AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
                         IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
 
@@ -166,6 +166,7 @@ namespace LetPortal.Portal.Executions.Mongo
             }
             else
             {
+                _ = mongoDatabase ?? throw new NullReferenceException(nameof(mongoDatabase));
                 var mongoCollection = GetCollection(mongoDatabase, parsingBson, Constants.QUERY_KEY);
                 List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = parsingBson[Constants.QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
                 IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();

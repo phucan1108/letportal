@@ -10,7 +10,16 @@ namespace LetPortal.Tests.ITs.Identity
 {
     public class FakeSignInManager : SignInManager<User>
     {
-        public FakeSignInManager(UserManager<User> userManager, IHttpContextAccessor contextAccessor, IUserClaimsPrincipalFactory<User> claimsFactory, IOptions<IdentityOptions> optionsAccessor, ILogger<SignInManager<User>> logger, IAuthenticationSchemeProvider schemes) : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes)
+        public FakeSignInManager
+            (
+                UserManager<User> userManager, 
+                IHttpContextAccessor contextAccessor, 
+                IUserClaimsPrincipalFactory<User> claimsFactory, 
+                IOptions<IdentityOptions> optionsAccessor, 
+                ILogger<SignInManager<User>> logger, 
+                IAuthenticationSchemeProvider schemes,
+                IUserConfirmation<User> userConfirmation) 
+            : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, userConfirmation)
         {
         }
 

@@ -7,7 +7,7 @@
 [CmdletBinding()]
 Param
 (
-	[String] $sdkVersion = "2.2.8",
+	[String] $sdkVersion = "3.1.1",
 	[String] $sdkPath = "C:\NetCoreSDK",
 	[String] $toolsPath = "C:\Tools"
 )

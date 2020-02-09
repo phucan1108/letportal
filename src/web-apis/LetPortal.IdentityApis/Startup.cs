@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
 namespace LetPortal.IdentityApis
@@ -44,17 +45,18 @@ namespace LetPortal.IdentityApis
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
             }).AddIdentity();
+
             services
-                .AddMvc()
-                .AddJsonOptions(options =>
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
                 {
+                    // Important note: we still use Newtonsoft instead of .NET JSON because they still don't support Timezone
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -87,8 +89,16 @@ namespace LetPortal.IdentityApis
                 options.SkipCheckUrls = new string[] { "api/accounts/login", "api/accounts/forgot-password", "api/accounts/recovery-password" };
             });
 
-            app.UseAuthentication();            
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
             app.UseOpenApi();
             app.UseSwaggerUi3();
         }

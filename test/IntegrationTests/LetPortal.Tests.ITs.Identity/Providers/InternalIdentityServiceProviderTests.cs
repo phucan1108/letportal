@@ -203,7 +203,8 @@ namespace LetPortal.Tests.ITs.Identity.Providers
             roleValidatorMock.Setup(a => a.ValidateAsync(It.IsAny<RoleManager<Role>>(), It.IsAny<Role>())).Returns(Task.FromResult(IdentityResult.Success));
             roleValidators.Add(roleValidatorMock.Object);
             var lookupNormalizedMock = new Mock<ILookupNormalizer>();
-            lookupNormalizedMock.Setup(a => a.Normalize(It.IsAny<string>())).Returns((string name) => name.ToUpper());
+            lookupNormalizedMock.Setup(a => a.NormalizeName(It.IsAny<string>())).Returns((string name) => name.ToUpper());
+            lookupNormalizedMock.Setup(a => a.NormalizeEmail(It.IsAny<string>())).Returns((string name) => name.ToUpper());
 
             var roleManager = new RoleManager<Role>(
                 roleStore,
@@ -311,13 +312,16 @@ namespace LetPortal.Tests.ITs.Identity.Providers
             var mockAuthOptions = new Mock<IOptions<AuthenticationOptions>>();
             mockAuthOptions.Setup(a => a.Value).Returns(authenticationOptions);
             var authenticationSchemeProvider = new AuthenticationSchemeProvider(mockAuthOptions.Object);
+            var mockUserConfirmation = new Mock<IUserConfirmation<User>>();
+            mockUserConfirmation.Setup(a => a.IsConfirmedAsync(It.IsAny<UserManager<User>>(), It.IsAny<User>())).Returns(Task.FromResult(true));
             var signInManager = new FakeSignInManager(
                 userManager,
                 mockHttpContext.Object,
                 mockUserClaimsPrincipalFactory.Object,
                 mockIdentityOptions.Object,
                 mockLogger.Object,
-                authenticationSchemeProvider
+                authenticationSchemeProvider,
+                mockUserConfirmation.Object
                 );
 
             return signInManager;

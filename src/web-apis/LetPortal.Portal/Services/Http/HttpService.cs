@@ -46,7 +46,7 @@ namespace LetPortal.Portal.Services.Http
             if(successCodes.Any(a => a == (int)response.StatusCode))
             {
                 httpResult.IsSuccess = true;
-                httpResult.Result = await response.Content.ReadAsAsync<dynamic>();
+                httpResult.Result = await response.Content.ReadAsJsonAsync<dynamic>();
             }
             return httpResult;
         }

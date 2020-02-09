@@ -187,8 +187,7 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IChartService, ChartService>();
             builder.Services.AddTransient<IBackupService, BackupService>();
 
-            builder.Services.AddTransient<HttpService>();
-            builder.Services.AddHttpClient<HttpService>();
+            builder.Services.AddHttpClient<IHttpService, HttpService>();
             return builder;
         }
     }

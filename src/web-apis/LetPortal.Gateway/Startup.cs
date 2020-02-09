@@ -3,9 +3,9 @@ using LetPortal.Core.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -42,11 +42,12 @@ namespace LetPortal.Gateway
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
             }).AddGateway();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             if(env.IsDevelopment())
             {
@@ -80,8 +81,6 @@ namespace LetPortal.Gateway
                 options.SkipCheckUrls = new string[] { "api/configurations" };
             });
             app.UseOcelot().Wait();
-            app.UseMvc();
-
         }
     }
 }

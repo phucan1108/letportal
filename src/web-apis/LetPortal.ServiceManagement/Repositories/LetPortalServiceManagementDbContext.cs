@@ -82,7 +82,7 @@ namespace LetPortal.ServiceManagement.Repositories
             {
                 foreach(var property in entity.GetProperties())
                 {
-                    property.Relational().ColumnName = ToCamelCase(property.Relational().ColumnName);
+                    property.SetColumnName(ToCamelCase(property.GetColumnName()));
                 }
             }
         }

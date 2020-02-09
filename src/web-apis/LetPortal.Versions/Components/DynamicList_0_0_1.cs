@@ -497,8 +497,8 @@ namespace LetPortal.Versions.SectionParts
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
-                        EntityName = "apps",
+                        DatabaseConnectionId = Constants.IdentityDatabaseId,
+                        EntityName = "users",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"users\": [ ] } }"
                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `users`" : "Select * from users")
@@ -628,8 +628,8 @@ namespace LetPortal.Versions.SectionParts
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
-                        EntityName = "apps",
+                        DatabaseConnectionId = Constants.IdentityDatabaseId,
+                        EntityName = "roles",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"roles\": [ ] } }"
                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `roles`" : "Select * from roles")

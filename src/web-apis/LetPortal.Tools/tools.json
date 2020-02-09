@@ -7,12 +7,12 @@
     },
     "IdentityConnection": {
       "ConnectionString": "mongodb://localhost:27017",
-      "DataSource": "letportal",
+      "DataSource": "letportalidentity",
       "ConnectionType": "MongoDB"
     },
     "ServiceManagementConnection": {
       "ConnectionString": "mongodb://localhost:27017",
-      "DataSource": "letportal",
+      "DataSource": "letportalservices",
       "ConnectionType": "MongoDB"
     }
   }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 
 namespace LetPortal.WebApis
@@ -38,17 +39,18 @@ namespace LetPortal.WebApis
                 {
                     options.EnableFileServer = true;
                 });
+
             services
-                .AddMvc()
-                .AddJsonOptions(options =>
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
                 {
+                    // Important note: we still use Newtonsoft instead of .NET JSON because they still don't support Timezone
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             if(env.IsDevelopment())
             {
@@ -69,7 +71,16 @@ namespace LetPortal.WebApis
                 options.EnableCheckTraceId = true;
                 options.EnableWrapException = true;
             });
-            app.UseMvc();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
             app.UseOpenApi();
             app.UseSwaggerUi3();
         }

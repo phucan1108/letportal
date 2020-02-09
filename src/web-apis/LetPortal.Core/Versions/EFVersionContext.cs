@@ -75,7 +75,17 @@ namespace LetPortal.Core.Versions
 
         public void ExecuteRaw(string rawCommand)
         {
-            _context.Database.ExecuteSqlCommand(rawCommand);
+            var dbTransaction = _context.Database.BeginTransaction();
+            try
+            {    
+                _context.Database.ExecuteSqlRaw(rawCommand);
+                dbTransaction.Commit();
+            }
+            catch
+            {
+                dbTransaction.Rollback();
+                throw;
+            }
         }
 
         public void InsertData<T>(T entity) where T : Entity
