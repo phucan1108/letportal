@@ -99,7 +99,7 @@ namespace LetPortal.ServiceManagement.Repositories
             }
             else if(_options.ConnectionType == ConnectionType.MySQL)
             {
-                optionsBuilder.UseMySQL(_options.ConnectionString);
+                optionsBuilder.UseMySql(_options.ConnectionString);
             }
         }
 

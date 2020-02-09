@@ -68,10 +68,13 @@ namespace LetPortal.Portal.Executions.Mongo
             }
 
             // Add Filter Options if had
-            if(fetchDataModel.FilterGroupOptions.FilterGroups[0].FilterOptions.Count > 0)
-            {
-                aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Match(BuildFilters(fetchDataModel.FilterGroupOptions.FilterGroups)));
-            }
+            if (fetchDataModel.FilterGroupOptions != null 
+                && fetchDataModel.FilterGroupOptions.FilterGroups != null
+                    && fetchDataModel.FilterGroupOptions.FilterGroups.Count > 0
+                        && (fetchDataModel.FilterGroupOptions.FilterGroups[0].FilterOptions.Count > 0))
+            {   
+               aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Match(BuildFilters(fetchDataModel.FilterGroupOptions.FilterGroups)));                
+            }             
 
             // Projection only columns
             BsonDocument projectDoc = new BsonDocument();

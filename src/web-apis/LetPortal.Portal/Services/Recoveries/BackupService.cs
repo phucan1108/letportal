@@ -103,7 +103,8 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var backupFileModel = new BackupFlatternFileModel
             {
-                TotalObjects = totalBackupCount
+                TotalObjects = totalBackupCount,
+                ChainingFiles = new List<string>()
             };
 
             var backup = new Backup
@@ -470,6 +471,6 @@ namespace LetPortal.Portal.Services.Recoveries
 
         public int TotalObjects { get; set; }
 
-        public List<string> ChainingFiles { get; }
+        public List<string> ChainingFiles { get; set; }
     }
 }
