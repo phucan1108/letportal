@@ -1,0 +1,61 @@
+{
+  "DatabasesList": [
+    {
+      "ConnectionString": "mongodb://localhost:27017",
+      "DatabaseConnectionType": "MongoDB"
+    },
+    {
+      "ConnectionString": "Host=localhost;Port=5432;Database={0};Username=postgres;Password=123456",
+      "DatabaseConnectionType": "PostgreSQL"
+    },
+    {
+      "ConnectionString": "Server=.;Database={0};User Id=sa;Password = 123456;",
+      "DatabaseConnectionType": "SQLServer"
+    },
+    {
+      "ConnectionString": "server=localhost;uid=root;pwd=123456;database={0}",
+      "DatabaseConnectionType": "MySQL"
+    }
+  ],
+  "MapperOptions": {
+    "MySQL": {
+      "decimal": "Decimal",
+      "double": "Double",
+      "float": "Float",
+      "timespan": "Int64",
+      "long": "Int64",
+      "int": "Int32",
+      "bool": "Bit",
+      "date": "Datetime",
+      "string": "LongText"
+    },
+    "PostgreSQL": {
+      "decimal": "Money",
+      "double": "Double",
+      "float": "Double",
+      "timespan": "Bigint",
+      "long": "Bigint",
+      "int": "Integer",
+      "bool": "Boolean",
+      "date": "Date",
+      "string": "Text"
+    },
+    "SQLServer": {
+      "decimal": "Decimal",
+      "double": "Float",
+      "float": "Float",
+      "timespan": "BigInt",
+      "long": "BigInt",
+      "int": "Int",
+      "bool": "Bit",
+      "date": "DateTime",
+      "string": "NVarChar"
+    }
+  },
+  "RunningConnectionTypes": [
+    "MongoDB",
+    "PostgreSQL",
+    "SQLServer",
+    "MySQL"
+  ]
+}
