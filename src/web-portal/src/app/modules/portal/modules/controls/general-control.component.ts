@@ -6,16 +6,17 @@ import * as _ from 'lodash';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { PageControl, ControlType, ValidatorType, DatasourceControlType, EventActionType, PageControlAsyncValidator, FilesClient } from 'services/portal.service';
 import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { PageStateModel } from 'stores/pages/page.state';
-import { filter, tap, debounceTime } from 'rxjs/operators';
+import { filter, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ChangeControlValueEvent } from 'stores/pages/page.actions';
 import { PageControlEventStateModel } from 'stores/pages/pagecontrol.state';
 import { PageService } from 'services/page.service';
 import { NGXLogger } from 'ngx-logger';
 import { EventsProvider } from 'app/core/events/event.provider';
 import { UploadFileService } from 'services/uploadfile.service';
+import { MarkdownService } from 'ngx-markdown';
 
 @Component({
     selector: 'let-general-control',
@@ -48,25 +49,27 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
     currentAsyncErrorName: string
     hasAsyncInvalid: boolean = false
 
+    // Check full documentation of Markdown Editor: https://github.com/ghiscoding/angular-markdown-editor
     markdownContent: string
-    markdownMode = 'editor'
+    // see full markdown options: https://github.com/ghiscoding/angular-markdown-editor/blob/master/src/lib/angular-markdown-editor/global-editor-options.ts
     markdownOptions = {
-        showPreviewPanel: true,    // Show preview panel, Default is true
-        showBorder: false,          // Show editor component's border. Default is true
-        hideIcons: ['FullScreen'], //['Bold', 'Italic', 'Heading', 'Refrence', 'Link', 'Image', 'Ul', 'Ol', 'Code', 'TogglePreview', 'FullScreen'],
-        usingFontAwesome5: false,   // Using font awesome with version 5, Default is false
-        scrollPastEnd: 0,        // The option for ace editor. Default is 0
-        enablePreviewContentClick: false,  // Allow user fire the click event on the preview panel, like href etc. Default is false
-        resizable: false,           // Allow resize the editor
-        markedjsOp: null  // The markedjs option, see https://marked.js.org/#/USING_ADVANCED.md#options
+        iconlibrary: 'fa',
+        fullscreen: {
+            enable: false,
+            icons: null
+        },
+        onChange: (e: any) => this.mardownChanged(e),
+        parser: (val) => this.markdownService.compile(val.trim())
     }
+    markdownValue$ = new BehaviorSubject<string>('');
     constructor(
         @Optional() private eventsProvider: EventsProvider,
         private pageService: PageService,
         private uploadService: UploadFileService,
+        private markdownService: MarkdownService,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef
-    ) { 
+    ) {
     }
 
     ngOnInit(): void {
@@ -74,11 +77,12 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
             filter(state => state && (state.controlFullName === this.controlFullName)),
             tap(
                 state => {
+                    let tempData = ObjectUtils.clone(state.data)
                     // Implement some function events there based on control type
                     switch (state.eventType) {
 
                         case 'change':
-                            this.formGroup.get(this.control.name).setValue(state.data)
+                            this.formGroup.get(this.control.name).setValue(tempData)
                             break
                         case 'reset':
                             this.formGroup.get(this.control.name).setValue(this.defaultData)
@@ -115,6 +119,9 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
                 }
             )
         ).subscribe()
+
+        
+
         this.generateValidators()
         this.maxLength = this.getMaxLength()
         this.defaultData = this.formGroup.get(this.control.name).value
@@ -122,6 +129,19 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
             || this.control.type === ControlType.AutoComplete
             || this.control.type === ControlType.Radio) {
             this.generateOptions()
+        }
+
+        if (this.control.type === ControlType.MarkdownEditor) {
+            this.markdownContent = this.defaultData
+            this.markdownValue$.pipe(
+                debounceTime(500),
+                distinctUntilChanged(),
+                tap(
+                    res => {
+                        this.pageService.changeControlValue(this.controlFullName, res)
+                    }
+                )
+            ).subscribe()
         }
         this.asyncValidators = this.control.asyncValidators ? this.control.asyncValidators : []
         this.controlFullName = this.section.name + '_' + this.control.name
@@ -135,6 +155,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
     notifyControlValueChange() {
         this.formGroup.get(this.control.name).valueChanges.pipe(
             debounceTime(500),
+            distinctUntilChanged(),
             tap(
                 newValue => {
                     this.hasAsyncInvalid = this.isInvalidAsync()
@@ -221,6 +242,9 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
             return parseInt(validatorMaxLength.validatorOption)
         }
         return -1
+    }
+    mardownChanged($event) {
+        this.markdownValue$.next($event.getContent())
     }
 
     private generateValidators() {

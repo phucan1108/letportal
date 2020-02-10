@@ -342,7 +342,7 @@ namespace LetPortal.Versions.Pages
                         Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
                         Name = "Cancel",
                         Icon = "close",
-                        Color = "basic",
+                        Color = "primary",
                         AllowHidden = "false",
                         ButtonOptions = new ButtonOptions
                         {

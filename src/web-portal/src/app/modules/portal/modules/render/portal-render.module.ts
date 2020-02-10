@@ -74,6 +74,7 @@ import { FilterSelectComponent } from './components/chart/controls/filter-select
 import { FilterNumberComponent } from './components/chart/controls/filter-number.component';
 import { AngularMarkdownEditorModule } from 'angular-markdown-editor'
 import { FilterRadioComponent } from './components/chart/controls/filter-radio.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -145,13 +146,8 @@ export const FULL_MONTH_FORMATS = {
             }
 		}),
 		NgxChartsModule,
-		AngularMarkdownEditorModule.forRoot({ 
-			iconlibrary: 'fa',
-			fullscreen: {
-				enable: false,
-				icons: null
-			}
-		})
+		AngularMarkdownEditorModule.forRoot(),
+		MarkdownModule.forRoot()
 	],
 	entryComponents: [
 		DynamicListDataDialogComponent

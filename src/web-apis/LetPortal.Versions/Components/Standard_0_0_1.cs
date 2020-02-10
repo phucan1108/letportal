@@ -21,7 +21,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d25f6abe88d28422061cfaf",
                 Name = "database-form",
                 DisplayName = "Database Form",
-                LayoutType = PageSectionLayoutType.TwoColumns,
+                LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
@@ -271,7 +271,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d3836194d8fa90874135d68",
                 Name = "app-form",
                 DisplayName = "App Form",
-                LayoutType = PageSectionLayoutType.TwoColumns,
+                LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl

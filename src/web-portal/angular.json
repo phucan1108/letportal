@@ -36,11 +36,17 @@
               "./node_modules/quill/dist/quill.snow.css",
               "./node_modules/quill-emoji/dist/quill-emoji.css",
               "./node_modules/quill-mention/dist/quill.mention.min.css",
-              "./node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css"
+              "./node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css",
+              "./node_modules/prismjs/themes/prism.css"
             ],
             "scripts": [
               "./node_modules/quill/dist/quill.min.js",
-              "./node_modules/bootstrap-markdown/js/bootstrap-markdown.js"
+              "./node_modules/bootstrap-markdown/js/bootstrap-markdown.js",
+              "./node_modules/marked/lib/marked.js",
+              "./node_modules/prismjs/prism.js",
+              "./node_modules/prismjs/components/prism-css.min.js",
+              "./node_modules/prismjs/components/prism-javascript.min.js",
+              "./node_modules/prismjs/components/prism-typescript.min.js"
             ],
             "es5BrowserSupport": true
           },

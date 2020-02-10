@@ -339,7 +339,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d6222ec3aae6a79ecf035e9",
                 Name = "register-form",
                 DisplayName = "Register Form",
-                LayoutType = PageSectionLayoutType.TwoColumns,
+                LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
