@@ -20,7 +20,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
 
     }
-    @ViewChild('jsonEditorQuery') editor: JsonEditorComponent;
+    @ViewChild('jsonEditorQuery', { static: false }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = {};
     isJsonEditorValid = true;

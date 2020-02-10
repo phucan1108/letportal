@@ -25,7 +25,7 @@ export class PageButtonDialogComponent implements OnInit {
     _colors = StaticResources.colorButtons()
     isEditMode = false
 
-    @ViewChild('actionOptions') actionOptions: CommandOptionsComponent
+    @ViewChild('actionOptions', { static: false }) actionOptions: CommandOptionsComponent
 
     constructor(
         public dialogRef: MatDialogRef<PageButtonGridComponent>,

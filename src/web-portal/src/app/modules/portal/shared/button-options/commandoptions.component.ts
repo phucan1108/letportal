@@ -39,13 +39,13 @@ export class CommandOptionsComponent implements OnInit {
 
     notificationOptionsForm: FormGroup
 
-    @ViewChild('jsonPayloadEditor') jsonPayloadEditor: JsonEditorComponent
+    @ViewChild('jsonPayloadEditor', { static: false }) jsonPayloadEditor: JsonEditorComponent
     public editorOptions1: JsonEditorOptions = new JsonEditorOptions()
     jsonHttpBodyData: any = {};
     isJsonHttpBodyEditorValid = true;
     _httpMethods = StaticResources.httpCallMethods()
 
-    @ViewChild('jsonDataEditor') jsonDataEditor: JsonEditorComponent
+    @ViewChild('jsonDataEditor', { static: false }) jsonDataEditor: JsonEditorComponent
     public editorOptions3: JsonEditorOptions = new JsonEditorOptions()
     jsonData: any = {}
     databaseConnections: Observable<Array<DatabaseConnection>>;

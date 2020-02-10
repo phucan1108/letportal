@@ -43,7 +43,7 @@ export class CommandModalComponent implements OnInit {
         modes: ['database', 'http', 'workflow', 'redirect']
     }
     isSmallDevice = false
-    @ViewChild('actionOptions') actionOptions: CommandOptionsComponent            
+    @ViewChild('actionOptions', { static: true }) actionOptions: CommandOptionsComponent            
 
     constructor(
         public dialogRef: MatDialogRef<CommandModalComponent>,

@@ -17,7 +17,7 @@ import { PageBuilderState, PageBuilderStateModel } from 'stores/pages/pagebuilde
     templateUrl: './page-event-grid.component.html'
 })
 export class PageEventGridComponent implements OnInit {
-    @ViewChild('table') table: MatTable<PageEvent>;
+    @ViewChild('table', { static: true }) table: MatTable<PageEvent>;
 
     displayedListColumns = ['eventKey', 'sourceName', 'actions'];
     availableEvents: Array<string> = []

@@ -5,11 +5,11 @@ import { ErrorComponent } from './modules/error/error.component';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: './modules/login/login.module#LoginModule'
+    loadChildren: () => import('./modules/login/login.module').then(m => m.LoginModule)
   },
   {
     path: 'portal',
-    loadChildren: './modules/portal/portalpages.module#PortalPagesModule'
+    loadChildren: () => import('./modules/portal/portalpages.module').then(m => m.PortalPagesModule)
   },
   {
     path: '404',

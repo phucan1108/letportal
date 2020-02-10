@@ -14,7 +14,7 @@ export class PageButtonOptionsDialogComponent implements OnInit {
 
     buttonOptions: ButtonOptions
 
-    @ViewChild('buttonOptionsComponent')buttonOptionsComponent: ButtonOptionsComponent
+    @ViewChild('buttonOptionsComponent', { static: true })buttonOptionsComponent: ButtonOptionsComponent
     constructor(public dialogRef: MatDialogRef<PageButtonGridComponent>,
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any,

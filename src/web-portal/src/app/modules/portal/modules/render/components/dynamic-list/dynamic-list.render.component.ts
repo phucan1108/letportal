@@ -30,7 +30,7 @@ import { TriggeredControlEvent } from 'app/core/models/page.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
-    @ViewChild(DynamicListGridComponent)
+    @ViewChild(DynamicListGridComponent, { static: true })
     dynamicListGrid: DynamicListGridComponent
 
     @Input()

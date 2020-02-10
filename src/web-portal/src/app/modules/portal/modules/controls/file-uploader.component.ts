@@ -14,7 +14,7 @@ import { forkJoin } from 'rxjs';
     styleUrls: ['./file-uploader.component.scss']
 })
 export class FileUploaderComponent implements OnInit {
-    @ViewChild('fileInput') fileInput: ElementRef
+    @ViewChild('fileInput', { static: true }) fileInput: ElementRef
 
     @Input()
     form: FormGroup
@@ -108,7 +108,7 @@ export class FileUploaderComponent implements OnInit {
             uploadingProgressObserables.push(this.progress[key].completed);
         }
 
-        forkJoin(uploadingProgressObserables).subscribe(responseFiles => {
+        forkJoin(uploadingProgressObserables).subscribe((responseFiles: any[]) => {
             if (!this.multiple) {
                 this.logger.debug('current control options', this.control.defaultOptions)
                 this.form.get(this.formControlKey).setValue(this.control.defaultOptions.allowfileurl ? responseFiles[0].response.downloadableUrl : responseFiles[0].response.fileId)

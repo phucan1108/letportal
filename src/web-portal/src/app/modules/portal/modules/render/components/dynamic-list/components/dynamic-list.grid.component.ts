@@ -22,11 +22,11 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 })
 export class DynamicListGridComponent implements OnInit {
 
-    @ViewChild('matTable')
+    @ViewChild('matTable', { static: false })
     private matTable: MatTable<any>;
-    @ViewChild(MatPaginator)
+    @ViewChild(MatPaginator, { static: false })
     private paginator: MatPaginator;
-    @ViewChild(MatSort)
+    @ViewChild(MatSort, { static: true })
     private sort: MatSort;
 
     @Input()

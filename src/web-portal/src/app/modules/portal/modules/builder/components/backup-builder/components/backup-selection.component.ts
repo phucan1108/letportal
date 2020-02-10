@@ -29,7 +29,7 @@ export class BackupSelectionComponent implements OnInit {
     @Output()
     selectionEntitiesChanged = new EventEmitter<any>()
     
-    @ViewChild('tree')
+    @ViewChild('tree', { static: false })
     tree: MatTree<any>
     selectedEntities$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     selectedEntities: ShortEntityModel[] = []

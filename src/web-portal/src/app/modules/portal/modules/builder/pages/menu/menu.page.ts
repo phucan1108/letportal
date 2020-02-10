@@ -23,7 +23,7 @@ import { SessionService } from 'services/session.service';
 })
 export class MenuPage implements OnInit, AfterViewInit {
    
-    @ViewChild(MatTree) 
+    @ViewChild(MatTree, { static: true }) 
     tree: MatTree<any>;
 
     private transformer = (node: ExtendedMenu, level: number) => {

@@ -10,7 +10,7 @@ import { NGXLogger } from 'ngx-logger';
     templateUrl: './httpoptions.component.html'
 })
 export class HttpOptionsComponent implements OnInit {
-    @ViewChild('jsonPayloadEditor') jsonPayloadEditor: JsonEditorComponent
+    @ViewChild('jsonPayloadEditor', { static: true }) jsonPayloadEditor: JsonEditorComponent
     public editorOptions1: JsonEditorOptions = new JsonEditorOptions()
 
     jsonHttpBodyData: any = {}

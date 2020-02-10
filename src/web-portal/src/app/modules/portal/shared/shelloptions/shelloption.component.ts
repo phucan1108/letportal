@@ -19,9 +19,9 @@ import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
 export class ShellOptionComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
     }
-    @ViewChild('table') table: MatTable<ExtendedShellOption>;
+    @ViewChild('table', { static: false }) table: MatTable<ExtendedShellOption>;
 
-    @ViewChild('mtable')
+    @ViewChild('mtable', { static: true })
     mtable: DataTable;
 
     displayedListColumns = ['hint', 'key', 'value', 'actions']

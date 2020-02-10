@@ -43,7 +43,7 @@ import { AsyncValidatorDialogComponent } from './control-async-validator.dialog.
     ]
 })
 export class ControlsGridComponent implements OnInit {
-    @ViewChild('table') table: MatTable<ExtendedPageControl>;
+    @ViewChild('table', { static: false }) table: MatTable<ExtendedPageControl>;
 
     controls: Array<ExtendedPageControl>
 

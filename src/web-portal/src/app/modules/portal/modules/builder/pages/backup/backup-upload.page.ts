@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./backup-upload.page.scss']
 })
 export class BackupUploadpage implements OnInit {
-    @ViewChild('fileInput') fileInput: ElementRef
+    @ViewChild('fileInput', { static: true }) fileInput: ElementRef
     form: FormGroup
 
     isMaximumSize = false

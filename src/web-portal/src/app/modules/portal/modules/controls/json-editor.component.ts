@@ -7,7 +7,7 @@ import { FormGroup } from '@angular/forms';
     templateUrl: './json-editor.component.html'
 })
 export class JsonEditorCustomComponent implements OnInit {
-    @ViewChild(JsonEditorComponent) editor: JsonEditorComponent;
+    @ViewChild(JsonEditorComponent, { static: true }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = '';
 

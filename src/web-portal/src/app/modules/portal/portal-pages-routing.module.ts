@@ -17,12 +17,12 @@ const routes: Routes = [
             },            
             {
                 path: 'builder',
-                loadChildren: './modules/builder/portal-builder.module#PortalBuilderModule',
+                loadChildren: () => import('./modules/builder/portal-builder.module').then(m => m.PortalBuilderModule),
                 canActivate: [AuthGuard, CanActivePortal]
             },
             {
                 path: 'page',
-                loadChildren: './modules/render/portal-render.module#PortalRenderModule',                
+                loadChildren: () => import('./modules/render/portal-render.module').then(m => m.PortalRenderModule),                
                 canActivate: [AuthGuard , CanActivePortal]
             }
         ]

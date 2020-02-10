@@ -15,7 +15,6 @@ import { PageControlEventStateModel } from 'stores/pages/pagecontrol.state';
 import { PageService } from 'services/page.service';
 import { NGXLogger } from 'ngx-logger';
 import { EventsProvider } from 'app/core/events/event.provider';
-import { UploadResult } from 'ngx-markdown-editor';
 import { UploadFileService } from 'services/uploadfile.service';
 
 @Component({
@@ -68,7 +67,6 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
         private logger: NGXLogger,
         private cd: ChangeDetectorRef
     ) { 
-        this.markdownUpload = this.markdownUpload.bind(this)
     }
 
     ngOnInit(): void {
@@ -224,12 +222,6 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
         }
         return -1
     }
-
-    markdownUpload(files: Array<File>): Promise<Array<UploadResult>> {
-        // do upload file by yourself
-        this.uploadService.upload(new Set<File>(files))
-        return Promise.resolve([{ name: 'xxx', url: 'xxx.png', isImg: true }]);
-      }
 
     private generateValidators() {
         _.forEach(this.control.validators, validator => {

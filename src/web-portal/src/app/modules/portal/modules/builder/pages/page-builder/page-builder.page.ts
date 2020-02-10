@@ -33,7 +33,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     }]
 })
 export class PageBuilderPage implements OnInit {
-    @ViewChild('table') table: MatTable<ExtendedShellOption>;
+    @ViewChild('table', { static: false }) table: MatTable<ExtendedShellOption>;
     loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     //#region New changes

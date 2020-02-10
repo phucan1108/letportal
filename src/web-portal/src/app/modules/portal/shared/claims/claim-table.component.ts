@@ -14,7 +14,7 @@ import { StaticResources } from 'portal/resources/static-resources';
     templateUrl: './claim-table.component.html'
 })
 export class ClaimTableComponent implements OnInit {
-    @ViewChild('table') table: MatTable<PortalClaim>;
+    @ViewChild('table', { static: true }) table: MatTable<PortalClaim>;
     @Input()
     claims: Array<PortalClaim> = []
 

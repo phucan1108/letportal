@@ -41,7 +41,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
 
     isEditMode = false
 
-    @ViewChild(DatabaseOptionsComponent) dbOptionsComponent: DatabaseOptionsComponent 
+    @ViewChild(DatabaseOptionsComponent, { static: false }) dbOptionsComponent: DatabaseOptionsComponent 
 
     constructor(
         public dialogRef: MatDialogRef<ControlsGridComponent>,

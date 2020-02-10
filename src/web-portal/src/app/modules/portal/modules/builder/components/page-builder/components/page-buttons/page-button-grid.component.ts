@@ -22,7 +22,7 @@ import { NGXLogger } from 'ngx-logger';
     templateUrl: './page-button-grid.component.html'
 })
 export class PageButtonGridComponent implements OnInit {
-    @ViewChild('table') table: MatTable<PageButton>;
+    @ViewChild('table', { static: true }) table: MatTable<PageButton>;
     currentActionCommands: Array<PageButton> = []
 
     selection = new SelectionModel<PageButton>(true, []);

@@ -21,9 +21,9 @@ export class SuggestionHintOptions {
     }
 })
 export class SuggestionHintComponent implements OnInit, AfterViewInit {
-    @ViewChild('formNameInput') formNameInput: ElementRef;
-    @ViewChild('suggestionHint') suggestionHint: ElementRef;
-    @ViewChild('spanTextWrap') spanTextWrap: ElementRef;
+    @ViewChild('formNameInput', { static: true }) formNameInput: ElementRef;
+    @ViewChild('suggestionHint', { static: true }) suggestionHint: ElementRef;
+    @ViewChild('spanTextWrap', { static: true }) spanTextWrap: ElementRef;
 
     @Input()
     options: SuggestionHintOptions

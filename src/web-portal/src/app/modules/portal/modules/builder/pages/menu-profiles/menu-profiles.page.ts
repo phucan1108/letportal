@@ -17,7 +17,7 @@ import { ExtendedMenu, MenuNode } from 'portal/modules/models/menu.model';
     templateUrl: './menu-profiles.page.html'
 })
 export class MenuProfilesPage implements OnInit {
-    @ViewChild('menuTree')
+    @ViewChild('menuTree', { static: false })
     menuTree: MatTree<any>;
 
     private transformer = (node: ExtendedMenu, level: number) => {

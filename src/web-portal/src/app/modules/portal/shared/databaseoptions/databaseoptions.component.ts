@@ -25,7 +25,7 @@ export class DatabaseOptionsComponent implements OnInit {
     isMongoDb = true
     code = ''
 
-    @ViewChild('jsonDataEditor') jsonDataEditor: JsonEditorComponent
+    @ViewChild('jsonDataEditor', { static: false }) jsonDataEditor: JsonEditorComponent
     public editorOptions3: JsonEditorOptions = new JsonEditorOptions()
     jsonData: any = {}
     databaseConnections$: Observable<Array<DatabaseConnection>>;

@@ -43,7 +43,7 @@ export class DynamicListBuilderPage implements OnInit {
 
     isCanSubmit = false;
 
-    @ViewChild(CommandGridComponent) commandGrid: CommandGridComponent
+    @ViewChild(CommandGridComponent, { static: true }) commandGrid: CommandGridComponent
 
     constructor(
         private pageService: PageService,

@@ -24,7 +24,7 @@ export class PageButtonRouteDialogComponent implements OnInit {
     isCreateRouteForm = false
     currentRoute: Route
     routeFormGroup: FormGroup
-    @ViewChild(PageRouteComponent) pageRouteForm: PageRouteComponent
+    @ViewChild(PageRouteComponent, { static: false }) pageRouteForm: PageRouteComponent
     constructor(
         public dialogRef: MatDialogRef<PageButtonGridComponent>,
         public dialog: MatDialog,

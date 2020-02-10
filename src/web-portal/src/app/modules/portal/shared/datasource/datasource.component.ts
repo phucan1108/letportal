@@ -11,8 +11,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
     templateUrl: './datasource.component.html'
 })
 export class DatasourceDialogComponent implements OnInit {
-    @ViewChild('formDirective') ngForm: NgForm;
-    @ViewChild(JsonEditorComponent) editor: JsonEditorComponent;
+    @ViewChild('formDirective', { static: true }) ngForm: NgForm;
+    @ViewChild(JsonEditorComponent, { static: true }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any;
 

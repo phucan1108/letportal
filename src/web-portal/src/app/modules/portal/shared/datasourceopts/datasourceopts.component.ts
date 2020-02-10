@@ -16,17 +16,17 @@ import * as _ from 'lodash';
 })
 export class DatasourceOptionsDialogComponent implements OnInit {
 
-    @ViewChild('jsonEditorQuery') editor: JsonEditorComponent;
+    @ViewChild('jsonEditorQuery', { static: false }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = {};
     isJsonEditorValid = true;
 
-    @ViewChild('jsonStaticEditorQuery') staticEditor: JsonEditorComponent;
+    @ViewChild('jsonStaticEditorQuery', { static: false }) staticEditor: JsonEditorComponent;
     jsonStaticOptions = new JsonEditorOptions();
     staticJsonData: any = {};
     isJsonStaticEditorValid = true;
 
-    @ViewChild('jsonBodyEditorQuery') httpBodyEditor: JsonEditorComponent;
+    @ViewChild('jsonBodyEditorQuery', { static: false }) httpBodyEditor: JsonEditorComponent;
     jsonHttpBodyOptions = new JsonEditorOptions();
     httpBodyJsonData: any = {};
     isJsonHttpBodyEditorValid = true;

@@ -22,7 +22,7 @@ import { SelectablePortalClaim, ClaimNode } from 'portal/modules/models/role-cla
     styleUrls: ['./role-claims.page.scss']
 })
 export class RoleClaimsPage implements OnInit {
-    @ViewChild('claimTree')
+    @ViewChild('claimTree', { static: false })
     claimTree: MatTree<any>;
     private transformer = (node: SelectablePortalClaim, level: number) => {
         let claimNode: ClaimNode = {

@@ -18,7 +18,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     templateUrl: './page-datasource.grid.component.html'
 })
 export class PageDatasourceGridComponent implements OnInit {
-    @ViewChild('table') table: MatTable<PageDatasource>;
+    @ViewChild('table', { static: false }) table: MatTable<PageDatasource>;
 
     displayedListColumns = ['datasourceName', 'triggerCondition', 'isActive', 'actions'];
     currentDatasources: Array<PageDatasource> = []

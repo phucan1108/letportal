@@ -22,7 +22,7 @@ export class ButtonOptionsComponent implements OnInit {
         modes: ['database', 'http', 'workflow']
     }
 
-    @ViewChild('actionOptions') actionOptions: CommandOptionsComponent
+    @ViewChild('actionOptions', { static: true }) actionOptions: CommandOptionsComponent
 
     constructor(
         private logger: NGXLogger,
