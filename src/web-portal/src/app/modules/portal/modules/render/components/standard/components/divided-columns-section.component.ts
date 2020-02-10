@@ -98,16 +98,18 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     }
 
     prepareRender() {
+        // By default, OneColumn must be separated two columns for all controls
+        // another layout must be kept one col
         switch (this.section.relatedStandard.layoutType) {
             case PageSectionLayoutType.OneColumn:
-                this._numberOfColumns = 1
-                this._labelClass = "col-lg-2 col-form-label"
-                this._boundedClass = "col-lg-6"
-                break;
-            case PageSectionLayoutType.TwoColumns:
                 this._numberOfColumns = 2
                 this._labelClass = "col-lg-2 col-form-label"
                 this._boundedClass = "col-lg-4"
+                break;
+            default:
+                this._numberOfColumns = 1
+                this._labelClass = "col-lg-2 col-form-label"
+                this._boundedClass = "col-lg-10"
                 break
         }
     }

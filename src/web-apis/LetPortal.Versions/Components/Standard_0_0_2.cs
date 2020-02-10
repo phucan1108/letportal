@@ -22,7 +22,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d615e501773a96ee8eb5ed3",
                 Name = "user-form",
                 DisplayName = "User Form",
-                LayoutType = PageSectionLayoutType.TwoColumns,
+                LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
