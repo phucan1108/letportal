@@ -69,7 +69,7 @@ namespace LetPortal.Versions.Pages
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
                             DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                             {
-                                DatabaseConnectionId = Constants.CoreDatabaseId,
+                                DatabaseConnectionId = Constants.IdentityDatabaseId,
                                 EntityName = "roles",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                     "{\"$query\":{\"roles\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
@@ -101,7 +101,7 @@ namespace LetPortal.Versions.Pages
                                 ActionType = ActionType.ExecuteDatabase,
                                 DatabaseOptions = new DatabaseOptions
                                 {
-                                    DatabaseConnectionId = Constants.CoreDatabaseId,
+                                    DatabaseConnectionId = Constants.IdentityDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"normalizedName\": \"{{data.name.toUpperCase()}}\" }\r\n  }\r\n}"
                                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
@@ -151,7 +151,7 @@ namespace LetPortal.Versions.Pages
                                 ActionType = ActionType.ExecuteDatabase,
                                 DatabaseOptions = new DatabaseOptions
                                 {
-                                    DatabaseConnectionId = Constants.CoreDatabaseId,
+                                    DatabaseConnectionId = Constants.IdentityDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
                                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
@@ -367,7 +367,7 @@ namespace LetPortal.Versions.Pages
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
                             DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                             {
-                                DatabaseConnectionId = Constants.CoreDatabaseId,
+                                DatabaseConnectionId = Constants.IdentityDatabaseId,
                                 EntityName = "roles",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                     "{\"$query\":{\"users\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
@@ -399,7 +399,7 @@ namespace LetPortal.Versions.Pages
                                 ActionType = ActionType.ExecuteDatabase,
                                 DatabaseOptions = new DatabaseOptions
                                 {
-                                    DatabaseConnectionId = Constants.CoreDatabaseId,
+                                    DatabaseConnectionId = Constants.IdentityDatabaseId,
                                     Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                         "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\", \"normalizedEmail\":\"{{data.email.toUpperCase()}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
                                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
