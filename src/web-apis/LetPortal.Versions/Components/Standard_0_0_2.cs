@@ -313,7 +313,7 @@ namespace LetPortal.Versions.Components
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
                             DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                             {
-                                DatabaseConnectionId = Constants.CoreDatabaseId,
+                                DatabaseConnectionId = Constants.IdentityDatabaseId,
                                 EntityName = "roles",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                 "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$project\": {\r\n          \"name\": \"$displayName\",\r\n          \"value\": \"$name\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
