@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement;
 using LetPortal.ServiceManagement.Providers;
 using LetPortal.ServiceManagement.Repositories;
@@ -20,6 +21,7 @@ namespace LetPortal.ServiceManagementApis
 
         public Startup(IConfiguration configuration)
         {
+            Console.WriteLine("Start a startup class");
             Configuration = configuration;
         }
 
@@ -28,6 +30,7 @@ namespace LetPortal.ServiceManagementApis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.WriteLine("Start configuring services");
             services.AddHttpContextAccessor();
             services.AddServiceManagement(Configuration);
             services
@@ -37,6 +40,7 @@ namespace LetPortal.ServiceManagementApis
                     // Important note: we still use Newtonsoft instead of .NET JSON because they still don't support Timezone
                     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 });
+            Console.WriteLine("End configuring services");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,6 +92,7 @@ namespace LetPortal.ServiceManagementApis
 
         private void OnStop()
         {
+            Console.WriteLine("Stop all services");
             serviceManagementProvider.ShutdownAllServices();
         }
     }
