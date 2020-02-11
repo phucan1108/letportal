@@ -24,7 +24,6 @@ import { ConfigurationProvider } from '../configs/configProvider';
 import { CustomHttpService } from './customhttp.service';
 import { ObjectUtils } from '../utils/object-util';
 import { SessionService } from './session.service';
-import { stat } from 'fs';
 
 /**
  * This class contains all base methods for interacting with Page
