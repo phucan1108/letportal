@@ -47,8 +47,7 @@ namespace LetPortal.Portal.Repositories.Pages
                             ds.Options.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(ds.Options.DatabaseOptions.Query, true));
                         }
                     }
-                }
-
+                }    
 
                 // Commands
                 if(page.Commands != null)

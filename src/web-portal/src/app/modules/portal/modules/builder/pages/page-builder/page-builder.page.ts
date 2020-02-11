@@ -230,7 +230,7 @@ export class PageBuilderPage implements OnInit {
             const _title = "Save changes"
             const _description = "Are you sure to save all changes?"
             const _waitDesciption = "Waiting..."
-            const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption, MessageType.Delete);
+            const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption, this.isEditMode ? MessageType.Update : MessageType.Create);
             dialogRef.afterClosed().subscribe(res => {
                 if (!res) {
                     return;

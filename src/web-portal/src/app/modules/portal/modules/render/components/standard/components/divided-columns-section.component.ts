@@ -206,25 +206,36 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         let tempSectionData = new Object()
         let foundDatasource: PageLoadedDatasource
         let sectionBoundData = {}
+        // When a 'data' is bind name, so we need to keep a default structure of data. Ex: data.id, data.name
+        // If bind name isn't 'data', we need to add sectioname to binding data.Ex: data.section1.id
         let isKeepDataSection = this.section.sectionDatasource.datasourceBindName === 'data'
         let sectionsMap: MapDataControl[] = []
         let hasDatasources = this.datasources.length > 0
-        if (hasDatasources &&
-            this.section.sectionDatasource.datasourceBindName &&
-            (this.section.sectionDatasource.datasourceBindName.indexOf('data.') === 0
-                || isKeepDataSection)) {
-            foundDatasource = _.find(this.datasources, ds => ds.name === 'data')
 
-            const execute = new Function('data', 'return ' + this.section.sectionDatasource.datasourceBindName)
-            sectionBoundData = execute(foundDatasource.data)
+        if (hasDatasources &&
+            this.section.sectionDatasource.datasourceBindName) {
+
+            let foundDatasource: any;
+
+            if ((this.section.sectionDatasource.datasourceBindName.indexOf('data.') === 0
+                || isKeepDataSection)) {
+                foundDatasource = _.find(this.datasources, ds => ds.name === 'data')
+                const execute = new Function('data', 'return ' + this.section.sectionDatasource.datasourceBindName)
+                sectionBoundData = execute(foundDatasource.data)
+            }
+            else {
+                foundDatasource = _.find(this.datasources, ds => ds.name === this.section.sectionDatasource.datasourceBindName)
+                const execute = new Function(this.section.sectionDatasource.datasourceBindName, 'return ' + this.section.sectionDatasource.datasourceBindName)
+                sectionBoundData = execute(foundDatasource.data)
+            }
         }
 
         if (!isKeepDataSection) {
             tempSectionData[this.section.name] = new Object()
         }
         _.forEach(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[], control => {
-            let controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control) 
-            
+            let controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control)
+
             let mapDataControl: MapDataControl
             if (isKeepDataSection) {
                 mapDataControl = {
@@ -244,7 +255,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                 }
                 sectionsMap.push(mapDataControl)
             }
-            
+
             formControls[control.name] = new FormControl({
                 value: this.getFormValue(control, controlData),
                 disabled: control.defaultOptions.checkDisabled
@@ -267,7 +278,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         if (controlBindName === 'id' || controlBindName === '_id') {
             const boundData = data['_id']
             if (!boundData) {
-                controlData =  data['id']
+                controlData = data['id']
             }
             else {
                 controlData = boundData
@@ -278,46 +289,46 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         }
 
         // Depends on control type, we need to doublecheck data and set default value if data is null
-        if(control.type == ControlType.AutoComplete || control.type == ControlType.Select){
-            if(controlData){
-                if(!ObjectUtils.isArray(controlData)){
-                    try{
+        if (control.type == ControlType.AutoComplete || control.type == ControlType.Select) {
+            if (controlData) {
+                if (!ObjectUtils.isArray(controlData)) {
+                    try {
                         let temp = JSON.parse(controlData)
                         controlData = temp
                     }
                     catch{
                         controlData = []
-                    }                        
+                    }
                 }
-            } 
-            else{
+            }
+            else {
                 controlData = []
-            }               
+            }
         }
-        else if(control.type == ControlType.Checkbox || control.type == ControlType.Slide){
-            if(controlData == 0 || controlData == 1){
+        else if (control.type == ControlType.Checkbox || control.type == ControlType.Slide) {
+            if (controlData == 0 || controlData == 1) {
                 control.defaultOptions.allowZero = true
             }
-            else if(controlData == 'Y' || controlData == 'N'){
+            else if (controlData == 'Y' || controlData == 'N') {
                 control.defaultOptions.allowYesNo = true
             }
-            else{
-                if(!ObjectUtils.isNotNull(controlData)){
+            else {
+                if (!ObjectUtils.isNotNull(controlData)) {
                     controlData = false
                 }
-            }            
+            }
         }
 
         controlData = ObjectUtils.isNotNull(controlData) ? controlData : null
         return controlData
     }
 
-    private getFormValue(control: PageRenderedControl<DefaultControlOptions>, controlData: any){
-        if(control.type ==  ControlType.Checkbox || control.type == ControlType.Slide){
-            if(control.defaultOptions.allowYesNo){
-                return controlData == 'Y' 
+    private getFormValue(control: PageRenderedControl<DefaultControlOptions>, controlData: any) {
+        if (control.type == ControlType.Checkbox || control.type == ControlType.Slide) {
+            if (control.defaultOptions.allowYesNo) {
+                return controlData == 'Y'
             }
-            else if(control.defaultOptions.allowZero){
+            else if (control.defaultOptions.allowZero) {
                 return controlData == 1
             }
         }

@@ -24,6 +24,7 @@ import { ConfigurationProvider } from '../configs/configProvider';
 import { CustomHttpService } from './customhttp.service';
 import { ObjectUtils } from '../utils/object-util';
 import { SessionService } from './session.service';
+import { stat } from 'fs';
 
 /**
  * This class contains all base methods for interacting with Page
@@ -130,6 +131,7 @@ export class PageService {
                     (state: PageStateModel) => {
                         switch (state.filterState) {
                             case UserClicksOnButtonAction:
+                                this.logger.debug('User has clicked on a button : ' + state.clickingButton.name)
                                 this.sectionValidationCounter = this.page.builder.sections.length
                                 if (state.clickingButton.isRequiredValidation) {
                                     this.store.dispatch(new GatherSectionValidations())

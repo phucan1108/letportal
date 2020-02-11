@@ -8,6 +8,7 @@ import { ControlEventExecution } from './events/control/control.event';
 import { currentTickTranslator } from './shell/translates/methods/currentTickTranslator';
 import { guidTranslator } from './shell/translates/methods/guidTranslator';
 import { bsonidTranslator } from './shell/translates/methods/bsonidTranslator';
+import { currentISODateTranslator } from './shell/translates/methods/currentISODateTranslator';
 
 /**
  * Declare all classes which contains a function to translate a expression data in {{ }}
@@ -17,6 +18,7 @@ export const TRANSLATOR_METHODS = [
     toJsonStringTranslator,
     currentDateTranslator,
     currentTickTranslator,
+    currentISODateTranslator,
     guidTranslator,
     bsonidTranslator
 ]

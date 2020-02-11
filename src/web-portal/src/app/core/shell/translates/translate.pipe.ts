@@ -7,6 +7,7 @@ import { TranslateConfigs } from './translate.configs';
 import { PageShellData } from 'app/core/models/page.model';
 import { PageParameterModel } from 'services/portal.service';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { NGXLogger } from 'ngx-logger';
 
 let shellConfigs: Array<ShellConfig> = []
 @Injectable({
@@ -18,7 +19,8 @@ export class Translator {
 
     constructor(
         @Optional() config: TranslateConfigs,
-        private shellConfigProvider: ShellConfigProvider) {
+        private shellConfigProvider: ShellConfigProvider,
+        private logger: NGXLogger) {
         this.shellConfigProvider.shellConfigs$.subscribe(shells => {
             shellConfigs = null
             shellConfigs = shells
@@ -73,7 +75,8 @@ export class Translator {
         })
 
         let params: PageParameterModel[] = []
-        _.forEach(foundReplacedConfigs, config => {
+        _.forEach(foundReplacedConfigs, config => {  
+            this.logger.debug('Replace config', config)          
             params.push({
                 name: config.key,
                 removeQuotes: config.replaceDQuote,
@@ -177,11 +180,16 @@ export class Translator {
 
     private generateReplacedValue(key: string, keyData: string, data: any): ShellConfig {
         let foundValue = null
-        if (keyData == 'data' && (key === 'data.id' || key === 'data._id')) {
-            let extractValueTemp = new Function('data', 'return data._id')
+
+        // For all id or _id, we must to doublecheck two cases
+        if(keyData == 'data' && (key.indexOf('.id') > 0 || key.indexOf('._id') > 0)){
+            let tempKey = key.replace('.id', '._id');
+            let extractValueTemp = new Function('data', 'return ' + tempKey)
             foundValue = extractValueTemp(data)
             if (foundValue === null || foundValue === undefined) {
-                extractValueTemp = new Function('data', 'return data.id')
+                // Case .id
+                let tempKeyId = key.replace('._id', '.id');
+                extractValueTemp = new Function('data', 'return ' + tempKeyId)
                 foundValue = extractValueTemp(data)
             }
         }

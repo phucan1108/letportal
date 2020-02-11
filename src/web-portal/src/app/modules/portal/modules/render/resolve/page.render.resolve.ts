@@ -13,6 +13,6 @@ export class PageRenderResolve implements Resolve<any> {
         state: RouterStateSnapshot
     ) {
         if(route.paramMap.get('pageName'))
-            return this.pagesClient.getOne(route.paramMap.get('pageName'));
+            return this.pagesClient.getOneForRender(route.paramMap.get('pageName'));
     }
 }

@@ -52,9 +52,7 @@ export class BuilderDnDComponent implements OnInit {
 
                                 this.pageSections = []
                                 _.forEach(tempEdit, (section: ExtendedPageSection) => {
-                                    this.pageSections.push({
-                                        ...section
-                                    })
+                                    this.pageSections.push(ObjectUtils.clone(section))
                                 })
                                 _.forEach(this.pageSections, (section: ExtendedPageSection) => {
                                     if (!section.sectionDatasource) {

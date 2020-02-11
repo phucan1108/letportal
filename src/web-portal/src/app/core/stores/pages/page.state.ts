@@ -109,7 +109,8 @@ export class PageState {
                 })
             }
             else {
-                tempData[pageSectionBoundData.name] = pageSectionBoundData.data
+                // Keep a mapping data with section name. Ex: data.appinfo.id
+                tempData = pageSectionBoundData.data
             }
         }
         if (sectionsMap && sectionsMap.length > 0) {
