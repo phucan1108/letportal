@@ -19,10 +19,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Create_User_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.CreateAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            Microsoft.AspNetCore.Identity.IdentityResult result = await userStore.CreateAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -33,7 +33,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Add_Claim_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.AddClaimsAsync(_context.GenerateUser(), new List<Claim> { new Claim("aaa", "vvv") }, new System.Threading.CancellationToken());
@@ -47,7 +47,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Add_To_Role_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.AddToRoleAsync(_context.GenerateUser(), "TestRole", new System.Threading.CancellationToken());
@@ -61,10 +61,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Find_By_Email_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.FindByEmailAsync("ADMIN@PORTAL.COM", new System.Threading.CancellationToken());
+            LetPortal.Identity.Entities.User result = await userStore.FindByEmailAsync("ADMIN@PORTAL.COM", new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -75,10 +75,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Find_By_Id_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.FindByIdAsync("5ce287ee569d6f23e8504cef", new System.Threading.CancellationToken());
+            LetPortal.Identity.Entities.User result = await userStore.FindByIdAsync("5ce287ee569d6f23e8504cef", new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -89,10 +89,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Find_By_Name_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.FindByNameAsync("ADMIN", new System.Threading.CancellationToken());
+            LetPortal.Identity.Entities.User result = await userStore.FindByNameAsync("ADMIN", new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -103,10 +103,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Access_Failed_Count_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetAccessFailedCountAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            int result = await userStore.GetAccessFailedCountAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -117,10 +117,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Claims_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetClaimsAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            IList<Claim> result = await userStore.GetClaimsAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -131,10 +131,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Email_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetEmailAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            string result = await userStore.GetEmailAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -145,10 +145,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Lockout_Enabled_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetLockoutEnabledAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            bool result = await userStore.GetLockoutEnabledAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -159,7 +159,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Lockout_End_Date_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.GetLockoutEndDateAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
@@ -173,10 +173,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Normalized_Email_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetNormalizedEmailAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            string result = await userStore.GetNormalizedEmailAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -187,10 +187,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Normalized_UserName_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetNormalizedUserNameAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            string result = await userStore.GetNormalizedUserNameAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -201,10 +201,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Password_Hash_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetNormalizedUserNameAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            string result = await userStore.GetNormalizedUserNameAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -215,10 +215,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Roles_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetRolesAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            IList<string> result = await userStore.GetRolesAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -229,10 +229,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_Security_Stamp_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetSecurityStampAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            string result = await userStore.GetSecurityStampAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -243,10 +243,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_UserId_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetUserIdAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            string result = await userStore.GetUserIdAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -257,10 +257,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Get_UserName_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.GetUserNameAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            string result = await userStore.GetUserNameAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -271,7 +271,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Has_Password_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.HasPasswordAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
@@ -285,10 +285,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Increment_Access_FailedCount_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.IncrementAccessFailedCountAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            int result = await userStore.IncrementAccessFailedCountAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -299,10 +299,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Is_In_Role_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.IsInRoleAsync(_context.GenerateUser(), "SuperAdmin", new System.Threading.CancellationToken());
+            bool result = await userStore.IsInRoleAsync(_context.GenerateUser(), "SuperAdmin", new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert
@@ -313,7 +313,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Remove_Claims_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.RemoveClaimsAsync(_context.GenerateUser(), new List<Claim>(), new System.Threading.CancellationToken());
@@ -327,7 +327,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Reset_Access_FailedCount_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.ResetAccessFailedCountAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
@@ -341,7 +341,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Email_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetEmailAsync(_context.GenerateUser(), "tasda@aaa.com", new System.Threading.CancellationToken());
@@ -355,7 +355,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Email_Confirmed_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetEmailConfirmedAsync(_context.GenerateUser(), true, new System.Threading.CancellationToken());
@@ -369,7 +369,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Lockout_Enabled_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetLockoutEnabledAsync(_context.GenerateUser(), false, new System.Threading.CancellationToken());
@@ -383,7 +383,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Lockout_EndDate_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetLockoutEndDateAsync(_context.GenerateUser(), DateTimeOffset.UtcNow.AddDays(10), new System.Threading.CancellationToken());
@@ -397,7 +397,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Normalized_Email_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetNormalizedEmailAsync(_context.GenerateUser(), "asdas@aaa.com".ToUpper(), new System.Threading.CancellationToken());
@@ -411,7 +411,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Normalized_UserName_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetNormalizedUserNameAsync(_context.GenerateUser(), "admin".ToUpper(), new System.Threading.CancellationToken());
@@ -425,7 +425,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Password_Hash_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetPasswordHashAsync(_context.GenerateUser(), "asdasdasd", new System.Threading.CancellationToken());
@@ -439,7 +439,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_Security_Stamp_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetSecurityStampAsync(_context.GenerateUser(), "asdasdasd", new System.Threading.CancellationToken());
@@ -453,7 +453,7 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Set_UserName_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
             await userStore.SetUserNameAsync(_context.GenerateUser(), "asdasdasd", new System.Threading.CancellationToken());
@@ -467,10 +467,10 @@ namespace LetPortal.Tests.ITs.Identity.Stores
         public async Task Update_User_Mongo_Test()
         {
             // Arrange
-            var userStore = _context.GetUserStore();
+            LetPortal.Identity.Stores.UserStore userStore = _context.GetUserStore();
 
             // Act
-            var result = await userStore.UpdateAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
+            Microsoft.AspNetCore.Identity.IdentityResult result = await userStore.UpdateAsync(_context.GenerateUser(), new System.Threading.CancellationToken());
 
             userStore.Dispose();
             // Assert

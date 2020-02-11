@@ -1,9 +1,10 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions
 {
@@ -12,5 +13,7 @@ namespace LetPortal.Portal.Executions
         ConnectionType ConnectionType { get; }
 
         Task<ExecuteDynamicResultModel> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters);
+
+        Task<ExecuteDynamicResultModel> Execute(List<DatabaseConnection> databaseConnections, DatabaseExecutionChains executionChains, IEnumerable<ExecuteParamModel> parameters);
     }
 }

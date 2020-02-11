@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.Components;
-using LetPortal.Portal.Repositories.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Repositories.Components;
 
 namespace LetPortal.Portal.Providers.Components
 {
@@ -19,7 +19,7 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<ComparisonResult>> CompareCharts(IEnumerable<Chart> charts)
         {
             var results = new List<ComparisonResult>();
-            foreach(var chart in charts)
+            foreach (var chart in charts)
             {
                 results.Add(await _chartRepository.Compare(chart));
             }
@@ -28,7 +28,7 @@ namespace LetPortal.Portal.Providers.Components
 
         public async Task ForceUpdateCharts(IEnumerable<Chart> charts)
         {
-            foreach(var chart in charts)
+            foreach (var chart in charts)
             {
                 await _chartRepository.ForceUpdateAsync(chart.Id, chart);
             }
@@ -56,7 +56,7 @@ namespace LetPortal.Portal.Providers.Components
         }
         public void Dispose()
         {
-            Dispose(true);            
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
         #endregion

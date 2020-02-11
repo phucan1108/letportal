@@ -1,12 +1,12 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Services.Databases;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Providers.Databases
 {

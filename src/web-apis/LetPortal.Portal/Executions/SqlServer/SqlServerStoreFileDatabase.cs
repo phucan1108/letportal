@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Files;
+﻿using System.Data.SqlClient;
+using System.IO;
+using System.Threading.Tasks;
+using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Http;
-using System.Data.SqlClient;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.SqlServer
 {
@@ -16,17 +16,17 @@ namespace LetPortal.Portal.Executions.SqlServer
         {
             var fileId = ConvertUtil.DeserializeObject<DatabaseIdentifierOptions>(storedFile.FileIdentifierOptions).FileId;
             byte[] bytes = null;
-            using(var sqlDbConnection = new SqlConnection(databaseOptions.ConnectionString))
+            using (var sqlDbConnection = new SqlConnection(databaseOptions.ConnectionString))
             {
                 sqlDbConnection.Open();
-                using(var sqlCommand = new SqlCommand("SELECT * FROM uploadFiles Where id=@id", sqlDbConnection))
+                using (var sqlCommand = new SqlCommand("SELECT * FROM uploadFiles Where id=@id", sqlDbConnection))
                 {
                     sqlCommand.Parameters.Add("id", System.Data.SqlDbType.NVarChar, 450).Value = fileId;
-                    using(var sqlReader = await sqlCommand.ExecuteReaderAsync())
+                    using (var sqlReader = await sqlCommand.ExecuteReaderAsync())
                     {
-                        if(sqlReader.HasRows)
+                        if (sqlReader.HasRows)
                         {
-                            while(sqlReader.Read())
+                            while (sqlReader.Read())
                             {
                                 bytes = (byte[])sqlReader["File"];
                                 break;
@@ -51,13 +51,13 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         private async Task<StoredFile> StoreFileSqlServer(string fileName, string localFilePath, DatabaseOptions databaseOptions)
         {
-            using(var sqlDbConnection = new SqlConnection(databaseOptions.ConnectionString))
+            using (var sqlDbConnection = new SqlConnection(databaseOptions.ConnectionString))
             {
                 sqlDbConnection.Open();
-                string oid = DataUtil.GenerateUniqueId();
-                using(var transaction = sqlDbConnection.BeginTransaction())
+                var oid = DataUtil.GenerateUniqueId();
+                using (var transaction = sqlDbConnection.BeginTransaction())
                 {
-                    using(var sqlCommand = new SqlCommand("INSERT INTO uploadFiles ([id], [file]) Values (@id, @File)", sqlDbConnection, transaction))
+                    using (var sqlCommand = new SqlCommand("INSERT INTO uploadFiles ([id], [file]) Values (@id, @File)", sqlDbConnection, transaction))
                     {
                         var bytes = await File.ReadAllBytesAsync(localFilePath);
                         sqlCommand.Parameters.Add("@id", System.Data.SqlDbType.NVarChar).Value = oid;

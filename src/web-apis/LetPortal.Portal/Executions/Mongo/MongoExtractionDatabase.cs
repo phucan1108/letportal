@@ -1,4 +1,7 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Shared;
@@ -6,9 +9,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -25,11 +25,11 @@ namespace LetPortal.Portal.Executions.Mongo
             //      ]
             //  }}
             // Note: we just support aggreation framework only
-            if(parameters != null)
+            if (parameters != null)
             {
-                foreach(var param in parameters)
+                foreach (var param in parameters)
                 {
-                    if(param.RemoveQuotes)
+                    if (param.RemoveQuotes)
                     {
                         formattedString = formattedString.Replace("\"{{" + param.Name + "}}\"", param.ReplaceValue);
                     }
@@ -42,40 +42,40 @@ namespace LetPortal.Portal.Executions.Mongo
             }
             var result = new ExtractingSchemaQueryModel();
 
-            JObject parsingObject = JObject.Parse(formattedString);
+            var parsingObject = JObject.Parse(formattedString);
 
             var mongoClient = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
 
             var executionGroupTypes = parsingObject.Children().Select(a => (a as JProperty).Name);
 
-            foreach(var executionGroupType in executionGroupTypes)
+            foreach (var executionGroupType in executionGroupTypes)
             {
-                switch(executionGroupType)
+                switch (executionGroupType)
                 {
                     case Constants.QUERY_KEY:
                         var collectionNames = parsingObject[Constants.QUERY_KEY].Children().Select(a => (a as JProperty).Name);
-                        foreach(var collectionName in collectionNames)
+                        foreach (var collectionName in collectionNames)
                         {
                             var mongoCollection = mongoClient.GetCollection<BsonDocument>(collectionName);
-                            string collectionQuery = parsingObject[Constants.QUERY_KEY][collectionName].ToString(Newtonsoft.Json.Formatting.Indented);
-                            List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+                            var collectionQuery = parsingObject[Constants.QUERY_KEY][collectionName].ToString(Newtonsoft.Json.Formatting.Indented);
+                            var aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
 
-                            IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
-                            foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
+                            var aggregateFluent = mongoCollection.Aggregate();
+                            foreach (var pipe in aggregatePipes)
                             {
                                 aggregateFluent = aggregateFluent.AppendStage(pipe);
                             }
 
-                            using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                            using (var executingCursor = await aggregateFluent.ToCursorAsync())
                             {
-                                while(executingCursor.MoveNext())
+                                while (executingCursor.MoveNext())
                                 {
                                     // Important note: this query must have one row result for extracting params and filters
-                                    BsonDocument currentDocument = executingCursor.Current.First();
+                                    var currentDocument = executingCursor.Current.First();
 
-                                    foreach(BsonElement element in currentDocument.Elements)
+                                    foreach (var element in currentDocument.Elements)
                                     {
-                                        ColumnField columnField = new ColumnField
+                                        var columnField = new ColumnField
                                         {
                                             Name = element.Name,
                                             DisplayName = element.Name,
@@ -98,11 +98,11 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private string GetTypeByBsonDocument(BsonValue bsonValue)
         {
-            if(bsonValue.IsBoolean)
+            if (bsonValue.IsBoolean)
             {
                 return "boolean";
             }
-            if(bsonValue.IsInt32
+            if (bsonValue.IsInt32
                 || bsonValue.IsInt64
                 || bsonValue.IsNumeric
                 || bsonValue.IsDecimal128
@@ -110,15 +110,15 @@ namespace LetPortal.Portal.Executions.Mongo
             {
                 return "number";
             }
-            if(bsonValue.IsValidDateTime)
+            if (bsonValue.IsValidDateTime)
             {
                 return "datetime";
             }
-            if(bsonValue.IsBsonArray)
+            if (bsonValue.IsBsonArray)
             {
                 return "list";
             }
-            if(bsonValue.IsBsonDocument)
+            if (bsonValue.IsBsonDocument)
             {
                 return "document";
             }

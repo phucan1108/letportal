@@ -1,4 +1,9 @@
-﻿using LetPortal.Core.Logger;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Threading;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Services;
@@ -8,11 +13,6 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MySql.Data.MySqlClient;
 using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LetPortal.Core.Monitors
 {
@@ -41,10 +41,10 @@ namespace LetPortal.Core.Monitors
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
             var pushHealthCheckModel = new PushHealthCheckModel();
-            if(_monitorOptions.CurrentValue.CheckDatabaseOption
+            if (_monitorOptions.CurrentValue.CheckDatabaseOption
                 && _databaseOptions.CurrentValue != null)
             {
-                switch(_databaseOptions.CurrentValue.ConnectionType)
+                switch (_databaseOptions.CurrentValue.ConnectionType)
                 {
                     case ConnectionType.MongoDB:
                         try
@@ -52,14 +52,14 @@ namespace LetPortal.Core.Monitors
                             var mongoClient = new MongoClient(_databaseOptions.CurrentValue.ConnectionString);
                             var mongoDatabase = mongoClient.GetDatabase(_databaseOptions.CurrentValue.Datasource);
                             var ping = await mongoDatabase.RunCommandAsync<BsonDocument>(new BsonDocument { { "ping", 1 } });
-                            if(ping.Contains("ok") &&
+                            if (ping.Contains("ok") &&
                                     (ping["ok"].IsDouble && (int)ping["ok"].AsDouble == 1 ||
                                     ping["ok"].IsInt32 && ping["ok"].AsInt32 == 1))
                             {
                                 pushHealthCheckModel.DatabaseHealthy = true;
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             pushHealthCheckModel.DatabaseHealthy = false;
                             pushHealthCheckModel.ErrorStack = ex.ToString();
@@ -68,17 +68,17 @@ namespace LetPortal.Core.Monitors
                     case ConnectionType.SQLServer:
                         try
                         {
-                            using(var sqlDbConnection = new SqlConnection(_databaseOptions.CurrentValue.ConnectionString))
+                            using (var sqlDbConnection = new SqlConnection(_databaseOptions.CurrentValue.ConnectionString))
                             {
                                 sqlDbConnection.Open();
-                                using(var sqlCommand = new SqlCommand("Select 1"))
+                                using (var sqlCommand = new SqlCommand("Select 1"))
                                 {
                                     sqlCommand.ExecuteScalar();
                                     pushHealthCheckModel.DatabaseHealthy = true;
                                 }
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             pushHealthCheckModel.DatabaseHealthy = false;
                             pushHealthCheckModel.ErrorStack = ex.ToString();
@@ -87,17 +87,17 @@ namespace LetPortal.Core.Monitors
                     case ConnectionType.MySQL:
                         try
                         {
-                            using(var mysqlDbConnection = new MySqlConnection(_databaseOptions.CurrentValue.ConnectionString))
+                            using (var mysqlDbConnection = new MySqlConnection(_databaseOptions.CurrentValue.ConnectionString))
                             {
                                 mysqlDbConnection.Open();
-                                using(var mysqlCommand = new MySqlCommand("Select 1"))
+                                using (var mysqlCommand = new MySqlCommand("Select 1"))
                                 {
                                     mysqlCommand.ExecuteScalar();
                                     pushHealthCheckModel.DatabaseHealthy = true;
                                 }
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             pushHealthCheckModel.DatabaseHealthy = false;
                             pushHealthCheckModel.ErrorStack = ex.ToString();
@@ -106,17 +106,17 @@ namespace LetPortal.Core.Monitors
                     case ConnectionType.PostgreSQL:
                         try
                         {
-                            using(var postgreDbConnection = new NpgsqlConnection(_databaseOptions.CurrentValue.ConnectionString))
+                            using (var postgreDbConnection = new NpgsqlConnection(_databaseOptions.CurrentValue.ConnectionString))
                             {
                                 postgreDbConnection.Open();
-                                using(var postgreCommand = new NpgsqlCommand("Select 1"))
+                                using (var postgreCommand = new NpgsqlCommand("Select 1"))
                                 {
                                     postgreCommand.ExecuteScalar();
                                     pushHealthCheckModel.DatabaseHealthy = true;
                                 }
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             pushHealthCheckModel.DatabaseHealthy = false;
                             pushHealthCheckModel.ErrorStack = ex.ToString();
@@ -138,7 +138,7 @@ namespace LetPortal.Core.Monitors
             pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage = hardwareCheck.CpuUsage;
             pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed = hardwareCheck.MemoryUsed;
 
-            if(_monitorOptions.CurrentValue.CheckCpuBottleneck)
+            if (_monitorOptions.CurrentValue.CheckCpuBottleneck)
             {
                 pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck = pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage > _monitorOptions.CurrentValue.BottleneckCpu;
             }
@@ -147,7 +147,7 @@ namespace LetPortal.Core.Monitors
                 pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck = false;
             }
 
-            if(_monitorOptions.CurrentValue.CheckMemoryThreshold)
+            if (_monitorOptions.CurrentValue.CheckMemoryThreshold)
             {
                 pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold = pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed > _monitorOptions.CurrentValue.ThresholdMemory;
             }
@@ -171,7 +171,7 @@ namespace LetPortal.Core.Monitors
                 {  Constants.LetPortalHealthCheckData, pushHealthCheckModel }
             };
 
-            if(pushHealthCheckModel.Healthy)
+            if (pushHealthCheckModel.Healthy)
             {
                 return new HealthCheckResult(HealthStatus.Healthy,
                     description:

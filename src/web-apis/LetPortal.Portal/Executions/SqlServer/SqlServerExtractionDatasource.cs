@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.Databases;
-using LetPortal.Portal.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Models;
 
 namespace LetPortal.Portal.Executions.SqlServer
 {
@@ -15,19 +15,19 @@ namespace LetPortal.Portal.Executions.SqlServer
         public Task<List<DatasourceModel>> ExtractionDatasource(DatabaseConnection databaseConnection, string formattedQueryString, string outputProjection)
         {
             var datasources = new List<DatasourceModel>();
-            using(var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
+            using (var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
             {
                 sqlDbConnection.Open();
-                using(var cmd = new SqlCommand(formattedQueryString, sqlDbConnection))
+                using (var cmd = new SqlCommand(formattedQueryString, sqlDbConnection))
                 {
-                    using(var reader = cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
                         var dt = new DataTable();
                         dt.Load(reader);
-                        bool hasNameAndValueCol = dt.Columns.Contains("Name") && dt.Columns.Contains("Value");
-                        if(!hasNameAndValueCol)
+                        var hasNameAndValueCol = dt.Columns.Contains("Name") && dt.Columns.Contains("Value");
+                        if (!hasNameAndValueCol)
                         {
-                            foreach(DataRow dr in dt.Rows)
+                            foreach (DataRow dr in dt.Rows)
                             {
                                 datasources.Add(new DatasourceModel
                                 {
@@ -38,7 +38,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                         }
                         else
                         {
-                            foreach(DataRow dr in dt.Rows)
+                            foreach (DataRow dr in dt.Rows)
                             {
                                 datasources.Add(new DatasourceModel
                                 {

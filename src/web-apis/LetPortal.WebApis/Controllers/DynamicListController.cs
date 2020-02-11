@@ -1,4 +1,6 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.DynamicLists;
@@ -6,8 +8,6 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Services.Components;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -37,7 +37,7 @@ namespace LetPortal.WebApis.Controllers
         {
             var result = await _dynamicListRepository.GetAllAsync(isRequiredDiscriminator: true);
             _logger.Info("Found dynamic lists {@result}", result);
-            if(result != null)
+            if (result != null)
             {
                 return Ok(result);
             }
@@ -51,7 +51,7 @@ namespace LetPortal.WebApis.Controllers
         {
             var result = await _dynamicListRepository.GetOneAsync(id);
             _logger.Info("Found dynamic list: {@result}", result);
-            if(result != null)
+            if (result != null)
             {
                 return Ok(result);
             }
@@ -70,7 +70,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(DynamicList), 200)]
         public async Task<IActionResult> Create([FromBody] DynamicList dynamicList)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 dynamicList.Id = DataUtil.GenerateUniqueId();
                 await _dynamicListRepository.AddAsync(dynamicList);
@@ -84,7 +84,7 @@ namespace LetPortal.WebApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] DynamicList dynamicList)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 dynamicList.Id = id;
                 await _dynamicListRepository.UpdateAsync(id, dynamicList);
@@ -109,7 +109,7 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Execute query in dynamic list id {id} with fetch data {@fetchDataModel}", id, fetchDataModel);
             var dynamicList = await _dynamicListRepository.GetOneAsync(id);
 
-            if(dynamicList == null)
+            if (dynamicList == null)
             {
                 return NotFound();
             }

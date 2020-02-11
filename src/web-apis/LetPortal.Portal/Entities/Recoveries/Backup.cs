@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Persistences.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Persistences.Attributes;
 
 namespace LetPortal.Portal.Entities.Recoveries
 {

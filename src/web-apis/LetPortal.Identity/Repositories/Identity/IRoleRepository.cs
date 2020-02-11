@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Identity.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Identity.Entities;
 
 namespace LetPortal.Identity.Repositories.Identity
 {

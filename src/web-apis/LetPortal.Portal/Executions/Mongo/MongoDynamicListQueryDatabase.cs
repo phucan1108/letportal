@@ -1,4 +1,8 @@
-﻿using LetPortal.Core.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.SectionParts;
@@ -8,10 +12,6 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -23,7 +23,7 @@ namespace LetPortal.Portal.Executions.Mongo
         {
             dynamicList.GenerateFilters();
 
-            DynamicListResponseDataModel dynamicListResponseDataModel = new DynamicListResponseDataModel();
+            var dynamicListResponseDataModel = new DynamicListResponseDataModel();
 
             // Because this flow is very complicated. We MUST UPDATE this flow fequently
             // 1. Extract collection name for executing
@@ -37,106 +37,106 @@ namespace LetPortal.Portal.Executions.Mongo
 
             // 1. Extract collection name for executing, either Entity mode or Custom mode, EntityName is the same
 
-            string executingQuery = dynamicList.ListDatasource.DatabaseConnectionOptions.Query;
+            var executingQuery = dynamicList.ListDatasource.DatabaseConnectionOptions.Query;
 
-            JObject parsingObject = JObject.Parse(executingQuery);
-            string executingCollectionName = (parsingObject[Constants.QUERY_KEY].First as JProperty).Name;
+            var parsingObject = JObject.Parse(executingQuery);
+            var executingCollectionName = (parsingObject[Constants.QUERY_KEY].First as JProperty).Name;
 
             // 2.  Prepare execution query
             // 2.2 Combine with Text Search, Filters and Sort           
-            IMongoCollection<BsonDocument> mongoCollection = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource).GetCollection<BsonDocument>(executingCollectionName);
-            FilterDefinition<BsonDocument> filterDefinitionOptions = FilterDefinition<BsonDocument>.Empty;
+            var mongoCollection = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource).GetCollection<BsonDocument>(executingCollectionName);
+            var filterDefinitionOptions = FilterDefinition<BsonDocument>.Empty;
 
-            string collectionQuery = parsingObject[Constants.QUERY_KEY][executingCollectionName].ToString(Newtonsoft.Json.Formatting.Indented);
+            var collectionQuery = parsingObject[Constants.QUERY_KEY][executingCollectionName].ToString(Newtonsoft.Json.Formatting.Indented);
 
-            foreach(var filledParam in fetchDataModel.FilledParameterOptions.FilledParameters)
+            foreach (var filledParam in fetchDataModel.FilledParameterOptions.FilledParameters)
             {
                 collectionQuery = collectionQuery.Replace("{{" + filledParam.Name + "}}", filledParam.Value);
             }
 
-            List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+            var aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
 
-            IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
-            foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
+            var aggregateFluent = mongoCollection.Aggregate();
+            foreach (var pipe in aggregatePipes)
             {
                 aggregateFluent = aggregateFluent.AppendStage(pipe);
             }
             // Add Text search first if had
-            if(!string.IsNullOrEmpty(fetchDataModel.TextSearch))
+            if (!string.IsNullOrEmpty(fetchDataModel.TextSearch))
             {
                 aggregateFluent = aggregateFluent.Match(CombineTextSearch(fetchDataModel.TextSearch, dynamicList.FiltersList));
             }
 
             // Add Filter Options if had
-            if (fetchDataModel.FilterGroupOptions != null 
+            if (fetchDataModel.FilterGroupOptions != null
                 && fetchDataModel.FilterGroupOptions.FilterGroups != null
                     && fetchDataModel.FilterGroupOptions.FilterGroups.Count > 0
                         && (fetchDataModel.FilterGroupOptions.FilterGroups[0].FilterOptions.Count > 0))
-            {   
-               aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Match(BuildFilters(fetchDataModel.FilterGroupOptions.FilterGroups)));                
-            }             
+            {
+                aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Match(BuildFilters(fetchDataModel.FilterGroupOptions.FilterGroups)));
+            }
 
             // Projection only columns
-            BsonDocument projectDoc = new BsonDocument();
-            foreach(var column in dynamicList.ColumnsList.ColumndDefs)
+            var projectDoc = new BsonDocument();
+            foreach (var column in dynamicList.ColumnsList.ColumndDefs)
             {
                 projectDoc.Add(new BsonElement(column.Name, 1));
             }
-            BsonDocument projection = new BsonDocument
+            var projection = new BsonDocument
             {
                 { "$project", projectDoc }
             };
             aggregateFluent = aggregateFluent.AppendStage((PipelineStageDefinition<BsonDocument, BsonDocument>)projection);
 
             // Add Sort if had
-            if(fetchDataModel.SortOptions.SortableFields != null && fetchDataModel.SortOptions.SortableFields.Count > 0)
+            if (fetchDataModel.SortOptions.SortableFields != null && fetchDataModel.SortOptions.SortableFields.Count > 0)
             {
-                SortableField sortField = fetchDataModel.SortOptions.SortableFields[0];
+                var sortField = fetchDataModel.SortOptions.SortableFields[0];
                 FieldDefinition<BsonDocument, string> field = sortField.FieldName;
-                SortDefinition<BsonDocument> sortDefinition = sortField.SortType == SortType.Asc
+                var sortDefinition = sortField.SortType == SortType.Asc
                                                                 ? Builders<BsonDocument>.Sort.Ascending(field) :
                                                                     Builders<BsonDocument>.Sort.Descending(field);
                 aggregateFluent = aggregateFluent.AppendStage(PipelineStageDefinitionBuilder.Sort(sortDefinition));
             }
 
-            if(fetchDataModel.PaginationOptions.NeedTotalItems)
+            if (fetchDataModel.PaginationOptions.NeedTotalItems)
             {
                 var aggregateFluentForCountTotal = aggregateFluent.Count();
                 var totalItems = await aggregateFluentForCountTotal.FirstOrDefaultAsync();
                 dynamicListResponseDataModel.TotalItems = totalItems != null ? totalItems.Count : 0;
             }
 
-            if(fetchDataModel.PaginationOptions.NeedTotalItems && dynamicListResponseDataModel.TotalItems > 0)
+            if (fetchDataModel.PaginationOptions.NeedTotalItems && dynamicListResponseDataModel.TotalItems > 0)
             {
                 // Add Pagination
                 aggregateFluent = aggregateFluent
                     .Skip(fetchDataModel.PaginationOptions.PageNumber * fetchDataModel.PaginationOptions.PageSize)
                     .Limit(fetchDataModel.PaginationOptions.PageSize);
 
-                using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                using (var executingCursor = await aggregateFluent.ToCursorAsync())
                 {
-                    while(executingCursor.MoveNext())
+                    while (executingCursor.MoveNext())
                     {
                         var currentBson = executingCursor.Current;
-                        foreach(var item in currentBson)
+                        foreach (var item in currentBson)
                         {
                             var addedFields = new List<BsonElement>();
                             var removedFields = new List<string>();
-                            foreach(var elem in item)
+                            foreach (var elem in item)
                             {
-                                if(elem.Value.IsObjectId)
+                                if (elem.Value.IsObjectId)
                                 {
                                     addedFields.Add(new BsonElement(elem.Name == "_id" ? "id" : elem.Name, BsonValue.Create(elem.Value.AsObjectId.ToString())));
                                     removedFields.Add(elem.Name);
                                 }
                             }
 
-                            foreach(var removedField in removedFields)
+                            foreach (var removedField in removedFields)
                             {
                                 item.Remove(removedField);
                             }
 
-                            foreach(var addedField in addedFields)
+                            foreach (var addedField in addedFields)
                             {
                                 item.Add(addedField);
                             }
@@ -155,37 +155,37 @@ namespace LetPortal.Portal.Executions.Mongo
                     }
                 }
             }
-            else if(!fetchDataModel.PaginationOptions.NeedTotalItems)
+            else if (!fetchDataModel.PaginationOptions.NeedTotalItems)
             {
                 // Add Pagination
                 aggregateFluent = aggregateFluent
                     .Skip(fetchDataModel.PaginationOptions.PageNumber * fetchDataModel.PaginationOptions.PageSize)
                     .Limit(fetchDataModel.PaginationOptions.PageSize);
 
-                using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                using (var executingCursor = await aggregateFluent.ToCursorAsync())
                 {
-                    while(executingCursor.MoveNext())
+                    while (executingCursor.MoveNext())
                     {
                         var currentBson = executingCursor.Current;
-                        foreach(var item in currentBson)
+                        foreach (var item in currentBson)
                         {
                             var addedFields = new List<BsonElement>();
                             var removedFields = new List<string>();
-                            foreach(var elem in item)
+                            foreach (var elem in item)
                             {
-                                if(elem.Value.IsObjectId)
+                                if (elem.Value.IsObjectId)
                                 {
                                     addedFields.Add(new BsonElement(elem.Name == "_id" ? "id" : elem.Name, BsonValue.Create(elem.Value.AsObjectId.ToString())));
                                     removedFields.Add(elem.Name);
                                 }
                             }
 
-                            foreach(var removedField in removedFields)
+                            foreach (var removedField in removedFields)
                             {
                                 item.Remove(removedField);
                             }
 
-                            foreach(var addedField in addedFields)
+                            foreach (var addedField in addedFields)
                             {
                                 item.Add(addedField);
                             }
@@ -215,18 +215,18 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private FilterDefinition<BsonDocument> CombineTextSearch(string textSearch, FiltersList filtersList)
         {
-            FilterDefinitionBuilder<BsonDocument> builder = Builders<BsonDocument>.Filter;
-            List<FilterDefinition<BsonDocument>> filtersDefinitionList = new List<FilterDefinition<BsonDocument>>();
+            var builder = Builders<BsonDocument>.Filter;
+            var filtersDefinitionList = new List<FilterDefinition<BsonDocument>>();
 
-            foreach(FilterField filter in filtersList.FilterFields)
+            foreach (var filter in filtersList.FilterFields)
             {
-                if(filter.AllowTextSearch)
+                if (filter.AllowTextSearch)
                 {
                     filtersDefinitionList.Add(builder.Regex(filter.Name, new BsonRegularExpression(textSearch, "i")));
                 }
             }
 
-            if(filtersDefinitionList.Count > 0)
+            if (filtersDefinitionList.Count > 0)
             {
                 return builder.Or(filtersDefinitionList);
             }
@@ -236,29 +236,29 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private FilterDefinition<BsonDocument> BuildFilters(List<FilterGroup> filterGroups)
         {
-            FilterDefinition<BsonDocument> executingFilterDefinition = FilterDefinition<BsonDocument>.Empty;
-            foreach(FilterGroup filterGroup in filterGroups ?? Enumerable.Empty<FilterGroup>())
+            var executingFilterDefinition = FilterDefinition<BsonDocument>.Empty;
+            foreach (var filterGroup in filterGroups ?? Enumerable.Empty<FilterGroup>())
             {
-                FilterDefinitionBuilder<BsonDocument> filterGroupBuilder = Builders<BsonDocument>.Filter;
+                var filterGroupBuilder = Builders<BsonDocument>.Filter;
 
-                bool isInCombiningAnd = false;
-                bool needToGroupOr = false;
-                FilterDefinitionBuilder<BsonDocument> andBuilder = Builders<BsonDocument>.Filter;
-                List<FilterDefinition<BsonDocument>> groupAndFilter = new List<FilterDefinition<BsonDocument>>();
+                var isInCombiningAnd = false;
+                var needToGroupOr = false;
+                var andBuilder = Builders<BsonDocument>.Filter;
+                var groupAndFilter = new List<FilterDefinition<BsonDocument>>();
 
-                bool isInCombiningOr = false;
-                FilterDefinitionBuilder<BsonDocument> orBuilder = Builders<BsonDocument>.Filter;
-                List<FilterDefinition<BsonDocument>> groupOrFilter = new List<FilterDefinition<BsonDocument>>();
+                var isInCombiningOr = false;
+                var orBuilder = Builders<BsonDocument>.Filter;
+                var groupOrFilter = new List<FilterDefinition<BsonDocument>>();
 
-                foreach(FilterOption filter in filterGroup.FilterOptions ?? Enumerable.Empty<FilterOption>())
+                foreach (var filter in filterGroup.FilterOptions ?? Enumerable.Empty<FilterOption>())
                 {
-                    if(filter.FilterChainOperator == FilterChainOperator.None)
+                    if (filter.FilterChainOperator == FilterChainOperator.None)
                     {
-                        if(isInCombiningAnd)
+                        if (isInCombiningAnd)
                         {
-                            if(needToGroupOr)
+                            if (needToGroupOr)
                             {
-                                if(groupAndFilter.Count > 0)
+                                if (groupAndFilter.Count > 0)
                                 {
                                     groupOrFilter.Add(andBuilder.And(groupAndFilter));
                                 }
@@ -274,11 +274,11 @@ namespace LetPortal.Portal.Executions.Mongo
                                 isInCombiningAnd = false;
                             }
                         }
-                        else if(isInCombiningOr)
+                        else if (isInCombiningOr)
                         {
-                            if(needToGroupOr)
+                            if (needToGroupOr)
                             {
-                                if(groupAndFilter.Count > 0)
+                                if (groupAndFilter.Count > 0)
                                 {
                                     groupOrFilter.Add(andBuilder.And(groupAndFilter));
                                 }
@@ -293,9 +293,9 @@ namespace LetPortal.Portal.Executions.Mongo
                             executingFilterDefinition = BuildOperator(filter);
                         }
                     }
-                    else if(filter.FilterChainOperator == FilterChainOperator.And)
+                    else if (filter.FilterChainOperator == FilterChainOperator.And)
                     {
-                        if(isInCombiningOr)
+                        if (isInCombiningOr)
                         {
                             groupAndFilter.Add(BuildOperator(filter));
                             isInCombiningOr = false;
@@ -307,9 +307,9 @@ namespace LetPortal.Portal.Executions.Mongo
                         }
                         isInCombiningAnd = true;
                     }
-                    else if(filter.FilterChainOperator == FilterChainOperator.Or)
+                    else if (filter.FilterChainOperator == FilterChainOperator.Or)
                     {
-                        if(isInCombiningAnd)
+                        if (isInCombiningAnd)
                         {
                             groupAndFilter.Add(BuildOperator(filter));
                             isInCombiningAnd = false;
@@ -333,16 +333,16 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private FilterDefinition<BsonDocument> BuildOperator(FilterOption filterOption)
         {
-            FilterDefinitionBuilder<BsonDocument> filterBuilderOption = Builders<BsonDocument>.Filter;
+            var filterBuilderOption = Builders<BsonDocument>.Filter;
             FieldDefinition<BsonDocument, string> field = filterOption.FieldName;
-            switch(filterOption.FilterValueType)
+            switch (filterOption.FilterValueType)
             {
                 case FieldValueType.Text:
-                    if(filterOption.FilterOperator == FilterOperator.Contains)
+                    if (filterOption.FilterOperator == FilterOperator.Contains)
                     {
                         return filterBuilderOption.Regex(field, new BsonRegularExpression(filterOption.FieldValue, "i"));
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Equal)
+                    else if (filterOption.FilterOperator == FilterOperator.Equal)
                     {
                         return filterBuilderOption.Eq(field, filterOption.FieldValue);
                     }
@@ -357,7 +357,7 @@ namespace LetPortal.Portal.Executions.Mongo
                     var month = datetime.Month;
                     var day = datetime.Day;
                     var year = datetime.Year;
-                    if(filterOption.FilterOperator == FilterOperator.Equal)
+                    if (filterOption.FilterOperator == FilterOperator.Equal)
                     {
                         // Support Format MM/DD/YYYY, we can change its in configuration later
                         var filterDateGt = new DateTime(year, month, day);
@@ -367,45 +367,45 @@ namespace LetPortal.Portal.Executions.Mongo
                             filterBuilderOption.Gte(filterOption.FieldName, filterDateGt),
                             filterBuilderOption.Lte(filterOption.FieldName, filterDateLt));
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Great)
+                    else if (filterOption.FilterOperator == FilterOperator.Great)
                     {
                         var filterDate = new DateTime(year, month, day);
                         return filterBuilderOption.Gt(filterOption.FieldName, filterDate);
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Less)
+                    else if (filterOption.FilterOperator == FilterOperator.Less)
                     {
                         var filterDate = new DateTime(year, month, day);
                         return filterBuilderOption.Lt(filterOption.FieldName, filterDate);
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Greater)
+                    else if (filterOption.FilterOperator == FilterOperator.Greater)
                     {
                         var filterDate = new DateTime(year, month, day);
                         return filterBuilderOption.Gte(filterOption.FieldName, filterDate);
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Lesser)
+                    else if (filterOption.FilterOperator == FilterOperator.Lesser)
                     {
                         var filterDate = new DateTime(year, month, day);
                         return filterBuilderOption.Lte(filterOption.FieldName, filterDate);
                     }
                     break;
                 case FieldValueType.Number:
-                    if(filterOption.FilterOperator == FilterOperator.Equal)
+                    if (filterOption.FilterOperator == FilterOperator.Equal)
                     {
                         return filterBuilderOption.Eq(filterOption.FieldName, new BsonInt64(long.Parse(filterOption.FieldValue)));
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Great)
+                    else if (filterOption.FilterOperator == FilterOperator.Great)
                     {
                         return filterBuilderOption.Gt(filterOption.FieldName, new BsonInt64(long.Parse(filterOption.FieldValue)));
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Greater)
+                    else if (filterOption.FilterOperator == FilterOperator.Greater)
                     {
                         return filterBuilderOption.Gte(filterOption.FieldName, new BsonInt64(long.Parse(filterOption.FieldValue)));
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Less)
+                    else if (filterOption.FilterOperator == FilterOperator.Less)
                     {
                         return filterBuilderOption.Lt(filterOption.FieldName, new BsonInt64(long.Parse(filterOption.FieldValue)));
                     }
-                    else if(filterOption.FilterOperator == FilterOperator.Lesser)
+                    else if (filterOption.FilterOperator == FilterOperator.Lesser)
                     {
                         return filterBuilderOption.Lte(filterOption.FieldName, new BsonInt64(long.Parse(filterOption.FieldValue)));
                     }

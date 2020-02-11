@@ -1,13 +1,13 @@
-﻿using LetPortal.Core.Utils;
-using LetPortal.Identity.Entities;
-using LetPortal.Identity.Repositories.Identity;
-using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using LetPortal.Core.Utils;
+using LetPortal.Identity.Entities;
+using LetPortal.Identity.Repositories.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace LetPortal.Identity.Stores
 {
@@ -23,7 +23,7 @@ namespace LetPortal.Identity.Stores
         public Task AddClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
         {
             var baseClaim = claim.ToBaseClaim();
-            if(role.Claims.Any(a => a.ClaimType == baseClaim.ClaimType && a.ClaimValue == baseClaim.ClaimValue))
+            if (role.Claims.Any(a => a.ClaimType == baseClaim.ClaimType && a.ClaimValue == baseClaim.ClaimValue))
             {
                 return Task.CompletedTask;
             }
@@ -77,7 +77,7 @@ namespace LetPortal.Identity.Stores
         public Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
         {
             var foundClaim = role.Claims.FirstOrDefault(a => a.ClaimType == claim.Type && a.ClaimValue == claim.Value);
-            if(foundClaim != null)
+            if (foundClaim != null)
             {
                 var foundIndex = role.Claims.IndexOf(foundClaim);
                 role.Claims.RemoveAt(foundIndex);

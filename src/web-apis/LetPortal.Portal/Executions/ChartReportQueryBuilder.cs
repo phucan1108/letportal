@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Utils;
-using LetPortal.Portal.Constants;
-using LetPortal.Portal.Models.Charts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
+using LetPortal.Portal.Models.Charts;
 
 namespace LetPortal.Portal.Executions
 {
@@ -36,7 +36,7 @@ namespace LetPortal.Portal.Executions
 
         public IChartReportQueryBuilder Init(string formattedString, string mappingProjection, Action<ChartReportQueryOptions> options = null)
         {
-            if(options != null)
+            if (options != null)
             {
                 options.Invoke(this.options);
             }
@@ -78,13 +78,13 @@ namespace LetPortal.Portal.Executions
             var listParams = new List<ChartReportParameter>();
             var chartReportQuery = new ChartReportQuery();
 
-            if(parameterValues != null)
+            if (parameterValues != null)
             {
-                foreach(var param in parameterValues)
+                foreach (var param in parameterValues)
                 {
                     var fieldParam = StringUtil.GenerateUniqueName();
                     formattedString = formattedString.Replace("{{" + param.Name + "}}", GetFieldWithParamSign(fieldParam));
-                    var paramType = GetValueDbType(param.Name, param.Value, out object castObject);
+                    var paramType = GetValueDbType(param.Name, param.Value, out var castObject);
                     listParams.Add(new ChartReportParameter
                     {
                         Name = fieldParam,
@@ -96,26 +96,26 @@ namespace LetPortal.Portal.Executions
 
             var warpperString = string.Format("SELECT {0} FROM ({1}) s", GenerateChartColumns(mappingProjection), formattedString);
 
-            if(filterValues != null && filterValues.Any() && warpperString.Contains(options.FilterWord))
+            if (filterValues != null && filterValues.Any() && warpperString.Contains(options.FilterWord))
             {
                 warpperString = warpperString.Replace(options.FilterWord, GenerateFilterColumns(filterValues, ref listParams));
             }
             else
             {
-                if(warpperString.Contains(options.FilterWord))
+                if (warpperString.Contains(options.FilterWord))
                 {
                     warpperString = warpperString.Replace(options.FilterWord, options.DefaultFilterNull);
 
                 }
             }
 
-            if(allowRealTime && !string.IsNullOrEmpty(comparedRealTimeField) && warpperString.Contains(options.RealTimeWord))
+            if (allowRealTime && !string.IsNullOrEmpty(comparedRealTimeField) && warpperString.Contains(options.RealTimeWord))
             {
                 warpperString = warpperString.Replace(options.RealTimeWord, GenerateRealTimeComparision(comparedRealTimeField, lastComparedDate, comparedDate, ref listParams));
             }
             else
             {
-                if(warpperString.Contains(options.RealTimeWord))
+                if (warpperString.Contains(options.RealTimeWord))
                 {
                     warpperString = warpperString.Replace(options.RealTimeWord, options.DefaultRealTimeNull);
                 }
@@ -161,13 +161,13 @@ namespace LetPortal.Portal.Executions
 
         private string GenerateChartColumns(string mappingProjection)
         {
-            string columnStr = string.Empty;
+            var columnStr = string.Empty;
             var list = mappingProjection.Split(";");
-            int counter = 0;
-            foreach(var elem in list)
+            var counter = 0;
+            foreach (var elem in list)
             {
                 var splitted = elem.Split("=");
-                if(counter == list.Length - 1)
+                if (counter == list.Length - 1)
                 {
                     columnStr += string.Format("{0} as {1} ", GetFieldFormat(splitted[1]), GetFieldFormat(splitted[0]));
                 }
@@ -184,7 +184,7 @@ namespace LetPortal.Portal.Executions
         private string GetValueDbType(string paramName, string value, out object castObj)
         {
             var splitted = paramName.Split("|");
-            if(splitted.Length == 1)
+            if (splitted.Length == 1)
             {
                 castObj = mapperFunc.Invoke(value, MapperConstants.String);
                 return MapperConstants.String;
@@ -198,20 +198,20 @@ namespace LetPortal.Portal.Executions
 
         private string GenerateFilterColumns(IEnumerable<ChartFilterValue> filterValues, ref List<ChartReportParameter> parameters)
         {
-            string filterStr = string.Empty;
+            var filterStr = string.Empty;
 
-            int counter = 0;
-            foreach(var filter in filterValues)
+            var counter = 0;
+            foreach (var filter in filterValues)
             {
-                switch(filter.FilterType)
+                switch (filter.FilterType)
                 {
                     case Entities.Components.FilterType.Checkbox:
                         var tempCheckBoxParam = StringUtil.GenerateUniqueName();
                         filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempCheckBoxParam));
 
                         // Only for MySQL, bool is 0 or 1
-                        int passValue = 0;
-                        if(filter.Value == "0" || filter.Value == "1")
+                        var passValue = 0;
+                        if (filter.Value == "0" || filter.Value == "1")
                         {
                             passValue = filter.Value == "0" ? 0 : 1;
                         }
@@ -227,21 +227,21 @@ namespace LetPortal.Portal.Executions
                         });
                         break;
                     case Entities.Components.FilterType.Select:
-                        if(filter.IsMultiple)
+                        if (filter.IsMultiple)
                         {
-                            bool isArrayStr = filter.Value.Any(a => a == '\'' || a == '"');
-                            if(isArrayStr)
+                            var isArrayStr = filter.Value.Any(a => a == '\'' || a == '"');
+                            if (isArrayStr)
                             {
                                 var arrayStr = ConvertUtil.DeserializeObject<List<string>>(filter.Value);
-                                foreach(var str in arrayStr)
+                                foreach (var str in arrayStr)
                                 {
-                                    if(arrayStr.IndexOf(str) == 0)
+                                    if (arrayStr.IndexOf(str) == 0)
                                     {
                                         filterStr += "(";
                                     }
                                     var tempSelectParam = StringUtil.GenerateUniqueName();
                                     filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempSelectParam));
-                                    if(arrayStr.IndexOf(str) < arrayStr.Count - 1)
+                                    if (arrayStr.IndexOf(str) < arrayStr.Count - 1)
                                     {
                                         filterStr += " OR ";
                                     }
@@ -261,15 +261,15 @@ namespace LetPortal.Portal.Executions
                             else
                             {
                                 var longStr = ConvertUtil.DeserializeObject<List<long>>(filter.Value);
-                                foreach(var longElem in longStr)
+                                foreach (var longElem in longStr)
                                 {
-                                    if(longStr.IndexOf(longElem) == 0)
+                                    if (longStr.IndexOf(longElem) == 0)
                                     {
                                         filterStr += "(";
                                     }
                                     var tempSelectParam = StringUtil.GenerateUniqueName();
                                     filterStr += string.Format("{0}={1}", GetFieldFormat(filter.Name), GetFieldWithParamSign(tempSelectParam));
-                                    if(longStr.IndexOf(longElem) < longStr.Count - 1)
+                                    if (longStr.IndexOf(longElem) < longStr.Count - 1)
                                     {
                                         filterStr += " OR ";
                                     }
@@ -294,13 +294,13 @@ namespace LetPortal.Portal.Executions
 
                             // Check value is int or string
                             long selectValue = 0;
-                            bool isLong = false;
-                            if(long.TryParse(filter.Value, out selectValue))
+                            var isLong = false;
+                            if (long.TryParse(filter.Value, out selectValue))
                             {
                                 isLong = true;
                             }
                             ChartReportParameter selectMySqlParameter;
-                            if(isLong)
+                            if (isLong)
                             {
                                 selectMySqlParameter = new ChartReportParameter
                                 {
@@ -323,22 +323,22 @@ namespace LetPortal.Portal.Executions
                         break;
                     case Entities.Components.FilterType.NumberPicker:
                         var tempNumberRangeParam = StringUtil.GenerateUniqueName();
-                        if(filter.IsMultiple)
+                        if (filter.IsMultiple)
                         {
                             var arrayStrings = ConvertUtil.DeserializeObject<string[]>(filter.Value);
-                            bool containsNumberMinMax = arrayStrings[0].Contains("-");
-                            if(containsNumberMinMax)
+                            var containsNumberMinMax = arrayStrings[0].Contains("-");
+                            if (containsNumberMinMax)
                             {
                                 // Ex: [10-20,20-30]
-                                string compareStr = string.Empty;
-                                int counterTemp = 0;
-                                foreach(var numRange in arrayStrings)
+                                var compareStr = string.Empty;
+                                var counterTemp = 0;
+                                foreach (var numRange in arrayStrings)
                                 {
                                     var splitted = numRange.Split("-");
 
                                     var tempStartNumParam = StringUtil.GenerateUniqueName();
                                     var tempEndNumParam = StringUtil.GenerateUniqueName();
-                                    if(counterTemp < arrayStrings.Length - 1)
+                                    if (counterTemp < arrayStrings.Length - 1)
                                     {
                                         compareStr +=
                                             string.Format(options.NumberRangeCompare + " OR ",
@@ -368,15 +368,15 @@ namespace LetPortal.Portal.Executions
                             }
                             else
                             {
-                                string inNumberStr = string.Join(",", arrayStrings);
+                                var inNumberStr = string.Join(",", arrayStrings);
                                 inNumberStr = string.Format(options.InOperator, GetFieldFormat(filter.Name), inNumberStr);
                                 filterStr += inNumberStr;
                             }
                         }
                         else
                         {
-                            bool containsNumberMinMax = filter.Value.Contains("-");
-                            if(containsNumberMinMax)
+                            var containsNumberMinMax = filter.Value.Contains("-");
+                            if (containsNumberMinMax)
                             {
                                 var splitted = filter.Value.Split("-");
                                 var tempStartNumParam = StringUtil.GenerateUniqueName();
@@ -414,7 +414,7 @@ namespace LetPortal.Portal.Executions
                         }
                         break;
                     case Entities.Components.FilterType.DatePicker:
-                        if(filter.IsMultiple)
+                        if (filter.IsMultiple)
                         {
                             // Ex: ['10/10/2019', '11/10/2019']
                             var tempStartDateParam = StringUtil.GenerateUniqueName();
@@ -466,7 +466,7 @@ namespace LetPortal.Portal.Executions
                         }
                         break;
                     case Entities.Components.FilterType.MonthYearPicker:
-                        if(filter.IsMultiple)
+                        if (filter.IsMultiple)
                         {
                             var tempStartDateParam = StringUtil.GenerateUniqueName();
                             var tempEndDateParam = StringUtil.GenerateUniqueName();
@@ -533,7 +533,7 @@ namespace LetPortal.Portal.Executions
                         break;
                 }
                 counter++;
-                if(counter < filterValues.Count())
+                if (counter < filterValues.Count())
                 {
                     filterStr += " AND ";
                 }

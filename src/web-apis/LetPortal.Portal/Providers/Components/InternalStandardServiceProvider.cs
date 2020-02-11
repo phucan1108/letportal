@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.SectionParts;
-using LetPortal.Portal.Repositories.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Repositories.Components;
 
 namespace LetPortal.Portal.Providers.Components
 {
@@ -19,7 +19,7 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<ComparisonResult>> CompareStandardComponent(IEnumerable<StandardComponent> standardComponents)
         {
             var results = new List<ComparisonResult>();
-            foreach(var standard in standardComponents)
+            foreach (var standard in standardComponents)
             {
                 results.Add(await _standardRepository.Compare(standard));
             }
@@ -28,7 +28,7 @@ namespace LetPortal.Portal.Providers.Components
 
         public async Task ForceUpdateStandards(IEnumerable<StandardComponent> standards)
         {
-            foreach(var standard in standards)
+            foreach (var standard in standards)
             {
                 await _standardRepository.ForceUpdateAsync(standard.Id, standard);
             }

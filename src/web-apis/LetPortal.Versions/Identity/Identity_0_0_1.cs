@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Versions;
-using LetPortal.Identity.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using LetPortal.Core.Versions;
+using LetPortal.Identity.Entities;
 
 namespace LetPortal.Versions.Identity
 {

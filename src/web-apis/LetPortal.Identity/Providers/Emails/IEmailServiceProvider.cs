@@ -1,6 +1,6 @@
-﻿using LetPortal.Identity.Configurations;
+﻿using System.Threading.Tasks;
+using LetPortal.Identity.Configurations;
 using LetPortal.Identity.Models;
-using System.Threading.Tasks;
 
 namespace LetPortal.Identity.Providers.Emails
 {

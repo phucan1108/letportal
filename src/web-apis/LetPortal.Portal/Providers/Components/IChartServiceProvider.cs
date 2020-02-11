@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Entities.Components;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.Components;
 
 namespace LetPortal.Portal.Providers.Components
 {

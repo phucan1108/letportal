@@ -27,10 +27,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var entitySchemaRepository = new EntitySchemaEFRepository(_context.GetPostgreSQLContext());
+            EntitySchemaEFRepository entitySchemaRepository = new EntitySchemaEFRepository(_context.GetPostgreSQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var entitySchemaTest = new EntitySchema
+            // Act
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abc",
@@ -50,7 +50,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await entitySchemaRepository.AddAsync(entitySchemaTest);
 
-            var result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
+            EntitySchema result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
 
             entitySchemaRepository.Dispose();
             // Assert
@@ -67,10 +67,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var entitySchemaRepository = new EntitySchemaEFRepository(_context.GetPostgreSQLContext());
+            EntitySchemaEFRepository entitySchemaRepository = new EntitySchemaEFRepository(_context.GetPostgreSQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var entitySchemaTest = new EntitySchema
+            // Act
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abcd",
@@ -113,10 +113,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var entitySchemaRepository = new EntitySchemaEFRepository(_context.GetSQLServerContext());
+            EntitySchemaEFRepository entitySchemaRepository = new EntitySchemaEFRepository(_context.GetSQLServerContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var entitySchemaTest = new EntitySchema
+            // Act
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abc",
@@ -136,7 +136,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await entitySchemaRepository.AddAsync(entitySchemaTest);
 
-            var result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
+            EntitySchema result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
 
             entitySchemaRepository.Dispose();
             // Assert
@@ -153,10 +153,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var entitySchemaRepository = new EntitySchemaEFRepository(_context.GetSQLServerContext());
+            EntitySchemaEFRepository entitySchemaRepository = new EntitySchemaEFRepository(_context.GetSQLServerContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var entitySchemaTest = new EntitySchema
+            // Act
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abcd",
@@ -198,10 +198,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var entitySchemaRepository = new EntitySchemaEFRepository(_context.GetMySQLContext());
+            EntitySchemaEFRepository entitySchemaRepository = new EntitySchemaEFRepository(_context.GetMySQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var entitySchemaTest = new EntitySchema
+            // Act
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abc",
@@ -221,7 +221,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await entitySchemaRepository.AddAsync(entitySchemaTest);
 
-            var result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
+            EntitySchema result = await entitySchemaRepository.GetOneEntitySchemaAsync("abc", "name");
 
             entitySchemaRepository.Dispose();
             // Assert
@@ -238,10 +238,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var entitySchemaRepository = new EntitySchemaEFRepository(_context.GetMySQLContext());
+            EntitySchemaEFRepository entitySchemaRepository = new EntitySchemaEFRepository(_context.GetMySQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var entitySchemaTest = new EntitySchema
+            // Act
+            EntitySchema entitySchemaTest = new EntitySchema
             {
                 Id = DataUtil.GenerateUniqueId(),
                 AppId = "abcd",

@@ -1,5 +1,5 @@
-﻿using LetPortal.Core.Persistences;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LetPortal.Core.Persistences;
 
 namespace LetPortal.Portal.Models.Recoveries
 {

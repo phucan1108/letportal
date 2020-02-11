@@ -1,5 +1,5 @@
-﻿using Serilog.Core;
-using System;
+﻿using System;
+using Serilog.Core;
 
 namespace LetPortal.Core.Logger
 {

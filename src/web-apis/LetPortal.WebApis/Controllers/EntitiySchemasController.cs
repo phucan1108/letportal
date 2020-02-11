@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Portal.Entities.EntitySchemas;
 using LetPortal.Portal.Models.EntitySchemas;
 using LetPortal.Portal.Repositories.EntitySchemas;
 using LetPortal.Portal.Services.EntitySchemas;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -36,7 +36,7 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Get one entity schema in database id = {databaseId}, entity name = {entityName}", databaseId, entityName);
             var result = await _entitySchemaRepository.GetOneEntitySchemaAsync(databaseId, entityName);
             _logger.Info("Found entity schemas: {@result}", result);
-            if(result != null)
+            if (result != null)
             {
                 return Ok(result);
             }

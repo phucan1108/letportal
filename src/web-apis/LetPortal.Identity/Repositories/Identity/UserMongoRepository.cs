@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Identity.Entities;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Identity.Repositories.Identity
 {

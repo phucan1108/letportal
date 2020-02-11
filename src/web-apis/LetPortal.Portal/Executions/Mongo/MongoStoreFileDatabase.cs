@@ -1,12 +1,12 @@
-﻿using LetPortal.Core.Files;
+﻿using System.IO;
+using System.Threading.Tasks;
+using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -34,8 +34,8 @@ namespace LetPortal.Portal.Executions.Mongo
         private async Task<StoredFile> StoreInMongo(string fileName, string localFilePath, DatabaseOptions databaseOptions)
         {
             var bucket = GetMongoBucket(databaseOptions);
-            ObjectId fileId = ObjectId.Empty;
-            using(var fileStream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
+            var fileId = ObjectId.Empty;
+            using (var fileStream = new FileStream(localFilePath, FileMode.Open, FileAccess.Read, FileShare.None))
             {
                 fileId = await bucket.UploadFromStreamAsync(fileName, fileStream);
             }

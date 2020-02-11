@@ -12,6 +12,8 @@
 
         public DatabaseOptions DatabaseOptions { get; set; }
 
+        public DatabaseExecutionChains DbExecutionChains { get; set; }
+
         public WorkflowOptions WorkflowOptions { get; set; }
 
         public NotificationOptions NotificationOptions { get; set; }

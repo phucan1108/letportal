@@ -1,6 +1,6 @@
-﻿using LetPortal.Core.Versions;
+﻿using System;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Components;
-using System;
 
 namespace LetPortal.Versions.Components
 {
