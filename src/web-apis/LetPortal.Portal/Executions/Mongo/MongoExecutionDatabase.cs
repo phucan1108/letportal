@@ -7,14 +7,12 @@ using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
-using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -124,53 +122,21 @@ namespace LetPortal.Portal.Executions.Mongo
             }
         }
 
-        public async Task<ExecuteDynamicResultModel> Execute(List<DatabaseConnection> databaseConnections, DatabaseExecutionChains executionChains, IEnumerable<ExecuteParamModel> parameters)
+
+        public async Task<StepExecutionResult> ExecuteStep(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters, ExecutionDynamicContext context)
         {
-            var context = new MongoExecutionContext
+            if (databaseConnection == null)
             {
-                Data = JObject.Parse("{}")
-            };
-
-            bool isSuccess = false;
-            string exception = string.Empty;
-            for (int i = 0; i < executionChains?.Steps.Count; i++)
-            {
-                var step = executionChains.Steps[i];
-                var dbConnection = databaseConnections.First(a => a.Id == step.DatabaseConnectionId);
-                var stepResult = await Execute(dbConnection, step.ExecuteCommand, parameters, context);
-                if (stepResult.IsSuccess)
-                {
-                    switch (stepResult.ExecutionType)
-                    {
-                        case StepExecutionType.Query:
-                            WriteDataToContext($"step{i.ToString()}", ConvertUtil.SerializeObject(stepResult.Result), context);
-                            break;
-                        case StepExecutionType.Insert:
-                            WriteDataToContext($"step{i.ToString()}", ConvertUtil.SerializeObject(stepResult.Result), context);
-                            break;
-                        case StepExecutionType.Update:
-                            break;
-                        case StepExecutionType.Delete:
-                            break;
-                    }
-                }
-                else
-                {
-                    isSuccess = false;
-                    exception = stepResult.Error;
-                    break;
-                }
+                throw new ArgumentNullException(nameof(databaseConnection));
             }
-
-            return isSuccess ? new ExecuteDynamicResultModel { IsSuccess = isSuccess } : ExecuteDynamicResultModel.IsFailed(exception);
+            return await ExecuteWithContext(databaseConnection, formattedString, parameters);
         }
 
-        private async Task<StepExecutionResult> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters, MongoExecutionContext context)
+        private async Task<StepExecutionResult> ExecuteWithContext(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
             try
             {
                 formattedString = StringUtil.ReplaceDoubleCurlyBraces(formattedString, parameters.Select(a => new Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
-                formattedString = ReplaceValueWithContext(formattedString, context);
                 var result = new StepExecutionResult { IsSuccess = true };
                 var query = EliminateRedundantFormat(formattedString);
                 var mongoDatabase = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource);
@@ -266,70 +232,11 @@ namespace LetPortal.Portal.Executions.Mongo
                 }
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StepExecutionResult.IsFailed(ex.ToString());
             }
-            
-        }
 
-        private static string ReplaceValueWithContext(string str, MongoExecutionContext context)
-        {
-            if (context == null || context.Data == null)
-            {
-                return str;
-            }
-            var allFields = StringUtil.GetByRegexMatchs(@"{{\$(.*?)}}", str, true);
-            if (allFields.Length > 0)
-            {
-                foreach (var field in allFields)
-                {
-                    var replacedValue = context.Data.SelectToken(field);
-                    switch (replacedValue.Type)
-                    {
-                        case JTokenType.Object:
-                            str = str.Replace("\"{{" + field + "}}\"", replacedValue.ToString(), StringComparison.OrdinalIgnoreCase);
-                            break;
-                        case JTokenType.Boolean:
-                        case JTokenType.Integer:
-                            str = str.Replace("\"{{" + field + "}}\"", replacedValue.Value<string>(), StringComparison.OrdinalIgnoreCase);
-                            break;
-                        default:
-                            str = str.Replace("{{" + field + "}}", replacedValue.Value<string>(), StringComparison.OrdinalIgnoreCase);
-                            break;
-                    }
-                }
-
-                return str;
-            }
-            else
-            {
-                return str;
-            }
-        }
-
-        private void WriteDataToContext(string name, string data, MongoExecutionContext context)
-        {
-            if (!string.IsNullOrEmpty(data))
-            {
-                if (context.Data.Children().Any(a => (a as JProperty).Name == name))
-                {
-                    var mergeObject = (JObject)context.Data[name];
-                    var dataJObject = JObject.Parse(data);
-                    mergeObject.Merge(dataJObject, new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Merge,
-                        MergeNullValueHandling = MergeNullValueHandling.Merge
-                    });
-
-                    context.Data.Remove(name);
-                    context.Data.Add(name, mergeObject);
-                }
-                else
-                {
-                    context.Data.Add(name, JToken.Parse(data));
-                }
-            }
         }
 
         private static string EliminateRedundantFormat(string query)
@@ -372,33 +279,5 @@ namespace LetPortal.Portal.Executions.Mongo
             var collectionName = parsingBson[operatorName].AsBsonDocument.First().Name;
             return mongoDatabase.GetCollection<BsonDocument>(collectionName);
         }
-    }
-
-    class StepExecutionResult
-    {
-        public StepExecutionType ExecutionType { get; set; }
-
-        public dynamic Result;
-
-        public bool IsSuccess;
-        public string Error { get; set; }
-
-        public static StepExecutionResult IsFailed(string errorMessage)
-        {
-            return new StepExecutionResult { IsSuccess = false, Error = errorMessage };
-        }
-    }
-
-    class MongoExecutionContext
-    {
-        public JObject Data { get; set; }
-    }
-
-    enum StepExecutionType
-    {
-        Query,
-        Insert,
-        Update,
-        Delete
     }
 }

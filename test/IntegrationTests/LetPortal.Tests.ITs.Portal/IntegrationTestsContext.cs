@@ -281,10 +281,10 @@ namespace LetPortal.Tests.ITs.Portal
             return letportalDbContext;
         }
 
-        private string GenerateUniqueDatasourceName()
+        private string GenerateUniqueDatasourceName(string startWith = "letportal_")
         {
             char[] suppliedVars = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-            int lengthOfName = 20;
+            int lengthOfName = 15;
             string datasourceName = string.Empty;
             for(int i = 0; i < lengthOfName; i++)
             {
@@ -292,7 +292,7 @@ namespace LetPortal.Tests.ITs.Portal
                 datasourceName += suppliedVars[randomIndx];
             }
 
-            return datasourceName;
+            return startWith + datasourceName;
         }
 
         private void CreateSomeDummyData()

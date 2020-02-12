@@ -66,6 +66,17 @@ namespace LetPortal.Core.Utils
             return JsonConvert.DeserializeObject<T>(deserializingObject);
         }
 
+        public static dynamic GetOneInArray(dynamic array)
+        {
+            if (array.Type == JTokenType.Array)
+            {
+                var jArray = ((JArray)array);
+                return jArray?.Count == 1 ? jArray[0].ToObject<dynamic>() : array;
+            }
+
+            return array;
+        }
+
         public static object DeserializeObjectToObject(string deserializingObject)
         {
             return JsonConvert.DeserializeObject(deserializingObject);
