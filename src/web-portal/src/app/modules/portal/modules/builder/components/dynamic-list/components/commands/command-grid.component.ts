@@ -99,10 +99,8 @@ export class CommandGridComponent implements OnInit {
             color: 'primary',
             actionCommandOptions: {
                 actionType: ActionType.Redirect,
-                databaseOptions:{
-                    databaseConnectionId: '',
-                    entityName: '',
-                    query: ''
+                dbExecutionChains: {
+                    steps: []
                 },
                 httpServiceOptions: {
                     httpMethod: 'GET',

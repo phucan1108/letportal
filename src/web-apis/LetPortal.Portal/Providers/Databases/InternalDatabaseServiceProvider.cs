@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Repositories.Databases;
@@ -62,6 +64,13 @@ namespace LetPortal.Portal.Providers.Databases
         {
             var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
             return await _databaseService.ExtractColumnSchema(databaseConnection, queryJsonString, parameters);
+        }    
+
+        public async Task<ExecuteDynamicResultModel> ExecuteDatabase(DatabaseExecutionChains databaseExecutionChains, IEnumerable<ExecuteParamModel> parameters)
+        {
+            var allRequiredDb = await _databaseRepository.GetAllByIdsAsync(databaseExecutionChains?.Steps.Select(a => a.DatabaseConnectionId));
+
+            return await _databaseService.ExecuteDynamic(allRequiredDb?.ToList(), databaseExecutionChains, parameters);
         }
 
         #region IDisposable Support

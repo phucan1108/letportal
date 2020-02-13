@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 
@@ -22,6 +23,7 @@ namespace LetPortal.Portal.Providers.Databases
 
         Task<ExecuteDynamicResultModel> ExecuteDatabase(string databaseId, string formattedCommand, IEnumerable<ExecuteParamModel> parameters);
 
+        Task<ExecuteDynamicResultModel> ExecuteDatabase(DatabaseExecutionChains databaseExecutionChains, IEnumerable<ExecuteParamModel> parameters);
         Task ForceUpdateDatabases(IEnumerable<DatabaseConnection> databases);
     }
 }

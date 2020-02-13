@@ -145,10 +145,8 @@ export class ListDatasourceComponent implements OnInit {
                 allowRefreshList: false,
                 actionCommandOptions: {
                     actionType: ActionType.Redirect,
-                    databaseOptions: {
-                        databaseConnectionId:'',
-                        entityName: '',
-                        query: ''
+                    dbExecutionChains: {
+                        steps: []
                     },
                     httpServiceOptions: {
                         httpMethod: 'GET',
@@ -182,10 +180,8 @@ export class ListDatasourceComponent implements OnInit {
                 allowRefreshList: false,
                 actionCommandOptions: {
                     actionType: ActionType.Redirect,
-                    databaseOptions: {
-                        databaseConnectionId:'',
-                        entityName: '',
-                        query: ''
+                    dbExecutionChains: {
+                        steps: []
                     },
                     httpServiceOptions: {
                         httpMethod: 'GET',
@@ -216,10 +212,8 @@ export class ListDatasourceComponent implements OnInit {
                 allowRefreshList: false,
                 actionCommandOptions: {
                     actionType: ActionType.Redirect,
-                    databaseOptions: {
-                        databaseConnectionId:'',
-                        entityName: '',
-                        query: ''
+                    dbExecutionChains: {
+                        steps: []
                     },
                     httpServiceOptions: {
                         httpMethod: 'GET',

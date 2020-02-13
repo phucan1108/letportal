@@ -4465,7 +4465,6 @@ export interface ActionCommandOptions {
     actionType?: ActionType;
     redirectOptions?: RedirectOptions | undefined;
     httpServiceOptions?: HttpServiceOptions | undefined;
-    databaseOptions?: DatabaseOptions | undefined;
     dbExecutionChains?: DatabaseExecutionChains | undefined;
     workflowOptions?: WorkflowOptions | undefined;
     notificationOptions?: NotificationOptions | undefined;

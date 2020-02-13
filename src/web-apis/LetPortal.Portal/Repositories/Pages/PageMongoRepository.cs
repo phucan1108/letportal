@@ -54,9 +54,14 @@ namespace LetPortal.Portal.Repositories.Pages
                 {
                     foreach (var command in page.Commands)
                     {
-                        if (command.ButtonOptions.ActionCommandOptions.ActionType == Entities.Shared.ActionType.ExecuteDatabase)
+                        if (command.ButtonOptions.ActionCommandOptions.ActionType == Entities.Shared.ActionType.ExecuteDatabase
+                                && command.ButtonOptions.ActionCommandOptions.DbExecutionChains != null
+                                && command.ButtonOptions.ActionCommandOptions.DbExecutionChains.Steps != null)
                         {
-                            command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query, true));
+                            foreach (var step in command.ButtonOptions.ActionCommandOptions.DbExecutionChains.Steps)
+                            {
+                                step.ExecuteCommand = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(step.ExecuteCommand, true));
+                            }
                         }
                     }
                 }

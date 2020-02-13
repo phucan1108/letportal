@@ -111,18 +111,12 @@ namespace LetPortal.Core.Utils
             {
                 var decryptor = aes.CreateEncryptor(GetBytes(key), GetBytes(iv));
                 // Create MemoryStream    
-                using (var ms = new MemoryStream(GetBytes(encryption)))
-                {
-                    // Create crypto stream    
-                    using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
-                    {
-                        // Read crypto stream    
-                        using (var reader = new StreamReader(cs))
-                        {
-                            plain = reader.ReadToEnd();
-                        }
-                    }
-                }
+                using var ms = new MemoryStream(GetBytes(encryption));
+                // Create crypto stream    
+                using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+                // Read crypto stream    
+                using var reader = new StreamReader(cs);
+                plain = reader.ReadToEnd();
             }
 
             return plain;
@@ -130,7 +124,7 @@ namespace LetPortal.Core.Utils
 
         public static string[] GetAllDoubleCurlyBraces(string str, bool keptCurlyBraces = false, IEnumerable<string> removeList = null)
         {
-            var matches = Regex.Matches(str, @"{{(.*?)}}");
+            var matches = Regex.Matches(str, @"{{(?!\$)(.*?)}}");
             if (keptCurlyBraces)
             {
                 var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().Select(b => "{{" + b + "}}").ToArray();

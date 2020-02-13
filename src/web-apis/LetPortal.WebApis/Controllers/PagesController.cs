@@ -141,8 +141,7 @@ namespace LetPortal.WebApis.Controllers
                     var result =
                         await _databaseServiceProvider
                                 .ExecuteDatabase(
-                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.DatabaseConnectionId,
-                                    button.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query,
+                                    button.ButtonOptions.ActionCommandOptions.DbExecutionChains,
                                     pageSubmittedButtonModel
                                         .Parameters
                                         .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }));

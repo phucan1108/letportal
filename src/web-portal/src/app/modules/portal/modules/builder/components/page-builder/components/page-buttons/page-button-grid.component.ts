@@ -98,10 +98,8 @@ export class PageButtonGridComponent implements OnInit {
             buttonOptions: {
                 actionCommandOptions: {
                     actionType: ActionType.ExecuteDatabase,
-                    databaseOptions: {
-                        databaseConnectionId: '',
-                        entityName: '',
-                        query: ''
+                    dbExecutionChains: {
+                        steps: []
                     },
                     notificationOptions: {
                         completeMessage: 'Completed!',

@@ -99,14 +99,20 @@ namespace LetPortal.Versions.Pages
                             {
                                 IsEnable = true,
                                 ActionType = ActionType.ExecuteDatabase,
-                                DatabaseOptions = new DatabaseOptions
+                                DbExecutionChains = new DatabaseExecutionChains
                                 {
-                                    DatabaseConnectionId = Constants.IdentityDatabaseId,
-                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                        "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"normalizedName\": \"{{data.name.toUpperCase()}}\" }\r\n  }\r\n}"
-                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
-                                        ? "INSERT INTO `roles` (id, name, `displayName`, `normalizedName`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})"
-                                        : "INSERT INTO roles(id, name, \"displayName\", \"normalizedName\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})")
+                                    Steps = new List<DatabaseExecutionStep>
+                                    {
+                                        new DatabaseExecutionStep
+                                        {
+                                            DatabaseConnectionId = Constants.IdentityDatabaseId,
+                                            ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                                "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"normalizedName\": \"{{data.name.toUpperCase()}}\" }\r\n  }\r\n}"
+                                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                                                        ? "INSERT INTO `roles` (id, name, `displayName`, `normalizedName`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})"
+                                                        : "INSERT INTO roles(id, name, \"displayName\", \"normalizedName\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{data.name.toUpperCase()}})")
+                                        }
+                                    }
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -149,14 +155,20 @@ namespace LetPortal.Versions.Pages
                             {
                                 IsEnable = true,
                                 ActionType = ActionType.ExecuteDatabase,
-                                DatabaseOptions = new DatabaseOptions
+                                DbExecutionChains = new DatabaseExecutionChains
                                 {
-                                    DatabaseConnectionId = Constants.IdentityDatabaseId,
-                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                        "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
-                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
-                                        ? "UPDATE `roles` SET name={{data.name}}, `displayName`={{data.displayName}}, `normalizedName`={{data.name.toUpperCase()}} Where id={{data.id}}"
-                                        : "UPDATE roles SET name={{data.name}}, \"displayName\"={{data.displayName}}, \"normalizedName\"={{data.name.toUpperCase()}} Where id={{data.id}}")
+                                    Steps = new List<DatabaseExecutionStep>
+                                    {
+                                        new DatabaseExecutionStep
+                                        {
+                                            DatabaseConnectionId = Constants.IdentityDatabaseId,
+                                            ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                                "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                                                        ? "UPDATE `roles` SET name={{data.name}}, `displayName`={{data.displayName}}, `normalizedName`={{data.name.toUpperCase()}} Where id={{data.id}}"
+                                                        : "UPDATE roles SET name={{data.name}}, \"displayName\"={{data.displayName}}, \"normalizedName\"={{data.name.toUpperCase()}} Where id={{data.id}}")
+                                        }
+                                    }
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -397,14 +409,20 @@ namespace LetPortal.Versions.Pages
                             {
                                 IsEnable = true,
                                 ActionType = ActionType.ExecuteDatabase,
-                                DatabaseOptions = new DatabaseOptions
+                                DbExecutionChains = new DatabaseExecutionChains
                                 {
-                                    DatabaseConnectionId = Constants.IdentityDatabaseId,
-                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                        "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\", \"normalizedEmail\":\"{{data.email.toUpperCase()}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
-                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
-                                        ? "Update `users` Set email={{data.email}}, `normalizedEmail`={{data.email.toUpperCase()}}, `isConfirmedEmail`={{data.isConfirmedEmail|bool}}, `isLockoutEnabled`={{data.isLockoutEnabled|bool}}, `lockoutEndDate`={{data.lockoutEndDate|date}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}"
-                                        : "Update users Set email={{data.email}}, \"normalizedEmail\"={{data.email.toUpperCase()}}, \"isConfirmedEmail\"={{data.isConfirmedEmail}}, \"isLockoutEnabled\"={{data.isLockoutEnabled|bool}}, \"lockoutEndDate\"={{data.lockoutEndDate|date}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}")
+                                    Steps = new List<DatabaseExecutionStep>
+                                    {
+                                        new DatabaseExecutionStep
+                                        {
+                                            DatabaseConnectionId = Constants.IdentityDatabaseId,
+                                            ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                                "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\", \"normalizedEmail\":\"{{data.email.toUpperCase()}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
+                                                        ? "Update `users` Set email={{data.email}}, `normalizedEmail`={{data.email.toUpperCase()}}, `isConfirmedEmail`={{data.isConfirmedEmail|bool}}, `isLockoutEnabled`={{data.isLockoutEnabled|bool}}, `lockoutEndDate`={{data.lockoutEndDate|date}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}"
+                                                        : "Update users Set email={{data.email}}, \"normalizedEmail\"={{data.email.toUpperCase()}}, \"isConfirmedEmail\"={{data.isConfirmedEmail}}, \"isLockoutEnabled\"={{data.isLockoutEnabled|bool}}, \"lockoutEndDate\"={{data.lockoutEndDate|date}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}")
+                                        }
+                                    }
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {

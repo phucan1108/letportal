@@ -506,8 +506,15 @@ export class PageService {
         if (command.buttonOptions.actionCommandOptions.isEnable) {
             switch (command.buttonOptions.actionCommandOptions.actionType) {
                 case ActionType.ExecuteDatabase:
+                    let combinedCommand = ''
+                    command.buttonOptions.actionCommandOptions.dbExecutionChains.steps.forEach((step,index) =>{
+                        if(index > 0)
+                            combinedCommand += ';' + step.executeCommand
+                        else
+                        combinedCommand += step.executeCommand
+                    })
                     const params = this.translator.retrieveParameters(
-                        command.buttonOptions.actionCommandOptions.databaseOptions.query, this.getPageShellData());
+                        combinedCommand, this.getPageShellData());
                     this.pageClients
                         .submitCommand(this.page.id, {
                             buttonName: command.name,

@@ -183,10 +183,16 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.ExecuteDatabase,
-                                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                                DbExecutionChains = new DatabaseExecutionChains
                                 {
-                                    DatabaseConnectionId = "fasdfas",
-                                    Query = "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                    Steps = new List<DatabaseExecutionStep>
+                                    {
+                                        new DatabaseExecutionStep
+                                        {
+                                            DatabaseConnectionId = "fasdfas",
+                                            ExecuteCommand = "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                        }
+                                    }
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {

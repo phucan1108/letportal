@@ -101,7 +101,6 @@ export class CommandOptionsComponent implements OnInit {
         this.actionCommandOptions = ObjectUtils.clone(this.actionCommandOptions)
         this.currentActionType = this.actionCommandOptions.actionType
         this.initDatabaseChains()
-        this.initDatabaseOptions()
         this.initHttpOptions()
         this.initWorkflowOptions()
         this.initRedirectionOptions()
@@ -171,40 +170,7 @@ export class CommandOptionsComponent implements OnInit {
 
 
     }
-
-    initDatabaseOptions(){
-        if(!this.actionCommandOptions.databaseOptions){
-            this.actionCommandOptions.databaseOptions = {
-                databaseConnectionId: '',
-                query: '',
-                entityName: ''
-            }
-        }
-        
-        this.editorOptions3.mode = 'code'
-        this.jsonData = this.actionCommandOptions.databaseOptions.query ? JSON.parse(this.actionCommandOptions.databaseOptions.query) : {}
-        this.editorOptions3.onChange = () => {
-            try {
-                const jsonStr = JSON.stringify(this.jsonDataEditor.get())
-                if (!!jsonStr && jsonStr !== '{}') {
-                    this.databaseOptionsForm.get('query').setValue(jsonStr)
-                }
-            }
-            catch{
-
-            }
-        }
-
-        this.databaseOptionsForm = this.fb.group({
-            databaseConnectionId: [this.actionCommandOptions.databaseOptions.databaseConnectionId, Validators.required],
-            query: [this.actionCommandOptions.databaseOptions.query, Validators.required]
-        })
-
-        this.databaseOptionsForm.valueChanges.subscribe(newValue => {
-
-        })
-    }
-
+    
     initHttpOptions() {
         if (!this.actionCommandOptions.httpServiceOptions) {
             this.actionCommandOptions.httpServiceOptions = {
