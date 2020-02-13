@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Databases;
 using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Repositories
 {
@@ -18,7 +18,7 @@ namespace LetPortal.Portal.Repositories
 
         public Task<IEnumerable<ShortEntityModel>> GetShortDatatabases(string keyWord = null)
         {
-            if(!string.IsNullOrEmpty(keyWord))
+            if (!string.IsNullOrEmpty(keyWord))
             {
                 var filterBuilder = Builders<DatabaseConnection>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var databases = Collection.Find(filterBuilder).ToList();

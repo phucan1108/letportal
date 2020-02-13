@@ -1,7 +1,7 @@
-﻿using LetPortal.Identity.Entities;
-using LetPortal.Identity.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Identity.Entities;
+using LetPortal.Identity.Models;
 
 namespace LetPortal.Identity.Providers.Identity
 {

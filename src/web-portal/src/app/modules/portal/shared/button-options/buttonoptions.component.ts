@@ -49,10 +49,8 @@ export class ButtonOptionsComponent implements OnInit {
         else {
             this.buttonOptions.actionCommandOptions = {
                 actionType: ActionType.ExecuteDatabase,
-                databaseOptions: {
-                    databaseConnectionId: '',
-                    entityName: '',
-                    query: ''
+                dbExecutionChains: {
+                    steps:[]
                 },
                 isEnable: false,
                 notificationOptions: {

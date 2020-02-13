@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.ServiceManagement.Entities;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.ServiceManagement.Entities;
 
 namespace LetPortal.ServiceManagement.Repositories.Abstractions
 {

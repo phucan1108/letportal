@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using MySql.Data.MySqlClient;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.MySQL
 {
@@ -15,19 +15,19 @@ namespace LetPortal.Portal.Executions.MySQL
         public Task<List<DatasourceModel>> ExtractionDatasource(DatabaseConnection databaseConnection, string formattedQueryString, string outputProjection)
         {
             var datasources = new List<DatasourceModel>();
-            using(var mySqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
+            using (var mySqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
             {
                 mySqlDbConnection.Open();
-                using(var cmd = new MySqlCommand(formattedQueryString, mySqlDbConnection))
+                using (var cmd = new MySqlCommand(formattedQueryString, mySqlDbConnection))
                 {
-                    using(var reader = cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
                         var dt = new DataTable();
                         dt.Load(reader);
-                        bool hasNameAndValueCol = dt.Columns.Contains("Name") && dt.Columns.Contains("Value");
-                        if(!hasNameAndValueCol)
+                        var hasNameAndValueCol = dt.Columns.Contains("Name") && dt.Columns.Contains("Value");
+                        if (!hasNameAndValueCol)
                         {
-                            foreach(DataRow dr in dt.Rows)
+                            foreach (DataRow dr in dt.Rows)
                             {
                                 datasources.Add(new DatasourceModel
                                 {
@@ -38,7 +38,7 @@ namespace LetPortal.Portal.Executions.MySQL
                         }
                         else
                         {
-                            foreach(DataRow dr in dt.Rows)
+                            foreach (DataRow dr in dt.Rows)
                             {
                                 datasources.Add(new DatasourceModel
                                 {

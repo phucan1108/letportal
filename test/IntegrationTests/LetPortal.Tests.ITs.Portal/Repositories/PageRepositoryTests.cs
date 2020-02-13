@@ -28,10 +28,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var pageBuilderTest = new Page
+            // Act
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder",
@@ -46,7 +46,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetOneByNameAsync("page-builder");
+            Page result = await pageRepository.GetOneByNameAsync("page-builder");
             pageRepository.Dispose();
             // Assert
             Assert.NotNull(result);
@@ -62,10 +62,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var pageBuilderTest = new Page
+            // Act
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-1",
@@ -80,7 +80,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetAllShortPagesAsync();
+            List<LetPortal.Portal.Models.Pages.ShortPageModel> result = await pageRepository.GetAllShortPagesAsync();
             pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
@@ -96,10 +96,10 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                              // Act
-            var pageBuilderTest = new Page
+            // Act
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-2",
@@ -114,7 +114,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
 
             await pageRepository.AddAsync(pageBuilderTest);
 
-            var result = await pageRepository.GetShortPortalClaimModelsAsync();
+            List<LetPortal.Portal.Models.Pages.ShortPortalClaimModel> result = await pageRepository.GetShortPortalClaimModelsAsync();
             pageRepository.Dispose();
             // Assert
             Assert.NotEmpty(result);
@@ -130,11 +130,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             }
             // Arrange
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var pageRepository = new PageMongoRepository(_context.GetMongoConnection());
+            PageMongoRepository pageRepository = new PageMongoRepository(_context.GetMongoConnection());
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Act
-            var pageBuilderTest = new Page
+            Page pageBuilderTest = new Page
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "page-builder-3",
@@ -183,10 +183,16 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.ExecuteDatabase,
-                                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                                DbExecutionChains = new DatabaseExecutionChains
                                 {
-                                    DatabaseConnectionId = "fasdfas",
-                                    Query = "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                    Steps = new List<DatabaseExecutionStep>
+                                    {
+                                        new DatabaseExecutionStep
+                                        {
+                                            DatabaseConnectionId = "fasdfas",
+                                            ExecuteCommand = "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                        }
+                                    }
                                 },
                                 NotificationOptions = new NotificationOptions
                                 {
@@ -204,7 +210,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await pageRepository.AddAsync(pageBuilderTest);
-            var page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
+            Page page = await pageRepository.GetOneByNameForRenderAsync("page-builder-3");
             pageRepository.Dispose();
             // Assert
             Assert.NotNull(page);

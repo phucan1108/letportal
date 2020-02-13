@@ -1,5 +1,5 @@
-﻿using LetPortal.Portal.Entities.SectionParts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LetPortal.Portal.Entities.SectionParts;
 
 namespace LetPortal.Versions
 {
@@ -7,9 +7,9 @@ namespace LetPortal.Versions
     {
         public static void GenerateControlEvents(StandardComponent standardComponent)
         {
-            foreach(var control in standardComponent.Controls)
+            foreach (var control in standardComponent.Controls)
             {
-                switch(control.Type)
+                switch (control.Type)
                 {
                     case Portal.Entities.SectionParts.Controls.ControlType.Label:
                         control.PageControlEvents = new List<Portal.Entities.Components.Controls.PageControlEvent>();

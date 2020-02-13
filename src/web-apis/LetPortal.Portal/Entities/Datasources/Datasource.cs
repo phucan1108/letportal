@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Portal.Constants;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Datasources
 {

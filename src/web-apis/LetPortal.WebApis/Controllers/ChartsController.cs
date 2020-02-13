@@ -1,4 +1,6 @@
-﻿using LetPortal.Core.Logger;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Charts;
@@ -6,8 +8,6 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Services.Components;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.PortalApis.Controllers
 {
@@ -44,7 +44,7 @@ namespace LetPortal.PortalApis.Controllers
         {
             _logger.Info("Getting Chart with Id = {id}", id);
             var result = await _chartRepository.GetOneAsync(id);
-            if(result == null)
+            if (result == null)
             {
                 return NotFound();
             }
@@ -66,7 +66,7 @@ namespace LetPortal.PortalApis.Controllers
         {
             _logger.Info("Getting Chart with Id = {id}", id);
             var result = await _chartRepository.GetOneAsync(id);
-            if(result == null)
+            if (result == null)
             {
                 return NotFound();
             }
@@ -97,7 +97,7 @@ namespace LetPortal.PortalApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] Chart chart)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 chart.Id = id;
                 await _chartRepository.UpdateAsync(id, chart);
@@ -118,7 +118,7 @@ namespace LetPortal.PortalApis.Controllers
         [ProducesResponseType(typeof(ExtractionChartFilter), 200)]
         public async Task<IActionResult> Extraction([FromBody] ExtractingChartQueryModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var result = await _chartService.Extract(model);
                 return Ok(result);
@@ -130,10 +130,10 @@ namespace LetPortal.PortalApis.Controllers
         [ProducesResponseType(typeof(ExecutionChartResponseModel), 200)]
         public async Task<IActionResult> Execution([FromBody] ExecutionChartRequestModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var foundChart = await _chartRepository.GetOneAsync(model.ChartId);
-                if(foundChart != null)
+                if (foundChart != null)
                 {
                     var result = await _chartService.Execute(foundChart, model);
                     return Ok(result);

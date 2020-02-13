@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using System.Data.Common;
+﻿using System.Data.Common;
+using Microsoft.Extensions.Options;
 
 namespace LetPortal.Core.Persistences
 {

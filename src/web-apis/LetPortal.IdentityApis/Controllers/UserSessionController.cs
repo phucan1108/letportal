@@ -1,12 +1,12 @@
-﻿using LetPortal.Core.Exceptions;
+﻿using System;
+using System.Threading.Tasks;
+using LetPortal.Core.Exceptions;
 using LetPortal.Core.Utils;
 using LetPortal.Identity.Entities;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Repositories.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace LetPortal.IdentityApis.Controllers
 {
@@ -26,7 +26,7 @@ namespace LetPortal.IdentityApis.Controllers
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> AddActivity([FromBody] UserActivityModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }

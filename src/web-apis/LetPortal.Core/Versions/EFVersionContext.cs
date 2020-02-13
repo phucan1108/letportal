@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Persistences;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using LetPortal.Core.Persistences;
+using Microsoft.EntityFrameworkCore;
 
 namespace LetPortal.Core.Versions
 {
@@ -30,7 +30,7 @@ namespace LetPortal.Core.Versions
 
         public void BulkInsertData<T>(T[] entities) where T : Entity
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 entity.Check();
             }
@@ -77,7 +77,7 @@ namespace LetPortal.Core.Versions
         {
             var dbTransaction = _context.Database.BeginTransaction();
             try
-            {    
+            {
                 _context.Database.ExecuteSqlRaw(rawCommand);
                 dbTransaction.Commit();
             }

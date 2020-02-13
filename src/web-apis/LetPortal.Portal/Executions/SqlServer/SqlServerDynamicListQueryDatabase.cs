@@ -1,4 +1,9 @@
-﻿using LetPortal.Core.Common;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
@@ -8,11 +13,6 @@ using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Models.DynamicLists;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.SqlServer
 {
@@ -39,8 +39,8 @@ namespace LetPortal.Portal.Executions.SqlServer
         public Task<DynamicListResponseDataModel> Query(DatabaseConnection databaseConnection, DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
             var response = new DynamicListResponseDataModel();
-            bool hasRows = false;
-            using(var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
+            var hasRows = false;
+            using (var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
             {
                 var combinedQuery =
                     _builder
@@ -61,11 +61,11 @@ namespace LetPortal.Portal.Executions.SqlServer
                         .Build();
 
                 sqlDbConnection.Open();
-                using(var cmd = new SqlCommand(combinedQuery.CombinedQuery, sqlDbConnection))
+                using (var cmd = new SqlCommand(combinedQuery.CombinedQuery, sqlDbConnection))
                 {
-                    foreach(var param in combinedQuery.Parameters)
+                    foreach (var param in combinedQuery.Parameters)
                     {
-                        if(param.IsReplacedValue)
+                        if (param.IsReplacedValue)
                         {
                             var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
                             cmd.Parameters.Add(
@@ -80,18 +80,18 @@ namespace LetPortal.Portal.Executions.SqlServer
                         {
                             cmd.Parameters.Add(
                               new SqlParameter(
-                                  param.Name, GetSqlDbType(param, out object castObject))
+                                  param.Name, GetSqlDbType(param, out var castObject))
                               {
                                   Value = castObject,
                                   Direction = System.Data.ParameterDirection.Input
                               });
                         }
                     }
-                    using(var reader = cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
                     {
                         var dt = new DataTable();
                         dt.Load(reader);
-                        if(dt.Rows.Count > 0)
+                        if (dt.Rows.Count > 0)
                         {
                             hasRows = true;
                             response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
@@ -100,13 +100,13 @@ namespace LetPortal.Portal.Executions.SqlServer
                     }
                 }
 
-                if(fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
+                if (fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
                 {
-                    using(var cmd = new SqlCommand(combinedQuery.CombinedQuery, sqlDbConnection))
+                    using (var cmd = new SqlCommand(combinedQuery.CombinedQuery, sqlDbConnection))
                     {
-                        foreach(var param in combinedQuery.Parameters)
+                        foreach (var param in combinedQuery.Parameters)
                         {
-                            if(param.IsReplacedValue)
+                            if (param.IsReplacedValue)
                             {
                                 var castObject = _cSharpMapper.GetCSharpObjectByType(param.Value, param.ReplaceValueType);
                                 cmd.Parameters.Add(
@@ -121,7 +121,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                             {
                                 cmd.Parameters.Add(
                                   new SqlParameter(
-                                      param.Name, GetSqlDbType(param, out object castObject))
+                                      param.Name, GetSqlDbType(param, out var castObject))
                                   {
                                       Value = castObject,
                                       Direction = System.Data.ParameterDirection.Input
@@ -144,7 +144,7 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         private SqlDbType GetSqlDbType(DynamicQueryParameter param, out object castObj)
         {
-            switch(param.ValueType)
+            switch (param.ValueType)
             {
                 case FieldValueType.Number:
                     castObj = _cSharpMapper.GetCSharpObjectByType(param.Value, MapperConstants.Long);

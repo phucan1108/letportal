@@ -1,14 +1,14 @@
-﻿using LetPortal.Core.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using LetPortal.Core.Exceptions;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Core.Utils;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace LetPortal.Core.Persistences
 {
@@ -31,11 +31,11 @@ namespace LetPortal.Core.Persistences
         public async Task AddAsync(T entity)
         {
             entity.Check();
-            if(string.IsNullOrEmpty(entity.Id))
+            if (string.IsNullOrEmpty(entity.Id))
             {
                 entity.Id = DataUtil.GenerateUniqueId();
             }
-            if(entityCollectionAttribute.IsUniqueBackup)
+            if (entityCollectionAttribute.IsUniqueBackup)
             {
                 await CheckIsExist(entity);
             }
@@ -44,10 +44,10 @@ namespace LetPortal.Core.Persistences
 
         public async Task AddBulkAsync(IEnumerable<T> entities)
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 entity.Check();
-                if(entityCollectionAttribute.IsUniqueBackup)
+                if (entityCollectionAttribute.IsUniqueBackup)
                 {
                     await CheckIsExist(entity);
                 }
@@ -74,7 +74,7 @@ namespace LetPortal.Core.Persistences
 
         public async Task<IEnumerable<T>> GetAllByIdsAsync(IEnumerable<string> ids)
         {
-            if(ids != null && ids.Any())
+            if (ids != null && ids.Any())
             {
                 return await Collection.AsQueryable().Where(a => ids.Contains(a.Id)).ToListAsync();
             }
@@ -89,7 +89,7 @@ namespace LetPortal.Core.Persistences
         public async Task UpdateAsync(string id, T entity)
         {
             entity.Check();
-            if(entityCollectionAttribute.IsUniqueBackup)
+            if (entityCollectionAttribute.IsUniqueBackup)
             {
                 await CheckIsExist(entity);
             }
@@ -98,9 +98,9 @@ namespace LetPortal.Core.Persistences
 
         public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool isRequiredDiscriminator = false)
         {
-            if(isRequiredDiscriminator)
+            if (isRequiredDiscriminator)
             {
-                if(expression != null)
+                if (expression != null)
                 {
                     return await Collection.OfType<T>().AsQueryable().Where(expression).ToListAsync();
                 }
@@ -109,7 +109,7 @@ namespace LetPortal.Core.Persistences
             }
             else
             {
-                if(expression != null)
+                if (expression != null)
                 {
                     return await Collection.AsQueryable().Where(expression).ToListAsync();
                 }
@@ -120,11 +120,11 @@ namespace LetPortal.Core.Persistences
 
         private async Task CheckIsExist(T entity)
         {
-            if(entity is BackupableEntity backupableEntity)
+            if (entity is BackupableEntity backupableEntity)
             {
                 var backupableCollection = Connection.GetDatabaseConnection().GetCollection<BackupableEntity>(CollectionName);
                 var isExist = await backupableCollection.AsQueryable().AnyAsync(a => a.Name == backupableEntity.Name && a.Id != backupableEntity.Id);
-                if(isExist)
+                if (isExist)
                 {
                     throw new CoreException(ErrorCodes.NameAlreadyExistException);
                 }
@@ -139,7 +139,7 @@ namespace LetPortal.Core.Persistences
         public async Task<ComparisonResult> Compare(T comparedEntity)
         {
             var foundEntity = await GetOneAsync(comparedEntity.Id);
-            if(foundEntity != null)
+            if (foundEntity != null)
             {
                 var jObject = JObject.FromObject(foundEntity);
                 var comparedJObject = JObject.FromObject(comparedEntity);
@@ -149,10 +149,10 @@ namespace LetPortal.Core.Persistences
                 {
                     Result = new ComparisonEntity { Properties = new List<ComparisonProperty>() }
                 };
-                foreach(JProperty jprop in comparedChildren)
+                foreach (JProperty jprop in comparedChildren)
                 {
                     var foundChild = children.FirstOrDefault(a => (a as JProperty).Name == jprop.Name);
-                    if(foundChild != null)
+                    if (foundChild != null)
                     {
                         var resultProperty = new ComparisonProperty
                         {
@@ -165,24 +165,24 @@ namespace LetPortal.Core.Persistences
                         resultProperty.TargetValue = resultProperty.TargetValue ?? string.Empty;
 
                         // In case the same string length, compare each char
-                        if(resultProperty.SourceValue.Length == resultProperty.TargetValue.Length)
+                        if (resultProperty.SourceValue.Length == resultProperty.TargetValue.Length)
                         {
-                            if(resultProperty.SourceValue.Length == 0)
+                            if (resultProperty.SourceValue.Length == 0)
                             {
                                 resultProperty.ComparedState = ComparedState.Unchanged;
                             }
                             else
                             {
-                                for(int i = 0; i < resultProperty.SourceValue.Length; i++)
+                                for (var i = 0; i < resultProperty.SourceValue.Length; i++)
                                 {
-                                    if(resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
+                                    if (resultProperty.SourceValue[i] != resultProperty.TargetValue[i])
                                     {
                                         resultProperty.ComparedState = ComparedState.Changed;
                                         break;
                                     }
                                 }
 
-                                if(resultProperty.ComparedState != ComparedState.Changed)
+                                if (resultProperty.ComparedState != ComparedState.Changed)
                                 {
                                     resultProperty.ComparedState = ComparedState.Unchanged;
                                 }
@@ -220,7 +220,7 @@ namespace LetPortal.Core.Persistences
         public async Task ForceUpdateAsync(string id, T forceEntity)
         {
             var oldOne = await Collection.FindAsync(a => a.Id == id);
-            if(oldOne != null)
+            if (oldOne != null)
             {
                 await Collection.FindOneAndReplaceAsync(a => a.Id == id, forceEntity);
             }
@@ -240,13 +240,13 @@ namespace LetPortal.Core.Persistences
                 if (disposing)
                 {
                     // Nothing to dispose with MongoDB
-                } 
+                }
                 disposedValue = true;
             }
         }
         public void Dispose()
-        {                             
-            Dispose(true);            
+        {
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
         #endregion

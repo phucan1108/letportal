@@ -1,4 +1,8 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Components;
@@ -7,10 +11,6 @@ using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Charts;
 using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.MySQL
 {
@@ -37,7 +37,7 @@ namespace LetPortal.Portal.Executions.MySQL
             {
                 Filters = new System.Collections.Generic.List<Entities.Components.ChartFilter>()
             };
-            using(var mysqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
+            using (var mysqlDbConnection = new MySqlConnection(databaseConnection.ConnectionString))
             {
                 mysqlDbConnection.Open();
                 var warpQuery = @"Select * from ({0}) s limit 1";
@@ -46,29 +46,29 @@ namespace LetPortal.Portal.Executions.MySQL
                 warpQuery = warpQuery.Replace("{{REAL_TIME}}", "1=1");
                 warpQuery = warpQuery.Replace("{{FILTER}}", "1=1");
                 var listParams = new List<MySqlParameter>();
-                if(parameterValues != null)
+                if (parameterValues != null)
                 {
-                    foreach(var parameter in parameterValues)
+                    foreach (var parameter in parameterValues)
                     {
                         var fieldParam = StringUtil.GenerateUniqueName();
                         formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
                         listParams.Add(
-                            new MySqlParameter(fieldParam, GetMySqlDbType(parameter.Name, parameter.Value, out object castObject))
+                            new MySqlParameter(fieldParam, GetMySqlDbType(parameter.Name, parameter.Value, out var castObject))
                             {
                                 Value = castObject,
                                 Direction = ParameterDirection.Input
                             });
                     }
                 }
-                using(var command = new MySqlCommand(formattedString, mysqlDbConnection))
+                using (var command = new MySqlCommand(formattedString, mysqlDbConnection))
                 {
                     command.Parameters.AddRange(listParams.ToArray());
-                    using(var reader = command.ExecuteReader())
+                    using (var reader = command.ExecuteReader())
                     {
-                        using(DataTable dt = new DataTable())
+                        using (var dt = new DataTable())
                         {
                             dt.Load(reader);
-                            foreach(DataColumn dc in dt.Columns)
+                            foreach (DataColumn dc in dt.Columns)
                             {
                                 chartFilters.Filters.Add(new Entities.Components.ChartFilter
                                 {
@@ -88,7 +88,7 @@ namespace LetPortal.Portal.Executions.MySQL
         private MySqlDbType GetMySqlDbType(string paramName, string value, out object castObj)
         {
             var splitted = paramName.Split("|");
-            if(splitted.Length == 1)
+            if (splitted.Length == 1)
             {
                 castObj = _cSharpMapper.GetCSharpObjectByType(value, MapperConstants.String);
                 return _mySqlMapper.GetMySqlDbType(MapperConstants.String);
@@ -102,11 +102,11 @@ namespace LetPortal.Portal.Executions.MySQL
 
         private FilterType GetType(Type type)
         {
-            if(type == typeof(DateTime))
+            if (type == typeof(DateTime))
             {
                 return FilterType.DatePicker;
             }
-            else if(type == typeof(int)
+            else if (type == typeof(int)
                 || type == typeof(float)
                 || type == typeof(double)
                 || type == typeof(decimal)
@@ -114,7 +114,7 @@ namespace LetPortal.Portal.Executions.MySQL
             {
                 return FilterType.NumberPicker;
             }
-            else if(type == typeof(bool))
+            else if (type == typeof(bool))
             {
                 return FilterType.Checkbox;
             }

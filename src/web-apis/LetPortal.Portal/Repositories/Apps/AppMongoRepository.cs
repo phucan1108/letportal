@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
 using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Repositories.Apps
 {
@@ -18,7 +18,7 @@ namespace LetPortal.Portal.Repositories.Apps
 
         public Task<IEnumerable<ShortEntityModel>> GetShortApps(string keyWord = null)
         {
-            if(!string.IsNullOrEmpty(keyWord))
+            if (!string.IsNullOrEmpty(keyWord))
             {
                 var filterBuilder = Builders<App>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
 
@@ -36,11 +36,11 @@ namespace LetPortal.Portal.Repositories.Apps
         public async Task UpdateMenuProfileAsync(string appId, MenuProfile menuProfile)
         {
             var app = await GetOneAsync(appId);
-            if(app.MenuProfiles.Any(a => a.Role == menuProfile.Role))
+            if (app.MenuProfiles.Any(a => a.Role == menuProfile.Role))
             {
-                foreach(var menu in app.MenuProfiles)
+                foreach (var menu in app.MenuProfiles)
                 {
-                    if(menuProfile.Role == menuProfile.Role)
+                    if (menuProfile.Role == menuProfile.Role)
                     {
                         menuProfile.MenuIds = menuProfile.MenuIds;
                         break;

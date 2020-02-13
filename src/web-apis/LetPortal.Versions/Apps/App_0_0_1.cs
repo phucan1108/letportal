@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Versions;
+﻿using System;
+using System.Collections.Generic;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
-using System;
-using System.Collections.Generic;
 
 namespace LetPortal.Versions.Apps
 {

@@ -1,12 +1,12 @@
-﻿using LetPortal.ServiceManagement.Options;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using LetPortal.ServiceManagement.Options;
 using LetPortal.ServiceManagement.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement
 {
@@ -33,7 +33,7 @@ namespace LetPortal.ServiceManagement
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Setting up Gather Services Report cron task with options {options}", _options);
-            while(!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 var monitorService = _services.GetService<IMonitorServiceReportProvider>();
                 var serviceManagement = _services.GetService<IServiceManagementProvider>();
@@ -43,7 +43,7 @@ namespace LetPortal.ServiceManagement
                     await monitorService.CollectAndReportHardware(allRunningServiceIds, _options.CurrentValue.DurationMonitorReport);
                     await monitorService.CollectAndReportHttp(allRunningServiceIds, _options.CurrentValue.DurationMonitorReport);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error during running Services Report Cron Task");
                 }

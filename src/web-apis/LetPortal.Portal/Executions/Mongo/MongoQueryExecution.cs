@@ -1,14 +1,14 @@
-﻿using LetPortal.Core.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Common;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Models.Databases;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.Mongo
 {
@@ -23,7 +23,7 @@ namespace LetPortal.Portal.Executions.Mongo
         {
             formattedString = StringUtil.ReplaceDoubleCurlyBraces(formattedString, parameters?.Select(a => new Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
             var query = EliminateRedundantFormat(formattedString);
-            BsonDocument parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
+            var parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
             // We are supporting many sample queries:
             // 1) One collection:
             // {
@@ -88,35 +88,35 @@ namespace LetPortal.Portal.Executions.Mongo
             //      ]
             //  }
             //}
-            bool hasProjection = CheckMappingProjection(mappingProjection);
+            var hasProjection = CheckMappingProjection(mappingProjection);
             var projection = hasProjection ? ConvertMappingProjection(mappingProjection) : null;
             // 1) Check $union/$join or normal 
-            if(parsingBson[Constants.QUERY_KEY].AsBsonDocument.Elements.First().Name == Constants.UNION_KEY)
+            if (parsingBson[Constants.QUERY_KEY].AsBsonDocument.Elements.First().Name == Constants.UNION_KEY)
             {
                 var arrayUnions = parsingBson[Constants.QUERY_KEY][Constants.UNION_KEY];
-                if(arrayUnions != null && arrayUnions.IsBsonArray)
+                if (arrayUnions != null && arrayUnions.IsBsonArray)
                 {
                     var arrayUnionCollections = arrayUnions.AsBsonArray;
                     var fluentCollectionsList = new List<IAggregateFluent<BsonDocument>>();
 
-                    foreach(BsonDocument collection in arrayUnionCollections)
+                    foreach (BsonDocument collection in arrayUnionCollections)
                     {
                         var mongoCollection = mongoDatabase?.GetCollection<BsonDocument>(collection.First().Name);
-                        List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = collection.First().Value.AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
-                        IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
+                        var aggregatePipes = collection.First().Value.AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+                        var aggregateFluent = mongoCollection.Aggregate();
 
-                        int indexMatchStage = -1;
+                        var indexMatchStage = -1;
                         var lastMatchStage = aggregatePipes.LastOrDefault(a => a.OperatorName == "$match");
-                        if(lastMatchStage != null)
+                        if (lastMatchStage != null)
                         {
                             indexMatchStage = aggregatePipes.LastIndexOf(lastMatchStage);
                         }
-                        if(filterStages != null)
+                        if (filterStages != null)
                         {
-                            bool needToAppendByIndex = indexMatchStage > -1;
-                            foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in filterStages)
+                            var needToAppendByIndex = indexMatchStage > -1;
+                            foreach (var pipe in filterStages)
                             {
-                                if(needToAppendByIndex)
+                                if (needToAppendByIndex)
                                 {
                                     aggregatePipes.Insert(indexMatchStage + 1, pipe);
                                     indexMatchStage++;
@@ -127,27 +127,27 @@ namespace LetPortal.Portal.Executions.Mongo
                                 }
                             }
                         }
-                        foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
+                        foreach (var pipe in aggregatePipes)
                         {
                             aggregateFluent = aggregateFluent.AppendStage(pipe);
                         }
 
-                        if(hasProjection)
+                        if (hasProjection)
                         {
                             aggregateFluent = aggregateFluent.AppendStage((PipelineStageDefinition<BsonDocument, BsonDocument>)projection);
                         }
                         fluentCollectionsList.Add(aggregateFluent);
                     }
                     var allDynamics = new List<dynamic>();
-                    List<Task> parallelTasks = new List<Task>();
-                    foreach(var collect in fluentCollectionsList)
+                    var parallelTasks = new List<Task>();
+                    foreach (var collect in fluentCollectionsList)
                     {
-                        using(IAsyncCursor<BsonDocument> executingCursor = collect.ToCursor())
+                        using (var executingCursor = collect.ToCursor())
                         {
-                            while(executingCursor.MoveNext())
+                            while (executingCursor.MoveNext())
                             {
-                                BsonDocument currentDocument = executingCursor.Current.FirstOrDefault();
-                                if(currentDocument != null)
+                                var currentDocument = executingCursor.Current.FirstOrDefault();
+                                if (currentDocument != null)
                                 {
                                     // Note: Server will decrease the performance for deserializing JSON instead of client
                                     var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
@@ -168,20 +168,20 @@ namespace LetPortal.Portal.Executions.Mongo
             {
                 _ = mongoDatabase ?? throw new NullReferenceException(nameof(mongoDatabase));
                 var mongoCollection = GetCollection(mongoDatabase, parsingBson, Constants.QUERY_KEY);
-                List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = parsingBson[Constants.QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
-                IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
-                int indexMatchStage = -1;
+                var aggregatePipes = parsingBson[Constants.QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+                var aggregateFluent = mongoCollection.Aggregate();
+                var indexMatchStage = -1;
                 var lastMatchStage = aggregatePipes.LastOrDefault(a => a.OperatorName == "$match");
-                if(lastMatchStage != null)
+                if (lastMatchStage != null)
                 {
                     indexMatchStage = aggregatePipes.LastIndexOf(lastMatchStage);
                 }
-                if(filterStages != null)
+                if (filterStages != null)
                 {
-                    bool needToAppendByIndex = indexMatchStage > -1;
-                    foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in filterStages)
+                    var needToAppendByIndex = indexMatchStage > -1;
+                    foreach (var pipe in filterStages)
                     {
-                        if(needToAppendByIndex)
+                        if (needToAppendByIndex)
                         {
                             aggregatePipes.Insert(indexMatchStage + 1, pipe);
                             indexMatchStage++;
@@ -192,22 +192,22 @@ namespace LetPortal.Portal.Executions.Mongo
                         }
                     }
                 }
-                foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
+                foreach (var pipe in aggregatePipes)
                 {
                     aggregateFluent = aggregateFluent.AppendStage(pipe);
                 }
 
-                if(hasProjection)
+                if (hasProjection)
                 {
                     aggregateFluent = aggregateFluent.AppendStage((PipelineStageDefinition<BsonDocument, BsonDocument>)projection);
                 }
 
-                using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
+                using (var executingCursor = await aggregateFluent.ToCursorAsync())
                 {
-                    while(executingCursor.MoveNext())
+                    while (executingCursor.MoveNext())
                     {
-                        BsonDocument currentDocument = executingCursor.Current.FirstOrDefault();
-                        if(currentDocument != null)
+                        var currentDocument = executingCursor.Current.FirstOrDefault();
+                        if (currentDocument != null)
                         {
                             // Note: Server will decrease the performance for deserializing JSON instead of client
                             var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
@@ -226,7 +226,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private bool CheckMappingProjection(string mappingProjection)
         {
-            if(string.IsNullOrEmpty(mappingProjection))
+            if (string.IsNullOrEmpty(mappingProjection))
             {
                 return false;
             }
@@ -236,15 +236,15 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private BsonDocument ConvertMappingProjection(string mappingProjection)
         {
-            BsonDocument projectDoc = new BsonDocument();
+            var projectDoc = new BsonDocument();
 
             var splitted = mappingProjection.Split(";");
-            foreach(var split in splitted)
+            foreach (var split in splitted)
             {
                 var sub = split.Split("=");
                 projectDoc.Add(new BsonElement(sub[0], "$" + sub[1]));
             }
-            BsonDocument projection = new BsonDocument
+            var projection = new BsonDocument
             {
                 { "$project", projectDoc }
             };
@@ -256,7 +256,7 @@ namespace LetPortal.Portal.Executions.Mongo
         {
             // Eliminate ObjectId
             var indexObjectId = query.IndexOf("\"ObjectId(");
-            while(indexObjectId > 0)
+            while (indexObjectId > 0)
             {
                 var closedCurly = query.IndexOf(")", indexObjectId);
                 query = query.Remove(closedCurly + 1, 1);
@@ -266,7 +266,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
             // Eliminate ISODate
             var indexISODate = query.IndexOf("\"ISODate(");
-            while(indexISODate > 0)
+            while (indexISODate > 0)
             {
                 var closedCurly = query.IndexOf(")", indexISODate);
                 query = query.Remove(closedCurly + 1, 1);
@@ -276,7 +276,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
             // Eliminate NumberLong
             var indexNumberLong = query.IndexOf("\"NumberLong(");
-            while(indexNumberLong > 0)
+            while (indexNumberLong > 0)
             {
                 var closedCurly = query.IndexOf(")", indexNumberLong);
                 query = query.Remove(closedCurly + 1, 1);

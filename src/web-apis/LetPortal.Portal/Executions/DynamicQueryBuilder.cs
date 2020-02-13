@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Utils;
-using LetPortal.Portal.Constants;
-using LetPortal.Portal.Models.DynamicLists;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
+using LetPortal.Portal.Models.DynamicLists;
 
 namespace LetPortal.Portal.Executions
 {
@@ -38,13 +38,13 @@ namespace LetPortal.Portal.Executions
 
         public IDynamicQueryBuilder Init(string query, List<FilledParameter> parameters, Action<DynamicQueryBuilderOptions> action = null)
         {
-            if(action != null)
+            if (action != null)
             {
                 action.Invoke(builderOptions);
             }
 
             dynamicQuery.CombinedQuery = query;
-            foreach(var param in parameters)
+            foreach (var param in parameters)
             {
                 var fieldParam = StringUtil.GenerateUniqueName();
                 dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace("{{" + param.Name + "}}", builderOptions.ParamSign + fieldParam);
@@ -66,19 +66,19 @@ namespace LetPortal.Portal.Executions
 
         public IDynamicQueryBuilder AddFilter(List<FilterGroup> groups)
         {
-            if(groups != null && groups.Count > 0)
+            if (groups != null && groups.Count > 0)
             {
-                if(groups.Count == 1 && groups.First().FilterOptions.Count > 0)
+                if (groups.Count == 1 && groups.First().FilterOptions.Count > 0)
                 {
                     filterString = null;
-                    foreach(var group in groups)
+                    foreach (var group in groups)
                     {
-                        foreach(var filter in group.FilterOptions)
+                        foreach (var filter in group.FilterOptions)
                         {
                             var fieldParam = StringUtil.GenerateUniqueName();
-                            if(filter.FilterOperator != FilterOperator.Contains)
+                            if (filter.FilterOperator != FilterOperator.Contains)
                             {
-                                if(filter.FilterValueType == Entities.SectionParts.FieldValueType.DatePicker)
+                                if (filter.FilterValueType == Entities.SectionParts.FieldValueType.DatePicker)
                                 {
                                     filterString += string.Format(builderOptions.DateCompareFormat,
                                         string.Format(builderOptions.FieldFormat, filter.FieldName),
@@ -110,10 +110,10 @@ namespace LetPortal.Portal.Executions
 
         public IDynamicQueryBuilder AddSort(List<SortableField> sorts)
         {
-            if(sorts != null && sorts.Count > 0)
+            if (sorts != null && sorts.Count > 0)
             {
                 orderString = null;
-                foreach(var sort in sorts)
+                foreach (var sort in sorts)
                 {
                     orderString += string.Format(builderOptions.FieldFormat, sort.FieldName) + " " + (sort.SortType == SortType.Asc ? "asc" : "desc");
                 }
@@ -123,11 +123,11 @@ namespace LetPortal.Portal.Executions
 
         public IDynamicQueryBuilder AddTextSearch(string text, IEnumerable<string> searchFields)
         {
-            if(!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text))
             {
                 searchString = null;
-                int i = 0;
-                foreach(var field in searchFields)
+                var i = 0;
+                foreach (var field in searchFields)
                 {
                     var fieldParam = StringUtil.GenerateUniqueName();
                     searchString += string.Format(builderOptions.FieldFormat, field) + string.Format(builderOptions.ContainsOperatorFormat, builderOptions.ParamSign + fieldParam);
@@ -138,7 +138,7 @@ namespace LetPortal.Portal.Executions
                         ValueType = Entities.SectionParts.FieldValueType.Text
                     });
                     i++;
-                    if(searchFields.Count() > i)
+                    if (searchFields.Count() > i)
                     {
                         searchString += " OR ";
                     }
@@ -164,27 +164,27 @@ namespace LetPortal.Portal.Executions
             var whereIndex = dynamicQuery.CombinedQuery.ToUpper().IndexOf(" WHERE ");
             var closeTagIndex = dynamicQuery.CombinedQuery.IndexOf(")");
 
-            bool containSearch = false;
-            bool containFilter = false;
-            bool containOrder = false;
-            bool containPaging = false;
+            var containSearch = false;
+            var containFilter = false;
+            var containOrder = false;
+            var containPaging = false;
 
-            if(dynamicQuery.CombinedQuery.Contains(builderOptions.SearchWord))
+            if (dynamicQuery.CombinedQuery.Contains(builderOptions.SearchWord))
             {
                 containSearch = true;
                 dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.SearchWord, searchString);
                 searchString = builderOptions.DefaultSearchNull;
             }
 
-            if(dynamicQuery.CombinedQuery.Contains(builderOptions.FilterWord))
+            if (dynamicQuery.CombinedQuery.Contains(builderOptions.FilterWord))
             {
                 containFilter = true;
                 dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.FilterWord, filterString);
                 filterString = builderOptions.DefaultFilterNull;
             }
 
-            bool enableOrder = !dynamicQuery.CombinedQuery.Contains(builderOptions.OrderWord);
-            if(!enableOrder)
+            var enableOrder = !dynamicQuery.CombinedQuery.Contains(builderOptions.OrderWord);
+            if (!enableOrder)
             {
                 containOrder = true;
                 dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.OrderWord, orderString);
@@ -195,11 +195,11 @@ namespace LetPortal.Portal.Executions
                 orderString = string.Format(builderOptions.OrderByFormat, orderString);
             }
 
-            bool enablePagination = !(dynamicQuery.CombinedQuery.Contains(builderOptions.CurrentPageWord)
+            var enablePagination = !(dynamicQuery.CombinedQuery.Contains(builderOptions.CurrentPageWord)
                                         || dynamicQuery.CombinedQuery.Contains(builderOptions.NumberPageWord)
                                         || dynamicQuery.CombinedQuery.Contains(builderOptions.StartRowWord));
 
-            if(!enablePagination)
+            if (!enablePagination)
             {
                 containPaging = true;
                 dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.CurrentPageWord, pageNumber.ToString());
@@ -207,20 +207,20 @@ namespace LetPortal.Portal.Executions
                 dynamicQuery.CombinedQuery = dynamicQuery.CombinedQuery.Replace(builderOptions.StartRowWord, startRow.ToString());
             }
 
-            if(string.IsNullOrEmpty(paginationString) && enablePagination)
+            if (string.IsNullOrEmpty(paginationString) && enablePagination)
             {
                 paginationString = string.Format(builderOptions.PaginationFormat, builderOptions.DefaultNumberPage, builderOptions.DefaultCurrentPage);
             }
 
-            bool notContainWords = !containSearch && !containFilter && !containOrder && !containPaging;
+            var notContainWords = !containSearch && !containFilter && !containOrder && !containPaging;
 
-            if(notContainWords)
+            if (notContainWords)
             {
-                if(whereIndex < 0)
+                if (whereIndex < 0)
                 {
                     warpQuery = @"{0} WHERE (({1}) AND ({2})) {3} {4}";
                 }
-                else if(whereIndex > 0 && whereIndex > closeTagIndex)
+                else if (whereIndex > 0 && whereIndex > closeTagIndex)
                 {
                     warpQuery = @"{0} AND (({1}) AND ({2})) {3} {4}";
                 }
@@ -231,22 +231,22 @@ namespace LetPortal.Portal.Executions
             }
             else
             {
-                if(containSearch)
+                if (containSearch)
                 {
                     searchString = builderOptions.DefaultSearchNull;
                 }
 
-                if(containFilter)
+                if (containFilter)
                 {
                     filterString = builderOptions.DefaultFilterNull;
                 }
 
-                if(containOrder)
+                if (containOrder)
                 {
                     orderString = string.Empty;
                 }
 
-                if(containPaging)
+                if (containPaging)
                 {
                     paginationString = string.Empty;
                 }
@@ -277,7 +277,7 @@ namespace LetPortal.Portal.Executions
 
         private string GetOperator(FilterOperator filterOperator, string comparision = null)
         {
-            switch(filterOperator)
+            switch (filterOperator)
             {
                 case FilterOperator.Contains:
                     return string.Format(builderOptions.ContainsOperatorFormat, builderOptions.ParamSign + comparision);
@@ -297,7 +297,7 @@ namespace LetPortal.Portal.Executions
 
         private string GetChainOperator(FilterChainOperator filterChainOperator)
         {
-            switch(filterChainOperator)
+            switch (filterChainOperator)
             {
                 case FilterChainOperator.And:
                     return "AND";

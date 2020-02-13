@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Monitors.Models;
-using LetPortal.Core.Utils;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using LetPortal.Core.Monitors.Models;
+using LetPortal.Core.Utils;
+using Microsoft.Extensions.Options;
 
 namespace LetPortal.Core.Monitors
 {
@@ -45,7 +45,7 @@ namespace LetPortal.Core.Monitors
 
         private void CalculateAvgHealthCheck()
         {
-            if(DateUtil.GetDateByTz(currentHttpHealthCheck.MeansureDateTime, _monitorOptions.CurrentValue.ResetMonitorTimezone).Day < DateUtil.GetCurrentSystemDateByTz(_monitorOptions.CurrentValue.ResetMonitorTimezone).Day)
+            if (DateUtil.GetDateByTz(currentHttpHealthCheck.MeansureDateTime, _monitorOptions.CurrentValue.ResetMonitorTimezone).Day < DateUtil.GetCurrentSystemDateByTz(_monitorOptions.CurrentValue.ResetMonitorTimezone).Day)
             {
                 // Reset monitor counter
                 currentHttpHealthCheck = new HttpHealthCheckModel();
@@ -55,7 +55,7 @@ namespace LetPortal.Core.Monitors
                 .Where(a => DateUtil.GetDateByTz(a.EndDateTime, _monitorOptions.CurrentValue.ResetMonitorTimezone).Day
                     == DateUtil.GetCurrentSystemDateByTz(_monitorOptions.CurrentValue.ResetMonitorTimezone).Day);
             currentHttpHealthCheck.TotalRequestsPerDay += groupedByToday.Count();
-            if(currentHttpHealthCheck.TotalRequestsPerDay == 0)
+            if (currentHttpHealthCheck.TotalRequestsPerDay == 0)
             {
                 currentHttpHealthCheck.SuccessRequests = 0;
                 currentHttpHealthCheck.FailedRequests = 0;
@@ -67,7 +67,7 @@ namespace LetPortal.Core.Monitors
             }
             else
             {
-                if(groupedByToday.Count() > 0)
+                if (groupedByToday.Count() > 0)
                 {
                     // Only count status code != 500 Internal Server Error
                     currentHttpHealthCheck.SuccessRequests += groupedByToday.Where(a => a.StatusCode != 500).Count();

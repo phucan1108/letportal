@@ -1,10 +1,10 @@
-﻿using LetPortal.Portal.Entities.Components;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Models.Charts;
 using LetPortal.Portal.Providers.Databases;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Components
 {

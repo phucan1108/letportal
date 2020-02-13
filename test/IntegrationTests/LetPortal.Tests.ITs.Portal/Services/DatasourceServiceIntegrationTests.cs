@@ -25,10 +25,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
         public async Task Fetch_Datasource_In_Static_Json_Test()
         {
             // Arrange
-            var datasourceService = new DatasourceService(null, null);
+            DatasourceService datasourceService = new DatasourceService(null, null);
 
             // Act
-            var result = await datasourceService.GetDatasourceService(new Datasource
+            LetPortal.Portal.Models.ExecutedDataSourceModel result = await datasourceService.GetDatasourceService(new Datasource
             {
                 DatasourceType = DatasourceType.Static,
                 Query = "[{\"name\":\"MongoDB\",\"value\":\"mongodb\"},{\"name\":\"SQL Server\",\"value\":\"sqlserver\"}]"
@@ -47,15 +47,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MongoDatabaseConenction));
 
-            var mongoExtractionDatasource = new MongoExtractionDatasource();
-            var datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { mongoExtractionDatasource });
+            MongoExtractionDatasource mongoExtractionDatasource = new MongoExtractionDatasource();
+            DatasourceService datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { mongoExtractionDatasource });
             // Act
-            var result = await datasourceService.GetDatasourceService(new Datasource
+            LetPortal.Portal.Models.ExecutedDataSourceModel result = await datasourceService.GetDatasourceService(new Datasource
             {
                 DatabaseId = "aaa",
                 DatasourceType = DatasourceType.Database,
@@ -75,15 +75,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.PostgreSqlDatabaseConnection));
 
-            var postgreExtractionDatasource = new PostgreExtractionDatasource();
-            var datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { postgreExtractionDatasource });
+            PostgreExtractionDatasource postgreExtractionDatasource = new PostgreExtractionDatasource();
+            DatasourceService datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { postgreExtractionDatasource });
             // Act
-            var result = await datasourceService.GetDatasourceService(new Datasource
+            LetPortal.Portal.Models.ExecutedDataSourceModel result = await datasourceService.GetDatasourceService(new Datasource
             {
                 DatabaseId = "aaa",
                 DatasourceType = DatasourceType.Database,
@@ -103,15 +103,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.SqlServerDatabaseConnection));
 
-            var sqlServerExtractionDatasource = new SqlServerExtractionDatasource();
-            var datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { sqlServerExtractionDatasource });
+            SqlServerExtractionDatasource sqlServerExtractionDatasource = new SqlServerExtractionDatasource();
+            DatasourceService datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { sqlServerExtractionDatasource });
             // Act
-            var result = await datasourceService.GetDatasourceService(new Datasource
+            LetPortal.Portal.Models.ExecutedDataSourceModel result = await datasourceService.GetDatasourceService(new Datasource
             {
                 DatabaseId = "aaa",
                 DatasourceType = DatasourceType.Database,
@@ -131,15 +131,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            var mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
 
-            var mysqlExtractionDatasource = new MySqlExtractionDatasource();
-            var datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { mysqlExtractionDatasource });
+            MySqlExtractionDatasource mysqlExtractionDatasource = new MySqlExtractionDatasource();
+            DatasourceService datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { mysqlExtractionDatasource });
             // Act
-            var result = await datasourceService.GetDatasourceService(new Datasource
+            LetPortal.Portal.Models.ExecutedDataSourceModel result = await datasourceService.GetDatasourceService(new Datasource
             {
                 DatabaseId = "aaa",
                 DatasourceType = DatasourceType.Database,

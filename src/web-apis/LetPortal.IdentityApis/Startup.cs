@@ -3,7 +3,6 @@ using LetPortal.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -84,7 +83,7 @@ namespace LetPortal.IdentityApis
             app.UseLetPortal(appLifetime, options =>
             {
                 options.EnableCheckUserSession = true;
-                options.EnableCheckTraceId = false;                
+                options.EnableCheckTraceId = false;
                 options.EnableWrapException = true;
                 options.SkipCheckUrls = new string[] { "api/accounts/login", "api/accounts/forgot-password", "api/accounts/recovery-password" };
             });

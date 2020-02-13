@@ -1,12 +1,12 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.EntitySchemas;
 using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Executions.MySQL
 {
@@ -17,14 +17,14 @@ namespace LetPortal.Portal.Executions.MySQL
         public async Task<IEnumerable<EntitySchema>> FetchAllEntitiesFromDatabase(DatabaseConnection databaseConnection)
         {
             var mysqlInfos = new List<MySqlSchemaInfo>();
-            using(var dbConnection = new MySqlConnection(databaseConnection.ConnectionString))
+            using (var dbConnection = new MySqlConnection(databaseConnection.ConnectionString))
             {
                 dbConnection.Open();
-                using(var cmd = new MySqlCommand("SELECT table_catalog as 'Catalog', table_schema as 'Schema', table_name as TableName, column_name as ColumnName, data_type as Type FROM information_schema.columns Where table_schema='letportal'", dbConnection))
+                using (var cmd = new MySqlCommand("SELECT table_catalog as 'Catalog', table_schema as 'Schema', table_name as TableName, column_name as ColumnName, data_type as Type FROM information_schema.columns Where table_schema='letportal'", dbConnection))
                 {
-                    using(var reader = await cmd.ExecuteReaderAsync())
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        while(reader.Read())
+                        while (reader.Read())
                         {
                             mysqlInfos.Add(new MySqlSchemaInfo
                             {
@@ -72,7 +72,7 @@ namespace LetPortal.Portal.Executions.MySQL
 
             public string GetDataType()
             {
-                switch(Type)
+                switch (Type)
                 {
                     case "timestamp":
                     case "datetime2":

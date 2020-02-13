@@ -1,13 +1,13 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Portal.Mappers;
-using LetPortal.Portal.Mappers.PostgreSql;
-using LetPortal.Portal.Models.Charts;
-using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Mappers;
+using LetPortal.Portal.Mappers.PostgreSql;
+using LetPortal.Portal.Models.Charts;
+using Npgsql;
 
 namespace LetPortal.Portal.Executions.PostgreSql
 {
@@ -38,10 +38,10 @@ namespace LetPortal.Portal.Executions.PostgreSql
         public async Task<ExecutionChartResponseModel> Execute(ExecutionChartReportModel model)
         {
             var result = new ExecutionChartResponseModel();
-            using(var postgreDbConnection = new NpgsqlConnection(model.DatabaseConnection.ConnectionString))
+            using (var postgreDbConnection = new NpgsqlConnection(model.DatabaseConnection.ConnectionString))
             {
                 postgreDbConnection.Open();
-                using(var command = new NpgsqlCommand(model.FormattedString, postgreDbConnection))
+                using (var command = new NpgsqlCommand(model.FormattedString, postgreDbConnection))
                 {
                     _chartReportQueryBuilder
                                             .Init(model.FormattedString, model.MappingProjection)
@@ -52,7 +52,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                                                 return _cSharpMapper.GetCSharpObjectByType(a, b);
                                             });
 
-                    if(model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
+                    if (model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
                     {
                         _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
                     }
@@ -61,17 +61,17 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
                     command.CommandText = chartQuery.CombinedQuery;
 
-                    if(chartQuery.DbParameters.Count > 0)
+                    if (chartQuery.DbParameters.Count > 0)
                     {
                         command.Parameters.AddRange(ConvertToParameters(chartQuery.DbParameters).ToArray());
                     }
-                    using(var reader = await command.ExecuteReaderAsync())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        using(DataTable dt = new DataTable())
+                        using (var dt = new DataTable())
                         {
                             dt.Load(reader);
                             result.IsSuccess = true;
-                            if(dt.Rows.Count > 0)
+                            if (dt.Rows.Count > 0)
                             {
                                 result.Result = await _chartReportProjection.ProjectionFromDataTable(dt, model.MappingProjection);
                                 result.IsSuccess = true;
@@ -90,7 +90,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
 
         private IEnumerable<NpgsqlParameter> ConvertToParameters(List<ChartReportParameter> parameters)
         {
-            foreach(var param in parameters)
+            foreach (var param in parameters)
             {
                 var postgreParam = new NpgsqlParameter(param.Name, _postgreSqlMapper.GetNpgsqlDbType(param.ValueType))
                 {

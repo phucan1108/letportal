@@ -6,59 +6,59 @@ namespace LetPortal.Portal.Mappers
     {
         public object GetCSharpObjectByType(string value, string type)
         {
-            switch(type)
+            switch (type)
             {
                 case "decimal":
-                    if(decimal.TryParse(value, out decimal tempDecimal))
+                    if (decimal.TryParse(value, out var tempDecimal))
                     {
                         return tempDecimal;
                     }
                     break;
                 case "double":
-                    if(double.TryParse(value, out double tempDouble))
+                    if (double.TryParse(value, out var tempDouble))
                     {
                         return tempDouble;
                     }
                     break;
                 case "float":
-                    if(float.TryParse(value, out float tempFloat))
+                    if (float.TryParse(value, out var tempFloat))
                     {
                         return tempFloat;
                     }
                     break;
                 case "timespan":
-                    if(TimeSpan.TryParse(value, out TimeSpan timeSpan))
+                    if (TimeSpan.TryParse(value, out var timeSpan))
                     {
                         return timeSpan;
                     }
                     break;
                 case "long":
-                    if(long.TryParse(value, out long tempLong))
+                    if (long.TryParse(value, out var tempLong))
                     {
                         return tempLong;
                     }
                     break;
                 case "int":
-                    if(int.TryParse(value, out int tempInt))
+                    if (int.TryParse(value, out var tempInt))
                     {
                         return tempInt;
                     }
                     break;
                 case "bool":
-                    if(value == "1" || value == "0")
+                    if (value == "1" || value == "0")
                     {
                         return value == "1";
                     }
                     else
                     {
-                        if(bool.TryParse(value, out bool tempBool))
+                        if (bool.TryParse(value, out var tempBool))
                         {
                             return tempBool;
                         }
                     }
                     break;
                 case "date":
-                    if(DateTime.TryParse(value, out DateTime dateTime))
+                    if (DateTime.TryParse(value, out var dateTime))
                     {
                         return dateTime;
                     }

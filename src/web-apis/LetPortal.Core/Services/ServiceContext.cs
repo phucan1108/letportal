@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Logger;
+﻿using System;
+using System.Net.Http;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Logger.Models;
 using LetPortal.Core.Monitors;
 using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Services.Models;
 using Microsoft.Extensions.Options;
-using System;
-using System.Net.Http;
 
 namespace LetPortal.Core.Services
 {
@@ -55,12 +55,12 @@ namespace LetPortal.Core.Services
                 var httpResponseMessage = task.Result;
                 httpResponseMessage.EnsureSuccessStatusCode();
                 serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                if(postAction != null)
+                if (postAction != null)
                 {
                     postAction.Invoke();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("There are some erros when trying to connect Service Management, please check stack trace.", ex);
             }
@@ -75,12 +75,12 @@ namespace LetPortal.Core.Services
                 httpResponseMessage.EnsureSuccessStatusCode();
                 serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-                if(postAction != null)
+                if (postAction != null)
                 {
                     postAction.Invoke();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("There are some erros when trying to notify stop behavior in Service Management, please check stack trace.", ex);
             }
@@ -94,12 +94,12 @@ namespace LetPortal.Core.Services
                 var httpResponseMessage = task.Result;
                 httpResponseMessage.EnsureSuccessStatusCode();
 
-                if(postAction != null)
+                if (postAction != null)
                 {
                     postAction.Invoke();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("There are some erros when trying to notify stop behavior in Service Management, please check stack trace.", ex);
             }
@@ -107,7 +107,7 @@ namespace LetPortal.Core.Services
 
         public void PushLog(PushLogModel pushLogModel)
         {
-            if(_loggerOptions.CurrentValue.NotifyOptions.Enable)
+            if (_loggerOptions.CurrentValue.NotifyOptions.Enable)
             {
                 pushLogModel.RegisteredServiceId = serviceId;
                 pushLogModel.ServiceName = _serviceOptions.CurrentValue.Name;
@@ -117,7 +117,7 @@ namespace LetPortal.Core.Services
                     var httpResponseMessage = task.Result;
                     httpResponseMessage.EnsureSuccessStatusCode();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception("There are some erros when trying to notify log behavior in Service Management, please check stack trace.", ex);
                 }
@@ -126,7 +126,7 @@ namespace LetPortal.Core.Services
 
         public void PushHealthCheck(PushHealthCheckModel pushHealthCheckModel)
         {
-            if(_monitorOptions.CurrentValue.NotifyOptions.Enable)
+            if (_monitorOptions.CurrentValue.NotifyOptions.Enable)
             {
                 try
                 {
@@ -137,7 +137,7 @@ namespace LetPortal.Core.Services
                     var httpResponseMessage = task.Result;
                     httpResponseMessage.EnsureSuccessStatusCode();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception("There are some erros when trying to notify monitor behavior in Service Management, please check stack trace.", ex);
                 }

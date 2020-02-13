@@ -140,3 +140,6 @@ dotnet_diagnostic.CA1303.severity = none
 
 # CA1054: Uri parameters should not be strings
 dotnet_diagnostic.CA1054.severity = none
+
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = none

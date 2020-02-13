@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Files;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Portal.Constants;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LetPortal.Portal.Entities.Files
 {

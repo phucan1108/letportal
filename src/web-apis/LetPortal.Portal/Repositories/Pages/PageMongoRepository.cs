@@ -1,13 +1,13 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Repositories.Pages
 {
@@ -31,32 +31,37 @@ namespace LetPortal.Portal.Repositories.Pages
         public async Task<Page> GetOneByNameForRenderAsync(string name)
         {
             var page = await Collection.AsQueryable().OfType<Page>().FirstAsync(a => a.Name == name);
-            if(page != null)
+            if (page != null)
             {
                 // Security Notes: Because in render mode, we don't need to return a raw json/command in Command/Datasource
                 // Just only return params which will be filled by Client side
 
                 // Datasources
-                if(page.PageDatasources != null)
+                if (page.PageDatasources != null)
                 {
                     page.PageDatasources = page.PageDatasources.Where(a => a.IsActive).ToList();
-                    foreach(var ds in page.PageDatasources)
+                    foreach (var ds in page.PageDatasources)
                     {
-                        if(ds.Options.Type == Entities.Shared.DatasourceControlType.Database)
+                        if (ds.Options.Type == Entities.Shared.DatasourceControlType.Database)
                         {
                             ds.Options.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(ds.Options.DatabaseOptions.Query, true));
                         }
                     }
-                }    
+                }
 
                 // Commands
-                if(page.Commands != null)
+                if (page.Commands != null)
                 {
-                    foreach(var command in page.Commands)
+                    foreach (var command in page.Commands)
                     {
-                        if(command.ButtonOptions.ActionCommandOptions.ActionType == Entities.Shared.ActionType.ExecuteDatabase)
+                        if (command.ButtonOptions.ActionCommandOptions.ActionType == Entities.Shared.ActionType.ExecuteDatabase
+                                && command.ButtonOptions.ActionCommandOptions.DbExecutionChains != null
+                                && command.ButtonOptions.ActionCommandOptions.DbExecutionChains.Steps != null)
                         {
-                            command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(command.ButtonOptions.ActionCommandOptions.DatabaseOptions.Query, true));
+                            foreach (var step in command.ButtonOptions.ActionCommandOptions.DbExecutionChains.Steps)
+                            {
+                                step.ExecuteCommand = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(step.ExecuteCommand, true));
+                            }
                         }
                     }
                 }
@@ -66,7 +71,7 @@ namespace LetPortal.Portal.Repositories.Pages
 
         public Task<IEnumerable<ShortEntityModel>> GetShortPages(string keyWord = null)
         {
-            if(!string.IsNullOrEmpty(keyWord))
+            if (!string.IsNullOrEmpty(keyWord))
             {
                 var filterBuilder = Builders<Page>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var pages = Collection.Find(filterBuilder).ToList();

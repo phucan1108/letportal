@@ -1,11 +1,9 @@
-﻿using System;
-using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Persistences;
 using LetPortal.ServiceManagement;
 using LetPortal.ServiceManagement.Providers;
 using LetPortal.ServiceManagement.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -43,15 +41,15 @@ namespace LetPortal.ServiceManagementApis
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
         {
-            if(serviceManagementProvider == null)
+            if (serviceManagementProvider == null)
             {
                 serviceManagementProvider = app?.ApplicationServices.GetService<IServiceManagementProvider>();
             }
 
-            if(!isExistedDB)
+            if (!isExistedDB)
             {
                 var databaseOptions = app?.ApplicationServices.GetService<DatabaseOptions>();
-                if(databaseOptions.ConnectionType != ConnectionType.MongoDB)
+                if (databaseOptions.ConnectionType != ConnectionType.MongoDB)
                 {
                     using var letportalDbContext = app.ApplicationServices.GetService<LetPortalServiceManagementDbContext>();
                     letportalDbContext.Database.EnsureCreated();
@@ -65,7 +63,7 @@ namespace LetPortal.ServiceManagementApis
 
             applicationLifetime?.ApplicationStarted.Register(OnStart);
             applicationLifetime?.ApplicationStopping.Register(OnStop);
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }

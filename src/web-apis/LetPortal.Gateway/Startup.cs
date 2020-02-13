@@ -49,11 +49,11 @@ namespace LetPortal.Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDevCors();
             }
-            else if(env.IsLocalEnv())
+            else if (env.IsLocalEnv())
             {
                 app.UseLocalCors();
             }

@@ -31,18 +31,18 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var databaseOptions = new DatabaseOptions
+            DatabaseOptions databaseOptions = new DatabaseOptions
             {
                 ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
                 ConnectionType = ConnectionType.MongoDB,
                 Datasource = _context.MongoDatabaseConenction.DataSource
             };
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
 
-            var appMongoRepository = new AppMongoRepository(new Core.Persistences.MongoConnection(databaseOptionsMock.CurrentValue));
-                              
+            AppMongoRepository appMongoRepository = new AppMongoRepository(new Core.Persistences.MongoConnection(databaseOptionsMock.CurrentValue));
+
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp123",
@@ -50,7 +50,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
             await appMongoRepository.AddAsync(app);
 
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -75,24 +75,24 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var databaseOptions = new DatabaseOptions
+            DatabaseOptions databaseOptions = new DatabaseOptions
             {
                 ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
                 ConnectionType = ConnectionType.MongoDB,
                 Datasource = _context.MongoDatabaseConenction.DataSource
             };
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
 
-            var appMongoRepository = new AppMongoRepository(new Core.Persistences.MongoConnection(databaseOptionsMock.CurrentValue));
+            AppMongoRepository appMongoRepository = new AppMongoRepository(new Core.Persistences.MongoConnection(databaseOptionsMock.CurrentValue));
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp1",
                 DisplayName = "Test App"
             };
             await appMongoRepository.AddAsync(app);
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -102,7 +102,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             await appMongoRepository.UpdateMenuAsync(app.Id, menus);
-            var menuProfile = new MenuProfile
+            MenuProfile menuProfile = new MenuProfile
             {
                 MenuIds = new List<string>
                     {
@@ -127,18 +127,18 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                 return;
             }
             // Arrange
-            var databaseOptions = new DatabaseOptions
+            DatabaseOptions databaseOptions = new DatabaseOptions
             {
                 ConnectionString = _context.MongoDatabaseConenction.ConnectionString,
                 ConnectionType = ConnectionType.MongoDB,
                 Datasource = _context.MongoDatabaseConenction.DataSource
             };
-            var databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
+            IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
 
-            var appMongoRepository = new AppMongoRepository(new Core.Persistences.MongoConnection(databaseOptionsMock.CurrentValue));
+            AppMongoRepository appMongoRepository = new AppMongoRepository(new Core.Persistences.MongoConnection(databaseOptionsMock.CurrentValue));
 
             // Act
-            var app = new App
+            App app = new App
             {
                 Id = DataUtil.GenerateUniqueId(),
                 Name = "testapp123456",
@@ -146,7 +146,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
             await appMongoRepository.AddAsync(app);
 
-            var menus = new List<Menu>
+            List<Menu> menus = new List<Menu>
             {
                 new Menu
                 {
@@ -156,7 +156,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             };
 
             app.Menus = menus;
-            var result = await appMongoRepository.Compare(app);
+            ComparisonResult result = await appMongoRepository.Compare(app);
 
             appMongoRepository.Dispose();
             // Assert

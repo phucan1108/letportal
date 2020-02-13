@@ -1,9 +1,9 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Identity.Entities;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System;
-using System.Threading.Tasks;
 
 namespace LetPortal.Identity.Repositories.Identity
 {
@@ -17,7 +17,7 @@ namespace LetPortal.Identity.Repositories.Identity
         public async Task<bool> DeactiveRefreshToken(string refreshToken)
         {
             var stillAvailable = await Collection.AsQueryable().AnyAsync(a => !a.Deactive && a.ExpiredRefreshToken > DateTime.UtcNow && a.RefreshToken == refreshToken);
-            if(stillAvailable)
+            if (stillAvailable)
             {
                 var updateBuider = Builders<IssuedToken>.Update;
                 var updateDefinition = updateBuider.Set(a => a.Deactive, true);

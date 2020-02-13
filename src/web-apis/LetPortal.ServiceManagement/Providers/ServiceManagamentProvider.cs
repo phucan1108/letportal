@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Services.Models;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Services.Models;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Repositories.Abstractions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
 {

@@ -128,7 +128,7 @@ export class DatabaseOptionsComponent implements OnInit {
 
     openDeleteHint() {
         let deleteText = this.isMongoDb ? '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
-                        : 'Delete From {Your_tabler} Where id={{data.id}}'
+                        : 'Delete From {Your_table} Where id={{data.id}}'
         this.hintText = deleteText
         this.isHintClicked = true
     }

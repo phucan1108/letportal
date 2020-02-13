@@ -1,5 +1,5 @@
-﻿using LetPortal.Portal.Entities.Pages;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LetPortal.Portal.Entities.Pages;
 
 namespace LetPortal.Versions
 {

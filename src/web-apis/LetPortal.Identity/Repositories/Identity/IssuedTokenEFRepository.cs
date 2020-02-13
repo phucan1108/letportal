@@ -1,8 +1,8 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Identity.Entities;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Identity.Entities;
 
 namespace LetPortal.Identity.Repositories.Identity
 {
@@ -19,7 +19,7 @@ namespace LetPortal.Identity.Repositories.Identity
         public Task<bool> DeactiveRefreshToken(string refreshToken)
         {
             var stillAvailable = _context.IssuedTokens.Any(a => !a.Deactive && a.ExpiredRefreshToken > DateTime.UtcNow && a.RefreshToken == refreshToken);
-            if(stillAvailable)
+            if (stillAvailable)
             {
                 var token = _context.IssuedTokens.First(a => a.RefreshToken == refreshToken);
                 token.Deactive = true;

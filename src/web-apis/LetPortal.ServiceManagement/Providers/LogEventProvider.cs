@@ -1,4 +1,6 @@
-﻿using LetPortal.Core.Logger.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger.Models;
 using LetPortal.Core.Utils;
 using LetPortal.ServiceManagement.Entities;
 using LetPortal.ServiceManagement.Options;
@@ -6,8 +8,6 @@ using LetPortal.ServiceManagement.Repositories.Abstractions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagement.Providers
 {
@@ -52,14 +52,14 @@ namespace LetPortal.ServiceManagement.Providers
         public async Task GatherAllLogs(string traceId)
         {
             var allTraceLogs = await _logEventRepository.GetAllAsync(a => a.TraceId == traceId);
-            if(allTraceLogs != null)
+            if (allTraceLogs != null)
             {
-                foreach(var trace in allTraceLogs)
+                foreach (var trace in allTraceLogs)
                 {
                     // Note: because of performance when we are using RDBMS to log
                     // So we only support MongoDB for main centralized log by now
                     // We will have a plan for other DBs in future 
-                    switch(_options.CurrentValue.Database.ConnectionType)
+                    switch (_options.CurrentValue.Database.ConnectionType)
                     {
                         case Core.Persistences.ConnectionType.MongoDB:
                             var databaseName = _options.CurrentValue.Database.Datasource;
@@ -68,7 +68,7 @@ namespace LetPortal.ServiceManagement.Providers
                             FieldDefinition<BsonDocument, string> traceIdField = "Properties.TraceId";
                             var traceIdFilter = Builders<BsonDocument>.Filter.Eq(traceIdField, traceId);
                             var logs = await mongoCollection.Find(traceIdFilter).ToListAsync();
-                            if(logs != null)
+                            if (logs != null)
                             {
                                 var allStackTraces = from log in logs
                                                      select log["RenderedMessage"].AsString;
