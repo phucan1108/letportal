@@ -4466,6 +4466,7 @@ export interface ActionCommandOptions {
     redirectOptions?: RedirectOptions | undefined;
     httpServiceOptions?: HttpServiceOptions | undefined;
     databaseOptions?: DatabaseOptions | undefined;
+    dbExecutionChains?: DatabaseExecutionChains | undefined;
     workflowOptions?: WorkflowOptions | undefined;
     notificationOptions?: NotificationOptions | undefined;
 }
@@ -4488,6 +4489,15 @@ export interface RedirectOptions {
 export enum RedirectType {
     ThroughPage = 0,
     ThroughUrl = 1,
+}
+
+export interface DatabaseExecutionChains {
+    steps?: DatabaseExecutionStep[] | undefined;
+}
+
+export interface DatabaseExecutionStep {
+    databaseConnectionId?: string | undefined;
+    executeCommand?: string | undefined;
 }
 
 export interface WorkflowOptions {

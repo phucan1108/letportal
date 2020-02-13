@@ -18,7 +18,7 @@
     </div>
 </div>
 <ng-container [ngSwitch]="currentActionType">
-    <form [formGroup]="databaseOptionsForm" *ngSwitchCase="actionType.ExecuteDatabase">
+    <!-- <form [formGroup]="databaseOptionsForm" *ngSwitchCase="actionType.ExecuteDatabase">
         <div class="row row-heading">
             <h3>Execute Database Info:</h3>
         </div>
@@ -64,7 +64,37 @@
                 </mat-form-field>
             </div>
         </div>
-    </form>
+    </form> -->
+    <div *ngSwitchCase="actionType.ExecuteDatabase">
+        <div class="row row-heading">
+            <h3>Execute Database Chains:</h3>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 pl-4">
+                <button mat-raised-button color="primary" (click)="addStep()">Add Step</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 pt-3" *ngIf="isReadyToRender">
+                <mat-accordion cdkDropList [cdkDropListData]="steps"
+                    (cdkDropListDropped)="onExecutionDrop($event)">
+                    <mat-expansion-panel *ngFor="let step of steps;let index = index"
+                        cdkDrag [cdkDragData]="step">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                Step {{index + 1}}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <let-executiondatabase-step 
+                            [step]="step" 
+                            [databaseConnections]="databaseConnections"
+                            (changed)="stepChanged($event,index)"></let-executiondatabase-step>
+                        <div class="drag-drop-placeholder" *cdkDragPlaceholder></div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </div>
+    </div>
     <form [formGroup]="httpOptionsForm" *ngSwitchCase="actionType.CallHttpService ">
         <div class="row row-heading">
             <h3>HTTP Web service Info:</h3>

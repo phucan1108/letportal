@@ -18,9 +18,9 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-// You can't upload images to stackblitz
+// Angular Editor: Fix issue of missing svg file
 div.jsoneditor-menu > button {
-  background-image: url("https://jsoneditoronline.org/img/jsoneditor-icons.svg");
+  background-image: url("https://jsoneditoronline.org/static/media/jsoneditor-icons.2b9b4872.svg");
 }
 
 .example-full-width {

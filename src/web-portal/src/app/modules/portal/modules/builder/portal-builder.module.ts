@@ -76,6 +76,7 @@ import { BackupUploadpage } from './pages/backup/backup-upload.page';
 import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { BackupResolve } from './resolve/backup.resolve';
 import { BackupRestorePage } from './pages/backup/backup-restore.page';
+import { ExecutionDatabaseStepComponent } from 'portal/shared/button-options/executiondatabase-step.component';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -133,7 +134,8 @@ import { BackupRestorePage } from './pages/backup/backup-restore.page';
 		BackupBuilderPage,
 		BackupSelectionComponent,
 		BackupUploadpage,
-		BackupRestorePage
+		BackupRestorePage,
+		ExecutionDatabaseStepComponent
 	],
 	imports: [
 		PortalBuilderRoutingModule,

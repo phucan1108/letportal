@@ -1,0 +1,56 @@
+<form [formGroup]="databaseOptionsForm" >
+        <div class="row row-heading">
+            <h3>Execute Database Info:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Database</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one connection" formControlName="databaseConnectionId">
+                        <mat-option *ngFor="let database of databaseConnections" [value]="database.id">
+                            {{ database.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Hint</label>
+            <div class="col-lg-10 pt-2">
+                <button mat-button (click)="openQueryHint()" color="primary">Query</button>
+                <button mat-button (click)="openInsertHint()" color="primary">Insert</button>
+                <button mat-button (click)="openUpdateHint()" color="primary">Update</button>
+                <button mat-button (click)="openUpdatePartsHint()" color="primary">Update Parts</button>
+                <button mat-button (click)="openDeleteHint()" color="primary">Delete</button>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="isHintClicked">
+            <div class="col-lg-10 offset-lg-2" (click)="copy()">
+                <mat-form-field class="field-full-width">
+                    <textarea style="cursor: pointer;" disabled="disabled" rows="6" readonly="true"
+                        [ngModelOptions]="{standalone: true}" matInput [(ngModel)]="hintText"
+                        placeholder="Click to copy"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="ismongodb && isReadyToRender">
+            <label class="col-lg-2 col-form-label">Execute Command</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <json-editor #jsonDataEditor [options]="editorOptions3" [data]="jsonData">
+                    </json-editor>
+                    <input formControlName="query" matInput #jsonDataEditor style="display:none">
+                    <mat-hint align="end">{{jsonDataEditor.value?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </div>            
+        </div>
+        <div class="form-group row" *ngIf="!ismongodb && isReadyToRender">
+            <label class="col-lg-2 col-form-label">Execute SQL:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <textarea formControlName="query" matInput rows="10"></textarea>
+                </mat-form-field>
+                <pre class="text-left"><code [highlight]="code"></code></pre>
+            </div>
+        </div>
+    </form>

@@ -54,6 +54,9 @@ export class ButtonOptionsComponent implements OnInit {
                     entityName: '',
                     query: ''
                 },
+                dbExecutionChains: {
+                    steps:[]
+                },
                 isEnable: false,
                 notificationOptions: {
                     completeMessage: '',

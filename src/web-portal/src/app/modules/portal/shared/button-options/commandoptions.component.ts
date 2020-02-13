@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, RedirectType, NotificationOptions } from 'services/portal.service';
+import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, RedirectType, NotificationOptions, DatabaseExecutionStep } from 'services/portal.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActionCommandRenderOptions } from './actioncommandrenderoptions';
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
@@ -11,6 +11,7 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 import * as _ from 'lodash';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-commandoptions',
@@ -39,6 +40,8 @@ export class CommandOptionsComponent implements OnInit {
 
     notificationOptionsForm: FormGroup
 
+    steps: Array<DatabaseExecutionStep> = []
+
     @ViewChild('jsonPayloadEditor', { static: false }) jsonPayloadEditor: JsonEditorComponent
     public editorOptions1: JsonEditorOptions = new JsonEditorOptions()
     jsonHttpBodyData: any = {};
@@ -48,11 +51,12 @@ export class CommandOptionsComponent implements OnInit {
     @ViewChild('jsonDataEditor', { static: false }) jsonDataEditor: JsonEditorComponent
     public editorOptions3: JsonEditorOptions = new JsonEditorOptions()
     jsonData: any = {}
-    databaseConnections: Observable<Array<DatabaseConnection>>;
+    databaseConnections: Array<DatabaseConnection>;
     hintText = ''
     isHintClicked = false
     mapWorkflowInputs: MapWorkflowInput[] = []
-    
+    isReadyToRender = false
+
     page$: Observable<Array<ShortPageModel>>;
     _redirectionTypes = StaticResources.redirectionTypes()
     redirectionType = RedirectType
@@ -67,7 +71,8 @@ export class CommandOptionsComponent implements OnInit {
         private databaseClient: DatabasesClient,
         private clipboardService: ClipboardService,
         private shortcutUtil: ShortcutUtil,
-        private pagesClient: PagesClient
+        private pagesClient: PagesClient,
+        private logger: NGXLogger
     ) { }
 
     ngOnInit(): void {
@@ -95,13 +100,21 @@ export class CommandOptionsComponent implements OnInit {
         
         this.actionCommandOptions = ObjectUtils.clone(this.actionCommandOptions)
         this.currentActionType = this.actionCommandOptions.actionType
+        this.initDatabaseChains()
         this.initDatabaseOptions()
         this.initHttpOptions()
         this.initWorkflowOptions()
         this.initRedirectionOptions()
         this.initNotificationOptions()
 
-        this.databaseConnections = this.databaseClient.getAll()
+        this.steps = ObjectUtils.clone(this.actionCommandOptions.dbExecutionChains.steps)
+
+        this.databaseClient.getAll().subscribe(
+            res => {
+                this.databaseConnections = res
+                this.isReadyToRender = true
+            }
+        )
     }
 
     initNotificationOptions() {
@@ -147,6 +160,16 @@ export class CommandOptionsComponent implements OnInit {
             }
         }
         this.mapWorkflowInputs = this.actionCommandOptions.workflowOptions.mapWorkflowInputs
+    }
+
+    initDatabaseChains(){
+        if(!this.actionCommandOptions.dbExecutionChains){
+            this.actionCommandOptions.dbExecutionChains = {
+                steps: []
+            }
+        }
+
+
     }
 
     initDatabaseOptions(){
@@ -213,45 +236,10 @@ export class CommandOptionsComponent implements OnInit {
         })
     }
 
-    openQueryHint() {
-        let query = '{\r\n  \"$query\":{\r\n    \"{{options.entityname}}\":[\r\n        {\r\n          \"$match\": {\r\n            \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n          }\r\n        }\r\n      ]\r\n  }\r\n}'
-        this.hintText = query
-        this.isHintClicked = true
-    }
-
-    openInsertHint() {
-        let insert = '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}'
-        this.hintText = insert
-        this.isHintClicked = true
-    }
-
-    openUpdateHint() {
-        let update = '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
-        this.hintText = update
-        this.isHintClicked = true
-    }
-
-    openUpdatePartsHint(){
-        let updatePart = '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
-        this.hintText = updatePart
-        this.isHintClicked = true
-    }
-
-    openDeleteHint() {
-        let deleteText = '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
-        this.hintText = deleteText
-        this.isHintClicked = true
-    }
-
-    copy(){
-        this.shortcutUtil.toastMessage('Copied content', ToastType.Info)
-        this.clipboardService.copyFromContent(this.hintText)
-    }
-
     isValid(){
         switch(this.currentActionType){
             case ActionType.ExecuteDatabase:
-                return this.databaseOptionsForm.valid && this.notificationOptionsForm.valid
+                return this.isDbChainsValid() && this.notificationOptionsForm.valid
             case ActionType.CallHttpService:
                 return this.httpOptionsForm.valid && this.notificationOptionsForm.valid
             case ActionType.Redirect:
@@ -259,17 +247,41 @@ export class CommandOptionsComponent implements OnInit {
         }
     }
 
+    onExecutionDrop($event){
+
+    }
+
+    addStep(){
+        let newStep = {
+            databaseConnectionId: '',
+            executeCommand: ''
+        }
+        this.actionCommandOptions.dbExecutionChains.steps.push(newStep)
+
+        this.steps.push(newStep)
+    }
+
+    stepChanged($event: DatabaseExecutionStep,index){
+        this.actionCommandOptions.dbExecutionChains.steps[index] = $event
+        this.logger.debug('After changed', this.actionCommandOptions.dbExecutionChains)
+    }
     get(): ActionCommandOptions{
         switch(this.currentActionType){
             case ActionType.ExecuteDatabase:
-                let databaseFormValue = this.databaseOptionsForm.value
+                // let databaseFormValue = this.databaseOptionsForm.value
+                // return {
+                //     isEnable: this.isEnable,
+                //     actionType: this.currentActionType,
+                //     databaseOptions: {
+                //         databaseConnectionId: databaseFormValue.databaseConnectionId,
+                //         query: databaseFormValue.query                        
+                //     },
+                //     notificationOptions: this.getNotification()
+                // }
                 return {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
-                    databaseOptions: {
-                        databaseConnectionId: databaseFormValue.databaseConnectionId,
-                        query: databaseFormValue.query                        
-                    },
+                    dbExecutionChains: this.actionCommandOptions.dbExecutionChains,
                     notificationOptions: this.getNotification()
                 }
             case ActionType.CallHttpService:
@@ -308,5 +320,17 @@ export class CommandOptionsComponent implements OnInit {
             completeMessage: notificationFormValues.completeMessage,
             failedMessage: notificationFormValues.failedMessage
         }
+    }
+
+    private isDbChainsValid(): boolean{
+        let isValid = true
+        this.actionCommandOptions.dbExecutionChains.steps.forEach(step => {
+            if(!ObjectUtils.isNotNull(step.databaseConnectionId) || !ObjectUtils.isNotNull(step.executeCommand)){
+                isValid = false
+                return false
+            }
+        });
+
+        return isValid
     }
 }
