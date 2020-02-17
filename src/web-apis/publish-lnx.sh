@@ -6,14 +6,14 @@ then
 fi
 
 mkdir $publishFolder
-chmod 755 $publishFolder
+chmod 755 -R $publishFolder
 
-dotnet publish ./LetPortal.Gateway/LetPortal.Gateway.csproj -o $publishFolder"/LetPortal.Gateway" -r linux-x64
-chmod 755 $publishFolder"/LetPortal.Gateway/LetPortal.Gateway"
-dotnet publish ./LetPortal.IdentityApis/LetPortal.IdentityApis.csproj -o $publishFolder"/LetPortal.IdentityApis" -r linux-x64
-chmod 755 $publishFolder"/LetPortal.IdentityApis/LetPortal.IdentityApis"
-dotnet publish ./LetPortal.WebApis/LetPortal.PortalApis.csproj -o $publishFolder"/LetPortal.PortalApis" -r linux-x64
-chmod 755 $publishFolder"/LetPortal.PortalApis/LetPortal.PortalApis"
-dotnet publish ./LetPortal.ServiceManagementApis/LetPortal.ServiceManagementApis.csproj -o $publishFolder"/LetPortal.ServiceManagementApis" -r linux-x64
-chmod 755 $publishFolder"/LetPortal.ServiceManagementApis/LetPortal.ServiceManagementApis"
+dotnet build ./LetPortal.Gateway/LetPortal.Gateway.csproj -c Release -o $publishFolder"/LetPortal.Gateway"
+chmod 755 $publishFolder"/LetPortal.Gateway/LetPortal.Gateway.dll"
+dotnet build ./LetPortal.IdentityApis/LetPortal.IdentityApis.csproj -c Release -o $publishFolder"/LetPortal.IdentityApis"
+chmod 755 $publishFolder"/LetPortal.IdentityApis/LetPortal.IdentityApis.dll"
+dotnet build ./LetPortal.WebApis/LetPortal.PortalApis.csproj -c Release -o $publishFolder"/LetPortal.PortalApis"
+chmod 755 $publishFolder"/LetPortal.PortalApis/LetPortal.PortalApis.dll"
+dotnet build ./LetPortal.ServiceManagementApis/LetPortal.ServiceManagementApis.csproj -c Release -o $publishFolder"/LetPortal.ServiceManagementApis"
+chmod 755 $publishFolder"/LetPortal.ServiceManagementApis/LetPortal.ServiceManagementApis.dll"
 echo ">>> Publish sucessfully! Go to execute run-lnx.sh to run all services"
