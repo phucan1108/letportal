@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-alpine3.10 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine AS base
 WORKDIR /app
 EXPOSE 80
 RUN apk add --no-cache tzdata
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-alpine3.10 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 WORKDIR /src
 COPY ["LetPortal.IdentityApis/LetPortal.IdentityApis.csproj", "LetPortal.IdentityApis/"]
 COPY ["LetPortal.Core/LetPortal.Core.csproj", "LetPortal.Core/"]
