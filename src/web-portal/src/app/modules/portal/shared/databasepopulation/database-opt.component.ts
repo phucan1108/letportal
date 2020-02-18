@@ -20,7 +20,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
 
     }
-    @ViewChild('jsonEditorQuery', { static: false }) editor: JsonEditorComponent;
+    @ViewChild('jsonEditorQuery', { static: true }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = {};
     isJsonEditorValid = true;
@@ -82,7 +82,8 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.databaseConnections$ = this.databaseClient.getAll()
-        this.databaseConnections$.subscribe(res => {
+        this.jsonOptions.mode = 'code';
+        const subscriber = this.databaseConnections$.subscribe(res => {
             this.databaseConnections = res
 
             if (this.databaseOptions.databaseConnectionId) {
@@ -91,9 +92,8 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             }
 
             this.isReadyToRender = true
-
             if (this.ismongodb) {
-                this.jsonOptions.mode = 'code';
+
                 this.queryJsonData = this.databaseOptions.query ? this.databaseOptions.query : {}
                 this.jsonOptions.onChange = () => {
                     try {
@@ -121,6 +121,8 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
                 this.enablePopulateButton()
             }
+
+            subscriber.unsubscribe()
         })
 
         this.databaseOptionForm = this.fb.group({
@@ -206,8 +208,9 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         this.databaseOptionForm.get('databaseId').valueChanges.subscribe(newValue => {
             if (newValue) {
                 this.selectedDatabaseConnection = this.databaseConnections.find(a => a.id == newValue)
-                this.ismongodb = this.selectedDatabaseConnection.databaseConnectionType == 'mongodb'
-                console.log('Before Calling')
+                this.ismongodb = this.selectedDatabaseConnection.databaseConnectionType === 'mongodb'
+                this.logger.debug('Selected database option', this.selectedDatabaseConnection)
+                this.logger.debug('Is selecting mongodb', this.ismongodb)
                 this.entityClient.getAllFromOneDatabase(newValue).subscribe(entitySchemas => {
                     this.shallowedEntitySchemas = entitySchemas;
                     this.entities.next(this.shallowedEntitySchemas)
@@ -292,10 +295,8 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 keptSameName: true
             }).subscribe(
                 result => {
-                    this.entityClient.getAllFromOneDatabase(this.databaseOptionForm.get('databaseId').value).subscribe(result => {
-                        this.shallowedEntitySchemas = result;
-                        this.entities.next(result)
-                    })
+                    this.shallowedEntitySchemas = result;
+                    this.entities.next(result)
                 },
                 err => {
 

@@ -105,7 +105,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             await entitySchemaRepository.UpsertEntitySchemasAsync(new List<EntitySchema>
             {
                 entitySchemaTest
-            }, true);
+            }, _context.MongoDatabaseConenction.Id, true);
 
             entitySchemaRepository.Dispose();
             // Assert

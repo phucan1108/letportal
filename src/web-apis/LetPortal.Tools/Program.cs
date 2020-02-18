@@ -80,6 +80,7 @@ namespace LET.Tools.Installation
             if (runningCommand != null)
             {
                 ToolsContext toolsContext = null;
+                var storingConnections = toolsOption.GetByDatabaseType(dbType);
                 switch (dbType)
                 {
                     case ConnectionType.MongoDB:
@@ -88,8 +89,8 @@ namespace LET.Tools.Installation
                         var versionMongoRepository = new VersionMongoRepository(mongoConnection);
                         mongoVersionContext.ConnectionType = ConnectionType.MongoDB;
                         mongoVersionContext.DatabaseOptions = databaseOption;
-                        mongoVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
-                        mongoVersionContext.IdentityDbOptions = toolsOption.StoringConnections.IdentityConnection;
+                        mongoVersionContext.ServiceManagementOptions = storingConnections.ServiceManagementConnection;
+                        mongoVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
                         var latestVersion = versionMongoRepository.GetAsQueryable().ToList().LastOrDefault();
 
                         var allVersions = Enumerable.Empty<IVersion>();
@@ -134,8 +135,8 @@ namespace LET.Tools.Installation
                             };
                             var portalVersionRepository = new VersionEFRepository(letportalContextForRepo);
                             var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
-                            sqlEFVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
-                            sqlEFVersionContext.IdentityDbOptions = toolsOption.StoringConnections.IdentityConnection;
+                            sqlEFVersionContext.ServiceManagementOptions = storingConnections.ServiceManagementConnection;
+                            sqlEFVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
 
                             IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
                             toolsContext = new ToolsContext
@@ -165,8 +166,8 @@ namespace LET.Tools.Installation
                             };
                             var portalVersionRepository = new VersionEFRepository(letportalContextForRepo);
                             var latestVersionEF = portalVersionRepository.GetAsQueryable().ToList().LastOrDefault();
-                            sqlEFVersionContext.ServiceManagementOptions = toolsOption.StoringConnections.ServiceManagementConnection;
-                            sqlEFVersionContext.IdentityDbOptions = toolsOption.StoringConnections.IdentityConnection;
+                            sqlEFVersionContext.ServiceManagementOptions = storingConnections.ServiceManagementConnection;
+                            sqlEFVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
 
                             IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
 

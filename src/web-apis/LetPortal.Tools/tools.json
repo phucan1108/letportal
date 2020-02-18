@@ -1,5 +1,5 @@
 {
-  "StoringConnections": {
+  "MongoStoringConnections": {
     "PortalConnection": {
       "ConnectionString": "mongodb://localhost:27017",
       "DataSource": "letportal",
@@ -14,6 +14,57 @@
       "ConnectionString": "mongodb://localhost:27017",
       "DataSource": "letportalservices",
       "ConnectionType": "MongoDB"
+    }
+  },
+  "PostgreSqlStoringConnections": {
+    "PortalConnection": {
+      "ConnectionString": "Host=localhost;Port=5432;Database=letportal;Username=postgres;Password=123456",
+      "DataSource": "letportal",
+      "ConnectionType": "PostgreSQL"
+    },
+    "IdentityConnection": {
+      "ConnectionString": "Host=localhost;Port=5432;Database=letportalidentity;Username=postgres;Password=123456",
+      "DataSource": "letportalidentity",
+      "ConnectionType": "PostgreSQL"
+    },
+    "ServiceManagementConnection": {
+      "ConnectionString": "Host=localhost;Port=5432;Database=letportalservices;Username=postgres;Password=123456",
+      "DataSource": "letportalservices",
+      "ConnectionType": "PostgreSQL"
+    }
+  },
+  "SqlServerStoringConnections": {
+    "PortalConnection": {
+      "ConnectionString": "Server=.;Database=letportal;User Id=sa;Password=123456;",
+      "DataSource": "letportal",
+      "ConnectionType": "SQLServer"
+    },
+    "IdentityConnection": {
+      "ConnectionString": "Server=.;Database=letportalidentity;User Id=sa;Password=123456;",
+      "DataSource": "letportalidentity",
+      "ConnectionType": "SQLServer"
+    },
+    "ServiceManagementConnection": {
+      "ConnectionString": "Server=.;Database=letportalservices;User Id=sa;Password=123456;",
+      "DataSource": "letportalservices",
+      "ConnectionType": "SQLServer"
+    }
+  },
+  "MySqlStoringConnections": {
+    "PortalConnection": {
+      "ConnectionString": "server=localhost;uid=root;pwd=123456;database=letportal",
+      "DataSource": "letportal",
+      "ConnectionType": "MySQL"
+    },
+    "IdentityConnection": {
+      "ConnectionString": "server=localhost;uid=root;pwd=123456;database=letportalidentity",
+      "DataSource": "letportalidentity",
+      "ConnectionType": "MySQL"
+    },
+    "ServiceManagementConnection": {
+      "ConnectionString": "server=localhost;uid=root;pwd=123456;database=letportalservices",
+      "DataSource": "letportalservices",
+      "ConnectionType": "MySQL"
     }
   }
 }

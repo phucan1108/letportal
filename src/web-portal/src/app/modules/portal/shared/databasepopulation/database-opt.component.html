@@ -33,7 +33,7 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="form-group row" *ngIf="ismongodb && isReadyToRender">
+    <div class="form-group row" [hidden]="(!ismongodb && isReadyToRender) || selectedDatabaseConnection == null">
         <label class="col-lg-2 col-form-label">Query:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
@@ -44,7 +44,7 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="form-group row" *ngIf="!ismongodb && isReadyToRender">
+    <div class="form-group row" [hidden]="(ismongodb && isReadyToRender) || selectedDatabaseConnection == null">
         <label class="col-lg-2 col-form-label">Query:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">

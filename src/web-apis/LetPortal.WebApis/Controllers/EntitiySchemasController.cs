@@ -68,7 +68,7 @@ namespace LetPortal.WebApis.Controllers
         {
             var result = await _entitySchemaService.FetchAllEntitiesFromDatabase(flushDatabaseModel.DatabaseId);
 
-            await _entitySchemaRepository.UpsertEntitySchemasAsync(result, flushDatabaseModel.KeptSameName);
+            await _entitySchemaRepository.UpsertEntitySchemasAsync(result, flushDatabaseModel.DatabaseId, flushDatabaseModel.KeptSameName);
 
             return Ok(result);
         }

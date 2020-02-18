@@ -44,7 +44,7 @@ namespace LetPortal.WebApis
                 .AddNewtonsoftJson(options =>
                 {
                     // Important note: we still use Newtonsoft instead of .NET JSON because they still don't support Timezone
-                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;                    
                 });
         }
 

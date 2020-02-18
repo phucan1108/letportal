@@ -23,7 +23,10 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
             return Task.FromResult(found);
         }
 
-        public Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false)
+        public Task UpsertEntitySchemasAsync(
+            IEnumerable<EntitySchema> entitySchemas,
+            string databaseId,
+            bool isKeptSameName = false)
         {
             foreach (var entitySchema in entitySchemas)
             {
@@ -32,17 +35,18 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
                 // Hotfix for MySQL issue: https://bugs.mysql.com/bug.php?id=92987
                 if (_context.ConnectionType == ConnectionType.MySQL)
                 {
-                    var exist = _context.EntitySchemas.FirstOrDefault(a => a.Name == entitySchema.Name);
+                    var exist = _context.EntitySchemas.FirstOrDefault(a => a.Name == entitySchema.Name && a.DatabaseId == databaseId);
                     isExisted = exist != null;
                 }
                 else
                 {
-                    isExisted = _context.EntitySchemas.Any(a => a.Name == entitySchema.Name);
+                    isExisted = _context.EntitySchemas.Any(a => a.Name == entitySchema.Name && a.DatabaseId == databaseId);
                 }
 
                 if ((isExisted && isKeptSameName) == false)
                 {
                     entitySchema.Id = DataUtil.GenerateUniqueId();
+                    entitySchema.DatabaseId = databaseId;
                     _context.EntitySchemas.Add(entitySchema);
                 }
             }

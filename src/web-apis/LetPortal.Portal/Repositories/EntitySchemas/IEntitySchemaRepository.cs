@@ -9,6 +9,9 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
     {
         Task<EntitySchema> GetOneEntitySchemaAsync(string databaseId, string name);
 
-        Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false);
+        Task UpsertEntitySchemasAsync(
+            IEnumerable<EntitySchema> entitySchemas,
+            string databaseId,
+            bool isKeptSameName = false);
     }
 }

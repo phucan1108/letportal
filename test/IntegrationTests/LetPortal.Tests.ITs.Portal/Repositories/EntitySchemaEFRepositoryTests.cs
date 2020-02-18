@@ -93,7 +93,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             await entitySchemaRepository.UpsertEntitySchemasAsync(new List<EntitySchema>
             {
                 entitySchemaTest
-            }, true);
+            }, _context.PostgreSqlDatabaseConnection.Id ,true);
 
             entitySchemaRepository.Dispose();
 
@@ -179,7 +179,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             await entitySchemaRepository.UpsertEntitySchemasAsync(new List<EntitySchema>
             {
                 entitySchemaTest
-            }, true);
+            }, _context.SqlServerDatabaseConnection.Id, true);
 
             entitySchemaRepository.Dispose();
             // Assert
@@ -264,7 +264,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
             await entitySchemaRepository.UpsertEntitySchemasAsync(new List<EntitySchema>
             {
                 entitySchemaTest
-            }, true);
+            }, _context.MySqlDatabaseConnection.Id, true);
 
             entitySchemaRepository.Dispose();
             // Assert

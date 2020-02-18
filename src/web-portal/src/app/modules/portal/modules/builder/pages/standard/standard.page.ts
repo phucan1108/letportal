@@ -14,7 +14,8 @@ import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'let-standard-page',
-    templateUrl: './standard.page.html'
+    templateUrl: './standard.page.html',
+    styleUrls:['./standard.page.scss']
 })
 export class StandardPagePage implements OnInit {
 
@@ -67,7 +68,7 @@ export class StandardPagePage implements OnInit {
             this.standardFormGroup = this.fb.group({
                 name: new FormControl({ value:this.standardComponent.name, disabled: true }, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]),
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
-                layoutType: [this.standardComponent.layoutType],
+                layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
             })
         }
@@ -76,7 +77,7 @@ export class StandardPagePage implements OnInit {
             this.standardFormGroup = this.fb.group({
                 name: [this.standardComponent.name, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]],
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
-                layoutType: [this.standardComponent.layoutType],
+                layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
             })
         }
@@ -96,7 +97,7 @@ export class StandardPagePage implements OnInit {
         this.standardComponent.name = this.isEditMode ? this.standardComponent.name :  formValues.name
         this.standardComponent.displayName = formValues.displayName
         this.standardComponent.controls = this.controls
-        this.standardComponent.layoutType = formValues.layoutType
+        this.standardComponent.layoutType = parseInt(formValues.layoutType)
     }
 
     onPopulatedControls($event: ExtendedPageControl[]) {

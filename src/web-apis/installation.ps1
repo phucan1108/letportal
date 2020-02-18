@@ -1,5 +1,5 @@
 <# This PS file will be using for installing LetPortal Tools
- Author: An Le Quang Phuc
+ Author: An Quang Phuc Le
  Created Date: Jan 28 2020
  Version: 0.0.5
 #>

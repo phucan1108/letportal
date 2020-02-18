@@ -21,14 +21,19 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
             return await Collection.AsQueryable().FirstOrDefaultAsync(a => a.Name == name && a.DatabaseId == databaseId);
         }
 
-        public async Task UpsertEntitySchemasAsync(IEnumerable<EntitySchema> entitySchemas, bool isKeptSameName = false)
+        public async Task UpsertEntitySchemasAsync(
+            IEnumerable<EntitySchema> entitySchemas, 
+            string databaseId,
+            bool isKeptSameName = false)
         {
             foreach (var entitySchema in entitySchemas)
             {
-                var isExisted = Collection.AsQueryable().Any(a => a.Name == entitySchema.Name);
+                var isExisted = Collection.AsQueryable()
+                        .Any(a => a.Name == entitySchema.Name && a.DatabaseId == databaseId);
                 if ((isExisted && isKeptSameName) == false)
                 {
                     entitySchema.Id = DataUtil.GenerateUniqueId();
+                    entitySchema.DatabaseId = databaseId;
                     await AddAsync(entitySchema);
                 }
             }

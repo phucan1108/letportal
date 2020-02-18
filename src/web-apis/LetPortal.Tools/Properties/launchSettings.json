@@ -2,7 +2,7 @@
   "profiles": {
     "LET.Tools.Installation": {
       "commandName": "Project",
-      "commandLineArgs": "portal install"
+      "commandLineArgs": "portal install -db=sqlserver"
     }
   }
 }

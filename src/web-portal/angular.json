@@ -23,7 +23,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
-              "src/favicon.ico",
+              "src/logo.ico",
               "src/assets"
             ],
             "styles": [
@@ -130,6 +130,14 @@
                   "with": "src/environments/environment.dockerlocal.ts"
                 }
               ]
+            },
+            "local": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ]
             }
           }
         },
@@ -150,6 +158,9 @@
             },
             "dockerlocal": {
               "browserTarget": "web-portal:build:dockerlocal"
+            },
+            "local": {
+              "browserTarget": "web-portal:build:local"
             }
           }
         },
