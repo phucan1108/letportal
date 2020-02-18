@@ -289,15 +289,18 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         }
 
         // Depends on control type, we need to doublecheck data and set default value if data is null
-        if (control.type == ControlType.AutoComplete || control.type == ControlType.Select) {
+        if ((control.type == ControlType.AutoComplete 
+                || control.type == ControlType.Select) 
+            && control.defaultOptions.multiple) {
             if (controlData) {
+                // If the data isn't an array, maybe it is array string, try to parse
                 if (!ObjectUtils.isArray(controlData)) {
                     try {
                         let temp = JSON.parse(controlData)
                         controlData = temp
                     }
                     catch{
-                        controlData = []
+                        controlData = [controlData]
                     }
                 }
             }
