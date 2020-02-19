@@ -102,7 +102,7 @@ export class ListDatasourceComponent implements OnInit {
                 // Ignore some special fields
                 let columnDef: ColumndDef = {
                     name: (element.name === '_id' || element.name === 'id') ? 'id' : element.name,
-                    displayName: element.displayName,
+                    displayName: this.getBeautifulName(element.displayName),
                     displayFormat: '{0}',
                     allowSort: !(element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
                     displayFormatAsHtml: false,
@@ -238,5 +238,18 @@ export class ListDatasourceComponent implements OnInit {
 
     private ignoreBsonFieldTypes(fieldType: string){
         return fieldType == 'list' || fieldType == 'document'
+    }
+
+    private getBeautifulName(colName: string){   
+        let firstLetter = colName[0].toUpperCase()
+        let subStr = colName.substr(1)
+        let combine = firstLetter + subStr
+        try{                 
+            let splitted = combine.split(/(?=[A-Z])/);
+            return splitted.join(' ').trim()
+        }
+        catch{
+            return colName
+        }
     }
 }

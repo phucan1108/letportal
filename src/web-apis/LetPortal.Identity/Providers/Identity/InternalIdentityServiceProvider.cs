@@ -109,7 +109,7 @@ namespace LetPortal.Identity.Providers.Identity
                         Id = DataUtil.GenerateUniqueId(),
                         RequestIpAddress = loginModel.ClientIp,
                         SoftwareAgent = loginModel.SoftwareAgent,
-                        VersionInstalled = loginModel.VersionInstalled,
+                        InstalledVersion = loginModel.VersionInstalled,
                         SignInDate = DateTime.UtcNow,
                         UserId = user.Id,
                         UserActivities = new List<UserActivity>

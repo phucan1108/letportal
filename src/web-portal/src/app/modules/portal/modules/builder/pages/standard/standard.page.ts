@@ -43,7 +43,7 @@ export class StandardPagePage implements OnInit {
                 controls: [],
                 name: '',
                 displayName: '',
-                layoutType: PageSectionLayoutType.TwoColumns
+                layoutType: PageSectionLayoutType.OneColumn
             }
         }
         else {
@@ -119,7 +119,7 @@ export class StandardPagePage implements OnInit {
                 this.standardsClient.createOne(this.standardComponent).subscribe(
                     result => {
                         this.shortcutUtil.toastMessage('Create standard successfully', ToastType.Success)
-                        this.router.navigateByUrl('portal/standard/builder/' + result)
+                        this.router.navigateByUrl('portal/page/standard-list-management')
                     },
                     err => {
 

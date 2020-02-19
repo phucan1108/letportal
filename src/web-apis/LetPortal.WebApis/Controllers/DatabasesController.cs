@@ -152,8 +152,17 @@ namespace LetPortal.WebApis.Controllers
             }
             else
             {
-                formattedContent = ConvertUtil.SerializeObject(model.Content);
+                if(model.Content.GetType() == typeof(string))
+                {
+                    formattedContent = model.Content;
+                }
+                else
+                {
+                    formattedContent = ConvertUtil.SerializeObject(model.Content);
+                }
+                
             }
+
             var result = await _databaseService.ExtractColumnSchema(databaseConnection, formattedContent, model.Parameters);
             _logger.Info("Result of extracting dynamic: {@result}", result);
             return Ok(result);

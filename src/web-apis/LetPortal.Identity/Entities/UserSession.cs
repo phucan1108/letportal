@@ -14,7 +14,7 @@ namespace LetPortal.Identity.Entities
 
         public User User { get; set; }
 
-        public string VersionInstalled { get; set; }
+        public string InstalledVersion { get; set; }
 
         public string SoftwareAgent { get; set; }
 

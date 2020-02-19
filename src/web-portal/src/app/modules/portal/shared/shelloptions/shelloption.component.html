@@ -6,7 +6,7 @@
                 <button mat-raised-button color="primary" (click)="addShell()">Add Option</button>
             </div>
             <div class="col-lg-12 pt-3">
-                <m-table [(value)]="shellOptions" #mtable [selectable]="false" selectionHandler="false"
+                <m-table [(value)]="shellOptions" #mtable [selectable]="false" [selectionHandler]="false"
                     (onEditComplete)="editComplete($event)">
                     <m-column field="description" header="Hint">
                         <ng-template let-col let-row="row" mTemplate="body">

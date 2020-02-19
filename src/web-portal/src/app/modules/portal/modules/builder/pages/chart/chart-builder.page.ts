@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PageService } from 'services/page.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { DynamicListClient, ChartsClient, Chart, DatabaseOptions, ChartType, ChartFilter } from 'services/portal.service';
+import { DynamicListClient, ChartsClient, Chart, DatabaseOptions, ChartType, ChartFilter, PageSectionLayoutType } from 'services/portal.service';
 import { MatDialog } from '@angular/material';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -54,7 +54,7 @@ export class ChartBuilderPage implements OnInit {
                 displayName: [this.edittingChart.displayName, [Validators.required, Validators.maxLength(250)]],
                 chartTitle: [this.edittingChart.definitions.chartTitle, [Validators.required, Validators.maxLength(250)]],
                 chartType: [this.edittingChart.definitions.chartType, Validators.required],
-                layoutType: [this.edittingChart.layoutType, Validators.required],
+                layoutType: [this.edittingChart.layoutType.toString(), Validators.required],
                 mappingProjection: [this.edittingChart.definitions.mappingProjection, Validators.required]
             })
             this.shellOptions = this.edittingChart.options as ExtendedShellOption[]
@@ -70,6 +70,7 @@ export class ChartBuilderPage implements OnInit {
                 displayName: ['', [Validators.required, Validators.maxLength(250)]],
                 chartTitle: ['', [Validators.required, Validators.maxLength(250)]],
                 chartType: [ChartType.VerticalBarChart, Validators.required],
+                layoutType: [PageSectionLayoutType.OneColumn.toString(), Validators.required],
                 mappingProjection: ['name=name;value=value;group=group', Validators.required]
             })
             this.shellOptions = this.shellOptions.concat(ChartOptions.getDefaultShellOptionsForChart())
@@ -115,7 +116,7 @@ export class ChartBuilderPage implements OnInit {
                     chartType: formValues.chartType,
                     mappingProjection: formValues.mappingProjection
                 },
-                layoutType: formValues.layoutType,
+                layoutType: parseInt(formValues.layoutType),
                 chartFilters: this.chartFilters,
                 options: this.shellOptions,
                 databaseOptions: this.databaseOptions

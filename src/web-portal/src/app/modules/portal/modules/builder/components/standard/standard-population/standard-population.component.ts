@@ -90,7 +90,7 @@ export class StandardPopulationComponent implements OnInit {
                     id: '',
                     description: 'Label will be displayed when it isn\'t empty',
                     key: 'label',
-                    value: pageControl.name[0].toUpperCase() + pageControl.name.substr(1),
+                    value: this.getBeautifulName(pageControl.name),
                     allowDelete: false
                 },
                 {
@@ -219,6 +219,19 @@ export class StandardPopulationComponent implements OnInit {
                         }
                     }
                 ]
+        }
+    }
+
+    private getBeautifulName(controlName: string){   
+        let firstLetter = controlName[0].toUpperCase()
+        let subStr = controlName.substr(1)
+        let combine = firstLetter + subStr
+        try{                 
+            let splitted = combine.split(/(?=[A-Z])/);
+            return splitted.join(' ').trim()
+        }
+        catch{
+            return controlName
         }
     }
 }
