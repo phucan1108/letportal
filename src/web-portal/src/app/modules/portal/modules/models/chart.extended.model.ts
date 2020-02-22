@@ -1,6 +1,7 @@
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { ShellOption, ChartFilter } from 'services/portal.service';
 import * as _ from 'lodash';
+import StringUtils from 'app/core/utils/string-util';
 
 export class ChartOptions {
 
@@ -21,7 +22,7 @@ export class ChartOptions {
             comparerealtimefield: comparedField.value ? comparedField.value : '',
             datarange: datarange ? datarange.value : '',
             xformatdate: xformatDate ? xformatDate.value : '',
-            colors: JSON.parse(_.find(options, opt => opt.key === 'colors').value)
+            colors: JSON.parse(StringUtils.replaceAllOccurences(_.find(options, opt => opt.key === 'colors').value, "'", "\""))
         }
     }
 
@@ -62,7 +63,7 @@ export class ChartOptions {
         allowDelete: false,
         description: 'This format will use momentjs for displaying date value in X axis. Default: empty',
         key: 'xformatdate',
-        value: ''
+        value: 'YYYY-MM-DD'
     }
 
     public static Colors: ExtendedShellOption = {
@@ -70,7 +71,7 @@ export class ChartOptions {
         allowDelete: false,
         description: "Colors list will be used to style a chart ['red','blue','yellow'] or style name (horizon|ocean|neons|vivid|cool|nightLights). Default: ['horizon']",
         key: 'colors',
-        value: "['horizon']"
+        value: "[\"horizo\"]"
     }
 
     public static getDefaultShellOptionsForChart(): ExtendedShellOption[] {

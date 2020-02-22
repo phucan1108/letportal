@@ -241,6 +241,10 @@ namespace LetPortal.Portal.Executions.Mongo
             var splitted = mappingProjection.Split(";");
             foreach (var split in splitted)
             {
+                if (string.IsNullOrEmpty(split))
+                {
+                    continue;
+                }
                 var sub = split.Split("=");
                 projectDoc.Add(new BsonElement(sub[0], "$" + sub[1]));
             }

@@ -29,7 +29,9 @@ namespace LetPortal.Portal.Executions.Mongo
                 {
                     var analyzingCollection = currentDatabaseConnection.GetCollection<BsonDocument>(collectionName);
 
-                    var firstElem = analyzingCollection.AsQueryable().FirstOrDefault();
+                    FieldDefinition<BsonDocument, string> field = "$natural";
+                    var sort = Builders<BsonDocument>.Sort.Descending(field);                    
+                    var firstElem = analyzingCollection.Find(Builders<BsonDocument>.Filter.Empty).Sort(sort).Limit(1).FirstOrDefault();
 
                     if (firstElem != null)
                     {

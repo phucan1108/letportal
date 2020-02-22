@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            <m-table [(value)]="commandsInList" #mtable [selectable]="false" selectionHandler="false">
+            <m-table [(value)]="commandsInList" #mtable [selectable]="false" [selectionHandler]="false">
                 <m-column field="displayName" header="Name">
                 </m-column>
                 <m-column field="commandPositionType" header="Position">

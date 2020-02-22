@@ -43,6 +43,14 @@ namespace LetPortal.IdentityApis.Controllers
             return Ok(result);
         }
 
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout([FromBody] LogoutModel logoutModel)
+        {
+            await _identityServiceProvider.SignOutAsync(logoutModel);
+            return Ok();
+        }
+
         [HttpPost("register")]
         [Authorize]
         [ProducesResponseType(typeof(ErrorCode), 500)]

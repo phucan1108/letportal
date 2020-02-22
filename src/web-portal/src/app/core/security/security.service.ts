@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AuthToken, AuthUser } from './auth.model';
 import { SessionService } from 'services/session.service';
-import { RolesClient, PortalClaimModel } from 'services/identity.service';
+import { RolesClient, PortalClaimModel, UserSessionClient, AccountsClient } from 'services/identity.service';
 import { Observable, of, timer } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 
@@ -18,6 +18,7 @@ export class SecurityService {
     private calledClaims = false
 
     constructor(
+        private accountsClient: AccountsClient,
         private session: SessionService,
         private roleClient: RolesClient) {
         let tempAuthToken = this.session.getUserToken()
@@ -73,7 +74,17 @@ export class SecurityService {
     }
 
     userLogout() {
+        if(!!this.authUser && !!this.authToken){
+            this.accountsClient.logout({
+                username: this.authUser.username,
+                token: this.authToken.jwtToken,
+                userSession: this.session.getUserSession()
+            }).subscribe(res =>{
+               
+            })
+        }  
         this.authUser = null
         this.authToken = null
+        this.session.setUserSession(null)
     }
 }

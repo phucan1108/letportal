@@ -12,6 +12,8 @@ namespace LetPortal.Identity.Entities
     {
         public string UserId { get; set; }
 
+        public string Username { get; set; }
+
         public User User { get; set; }
 
         public string InstalledVersion { get; set; }
@@ -23,6 +25,8 @@ namespace LetPortal.Identity.Entities
         public DateTime SignInDate { get; set; }
 
         public DateTime SignOutDate { get; set; }
+
+        public bool AlreadySignOut { get; set; }
 
         public List<UserActivity> UserActivities { get; set; }
     }

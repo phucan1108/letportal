@@ -71,9 +71,26 @@ export class SectionDialogComponent implements OnInit {
 
     populatedFormValues() {
         this.sectionForm.get('displayName').valueChanges.subscribe(newValue => {
-            const sectionFormNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
+            const sectionFormNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '').replace(/[$&+,:;=?@#|'<>.^*()%!-]/g, '')
             this.sectionForm.get('name').setValue(sectionFormNameValue)
             this.cd.markForCheck()
+        })
+
+        this.sectionForm.get('componentId').valueChanges.subscribe(newValue => {
+            switch(this.sectionForm.value.constructionType){
+                case SectionContructionType.Standard:
+                    const selectedStandard = this.standards.find(a => a.id === newValue)
+                    this.sectionForm.get('displayName').setValue(selectedStandard.displayName)
+                    break
+                case SectionContructionType.Chart:
+                    const selectedChart = this.charts.find(a => a.id === newValue)
+                    this.sectionForm.get('displayName').setValue(selectedChart.displayName)
+                    break
+                case SectionContructionType.DynamicList:
+                    const selectedDynamicList = this.charts.find(a => a.id === newValue)
+                    this.sectionForm.get('displayName').setValue(selectedDynamicList.displayName)
+                    break
+            }
         })
     }
 

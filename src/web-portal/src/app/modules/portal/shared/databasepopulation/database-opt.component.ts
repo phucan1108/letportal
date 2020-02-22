@@ -83,6 +83,15 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.databaseConnections$ = this.databaseClient.getAll()
         this.jsonOptions.mode = 'code';
+        this.jsonOptions.onChange = () => {
+            try {
+                this.onJsonEditorChange(this.editor.get())
+                this.isJsonEditorValid = true
+            }
+            catch {
+                this.isJsonEditorValid = false;
+            }
+        }
         const subscriber = this.databaseConnections$.subscribe(res => {
             this.databaseConnections = res
 
@@ -94,19 +103,16 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             this.isReadyToRender = true
             if (this.ismongodb) {
 
-                this.queryJsonData = this.databaseOptions.query ? this.databaseOptions.query : {}
-                this.jsonOptions.onChange = () => {
-                    try {
-                        this.onJsonEditorChange(this.editor.get())
-                        this.isJsonEditorValid = true
-                    }
-                    catch {
-                        this.isJsonEditorValid = false;
-                    }
+                if(ObjectUtils.isNotNull(this.databaseOptions.query)){
+                    this.queryJsonData = JSON.parse(this.databaseOptions.query.replace(/(\r\n|\n|\r)/gm," ")) 
                 }
+                else{
+                    this.queryJsonData = {}
+                }
+                
                 this.logger.debug('current json data', this.queryJsonData)
                 if (this.isEditMode) {
-                    this.queryJsonData = this.databaseOptionForm.get('query').value
+                    this.queryJsonData = JSON.parse(this.databaseOptionForm.get('query').value)
                 }
             }
             else {
@@ -292,7 +298,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             this.isRefreshClicked = false
             this.entityClient.flushOneDatabase({
                 databaseId: this.databaseOptionForm.get('databaseId').value as string,
-                keptSameName: true
+                keptSameName: false
             }).subscribe(
                 result => {
                     this.shallowedEntitySchemas = result;

@@ -30,10 +30,16 @@ export class UnlockScreenDialogComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.username = this.security.getAuthUser().username
-        this.confirmPasswordForm = this.fb.group({
-            password: ['', [Validators.required, Validators.minLength(6)]]
-        })
+        // Ensure we don't be forced back to Login page
+        if(!!this.security.getAuthUser()){
+            this.username = this.security.getAuthUser().username
+            this.confirmPasswordForm = this.fb.group({
+                password: ['', [Validators.required, Validators.minLength(6)]]
+            })
+        }
+        else{
+            this.dialogRef.close()
+        }
     }
 
     onUnlock() {

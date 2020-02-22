@@ -28,9 +28,19 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
         {
             foreach (var entitySchema in entitySchemas)
             {
-                var isExisted = Collection.AsQueryable()
-                        .Any(a => a.Name == entitySchema.Name && a.DatabaseId == databaseId);
-                if ((isExisted && isKeptSameName) == false)
+                var foundElem = Collection.AsQueryable()
+                        .FirstOrDefault(a => a.Name == entitySchema.Name && a.DatabaseId == databaseId);
+
+                bool wantToAdd = true;
+                if (foundElem != null)
+                {
+                    if (!isKeptSameName)
+                    {
+                        await DeleteAsync(foundElem.Id);   
+                    }
+                }
+                
+                if(wantToAdd)
                 {
                     entitySchema.Id = DataUtil.GenerateUniqueId();
                     entitySchema.DatabaseId = databaseId;

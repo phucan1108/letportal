@@ -112,6 +112,7 @@ namespace LetPortal.Identity.Providers.Identity
                         InstalledVersion = loginModel.VersionInstalled,
                         SignInDate = DateTime.UtcNow,
                         UserId = user.Id,
+                        Username = user.Username,
                         UserActivities = new List<UserActivity>
                     {
                         new UserActivity
@@ -154,6 +155,19 @@ namespace LetPortal.Identity.Providers.Identity
             }
 
             throw new IdentityException(ErrorCodes.CannotSignIn);
+        }   
+
+        public async Task SignOutAsync(LogoutModel logoutModel)
+        {
+            // In fact, we just add a signout date for auditing
+            // Because JWT is helping us to validate service-self instead of connecting back to Identity Server
+            // For micro-services, we need to implement distributed JWT cache for signing out all sessions
+
+            var userSession = await _userSessionRepository.GetOneAsync(logoutModel.UserSession);
+
+            userSession.SignOutDate = DateTime.UtcNow;
+            userSession.AlreadySignOut = true;
+            await _userSessionRepository.UpdateAsync(userSession.Id, userSession);
         }
 
         public async Task<TokenModel> RefreshTokenAsync(string refreshToken)
@@ -299,6 +313,5 @@ namespace LetPortal.Identity.Providers.Identity
 
             return claims;
         }
-
     }
 }

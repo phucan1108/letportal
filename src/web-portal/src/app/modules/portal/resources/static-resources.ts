@@ -84,8 +84,8 @@ export class StaticResources {
         return [
             { name: 'Standard', value: SectionContructionType.Standard },
             { name: 'Dynamic List', value: SectionContructionType.DynamicList },
-            { name: 'Chart', value: SectionContructionType.Chart },
-            { name: 'Array', value: SectionContructionType.Standard }
+            { name: 'Chart', value: SectionContructionType.Chart }
+            // { name: 'Array', value: SectionContructionType.Standard }
         ]
     }
 

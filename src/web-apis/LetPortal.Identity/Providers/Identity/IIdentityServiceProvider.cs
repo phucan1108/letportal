@@ -11,6 +11,8 @@ namespace LetPortal.Identity.Providers.Identity
 
         Task<TokenModel> SignInAsync(LoginModel loginModel);
 
+        Task SignOutAsync(LogoutModel logoutModel);
+
         Task<TokenModel> RefreshTokenAsync(string refreshToken);
 
         Task ForgotPasswordAsync(string email);
