@@ -35,6 +35,15 @@ namespace LetPortal.WebApis.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}/render")]
+        [ProducesResponseType(typeof(StandardComponent), 200)]
+        public async Task<IActionResult> GetOneForRender(string id)
+        {
+            var result = await _standardRepository.GetOneForRenderAsync(id);
+            _logger.Info("Found standard component: {@result}", result);
+            return Ok(result);
+        }
+
         [HttpGet("short-standards")]
         [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
         public async Task<IActionResult> GetSortStandards([FromQuery] string keyWord = null)

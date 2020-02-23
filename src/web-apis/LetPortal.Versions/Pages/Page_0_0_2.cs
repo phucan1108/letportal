@@ -70,7 +70,7 @@ namespace LetPortal.Versions.Pages
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
                             DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                             {
-                                DatabaseConnectionId = Constants.CoreDatabaseId,
+                                DatabaseConnectionId = Constants.PortalDatabaseId,
                                 EntityName = "databases",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                 "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
@@ -106,7 +106,7 @@ namespace LetPortal.Versions.Pages
                                     {
                                         new DatabaseExecutionStep
                                         {
-                                            DatabaseConnectionId = Constants.CoreDatabaseId,
+                                            DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                     "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
@@ -152,7 +152,7 @@ namespace LetPortal.Versions.Pages
                                     {
                                         new DatabaseExecutionStep
                                         {
-                                            DatabaseConnectionId = Constants.CoreDatabaseId,
+                                            DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                                 "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
                                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
@@ -258,7 +258,7 @@ namespace LetPortal.Versions.Pages
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
                             DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                             {
-                                DatabaseConnectionId = Constants.CoreDatabaseId,
+                                DatabaseConnectionId = Constants.PortalDatabaseId,
                                 EntityName = "databases",
                                 Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                 "{\"$query\":{\"apps\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"
@@ -294,7 +294,7 @@ namespace LetPortal.Versions.Pages
                                     {
                                         new DatabaseExecutionStep
                                         {
-                                            DatabaseConnectionId = Constants.CoreDatabaseId,
+                                            DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                                     "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"author\": \"{{user.username}}\",\r\n      \"createdDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\"\r\n    }\r\n  }\r\n}"
                                                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
@@ -341,7 +341,7 @@ namespace LetPortal.Versions.Pages
                                     {
                                         new DatabaseExecutionStep
                                         {
-                                            DatabaseConnectionId = Constants.CoreDatabaseId,
+                                            DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                                                 "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
                                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL

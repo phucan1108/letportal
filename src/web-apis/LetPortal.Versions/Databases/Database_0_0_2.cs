@@ -25,7 +25,8 @@ namespace LetPortal.Versions.Databases
                 ConnectionString = databaseSMOptions.ConnectionString,
                 DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseSMOptions.ConnectionType).ToLower(),
                 DataSource = databaseSMOptions.Datasource,
-                Name = "Service Management"
+                Name = "serviceManagement",
+                DisplayName = "Service Management"
             };
 
             var identityDatabase = new DatabaseConnection
@@ -34,7 +35,8 @@ namespace LetPortal.Versions.Databases
                 ConnectionString = databseIdOptions.ConnectionString,
                 DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databseIdOptions.ConnectionType).ToLower(),
                 DataSource = databseIdOptions.Datasource,
-                Name = "Identity Database"
+                Name = "identityDatabase",
+                DisplayName = "Identity Database"
             };
 
             versionContext.InsertData(smDatabase);

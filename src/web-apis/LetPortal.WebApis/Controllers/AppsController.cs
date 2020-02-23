@@ -92,8 +92,8 @@ namespace LetPortal.WebApis.Controllers
         {
             _logger.Info("Creating app: {@app}", app);
             app.Id = DataUtil.GenerateUniqueId();
-            app.DateCreated = DateTime.UtcNow;
-            app.DateModified = DateTime.UtcNow;
+            app.CreatedDate = DateTime.UtcNow;
+            app.ModifiedDate = DateTime.UtcNow;
             await _appRepository.AddAsync(app);
             _logger.Info("Created app: {@app}", app);
 

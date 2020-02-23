@@ -46,7 +46,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
         }))
         switch (this.pageSection.constructionType) {
             case SectionContructionType.Standard:
-                this.standardClient.getOne(this.pageSection.componentId).pipe(
+                this.standardClient.getOneForRender(this.pageSection.componentId).pipe(
                     //delay(5000),
                     tap(
                         standard => {

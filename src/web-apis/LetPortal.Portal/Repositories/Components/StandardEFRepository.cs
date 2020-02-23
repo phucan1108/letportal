@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,28 @@ namespace LetPortal.Portal.Repositories.Components
             : base(context)
         {
             _context = context;
+        }
+
+        public async Task<StandardComponent> GetOneForRenderAsync(string id)
+        {
+            var standard = await GetOneAsync(id);
+
+            // Remove some security risks
+            foreach (var control in standard.Controls)
+            {
+                if (control.AsyncValidators != null && control.AsyncValidators.Count > 0)
+                {
+                    foreach (var validator in control.AsyncValidators)
+                    {
+                        if (validator.AsyncValidatorOptions.ValidatorType == Entities.Components.Controls.AsyncValidatorType.DatabaseValidator)
+                        {
+                            validator.AsyncValidatorOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(validator.AsyncValidatorOptions.DatabaseOptions.Query, true));
+                        }
+                    }
+                }
+            }
+
+            return standard;
         }
 
         public async Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null)

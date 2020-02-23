@@ -8,6 +8,7 @@ using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Models.Shared;
+using LetPortal.Portal.Providers.Components;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Repositories.Pages;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,8 @@ namespace LetPortal.WebApis.Controllers
     {
         private readonly IDatabaseServiceProvider _databaseServiceProvider;
 
+        private readonly IStandardServiceProvider _standardServiceProvider;
+
         private readonly IPageRepository _pageRepository;
 
         private readonly IServiceLogger<PagesController> _logger;
@@ -27,10 +30,12 @@ namespace LetPortal.WebApis.Controllers
         public PagesController(
             IPageRepository pageRepository,
             IDatabaseServiceProvider databaseServiceProvider,
+            IStandardServiceProvider standardServiceProvider,
             IServiceLogger<PagesController> logger)
         {
             _pageRepository = pageRepository;
             _databaseServiceProvider = databaseServiceProvider;
+            _standardServiceProvider = standardServiceProvider;
             _logger = logger;
         }
 
@@ -147,6 +152,46 @@ namespace LetPortal.WebApis.Controllers
                                         .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }));
 
                     return Ok(result);
+                }
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost("{pageId}/async-validator")]
+        [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        public async Task<IActionResult> ExecuteAsyncValidator(string pageId, [FromBody] PageAsyncValidatorModel validatorModel)
+        {
+            var page = await _pageRepository.GetOneAsync(pageId);
+            if (page != null)
+            {
+                var section = page.Builder.Sections.First(a => a.Name == validatorModel.SectionName);
+                if (section.ConstructionType == SectionContructionType.Standard)
+                {
+                    // Only support Standard component
+                    var sectionStandard = (await _standardServiceProvider.GetStandardComponentsByIds(new List<string> { section.ComponentId })).First();
+
+                    var control = sectionStandard.Controls.First(a => a.Name == validatorModel.ControlName);
+                    var asyncValidator = control.AsyncValidators.First(a => a.ValidatorName == validatorModel.AsyncName);
+                    if (asyncValidator.AsyncValidatorOptions.ValidatorType == Portal.Entities.Components.Controls.AsyncValidatorType.DatabaseValidator)
+                    {
+                        var result =
+                            await _databaseServiceProvider
+                                    .ExecuteDatabase(
+                                        asyncValidator.AsyncValidatorOptions.DatabaseOptions.DatabaseConnectionId,
+                                        asyncValidator.AsyncValidatorOptions.DatabaseOptions.Query,
+                                        validatorModel?
+                                            .Parameters
+                                            .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }));
+
+                        return Ok(result);
+                    }
+
+                    return BadRequest();
+                }
+                else
+                {
+                    return BadRequest();
                 }
             }
 

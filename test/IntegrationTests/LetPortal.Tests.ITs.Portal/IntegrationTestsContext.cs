@@ -351,8 +351,8 @@ namespace LetPortal.Tests.ITs.Portal
                 DisplayName = "Test App",
                 Author = "Admin",
                 CurrentVersionNumber = "0.0.1",
-                DateCreated = DateTime.UtcNow,
-                DateModified = DateTime.UtcNow.AddDays(7),
+                CreatedDate = DateTime.UtcNow,
+                ModifiedDate = DateTime.UtcNow.AddDays(7),
                 DefaultUrl = "~",
                 Logo = "icon",
                 TimeSpan = DateTime.UtcNow.Ticks

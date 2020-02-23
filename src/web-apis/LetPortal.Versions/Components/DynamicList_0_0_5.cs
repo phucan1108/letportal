@@ -26,7 +26,7 @@ namespace LetPortal.Versions.Components
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
+                        DatabaseConnectionId = Constants.PortalDatabaseId,
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB
                         ? "{ \"$query\": { \"backups\": [ ] } }" : "SELECT * FROM backups"
                     },

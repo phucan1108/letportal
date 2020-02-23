@@ -7,6 +7,7 @@ import { SessionService } from 'services/session.service';
 import { SecurityService } from 'app/core/security/security.service';
 import { AuthToken } from 'app/core/security/auth.model';
 import { Router } from '@angular/router';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-login',
@@ -68,7 +69,12 @@ export class LoginPage implements OnInit {
                     })
                 },
                 err => {
-                    this.errorMessage = err.messageContent
+                    if(ObjectUtils.isNotNull(err.messageContent)){
+                        this.errorMessage = err.messageContent
+                    }
+                    else{
+                        this.errorMessage = "Oops! Something went wrong, please try again."
+                    }
                 }
             )
         }

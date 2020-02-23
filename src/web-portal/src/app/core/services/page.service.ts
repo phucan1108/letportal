@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -329,12 +329,27 @@ export class PageService {
     }
 
     translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string {
-        let translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
+        if(ObjectUtils.isNotNull(data)){
+            let translated = this.translator.translateDataWithShell(translateStr, data)
 
-        return translated
+            return translated
+        }
+        else{
+            let translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
+
+            return translated
+        }
+        
     }
-    retrieveParameters(translateStr: string, data: any = null): PageParameterModel[]{
-        return this.translator.retrieveParameters(translateStr, this.getPageShellData())
+    retrieveParameters(translateStr: string, data: any = null, isMergingData: boolean = false): PageParameterModel[]{
+        let  preparedData = this.getPageShellData()
+        if(data != null && isMergingData){
+            preparedData.data = {
+                ...preparedData.data,
+                ...data
+            }
+        }
+        return this.translator.retrieveParameters(translateStr, preparedData)
     }
 
     getPageShellData(): PageShellData{
@@ -347,6 +362,10 @@ export class PageService {
             queryparams: this.queryparams,
             user: this.security.getAuthUser()
         }
+    }
+
+    executeAsyncValidator(asyncValidatorModel: PageAsyncValidatorModel, data?: any){
+        return this.pageClients.executeAsyncValidator(this.page.id, asyncValidatorModel)
     }
 
     private mergeData(mergingData: any) {

@@ -23,11 +23,11 @@ namespace LetPortal.Versions.Apps
                 Name = "core-app",
                 Logo = "important_devices",
                 Author = "Admin",
-                DateCreated = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
                 DefaultUrl = "/portal/page/apps-management",
                 CurrentVersionNumber = "0.0.1",
                 DisplayName = "Core",
-                DateModified = DateTime.UtcNow,
+                ModifiedDate = DateTime.UtcNow,
                 Menus = new List<Menu>
                 {
                     new Menu

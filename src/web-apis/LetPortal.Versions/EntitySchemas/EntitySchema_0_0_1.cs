@@ -17,7 +17,7 @@ namespace LetPortal.Versions.EntitySchemas
             var databaseConnectionES = new EntitySchema
             {
                 Id = "5cbf39888dd09406f03785de",
-                DatabaseId = Constants.CoreDatabaseId,
+                DatabaseId = Constants.PortalDatabaseId,
                 Name = "databases",
                 DisplayName = "Database",
                 EntityFields = new System.Collections.Generic.List<EntityField>

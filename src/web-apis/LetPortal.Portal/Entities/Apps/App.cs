@@ -19,9 +19,9 @@ namespace LetPortal.Portal.Entities.Apps
 
         public string CurrentVersionNumber { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime CreatedDate { get; set; }
 
-        public DateTime DateModified { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
         public List<Menu> Menus { get; set; } = new List<Menu>();
 

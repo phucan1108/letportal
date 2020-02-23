@@ -5,7 +5,7 @@ namespace LetPortal.Versions
 {
     public class Constants
     {
-        public const string CoreDatabaseId = "5c17b4df7cf5e34530d103b9";
+        public const string PortalDatabaseId = "5c17b4df7cf5e34530d103b9";
         public const string CoreAppId = "5c162e9005924c1c741bfdc2";
         public const string ServiceManagementDatabaseId = "5dc786a40f4b6b13e0a909f2";
         public const string IdentityDatabaseId = "5e27ea649d474848acec4510";

@@ -9,5 +9,7 @@ namespace LetPortal.Portal.Repositories.Components
     public interface IStandardRepository : IGenericRepository<StandardComponent>
     {
         Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null);
+
+        Task<StandardComponent> GetOneForRenderAsync(string id);
     }
 }

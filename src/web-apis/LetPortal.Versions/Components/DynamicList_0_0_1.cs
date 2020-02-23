@@ -30,7 +30,7 @@ namespace LetPortal.Versions.SectionParts
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
+                        DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "databases",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB
                         ? "{ \"$query\": { \"databases\": [ ] } }"
@@ -210,7 +210,7 @@ namespace LetPortal.Versions.SectionParts
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
+                        DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                             "{ \"$query\": { \"apps\": [ ] } }"
@@ -352,8 +352,8 @@ namespace LetPortal.Versions.SectionParts
                         },
                         new ColumndDef
                         {
-                            Name = "dateCreated",
-                            DisplayName = "Date Created",
+                            Name = "createdDate",
+                            DisplayName = "Created Date",
                             DisplayFormat = "{0:dd/MM/yyyy}",
                             SearchOptions = new SearchOptions
                             {
@@ -362,6 +362,19 @@ namespace LetPortal.Versions.SectionParts
                                 FieldValueType = FieldValueType.DatePicker
                             },
                             Order = 4
+                        },
+                        new ColumndDef
+                        {
+                            Name = "modifiedDate",
+                            DisplayName = "Modified Date",
+                            DisplayFormat = "{0:dd/MM/yyyy}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                AllowTextSearch = true,
+                                FieldValueType = FieldValueType.DatePicker
+                            },
+                            Order = 5
                         }
                     }
                 }
@@ -377,7 +390,7 @@ namespace LetPortal.Versions.SectionParts
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
+                        DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "apps",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"pages\": [ ] } }"

@@ -75,8 +75,9 @@ export class PortalValidators {
             validator: PageControlAsyncValidator, 
             controlBindName: string,
             controlFullName: string, 
-            defaultValue: any, 
-            databaseClients: DatabasesClient, 
+            sectionName: string,
+            controlName: string,
+            defaultValue: any,  
             pageService: PageService, 
             customHttpService: CustomHttpService): AsyncValidatorFn {
         return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
@@ -89,8 +90,16 @@ export class PortalValidators {
                             switchMap(() => {
                                 let mergingObject = new Object()
                                 mergingObject[controlBindName] = control.value
-                                let parsedQuery = pageService.translateData(validator.asyncValidatorOptions.databaseOptions.query, mergingObject, true)
-                                return databaseClients.executionDynamic(validator.asyncValidatorOptions.databaseOptions.databaseConnectionId, parsedQuery)
+                                const parameters = pageService.retrieveParameters(
+                                    validator.asyncValidatorOptions.databaseOptions.query,
+                                    mergingObject,
+                                    true)                                
+                                return pageService.executeAsyncValidator({
+                                    sectionName: sectionName,
+                                    controlName: controlName,
+                                    asyncName: validator.validatorName,
+                                    parameters: parameters
+                                })
                                     .pipe(
                                         map(response => {
                                             let evaluated = Function('response', 'return ' + validator.asyncValidatorOptions.evaluatedExpression)

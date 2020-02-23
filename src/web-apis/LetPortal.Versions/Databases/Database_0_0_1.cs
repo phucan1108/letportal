@@ -11,7 +11,7 @@ namespace LetPortal.Versions.Databases
 
         public void Downgrade(IVersionContext versionContext)
         {
-            versionContext.DeleteData<DatabaseConnection>(Constants.CoreDatabaseId);
+            versionContext.DeleteData<DatabaseConnection>(Constants.PortalDatabaseId);
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -19,11 +19,12 @@ namespace LetPortal.Versions.Databases
             var databaseOptions = versionContext.DatabaseOptions as DatabaseOptions;
             var databaseManagement = new DatabaseConnection
             {
-                Id = Constants.CoreDatabaseId,
+                Id = Constants.PortalDatabaseId,
                 ConnectionString = databaseOptions.ConnectionString,
                 DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseOptions.ConnectionType).ToLower(),
                 DataSource = databaseOptions.Datasource,
-                Name = "Database Management"
+                Name = "portalDatabase",
+                DisplayName = "Portal Database"
             };
 
             versionContext.InsertData(databaseManagement);

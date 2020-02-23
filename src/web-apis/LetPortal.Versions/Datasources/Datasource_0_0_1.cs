@@ -30,7 +30,7 @@ namespace LetPortal.Versions.Datasources
                 Id = "5c06a15e4cc9a850bca44488",
                 CanCache = true,
                 Name = "Apps List",
-                DatabaseId = Constants.CoreDatabaseId,
+                DatabaseId = Constants.PortalDatabaseId,
                 DatasourceType = DatasourceType.Database,
                 Query =
                     versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?

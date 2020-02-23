@@ -2987,6 +2987,7 @@ export interface IPagesClient {
     delete(id: string | null): Observable<FileResponse>;
     checkExist(name: string | null): Observable<boolean>;
     submitCommand(pageId: string | null, pageSubmittedButtonModel: PageSubmittedButtonModel): Observable<ExecuteDynamicResultModel>;
+    executeAsyncValidator(pageId: string | null, validatorModel: PageAsyncValidatorModel): Observable<ExecuteDynamicResultModel>;
     getDatasourceForPage(pageId: string | null, pageRequestDatasourceModel: PageRequestDatasourceModel): Observable<ExecuteDynamicResultModel>;
 }
 
@@ -3551,6 +3552,60 @@ export class PagesClient implements IPagesClient {
         return _observableOf<ExecuteDynamicResultModel>(<any>null);
     }
 
+    executeAsyncValidator(pageId: string | null, validatorModel: PageAsyncValidatorModel): Observable<ExecuteDynamicResultModel> {
+        let url_ = this.baseUrl + "/api/pages/{pageId}/async-validator";
+        if (pageId === undefined || pageId === null)
+            throw new Error("The parameter 'pageId' must be defined.");
+        url_ = url_.replace("{pageId}", encodeURIComponent("" + pageId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(validatorModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExecuteAsyncValidator(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExecuteAsyncValidator(<any>response_);
+                } catch (e) {
+                    return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processExecuteAsyncValidator(response: HttpResponseBase): Observable<ExecuteDynamicResultModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ExecuteDynamicResultModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExecuteDynamicResultModel>(<any>null);
+    }
+
     getDatasourceForPage(pageId: string | null, pageRequestDatasourceModel: PageRequestDatasourceModel): Observable<ExecuteDynamicResultModel> {
         let url_ = this.baseUrl + "/api/pages/{pageId}/fetch-datasource";
         if (pageId === undefined || pageId === null)
@@ -3609,6 +3664,7 @@ export class PagesClient implements IPagesClient {
 export interface IStandardComponentClient {
     getOne(id: string | null): Observable<StandardComponent>;
     updateOne(id: string | null, standardComponent: StandardComponent): Observable<FileResponse>;
+    getOneForRender(id: string | null): Observable<StandardComponent>;
     getSortStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     createOne(standardComponent: StandardComponent): Observable<string>;
     createBulk(standardComponents: StandardComponent[]): Observable<FileResponse>;
@@ -3729,6 +3785,56 @@ export class StandardComponentClient implements IStandardComponentClient {
             }));
         }
         return _observableOf<FileResponse>(<any>null);
+    }
+
+    getOneForRender(id: string | null): Observable<StandardComponent> {
+        let url_ = this.baseUrl + "/api/standards/{id}/render";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetOneForRender(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetOneForRender(<any>response_);
+                } catch (e) {
+                    return <Observable<StandardComponent>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StandardComponent>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetOneForRender(response: HttpResponseBase): Observable<StandardComponent> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <StandardComponent>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StandardComponent>(<any>null);
     }
 
     getSortStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
@@ -4282,8 +4388,8 @@ export interface App extends BackupableEntity {
     defaultUrl?: string | undefined;
     author?: string | undefined;
     currentVersionNumber?: string | undefined;
-    dateCreated?: Date;
-    dateModified?: Date;
+    createdDate?: Date;
+    modifiedDate?: Date;
     menus?: Menu[] | undefined;
     menuProfiles?: MenuProfile[] | undefined;
 }
@@ -4604,7 +4710,10 @@ export interface FilledParameterModel2 {
     value?: string | undefined;
 }
 
-export interface EntitySchema extends BackupableEntity {
+export interface EntitySchema extends Entity {
+    name?: string | undefined;
+    displayName?: string | undefined;
+    timeSpan?: number;
     databaseId?: string | undefined;
     appId?: string | undefined;
     entityFields?: EntityField[] | undefined;
@@ -4781,6 +4890,13 @@ export interface PageParameterModel {
     name?: string | undefined;
     replaceValue?: string | undefined;
     removeQuotes?: boolean;
+}
+
+export interface PageAsyncValidatorModel {
+    sectionName?: string | undefined;
+    controlName?: string | undefined;
+    asyncName?: string | undefined;
+    parameters?: PageParameterModel[] | undefined;
 }
 
 export interface PageRequestDatasourceModel {

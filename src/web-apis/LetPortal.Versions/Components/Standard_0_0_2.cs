@@ -398,6 +398,25 @@ namespace LetPortal.Versions.Components
                                 ValidatorMessage = "This field requires maximum 50 characters",
                                 ValidatorOption = "50"
                             }
+                        },
+                        AsyncValidators = new List<Portal.Entities.Components.Controls.PageControlAsyncValidator>
+                        {
+                            new Portal.Entities.Components.Controls.PageControlAsyncValidator
+                            {
+                                ValidatorName = "uniquename",
+                                IsActive = true,
+                                ValidatorMessage = "This username is already existed. Please choose another name.",
+                                AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
+                                {
+                                    EvaluatedExpression = "response.result == null",
+                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    {
+                                      DatabaseConnectionId = Constants.IdentityDatabaseId,
+                                      Query = "{\r\n  \"$query\": {\r\n    \"users\": [\r\n      {\r\n        \"$match\": {\r\n          \"username\": \"{{data.username}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                    },
+                                    ValidatorType = Portal.Entities.Components.Controls.AsyncValidatorType.DatabaseValidator
+                                }
+                            }
                         }
                     },
                     new Portal.Entities.SectionParts.Controls.PageControl
@@ -571,6 +590,25 @@ namespace LetPortal.Versions.Components
                                 IsActive = true,
                                 ValidatorMessage = "This field must be email format"
                             }
+                        },
+                         AsyncValidators = new List<Portal.Entities.Components.Controls.PageControlAsyncValidator>
+                        {
+                            new Portal.Entities.Components.Controls.PageControlAsyncValidator
+                            {
+                                ValidatorName = "uniqueemail",
+                                IsActive = true,
+                                ValidatorMessage = "This email is already existed. Please choose another email.",
+                                AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
+                                {
+                                    EvaluatedExpression = "response.result == null",
+                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    {
+                                      DatabaseConnectionId = Constants.IdentityDatabaseId,
+                                      Query = "{\r\n  \"$query\": {\r\n    \"users\": [\r\n      {\r\n        \"$match\": {\r\n          \"email\": \"{{data.emaill}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                    },
+                                    ValidatorType = Portal.Entities.Components.Controls.AsyncValidatorType.DatabaseValidator
+                                }
+                            }
                         }
                     }
                 }
@@ -674,6 +712,25 @@ namespace LetPortal.Versions.Components
                                 IsActive = true,
                                 ValidatorMessage = "Please enter only characters",
                                 ValidatorOption = "[A-Za-z]*"
+                            }
+                        },
+                        AsyncValidators = new List<Portal.Entities.Components.Controls.PageControlAsyncValidator>
+                        {
+                            new Portal.Entities.Components.Controls.PageControlAsyncValidator
+                            {
+                                ValidatorName = "uniquename",
+                                IsActive = true,
+                                ValidatorMessage = "This role is already existed. Please choose another name.",
+                                AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
+                                {
+                                    EvaluatedExpression = "response.result == null",
+                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    {
+                                      DatabaseConnectionId = Constants.IdentityDatabaseId,
+                                      Query = "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$match\": {\r\n          \"name\": \"{{data.name}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                    },
+                                    ValidatorType = Portal.Entities.Components.Controls.AsyncValidatorType.DatabaseValidator
+                                }
                             }
                         }
                     },

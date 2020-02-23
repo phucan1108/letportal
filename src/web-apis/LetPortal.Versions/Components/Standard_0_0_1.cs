@@ -103,10 +103,36 @@ namespace LetPortal.Versions.Components
                             },
                             new Portal.Entities.SectionParts.Controls.PageControlValidator
                             {
+                                ValidatorType = Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                                IsActive = true,
+                                ValidatorMessage = "Please enter only characters and numberic",
+                                ValidatorOption = "[A-Za-z0-9]*"
+                            },
+                            new Portal.Entities.SectionParts.Controls.PageControlValidator
+                            {
                                 ValidatorType = Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
                                 IsActive = true,
                                 ValidatorMessage = "This field requires maximum 250 characters",
                                 ValidatorOption = "250"
+                            }
+                        },
+                        AsyncValidators = new List<Portal.Entities.Components.Controls.PageControlAsyncValidator>
+                        {
+                            new Portal.Entities.Components.Controls.PageControlAsyncValidator
+                            {
+                                ValidatorName = "uniquename",
+                                IsActive = true,
+                                ValidatorMessage = "This database name is already existed. Please choose another name.",
+                                AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
+                                {
+                                    EvaluatedExpression = "response.result == null",
+                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    {
+                                      DatabaseConnectionId = Constants.PortalDatabaseId,
+                                      Query = "{\r\n  \"$query\": {\r\n    \"databases\": [\r\n      {\r\n        \"$match\": {\r\n          \"name\": \"{{data.name}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                    },
+                                    ValidatorType = Portal.Entities.Components.Controls.AsyncValidatorType.DatabaseValidator
+                                }
                             }
                         }
                     },
@@ -353,10 +379,36 @@ namespace LetPortal.Versions.Components
                             },
                             new Portal.Entities.SectionParts.Controls.PageControlValidator
                             {
+                                ValidatorType = Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                                IsActive = true,
+                                ValidatorMessage = "Please enter only characters and numberic",
+                                ValidatorOption = "[A-Za-z0-9]*"
+                            },
+                            new Portal.Entities.SectionParts.Controls.PageControlValidator
+                            {
                                 ValidatorType = Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
                                 IsActive = true,
                                 ValidatorMessage = "This field requires maximum 250 characters",
                                 ValidatorOption = "250"
+                            }
+                        },
+                        AsyncValidators = new List<Portal.Entities.Components.Controls.PageControlAsyncValidator>
+                        {
+                            new Portal.Entities.Components.Controls.PageControlAsyncValidator
+                            {
+                                ValidatorName = "uniquename",
+                                IsActive = true,
+                                ValidatorMessage = "This app name is already existed. Please choose another name.",
+                                AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
+                                {
+                                    EvaluatedExpression = "response.result == null",
+                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    {
+                                      DatabaseConnectionId = Constants.PortalDatabaseId,
+                                      Query = "{\r\n  \"$query\": {\r\n    \"apps\": [\r\n      {\r\n        \"$match\": {\r\n          \"name\": \"{{data.name}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                    },
+                                    ValidatorType = Portal.Entities.Components.Controls.AsyncValidatorType.DatabaseValidator
+                                }
                             }
                         }
                     },

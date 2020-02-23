@@ -26,7 +26,7 @@ namespace LetPortal.Versions.Components
                 {
                     DatabaseConnectionOptions = new DatabaseOptions
                     {
-                        DatabaseConnectionId = Constants.CoreDatabaseId,
+                        DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "components",
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
                         "{ \"$query\": { \"components\": [{ \r\n \"$match\" : {\r\n  \"_t\": {\r\n    $elemMatch: {\r\n      $eq: \"Chart\"\r\n    }\r\n  }\r\n}\r\n}] }}"
