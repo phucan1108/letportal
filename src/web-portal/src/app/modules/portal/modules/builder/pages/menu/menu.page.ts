@@ -15,6 +15,7 @@ import { RouterExtService } from 'app/core/ext-service/routerext.service';
 import { PageService } from 'services/page.service';
 import { ExtendedMenu, MenuNode } from 'portal/modules/models/menu.model';
 import { SessionService } from 'services/session.service';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-menu',
@@ -65,7 +66,10 @@ export class MenuPage implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.tree.treeControl.expandAll()
+        // Ensure we have nested node with more than 1
+        if(this.menus.some(a => ObjectUtils.isNotNull(a.subMenus) && a.subMenus.length > 0)){
+            this.tree.treeControl.expandAll()
+        }
     }
 
     cancel(){
@@ -90,7 +94,8 @@ export class MenuPage implements OnInit, AfterViewInit {
             parentId: '',
             order: this.menus.length,
             hide: false,
-            subMenus: []
+            subMenus: [],
+            level: 0
         }
 
         const dialogRef = this.dialog.open(MenuDialogComponent, {
@@ -118,7 +123,8 @@ export class MenuPage implements OnInit, AfterViewInit {
             order: node.extMenu.parentId ? this.findParent(node.extMenu).subMenus.length : this.menus.length, 
             hide: false,
             parentId: `${node.id}`,
-            subMenus: []
+            subMenus: [],
+            level: this.treeControl.getLevel(node) + 1
         }
 
         const dialogRef = this.dialog.open(MenuDialogComponent, {
@@ -197,7 +203,8 @@ export class MenuPage implements OnInit, AfterViewInit {
             order: menu.extMenu.order + 1,
             hide: false,
             parentId: menu.extMenu.parentId,
-            subMenus: []
+            subMenus: [],
+            level: this.treeControl.getLevel(menu)
         }
 
         const dialogRef = this.dialog.open(MenuDialogComponent, {
@@ -246,7 +253,10 @@ export class MenuPage implements OnInit, AfterViewInit {
         _.forEach(menuPaths, path => {
             if(path != '~'){
                 let lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
-                parentMenuTemp = _.find(lookingMenus, subMenu => subMenu.id === path)
+                parentMenuTemp = {
+                    ..._.find(lookingMenus, subMenu => subMenu.id === path),
+                    level: 0
+                }
             }
         })
         return parentMenuTemp
@@ -255,7 +265,10 @@ export class MenuPage implements OnInit, AfterViewInit {
     private refreshTree() {
         this.logger.debug('current tree', this.menus)
         this.dataSource.data = this.menus
-        this.tree.treeControl.expandAll()
+        // Ensure we have nested node with more than 1
+        if(this.menus.some(a => ObjectUtils.isNotNull(a.subMenus) && a.subMenus.length > 0)){
+            this.tree.treeControl.expandAll()
+        }
     }
 
     private sortMenus(){

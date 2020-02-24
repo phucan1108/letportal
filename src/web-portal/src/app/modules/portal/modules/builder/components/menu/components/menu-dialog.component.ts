@@ -17,6 +17,7 @@ export class MenuDialogComponent implements OnInit {
     isEditMode = false
     appId = ''
     availableUrls: Array<AvailableUrl>;
+    currentLevel = 0
 
     constructor(
         public dialogRef: MatDialogRef<any>,
@@ -33,8 +34,9 @@ export class MenuDialogComponent implements OnInit {
         this.menuFormGroup = this.fb.group({
             displayName: [this.menu.displayName, Validators.required],
             hide: [this.menu.hide],
-            url: [this.menu.url, Validators.required],
-            availableUrl: ['']
+            url: [this.menu.url],
+            availableUrl: [''],
+            icon: [this.menu.icon, Validators.required]
         })
 
         this.menuFormGroup.get('availableUrl').valueChanges.subscribe(newValue => {
@@ -47,6 +49,8 @@ export class MenuDialogComponent implements OnInit {
         this.appClient.getAvailableUrls(this.appId).subscribe(result => {
             this.availableUrls = result
         })
+
+        this.currentLevel = this.menu.level
     }
 
     ngOnInit(): void { }
@@ -62,13 +66,14 @@ export class MenuDialogComponent implements OnInit {
         return {
             id: this.menu.id,
             displayName: formValues.displayName,
-            icon: this.menu.icon,
+            icon: formValues.icon,
             menuPath: this.menu.menuPath,
             parentId: this.menu.parentId,
             url: formValues.url,
             subMenus: this.menu.subMenus,
             order: this.menu.order,
-            hide: formValues.hide
+            hide: formValues.hide,
+            level: this.menu.level
         }
     }
 }

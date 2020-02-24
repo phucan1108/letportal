@@ -47,7 +47,7 @@ export class ChartOptions {
         allowDelete: false,
         description: 'By default, if this field is blank, chart with real-time just refreshes a data. But if we set it to one field, this field (Must be DateTime type) will be compared between (Now - timetorefresh) and Now',
         key: 'comparerealtimefield',
-        value: '30'
+        value: ''
     }
 
     public static DataRange: ExtendedShellOption = {
@@ -71,7 +71,7 @@ export class ChartOptions {
         allowDelete: false,
         description: "Colors list will be used to style a chart ['red','blue','yellow'] or style name (horizon|ocean|neons|vivid|cool|nightLights). Default: ['horizon']",
         key: 'colors',
-        value: "[\"horizo\"]"
+        value: "[\"horizon\"]"
     }
 
     public static getDefaultShellOptionsForChart(): ExtendedShellOption[] {

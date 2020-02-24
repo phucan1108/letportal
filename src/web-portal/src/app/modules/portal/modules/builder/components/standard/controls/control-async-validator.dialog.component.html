@@ -54,9 +54,11 @@
                 <label class="col-lg-2 col-form-label">Evaludated Expression:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
-                        <input matInput placeholder="Evaludated Expression" #evaluatedExpressionInput
+                        <input matInput placeholder="Evaluated Expression" #evaluatedExpressionInput
                             formControlName="evaluatedExpression" maxlength="500" />
                         <mat-hint align="end"> {{evaluatedExpressionInput.value?.length || 0}}/500</mat-hint>
+                        <mat-icon matSuffix matTooltip="This expression must be equal true/false. Ex: response.result == null">
+                            help_outline</mat-icon>
                     </mat-form-field>
                 </div>
             </div>

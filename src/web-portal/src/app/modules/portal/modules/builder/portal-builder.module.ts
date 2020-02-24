@@ -12,7 +12,7 @@ import { CommandModalComponent } from './components/dynamic-list/components/comm
 import { DynamicListDataSourceComponent } from './components/dynamic-list/components/dynamic-list.datasource.component';
 import { DatasourceDialogComponent } from '../../shared/datasource/datasource.component';
 import { BuilderDnDComponent } from './components/page-builder/components/page-builders/builder-dnd.component';
-import { TextboxComponent } from '../controls/textbox.component';
+import { TextboxComponent } from '../render/controls/textbox.component';
 import { SectionDialogComponent } from './components/page-builder/components/page-builders/section-dialog.component';
 import { ControlsGridComponent } from './components/standard/controls/controls-grid.component';
 import { ControlDialogComponent } from './components/standard/controls/control-dialog.component';
@@ -77,6 +77,7 @@ import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { BackupResolve } from './resolve/backup.resolve';
 import { BackupRestorePage } from './pages/backup/backup-restore.page';
 import { ExecutionDatabaseStepComponent } from 'portal/shared/button-options/executiondatabase-step.component';
+import { IconPickerSharedComponent } from 'portal/shared/icon-picker/icon-picker.component';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -135,7 +136,8 @@ import { ExecutionDatabaseStepComponent } from 'portal/shared/button-options/exe
 		BackupSelectionComponent,
 		BackupUploadpage,
 		BackupRestorePage,
-		ExecutionDatabaseStepComponent
+		ExecutionDatabaseStepComponent,
+		IconPickerSharedComponent
 	],
 	imports: [
 		PortalBuilderRoutingModule,

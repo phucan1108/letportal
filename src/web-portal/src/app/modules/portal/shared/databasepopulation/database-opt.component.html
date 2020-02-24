@@ -13,7 +13,7 @@
             <mat-form-field class="field-full-width">
                 <mat-select placeholder="Pick one connection" formControlName="databaseId">
                     <mat-option *ngFor="let database of databaseConnections$ | async" [value]="database.id">
-                        {{ database.name }}
+                        {{ database.displayName }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

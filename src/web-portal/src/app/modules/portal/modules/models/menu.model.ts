@@ -10,4 +10,5 @@ export interface MenuNode {
 }
 
 export interface ExtendedMenu extends Menu{
+    level: number
 }

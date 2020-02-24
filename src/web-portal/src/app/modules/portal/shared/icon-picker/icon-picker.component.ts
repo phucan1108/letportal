@@ -2,16 +2,14 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 import * as _ from 'lodash';
-import { ExtendedControlValidator } from 'app/core/models/extended.models';
 import { StaticResources } from 'portal/resources/static-resources';
 
 @Component({
-    selector: 'let-icon-picker',
+    selector: 'let-icon-picker-shared',
     templateUrl: './icon-picker.component.html'
 })
-export class IconPickerComponent implements OnInit {
+export class IconPickerSharedComponent implements OnInit {
     iconFilterOptions: Observable<string[]>;
     _icons = StaticResources.iconsList()
 
@@ -23,12 +21,6 @@ export class IconPickerComponent implements OnInit {
 
     @Input()
     tooltip: string
-
-    @Input()
-    control: PageRenderedControl<DefaultControlOptions>
-
-    @Input()
-    validators: Array<ExtendedControlValidator> = []
 
     constructor() { }
 
@@ -46,10 +38,6 @@ export class IconPickerComponent implements OnInit {
     }
 
     isInvalid(validatorName: string): boolean {
-        return this.form.get(this.control.name).hasError(validatorName)
-    }
-
-    getErrorMessage(validatorName: string) {
-        return _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
+        return this.form.get(this.formControlKey).hasError(validatorName)
     }
 }

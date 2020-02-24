@@ -2,7 +2,7 @@
     <ng-container [ngSwitch]="control.type">
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Textbox">
             <input [formControlName]="control.name" [id]="control.name" matInput #formNameInput
-                [placeholder]="control.defaultOptions.tooltip" [disabled]="control.defaultOptions.checkDisabled">
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled">
             <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
             <mat-error *ngIf="isInvalid('required')">
                 {{getErrorMessage('required')}}
@@ -34,7 +34,7 @@
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Email">
             <input [formControlName]="control.name" [id]="control.name" matInput #formNameInput
-                [placeholder]="control.defaultOptions.tooltip" [disabled]="control.defaultOptions.checkDisabled"
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled"
                 type="email">
             <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
             <mat-error *ngIf="isInvalid('required')">
@@ -64,7 +64,7 @@
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Password">
             <input [formControlName]="control.name" [id]="control.name" matInput #formNameInput
-                [placeholder]="control.defaultOptions.tooltip" [disabled]="control.defaultOptions.checkDisabled"
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled"
                 type="password">
             <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
             <mat-error *ngIf="isInvalid('required')">
@@ -91,7 +91,7 @@
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Textarea">
             <textarea [formControlName]="control.name" [id]="control.name" matInput #formNameInput
-                [placeholder]="control.defaultOptions.tooltip" [disabled]="control.defaultOptions.checkDisabled"
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled"
                 [rows]="control.defaultOptions.textarearows"></textarea>
             <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
             <mat-error *ngIf="isInvalid('required')">
@@ -125,7 +125,7 @@
         <mat-slide-toggle *ngSwitchCase="controlType.Slide" [formControlName]="control.name" [id]="control.name">
         </mat-slide-toggle>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.DateTime">
-            <input matInput [matDatepicker]="picker" [placeholder]="control.defaultOptions.tooltip"
+            <input matInput [matDatepicker]="picker" [placeholder]="control.defaultOptions.placeholder"
                 [formControlName]="control.name" [id]="control.name">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
@@ -134,7 +134,7 @@
             </mat-error>
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Select">
-            <mat-select [placeholder]="control.defaultOptions.tooltip" [formControlName]="control.name"
+            <mat-select [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
                 [id]="control.name" [multiple]="control.defaultOptions.multiple">
                 <mat-option *ngFor="let option of optionsList | async" [value]="option.value">
                     {{ option.name }}
@@ -148,7 +148,7 @@
             </mat-error>
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.AutoComplete">
-            <input type="text" [placeholder]="control.defaultOptions.tooltip" [formControlName]="control.name"
+            <input type="text" [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
                 [id]="control.name" matInput [matAutocomplete]="auto" [multiple]="control.defaultOptions.multiple">
             <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let option of optionsList | async" [value]="option.value">
@@ -164,7 +164,7 @@
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Number">
             <input [formControlName]="control.name" [id]="control.name" matInput
-                [placeholder]="control.defaultOptions.tooltip" type="number">
+                [placeholder]="control.defaultOptions.placeholder" type="number">
             <mat-error *ngIf="isInvalid('required')">
                 {{getErrorMessage('required')}}
             </mat-error>
@@ -182,9 +182,9 @@
                 </mat-radio-button>
             </mat-radio-group>
         </div>
-        <let-icon-picker [control]="control" [validators]="validators" [tooltip]="control.defaultOptions.tooltip"
+        <let-icon-picker [control]="control" [validators]="validators" [tooltip]="control.defaultOptions.placeholder"
             [formControlKey]="control.name" [form]="formGroup" *ngSwitchCase="controlType.IconPicker"></let-icon-picker>
-        <let-file-uploader [control]="control" [validators]="validators" [tooltip]="control.defaultOptions.tooltip"
+        <let-file-uploader [control]="control" [validators]="validators" [tooltip]="control.defaultOptions.placeholder"
             [formControlKey]="control.name" [form]="formGroup" *ngSwitchCase="controlType.Uploader"></let-file-uploader>
         <div class="pt-3" *ngSwitchCase="controlType.RichTextEditor">
             <quill-editor [formControlName]="control.name" [readOnly]="control.defaultOptions.checkDisabled">

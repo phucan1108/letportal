@@ -39,7 +39,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "id"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -74,7 +74,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Name"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -151,7 +151,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Datasource"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -202,7 +202,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Connection String"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -253,7 +253,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = ""
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -315,7 +315,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = ""
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -350,7 +350,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Name"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -427,7 +427,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Display Name"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -478,7 +478,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Default Url"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -529,7 +529,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "App Version"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -580,7 +580,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Icon"
                            },
                            new Portal.Entities.Pages.ShellOption

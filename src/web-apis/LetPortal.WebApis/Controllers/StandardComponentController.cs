@@ -112,7 +112,7 @@ namespace LetPortal.WebApis.Controllers
             }
             else
             {
-                var result = await _standardRepository.GetAllAsync();
+                var result = await _standardRepository.GetAllAsync(isRequiredDiscriminator: true);
                 _logger.Info("Get bulk standard components: {@result}", result);
                 return Ok(result);
             }

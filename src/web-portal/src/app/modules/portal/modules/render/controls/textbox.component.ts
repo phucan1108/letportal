@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ExtendedPageControl } from '../../../../core/models/extended.models';
+import { ExtendedPageControl } from '../../../../../core/models/extended.models';
 
 @Component({
     selector: 'let-textbox',

@@ -87,7 +87,7 @@ export class SectionDialogComponent implements OnInit {
                     this.sectionForm.get('displayName').setValue(selectedChart.displayName)
                     break
                 case SectionContructionType.DynamicList:
-                    const selectedDynamicList = this.charts.find(a => a.id === newValue)
+                    const selectedDynamicList = this.dynamicLists.find(a => a.id === newValue)
                     this.sectionForm.get('displayName').setValue(selectedDynamicList.displayName)
                     break
             }

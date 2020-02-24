@@ -12,6 +12,7 @@ import { FormUtil } from 'app/core/utils/form-util';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { StaticResources } from 'portal/resources/static-resources';
 import { DatabaseFormOptions, DatabaseOptionsComponent } from 'portal/shared/databaseoptions/databaseoptions.component';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-async-validators',
@@ -138,6 +139,24 @@ export class AsyncValidatorDialogComponent implements OnInit {
     }
 
     reinitSelectedValidator() {
+        if(!ObjectUtils.isNotNull(this.selectedValidator.asyncValidatorOptions.httpServiceOptions)){
+            this.selectedValidator.asyncValidatorOptions.httpServiceOptions = {
+                httpMethod: 'Get',
+                httpServiceUrl: '',
+                httpSuccessCode: '200',
+                jsonBody: '',
+                outputProjection: ''
+            }
+        }
+
+        if(!ObjectUtils.isNotNull(this.selectedValidator.asyncValidatorOptions.databaseOptions)){
+            this.selectedValidator.asyncValidatorOptions.databaseOptions = {
+                databaseConnectionId: '',
+                entityName: '',
+                query: ''    
+            }
+        }
+
         this.asyncValidatorForm = this.fb.group({
             validatorName: [this.selectedValidator.validatorName, [Validators.pattern('^[a-zA-Z]+'), Validators.required, Validators.maxLength(100), Validators.required, FormUtil.isExist(this.getAvailableValidatorNames(), this.selectedValidator.validatorName)]],
             isActive: [this.selectedValidator.isActive],

@@ -35,7 +35,7 @@ namespace LetPortal.PortalApis.Controllers
         [ProducesResponseType(typeof(IEnumerable<Chart>), 200)]
         public async Task<IActionResult> GetMany()
         {
-            return Ok(await _chartRepository.GetAllAsync());
+            return Ok(await _chartRepository.GetAllAsync(isRequiredDiscriminator: true));
         }
 
         [HttpGet("{id}")]

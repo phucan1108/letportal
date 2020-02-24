@@ -40,7 +40,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "id"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -75,7 +75,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a username"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -113,7 +113,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a email"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -170,7 +170,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = ""
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -208,7 +208,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = ""
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -246,7 +246,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = ""
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -284,7 +284,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = ""
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -357,7 +357,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a username"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -434,7 +434,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a password"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -492,7 +492,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a confirm password"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -550,7 +550,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a email"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -637,7 +637,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "id"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -672,7 +672,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a role name"
                            },
                            new Portal.Entities.Pages.ShellOption
@@ -749,7 +749,7 @@ namespace LetPortal.Versions.Components
                            },
                            new Portal.Entities.Pages.ShellOption
                            {
-                               Key = "tooltip",
+                               Key = "placeholder",
                                Value = "Enter a display name"
                            },
                            new Portal.Entities.Pages.ShellOption

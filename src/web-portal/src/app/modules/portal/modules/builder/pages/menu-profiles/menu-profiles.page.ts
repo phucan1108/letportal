@@ -143,7 +143,10 @@ export class MenuProfilesPage implements OnInit {
         _.forEach(menuPaths, path => {
             if (path != '~') {
                 let lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
-                parentMenuTemp = _.find(lookingMenus, subMenu => subMenu.id === path)
+                parentMenuTemp = {
+                    ..._.find(lookingMenus, subMenu => subMenu.id === path),
+                    level: 0
+                }
             }
         })
         return parentMenuTemp

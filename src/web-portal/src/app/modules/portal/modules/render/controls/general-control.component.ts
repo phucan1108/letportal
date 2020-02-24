@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef, Optional } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { StaticResources } from 'portal/resources/static-resources';
-import { ExtendedFormValidator, ExtendedControlValidator, ExtendedPageSection } from '../../../../core/models/extended.models';
+import { ExtendedFormValidator, ExtendedControlValidator, ExtendedPageSection } from '../../../../../core/models/extended.models';
 import * as _ from 'lodash';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { PageControl, ControlType, ValidatorType, DatasourceControlType, EventActionType, PageControlAsyncValidator, FilesClient } from 'services/portal.service';
