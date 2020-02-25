@@ -110,16 +110,18 @@ export class DynamicListGridComponent implements OnInit {
         // Fetch all ready datasources and ready for filters
         let filters: ExtendedFilterField[] = []
         let counter = this.headers.length
+        let needToWaitDatasource = false
         _.forEach(this.headers, (colDef: ExtendedColDef) => {
             // We will fetch datasource and then passing its for filter
             if (colDef.searchOptions.fieldValueType === FieldValueType.Select) {
+                needToWaitDatasource = true
                 this.datasoureOptsService
                     .executeDatasourceOptions(colDef.datasourceOptions, null)
                     .subscribe(
                         res => {
                             let datasource = {
-                                data: res,
-                                datasourceId: Guid.create.toString()
+                                data: ObjectUtils.isArray(res) ? res : [res],
+                                datasourceId: Guid.create().toString()
                             }
                             this.datasourceCache.push(datasource)
                             colDef.datasourceId = datasource.datasourceId
@@ -131,7 +133,7 @@ export class DynamicListGridComponent implements OnInit {
                                 allowTextSearch: colDef.searchOptions.allowTextSearch,
                                 fieldValueType: colDef.searchOptions.fieldValueType,
                                 isHidden: !colDef.searchOptions.allowInAdvancedMode,
-                                jsonData: res,
+                                jsonData: datasource.data,
                                 datasourceId: datasource.datasourceId
                             }
                             filters.push(filter)
@@ -139,6 +141,7 @@ export class DynamicListGridComponent implements OnInit {
                             if (counter == 0) {
                                 this.filters = filters
                                 this.isContructedGrid = true
+                                this.initFetchData()
                             }
                         }
                     )
@@ -184,29 +187,9 @@ export class DynamicListGridComponent implements OnInit {
             this.displayedColumns.push('actions')
         }
 
-        // Trigger loading data form sortChange and page event
-        if (this.listOptions.enablePagination) {
-            this.cd.detectChanges()
-            merge(this.sort.sortChange, this.paginator.page)
-                .pipe(
-                    tap(() => {
-                        this.fetchDataQuery = this.getFetchDataQuery();
-                        this.fetchData();
-                    })
-                )
-                .subscribe();
+        if(!needToWaitDatasource){
+            this.initFetchData()
         }
-        else {
-            this.sort.sortChange
-                .pipe(
-                    tap(() => {
-                        this.fetchDataQuery = this.getFetchDataQuery();
-                        this.fetchData();
-                    })
-                )
-                .subscribe();
-        }
-
     }
 
     openDialogData(data) {
@@ -239,6 +222,31 @@ export class DynamicListGridComponent implements OnInit {
         this.fetchDataQuery.filterGroupOptions = fetchQuery.filterGroupOptions;
         this.fetchDataQuery.textSearch = fetchQuery.textSearch;
         this.fetchData();
+    }
+
+    private initFetchData(){
+        // Trigger loading data form sortChange and page event
+        if (this.listOptions.enablePagination) {
+            this.cd.detectChanges()
+            merge(this.sort.sortChange, this.paginator.page)
+                .pipe(
+                    tap(() => {
+                        this.fetchDataQuery = this.getFetchDataQuery();
+                        this.fetchData();
+                    })
+                )
+                .subscribe();
+        }
+        else {
+            this.sort.sortChange
+                .pipe(
+                    tap(() => {
+                        this.fetchDataQuery = this.getFetchDataQuery();
+                        this.fetchData();
+                    })
+                )
+                .subscribe();
+        }
     }
 
     private onCommandClick(commandClicked: CommandClicked) {
@@ -285,6 +293,7 @@ export class DynamicListGridComponent implements OnInit {
                     this.readyToRender = true
                     this.logger.debug('Unblock loading for table')
                     this.loading$.next(false)
+                    this.cd.detectChanges()
                 }),
                 catchError(err => of([])),
                 finalize(() => this.loading$.next(false))
@@ -322,7 +331,10 @@ export class DynamicListGridComponent implements OnInit {
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-            return _.find(datasource.data, elem => elem.value.toString() === displayData).name
+            if(ObjectUtils.isNotNull(datasource)){
+                const found = _.find(datasource.data, elem => elem ? elem.value === displayData : false)
+                return found ? found.name : displayData
+            }
         }
         return displayData
     }
@@ -400,7 +412,10 @@ export class DynamicListGridComponent implements OnInit {
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-            return _.find(datasource.data, elem => elem.value === displayData).name
+            if(ObjectUtils.isNotNull(datasource)){
+                const found = _.find(datasource.data, elem => elem ? elem.value === displayData : false)
+                return found ? found.name : displayData
+            }
         }
         return displayData
     }

@@ -4584,16 +4584,8 @@ export enum ActionType {
 }
 
 export interface RedirectOptions {
-    redirectType?: RedirectType;
     redirectUrl?: string | undefined;
-    targetPageId?: string | undefined;
-    passParams?: string | undefined;
     isSameDomain?: boolean;
-}
-
-export enum RedirectType {
-    ThroughPage = 0,
-    ThroughUrl = 1,
 }
 
 export interface DatabaseExecutionChains {

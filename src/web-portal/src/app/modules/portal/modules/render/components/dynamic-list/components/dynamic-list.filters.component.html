@@ -6,7 +6,7 @@
                     <input matInput placeholder="Search..." [(ngModel)]="textSearch">
                 </mat-form-field>
             </div>
-            <div class="col-md-2" *ngIf="enableSearch">
+            <div class="col-md-2" *ngIf="enableSearch || enableAdvancedSearch">
                 <button (click)="onSearchClick()" mat-raised-button matTooltip="Search" color="primary" type="button"
                     class="">
                     <span>Search</span>
@@ -18,7 +18,7 @@
                     Mode</mat-slide-toggle>
             </div>
         </div>
-        <div class="row align-items-center" *ngIf="isOpeningAdvancedMode">
+        <div class="row align-items-center pt-2" *ngIf="isOpeningAdvancedMode">
             <ng-container *ngFor="let filterOption of filterOptions">
                 <div class="col-md-2">
                     <mat-form-field class="field-full-width">

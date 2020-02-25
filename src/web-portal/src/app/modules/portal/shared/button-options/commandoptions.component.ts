@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, RedirectType, NotificationOptions, DatabaseExecutionStep } from 'services/portal.service';
+import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, NotificationOptions, DatabaseExecutionStep } from 'services/portal.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActionCommandRenderOptions } from './actioncommandrenderoptions';
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { StaticResources } from 'portal/resources/static-resources';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { ClipboardService } from 'ngx-clipboard';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
@@ -57,9 +57,8 @@ export class CommandOptionsComponent implements OnInit {
     mapWorkflowInputs: MapWorkflowInput[] = []
     isReadyToRender = false
 
-    page$: Observable<Array<ShortPageModel>>;
-    _redirectionTypes = StaticResources.redirectionTypes()
-    redirectionType = RedirectType
+    page$: BehaviorSubject<Array<ShortPageModel>> = new BehaviorSubject([])
+    pages: Array<ShortPageModel> = []
 
     hideDatabaseOption = false
     hideHttpOption = false
@@ -114,6 +113,10 @@ export class CommandOptionsComponent implements OnInit {
                 this.isReadyToRender = true
             }
         )
+
+        this.page$.subscribe(res => {
+            this.pages = res
+        })
     }
 
     initNotificationOptions() {
@@ -134,20 +137,25 @@ export class CommandOptionsComponent implements OnInit {
         if(!this.actionCommandOptions.redirectOptions){
             this.actionCommandOptions.redirectOptions = {
                 redirectUrl: '',
-                isSameDomain: true,
-                passParams: '',
-                redirectType: RedirectType.ThroughPage,
-                targetPageId: ''
+                isSameDomain: true
             }
         }
 
-        this.page$ = this.pagesClient.getAllShortPages()
-        this.redirectionOptionsForm = this.fb.group({
-            redirectionType : [this.actionCommandOptions.redirectOptions.redirectType, Validators.required],
+        this.pagesClient.getAllShortPages().subscribe(res => {
+            this.page$.next(res)
+        })
+        
+        this.redirectionOptionsForm = this.fb.group({            
             isSameDomain: [this.actionCommandOptions.redirectOptions.isSameDomain],
-            targetPageId: [this.actionCommandOptions.redirectOptions.targetPageId],
-            passParams: [this.actionCommandOptions.redirectOptions.passParams],
-            redirectUrl: [this.actionCommandOptions.redirectOptions.redirectUrl]
+            redirectUrl: [this.actionCommandOptions.redirectOptions.redirectUrl],
+            targetPageId: ['']
+        })
+
+        this.redirectionOptionsForm.get('targetPageId').valueChanges.subscribe(newValue => {
+            if(newValue){
+                const found = this.pages.find(a => a.id == newValue)
+                this.redirectionOptionsForm.get('redirectUrl').setValue(found.urlPath)
+            }
         })
     }
 
@@ -167,8 +175,6 @@ export class CommandOptionsComponent implements OnInit {
                 steps: []
             }
         }
-
-
     }
     
     initHttpOptions() {
@@ -234,16 +240,6 @@ export class CommandOptionsComponent implements OnInit {
     get(): ActionCommandOptions{
         switch(this.currentActionType){
             case ActionType.ExecuteDatabase:
-                // let databaseFormValue = this.databaseOptionsForm.value
-                // return {
-                //     isEnable: this.isEnable,
-                //     actionType: this.currentActionType,
-                //     databaseOptions: {
-                //         databaseConnectionId: databaseFormValue.databaseConnectionId,
-                //         query: databaseFormValue.query                        
-                //     },
-                //     notificationOptions: this.getNotification()
-                // }
                 return {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
@@ -270,11 +266,8 @@ export class CommandOptionsComponent implements OnInit {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
                     redirectOptions: {
-                        redirectType: redirectFormValue.redirectionType,
                         redirectUrl: redirectFormValue.redirectUrl,
-                        isSameDomain: redirectFormValue.isSameDomain,
-                        passParams: redirectFormValue.passParams,
-                        targetPageId: redirectFormValue.targetPageId
+                        isSameDomain: redirectFormValue.isSameDomain
                     }
                 }
         }

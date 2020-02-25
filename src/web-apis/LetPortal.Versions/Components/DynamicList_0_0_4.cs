@@ -188,8 +188,7 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/page/service-dashboard?serviceId={{data.id}}",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
                             },

@@ -18,9 +18,11 @@ import { EventsProvider } from './events/event.provider';
 import { UnlockScreenDialogComponent } from './security/components/unlock-screen.component';
 import { MatFormFieldModule, MatDialogModule, MatInputModule, MatIconModule, MatButtonModule } from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
 @NgModule({
   declarations: [
-    UnlockScreenDialogComponent
+    UnlockScreenDialogComponent,        
+    SafeHtmlPipe
   ],
   imports: [
     CommonModule,
@@ -35,6 +37,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     UnlockScreenDialogComponent
   ],
   exports: [
+    SafeHtmlPipe
   ],
   providers: [
     TranslateConfigs,

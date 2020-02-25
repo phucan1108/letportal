@@ -129,7 +129,25 @@ namespace LetPortal.WebApis.Controllers
                 return BadRequest();
             }
 
-            var result = await _databaseService.ExecuteDynamic(databaseConnection, ConvertUtil.SerializeObject(content), new List<ExecuteParamModel>());
+            string formattedContent;
+            if (databaseConnection.GetConnectionType() != Core.Persistences.ConnectionType.MongoDB)
+            {
+                formattedContent = content;
+            }
+            else
+            {
+                if (content.GetType() == typeof(string))
+                {
+                    formattedContent = content;
+                }
+                else
+                {
+                    formattedContent = ConvertUtil.SerializeObject(content);
+                }
+
+            }
+
+            var result = await _databaseService.ExecuteDynamic(databaseConnection, formattedContent, new List<ExecuteParamModel>());
             _logger.Info("Result of execution dynamic: {@result}", result);
             return Ok(result);
         }

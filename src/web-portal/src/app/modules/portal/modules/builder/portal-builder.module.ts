@@ -78,6 +78,7 @@ import { BackupResolve } from './resolve/backup.resolve';
 import { BackupRestorePage } from './pages/backup/backup-restore.page';
 import { ExecutionDatabaseStepComponent } from 'portal/shared/button-options/executiondatabase-step.component';
 import { IconPickerSharedComponent } from 'portal/shared/icon-picker/icon-picker.component';
+import { CoreModule } from 'app/core/core.module';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -140,6 +141,7 @@ import { IconPickerSharedComponent } from 'portal/shared/icon-picker/icon-picker
 		IconPickerSharedComponent
 	],
 	imports: [
+		CoreModule,
 		PortalBuilderRoutingModule,
 		CommonModule,
 		FormsModule,

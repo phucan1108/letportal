@@ -53,8 +53,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/page/database-form",
-                                    RedirectType = RedirectType.ThroughUrl
+                                    RedirectUrl = "portal/page/database-form"
                                 }
                             },
                             CommandPositionType = CommandPositionType.OutList,
@@ -72,8 +71,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/page/database-form?id={{data.id}}",
-                                    RedirectType = RedirectType.ThroughUrl
+                                    RedirectUrl = "portal/page/database-form?id={{data.id}}"                                    
                                 }
                             },
                             Order = 1
@@ -90,8 +88,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/page/database-form?id={{data.id}}",
-                                    RedirectType = RedirectType.ThroughUrl
+                                    RedirectUrl = "portal/page/database-form?id={{data.id}}"                                    
                                 }
                             },
                             Order = 2
@@ -234,8 +231,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/page/app-form",
-                                    RedirectType = RedirectType.ThroughUrl
+                                    RedirectUrl = "portal/page/app-form"
                                 }
                             },
                             Order = 0
@@ -252,8 +248,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/page/app-form?id={{data.id}}",
-                                    RedirectType = RedirectType.ThroughUrl
+                                    RedirectUrl = "portal/page/app-form?id={{data.id}}"
                                 }
                             },
                             Order = 1
@@ -270,8 +265,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/page/app-form?id={{data.id}}",
-                                    RedirectType = RedirectType.ThroughUrl
+                                    RedirectUrl = "portal/page/app-form?id={{data.id}}"
                                 }
                             }
                         },
@@ -287,8 +281,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/builder/menus/{{data.id}}",
-                                    RedirectType = RedirectType.ThroughUrl
+                                    RedirectUrl = "portal/builder/menus/{{data.id}}"
                                 }
                             },
                             Order = 2
@@ -472,8 +465,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/page",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 }
                             },
                             Order = 0
@@ -490,8 +482,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/page/{{data.name}}",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 }
                             },
                             Order = 1
@@ -569,8 +560,21 @@ namespace LetPortal.Versions.SectionParts
                             SearchOptions = new SearchOptions
                             {
                                 AllowInAdvancedMode = true,
-                                AllowTextSearch = true
+                                AllowTextSearch = true,
+                                FieldValueType = FieldValueType.Select
                             },
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                                Type = DatasourceControlType.Database,
+                                DatabaseOptions = new DatabaseOptions
+                                {
+                                    DatabaseConnectionId = Constants.IdentityDatabaseId,
+                                    EntityName = "roles",
+                                    Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                        "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$project\": {\r\n          \"name\": \"$displayName\",\r\n          \"value\": \"$name\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+                                        : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select `displayName` as name, name as value from `roles`" : "Select \"displayName\" as name, name as value from roles")
+                                }
+                            },           
                             Order = 3
                         },
                         new ColumndDef
@@ -604,8 +608,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/page/add-user-form",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 }
                             },
                             Order = 0
@@ -621,8 +624,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/page/user-form?id={{data.id}}",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 }
                             },
                             Order = 1
@@ -696,8 +698,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/page/role-form",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
                             },
@@ -714,8 +715,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/page/role-form?id={{data.id}}",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
                             },
@@ -732,8 +732,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/roles/{{data.name}}/claims",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
                             },

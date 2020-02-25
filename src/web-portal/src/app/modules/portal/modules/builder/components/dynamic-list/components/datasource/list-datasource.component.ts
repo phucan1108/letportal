@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { ExtractingSchemaQueryModel, ColumnField, ColumndDef, CommandButtonInList, ActionType, CommandPositionType, FilledParameter, Parameter, DatabaseOptions, FieldValueType, DatasourceControlType, RedirectType } from 'services/portal.service';
+import { ExtractingSchemaQueryModel, ColumnField, ColumndDef, CommandButtonInList, ActionType, CommandPositionType, FilledParameter, Parameter, DatabaseOptions, FieldValueType, DatasourceControlType } from 'services/portal.service';
 import * as _ from 'lodash';
 import { Constants } from 'portal/resources/constants';
 import { NGXLogger } from 'ngx-logger';
@@ -157,8 +157,7 @@ export class ListDatasourceComponent implements OnInit {
                     },
                     redirectOptions: {
                         redirectUrl: `${Constants.PREFIX_FORM_URL}${entityName}-form`,
-                        isSameDomain: true,
-                        redirectType: RedirectType.ThroughUrl
+                        isSameDomain: true
                     },
                     workflowOptions: {
                         workflowId: '',
@@ -192,8 +191,7 @@ export class ListDatasourceComponent implements OnInit {
                     },
                     redirectOptions: {
                         redirectUrl: `${Constants.PREFIX_FORM_URL}${entityName}-form?id={{data.id}}`,
-                        isSameDomain: true,
-                        redirectType: RedirectType.ThroughUrl
+                        isSameDomain: true
                     },
                     notificationOptions: {
                         completeMessage: Constants.COMPLETE_DEFAULT_MESSAGE,
@@ -224,7 +222,6 @@ export class ListDatasourceComponent implements OnInit {
                     },
                     redirectOptions: {
                         isSameDomain: true,
-                        redirectType: RedirectType.ThroughUrl,
                         redirectUrl: `${Constants.PREFIX_FORM_URL}${entityName}-entity?id={{data._id}}`
                     },
                     notificationOptions: {

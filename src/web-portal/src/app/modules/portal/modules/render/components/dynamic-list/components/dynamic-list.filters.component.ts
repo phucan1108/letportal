@@ -133,7 +133,7 @@ export class DynamicListFiltersComponent implements OnInit {
     onAdvancedSearchChange() {
         if (this.isOpeningAdvancedMode) {
             if (this.filterOptions.length === 0) {
-                this.filterOptions.push({
+                let addingFilter = {
                     fieldName: this.filters[0].name,
                     fieldValue: '',
                     filterChainOperator: FilterChainOperator.None,
@@ -141,7 +141,9 @@ export class DynamicListFiltersComponent implements OnInit {
                     filterValueType: this.filters[0].fieldValueType,
                     filterDataSource: this.filters[0].jsonData ? this.filters[0].jsonData : new Array<any>(),
                     filterOperators: this.getAllowedOperators(this.filters[0].fieldValueType)
-                })
+                }
+
+                this.filterOptions.push(addingFilter)
             }
         }
         else {
@@ -211,8 +213,11 @@ export class DynamicListFiltersComponent implements OnInit {
             if (element.name === filterOption.fieldName) {
                 if (element.fieldValueType === FieldValueType.Select) {
                     filterOption.filterDataSource = element.jsonData
+                    filterOption.fieldValue = element.jsonData.length == 1 ? element.jsonData[0].value : ''
                 }
-                filterOption.fieldValue = ''
+                else{
+                    filterOption.fieldValue = ''
+                }
 
                 filterOption.filterValueType = element.fieldValueType
                 filterOption.filterOperators = this.getAllowedOperators(filterOption.filterValueType)

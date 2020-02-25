@@ -4,6 +4,7 @@ import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/exten
 import { FilterOperator, FilterChainOperator, FieldValueType } from 'services/portal.service';
 import * as _ from 'lodash';
 import { NGXLogger } from 'ngx-logger';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-advanced-filer-dialog',

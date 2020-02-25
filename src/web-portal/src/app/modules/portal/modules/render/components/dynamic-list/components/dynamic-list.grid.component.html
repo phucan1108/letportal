@@ -21,7 +21,7 @@
                     </ng-container>
                     <ng-container *ngIf="isDisplayedAsHtml(header)">
                         <span class="handset-data" (click)="openDialogData(data)" *ngIf="isTextAsHtml(header)"
-                            [innerHtml]="renderInnerHtml(data, header)"></span>
+                            [innerHtml]="renderInnerHtml(data, header) | safeHtml"></span>
                         <div class="handset-data" *ngIf="isBooleanAsHtml(header)">
                             <mat-chip-list>
                                 <mat-chip color="primary" *ngIf="getBooleanValue(data, header)" selected>
@@ -83,5 +83,5 @@
 </div>
 
 <ng-template #loading>
-    
+    <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
 </ng-template>

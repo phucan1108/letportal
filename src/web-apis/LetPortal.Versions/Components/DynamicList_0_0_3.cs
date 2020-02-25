@@ -81,8 +81,7 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/chart",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
                             },
@@ -99,8 +98,7 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                     RedirectUrl = "portal/builder/chart/{{data.id}}",
-                                    IsSameDomain = true,
-                                    RedirectType = RedirectType.ThroughUrl
+                                    IsSameDomain = true
                                 },
                                 ActionType = ActionType.Redirect
                             },

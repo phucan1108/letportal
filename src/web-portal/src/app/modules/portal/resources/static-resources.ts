@@ -1,4 +1,4 @@
-import { RouteType, ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, RedirectType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
+import { RouteType, ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
 
 export class StaticResources {
 
@@ -120,13 +120,6 @@ export class StaticResources {
         return [
             { name: 'Through Page', value: RouteType.ThroughPage },
             { name: 'Through Url', value: RouteType.ThroughUrl }
-        ]
-    }
-
-    public static redirectionTypes() {
-        return [
-            { name: 'Page', value: RedirectType.ThroughPage },
-            { name: 'Custom Url', value: RedirectType.ThroughUrl }
         ]
     }
 

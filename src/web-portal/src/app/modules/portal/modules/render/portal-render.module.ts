@@ -75,6 +75,7 @@ import { FilterNumberComponent } from './components/chart/controls/filter-number
 import { AngularMarkdownEditorModule } from 'angular-markdown-editor'
 import { FilterRadioComponent } from './components/chart/controls/filter-radio.component';
 import { MarkdownModule } from 'ngx-markdown';
+import { CoreModule } from 'app/core/core.module';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -91,6 +92,7 @@ export const FULL_MONTH_FORMATS = {
 
 @NgModule({
 	imports: [
+		CoreModule,
 		CommonModule,
 		PortalRenderRoutingModule,
 		FormsModule,

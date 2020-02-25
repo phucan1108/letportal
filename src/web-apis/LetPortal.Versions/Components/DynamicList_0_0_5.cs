@@ -135,7 +135,6 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                    IsSameDomain = true,
-                                   RedirectType = RedirectType.ThroughUrl,
                                    RedirectUrl = "portal/builder/backup"
                                 },
                                 IsEnable = true
@@ -155,7 +154,6 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                    IsSameDomain = true,
-                                   RedirectType = RedirectType.ThroughUrl,
                                    RedirectUrl = "portal/builder/backup/upload"
                                 },
                                 IsEnable = true
@@ -175,7 +173,6 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                    IsSameDomain = false,
-                                   RedirectType = RedirectType.ThroughUrl,
                                    RedirectUrl = "{{data.downloadableUrl}}"
                                 },
                                 IsEnable = true
@@ -195,7 +192,6 @@ namespace LetPortal.Versions.Components
                                 RedirectOptions = new RedirectOptions
                                 {
                                    IsSameDomain = true,
-                                   RedirectType = RedirectType.ThroughUrl,
                                    RedirectUrl = "portal/builder/backup/restore/{{data.id}}"
                                 },
                                 IsEnable = true
