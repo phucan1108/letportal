@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef, Optional } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef, Optional, ViewChild, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { StaticResources } from 'portal/resources/static-resources';
 import { ExtendedFormValidator, ExtendedControlValidator, ExtendedPageSection } from '../../../../../core/models/extended.models';
@@ -17,14 +17,16 @@ import { NGXLogger } from 'ngx-logger';
 import { EventsProvider } from 'app/core/events/event.provider';
 import { UploadFileService } from 'services/uploadfile.service';
 import { MarkdownService } from 'ngx-markdown';
+import { MultipleDataSelection } from 'portal/modules/models/control.extended.model';
+import { AutocompleteMultipleComponent } from './autocomplete-multiple.component';
 
 @Component({
     selector: 'let-general-control',
     templateUrl: './general-control.component.html',
     styleUrls: ['./general-control.component.scss']
 })
-export class GeneralControlComponent implements OnInit, OnDestroy {
-
+export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit {       
+    
     @Input()
     formGroup: FormGroup
 
@@ -34,13 +36,17 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
     @Input()
     section: ExtendedPageSection
 
+    @ViewChild(AutocompleteMultipleComponent, {static: false}) autoComplete: AutocompleteMultipleComponent
+
     controlFullName: string
     controlType = ControlType
     maxLength = -1
     validators: Array<ExtendedControlValidator> = []
     validatorTypes = StaticResources.formValidatorTypes();
 
-    optionsList: Observable<any>
+    optionsList$: Observable<any>
+    optionsList: any[] = []
+    autoOptionsList: Array<MultipleDataSelection> = []
     defaultData: any
     pageControlState$: Observable<PageControlEventStateModel>
     controlEventSubscription: Subscription
@@ -118,9 +124,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
                     }
                 }
             )
-        ).subscribe()
-
-        
+        ).subscribe()        
 
         this.generateValidators()
         this.maxLength = this.getMaxLength()
@@ -129,6 +133,22 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
             || this.control.type === ControlType.AutoComplete
             || this.control.type === ControlType.Radio) {
             this.generateOptions()
+            this.optionsList$.subscribe(res => {
+                this.optionsList = res
+
+                if(this.control.type === ControlType.AutoComplete
+                    && this.control.defaultOptions.multiple){
+                    // Available only for AutoComplete and Multiple mode
+                    let arrayData: string[] = ObjectUtils.isArray(this.defaultData) ? this.defaultData : [this.defaultData]
+                    this.optionsList.forEach(elem => {
+                        this.autoOptionsList.push({
+                            name: elem.name,
+                            value: elem.value,
+                            selected: arrayData.some(a => elem.value === a)
+                        })                        
+                    })
+                }
+            })
         }
 
         if (this.control.type === ControlType.MarkdownEditor) {
@@ -138,7 +158,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
                 distinctUntilChanged(),
                 tap(
                     res => {
-                        this.pageService.changeControlValue(this.controlFullName, res)
+                        this.setControlValue(res)
                     }
                 )
             ).subscribe()
@@ -147,6 +167,14 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
         this.controlFullName = this.section.name + '_' + this.control.name
         this.notifyControlValueChange()
     }
+
+    ngAfterViewInit(): void {
+        if(this.control.type === ControlType.AutoComplete && this.control.defaultOptions.multiple){
+            setTimeout(() => {
+                this.autoComplete.dropdownList = this.autoOptionsList
+            }, 500)
+        }
+    } 
 
     ngOnDestroy(): void {
         this.controlEventSubscription.unsubscribe()
@@ -190,13 +218,18 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
         ).subscribe()
     }
 
+    setControlValue(value: any){    
+        this.formGroup.get(this.control.name).markAsTouched()
+        this.formGroup.get(this.control.name).setValue(value)
+    }
+
     generateOptions() {
         switch (this.control.datasourceOptions.type) {
             case DatasourceControlType.StaticResource:
-                this.optionsList = of(JSON.parse(this.control.datasourceOptions.datasourceStaticOptions.jsonResource))
+                this.optionsList$ = of(JSON.parse(this.control.datasourceOptions.datasourceStaticOptions.jsonResource))
                 break
             case DatasourceControlType.Database:
-                this.optionsList = this.pageService.fetchDatasource(this.control.datasourceOptions.databaseOptions.databaseConnectionId, this.control.datasourceOptions.databaseOptions.query)
+                this.optionsList$ = this.pageService.fetchDatasource(this.control.datasourceOptions.databaseOptions.databaseConnectionId, this.control.datasourceOptions.databaseOptions.query)
                 break
             case DatasourceControlType.WebService:
                 break
@@ -204,13 +237,14 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
     }
 
     isInvalid(validatorName: string): boolean {
-        return this.formGroup.get(this.control.name).hasError(validatorName)
+        const invalid = this.formGroup.get(this.control.name).hasError(validatorName)
+        return invalid
     }
 
     getErrorMessage(validatorName: string) {
-        return _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
+        const errorMessage = _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
+        return errorMessage
     }
-
 
     isInvalidAsync(): boolean {
         let invalid = false
@@ -247,6 +281,11 @@ export class GeneralControlComponent implements OnInit, OnDestroy {
         this.markdownValue$.next($event.getContent())
     }
 
+    onAutoChanged(){
+        let selected = this.autoOptionsList.filter(a => a.selected)
+        this.logger.debug('Current selected values', selected)
+        this.setControlValue(selected.length > 0 ? selected.map(b => b.value): null)
+    }   
     private generateValidators() {
         _.forEach(this.control.validators, validator => {
             if (validator.isActive) {

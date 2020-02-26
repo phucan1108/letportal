@@ -26,7 +26,6 @@ namespace LetPortal.Versions.Components
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "be0bbde4-b189-9e7d-95ab-98af8e681559",
                         Name = "id",
                         Order = 0,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -61,7 +60,6 @@ namespace LetPortal.Versions.Components
                     },
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "b1b51c52-1312-c5ea-2e5a-8296392da949",
                         Name = "name",
                         Order = 1,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -138,7 +136,6 @@ namespace LetPortal.Versions.Components
                     },
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "da8c538a-3791-596d-93e2-ec01cbe8b198",
                         Name = "dataSource",
                         Order = 2,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -189,7 +186,6 @@ namespace LetPortal.Versions.Components
                     },
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "b1b51c52-1312-c5ea-2e5a-8296392da949",
                         Name = "connectionString",
                         Order = 3,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -240,7 +236,6 @@ namespace LetPortal.Versions.Components
                     },
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "55d8d892-bbe0-f8c0-b3c6-b18b186b8ec2",
                         Name = "databaseConnectionType",
                         Order = 4,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Select,
@@ -302,7 +297,6 @@ namespace LetPortal.Versions.Components
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "55d8d892-bbe0-f8c0-b3c6-b18b186b8ec1",
                         Name = "id",
                         Order = 0,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -337,7 +331,6 @@ namespace LetPortal.Versions.Components
                     },
                     new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "55d8d892-bbe0-f8c0-b3c6-b18b186b8ec2",
                         Name = "name",
                         Order = 1,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -414,7 +407,6 @@ namespace LetPortal.Versions.Components
                     },
                      new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "55d8d892-bbe0-f8c0-b3c6-b18b186b8ec3",
                         Name = "displayName",
                         Order = 2,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -465,7 +457,6 @@ namespace LetPortal.Versions.Components
                     },
                      new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "55d8d892-bbe0-f8c0-b3c6-b18b186b8ec4",
                         Name = "defaultUrl",
                         Order = 3,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -516,7 +507,6 @@ namespace LetPortal.Versions.Components
                     },
                      new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "55d8d892-bbe0-f8c0-b3c6-b18b186b8232",
                         Name = "currentVersionNumber",
                         Order = 4,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.Textbox,
@@ -567,7 +557,6 @@ namespace LetPortal.Versions.Components
                     },
                      new Portal.Entities.SectionParts.Controls.PageControl
                     {
-                        Id = "55d8d892-bbe0-f8c0-b3c6-b18b186b8ec1",
                         Name = "logo",
                         Order = 4,
                         Type = Portal.Entities.SectionParts.Controls.ControlType.IconPicker,

@@ -136,7 +136,7 @@
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Select">
             <mat-select [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
                 [id]="control.name" [multiple]="control.defaultOptions.multiple">
-                <mat-option *ngFor="let option of optionsList | async" [value]="option.value">
+                <mat-option *ngFor="let option of optionsList$ | async" [value]="option.value">
                     {{ option.name }}
                 </mat-option>
             </mat-select>
@@ -147,21 +147,39 @@
                 {{ getAsyncErrorMessage() }}
             </mat-error>
         </mat-form-field>
-        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.AutoComplete">
-            <input type="text" [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
-                [id]="control.name" matInput [matAutocomplete]="auto" [multiple]="control.defaultOptions.multiple">
-            <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of optionsList | async" [value]="option.value">
-                    {{ option.name }}
-                </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="isInvalid('required')">
-                {{getErrorMessage('required')}}
-            </mat-error>
-            <mat-error *ngIf="hasAsyncInvalid">
-                {{ getAsyncErrorMessage() }}
-            </mat-error>
-        </mat-form-field>
+        <div class="field-full-width" *ngSwitchCase="controlType.AutoComplete">
+            <div *ngIf="control.defaultOptions.multiple">
+                <let-mat-auto-multiple #autoComplete [(dropdownList)]="autoOptionsList" display-key="name"
+                    (selectionChanged)="onAutoChanged()"></let-mat-auto-multiple>
+                <mat-form-field class="autocomplete-hidden-input field-full-width">
+                    <input [id]="control.name" [placeholder]="control.defaultOptions.placeholder"
+                        [formControlName]="control.name" matInput>
+                    <mat-error *ngIf="isInvalid('required')">
+                        {{getErrorMessage('required')}}
+                    </mat-error>
+                    <mat-error *ngIf="hasAsyncInvalid">
+                        {{ getAsyncErrorMessage() }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <mat-form-field class="field-full-width" *ngIf="!control.defaultOptions.multiple">
+                <input type="text" [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
+                    [id]="control.name" matInput [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of optionsList$ | async" [value]="option.value">
+                        {{ option.name }}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="isInvalid('required')">
+                    {{getErrorMessage('required')}}
+                </mat-error>
+                <mat-error *ngIf="hasAsyncInvalid">
+                    {{ getAsyncErrorMessage() }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!--  -->
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Number">
             <input [formControlName]="control.name" [id]="control.name" matInput
                 [placeholder]="control.defaultOptions.placeholder" type="number">
@@ -191,13 +209,8 @@
             </quill-editor>
         </div>
         <div *ngSwitchCase="controlType.MarkdownEditor" class="disable-align-center">
-            <angular-markdown-editor 
-                textareaId="markdowTextArea" 
-                rows="20" 
-                name="markdownText" 
-                [options]="markdownOptions"
-                [(ngModel)]="markdownContent" 
-                [ngModelOptions]="{standalone: true}" >
+            <angular-markdown-editor textareaId="markdowTextArea" rows="20" name="markdownText"
+                [options]="markdownOptions" [(ngModel)]="markdownContent" [ngModelOptions]="{standalone: true}">
             </angular-markdown-editor>
         </div>
     </ng-container>

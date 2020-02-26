@@ -332,7 +332,7 @@ export class DynamicListGridComponent implements OnInit {
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
             if(ObjectUtils.isNotNull(datasource)){
-                const found = _.find(datasource.data, elem => elem ? elem.value === displayData : false)
+                const found = _.find(datasource.data, elem => elem ? elem.value.toString() === displayData : false)
                 return found ? found.name : displayData
             }
         }
@@ -413,7 +413,7 @@ export class DynamicListGridComponent implements OnInit {
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
             if(ObjectUtils.isNotNull(datasource)){
-                const found = _.find(datasource.data, elem => elem ? elem.value === displayData : false)
+                const found = _.find(datasource.data, elem => elem ? elem.value.toString()  === displayData : false)
                 return found ? found.name : displayData
             }
         }

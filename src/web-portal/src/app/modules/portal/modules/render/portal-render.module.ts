@@ -53,7 +53,6 @@ import { MomentumTableModule } from 'momentum-table';
 import { PageRenderSectionWrapperComponent } from './components/standard/components/page-render-section-wrapper.component';
 import { PageRenderBuilderComponent } from './components/standard/components/page-render-builder.component';
 import { PortalRenderPageComponent } from './portal-render-page.component';
-import { GeneralControlComponent } from './controls/general-control.component';
 import { FileUploaderComponent } from './controls/file-uploader.component';
 import { IconPickerComponent } from './controls/icon-picker.component';
 import { JsonEditorCustomComponent } from './controls/json-editor.component';
@@ -76,6 +75,9 @@ import { AngularMarkdownEditorModule } from 'angular-markdown-editor'
 import { FilterRadioComponent } from './components/chart/controls/filter-radio.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { CoreModule } from 'app/core/core.module';
+import { AutocompleteMultipleComponent } from './controls/autocomplete-multiple.component';
+import { AutocompletePipe } from './pipe/autocomplete.pipe';
+import { GeneralControlComponent } from './controls/general-control.component';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -175,6 +177,7 @@ export const FULL_MONTH_FORMATS = {
 		FileUploaderComponent,
 		IconPickerComponent,
 		JsonEditorCustomComponent,
+		AutocompleteMultipleComponent,
 
 		// Dynamic Lists Render,
 		DynamicListRenderComponent,
@@ -191,7 +194,8 @@ export const FULL_MONTH_FORMATS = {
 		FilterDatepickerComponent,
 		FilterSelectComponent,
 		FilterNumberComponent,
-		FilterRadioComponent
+		FilterRadioComponent,
+		AutocompletePipe
 	]
 })
 export class PortalRenderModule { }

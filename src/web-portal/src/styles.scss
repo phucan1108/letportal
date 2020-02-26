@@ -20,7 +20,7 @@ body {
 
 // Angular Editor: Fix issue of missing svg file
 div.jsoneditor-menu > button {
-  background-image: url('assets/images/jsonedit.svg');
+  background-image: url("assets/images/jsonedit.svg");
 }
 
 .example-full-width {
@@ -152,20 +152,46 @@ a:not(.mat-button):not(.mat-raised-button):not(.mat-fab):not(.mat-mini-fab):not(
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-label.mat-radio-label{
-  float:left;
+label.mat-radio-label {
+  float: left;
 }
 
-.float-footer{
+.float-footer {
   position: fixed;
   width: 100%;
   bottom: 0;
   line-height: 56px;
   background-color: white;
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12)
-  
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-.fileupload-wrapper div.mat-form-field-wrapper{
+.fileupload-wrapper div.mat-form-field-wrapper {
   height: 0px !important;
+}
+
+// Auto Complete - Multiple
+.autocomplete-hidden-input {
+  div.mat-form-field-wrapper {
+    height: 0px;
+    div.mat-form-field-infix {
+      padding-bottom: 0px;
+      height: 0px;
+      line-height: 0px;
+    }
+    input {
+      display: none;
+    }
+  }
+}
+
+.select-container {
+  .mat-form-field-wrapper {
+    padding-bottom: 0px;
+  }
+  .mat-form-field-underline {
+    height: 0px;
+  }
+  .mat-form-field-underline{
+    height: 0px !important;
+  }
 }

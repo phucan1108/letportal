@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Shared;
@@ -7,7 +8,7 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
 {
     public class PageControl
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         public string Name { get; set; }
 

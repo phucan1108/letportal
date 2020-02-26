@@ -83,6 +83,9 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                             this.readyToRender = true
                             break
                         case GatherSectionValidations:
+                            if(this.builderFormGroup.invalid){
+                                this.logger.debug('Section errors', this.collectAllControlsState(this.builderFormGroup.controls))
+                            }
                             this.store.dispatch(new SectionValidationStateAction(this.section.name, this.builderFormGroup.valid))
                             break
                     }
@@ -280,6 +283,18 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         this.builderFormGroup = new FormGroup(formControls)
     }
 
+    private collectAllControlsState(controls: any){
+        let controlStates = new Object()
+        Object.keys(controls).forEach(key => {
+            const control = <FormControl>controls[key]
+            controlStates[key] = {
+                valid: control.valid,
+                errors: control.errors
+            }
+        })
+
+        return controlStates
+    }
     private getInitDataOfControl(data: any, controlBindName: string, control: PageRenderedControl<DefaultControlOptions>): any {
         let controlData = null
         if (controlBindName === 'id' || controlBindName === '_id') {

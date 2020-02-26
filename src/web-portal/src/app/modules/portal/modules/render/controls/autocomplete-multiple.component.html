@@ -1,0 +1,38 @@
+<div class="autocomplete-warpper">
+    <div class="select-container">
+        <mat-form-field class="field-full-width">
+            <input matInput (focus)="showDropdown()" readonly 
+            name="autocomplete-input"
+            [disabled]="disabled"
+            [required]="required"
+            [placeholder]="placeholder"
+            [value]="_selectedDpdwnInput ? _selectedDpdwnInput : ''" />
+            <mat-icon matSuffix>{{ icon ? icon : 'arrow_drop_down' }}</mat-icon>
+            <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+        </mat-form-field>
+    </div>
+    <div class="dropdown-list-container" *ngIf="displayDropdown">
+        <mat-form-field [floatLabel]="'never'">
+            <input
+              matInput
+              #autocompleteInput
+              placeholder="Search"
+            />
+        </mat-form-field>
+        <ul>
+            <li #myVar *ngIf="masterToggle && dropdownList.length > 0 && !autocompleteInput.value">
+                <mat-checkbox
+                [checked]="isAllselected()"
+                [indeterminate]="isAtleastOneSelected()"
+                (change)="onCheckAllChanged()">All</mat-checkbox>
+            </li>
+            <li *ngFor="let listItem of dropdownList | autocomplete: {filterKey: autocompleteInput.value, displayKey: displayKey, infoKey: infoKey}">
+                <mat-checkbox [(ngModel)]="listItem.selected"
+                (change)="onDropdownSelected()">{{ listItem[displayKey] }}</mat-checkbox>
+                <div *ngIf="infoKey" [ngClass]="'listitem-info ' + (alignInfoRight ? 'right' : 'left')">
+                    {{ listItem[infoKey] }}
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
