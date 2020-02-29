@@ -331,19 +331,20 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             }
         }
         else if (control.type == ControlType.Checkbox || control.type == ControlType.Slide) {
-            if (controlData == 0 || controlData == 1) {
+            if (controlData.toString() == '0' || controlData.toString() == '1') {
                 control.defaultOptions.allowZero = true
             }
             else if (controlData == 'Y' || controlData == 'N') {
                 control.defaultOptions.allowYesNo = true
             }
             else {
-                if (!ObjectUtils.isNotNull(controlData)) {
-                    controlData = false
-                }
+                // Checkbox or slide must be true/false, there shouldn't be null
+                controlData = ObjectUtils.isNotNull(controlData)
+                return controlData
             }
         }
 
+        // Otherwise, normal cases can return value or null
         controlData = ObjectUtils.isNotNull(controlData) ? controlData : null
         return controlData
     }

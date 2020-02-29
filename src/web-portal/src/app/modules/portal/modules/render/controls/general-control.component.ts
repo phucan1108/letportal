@@ -9,7 +9,7 @@ import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page
 import { Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { PageStateModel } from 'stores/pages/page.state';
-import { filter, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { filter, tap, debounceTime, distinctUntilChanged, startWith, map } from 'rxjs/operators';
 import { ChangeControlValueEvent } from 'stores/pages/page.actions';
 import { PageControlEventStateModel } from 'stores/pages/pagecontrol.state';
 import { PageService } from 'services/page.service';
@@ -19,14 +19,16 @@ import { UploadFileService } from 'services/uploadfile.service';
 import { MarkdownService } from 'ngx-markdown';
 import { MultipleDataSelection } from 'portal/modules/models/control.extended.model';
 import { AutocompleteMultipleComponent } from './autocomplete-multiple.component';
+import { CustomHttpService } from 'services/customhttp.service';
+import { MatAutocompleteSelectedEvent } from '@angular/material';
 
 @Component({
     selector: 'let-general-control',
     templateUrl: './general-control.component.html',
     styleUrls: ['./general-control.component.scss']
 })
-export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit {       
-    
+export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit {
+
     @Input()
     formGroup: FormGroup
 
@@ -36,7 +38,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     @Input()
     section: ExtendedPageSection
 
-    @ViewChild(AutocompleteMultipleComponent, {static: false}) autoComplete: AutocompleteMultipleComponent
+    @ViewChild(AutocompleteMultipleComponent, { static: false }) autoComplete: AutocompleteMultipleComponent
 
     controlFullName: string
     controlType = ControlType
@@ -44,9 +46,12 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     validators: Array<ExtendedControlValidator> = []
     validatorTypes = StaticResources.formValidatorTypes();
 
+    formControlLink: FormControl = new FormControl()
+
     optionsList$: Observable<any>
     optionsList: any[] = []
     autoOptionsList: Array<MultipleDataSelection> = []
+    autoOptionsList$: BehaviorSubject<Array<MultipleDataSelection>> = new BehaviorSubject([])
     defaultData: any
     pageControlState$: Observable<PageControlEventStateModel>
     controlEventSubscription: Subscription
@@ -54,6 +59,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     asyncValidators: PageControlAsyncValidator[] = []
     currentAsyncErrorName: string
     hasAsyncInvalid: boolean = false
+
+    sectionName: string = ''
 
     // Check full documentation of Markdown Editor: https://github.com/ghiscoding/angular-markdown-editor
     markdownContent: string
@@ -71,7 +78,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     constructor(
         @Optional() private eventsProvider: EventsProvider,
         private pageService: PageService,
-        private uploadService: UploadFileService,
+        private customHttpService: CustomHttpService,
         private markdownService: MarkdownService,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef
@@ -79,6 +86,9 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     ngOnInit(): void {
+        this.asyncValidators = this.control.asyncValidators ? this.control.asyncValidators : []
+        this.controlFullName = this.section.name + '_' + this.control.name
+        this.sectionName = this.section.name
         this.controlEventSubscription = this.pageService.listenTriggeringControlEvent$().pipe(
             filter(state => state && (state.controlFullName === this.controlFullName)),
             tap(
@@ -86,7 +96,6 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                     let tempData = ObjectUtils.clone(state.data)
                     // Implement some function events there based on control type
                     switch (state.eventType) {
-
                         case 'change':
                             this.formGroup.get(this.control.name).setValue(tempData)
                             break
@@ -124,7 +133,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                     }
                 }
             )
-        ).subscribe()        
+        ).subscribe()
 
         this.generateValidators()
         this.maxLength = this.getMaxLength()
@@ -133,22 +142,31 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
             || this.control.type === ControlType.AutoComplete
             || this.control.type === ControlType.Radio) {
             this.generateOptions()
-            this.optionsList$.subscribe(res => {
-                this.optionsList = res
-
-                if(this.control.type === ControlType.AutoComplete
-                    && this.control.defaultOptions.multiple){
-                    // Available only for AutoComplete and Multiple mode
-                    let arrayData: string[] = ObjectUtils.isArray(this.defaultData) ? this.defaultData : [this.defaultData]
-                    this.optionsList.forEach(elem => {
+            if (this.control.type === ControlType.AutoComplete) {
+                // Available only for AutoComplete and Multiple mode
+                let arrayData: string[] = ObjectUtils.isArray(this.defaultData) ? this.defaultData : [this.defaultData]
+                this.optionsList$.subscribe(res => {
+                    res.forEach(elem => {
                         this.autoOptionsList.push({
                             name: elem.name,
                             value: elem.value,
                             selected: arrayData.some(a => elem.value === a)
-                        })                        
+                        })
                     })
-                }
-            })
+
+                    // Important note: to prevent many unexpected data between multiple and single mode
+                    // We need to check a defaultData for ensuring this is matching with Single/Multiple mode
+                    if(ObjectUtils.isArray(this.defaultData) && !this.control.defaultOptions.multiple){
+                        this.defaultData = this.defaultData[0]
+                    }
+                    // Set default option for AutoComplete/Single
+                    if(!this.control.defaultOptions.multiple){                        
+                        const defaultSelect = this.autoOptionsList.find(a => a.value === this.defaultData)
+                        this.formControlLink.setValue(defaultSelect ? defaultSelect : null)
+                        this.autoOptionsList$.next(this.autoOptionsList)
+                    }
+                })
+            }
         }
 
         if (this.control.type === ControlType.MarkdownEditor) {
@@ -163,18 +181,16 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                 )
             ).subscribe()
         }
-        this.asyncValidators = this.control.asyncValidators ? this.control.asyncValidators : []
-        this.controlFullName = this.section.name + '_' + this.control.name
         this.notifyControlValueChange()
     }
 
     ngAfterViewInit(): void {
-        if(this.control.type === ControlType.AutoComplete && this.control.defaultOptions.multiple){
+        if (this.control.type === ControlType.AutoComplete && this.control.defaultOptions.multiple) {
             setTimeout(() => {
                 this.autoComplete.dropdownList = this.autoOptionsList
             }, 500)
         }
-    } 
+    }
 
     ngOnDestroy(): void {
         this.controlEventSubscription.unsubscribe()
@@ -187,7 +203,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
             tap(
                 newValue => {
                     this.hasAsyncInvalid = this.isInvalidAsync()
-                    if (this.control.type == ControlType.Checkbox || this.control.type == ControlType.Slide) {
+                    if (this.control.type == ControlType.Checkbox
+                        || this.control.type == ControlType.Slide) {
                         if (this.control.defaultOptions.allowZero) {
                             this.pageService.changeControlValue(this.controlFullName, newValue ? 1 : 0)
                         }
@@ -216,9 +233,27 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                 }
             )
         ).subscribe()
+       
+         // Only for AutoComplete with single mode
+         if(this.control.type == ControlType.AutoComplete
+            && !this.control.defaultOptions.multiple){
+               
+                this.formControlLink.valueChanges.pipe(
+                    startWith(''),
+                    map(value => typeof value === 'string' ? value : value.name),
+                    tap(
+                        res => {
+                            // For one selection mode
+                            const keyword = res.toLowerCase();
+                            const filters = this.autoOptionsList.filter(a => a.name.toLowerCase().includes(keyword))
+                            this.autoOptionsList$.next(filters)
+                        }
+                    )
+                ).subscribe()
+        }
     }
 
-    setControlValue(value: any){    
+    setControlValue(value: any) {
         this.formGroup.get(this.control.name).markAsTouched()
         this.formGroup.get(this.control.name).setValue(value)
     }
@@ -229,11 +264,31 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                 this.optionsList$ = of(JSON.parse(this.control.datasourceOptions.datasourceStaticOptions.jsonResource))
                 break
             case DatasourceControlType.Database:
-                this.optionsList$ = this.pageService.fetchDatasource(this.control.datasourceOptions.databaseOptions.databaseConnectionId, this.control.datasourceOptions.databaseOptions.query)
+                const parameters = this.pageService.retrieveParameters(this.control.datasourceOptions.databaseOptions.query)
+                this.optionsList$ = this.pageService
+                    .fetchControlSelectionDatasource(this.sectionName, this.control.name, parameters)
                 break
             case DatasourceControlType.WebService:
                 break
         }
+    }
+
+    displayFn(option: MultipleDataSelection): string {
+        return option && option.name ? option.name : '';
+    }
+
+    onAutoCompleteSelected($event: MatAutocompleteSelectedEvent) {
+        // only for AutoComplete with single mode
+        const found = this.autoOptionsList.find(a => a.value === $event.option.value)
+        this.formControlLink.setValue(found)
+        this.setControlValue(found.value)        
+    }    
+
+    onAutoChanged() {
+        // only for AutoComplett with multiple mode
+        let selected = this.autoOptionsList.filter(a => a.selected)
+        this.logger.debug('Current selected values', selected)
+        this.setControlValue(selected.length > 0 ? selected.map(b => b.value) : null)
     }
 
     isInvalid(validatorName: string): boolean {
@@ -281,11 +336,6 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
         this.markdownValue$.next($event.getContent())
     }
 
-    onAutoChanged(){
-        let selected = this.autoOptionsList.filter(a => a.selected)
-        this.logger.debug('Current selected values', selected)
-        this.setControlValue(selected.length > 0 ? selected.map(b => b.value): null)
-    }   
     private generateValidators() {
         _.forEach(this.control.validators, validator => {
             if (validator.isActive) {

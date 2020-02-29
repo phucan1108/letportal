@@ -163,10 +163,13 @@
                 </mat-form-field>
             </div>
             <mat-form-field class="field-full-width" *ngIf="!control.defaultOptions.multiple">
-                <input type="text" [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
+                <input type="text" 
+                    [placeholder]="control.defaultOptions.placeholder" [formControl]="formControlLink"
                     [id]="control.name" matInput [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option *ngFor="let option of optionsList$ | async" [value]="option.value">
+                <mat-autocomplete #auto="matAutocomplete" 
+                    [displayWith]="displayFn"
+                    (optionSelected)="onAutoCompleteSelected($event)">
+                    <mat-option *ngFor="let option of autoOptionsList$ | async" [value]="option.value">
                         {{ option.name }}
                     </mat-option>
                 </mat-autocomplete>
@@ -194,7 +197,7 @@
         </mat-checkbox>
         <div *ngSwitchCase="controlType.Radio">
             <mat-radio-group class="radio-group" [formControlName]="control.name" [id]="control.name">
-                <mat-radio-button class="radio-button" *ngFor="let option of optionsList | async"
+                <mat-radio-button class="radio-button" *ngFor="let option of optionsList$ | async"
                     [value]="option.value">
                     {{ option.name }}
                 </mat-radio-button>

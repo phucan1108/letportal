@@ -13,9 +13,16 @@ namespace LetPortal.Portal.Executions
     {
         ConnectionType ConnectionType { get; }
 
-        Task<ExecuteDynamicResultModel> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters);
+        Task<ExecuteDynamicResultModel> Execute(
+            DatabaseConnection databaseConnection, 
+            string formattedString, 
+            IEnumerable<ExecuteParamModel> parameters);
 
-        Task<StepExecutionResult> ExecuteStep(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters, ExecutionDynamicContext context);
+        Task<StepExecutionResult> ExecuteStep(
+            DatabaseConnection databaseConnection, 
+            string formattedString, 
+            IEnumerable<ExecuteParamModel> parameters, 
+            ExecutionDynamicContext context);
     }
 
     public class ExecutionDynamicContext

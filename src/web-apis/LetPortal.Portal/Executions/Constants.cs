@@ -12,6 +12,10 @@
         public const string UNION_KEY = "$union";
         public const string JOIN_KEY = "$join";
 
+        // Special parameter name
+        // Usable only for AutoComplete Control, help to add filter step
+        public const string FILTER_KEYWORD = "filter.keyword";
+
         // Chart
         public const string REAL_TIME_KEY = "{{REAL_TIME}}";
         public const string FILTER_KEY = "{{FILTER}}";

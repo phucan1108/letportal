@@ -260,17 +260,17 @@ export class ControlDialogComponent implements OnInit {
                 return []
             case ControlType.AutoComplete:
                 return [
-                    {
-                        eventName: `${control.name}_select`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
-                        httpServiceOptions: {
-                            httpServiceUrl: '',
-                            httpMethod: 'Get',
-                            boundData: [],
-                            httpSuccessCode: '200',
-                            jsonBody: '',
-                            outputProjection: ''
-                        }
-                    },
+                    // {
+                    //     eventName: `${control.name}_select`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
+                    //     httpServiceOptions: {
+                    //         httpServiceUrl: '',
+                    //         httpMethod: 'Get',
+                    //         boundData: [],
+                    //         httpSuccessCode: '200',
+                    //         jsonBody: '',
+                    //         outputProjection: ''
+                    //     }
+                    // },
                     {
                         eventName: `${control.name}_change`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
                         httpServiceOptions: {

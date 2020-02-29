@@ -36,63 +36,57 @@ namespace LetPortal.Portal.Executions.SqlServer
             using (var sqlDbConnection = new SqlConnection(databaseConnection.ConnectionString))
             {
                 sqlDbConnection.Open();
-                using (var command = new SqlCommand(formattedString, sqlDbConnection))
+                using var command = new SqlCommand(formattedString, sqlDbConnection);
+                var upperFormat = formattedString.ToUpper().Trim();
+                var isQuery = upperFormat.StartsWith("SELECT ") && upperFormat.Contains("FROM ");
+                var isInsert = upperFormat.StartsWith("INSERT INTO ");
+                var isUpdate = upperFormat.StartsWith("UPDATE ");
+                var isDelete = upperFormat.StartsWith("DELETE ");
+                var isStoreProcedure = upperFormat.StartsWith("EXEC ");
+
+                var listParams = new List<SqlParameter>();
+                if (parameters != null)
                 {
-                    var upperFormat = formattedString.ToUpper().Trim();
-                    var isQuery = upperFormat.StartsWith("SELECT ") && upperFormat.Contains("FROM ");
-                    var isInsert = upperFormat.StartsWith("INSERT INTO ");
-                    var isUpdate = upperFormat.StartsWith("UPDATE ");
-                    var isDelete = upperFormat.StartsWith("DELETE ");
-                    var isStoreProcedure = upperFormat.StartsWith("EXEC ");
-
-                    var listParams = new List<SqlParameter>();
-                    if (parameters != null)
+                    foreach (var parameter in parameters)
                     {
-                        foreach (var parameter in parameters)
-                        {
-                            var fieldParam = StringUtil.GenerateUniqueName();
-                            formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
-                            listParams.Add(
-                                new SqlParameter(fieldParam, GetSqlDbType(parameter.Name, parameter.ReplaceValue, out var castObject))
-                                {
-                                    Value = castObject,
-                                    Direction = ParameterDirection.Input
-                                });
-                        }
-                    }
-
-                    command.Parameters.AddRange(listParams.ToArray());
-                    command.CommandText = formattedString;
-                    if (isQuery)
-                    {
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            using (var dt = new DataTable())
+                        var fieldParam = StringUtil.GenerateUniqueName();
+                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
+                        listParams.Add(
+                            new SqlParameter(fieldParam, GetSqlDbType(parameter.Name, parameter.ReplaceValue, out var castObject))
                             {
-                                dt.Load(reader);
-                                result.IsSuccess = true;
-                                if (dt.Rows.Count > 0)
-                                {
-                                    var str = ConvertUtil.SerializeObject(dt, true);
-                                    result.Result = ConvertUtil.DeserializeObject<dynamic>(str);
-                                    result.IsSuccess = true;
-                                }
-                                else
-                                {
-                                    result.IsSuccess = false;
-                                }
-                            }
-                        }
+                                Value = castObject,
+                                Direction = ParameterDirection.Input
+                            });
                     }
-                    else if (isInsert || isUpdate || isDelete)
+                }
+
+                command.Parameters.AddRange(listParams.ToArray());
+                command.CommandText = formattedString;
+                if (isQuery)
+                {
+                    using var reader = await command.ExecuteReaderAsync();
+                    using var dt = new DataTable();
+                    dt.Load(reader);
+                    result.IsSuccess = true;
+                    if (dt.Rows.Count > 0)
                     {
-                        var effectiveCols = await command.ExecuteNonQueryAsync();
+                        var str = ConvertUtil.SerializeObject(dt, true);
+                        result.Result = ConvertUtil.DeserializeObject<dynamic>(str);
                         result.IsSuccess = true;
                     }
-                    else if (isStoreProcedure)
+                    else
                     {
-                        // TODO: Will implement later
+                        result.IsSuccess = false;
                     }
+                }
+                else if (isInsert || isUpdate || isDelete)
+                {
+                    var effectiveCols = await command.ExecuteNonQueryAsync();
+                    result.IsSuccess = true;
+                }
+                else if (isStoreProcedure)
+                {
+                    // TODO: Will implement later
                 }
             }
 

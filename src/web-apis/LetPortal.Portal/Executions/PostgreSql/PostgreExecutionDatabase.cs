@@ -30,69 +30,66 @@ namespace LetPortal.Portal.Executions.PostgreSql
             _cSharpMapper = cSharpMapper;
         }
 
-        public async Task<ExecuteDynamicResultModel> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
+        public async Task<ExecuteDynamicResultModel> Execute(
+            DatabaseConnection databaseConnection, 
+            string formattedString, 
+            IEnumerable<ExecuteParamModel> parameters)
         {
             var result = new ExecuteDynamicResultModel();
             using (var postgreDbConnection = new NpgsqlConnection(databaseConnection.ConnectionString))
             {
                 postgreDbConnection.Open();
-                using (var command = new NpgsqlCommand(formattedString, postgreDbConnection))
+                using var command = new NpgsqlCommand(formattedString, postgreDbConnection);
+                var upperFormat = formattedString.ToUpper().Trim();
+                var isQuery = upperFormat.StartsWith("SELECT ") && upperFormat.Contains("FROM ");
+                var isInsert = upperFormat.StartsWith("INSERT INTO ");
+                var isUpdate = upperFormat.StartsWith("UPDATE ");
+                var isDelete = upperFormat.StartsWith("DELETE ");
+                var isStoreProcedure = upperFormat.StartsWith("CALL");
+
+                var listParams = new List<NpgsqlParameter>();
+                if (parameters != null)
                 {
-                    var upperFormat = formattedString.ToUpper().Trim();
-                    var isQuery = upperFormat.StartsWith("SELECT ") && upperFormat.Contains("FROM ");
-                    var isInsert = upperFormat.StartsWith("INSERT INTO ");
-                    var isUpdate = upperFormat.StartsWith("UPDATE ");
-                    var isDelete = upperFormat.StartsWith("DELETE ");
-                    var isStoreProcedure = upperFormat.StartsWith("CALL");
-
-                    var listParams = new List<NpgsqlParameter>();
-                    if (parameters != null)
+                    foreach (var parameter in parameters)
                     {
-                        foreach (var parameter in parameters)
-                        {
-                            var fieldParam = StringUtil.GenerateUniqueName();
-                            formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
-                            listParams.Add(
-                                new NpgsqlParameter(fieldParam, GetNpgsqlDbType(parameter.Name, parameter.ReplaceValue, out var castObject))
-                                {
-                                    Value = castObject,
-                                    Direction = ParameterDirection.Input
-                                });
-                        }
-                    }
-
-                    command.Parameters.AddRange(listParams.ToArray());
-                    command.CommandText = formattedString;
-                    if (isQuery)
-                    {
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            using (var dt = new DataTable())
+                        var fieldParam = StringUtil.GenerateUniqueName();
+                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam);
+                        listParams.Add(
+                            new NpgsqlParameter(fieldParam, GetNpgsqlDbType(parameter.Name, parameter.ReplaceValue, out var castObject))
                             {
-                                dt.Load(reader);
-                                result.IsSuccess = true;
-                                if (dt.Rows.Count > 0)
-                                {
-                                    var str = ConvertUtil.SerializeObject(dt, true);
-                                    result.Result = ConvertUtil.DeserializeObject<dynamic>(str);
-                                    result.IsSuccess = true;
-                                }
-                                else
-                                {
-                                    result.IsSuccess = false;
-                                }
-                            }
-                        }
+                                Value = castObject,
+                                Direction = ParameterDirection.Input
+                            });
                     }
-                    else if (isInsert || isUpdate || isDelete)
+                }
+
+                command.Parameters.AddRange(listParams.ToArray());
+                command.CommandText = formattedString;
+                if (isQuery)
+                {
+                    using var reader = await command.ExecuteReaderAsync();
+                    using var dt = new DataTable();
+                    dt.Load(reader);
+                    result.IsSuccess = true;
+                    if (dt.Rows.Count > 0)
                     {
-                        var effectiveCols = await command.ExecuteNonQueryAsync();
+                        var str = ConvertUtil.SerializeObject(dt, true);
+                        result.Result = ConvertUtil.DeserializeObject<dynamic>(str);
                         result.IsSuccess = true;
                     }
-                    else if (isStoreProcedure)
+                    else
                     {
-                        // TODO: Will implement later
+                        result.IsSuccess = false;
                     }
+                }
+                else if (isInsert || isUpdate || isDelete)
+                {
+                    var effectiveCols = await command.ExecuteNonQueryAsync();
+                    result.IsSuccess = true;
+                }
+                else if (isStoreProcedure)
+                {
+                    // TODO: Will implement later
                 }
             }
 

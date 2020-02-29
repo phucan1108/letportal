@@ -82,7 +82,7 @@ export class PortalValidators {
             customHttpService: CustomHttpService): AsyncValidatorFn {
         return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
             if (control.value === defaultValue)
-                return null
+                return of(null)
             switch (validator.asyncValidatorOptions.validatorType) {
                 case AsyncValidatorType.DatabaseValidator:
                     return timer(500)
@@ -151,7 +151,7 @@ export class PortalValidators {
                             })
                         )
                 default:
-                    return null
+                    return of(null)
             }
 
         };

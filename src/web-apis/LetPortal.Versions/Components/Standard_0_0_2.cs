@@ -267,7 +267,7 @@ namespace LetPortal.Versions.Components
                     {
                         Name = "roles",
                         Order = 4,
-                        Type = Portal.Entities.SectionParts.Controls.ControlType.Select,
+                        Type = Portal.Entities.SectionParts.Controls.ControlType.AutoComplete,
                         Options = new List<Portal.Entities.Pages.ShellOption>
                         {
                            new Portal.Entities.Pages.ShellOption

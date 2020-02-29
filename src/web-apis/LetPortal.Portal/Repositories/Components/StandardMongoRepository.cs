@@ -33,6 +33,15 @@ namespace LetPortal.Portal.Repositories.Components
                         }
                     }
                 }
+
+                if(control.Type == Entities.SectionParts.Controls.ControlType.Select
+                    || control.Type == Entities.SectionParts.Controls.ControlType.AutoComplete)
+                {
+                    if(control.DatasourceOptions.Type == Entities.Shared.DatasourceControlType.Database)
+                    {
+                        control.DatasourceOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(control.DatasourceOptions.DatabaseOptions.Query, true));
+                    }
+                }
             }
 
             return standard;

@@ -323,6 +323,16 @@ export class PageService {
         )
     }
 
+    fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel>{
+        return this.pageClients.fetchControlDatasource(this.page.id, {
+            sectionName: sectionName,
+            controlName: controlName,
+            parameters: parameters
+        }).pipe(
+            map(res => ObjectUtils.isArray(res.result) ? res.result : [res.result])
+        )
+    }
+
     evaluatedExpression(evaluteStr: string, data: any = null): boolean {
         let func = new Function('user', 'claims', 'configs', 'options', 'queryparams', 'data', `return ${evaluteStr} ? true : false;`);
         return func(this.security.getAuthUser(), this.claims, this.configs, this.options, this.queryparams, !!data ? data : this.data) as boolean

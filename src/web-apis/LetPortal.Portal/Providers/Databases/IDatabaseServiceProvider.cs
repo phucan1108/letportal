@@ -21,9 +21,14 @@ namespace LetPortal.Portal.Providers.Databases
             string queryJsonString,
             IEnumerable<ExecuteParamModel> parameters);
 
-        Task<ExecuteDynamicResultModel> ExecuteDatabase(string databaseId, string formattedCommand, IEnumerable<ExecuteParamModel> parameters);
+        Task<ExecuteDynamicResultModel> ExecuteDatabase(
+            string databaseId, 
+            string formattedCommand, 
+            IEnumerable<ExecuteParamModel> parameters);
 
-        Task<ExecuteDynamicResultModel> ExecuteDatabase(DatabaseExecutionChains databaseExecutionChains, IEnumerable<ExecuteParamModel> parameters);
+        Task<ExecuteDynamicResultModel> ExecuteDatabase(
+            DatabaseExecutionChains databaseExecutionChains, 
+            IEnumerable<ExecuteParamModel> parameters);
         Task ForceUpdateDatabases(IEnumerable<DatabaseConnection> databases);
     }
 }

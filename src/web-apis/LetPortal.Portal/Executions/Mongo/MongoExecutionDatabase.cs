@@ -20,10 +20,13 @@ namespace LetPortal.Portal.Executions.Mongo
     {
         public ConnectionType ConnectionType => ConnectionType.MongoDB;
 
-        public async Task<ExecuteDynamicResultModel> Execute(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
+        public async Task<ExecuteDynamicResultModel> Execute(
+            DatabaseConnection databaseConnection, 
+            string formattedString, 
+            IEnumerable<ExecuteParamModel> parameters)
         {
             try
-            {
+            {                   
                 formattedString = StringUtil.ReplaceDoubleCurlyBraces(formattedString, parameters.Select(a => new Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
                 var result = new ExecuteDynamicResultModel { IsSuccess = true };
                 var query = EliminateRedundantFormat(formattedString);
