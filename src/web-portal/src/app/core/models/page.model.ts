@@ -24,7 +24,7 @@ export interface PageRenderedControl<T> extends PageControl{
     defaultOptions: T
 }
 
-export interface PageControlEvent {
+export interface PageControlActionEvent {
     name: string
     sectionName: string
     controlName: string

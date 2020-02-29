@@ -200,6 +200,49 @@ namespace LetPortal.WebApis.Controllers
             return NotFound();
         }
 
+        [HttpPost("{pageId}/trigger-control-event")]
+        [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        public async Task<IActionResult> ExecuteTriggeredEvent(string pageId, [FromBody] PageTriggeringEventModel model)
+        {
+            var page = await _pageRepository.GetOneAsync(pageId);
+            if (page != null)
+            {
+                var section = page.Builder.Sections.First(a => a.Name == model.SectionName);
+                if (section.ConstructionType == SectionContructionType.Standard)
+                {
+                    // Only support Standard component
+                    var sectionStandard = (await _standardServiceProvider.GetStandardComponentsByIds(new List<string> { section.ComponentId })).First();
+
+                    var control = sectionStandard.Controls.First(a => a.Name == model.ControlName);
+                    var triggeringEvent = control.PageControlEvents.FirstOrDefault(a => a.EventName == model.EventName);
+
+                    if (triggeringEvent != null && triggeringEvent.EventActionType == Portal.Entities.Components.Controls.EventActionType.QueryDatabase)
+                    {
+                        var parameters = model?
+                                           .Parameters
+                                           .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }).ToList();
+
+                        var result =
+                           await _databaseServiceProvider
+                                   .ExecuteDatabase(
+                                       triggeringEvent.EventDatabaseOptions.DatabaseConnectionId,
+                                       triggeringEvent.EventDatabaseOptions.Query,
+                                       parameters
+                                       );
+
+                        return Ok(result);
+                    }
+                    return BadRequest();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+
+            return NotFound();
+        }
+
         [HttpPost("{pageId}/async-validator")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
         public async Task<IActionResult> ExecuteAsyncValidator(string pageId, [FromBody] PageAsyncValidatorModel validatorModel)

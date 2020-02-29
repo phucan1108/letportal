@@ -21,6 +21,8 @@ import { MultipleDataSelection } from 'portal/modules/models/control.extended.mo
 import { AutocompleteMultipleComponent } from './autocomplete-multiple.component';
 import { CustomHttpService } from 'services/customhttp.service';
 import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 
 @Component({
     selector: 'let-general-control',
@@ -78,8 +80,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     constructor(
         @Optional() private eventsProvider: EventsProvider,
         private pageService: PageService,
-        private customHttpService: CustomHttpService,
         private markdownService: MarkdownService,
+        private shortcutUtil: ShortcutUtil,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef
     ) {
@@ -226,7 +228,31 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                                     this.pageService.notifyTriggeringEvent(this.section.name + '_' + eventOpt)
                                 })
                                 break
+                            case EventActionType.QueryDatabase:
+                                this.pageService.executeActionEventOnDatabase(event, this.section.name, this.control.name)
+                                    .pipe(
+                                        tap(
+                                            res => {
+                                                this.notifyChangedByActionEvent(event.eventDatabaseOptions.boundData, res)
+                                            },
+                                            err => {
+                                                this.shortcutUtil.toastMessage('Oops! Something went wrong, please try again.', ToastType.Error)
+                                            }
+                                        )
+                                    ).subscribe()
+                                break
                             case EventActionType.WebService:
+                                this.pageService.executeActionEventOnWebService(event)
+                                    .pipe(
+                                        tap(
+                                            res => {
+                                                this.notifyChangedByActionEvent(event.eventHttpServiceOptions.boundData, res)
+                                            },
+                                            err => {
+                                                this.shortcutUtil.toastMessage('Oops! Something went wrong, please try again.', ToastType.Error)
+                                            }
+                                        )
+                                    )
                                 break
                         }
                     })
@@ -345,6 +371,17 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                     validatorErrorMessage: replacedMessage
                 })
             }
+        })
+    }
+
+    private notifyChangedByActionEvent(boundControls: string[], data: any){
+        const foundControls = this.section.relatedStandard.controls.filter(a => boundControls.some(bound => bound === a.name))
+
+        foundControls.forEach(control => {
+            // Detach data by bind name
+            const keyValue = control.options.find(a => a.key == 'bindname')
+            const evaluted = Function('data', 'return data.' + keyValue.value)
+            this.pageService.notifyTriggeringEvent(this.section.name + '_' + control.name + '_change', evaluted(data))
         })
     }
 }

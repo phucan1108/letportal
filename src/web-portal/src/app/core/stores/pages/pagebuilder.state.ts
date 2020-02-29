@@ -17,6 +17,7 @@ export interface PageBuilderStateModel {
   availableFunctionEvents: Array<string>,
   availableShells: Array<string>,
   availableBoundDatas: Array<string>,
+  availableTriggerEventsList: Array<string>,
   isFormBuilderValid: boolean
 }
 
@@ -43,6 +44,7 @@ export interface PageBuilderStateModel {
     availableFunctionEvents: [],
     availableShells: [],
     availableBoundDatas: [],
+    availableTriggerEventsList: [],
     isFormBuilderValid: false
   }
 })
@@ -271,6 +273,17 @@ export class PageBuilderState {
       ...state,
       filterState: PageActions.UpdateAvailableEvents,
       availableEvents: distinctEvents
+    })
+  }
+
+  @Action(PageActions.UpdateAvailableTriggerEventsList)
+  public updateAvailableTriggerEventsList(ctx: StateContext<PageBuilderStateModel>, { availableTriggerEventsList }: PageActions.UpdateAvailableTriggerEventsList) {
+    const state = ctx.getState()
+    let distinctEvents = _.uniq(_.concat(state.availableTriggerEventsList, availableTriggerEventsList))
+    ctx.setState({
+      ...state,
+      filterState: PageActions.UpdateAvailableTriggerEventsList,
+      availableTriggerEventsList: distinctEvents
     })
   }
 

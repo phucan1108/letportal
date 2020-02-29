@@ -2988,6 +2988,7 @@ export interface IPagesClient {
     checkExist(name: string | null): Observable<boolean>;
     submitCommand(pageId: string | null, pageSubmittedButtonModel: PageSubmittedButtonModel): Observable<ExecuteDynamicResultModel>;
     fetchControlDatasource(pageId: string | null, model: PageSelectionDatasourceModel): Observable<ExecuteDynamicResultModel>;
+    executeTriggeredEvent(pageId: string | null, model: PageTriggeringEventModel): Observable<ExecuteDynamicResultModel>;
     executeAsyncValidator(pageId: string | null, validatorModel: PageAsyncValidatorModel): Observable<ExecuteDynamicResultModel>;
     getDatasourceForPage(pageId: string | null, pageRequestDatasourceModel: PageRequestDatasourceModel): Observable<ExecuteDynamicResultModel>;
 }
@@ -3587,6 +3588,60 @@ export class PagesClient implements IPagesClient {
     }
 
     protected processFetchControlDatasource(response: HttpResponseBase): Observable<ExecuteDynamicResultModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ExecuteDynamicResultModel>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ExecuteDynamicResultModel>(<any>null);
+    }
+
+    executeTriggeredEvent(pageId: string | null, model: PageTriggeringEventModel): Observable<ExecuteDynamicResultModel> {
+        let url_ = this.baseUrl + "/api/pages/{pageId}/trigger-control-event";
+        if (pageId === undefined || pageId === null)
+            throw new Error("The parameter 'pageId' must be defined.");
+        url_ = url_.replace("{pageId}", encodeURIComponent("" + pageId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(model);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExecuteTriggeredEvent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExecuteTriggeredEvent(<any>response_);
+                } catch (e) {
+                    return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ExecuteDynamicResultModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processExecuteTriggeredEvent(response: HttpResponseBase): Observable<ExecuteDynamicResultModel> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -4878,7 +4933,8 @@ export interface PageEvent {
 
 export enum EventActionType {
     TriggerEvent = 0,
-    WebService = 1,
+    QueryDatabase = 1,
+    WebService = 2,
 }
 
 export interface EventHttpServiceOptions extends HttpServiceOptions {
@@ -4942,6 +4998,13 @@ export interface PageParameterModel {
 export interface PageSelectionDatasourceModel {
     sectionName?: string | undefined;
     controlName?: string | undefined;
+    parameters?: PageParameterModel[] | undefined;
+}
+
+export interface PageTriggeringEventModel {
+    sectionName?: string | undefined;
+    controlName?: string | undefined;
+    eventName?: string | undefined;
     parameters?: PageParameterModel[] | undefined;
 }
 
@@ -5043,8 +5106,14 @@ export enum AsyncValidatorType {
 export interface PageControlEvent {
     eventName?: string | undefined;
     eventActionType?: EventActionType;
-    httpServiceOptions?: EventHttpServiceOptions | undefined;
+    eventHttpServiceOptions?: EventHttpServiceOptions | undefined;
+    eventDatabaseOptions?: EventDatabaseOptions | undefined;
     triggerEventOptions?: TriggerEventOptions | undefined;
+}
+
+export interface EventDatabaseOptions extends DatabaseOptions {
+    outputProjection?: string | undefined;
+    boundData?: string[] | undefined;
 }
 
 export interface FileParameter {

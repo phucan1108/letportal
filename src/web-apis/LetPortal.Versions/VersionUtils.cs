@@ -19,9 +19,9 @@ namespace LetPortal.Versions
                         {
                             new Portal.Entities.Components.Controls.PageControlEvent
                             {
-                                EventName = control.Name + "_select",
+                                EventName = control.Name + "_change",
                                 EventActionType = Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
-                                HttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
+                                EventHttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
                                 {
                                     BoundData = System.Array.Empty<string>(),
                                     HttpMethod = "Get",
@@ -30,22 +30,12 @@ namespace LetPortal.Versions
                                     JsonBody = "",
                                     OutputProjection = ""
                                 },
-                                TriggerEventOptions = new Portal.Entities.Components.Controls.TriggerEventOptions
-                                {
-                                    EventsList = System.Array.Empty<string>()
-                                }
-                            },
-                            new Portal.Entities.Components.Controls.PageControlEvent
-                            {
-                                EventName = control.Name + "_change",
-                                EventActionType = Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
-                                HttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
+                                EventDatabaseOptions = new Portal.Entities.Components.Controls.EventDatabaseOptions
                                 {
                                     BoundData = System.Array.Empty<string>(),
-                                    HttpMethod = "Get",
-                                    HttpServiceUrl = "",
-                                    HttpSuccessCode = "200",
-                                    JsonBody = "",
+                                    DatabaseConnectionId = "",
+                                    EntityName = "",
+                                    Query = "",
                                     OutputProjection = ""
                                 },
                                 TriggerEventOptions = new Portal.Entities.Components.Controls.TriggerEventOptions
@@ -62,7 +52,7 @@ namespace LetPortal.Versions
                             {
                                 EventName = control.Name + "_change",
                                 EventActionType = Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
-                                HttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
+                                EventHttpServiceOptions = new Portal.Entities.Components.Controls.EventHttpServiceOptions
                                 {
                                     BoundData = System.Array.Empty<string>(),
                                     HttpMethod = "Get",
@@ -71,6 +61,14 @@ namespace LetPortal.Versions
                                     JsonBody = "",
                                     OutputProjection = ""
                                 },
+                                EventDatabaseOptions = new Portal.Entities.Components.Controls.EventDatabaseOptions
+                                {
+                                    BoundData = System.Array.Empty<string>(),
+                                    DatabaseConnectionId = "",
+                                    EntityName = "",
+                                    Query = "",
+                                    OutputProjection = ""
+                                },  
                                 TriggerEventOptions = new Portal.Entities.Components.Controls.TriggerEventOptions
                                 {
                                     EventsList = System.Array.Empty<string>()

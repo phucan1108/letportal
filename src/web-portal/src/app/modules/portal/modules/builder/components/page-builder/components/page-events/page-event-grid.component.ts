@@ -21,7 +21,9 @@ export class PageEventGridComponent implements OnInit {
 
     displayedListColumns = ['eventKey', 'sourceName', 'actions'];
     availableEvents: Array<string> = []
+    availableTriggerEventsList: Array<string> = []
     availableBoundDatas: Array<string> = []
+    
     currentEvents: Array<PageEvent> = []
     _eventActionTypes = [
         { name: 'Trigger Events', value: EventActionType.TriggerEvent },
@@ -49,6 +51,7 @@ export class PageEventGridComponent implements OnInit {
                     console.log('Tracking', state)
                     this.availableEvents = state.availableEvents
                     this.availableBoundDatas = state.availableBoundDatas
+                    this.availableTriggerEventsList = state.availableTriggerEventsList
                     switch (state.filterState) {
                         case NextToWorkflowAction:
                             this.currentEvents = []
@@ -102,7 +105,8 @@ export class PageEventGridComponent implements OnInit {
                 event: newEvent,
                 isEdit: false,
                 availableEvents: this.availableEvents,
-                availableBoundDatas: this.availableBoundDatas
+                availableBoundDatas: this.availableBoundDatas,
+                availableTriggerEvents: this.availableTriggerEventsList
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -124,7 +128,8 @@ export class PageEventGridComponent implements OnInit {
                 event: event,
                 isEdit: true,
                 availableEvents: this.availableEvents,
-                availableBoundDatas: this.availableBoundDatas
+                availableBoundDatas: this.availableBoundDatas,
+                availableTriggerEvents: this.availableTriggerEventsList
             }
         });
         dialogRef.afterClosed().subscribe(result => {

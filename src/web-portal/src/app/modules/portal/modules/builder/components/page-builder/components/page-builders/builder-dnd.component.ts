@@ -10,8 +10,8 @@ import { Observable } from 'rxjs';
 import { filter, tap, combineLatest } from 'rxjs/operators';
 import { ShellContants } from 'app/core/shell/shell.contants';
 import { NGXLogger } from 'ngx-logger';
-import { InitEditPageBuilderAction, GeneratePageBuilderInfoAction, NextToWorkflowAction, UpdatePageBuilderInfoAction, UpdateAvailableEvents, UpdateAvailableShells, NextToDatasourceAction, GatherAllChanges, UpdateAvailableBoundDatas } from 'stores/pages/pagebuilder.actions';
-import { SectionContructionType, PageSection, StandardComponent, PageSectionLayoutType, StandardComponentClient, DynamicListClient, PageControl, DynamicList } from 'services/portal.service';
+import { InitEditPageBuilderAction, GeneratePageBuilderInfoAction, NextToWorkflowAction, UpdatePageBuilderInfoAction, UpdateAvailableEvents, UpdateAvailableShells, NextToDatasourceAction, GatherAllChanges, UpdateAvailableBoundDatas, UpdateAvailableTriggerEventsList } from 'stores/pages/pagebuilder.actions';
+import { SectionContructionType, PageSection, StandardComponent, PageSectionLayoutType, StandardComponentClient, DynamicListClient, PageControl, DynamicList, ControlType } from 'services/portal.service';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 
@@ -96,7 +96,8 @@ export class BuilderDnDComponent implements OnInit {
                                 }),
                                 new UpdateAvailableEvents(this.generateAvailableEvents()),
                                 new UpdateAvailableBoundDatas(this.generateBoundDatas()),
-                                new UpdateAvailableShells(this.generateAvailableFormShells())
+                                new UpdateAvailableShells(this.generateAvailableFormShells()),
+                                new UpdateAvailableTriggerEventsList(this.generateAvailableTriggerEvents())
                             ])
                             break
                         case GatherAllChanges:
@@ -207,7 +208,39 @@ export class BuilderDnDComponent implements OnInit {
                 case SectionContructionType.Standard:
                     _.forEach(section.relatedStandard.controls, (control: PageControl) => {
                         _.forEach(control.pageControlEvents, e => {
-                            events.push(`${section.name}_${e.eventName}`)
+                            events.push(`${section.name}_${control.name}_change`)
+                        })
+                    })
+                    break
+                case SectionContructionType.DynamicList:
+                    events.push(`${section.name}_${section.relatedDynamicList.name}_search`)
+                    break
+            }
+        })
+
+        return events
+    }
+
+    generateAvailableTriggerEvents(): Array<string>{
+        let events: Array<string> = []
+
+        _.forEach(this.pageSections, (section: ExtendedPageSection) => {
+            switch (section.constructionType) {
+                case SectionContructionType.Standard:
+                    _.forEach(section.relatedStandard.controls, (control: PageControl) => {
+                        _.forEach(control.pageControlEvents, e => {
+                            switch(control.type){
+                                case ControlType.Select:
+                                case ControlType.AutoComplete:
+                                    events.push(`${section.name}_${control.name}_rebounddatasource`)
+                                    events.push(`${section.name}_${control.name}_rebounddatasource`)
+                                default:
+                                    events.push(`${section.name}_${control.name}_change`)
+                                    events.push(`${section.name}_${control.name}_rebound`)
+                                    events.push(`${section.name}_${control.name}_clean`)
+                                    events.push(`${section.name}_${control.name}_reset`)
+                                    break
+                            }
                         })
                     })
                     break

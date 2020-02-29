@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -12,7 +12,7 @@ import { tap, map, filter, mergeMap } from 'rxjs/operators';
 import { AuthUser } from '../security/auth.model';
 import { PortalStandardClaims } from '../security/portalClaims';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { PageResponse, PageLoadedDatasource, PageControlEvent, TriggeredControlEvent, PageShellData } from '../models/page.model';
+import { PageResponse, PageLoadedDatasource, PageControlActionEvent, TriggeredControlEvent, PageShellData } from '../models/page.model';
 import { PageStateModel, PageState } from 'stores/pages/page.state';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
 import * as _ from 'lodash';
@@ -166,6 +166,7 @@ export class PageService {
             }
         )
 
+        // Events for linking sections on one page
         this.eventSub =
             this.listenControlEvent$().pipe(
                 filter(state => !!state),
@@ -240,7 +241,7 @@ export class PageService {
      * Listens control event$
      * @returns control event$ 
      */
-    listenControlEvent$(): Observable<PageControlEvent> {
+    listenControlEvent$(): Observable<PageControlActionEvent> {
         return this.store.select(state => state.page.lastEvent)
     }
 
@@ -376,6 +377,31 @@ export class PageService {
 
     executeAsyncValidator(asyncValidatorModel: PageAsyncValidatorModel, data?: any){
         return this.pageClients.executeAsyncValidator(this.page.id, asyncValidatorModel)
+    }
+
+    executeActionEventOnDatabase(triggeringEvent: PageControlEvent, sectionName: string, controlName: string){
+        const paramters = this.retrieveParameters(triggeringEvent.eventDatabaseOptions.query)
+        return this.pageClients.executeTriggeredEvent(this.page.id, {
+            sectionName: sectionName,
+            controlName: controlName,
+            eventName: triggeringEvent.eventName,
+            parameters: paramters
+        }).pipe(
+            filter(a => a.isSuccess),
+            map(res => ObjectUtils.isNotNull(triggeringEvent.eventDatabaseOptions.outputProjection)? 
+                    ObjectUtils.projection(triggeringEvent.eventDatabaseOptions.outputProjection,res.result) : res.result)
+        )
+    }
+
+    executeActionEventOnWebService(triggeringEvent: PageControlEvent){
+        const translatedUrl = this.translateData(triggeringEvent.eventHttpServiceOptions.httpServiceUrl)
+        const translatedBody = this.translateData(triggeringEvent.eventHttpServiceOptions.jsonBody)
+        return this.customHttpService.performHttp(
+                    translatedUrl,
+                    triggeringEvent.eventHttpServiceOptions.httpMethod,
+                    translatedBody,
+                    triggeringEvent.eventHttpServiceOptions.httpSuccessCode,
+                    triggeringEvent.eventHttpServiceOptions.outputProjection)
     }
 
     private mergeData(mergingData: any) {

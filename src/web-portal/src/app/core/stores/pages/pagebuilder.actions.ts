@@ -95,6 +95,11 @@ export class UpdateAvailableEvents implements PageBuilderAction {
   constructor(public availableEvents: Array<string>) { }
 }
 
+export class UpdateAvailableTriggerEventsList implements PageBuilderAction{
+  public static readonly type = `${PAGE_BUILDER_PAGE} Update Available Trgger Events List`
+  constructor(public availableTriggerEventsList: Array<string>) { }
+}
+
 export class UpdateAvailableBoundDatas implements PageBuilderAction {
   public static readonly type = `${PAGE_BUILDER_PAGE} Update Available Bound Datas`
   constructor(public availableBoundDatas: Array<string>) { }
@@ -151,6 +156,7 @@ export type All =
   UpdateAvailableEvents |
   UpdateAvailableBoundDatas |
   UpdateAvailableShells |
+  UpdateAvailableTriggerEventsList |
   UpdatePageClaims |
   UpdateStandardComponents |
   UpdatePageDatasources |

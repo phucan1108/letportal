@@ -1,16 +1,17 @@
-import { Component, OnInit, Inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { ControlsGridComponent } from './controls-grid.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NGXLogger } from 'ngx-logger';
 import { ExtendedPageControl, ExtendedPageControlEvent } from 'app/core/models/extended.models';
-import { EventActionType, PageControlEvent, HttpServiceOptions, PageControl, ControlType } from 'services/portal.service';
+import { EventActionType, PageControlEvent, HttpServiceOptions, PageControl, ControlType, DatabaseOptions } from 'services/portal.service';
 import { Guid } from 'guid-typescript';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { JsonEditorOptions } from 'ang-jsoneditor';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { tap } from 'rxjs/operators';
+import { DatabaseFormOptions, DatabaseOptionsComponent } from 'portal/shared/databaseoptions/databaseoptions.component';
 
 @Component({
     selector: 'let-controlevents-dialog',
@@ -19,6 +20,7 @@ import { tap } from 'rxjs/operators';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControlEventsDialogComponent implements OnInit {
+    @ViewChild(DatabaseOptionsComponent, { static: false }) dbOptionsComponent: DatabaseOptionsComponent
     public editorOptions: JsonEditorOptions
     query: any
     control: ExtendedPageControl
@@ -38,11 +40,16 @@ export class ControlEventsDialogComponent implements OnInit {
     isHttpOptionsValid: boolean = false
     httpOptions: HttpServiceOptions
 
+    databaseOptions: DatabaseOptions 
+    dbOptions: DatabaseFormOptions = {
+        allowHints: ['query']
+    }
     availabelEvents: string[] = []
     availableBoundDatas: string[] = []
 
     _eventActionTypes = [
         { name: 'Trigger Events', value: EventActionType.TriggerEvent },
+        { name: 'Query Database', value: EventActionType.QueryDatabase },
         { name: 'Web Service', value: EventActionType.WebService }
     ]
 
@@ -97,7 +104,9 @@ export class ControlEventsDialogComponent implements OnInit {
         this.eventForm = this.fb.group({
             eventName: ['', Validators.required],
             eventActionType: [EventActionType.TriggerEvent, Validators.required],
-            boundData: [],
+            outputProjectionDatabase: [''],
+            boundDataHttp: [],
+            boundDataDatabase: [],
             triggerEventsList: []
         })
     }
@@ -125,11 +134,14 @@ export class ControlEventsDialogComponent implements OnInit {
         this.eventForm = this.fb.group({
             eventName: [this.selectedEvent.eventName, Validators.required],
             eventActionType: [this.selectedEvent.eventActionType, Validators.required],
-            boundData: [this.selectedEvent.httpServiceOptions.boundData],
+            outputProjectionDatabase: [this.selectedEvent.eventDatabaseOptions.outputProjection],
+            boundDataHttp: [this.selectedEvent.eventHttpServiceOptions.boundData],
+            boundDataDatabase: [this.selectedEvent.eventDatabaseOptions.boundData],
             triggerEventsList: [this.selectedEvent.triggerEventOptions.eventsList]
         })
 
-        this.httpOptions = this.selectedEvent.httpServiceOptions
+        this.httpOptions = this.selectedEvent.eventHttpServiceOptions
+        this.databaseOptions = this.selectedEvent.eventDatabaseOptions
     }
 
     editEvent(event: ExtendedPageControlEvent) {
@@ -144,16 +156,39 @@ export class ControlEventsDialogComponent implements OnInit {
 
     saveEvent() {
         this.selectedEvent = this.combineEvent()
-        _.forEach(this.events, event => {
-            if(event.id === this.selectedEvent.id){
-                event.eventActionType = this.selectedEvent.eventActionType
-                event.triggerEventOptions = this.selectedEvent.triggerEventOptions
-                event.httpServiceOptions = this.selectedEvent.httpServiceOptions
-                return false
+        let formValid = false
+        if(this.eventForm.valid){
+            if(this.selectedEvent.eventActionType === EventActionType.QueryDatabase
+                && this.dbOptionsComponent.isValid()){
+                    
+                    const currentDbOptions = this.dbOptionsComponent.get()
+                    this.selectedEvent.eventDatabaseOptions = {
+                        ...this.selectedEvent.eventDatabaseOptions,
+                        databaseConnectionId: currentDbOptions.databaseConnectionId,
+                        query: currentDbOptions.query
+                    }
+
+                    formValid = true
+                }
+            
+            if(this.selectedEvent.eventActionType === EventActionType.WebService && this.isHttpOptionsValid){
+                formValid = true
             }
-        })
-        this.events$.next(this.events)
-        this.isShowEditForm = false
+        }
+
+        if(formValid){
+            _.forEach(this.events, event => {
+                if(event.id === this.selectedEvent.id){
+                    event.eventActionType = this.selectedEvent.eventActionType
+                    event.triggerEventOptions = this.selectedEvent.triggerEventOptions
+                    event.eventHttpServiceOptions = this.selectedEvent.eventHttpServiceOptions
+                    event.eventDatabaseOptions = this.selectedEvent.eventDatabaseOptions
+                    return false
+                }
+            })
+            this.events$.next(this.events)
+            this.isShowEditForm = false
+        }        
     }
 
     combineEvent(): ExtendedPageControlEvent{
@@ -162,13 +197,16 @@ export class ControlEventsDialogComponent implements OnInit {
             id: this.selectedEvent.id,
             eventActionType: formValues.eventActionType,
             eventName: this.selectedEvent.eventName,
-            httpServiceOptions: this.httpOptions ? this.httpOptions : this.selectedEvent.httpServiceOptions,
+            eventHttpServiceOptions: this.httpOptions ? this.httpOptions : this.selectedEvent.eventHttpServiceOptions,
+            eventDatabaseOptions: this.databaseOptions ? this.databaseOptions : this.selectedEvent.eventDatabaseOptions,
             triggerEventOptions: {
                 eventsList: formValues.triggerEventsList
             }
         }
 
-        event.httpServiceOptions.boundData = formValues.boundData
+        event.eventHttpServiceOptions.boundData = formValues.boundDataHttp
+        event.eventDatabaseOptions.boundData = formValues.boundDataDatabase
+        event.eventDatabaseOptions.outputProjection = formValues.outputProjectionDatabase
         return event
     }
 

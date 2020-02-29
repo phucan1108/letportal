@@ -22,6 +22,7 @@ export class PageEventDialogComponent implements OnInit {
 
     availableEvents$: Observable<Array<string>>    
     availableEvents: string[] = []
+    availableTriggerEvents: string[] = []
     availableBoundDatas: string[] = []
     _eventActionTypes = [
         { name: 'Trigger Events', value: EventActionType.TriggerEvent },
@@ -47,6 +48,11 @@ export class PageEventDialogComponent implements OnInit {
         this.availableBoundDatas = this.data.availableBoundDatas
         if(!this.availableBoundDatas){
             this.availableBoundDatas = []
+        }
+        
+        this.availableTriggerEvents = this.data.availableTriggerEvents
+        if(!this.availableTriggerEvents){
+            this.availableTriggerEvents = []
         }
         this.httpOptions = this.currentEvent.httpServiceOptions
         this.initialEventForm()

@@ -25,6 +25,9 @@
                     </mat-form-field>
                 </div>
             </div>
+            <let-databaseoptions [databaseOptions]="databaseOptions" [options]="dbOptions"
+                *ngIf="eventForm.get('eventActionType').value == eventActionType.QueryDatabase">
+            </let-databaseoptions>
             <let-httpoptions [httpOptions]="httpOptions" (changed)="onChangeHttpOptions($event)"
                 (checkValid)="onCheckingHttpOptionsValid($event)"
                 *ngIf="eventForm.get('eventActionType').value == eventActionType.WebService">
@@ -33,7 +36,26 @@
                 <label class=" col-lg-2 col-form-label">Bound data fields:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
-                        <mat-select formControlName="boundData" multiple>
+                        <mat-select formControlName="boundDataHttp" multiple>
+                            <mat-option *ngFor="let bounData of availableBoundDatas" [value]="bounData">{{bounData}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.QueryDatabase">
+                <label class=" col-lg-2 col-form-label">Bound data fields:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <input matInput placeholder="Output Projection" formControlName="outputProjectionDatabase" />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.QueryDatabase">
+                <label class=" col-lg-2 col-form-label">Bound data fields:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <mat-select formControlName="boundDataDatabase" multiple>
                             <mat-option *ngFor="let bounData of availableBoundDatas" [value]="bounData">{{bounData}}
                             </mat-option>
                         </mat-select>

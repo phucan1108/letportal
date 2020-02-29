@@ -42,6 +42,14 @@ namespace LetPortal.Portal.Repositories.Components
                         control.DatasourceOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(control.DatasourceOptions.DatabaseOptions.Query, true));
                     }
                 }
+
+                foreach(var controlEvent in control.PageControlEvents)
+                {
+                    if(controlEvent.EventActionType == Entities.Components.Controls.EventActionType.QueryDatabase)
+                    {
+                        controlEvent.EventDatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(controlEvent.EventDatabaseOptions.Query, true));
+                    }
+                }
             }
 
             return standard;

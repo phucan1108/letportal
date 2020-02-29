@@ -48,7 +48,7 @@
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
                     <mat-select formControlName="triggerEventsList" multiple>
-                        <mat-option *ngFor="let event of availableEvents" [value]="event">{{event}}</mat-option>
+                        <mat-option *ngFor="let event of availableTriggerEvents" [value]="event">{{event}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>

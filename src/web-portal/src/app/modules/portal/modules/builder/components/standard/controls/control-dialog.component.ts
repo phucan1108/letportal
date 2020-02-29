@@ -259,27 +259,23 @@ export class ControlDialogComponent implements OnInit {
             case ControlType.LineBreaker:
                 return []
             case ControlType.AutoComplete:
-                return [
-                    // {
-                    //     eventName: `${control.name}_select`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
-                    //     httpServiceOptions: {
-                    //         httpServiceUrl: '',
-                    //         httpMethod: 'Get',
-                    //         boundData: [],
-                    //         httpSuccessCode: '200',
-                    //         jsonBody: '',
-                    //         outputProjection: ''
-                    //     }
-                    // },
+                return [                    
                     {
                         eventName: `${control.name}_change`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
-                        httpServiceOptions: {
+                        eventHttpServiceOptions: {
                             httpServiceUrl: '',
                             httpMethod: 'Get',
                             boundData: [],
                             httpSuccessCode: '200',
                             jsonBody: '',
                             outputProjection: ''
+                        },
+                        eventDatabaseOptions: {
+                            databaseConnectionId: '',
+                            entityName: '',
+                            outputProjection: '',
+                            boundData: [],
+                            query: ''
                         }
                     }
                 ]
@@ -287,13 +283,20 @@ export class ControlDialogComponent implements OnInit {
                 return [
                     {
                         eventName: `${control.name}_change`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
-                        httpServiceOptions: {
+                        eventHttpServiceOptions: {
                             httpServiceUrl: '',
                             httpMethod: 'Get',
                             boundData: [],
                             httpSuccessCode: '200',
                             jsonBody: '',
                             outputProjection: ''
+                        },
+                        eventDatabaseOptions: {
+                            databaseConnectionId: '',
+                            entityName: '',
+                            outputProjection: '',
+                            boundData: [],
+                            query: ''
                         }
                     }
                 ]

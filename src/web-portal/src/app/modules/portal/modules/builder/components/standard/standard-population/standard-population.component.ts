@@ -181,27 +181,23 @@ export class StandardPopulationComponent implements OnInit {
             case ControlType.Label:
                 return []
             case ControlType.AutoComplete:
-                return [
-                    {
-                        eventName: `${control.name}_select`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
-                        httpServiceOptions: {
-                            httpServiceUrl: '',
-                            httpMethod: 'Get',
-                            boundData: [],
-                            httpSuccessCode: '200',
-                            jsonBody: '',
-                            outputProjection: ''
-                        }
-                    },
+                return [                   
                     {
                         eventName: `${control.name}_change`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
-                        httpServiceOptions: {
+                        eventHttpServiceOptions: {
                             httpServiceUrl: '',
                             httpMethod: 'Get',
                             boundData: [],
                             httpSuccessCode: '200',
                             jsonBody: '',
                             outputProjection: ''
+                        },
+                        eventDatabaseOptions: {
+                            databaseConnectionId: '',
+                            entityName: '',
+                            query: '',
+                            outputProjection: '',
+                            boundData: []
                         }
                     }
                 ]
@@ -209,13 +205,20 @@ export class StandardPopulationComponent implements OnInit {
                 return [
                     {
                         eventName: `${control.name}_change`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
-                        httpServiceOptions: {
+                        eventHttpServiceOptions: {
                             httpServiceUrl: '',
                             httpMethod: 'Get',
                             boundData: [],
                             httpSuccessCode: '200',
                             jsonBody: '',
                             outputProjection: ''
+                        },
+                        eventDatabaseOptions: {
+                            databaseConnectionId: '',
+                            entityName: '',
+                            query: '',
+                            outputProjection: '',
+                            boundData: []
                         }
                     }
                 ]
