@@ -94,7 +94,7 @@ export const FULL_MONTH_FORMATS = {
 
 @NgModule({
 	imports: [
-		CoreModule,
+		CoreModule.forChild(),
 		CommonModule,
 		PortalRenderRoutingModule,
 		FormsModule,

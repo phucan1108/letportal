@@ -50,7 +50,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
 
     formControlLink: FormControl = new FormControl()
 
-    optionsList$: Observable<any>
+    optionsList$: BehaviorSubject<any> = new BehaviorSubject([])
     optionsList: any[] = []
     autoOptionsList: Array<MultipleDataSelection> = []
     autoOptionsList$: BehaviorSubject<Array<MultipleDataSelection>> = new BehaviorSubject([])
@@ -98,18 +98,19 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                     let tempData = ObjectUtils.clone(state.data)
                     // Implement some function events there based on control type
                     switch (state.eventType) {
-                        case 'change':
-                            this.formGroup.get(this.control.name).setValue(tempData)
-                            break
-                        case 'reset':
-                            this.formGroup.get(this.control.name).setValue(this.defaultData)
-                            break
-                        case 'clean':
-                            this.formGroup.get(this.control.name).setValue('')
-                            break
-                        case 'rebound':
-                            const foundData = this.pageService.getDataByBindName(this.control.defaultOptions.bindname)
-                            this.formGroup.get(this.control.name).setValue(foundData)
+                        case 'resetdatasource':
+                            // Only for Auto and Select
+                            if (this.control.type === ControlType.Select
+                                || this.control.type === ControlType.AutoComplete) {
+                                this.generateOptions()
+                                    .pipe(
+                                        tap(
+                                            res => {
+                                                this.optionsList$.next(res)
+                                            }
+                                        )
+                                    ).subscribe()
+                            }
                             break
                         case 'hasAsyncError':
                             this.hasAsyncInvalid = true
@@ -121,15 +122,14 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                         default:
                             const eventExecution = this.eventsProvider.getEvent(state.eventType)
                             if (eventExecution != null) {
-                                eventExecution.execute(
-                                    this.formGroup.get(this.control.name) as FormControl,
-                                    this.formGroup,
-                                    this.pageService,
-                                    this.control.defaultOptions.bindname,
-                                    this.defaultData,
-                                    this.pageService.getDataByBindName(this.control.defaultOptions.bindname),
-                                    state.data
-                                )
+                                eventExecution
+                                    .execute(
+                                        this.control,
+                                        this.pageService,
+                                        <FormControl>this.formGroup.get(this.control.name),
+                                        this.defaultData,
+                                        ObjectUtils.isNotNull(tempData) ?
+                                            tempData : this.pageService.getDataByBindName(this.control.defaultOptions.bindname))
                             }
                             break
                     }
@@ -143,32 +143,51 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
         if (this.control.type === ControlType.Select
             || this.control.type === ControlType.AutoComplete
             || this.control.type === ControlType.Radio) {
-            this.generateOptions()
-            if (this.control.type === ControlType.AutoComplete) {
-                // Available only for AutoComplete and Multiple mode
-                let arrayData: string[] = ObjectUtils.isArray(this.defaultData) ? this.defaultData : [this.defaultData]
-                this.optionsList$.subscribe(res => {
-                    res.forEach(elem => {
-                        this.autoOptionsList.push({
-                            name: elem.name,
-                            value: elem.value,
-                            selected: arrayData.some(a => elem.value === a)
-                        })
-                    })
 
-                    // Important note: to prevent many unexpected data between multiple and single mode
-                    // We need to check a defaultData for ensuring this is matching with Single/Multiple mode
-                    if(ObjectUtils.isArray(this.defaultData) && !this.control.defaultOptions.multiple){
-                        this.defaultData = this.defaultData[0]
-                    }
-                    // Set default option for AutoComplete/Single
-                    if(!this.control.defaultOptions.multiple){                        
-                        const defaultSelect = this.autoOptionsList.find(a => a.value === this.defaultData)
-                        this.formControlLink.setValue(defaultSelect ? defaultSelect : null)
-                        this.autoOptionsList$.next(this.autoOptionsList)
-                    }
-                })
+            // Important note: to prevent many unexpected data between multiple and single mode
+            // We need to check a defaultData for ensuring this is matching with Single/Multiple mode
+            if (ObjectUtils.isArray(this.defaultData) && !this.control.defaultOptions.multiple) {
+                this.defaultData = this.defaultData[0]
             }
+
+            this.generateOptions()
+                .pipe(
+                    tap(
+                        res => {
+                            this.optionsList$.next(res)
+                        }
+                    )
+                ).subscribe() 
+                
+                this.optionsList$
+                .pipe(
+                    tap(
+                        res => {
+                            if(!ObjectUtils.isNotNull(res) || res.length === 0){
+                                return
+                            }
+                            if (this.control.type === ControlType.AutoComplete) {
+                                // Available only for AutoComplete and Multiple mode
+                                let arrayData: string[] = ObjectUtils.isArray(this.defaultData) ? this.defaultData : [this.defaultData]
+                                this.optionsList$.subscribe(res => {                    
+                                    res.forEach(elem => {
+                                        this.autoOptionsList.push({
+                                            name: elem.name,
+                                            value: elem.value,
+                                            selected: arrayData.some(a => elem.value === a)
+                                        })
+                                    })
+                                    // Set default option for AutoComplete/Single
+                                    if (!this.control.defaultOptions.multiple) {
+                                        const defaultSelect = this.autoOptionsList.find(a => a.value === this.defaultData)
+                                        this.formControlLink.setValue(defaultSelect ? defaultSelect : null)
+                                        this.autoOptionsList$.next(this.autoOptionsList)
+                                    }
+                                })
+                            }
+                        }
+                    )
+                ).subscribe()  
         }
 
         if (this.control.type === ControlType.MarkdownEditor) {
@@ -259,23 +278,23 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                 }
             )
         ).subscribe()
-       
-         // Only for AutoComplete with single mode
-         if(this.control.type == ControlType.AutoComplete
-            && !this.control.defaultOptions.multiple){
-               
-                this.formControlLink.valueChanges.pipe(
-                    startWith(''),
-                    map(value => typeof value === 'string' ? value : value.name),
-                    tap(
-                        res => {
-                            // For one selection mode
-                            const keyword = res.toLowerCase();
-                            const filters = this.autoOptionsList.filter(a => a.name.toLowerCase().includes(keyword))
-                            this.autoOptionsList$.next(filters)
-                        }
-                    )
-                ).subscribe()
+
+        // Only for AutoComplete with single mode
+        if (this.control.type == ControlType.AutoComplete
+            && !this.control.defaultOptions.multiple) {
+
+            this.formControlLink.valueChanges.pipe(
+                startWith(''),
+                map(value => typeof value === 'string' ? value : value.name),
+                tap(
+                    res => {
+                        // For one selection mode
+                        const keyword = res.toLowerCase();
+                        const filters = this.autoOptionsList.filter(a => a.name.toLowerCase().includes(keyword))
+                        this.autoOptionsList$.next(filters)
+                    }
+                )
+            ).subscribe()
         }
     }
 
@@ -284,18 +303,16 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
         this.formGroup.get(this.control.name).setValue(value)
     }
 
-    generateOptions() {
+    generateOptions(): Observable<any> {
         switch (this.control.datasourceOptions.type) {
             case DatasourceControlType.StaticResource:
-                this.optionsList$ = of(JSON.parse(this.control.datasourceOptions.datasourceStaticOptions.jsonResource))
-                break
+                return of(JSON.parse(this.control.datasourceOptions.datasourceStaticOptions.jsonResource))                
             case DatasourceControlType.Database:
                 const parameters = this.pageService.retrieveParameters(this.control.datasourceOptions.databaseOptions.query)
-                this.optionsList$ = this.pageService
-                    .fetchControlSelectionDatasource(this.sectionName, this.control.name, parameters)
-                break
-            case DatasourceControlType.WebService:
-                break
+                return this.pageService
+                    .fetchControlSelectionDatasource(this.sectionName, this.control.name, parameters)               
+            case DatasourceControlType.WebService:                
+                return this.pageService.executeHttpWithBoundData(this.control.datasourceOptions.httpServiceOptions)
         }
     }
 
@@ -307,8 +324,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
         // only for AutoComplete with single mode
         const found = this.autoOptionsList.find(a => a.value === $event.option.value)
         this.formControlLink.setValue(found)
-        this.setControlValue(found.value)        
-    }    
+        this.setControlValue(found.value)
+    }
 
     onAutoChanged() {
         // only for AutoComplett with multiple mode
@@ -374,7 +391,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
         })
     }
 
-    private notifyChangedByActionEvent(boundControls: string[], data: any){
+    private notifyChangedByActionEvent(boundControls: string[], data: any) {
         const foundControls = this.section.relatedStandard.controls.filter(a => boundControls.some(bound => bound === a.name))
 
         foundControls.forEach(control => {

@@ -14,7 +14,7 @@ import { PageService } from 'services/page.service';
 import { UploadFileService } from 'services/uploadfile.service';
 import { TRANSLATOR_METHODS, CONTROL_EVENTS } from './core.config';
 import { ControlEventExecution } from './events/control/control.event';
-import { EventsProvider } from './events/event.provider';
+import { EventsProvider, EVENTS_CONFIG } from './events/event.provider';
 import { UnlockScreenDialogComponent } from './security/components/unlock-screen.component';
 import { MatFormFieldModule, MatDialogModule, MatInputModule, MatIconModule, MatButtonModule } from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -37,7 +37,9 @@ import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
     UnlockScreenDialogComponent
   ],
   exports: [
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    CommonModule,
+    ReactiveFormsModule
   ],
   providers: [
     TranslateConfigs,
@@ -79,9 +81,34 @@ export class CoreModule {
           }
         },
         {
-          provide: EventsProvider, useValue: {
+          provide: EVENTS_CONFIG, useValue: {
             events: controlEvents ? CONTROL_EVENTS.concat(controlEvents) : CONTROL_EVENTS
           }
+        },
+        {
+          provide: EventsProvider, useClass: EventsProvider
+        }
+      ]
+    };
+  }
+  static forChild(
+    builtInMethods: any[] = null,
+    controlEvents: ControlEventExecution[] = null): ModuleWithProviders {
+    return {
+      ngModule: CoreModule,
+      providers: [
+        {
+          provide: TranslateConfigs, useValue: {
+            builtInMethods: builtInMethods ? TRANSLATOR_METHODS.concat(builtInMethods) : TRANSLATOR_METHODS
+          }
+        },
+        {
+          provide: EVENTS_CONFIG, useValue: {
+            events: controlEvents ? CONTROL_EVENTS.concat(controlEvents) : CONTROL_EVENTS
+          }
+        },
+        {
+          provide: EventsProvider, useClass: EventsProvider
         }
       ]
     };

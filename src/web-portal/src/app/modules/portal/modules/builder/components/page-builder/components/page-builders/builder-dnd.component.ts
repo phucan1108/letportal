@@ -136,7 +136,13 @@ export class BuilderDnDComponent implements OnInit {
             relatedChart: null,
             isLoaded: false
         }
-        const dialogRef = this.dialog.open(SectionDialogComponent, { data: newSection });
+        const availableSectionNames = this.pageSections.map(a => a.name)
+        const dialogRef = this.dialog.open(SectionDialogComponent, { 
+            data: {
+                section: newSection,
+                sectionNames: availableSectionNames
+            }
+         });
         const pageSectionsRef = this.pageSections
         dialogRef.afterClosed().subscribe((result: ExtendedPageSection) => {
             if (result) {
@@ -152,7 +158,13 @@ export class BuilderDnDComponent implements OnInit {
     }
 
     editSection(choosenSection: ExtendedPageSection) {
-        const dialogRef = this.dialog.open(SectionDialogComponent, { data: choosenSection });
+        const availableSectionNames = this.pageSections.map(a => a.name)
+        const dialogRef = this.dialog.open(SectionDialogComponent, { 
+            data: {
+                section: choosenSection,
+                sectionNames: availableSectionNames
+            }
+         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 _.forEach(this.pageSections, (section) => {

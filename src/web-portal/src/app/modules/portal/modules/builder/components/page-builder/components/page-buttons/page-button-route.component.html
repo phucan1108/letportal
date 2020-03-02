@@ -15,11 +15,11 @@
                         <mat-cell *matCellDef="let route" class="mat-column-vinCode">
                             {{route.condition}}</mat-cell>
                     </ng-container>
-                    <ng-container matColumnDef="routeType">
-                        <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Route Type
+                    <ng-container matColumnDef="redirectUrl">
+                        <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Url
                         </mat-header-cell>
                         <mat-cell *matCellDef="let route" class="mat-column-vinCode">
-                            {{translateRouteType(route.routeType)}}</mat-cell>
+                            {{route.redirectUrl}}</mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="actions">

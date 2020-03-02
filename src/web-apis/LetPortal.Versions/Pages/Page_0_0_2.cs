@@ -198,8 +198,8 @@ namespace LetPortal.Versions.Pages
                                         new Route
                                         {
                                             Condition = "true",
-                                            RouteType = RouteType.ThroughUrl,
-                                            TargetUrl = "portal/page/databases-management"
+                                            RedirectUrl = "portal/page/databases-management",
+                                            IsSameDomain = true
                                         }
                                     }
                                 }
@@ -385,9 +385,9 @@ namespace LetPortal.Versions.Pages
                                 {
                                     new Route
                                     {
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/apps-management",
-                                        Condition = "true"
+                                        RedirectUrl = "portal/page/apps-management",
+                                        Condition = "true",
+                                        IsSameDomain = true
                                     }
                                 }
                             }

@@ -28,7 +28,7 @@
                             </button>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <div class="row">
+                    <div class="row" *ngIf="!!pageSection.relatedStandard">
                         <label class="col-lg-2 col-form-label">Datasource Bind Name:</label>
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">

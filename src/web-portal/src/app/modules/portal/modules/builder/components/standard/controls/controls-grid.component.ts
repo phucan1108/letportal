@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter, Optional, SkipSelf } from '@angular/core';
 import { ExtendedPageSection, ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -21,6 +21,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { tap } from 'rxjs/operators';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { AsyncValidatorDialogComponent } from './control-async-validator.dialog.component';
+import { EventsProvider } from 'app/core/events/event.provider';
 
 @Component({
     selector: 'let-controls-grid',
@@ -61,6 +62,7 @@ export class ControlsGridComponent implements OnInit {
     isEditControl = false
     isHandset = false
     constructor(
+        private eventsProvider: EventsProvider,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
         private breakpointObserver: BreakpointObserver,
@@ -257,16 +259,6 @@ export class ControlsGridComponent implements OnInit {
 
         _.forEach(controls, control => {
             switch (control.type) {
-                case ControlType.Textbox:
-                case ControlType.Number:
-                case ControlType.DateTime:
-                case ControlType.IconPicker:
-                case ControlType.Select:
-                case ControlType.AutoComplete:
-                    events.push(`${control.name}_reset`)
-                    events.push(`${control.name}_clean`)
-                    events.push(`${control.name}_rebound`)
-                    break
                 case ControlType.Radio:
                 case ControlType.Slide:
                     events.push(`${control.name}_reset`)
@@ -274,6 +266,15 @@ export class ControlsGridComponent implements OnInit {
                     break
                 case ControlType.Label:
                     events.push(`${control.name}_rebound`)
+                    break
+                case ControlType.Select:
+                case ControlType.AutoComplete:
+                    events.push(`${control.name}_resetdatasource`)
+                default:
+                    const availableEvents = this.eventsProvider.getAvailableEventsForControlType(control.type, control.name)
+                    availableEvents.forEach(a => {
+                        events.push(a)
+                    })
                     break
             }
         })

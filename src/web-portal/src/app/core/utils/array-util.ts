@@ -11,7 +11,7 @@ export class ArrayUtils {
     }
 
     public static updateOneItemByIndex<T>(arrays: Array<T>, updatingItem: T, index: number){
-        arrays[index] = updatingItem
+        arrays.splice(index, 1, updatingItem)
         return arrays
     }
 

@@ -127,9 +127,9 @@ namespace LetPortal.Versions.Pages
                                 {
                                     new Route
                                     {
-                                        Condition = "true",
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/roles-management"
+                                        Condition = "true",                                        
+                                        RedirectUrl = "portal/page/roles-management",
+                                        IsSameDomain = true
                                     }
                                 }
                             }
@@ -205,10 +205,10 @@ namespace LetPortal.Versions.Pages
                                 Routes = new List<Route>
                                 {
                                     new Route
-                                    {
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/roles-management",
-                                        Condition = "true"
+                                    {                                           
+                                        Condition = "true",
+                                        RedirectUrl = "portal/page/roles-management",
+                                        IsSameDomain = true
                                     }
                                 }
                             }
@@ -287,9 +287,9 @@ namespace LetPortal.Versions.Pages
                                 {
                                     new Route
                                     {
-                                        Condition = "true",
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/users-management"
+                                        Condition = "true",                                        
+                                        RedirectUrl = "portal/page/users-management",
+                                        IsSameDomain = true
                                     }
                                 }
                             }
@@ -319,9 +319,9 @@ namespace LetPortal.Versions.Pages
                                 {
                                     new Route
                                     {
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/users-management",
-                                        Condition = "true"
+                                        RedirectUrl = "portal/page/users-management",
+                                        Condition = "true",
+                                        IsSameDomain = true
                                     }
                                 }
                             }
@@ -438,8 +438,8 @@ namespace LetPortal.Versions.Pages
                                     new Route
                                     {
                                         Condition = "true",
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/users-management"
+                                        RedirectUrl = "portal/page/users-management",
+                                        IsSameDomain = true
                                     }
                                 }
                             }
@@ -469,10 +469,10 @@ namespace LetPortal.Versions.Pages
                                 Routes = new List<Route>
                                 {
                                     new Route
-                                    {
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/users-management",
-                                        Condition = "true"
+                                    {                                           
+                                        Condition = "true",
+                                        RedirectUrl = "portal/page/users-management",
+                                        IsSameDomain = true
                                     }
                                 }
                             }

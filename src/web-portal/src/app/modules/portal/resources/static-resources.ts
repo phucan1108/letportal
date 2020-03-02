@@ -1,4 +1,4 @@
-import { RouteType, ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
+import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
 
 export class StaticResources {
 
@@ -65,6 +65,7 @@ export class StaticResources {
             { name: 'Label', value: ControlType.Label },
             { name: 'Text box', value: ControlType.Textbox },
             { name: 'Textarea', value: ControlType.Textarea },
+            { name: 'Email', value: ControlType.Email },
             { name: 'Number', value: ControlType.Number },
             { name: 'Date Picker', value: ControlType.DateTime },
             { name: 'Checkbox', value: ControlType.Checkbox },
@@ -115,14 +116,7 @@ export class StaticResources {
             { name: 'accent', value: 'accent' }
         ]
     }
-
-    public static routeTypes() {
-        return [
-            { name: 'Through Page', value: RouteType.ThroughPage },
-            { name: 'Through Url', value: RouteType.ThroughUrl }
-        ]
-    }
-
+    
     public static datasourceTypes() {
         return [
             { name: 'Static Resource', value: DatasourceControlType.StaticResource },

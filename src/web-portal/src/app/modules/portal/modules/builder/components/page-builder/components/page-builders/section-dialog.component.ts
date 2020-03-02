@@ -7,6 +7,7 @@ import { StaticResources } from 'portal/resources/static-resources';
 import { DynamicListClient, DynamicList, SectionContructionType, StandardComponent, StandardComponentClient, ChartsClient, Chart } from 'services/portal.service';
 import { Observable } from 'rxjs';
 import * as _ from 'lodash';
+import { FormUtil } from 'app/core/utils/form-util';
 
 @Component({
     selector: 'let-section-dialog',
@@ -21,7 +22,7 @@ export class SectionDialogComponent implements OnInit {
     standards$: Observable<StandardComponent[]>;
     charts$: Observable<Chart[]>;
     isEditMode = false;
-
+    availableSectionNames: string[] = []
     _sectionLayouts = StaticResources.sectionLayoutTypes()
     _constructionTypes = StaticResources.constructionTypes()
     standards: StandardComponent[]
@@ -39,7 +40,8 @@ export class SectionDialogComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.currentExtendedFormSection = this.data
+        this.currentExtendedFormSection = this.data.section
+        this.availableSectionNames = this.data.sectionNames
         this.isEditMode = this.currentExtendedFormSection.name ? true : false
         this.initialSectionForm()
         this.populatedFormValues()        
@@ -62,7 +64,7 @@ export class SectionDialogComponent implements OnInit {
 
     initialSectionForm() {
         this.sectionForm = this.fb.group({
-            name: [this.currentExtendedFormSection.name, Validators.required],
+            name: [this.currentExtendedFormSection.name, [Validators.required, FormUtil.isExist(this.availableSectionNames, this.currentExtendedFormSection.name)]],
             displayName: [this.currentExtendedFormSection.displayName, Validators.required],
             constructionType: [this.currentExtendedFormSection.constructionType, Validators.required],
             componentId: [this.currentExtendedFormSection.componentId, Validators.required]
@@ -119,6 +121,7 @@ export class SectionDialogComponent implements OnInit {
     }
 
     onSubmittingSection() {
+        FormUtil.triggerFormValidators(this.sectionForm)
         if(this.sectionForm.valid){
             this.dialogRef.close(this.generateFormSection())
         }        

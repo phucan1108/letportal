@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, RouteType, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -11,7 +11,7 @@ import { Observable, of, forkJoin, Subscription, throwError } from 'rxjs';
 import { tap, map, filter, mergeMap } from 'rxjs/operators';
 import { AuthUser } from '../security/auth.model';
 import { PortalStandardClaims } from '../security/portalClaims';
-import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { ToastType, MessageType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PageResponse, PageLoadedDatasource, PageControlActionEvent, TriggeredControlEvent, PageShellData } from '../models/page.model';
 import { PageStateModel, PageState } from 'stores/pages/page.state';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
@@ -291,10 +291,10 @@ export class PageService {
         this.store.dispatch(new TriggerControlChangeValueEvent(event))
     }
 
-    fetchDatasourceOptions(datasourceOpts: DatasourceOptions): Observable<any>{
-        switch(datasourceOpts.type){
+    fetchDatasourceOptions(datasourceOpts: DatasourceOptions): Observable<any> {
+        switch (datasourceOpts.type) {
             case DatasourceControlType.StaticResource:
-                return  of(JSON.parse(datasourceOpts.datasourceStaticOptions.jsonResource))
+                return of(JSON.parse(datasourceOpts.datasourceStaticOptions.jsonResource))
             case DatasourceControlType.Database:
                 return this.fetchDatasource(datasourceOpts.databaseOptions.databaseConnectionId, datasourceOpts.databaseOptions.query)
             case DatasourceControlType.WebService:
@@ -324,7 +324,7 @@ export class PageService {
         )
     }
 
-    fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel>{
+    fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
         return this.pageClients.fetchControlDatasource(this.page.id, {
             sectionName: sectionName,
             controlName: controlName,
@@ -340,21 +340,21 @@ export class PageService {
     }
 
     translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string {
-        if(ObjectUtils.isNotNull(data)){
+        if (ObjectUtils.isNotNull(data)) {
             let translated = this.translator.translateDataWithShell(translateStr, data)
 
             return translated
         }
-        else{
+        else {
             let translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
 
             return translated
         }
-        
+
     }
-    retrieveParameters(translateStr: string, data: any = null, isMergingData: boolean = false): PageParameterModel[]{
-        let  preparedData = this.getPageShellData()
-        if(data != null && isMergingData){
+    retrieveParameters(translateStr: string, data: any = null, isMergingData: boolean = false): PageParameterModel[] {
+        let preparedData = this.getPageShellData()
+        if (data != null && isMergingData) {
             preparedData.data = {
                 ...preparedData.data,
                 ...data
@@ -363,7 +363,7 @@ export class PageService {
         return this.translator.retrieveParameters(translateStr, preparedData)
     }
 
-    getPageShellData(): PageShellData{
+    getPageShellData(): PageShellData {
         return {
             data: this.data,
             appsettings: {},
@@ -375,11 +375,11 @@ export class PageService {
         }
     }
 
-    executeAsyncValidator(asyncValidatorModel: PageAsyncValidatorModel, data?: any){
+    executeAsyncValidator(asyncValidatorModel: PageAsyncValidatorModel, data?: any) {
         return this.pageClients.executeAsyncValidator(this.page.id, asyncValidatorModel)
     }
 
-    executeActionEventOnDatabase(triggeringEvent: PageControlEvent, sectionName: string, controlName: string){
+    executeActionEventOnDatabase(triggeringEvent: PageControlEvent, sectionName: string, controlName: string) {
         const paramters = this.retrieveParameters(triggeringEvent.eventDatabaseOptions.query)
         return this.pageClients.executeTriggeredEvent(this.page.id, {
             sectionName: sectionName,
@@ -388,20 +388,31 @@ export class PageService {
             parameters: paramters
         }).pipe(
             filter(a => a.isSuccess),
-            map(res => ObjectUtils.isNotNull(triggeringEvent.eventDatabaseOptions.outputProjection)? 
-                    ObjectUtils.projection(triggeringEvent.eventDatabaseOptions.outputProjection,res.result) : res.result)
+            map(res => ObjectUtils.isNotNull(triggeringEvent.eventDatabaseOptions.outputProjection) ?
+                ObjectUtils.projection(triggeringEvent.eventDatabaseOptions.outputProjection, res.result) : res.result)
         )
     }
 
-    executeActionEventOnWebService(triggeringEvent: PageControlEvent){
+    executeActionEventOnWebService(triggeringEvent: PageControlEvent) {
         const translatedUrl = this.translateData(triggeringEvent.eventHttpServiceOptions.httpServiceUrl)
         const translatedBody = this.translateData(triggeringEvent.eventHttpServiceOptions.jsonBody)
         return this.customHttpService.performHttp(
-                    translatedUrl,
-                    triggeringEvent.eventHttpServiceOptions.httpMethod,
-                    translatedBody,
-                    triggeringEvent.eventHttpServiceOptions.httpSuccessCode,
-                    triggeringEvent.eventHttpServiceOptions.outputProjection)
+            translatedUrl,
+            triggeringEvent.eventHttpServiceOptions.httpMethod,
+            translatedBody,
+            triggeringEvent.eventHttpServiceOptions.httpSuccessCode,
+            triggeringEvent.eventHttpServiceOptions.outputProjection)
+    }
+
+    executeHttpWithBoundData(httpServiceOptions: HttpServiceOptions) {
+        const translatedUrl = this.translateData(httpServiceOptions.httpServiceUrl)
+        const translatedBody = this.translateData(httpServiceOptions.jsonBody)
+        return this.customHttpService.performHttp(
+            translatedUrl,
+            httpServiceOptions.httpMethod,
+            translatedBody,
+            httpServiceOptions.httpSuccessCode,
+            httpServiceOptions.outputProjection)
     }
 
     private mergeData(mergingData: any) {
@@ -506,7 +517,7 @@ export class PageService {
                                             filter(res => res.isSuccess),
                                             map<ExecuteDynamicResultModel, PageLoadedDatasource>((res: ExecuteDynamicResultModel) => {
                                                 // Ensure if result is array, take 1st elem for data
-                                                if(ObjectUtils.isArray(res.result)){
+                                                if (ObjectUtils.isArray(res.result)) {
                                                     return { name: dsName, data: res.result[0] }
                                                 }
                                                 return { name: dsName, data: res.result }
@@ -543,7 +554,13 @@ export class PageService {
             const _title = 'Confirmation'
             const _description = command.buttonOptions.confirmationOptions.confirmationText
             const _waitDesciption = "Waiting..."
-            const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption);
+            const dialogRef = this.shortcutUtil
+                .confirmationDialog(
+                    _title,
+                    _description,
+                    _waitDesciption,
+                    MessageType.Custom,
+                    'Proceed');
             dialogRef.afterClosed().subscribe(res => {
                 if (!res) {
                     return
@@ -562,11 +579,11 @@ export class PageService {
             switch (command.buttonOptions.actionCommandOptions.actionType) {
                 case ActionType.ExecuteDatabase:
                     let combinedCommand = ''
-                    command.buttonOptions.actionCommandOptions.dbExecutionChains.steps.forEach((step,index) =>{
-                        if(index > 0)
+                    command.buttonOptions.actionCommandOptions.dbExecutionChains.steps.forEach((step, index) => {
+                        if (index > 0)
                             combinedCommand += ';' + step.executeCommand
                         else
-                        combinedCommand += step.executeCommand
+                            combinedCommand += step.executeCommand
                     })
                     const params = this.translator.retrieveParameters(
                         combinedCommand, this.getPageShellData());
@@ -632,37 +649,16 @@ export class PageService {
     private routingCommand(command: PageButton) {
         let foundRoute = false
         _.forEach(command.buttonOptions.routeOptions.routes, route => {
-            switch (route.routeType) {
-                case RouteType.ThroughUrl:
-                    let allowed = this.evaluatedExpression(route.condition)
-                    if (allowed && !foundRoute) {
-                        foundRoute = true
-                        let url = this.translator.translateDataWithShell(route.targetUrl, this.getPageShellData())
-                        let path = this.translator.translateDataWithShell(route.passDataPath, this.getPageShellData())
-                        let fullUrl = !!url ? url : ''
-                        if (!!path) {
-                            fullUrl += '?' + path
-                        }
-                        this.logger.debug('Redirecting to...', fullUrl)
-                        this.router.navigateByUrl(fullUrl)
-                    }
-                    break
-                case RouteType.ThroughPage:
-                    let allowedPage = this.evaluatedExpression(route.condition)
-                    if (allowedPage && !foundRoute) {
-                        this.pageClients.getOneById(route.targetPageId).subscribe(
-                            page => {
-                                let combineData = this.translator.translateDataWithShell(route.passDataPath, this.getPageShellData())
-                                if (combineData) {
-                                    this.router.navigateByUrl(page.urlPath + '?' + combineData)
-                                }
-                                else {
-                                    this.router.navigateByUrl(page.urlPath)
-                                }
-                            }
-                        )
-                    }
-                    break
+            let allowed = this.evaluatedExpression(route.condition)
+            if (allowed && !foundRoute) {
+                foundRoute = true
+                let url = this.translator.translateDataWithShell(route.redirectUrl, this.getPageShellData())                 
+                this.logger.debug('Redirecting to...', url)
+                if(route.isSameDomain)
+                    this.router.navigateByUrl(url)
+                else
+                    window.open(url, '_blank')
+                return false
             }
         })
 

@@ -30,8 +30,10 @@ export class ConfirmationDialogComponent implements OnInit {
 				break
 			case MessageType.Custom:
 				this.saveButtonText = this.data.confirmText
+				break
 			default:
 				this.saveButtonText = 'Save'			
+				break
 		}
 	}
 

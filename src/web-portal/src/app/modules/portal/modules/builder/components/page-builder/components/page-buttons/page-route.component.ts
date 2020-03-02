@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Route, PagesClient, ShortPageModel, RouteType } from 'services/portal.service';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Route, PagesClient, ShortPageModel } from 'services/portal.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { StaticResources } from 'portal/resources/static-resources';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { FormUtil } from 'app/core/utils/form-util';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'let-pageroute',
@@ -14,24 +15,42 @@ export class PageRouteComponent implements OnInit {
     @Input()
     route: Route
 
-    _routeTypes = StaticResources.routeTypes()
     routeForm: FormGroup
-    routeType = RouteType
-    page$: Observable<Array<ShortPageModel>>;
+    
+    page$: BehaviorSubject<Array<ShortPageModel>> = new BehaviorSubject([])
+    pages: Array<ShortPageModel> = []
+
     constructor(
         private fb: FormBuilder,
         private pagesClient: PagesClient
     ) { }
 
     ngOnInit(): void {
-        this.page$ = this.pagesClient.getAllShortPages()
+        this.pagesClient.getAllShortPages()
+            .pipe(
+                tap(
+                    res => {
+                        this.page$.next(res)
+                    }
+                )
+            ).subscribe() 
+
+        this.page$.subscribe(res => {
+            this.pages = res
+        })
 
         this.routeForm = this.fb.group({
-            routeType: [this.route.routeType],
-            targetPageId: [this.route.targetPageId],
-            targetUrl: [this.route.targetUrl],
-            passDataPath: [this.route.passDataPath],
-            condition: [this.route.condition]
+            redirectUrl: [this.route.redirectUrl, Validators.required],
+            isSameDomain: [this.route.isSameDomain],
+            condition: [this.route.condition, Validators.required],
+            targetPageId: ['']
+        })
+
+        this.routeForm.get('targetPageId').valueChanges.subscribe(newValue => {
+            if(newValue){
+                const found = this.pages.find(a => a.id == newValue)
+                this.routeForm.get('redirectUrl').setValue(found.urlPath)
+            }
         })
     }
 
@@ -39,10 +58,8 @@ export class PageRouteComponent implements OnInit {
         if(this.routeForm.valid){
             let formValues = this.routeForm.value
             let newRoute: Route = {
-                routeType: formValues.routeType,
-                targetPageId: formValues.targetPageId,
-                targetUrl: formValues.targetUrl,
-                passDataPath: formValues.passDataPath,
+                redirectUrl: formValues.redirectUrl,
+                isSameDomain: formValues.isSameDomain,
                 condition: formValues.condition
             }
             return newRoute

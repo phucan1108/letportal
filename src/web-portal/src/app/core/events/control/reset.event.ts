@@ -2,19 +2,19 @@ import { ControlEventExecution } from './control.event';
 import { ControlEvent } from '../decorators/event.decorator';
 import { FormControl, FormGroup } from '@angular/forms';
 import { PageService } from 'services/page.service';
+import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 
 @ControlEvent({
-    name: 'reset'
+    name: 'reset',
+    allowedControlTypes: '*'
 })
 export class ResetControlEvent implements ControlEventExecution{
     execute(
-        control: FormControl, 
-        formGroup: FormGroup, 
-        pageService: PageService, 
-        bindName: string,
-        defaultValue: any, 
-        oldValue: any, 
+        control: PageRenderedControl<DefaultControlOptions>,        
+        pageService: PageService,
+        formControl: FormControl,
+        defaultValue: any,
         newValue: any) {
-        control.setValue(defaultValue)
+            formControl.setValue(defaultValue)
     }
 }

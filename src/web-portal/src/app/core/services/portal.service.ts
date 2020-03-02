@@ -4972,16 +4972,9 @@ export interface RouteOptions {
 }
 
 export interface Route {
-    routeType?: RouteType;
-    targetPageId?: string | undefined;
-    targetUrl?: string | undefined;
-    passDataPath?: string | undefined;
+    redirectUrl?: string | undefined;
+    isSameDomain?: boolean;
     condition?: string | undefined;
-}
-
-export enum RouteType {
-    ThroughPage = 0,
-    ThroughUrl = 1,
 }
 
 export interface PageSubmittedButtonModel {

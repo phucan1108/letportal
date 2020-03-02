@@ -104,10 +104,10 @@ namespace LetPortal.Versions.Pages
                                 Routes = new List<Route>
                                 {
                                     new Route
-                                    {
-                                        RouteType = RouteType.ThroughUrl,
-                                        TargetUrl = "portal/page/services-monitor",
-                                        Condition = "true"
+                                    {                                         
+                                        Condition = "true",
+                                        RedirectUrl = "portal/page/services-monitor",
+                                        IsSameDomain = true
                                     }
                                 }
                             }

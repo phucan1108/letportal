@@ -34,13 +34,9 @@ namespace LetPortal.Portal.Entities.Shared
 
     public class Route
     {
-        public RouteType RouteType { get; set; }
+        public string RedirectUrl { get; set; }
 
-        public string TargetPageId { get; set; }
-
-        public string TargetUrl { get; set; }
-
-        public string PassDataPath { get; set; }
+        public bool IsSameDomain { get; set; }
 
         public string Condition { get; set; }
     }

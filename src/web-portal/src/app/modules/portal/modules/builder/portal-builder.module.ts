@@ -141,7 +141,7 @@ import { CoreModule } from 'app/core/core.module';
 		IconPickerSharedComponent
 	],
 	imports: [
-		CoreModule,
+		CoreModule.forChild(),
 		PortalBuilderRoutingModule,
 		CommonModule,
 		FormsModule,

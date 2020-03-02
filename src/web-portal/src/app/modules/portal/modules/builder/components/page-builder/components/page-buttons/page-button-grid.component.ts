@@ -51,18 +51,14 @@ export class PageButtonGridComponent implements OnInit {
                             this.currentActionCommands = []
                             const commandsTempEdit = result.processPage.commands as Array<PageButton>
                             _.forEach(commandsTempEdit, action => {
-                                this.currentActionCommands.push({
-                                    ...action
-                                })
+                                this.currentActionCommands.push(ObjectUtils.clone(action))
                             })
                             break
                         case GeneratePageActionCommandsAction:
                             this.currentActionCommands = []
                             const commandsTemp = result.processPage.commands as Array<PageButton>
                             _.forEach(commandsTemp, action => {
-                                this.currentActionCommands.push({
-                                    ...action
-                                })
+                                this.currentActionCommands.push(ObjectUtils.clone(action))
                             })
                             break
                         case NextToDatasourceAction:

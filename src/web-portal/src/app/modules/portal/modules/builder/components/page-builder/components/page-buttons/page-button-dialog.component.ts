@@ -69,6 +69,7 @@ export class PageButtonDialogComponent implements OnInit {
             name: formValues.name,
             color: formValues.color,
             allowHidden: formValues.allowHidden,
+            icon: formValues.icon,
             isRequiredValidation: formValues.isRequiredValidation,
             buttonOptions: this.pageButton.buttonOptions
         }

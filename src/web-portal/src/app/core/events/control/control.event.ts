@@ -1,13 +1,12 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { PageService } from 'services/page.service';
+import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 
 export interface ControlEventExecution{
     execute(
-        control: FormControl, 
-        formGroup: FormGroup,        
+        control: PageRenderedControl<DefaultControlOptions>,        
         pageService: PageService,
-        bindName: string,
+        formControl: FormControl,
         defaultValue: any,
-        oldValue: any,
         newValue: any);
 }

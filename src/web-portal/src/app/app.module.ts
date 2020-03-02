@@ -97,6 +97,7 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
 
   ],
   exports:[
+    CoreModule
   ],
   bootstrap: [AppComponent]
 })

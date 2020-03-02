@@ -169,9 +169,12 @@ export class ControlEventsDialogComponent implements OnInit {
                     }
 
                     formValid = true
-                }
-            
-            if(this.selectedEvent.eventActionType === EventActionType.WebService && this.isHttpOptionsValid){
+                }            
+            else if(this.selectedEvent.eventActionType === EventActionType.WebService 
+                && this.isHttpOptionsValid){
+                formValid = true
+            }
+            else if(this.selectedEvent.eventActionType === EventActionType.TriggerEvent){
                 formValid = true
             }
         }

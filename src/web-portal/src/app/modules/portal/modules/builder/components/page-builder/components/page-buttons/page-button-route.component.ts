@@ -2,10 +2,12 @@ import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild } from '@angula
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { PageButtonGridComponent } from './page-button-grid.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PageButton, RouteType, Route } from 'services/portal.service';
+import { PageButton, Route } from 'services/portal.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Guid } from 'guid-typescript';
 import { PageRouteComponent } from './page-route.component';
+import { ArrayUtils } from 'app/core/utils/array-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-page-button-route',
@@ -17,7 +19,7 @@ export class PageButtonRouteDialogComponent implements OnInit {
     isEnable = false
     routes$: BehaviorSubject<Route[]> = new BehaviorSubject([])
     routes: Route[]
-    displayedListColumns = ['condition', 'routeType', 'actions'];
+    displayedListColumns = ['condition', 'redirectUrl', 'actions'];
 
     isShowRouteForm = false
     isEditRouteForm = false
@@ -44,22 +46,11 @@ export class PageButtonRouteDialogComponent implements OnInit {
         this.routes$.next(this.routes)
     }
 
-    translateRouteType(routeType: RouteType) {
-        switch (routeType) {
-            case RouteType.ThroughPage:
-                return 'Through Page'
-            case RouteType.ThroughUrl:
-                return 'Through Url'
-        }
-    }
-
     addRoute() {
         let newRoute: Route = {
             condition: 'true',
-            passDataPath: '',
-            routeType: RouteType.ThroughPage,
-            targetPageId: '',
-            targetUrl: ''
+            redirectUrl: '',
+            isSameDomain: true
         }
         this.currentRoute = newRoute
         this.isShowRouteForm = true
@@ -89,9 +80,7 @@ export class PageButtonRouteDialogComponent implements OnInit {
             if (this.pageRouteForm.valid()) {
                 if (this.isEditRouteForm) {
                     const index = this.routes.indexOf(this.currentRoute)
-                    this.routes[index] = {
-                        ...this.pageRouteForm.get()
-                    }
+                    this.routes = ArrayUtils.updateOneItemByIndex(this.routes, this.pageRouteForm.get(), index)                    
                     this.routes$.next(this.routes)
                     this.isShowRouteForm = false
                     this.cd.detectChanges()
