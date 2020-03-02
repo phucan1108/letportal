@@ -101,7 +101,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                         case 'resetdatasource':
                             // Only for Auto and Select
                             if (this.control.type === ControlType.Select
-                                || this.control.type === ControlType.AutoComplete) {
+                                || this.control.type === ControlType.AutoComplete
+                                || this.control.type === ControlType.Radio) {
                                 this.generateOptions()
                                     .pipe(
                                         tap(

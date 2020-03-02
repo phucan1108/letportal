@@ -263,6 +263,7 @@ export class ControlsGridComponent implements OnInit {
                 case ControlType.Slide:
                     events.push(`${control.name}_reset`)
                     events.push(`${control.name}_rebound`)
+                    events.push(`${control.name}_resetdatasource`)
                     break
                 case ControlType.Label:
                     events.push(`${control.name}_rebound`)
