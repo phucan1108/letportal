@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Common;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Models.Databases;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -14,6 +16,13 @@ namespace LetPortal.Portal.Executions.Mongo
 {
     public class MongoQueryExecution : IMongoQueryExecution
     {
+        private readonly IOptionsMonitor<MongoOptions> _mongoOptions;
+
+        public MongoQueryExecution(IOptionsMonitor<MongoOptions> options)
+        {
+            _mongoOptions = options;
+        }
+
         public async Task<dynamic> ExecuteAsync(
             IMongoDatabase mongoDatabase,
             string formattedString,
@@ -22,7 +31,7 @@ namespace LetPortal.Portal.Executions.Mongo
             List<PipelineStageDefinition<BsonDocument, BsonDocument>> filterStages = null)
         {
             formattedString = StringUtil.ReplaceDoubleCurlyBraces(formattedString, parameters?.Select(a => new Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
-            var query = EliminateRedundantFormat(formattedString);
+            var query = _mongoOptions.CurrentValue.EliminateDoubleQuotes(formattedString);
             var parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
             // We are supporting many sample queries:
             // 1) One collection:

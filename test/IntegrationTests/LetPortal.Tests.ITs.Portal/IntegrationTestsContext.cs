@@ -47,6 +47,8 @@ namespace LetPortal.Tests.ITs.Portal
 
         public MapperOptions MapperOptions => intergrationTestOptions.MapperOptions;
 
+        public MongoOptions MongoOptions => intergrationTestOptions.MongoOptions;
+
         public static bool isRegistered;
 
         private static readonly object _lockObject = new object();
@@ -409,5 +411,7 @@ namespace LetPortal.Tests.ITs.Portal
         public MapperOptions MapperOptions { get; set; }
 
         public List<ConnectionType> RunningConnectionTypes { get; set; }
+
+        public MongoOptions MongoOptions { get; set; }
     }
 }

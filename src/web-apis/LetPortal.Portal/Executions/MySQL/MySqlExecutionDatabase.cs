@@ -108,7 +108,7 @@ namespace LetPortal.Portal.Executions.MySQL
                 };
 
                 var upperFormat = formattedString.ToUpper(System.Globalization.CultureInfo.CurrentCulture).Trim();
-                var isQuery = upperFormat.StartsWith("SELECT ", System.StringComparison.OrdinalIgnoreCase) && upperFormat.Contains("FROM ", System.StringComparison.OrdinalIgnoreCase);
+                var isQuery = upperFormat.StartsWith("SELECT ", System.StringComparison.OrdinalIgnoreCase) && upperFormat.Contains("FROM ", System.StringComparison.Ordinal);
                 var isInsert = upperFormat.StartsWith("INSERT INTO ", System.StringComparison.OrdinalIgnoreCase);
                 var isUpdate = upperFormat.StartsWith("UPDATE ", System.StringComparison.OrdinalIgnoreCase);
                 var isDelete = upperFormat.StartsWith("DELETE ", System.StringComparison.OrdinalIgnoreCase);
@@ -120,7 +120,7 @@ namespace LetPortal.Portal.Executions.MySQL
                     foreach (var parameter in parameters)
                     {
                         var fieldParam = StringUtil.GenerateUniqueName();
-                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam, System.StringComparison.OrdinalIgnoreCase);
+                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam, System.StringComparison.Ordinal);
                         listParams.Add(
                             new MySqlParameter(fieldParam, GetMySqlDbType(parameter.Name, parameter.ReplaceValue, out var castObject))
                             {

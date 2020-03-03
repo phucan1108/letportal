@@ -110,7 +110,7 @@ namespace LetPortal.Core
                         var isSkipped = false;
                         foreach (var url in defaultOptions.SkipCheckUrls)
                         {
-                            isSkipped = context.Request.Path.ToString().Contains(url, StringComparison.OrdinalIgnoreCase);
+                            isSkipped = context.Request.Path.ToString().Contains(url, StringComparison.Ordinal);
                             if (isSkipped)
                             {
                                 break;

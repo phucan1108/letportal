@@ -9,6 +9,7 @@ using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -20,6 +21,13 @@ namespace LetPortal.Portal.Executions.Mongo
     {
         public ConnectionType ConnectionType => ConnectionType.MongoDB;
 
+        private readonly IOptionsMonitor<MongoOptions> _mongoOptions;
+
+        public MongoExecutionDatabase(IOptionsMonitor<MongoOptions> mongoOptions)
+        {
+            _mongoOptions = mongoOptions;
+        }
+
         public async Task<ExecuteDynamicResultModel> Execute(
             DatabaseConnection databaseConnection, 
             string formattedString, 
@@ -29,7 +37,7 @@ namespace LetPortal.Portal.Executions.Mongo
             {                   
                 formattedString = StringUtil.ReplaceDoubleCurlyBraces(formattedString, parameters.Select(a => new Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
                 var result = new ExecuteDynamicResultModel { IsSuccess = true };
-                var query = EliminateRedundantFormat(formattedString);
+                var query = _mongoOptions.CurrentValue.EliminateDoubleQuotes(formattedString);
                 var mongoDatabase = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource);
                 var parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
                 var executionGroupType = parsingBson.First().Name;
@@ -141,7 +149,7 @@ namespace LetPortal.Portal.Executions.Mongo
             {
                 formattedString = StringUtil.ReplaceDoubleCurlyBraces(formattedString, parameters.Select(a => new Tuple<string, string, bool>(a.Name, a.ReplaceValue, a.RemoveQuotes)));
                 var result = new StepExecutionResult { IsSuccess = true };
-                var query = EliminateRedundantFormat(formattedString);
+                var query = _mongoOptions.CurrentValue.EliminateDoubleQuotes(formattedString);
                 var mongoDatabase = new MongoClient(databaseConnection.ConnectionString).GetDatabase(databaseConnection.DataSource);
                 var parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
                 var executionGroupType = parsingBson.First().Name;
@@ -240,41 +248,6 @@ namespace LetPortal.Portal.Executions.Mongo
                 return StepExecutionResult.IsFailed(ex.ToString());
             }
 
-        }
-
-        private static string EliminateRedundantFormat(string query)
-        {
-            // Eliminate ObjectId
-            var indexObjectId = query.IndexOf("\"ObjectId(");
-            while (indexObjectId > 0)
-            {
-                var closedCurly = query.IndexOf(")", indexObjectId);
-                query = query.Remove(closedCurly + 1, 1);
-                query = query.Remove(indexObjectId, 1);
-                indexObjectId = query.IndexOf("\"ObjectId(");
-            }
-
-            // Eliminate ISODate
-            var indexISODate = query.IndexOf("\"ISODate(");
-            while (indexISODate > 0)
-            {
-                var closedCurly = query.IndexOf(")", indexISODate);
-                query = query.Remove(closedCurly + 1, 1);
-                query = query.Remove(indexISODate, 1);
-                indexISODate = query.IndexOf("\"ISODate(");
-            }
-
-            // Eliminate NumberLong
-            var indexNumberLong = query.IndexOf("\"NumberLong(");
-            while (indexNumberLong > 0)
-            {
-                var closedCurly = query.IndexOf(")", indexNumberLong);
-                query = query.Remove(closedCurly + 1, 1);
-                query = query.Remove(indexNumberLong, 1);
-                indexNumberLong = query.IndexOf("\"NumberLong(");
-            }
-
-            return query;
         }
 
         private static IMongoCollection<BsonDocument> GetCollection(IMongoDatabase mongoDatabase, BsonDocument parsingBson, string operatorName)

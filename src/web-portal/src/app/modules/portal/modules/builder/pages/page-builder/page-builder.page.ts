@@ -1,20 +1,18 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { MatDialog, MatTable } from '@angular/material';
 import { ActivatedRoute, Router, Route } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { StepperSelectionEvent, STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ExtendedPageSection, ExtendedPageControl } from '../../../../../../core/models/extended.models';
 import { Guid } from 'guid-typescript'
 import { Store } from '@ngxs/store';
 import { filter, tap, map } from 'rxjs/operators';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
+import { PageBuilderStateModel, PageBuilderState } from 'stores/pages/pagebuilder.state';
 import * as _ from 'lodash';
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { Constants } from 'portal/resources/constants';
-import { ShellContants } from 'app/core/shell/shell.contants';
-import { ArrayUtils } from 'app/core/utils/array-util';
 import { SessionService } from 'services/session.service';
 import { NGXLogger } from 'ngx-logger';
 import { PortalStandardClaims } from 'app/core/security/portalClaims';
@@ -25,6 +23,7 @@ import { NextToWorkflowAction, NextToRouteAction, UpdateShellOptions, InitCreate
 import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { StateReset } from 'ngxs-reset-plugin';
 @Component({
     selector: 'let-page-builder',
     templateUrl: './page-builder.page.html',
@@ -32,7 +31,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
         provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true }
     }]
 })
-export class PageBuilderPage implements OnInit {
+export class PageBuilderPage implements OnInit, OnDestroy {
     @ViewChild('table', { static: false }) table: MatTable<ExtendedShellOption>;
     loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -97,6 +96,11 @@ export class PageBuilderPage implements OnInit {
         this.initialInputDynamicForm()
         this.onValueChanges()
         this.databaseConnections = this.databaseClient.getAll()
+    }
+    
+    
+    ngOnDestroy(): void {
+        this.store.dispatch(new StateReset(PageBuilderState))
     }
 
     nextToBuilder() {

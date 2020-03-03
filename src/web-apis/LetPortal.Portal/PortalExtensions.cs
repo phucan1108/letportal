@@ -56,6 +56,7 @@ namespace LetPortal.Portal
                 action.Invoke(portalOptions);
             }
 
+            builder.Services.Configure<MongoOptions>(builder.Configuration.GetSection("MongoOptions"));
             builder.Services.Configure<MapperOptions>(builder.Configuration.GetSection("MapperOptions"));
             builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("BackupOptions"));
             var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();

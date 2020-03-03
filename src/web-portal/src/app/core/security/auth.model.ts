@@ -36,7 +36,7 @@ export class AuthUser {
 
     claims: Array<RolePortalClaimModel> = []
 
-    constructor(public userid: string, public username: string, private roles: string[], private tokenPayload: any) { }
+    constructor(public userid: string, public username: string, public roles: string[], private tokenPayload: any) { }
 
     hasClaim(claimType: string, claimValue: string): boolean{
         const foundClaim = _.find(this.claims, claim => claim.name === claimType)

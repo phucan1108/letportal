@@ -145,21 +145,21 @@ namespace LetPortal.Portal.Services.Databases
                         };
 
                         executeParamModels.Add(executeParam);
-                        str = str.Replace("{{$" + field + "}}","{{" + paramName + "}}", StringComparison.OrdinalIgnoreCase);
+                        str = str.Replace("{{$" + field + "}}","{{" + paramName + "}}", StringComparison.Ordinal);
                     }
                     else
                     {
                         switch (replacedValue.Type)
                         {
                             case JTokenType.Object:
-                                str = str.Replace("\"{{$" + field + "}}\"", replacedValue.ToString(), StringComparison.OrdinalIgnoreCase);
+                                str = str.Replace("\"{{$" + field + "}}\"", replacedValue.ToString(), StringComparison.Ordinal);
                                 break;
                             case JTokenType.Boolean:
                             case JTokenType.Integer:
-                                str = str.Replace("\"{{$" + field + "}}\"", replacedValue.Value<string>(), StringComparison.OrdinalIgnoreCase);
+                                str = str.Replace("\"{{$" + field + "}}\"", replacedValue.Value<string>(), StringComparison.Ordinal);
                                 break;
                             default:
-                                str = str.Replace("{{$" + field + "}}", replacedValue.Value<string>(), StringComparison.OrdinalIgnoreCase);                               
+                                str = str.Replace("{{$" + field + "}}", replacedValue.Value<string>(), StringComparison.Ordinal);                               
                                 break;
                         }
                     }                     

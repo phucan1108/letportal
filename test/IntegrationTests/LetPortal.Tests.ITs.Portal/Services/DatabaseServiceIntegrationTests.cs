@@ -1,4 +1,5 @@
 using LetPortal.Core.Extensions;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Executions;
@@ -12,6 +13,8 @@ using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Services.Databases;
+using Microsoft.Extensions.Options;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,7 +42,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
+            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase(optionsMock);
             LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
             DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
             string formattedQueryString = "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('" + _context.MongoDatabaseConenction.Id + "')\"}}]}}";
@@ -59,7 +63,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
+            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase(optionsMock);
             LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
             DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
 
@@ -84,7 +89,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
+            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase(optionsMock);
             LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
             DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
 
@@ -105,7 +111,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
+            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase(optionsMock);
             LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
             DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
 
@@ -133,7 +140,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
             // Arrange
-            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase();
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
+            MongoExecutionDatabase mongoExecutionDatabase = new MongoExecutionDatabase(optionsMock);
             LetPortal.Portal.Entities.Databases.DatabaseConnection mongoDatabaseConnection = _context.MongoDatabaseConenction;
             DatabaseService databaserService = new DatabaseService(new IExecutionDatabase[] { mongoExecutionDatabase }, null);
 
@@ -720,7 +728,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             DatabaseService databaseService = new DatabaseService(null, new List<IExtractionDatabase> { mysqlExtractionDatabase });
             // Act
-            string warpQuery = "Select * From `apps` Where date(`dateCreated`)={{queryparams.date|date}}";
+            string warpQuery = "Select * From `apps` Where date(`createdDate`)={{queryparams.date|date}}";
             ExtractingSchemaQueryModel result = await databaseService
                                 .ExtractColumnSchema(_context.MySqlDatabaseConnection, warpQuery,
                                     new List<ExecuteParamModel>

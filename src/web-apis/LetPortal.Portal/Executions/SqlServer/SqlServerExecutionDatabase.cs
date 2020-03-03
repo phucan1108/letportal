@@ -111,7 +111,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                 };
 
                 var upperFormat = formattedString.ToUpper(System.Globalization.CultureInfo.CurrentCulture).Trim();
-                var isQuery = upperFormat.StartsWith("SELECT ", System.StringComparison.OrdinalIgnoreCase) && upperFormat.Contains("FROM ", System.StringComparison.OrdinalIgnoreCase);
+                var isQuery = upperFormat.StartsWith("SELECT ", System.StringComparison.OrdinalIgnoreCase) && upperFormat.Contains("FROM ", System.StringComparison.Ordinal);
                 var isInsert = upperFormat.StartsWith("INSERT INTO ", System.StringComparison.OrdinalIgnoreCase);
                 var isUpdate = upperFormat.StartsWith("UPDATE ", System.StringComparison.OrdinalIgnoreCase);
                 var isDelete = upperFormat.StartsWith("DELETE ", System.StringComparison.OrdinalIgnoreCase);
@@ -123,7 +123,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                     foreach (var parameter in parameters)
                     {
                         var fieldParam = StringUtil.GenerateUniqueName();
-                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam, StringComparison.OrdinalIgnoreCase);
+                        formattedString = formattedString.Replace("{{" + parameter.Name + "}}", "@" + fieldParam, StringComparison.Ordinal);
                         listParams.Add(
                             new SqlParameter(fieldParam, GetSqlDbType(parameter.Name, parameter.ReplaceValue, out var castObject))
                             {

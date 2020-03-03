@@ -17,6 +17,9 @@
       "DatabaseConnectionType": "MySQL"
     }
   ],
+  "MongoOptions": {
+    "AllowedFunctions": [ "ObjectId", "ISODate", "NumberLong" ]
+  },
   "MapperOptions": {
     "MySQL": {
       "decimal": "Decimal",

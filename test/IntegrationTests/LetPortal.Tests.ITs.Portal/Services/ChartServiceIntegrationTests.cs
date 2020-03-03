@@ -1,4 +1,5 @@
-﻿using LetPortal.Portal.Executions;
+﻿using LetPortal.Core.Persistences;
+using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
 using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
@@ -9,6 +10,7 @@ using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Services.Components;
+using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -37,14 +39,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 return;
             }
 
-            // Arrange
+            // Arrange               
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
             Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
             mockDatabaseServiceProvider
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MongoDatabaseConenction));
             List<IExecutionChartReport> executionCharts = new List<IExecutionChartReport>()
             {
-               new MongoExecutionChartReport(new MongoQueryExecution())
+               new MongoExecutionChartReport(new MongoQueryExecution(optionsMock))
             };
             ChartService chartService = new ChartService(mockDatabaseServiceProvider.Object, null, executionCharts);
 
@@ -59,7 +62,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=dateCreated;group=name"
+                    MappingProjection = "name=name;value=createdDate;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
@@ -76,7 +79,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     new LetPortal.Portal.Models.Charts.ChartFilterValue
                     {
                         FilterType = LetPortal.Portal.Entities.Components.FilterType.DatePicker,
-                        Name = "dateCreated",
+                        Name = "createdDate",
                         IsMultiple = true,
                         Value = string.Format("['{0}','{1}']",DateTime.UtcNow.AddDays(-1).ToString("o"), DateTime.UtcNow.AddDays(1).ToString("o"))
                     }
@@ -156,13 +159,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
-                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"dateCreated\", \"dateModified\" FROM \"apps\""
+                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },
                 Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=dateCreated;group=name"
+                    MappingProjection = "name=name;value=createdDate;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
@@ -220,13 +223,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
-                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"dateCreated\", \"dateModified\" FROM \"apps\""
+                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },
                 Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=dateCreated;group=name"
+                    MappingProjection = "name=name;value=createdDate;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
@@ -326,13 +329,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
-                    Query = "SELECT name, `displayName`, `timeSpan`, `dateCreated`, `dateModified` FROM `apps`"
+                    Query = "SELECT name, `displayName`, `timeSpan`, `createdDate`, `modifiedDate` FROM `apps`"
                 },
                 Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=dateCreated;group=name"
+                    MappingProjection = "name=name;value=createdDate;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
@@ -390,13 +393,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
-                    Query = "SELECT name, `displayName`, `timeSpan`, `dateCreated`, `dateModified` FROM `apps`"
+                    Query = "SELECT name, `displayName`, `timeSpan`, `createdDate`, `modifiedDate` FROM `apps`"
                 },
                 Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=dateCreated;group=name"
+                    MappingProjection = "name=name;value=createdDate;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
@@ -495,13 +498,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
-                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"dateCreated\", \"dateModified\" FROM \"apps\""
+                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },
                 Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=dateCreated;group=name"
+                    MappingProjection = "name=name;value=createdDate;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
@@ -559,13 +562,13 @@ namespace LetPortal.Tests.ITs.Portal.Services
             {
                 DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
                 {
-                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"dateCreated\", \"dateModified\" FROM \"apps\""
+                    Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },
                 Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions
                 {
                     ChartTitle = "aaa",
                     ChartType = LetPortal.Portal.Entities.Components.ChartType.VerticalBarChart,
-                    MappingProjection = "name=name;value=dateCreated;group=name"
+                    MappingProjection = "name=name;value=createdDate;group=name"
                 }
             }, new LetPortal.Portal.Models.Charts.ExecutionChartRequestModel
             {
