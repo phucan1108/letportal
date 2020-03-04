@@ -53,7 +53,7 @@
                 </mat-form-field>
             </div>
         </div>
-        <div class="form-group row">
+        <div class="form-group row" *ngIf="enableMultiple()">
             <label class="col-lg-2 col-form-label">Is Multiple</label>
             <div class="col-lg-1 pt-3 align-center">
                 <mat-checkbox formControlName="isMultiple">

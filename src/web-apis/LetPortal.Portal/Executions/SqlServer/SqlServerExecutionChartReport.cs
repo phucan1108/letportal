@@ -59,6 +59,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                                                 return _cSharpMapper.GetCSharpObjectByType(a, b);
                                             });
 
+                    // In case we compare exact field and data has been fetched one times
                     if (model.IsRealTime && model.LastComparedDate.HasValue && !string.IsNullOrEmpty(model.ComparedRealTimeField))
                     {
                         _chartReportQueryBuilder.AddRealTime(model.ComparedRealTimeField, model.LastComparedDate.Value, DateTime.UtcNow);
@@ -104,38 +105,6 @@ namespace LetPortal.Portal.Executions.SqlServer
                 };
                 yield return postgreParam;
             }
-        }
-
-        private SqlDbType ConvertTypeToSql(Type type)
-        {
-            if (type == typeof(decimal))
-            {
-                return SqlDbType.Decimal;
-            }
-            else if (type == typeof(double))
-            {
-                return SqlDbType.Float;
-            }
-            else if (type == typeof(long))
-            {
-                return SqlDbType.BigInt;
-            }
-            else if (type == typeof(int))
-            {
-                return SqlDbType.Int;
-            }
-            else if (type == typeof(bool))
-            {
-                return SqlDbType.Bit;
-            }
-            else if (type == typeof(DateTime))
-            {
-                return SqlDbType.DateTime2;
-            }
-            else
-            {
-                return SqlDbType.NVarChar;
-            }
-        }
+        }           
     }
 }

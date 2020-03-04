@@ -68,6 +68,11 @@ export class ChartFilterDialogComponent implements OnInit {
         return currentType !== FilterType.None && currentType !== FilterType.Checkbox && currentType !== FilterType.Select
     }
 
+    enableMultiple(){
+        let currentType = this.chartFilterFormGroup.get('type').value as FilterType
+        return currentType !== FilterType.None && currentType !== FilterType.Checkbox
+    }
+
     onSubmit() {
         if (this.chartFilterFormGroup.valid) {
             this.dialogRef.close(this.combiningChartFilter())

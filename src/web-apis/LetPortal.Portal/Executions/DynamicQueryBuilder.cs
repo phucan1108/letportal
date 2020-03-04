@@ -159,6 +159,8 @@ namespace LetPortal.Portal.Executions
 
         public DynamicQuery Build()
         {
+            // Sample of build
+            // SELECT id, username FROM users 
             string warpQuery;
             string totalWrapQuery;
             var whereIndex = dynamicQuery.CombinedQuery.ToUpper().IndexOf(" WHERE ");

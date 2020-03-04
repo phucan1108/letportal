@@ -65,29 +65,40 @@ export class ChartFilterRenderComponent implements OnInit {
                     case FilterType.NumberPicker:
                         temp.datasource = this.generateDatasourceForNumberRange(c.rangeValue, c.isMultiple)
                         let defaultValNum: any
+                        let tempDefault = StringUtils.replaceAllOccurences(c.defaultValue, "'","\"")
                         defaultValNum = ObjectUtils.isNotNull(c.defaultValue) && c.allowDefaultValue ?
-                            (c.isMultiple ? JSON.parse(c.defaultValue) : parseInt(c.defaultValue))
+                            (c.isMultiple ? JSON.parse(tempDefault) : parseInt(c.defaultValue))
                             : 0
                         formControls[tempName] = new FormControl(defaultValNum, Validators.required)
                         break
                     case FilterType.DatePicker:
-                        if (c.rangeValue) {
-                            let tempDates: string[] = JSON.parse(c.rangeValue)
+                        if (ObjectUtils.isNotNull(c.rangeValue)) {
+                            let tempStr = StringUtils.replaceAllOccurences(c.rangeValue, "'", "\"")
+                            let tempDates: string[] = JSON.parse(tempStr)
                             if (tempDates.length == 1) {
                                 // Only min date
+                                // Accept some values: ['2020-02-02'] or ['Now'] or ['Now-5'] or ['Now+5']
                                 temp.minDate = this.convertNowWords(tempDates[0], false)
+
+                                let currentYear = (new Date()).getFullYear()
+                                temp.maxDate = new Date(currentYear + 30, 1, 1)
                             }
                             else if (tempDates.length == 2) {
                                 temp.minDate = this.convertNowWords(tempDates[0], false)
                                 temp.maxDate = this.convertNowWords(tempDates[1], false)
                             }
                         }
+                        else{
+                            temp.minDate = new Date(1970,1,1)
+                            temp.maxDate = new Date()
+                        }
 
                         if (c.isMultiple) {
                             let defaultMinDate: any = new Date()
                             let defaultMaxDate: any = new Date()
                             if(ObjectUtils.isNotNull(c.defaultValue)){
-                                let tempDates: string[] = JSON.parse(c.defaultValue)
+                                let tempStr = StringUtils.replaceAllOccurences(c.defaultValue, "'", "\"")
+                                let tempDates: string[] = JSON.parse(tempStr)
                                 if (tempDates.length == 1) {
                                     defaultMinDate = this.convertNowWords(tempDates[0], false)
                                 }
@@ -97,10 +108,10 @@ export class ChartFilterRenderComponent implements OnInit {
                                 }
                             }
                             else{
-
-                            }                           
-                            formControls[tempName + '_min'] = new FormControl(defaultMinDate, Validators.required)
-                            formControls[tempName + '_max'] = new FormControl(defaultMaxDate, Validators.required)
+                                // If we don't set Default, set it to Now
+                                formControls[tempName + '_min'] = new FormControl(defaultMinDate, Validators.required)
+                                formControls[tempName + '_max'] = new FormControl(defaultMaxDate, Validators.required)
+                            }                                                       
                         }
                         else {
                             let defaultMinDate: any
@@ -109,21 +120,30 @@ export class ChartFilterRenderComponent implements OnInit {
                         }
                         break
                     case FilterType.MonthYearPicker:
-                        if (c.rangeValue) {
-                            let tempDates: string[] = JSON.parse(c.rangeValue)
+                        if (ObjectUtils.isNotNull(c.rangeValue)) {
+                            let tempStr = StringUtils.replaceAllOccurences(c.rangeValue, "'", "\"")
+                            let tempDates: string[] = JSON.parse(tempStr)
                             if (tempDates.length == 1) {
                                 // Only min date
                                 temp.minDate = this.convertNowWords(tempDates[0], true)
+                                let currentYear = (new Date()).getFullYear()
+                                let currentMonth = (new Date()).getMonth()
+                                temp.maxDate = new Date(currentYear + 30, currentMonth, 1)
                             }
                             else if (tempDates.length == 2) {
                                 temp.minDate = this.convertNowWords(tempDates[0], true)
                                 temp.maxDate = this.convertNowWords(tempDates[1], true)
                             }
                         }
+                        else{
+                            temp.minDate = new Date(1970,1,1)
+                            temp.maxDate = new Date()
+                        }
                         if (c.isMultiple) {
                             let defaultMinDate: any
                             let defaultMaxDate: any
-                            let tempDates: string[] = JSON.parse(c.defaultValue)
+                            let tempStr = StringUtils.replaceAllOccurences(c.defaultValue, "'", "\"")
+                            let tempDates: string[] = JSON.parse(tempStr)
                             if (tempDates.length == 1) {
                                 defaultMinDate = this.convertNowWords(tempDates[0], true)
                             }
@@ -224,7 +244,7 @@ export class ChartFilterRenderComponent implements OnInit {
     }
 
     private convertNowWords(nowStr: string, isMonthPicker: boolean) {
-        let nowIndex = nowStr.indexOf('Now')
+        let nowIndex = nowStr.toUpperCase().indexOf('NOW')
         if (nowIndex > -1) {
             let nowDate = new Date()
             if (nowStr.length === 3) {
@@ -253,11 +273,14 @@ export class ChartFilterRenderComponent implements OnInit {
             }
         }
         else {
+            
             if (isMonthPicker) {
-                let splitted = nowStr.split('/')
+                // 2020-02
+                let splitted = nowStr.split('-')
                 return new Date(parseInt(splitted[1]), parseInt(splitted[0]), 1)
             }
             else {
+                // 2020-02-02
                 return new Date(nowStr)
             }
         }
@@ -333,7 +356,8 @@ export class ChartFilterRenderComponent implements OnInit {
         }
         else {
             // return as number[]
-            let arrayNum: number[] = JSON.parse(numberRange)
+            let temp = StringUtils.replaceAllOccurences(numberRange, "'","\"")
+            let arrayNum: number[] = JSON.parse(temp)
             return arrayNum.map(a => ({
                 name: a.toString(),
                 value: a

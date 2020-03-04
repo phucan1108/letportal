@@ -109,7 +109,9 @@ namespace LetPortal.Portal.Executions
                 }
             }
 
-            if (allowRealTime && !string.IsNullOrEmpty(comparedRealTimeField) && warpperString.Contains(options.RealTimeWord))
+            if (allowRealTime 
+                && !string.IsNullOrEmpty(comparedRealTimeField) 
+                && warpperString.Contains(options.RealTimeWord))
             {
                 warpperString = warpperString.Replace(options.RealTimeWord, GenerateRealTimeComparision(comparedRealTimeField, lastComparedDate, comparedDate, ref listParams));
             }

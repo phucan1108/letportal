@@ -154,7 +154,6 @@ export class StaticResources {
 
     public static chartFilterTypes(){
         return [
-           { name: 'None', value: FilterType.None } ,
            { name: 'Checkbox', value: FilterType.Checkbox } , 
            { name: 'Select', value: FilterType.Select } ,
            { name: 'NumberPicker', value: FilterType.NumberPicker } ,

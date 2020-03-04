@@ -68,14 +68,14 @@ export class ChartDatasourceComponent implements OnInit {
         _.forEach(columnFields, (element) => {
             // By default, we need to remove all fields that contain id or special char
             const fieldName = element.name.toLowerCase()
-            if (fieldName.indexOf('id') < 2
+            if ((fieldName === 'id' || fieldName === '_id')
                 && !this.format.test(fieldName)
                 && !this.ignoreBsonFieldTypes(element.fieldType)) {
                 // Ignore some special fields
                 let chartFilter: ChartFilter = {
-                    name: (element.name === '_id' || element.name === 'id') ? 'id' : element.name,
+                    name: element.name,
                     displayName: element.displayName,
-                    isHidden: (element.name === '_id' || element.name === 'id'),
+                    isHidden: false,
                     isMultiple: false,
                     allowDefaultValue: false,
                     defaultValue: '',

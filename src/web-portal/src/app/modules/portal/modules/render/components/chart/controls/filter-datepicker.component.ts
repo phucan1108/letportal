@@ -22,6 +22,9 @@ export class FilterDatepickerComponent implements OnInit {
     controlNameMin = ''
     controlNameMax = ''
     isMultiple = false
+
+    minDate: Date
+    maxDate: Date
     constructor(
         private fb: FormBuilder
     ) { }
@@ -39,5 +42,8 @@ export class FilterDatepickerComponent implements OnInit {
             this.controlNameMin = this.controlName + '_min'
             this.controlNameMax = this.controlName + '_max'
         }
+
+        this.minDate = this.filter.minDate
+        this.maxDate = this.filter.maxDate
     }
 }
