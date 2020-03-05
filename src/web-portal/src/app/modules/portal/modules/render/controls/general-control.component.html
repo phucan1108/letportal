@@ -90,6 +90,7 @@
             </mat-error>
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Textarea">
+            <mat-label>{{control.defaultOptions.placeholder}}</mat-label>
             <textarea [formControlName]="control.name" [id]="control.name" matInput #formNameInput
                 [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled"
                 [rows]="control.defaultOptions.textarearows"></textarea>

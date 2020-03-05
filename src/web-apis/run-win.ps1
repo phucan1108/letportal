@@ -7,14 +7,15 @@
 [CmdletBinding()]
 Param
 (
-	[String] $publishFolder = "C:\LetPortal"
+	[String] $publishFolder = "C:\LetPortal",
+    [String] $environment = "Local"
 )
 
 if((Test-Path $publishFolder) -eq 0){
     Write-Host "Publish folder isn't exist, please check again or running publish-win.ps1.'"
 }
 
-$Env:ASPNETCORE_ENVIRONMENT = "Local"
+$Env:ASPNETCORE_ENVIRONMENT = $environment
 
 Set-Location ($publishFolder + "\LetPortal.ServiceManagementApis")
 Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.ServiceManagementApis.dll" -Verb RunAs

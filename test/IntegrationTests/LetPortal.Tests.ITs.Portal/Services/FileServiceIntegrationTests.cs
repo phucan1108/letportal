@@ -637,8 +637,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             DiskStorageOptions diskOptions = new DiskStorageOptions
             {
                 AllowDayFolder = true,
-                IsStoredInTempFolder = false,
-                Path = "~"
+                Path = "~/UploadFiles"
             };
 
             DatabaseOptions databaseOptions = new Core.Persistences.DatabaseOptions
