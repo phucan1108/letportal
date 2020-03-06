@@ -1,5 +1,5 @@
 #!/bin/bash
-publishFolder=${1:-~/.letportal-pub}
+publishFolder=${1:-~/.letportal-pub/web-apis}
 environment=${2:-Local}
 # 1. Start Service Management
 screen -dmS letportal-sm

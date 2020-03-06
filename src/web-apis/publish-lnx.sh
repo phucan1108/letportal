@@ -1,5 +1,5 @@
 #!/bin/bash
-publishFolder=${1:-~/.letportal-pub}
+publishFolder=${1:-~/.letportal-pub/web-apis}
 if [ -d $publishFolder ] 
 then
  rm $publishFolder -rf

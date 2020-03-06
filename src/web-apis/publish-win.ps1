@@ -7,11 +7,12 @@
 [CmdletBinding()]
 Param
 (
-	[String] $publishFolder = "C:\LetPortal"
+	[String] $publishFolder = "C:\.letportal-pub\web-apis"
 )
 
 if((Test-Path $publishFolder) -eq 1){
     Remove-Item -LiteralPath $publishFolder –Force  -Recurse
+    New-Item -Path $publishFolder -Type Directory
 }
 else{
     New-Item -Path $publishFolder -Type Directory

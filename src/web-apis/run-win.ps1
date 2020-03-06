@@ -7,7 +7,7 @@
 [CmdletBinding()]
 Param
 (
-	[String] $publishFolder = "C:\LetPortal",
+	[String] $publishFolder = "C:\.letportal-pub\web-apis",
     [String] $environment = "Local"
 )
 
