@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>0.0.5</Version>
+    <Version>0.5.0</Version>
     <Company>LetPortal</Company>
     <Product>LetPortal</Product>
     <Authors>An Quang Phuc Le</Authors>
