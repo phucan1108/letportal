@@ -83,7 +83,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                             this.readyToRender = true
                             break
                         case GatherSectionValidations:
-                            if(this.builderFormGroup.invalid){
+                            if (this.builderFormGroup.invalid) {
                                 this.logger.debug('Section errors', this.collectAllControlsState(this.builderFormGroup.controls))
                             }
                             this.store.dispatch(new SectionValidationStateAction(this.section.name, this.builderFormGroup.valid))
@@ -265,12 +265,12 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             },
                 this.generateFormValidators(control.validators, formControls),
                 this.generateFormAsyncValidators(
-                    control.asyncValidators, 
-                    mapDataControl.bindName, 
+                    control.asyncValidators,
+                    mapDataControl.bindName,
                     mapDataControl.controlFullName,
                     this.section.name,
                     control.name,
-                    controlData, 
+                    controlData,
                     formControls)
             )
         })
@@ -283,7 +283,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         this.builderFormGroup = new FormGroup(formControls)
     }
 
-    private collectAllControlsState(controls: any){
+    private collectAllControlsState(controls: any) {
         let controlStates = new Object()
         Object.keys(controls).forEach(key => {
             const control = <FormControl>controls[key]
@@ -311,8 +311,8 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         }
 
         // Depends on control type, we need to doublecheck data and set default value if data is null
-        if ((control.type == ControlType.AutoComplete 
-                || control.type == ControlType.Select) 
+        if ((control.type == ControlType.AutoComplete
+            || control.type == ControlType.Select)
             && control.defaultOptions.multiple) {
             if (controlData) {
                 // If the data isn't an array, maybe it is array string, try to parse
@@ -330,7 +330,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                 controlData = []
             }
         }
-        else if (control.type == ControlType.Checkbox || control.type == ControlType.Slide) {
+        else if ((control.type == ControlType.Checkbox || control.type == ControlType.Slide) && controlData) {
             if (controlData.toString() == '0' || controlData.toString() == '1') {
                 control.defaultOptions.allowZero = true
             }
@@ -428,13 +428,13 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         _.forEach(validators, validator => {
             asyncValidatorFns.push(PortalValidators
                 .addAsyncValidator(
-                    validator, 
-                    controlBindName, 
-                    controlFullName, 
+                    validator,
+                    controlBindName,
+                    controlFullName,
                     sectionName,
                     controlName,
-                    defaultValue, 
-                    this.pageService, 
+                    defaultValue,
+                    this.pageService,
                     this.customHttpService))
         })
 

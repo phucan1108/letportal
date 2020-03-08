@@ -84,20 +84,20 @@ export class StandardPopulationComponent implements OnInit {
             }
 
             pageControl.pageControlEvents = this.generateEventsList(pageControl)
-
+            let beautifulName = this.getBeautifulName(pageControl.name)
             let defaultOptions: ExtendedShellOption[] = [
                 {
                     id: '',
                     description: 'Label will be displayed when it isn\'t empty',
                     key: 'label',
-                    value: this.getBeautifulName(pageControl.name),
+                    value: beautifulName,
                     allowDelete: false
                 },
                 {
                     id: '',
                     description: 'Tooltip will be displayed when it isn\'t empty',
-                    key: 'tooltip',
-                    value: this.generateTooltipByControlType(pageControl.type),
+                    key: 'placeholder',
+                    value: this.generateTooltipByControlType(pageControl.type,beautifulName),
                     allowDelete: false
                 },
                 {
@@ -159,15 +159,15 @@ export class StandardPopulationComponent implements OnInit {
         this.onPopulatedControls.emit(this.controls)
     }
 
-    generateTooltipByControlType(controlType: ControlType) {
+    generateTooltipByControlType(controlType: ControlType, label: string) {
         switch (controlType) {
             case ControlType.Textbox:
-                return 'Please enter value'
+                return 'Please enter ' + label
             case ControlType.Select:
             case ControlType.AutoComplete:
                 return 'Please choose one option'
             case ControlType.Number:
-                return 'Please enter one number'
+                return 'Please enter ' + label
             case ControlType.Slide:
             case ControlType.Checkbox:
                 return 'Turn On/Off'
