@@ -16,7 +16,7 @@ You can read here [Documentation](https://docs.letportal.app) for full documenta
 
 # Licenses
 
-LET Portal typically use [MIT](LICENSE.TXT).
+LET Portal typically use [MIT](LICENSE).
 
 Copyrigh@2020 An Quang Phuc Le.
 
