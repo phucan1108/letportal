@@ -1,7 +1,7 @@
-﻿using LetPortal.Portal.Entities.Files;
+﻿using System.Threading.Tasks;
+using LetPortal.Portal.Entities.Files;
 using LetPortal.Portal.Models.Files;
 using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Files
 {
@@ -11,8 +11,14 @@ namespace LetPortal.Portal.Services.Files
 
         Task<string> GetFileMIMEType(string fileName);
 
-        Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader);
+        Task<bool> ValidateFile(IFormFile file);
 
-        Task<ResponseDownloadFile> DownloadFileAsync(string fileId);
+        Task<bool> ValidateFile(string localFilePath);
+
+        Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader, bool allowCompress);
+
+        Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader, bool allowCompress);
+
+        Task<ResponseDownloadFile> DownloadFileAsync(string fileId, bool wantCompress);
     }
 }

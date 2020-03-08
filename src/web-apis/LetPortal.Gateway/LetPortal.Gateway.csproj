@@ -1,18 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>LetPortal.Gateway</AssemblyName>
     <RootNamespace>LetPortal.Gateway</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>0.5.0</Version>
+    <Company>LetPortal</Company>
+    <Product>LetPortal</Product>
+    <Authors>An Quang Phuc Le</Authors>
+    <Description>LetPortal is an internal web platform which helps small company to manage their data. The project is open-source project. There are no fee charged to use or modify.</Description>
+    <Copyright>An Quang Phuc Le</Copyright>
+    <PackageProjectUrl>http://letportal.app</PackageProjectUrl>
+    <PackageTags>Web Portal; .NET Core;</PackageTags>
   </PropertyGroup>
-
+  <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Ocelot" Version="13.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Ocelot" Version="14.0.5" />
   </ItemGroup>
 
   <ItemGroup>

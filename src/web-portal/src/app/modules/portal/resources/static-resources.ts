@@ -1,4 +1,4 @@
-import { RouteType, ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, RedirectType, FieldValueType, AsyncValidatorType } from "services/portal.service"
+import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
 
 export class StaticResources {
 
@@ -50,7 +50,6 @@ export class StaticResources {
         return [
             { name: 'Execute Database', value: ActionType.ExecuteDatabase },
             { name: 'Http Service', value: ActionType.CallHttpService },
-            { name: 'Workflow', value: ActionType.CallWorkflow },
             { name: 'Redirect', value: ActionType.Redirect }
         ]
     }
@@ -66,6 +65,7 @@ export class StaticResources {
             { name: 'Label', value: ControlType.Label },
             { name: 'Text box', value: ControlType.Textbox },
             { name: 'Textarea', value: ControlType.Textarea },
+            { name: 'Email', value: ControlType.Email },
             { name: 'Number', value: ControlType.Number },
             { name: 'Date Picker', value: ControlType.DateTime },
             { name: 'Checkbox', value: ControlType.Checkbox },
@@ -76,7 +76,8 @@ export class StaticResources {
             { name: 'Rich Text Editor', value: ControlType.RichTextEditor },
             { name: 'Uploader', value: ControlType.Uploader },
             { name: 'MultiUploader', value: ControlType.MultiUploader },
-            { name: 'Icon Picker', value: ControlType.IconPicker }
+            { name: 'Icon Picker', value: ControlType.IconPicker },            
+            { name: 'Markdown Editor', value: ControlType.MarkdownEditor }
         ];
     }
 
@@ -84,7 +85,8 @@ export class StaticResources {
         return [
             { name: 'Standard', value: SectionContructionType.Standard },
             { name: 'Dynamic List', value: SectionContructionType.DynamicList },
-            { name: 'Array', value: SectionContructionType.Standard }
+            { name: 'Chart', value: SectionContructionType.Chart }
+            // { name: 'Array', value: SectionContructionType.Standard }
         ]
     }
 
@@ -114,21 +116,7 @@ export class StaticResources {
             { name: 'accent', value: 'accent' }
         ]
     }
-
-    public static routeTypes() {
-        return [
-            { name: 'Through Page', value: RouteType.ThroughPage },
-            { name: 'Through Url', value: RouteType.ThroughUrl }
-        ]
-    }
-
-    public static redirectionTypes() {
-        return [
-            { name: 'Page', value: RedirectType.ThroughPage },
-            { name: 'Custom Url', value: RedirectType.ThroughUrl }
-        ]
-    }
-
+    
     public static datasourceTypes() {
         return [
             { name: 'Static Resource', value: DatasourceControlType.StaticResource },
@@ -146,6 +134,32 @@ export class StaticResources {
             { name: 'Slide', value: FieldValueType.Slide },
             { name: 'Select', value: FieldValueType.Select },
         ]
+    }
+
+    public static chartTypes(){
+        return [
+            { name: 'Vertical Bar Chart', value: ChartType.VerticalBarChart },
+            { name: 'Horizontal Bar Chart', value: ChartType.HorizontalBarChart },
+            { name: 'Grouped Vertical Bar Chart', value: ChartType.GroupedVerticalBarChart },
+            { name: 'Grouped Horizontal Bar Chart', value: ChartType.GroupedHorizontalBarChart },
+            { name: 'Pie Chart', value: ChartType.PieChart },
+            { name: 'Advanced Pie Chart', value: ChartType.AdvancedPieChart },
+            { name: 'Pie Grid', value: ChartType.PieGrid },
+            { name: 'Line Chart', value: ChartType.LineChart },
+            { name: 'Area Chart', value: ChartType.AreaChart },
+            { name: 'Gauge', value: ChartType.Gauge },
+            { name: 'Number Card', value: ChartType.NumberCard }
+        ]
+    }
+
+    public static chartFilterTypes(){
+        return [
+           { name: 'Checkbox', value: FilterType.Checkbox } , 
+           { name: 'Select', value: FilterType.Select } ,
+           { name: 'NumberPicker', value: FilterType.NumberPicker } ,
+           { name: 'DatePicker', value: FilterType.DatePicker } ,
+           { name: 'MonthYearPicker', value: FilterType.MonthYearPicker } 
+        ] 
     }
 
     public static iconsList() {

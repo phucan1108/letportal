@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using LetPortal.Core.Utils;
+using Microsoft.AspNetCore.Http;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using System;
 
 namespace LetPortal.Core.Logger
 {
@@ -20,10 +21,11 @@ namespace LetPortal.Core.Logger
 
         public void Enrich(Serilog.Events.LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            var traceId = _httpContextAccessor.HttpContext.Request.Headers[Constants.TraceIdHeader].ToString();
-            var userSessionId = _httpContextAccessor.HttpContext.Request.Headers[Constants.UserSessionIdHeader].ToString();
+            var traceId = StringUtil.DecodeBase64ToUTF8(_httpContextAccessor.HttpContext.Request.Headers[Constants.TraceIdHeader].ToString());
+            var userSessionId = StringUtil.DecodeBase64ToUTF8(_httpContextAccessor.HttpContext.Request.Headers[Constants.UserSessionIdHeader].ToString());
             logEvent.AddPropertyIfAbsent(new LogEventProperty("TraceId", new ScalarValue(traceId)));
             logEvent.AddPropertyIfAbsent(new LogEventProperty("UserSessionId", new ScalarValue(userSessionId)));
+
         }
 
         public void Debug(string message, params object[] logObjects)

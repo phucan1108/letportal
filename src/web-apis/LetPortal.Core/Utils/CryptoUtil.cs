@@ -7,7 +7,7 @@ namespace LetPortal.Core.Utils
 {
     public class CryptoUtil
     {
-        private const string EncryptKey = "FIU.Social";
+        private const string EncryptKey = "LetPortal";
 
         public static string EncryptString(string text, string keyString = EncryptKey)
         {
@@ -70,16 +70,16 @@ namespace LetPortal.Core.Utils
                     return result;
                 }
             }
-        }        
+        }
 
         public static string ToSHA256(string text)
         {
-            using (SHA256 sha256Hash = SHA256.Create())
+            using (var sha256Hash = SHA256.Create())
             {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(text));
+                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(text));
 
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
+                var builder = new StringBuilder();
+                for (var i = 0; i < bytes.Length; i++)
                 {
                     builder.Append(bytes[i].ToString("x2"));
                 }

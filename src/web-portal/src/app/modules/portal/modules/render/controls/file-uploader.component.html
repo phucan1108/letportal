@@ -1,0 +1,51 @@
+<div [formGroup]="form" class="pt-2">
+    <div class="row">
+        <div class="col-lg-12">
+            <button mat-stroked-button color="primary" class="float-left" [disabled]="disabled">Choose File</button>
+            <input class="file-input" type="file" #fileInput (change)="onFileChange($event)" [multiple]="multiple" [disabled]="disabled">
+        </div>
+        <ng-container *ngIf="hasSelectedFile">
+            <div class="col-lg-12">
+                <mat-list role="list" class="list-items">
+                    <mat-list-item role="listitem" *ngFor="let file of selectedFiles; last as last">
+                        <div class="row" style="width: 100%;">
+                            <div class="col-lg-12 p-0" style="display: flex;">
+                                <span class="pt-2" *ngIf="!canDownloadableFile(file)">{{file.name}} -
+                                    {{getFileSizeInKb(file.size)}}Kb</span>
+                                <a class="pt-2" target="blank" [href]="getDownloadableLink(file)"
+                                    *ngIf="canDownloadableFile(file)">{{file.name}}</a>
+                                <button mat-icon-button class="float-left" color="primary" matTooltip="Upload"
+                                    (click)="upload(file)" *ngIf="!canDownloadableFile(file)">
+                                    <mat-icon>cloud_upload</mat-icon>
+                                </button>
+                                <button mat-icon-button class="float-left" color="accent" matTooltip="Remove"
+                                    (click)="remove(file)">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+                            </div>
+                            <div class="col-lg-12 p-0" *ngIf="!!progress">
+                                <mat-progress-bar mode="determinate" *ngIf="!!progress[file.name]"
+                                    [value]="progress[file.name].progress | async"></mat-progress-bar>
+                            </div>
+                        </div>
+                        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+            <div class="col-lg-12" *ngIf="form.get(control.name).invalid">
+                <mat-form-field class="field-full-width fileupload-wrapper">
+                    <input [formControlName]="control.name" [id]="control.name" matInput [hidden]="true">
+                    <mat-error *ngIf="isInvalid('required')">
+                        {{getErrorMessage('required')}}
+                    </mat-error>
+                    <mat-error *ngIf="isInvalid('maximumsize')">
+                        {{getErrorMessage('maximumsize')}}
+                    </mat-error>
+                    <mat-error *ngIf="isInvalid('fileextensions')">
+                        {{getErrorMessage('fileextensions')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </ng-container>
+    </div>
+</div>

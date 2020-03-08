@@ -1,10 +1,10 @@
-﻿using LetPortal.Core.Extensions;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using LetPortal.Core.Extensions;
 using LetPortal.Core.Logger;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace LetPortal.Core.Monitors
 {
@@ -23,7 +23,7 @@ namespace LetPortal.Core.Monitors
             IMonitorHealthCheck monitorHealthCheck,
             IServiceLogger<AddRequestMonitorMiddleware> serviceLogger)
         {
-            if(monitorOption.CurrentValue.Enable)
+            if (monitorOption.CurrentValue.Enable)
             {
                 var requestMonitor = new RequestMonitor
                 {

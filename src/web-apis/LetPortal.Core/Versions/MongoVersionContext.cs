@@ -1,24 +1,32 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Persistences.Attributes;
-using MongoDB.Driver;
-using System;
+﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Persistences.Attributes;
+using MongoDB.Driver;
 
 namespace LetPortal.Core.Versions
 {
     public class MongoVersionContext : IVersionContext
     {
-        private IMongoClient mongoClient;
+        private readonly IMongoClient mongoClient;
 
-        private IMongoDatabase mongoDatabase;
+        private readonly IMongoDatabase mongoDatabase;
 
         public MongoVersionContext(DatabaseOptions databaseOptions)
         {
-            if (mongoClient == null) mongoClient = new MongoClient(databaseOptions.ConnectionString);
+            if (mongoClient == null)
+            {
+                mongoClient = new MongoClient(databaseOptions.ConnectionString);
+            }
 
             mongoDatabase = mongoClient.GetDatabase(databaseOptions.Datasource);
         }
+
+        public ConnectionType ConnectionType { get; set; } = ConnectionType.MongoDB;
+        public object DatabaseOptions { get; set; }
+        public object ServiceManagementOptions { get; set; }
+        public object IdentityDbOptions { get; set; }
 
         public void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity
         {
@@ -28,7 +36,7 @@ namespace LetPortal.Core.Versions
 
         public void BulkInsertData<T>(T[] entities) where T : Entity
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 entity.Check();
             }
@@ -47,11 +55,21 @@ namespace LetPortal.Core.Versions
             mongoDatabase.DropCollection(GetEntityName(typeof(T)));
         }
 
+        public void ExecuteRaw(string rawCommand)
+        {
+            // Do nothing
+        }
+
         public void InsertData<T>(T entity) where T : Entity
         {
             entity.Check();
             var entityCollection = GetMongoCollection<T>();
             entityCollection.InsertOne(entity);
+        }
+
+        public void SaveChange()
+        {
+            // Do nothing
         }
 
         public void UpdateData<T>(string id, T entity) where T : Entity

@@ -2,6 +2,6 @@
 {
     public static class DatabaseConstants
     {
-        public const string DatabaseCollection = "databases";       
+        public const string DatabaseCollection = "databases";
     }
 }

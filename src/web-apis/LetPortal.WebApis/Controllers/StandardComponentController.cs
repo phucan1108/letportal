@@ -1,13 +1,12 @@
-﻿using LetPortal.Core.Logger;
-using LetPortal.Portal.Entities.SectionParts;
-using LetPortal.Portal.Handlers.Components.Standards.Commands;
-using LetPortal.Portal.Handlers.Components.Standards.Queries;
-using LetPortal.Portal.Handlers.Components.Standards.Requests;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Logger;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Models.Shared;
+using LetPortal.Portal.Repositories.Components;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -15,50 +14,89 @@ namespace LetPortal.WebApis.Controllers
     [ApiController]
     public class StandardComponentController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IStandardRepository _standardRepository;
 
-        private readonly IServiceLogger<StandardComponentController> _serviceLogger;
+        private readonly IServiceLogger<StandardComponentController> _logger;
 
         public StandardComponentController(
-            IMediator mediator, 
-            IServiceLogger<StandardComponentController> serviceLogger)
+            IStandardRepository standardRepository,
+            IServiceLogger<StandardComponentController> logger)
         {
-            _serviceLogger = serviceLogger;
-            _mediator = mediator;
+            _standardRepository = standardRepository;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(StandardComponent), 200)]
         public async Task<IActionResult> GetOne(string id)
         {
-            return Ok(await _mediator.Send(new GetOneStandardComponentRequest(new Portal.Handlers.Components.Standards.Queries.GetOneStandardComponentQuery { StandardId = id })));
+            var result = await _standardRepository.GetOneAsync(id);
+            _logger.Info("Found standard component: {@result}", result);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/render")]
+        [ProducesResponseType(typeof(StandardComponent), 200)]
+        public async Task<IActionResult> GetOneForRender(string id)
+        {
+            var result = await _standardRepository.GetOneForRenderAsync(id);
+            _logger.Info("Found standard component: {@result}", result);
+            return Ok(result);
+        }
+
+        [HttpGet("short-standards")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetSortStandards([FromQuery] string keyWord = null)
+        {
+            return Ok(await _standardRepository.GetShortStandards(keyWord));
         }
 
         [HttpPost("")]
         [ProducesResponseType(typeof(string), 200)]
-        public async Task<IActionResult> CreateOne([FromBody] CreateStandardComponentCommand createStandardComponentCommand)
+        public async Task<IActionResult> CreateOne([FromBody] StandardComponent standardComponent)
         {
-            return Ok(await _mediator.Send(new CreateStandardComponentRequest(createStandardComponentCommand)));
+            if (ModelState.IsValid)
+            {
+                standardComponent.Id = DataUtil.GenerateUniqueId();
+                await _standardRepository.AddAsync(standardComponent);
+                _logger.Info("Created standard component: {@standardComponent}", standardComponent);
+                return Ok(standardComponent.Id);
+            }
+
+            return BadRequest();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOne(string id, [FromBody] UpdateStandardComponentCommand updateStandardComponentCommand)
+        public async Task<IActionResult> UpdateOne(string id, [FromBody] StandardComponent standardComponent)
         {
-            updateStandardComponentCommand.StandardId = id;
-            return Ok(await _mediator.Send(new UpdateStandardComponentRequest(updateStandardComponentCommand)));
+            if (ModelState.IsValid)
+            {
+                standardComponent.Id = id;
+                await _standardRepository.UpdateAsync(id, standardComponent);
+                _logger.Info("Updated standard component: {@standardComponent}", standardComponent);
+                return Ok();
+            }
+
+            return BadRequest();
         }
 
         [HttpPost("bulk")]
-        public async Task<IActionResult> CreateBulk([FromBody] CreateBulkStandardComponentsCommand createBulkStandardComponentsCommand)
+        public async Task<IActionResult> CreateBulk([FromBody] List<StandardComponent> standardComponents)
         {
-            await _mediator.Send(new CreateBulkStandardComponentsRequest(createBulkStandardComponentsCommand));
+            standardComponents.ForEach(a =>
+            {
+                a.Id = DataUtil.GenerateUniqueId();
+            });
+            _logger.Info("Created standard components: {@standardComponents}", standardComponents);
+            await _standardRepository.AddBulkAsync(standardComponents);
             return Ok();
         }
 
         [HttpDelete("bulk")]
         public async Task<IActionResult> DeleteBulk([FromQuery] string ids)
         {
-            await _mediator.Send(new DeleteBulkStandardComponentsRequest(new DeleteBulkStandardComponentsCommand { StandardIds = ids.Split(";").ToList() }));
+            _logger.Info("Deleted bulk standard components: {ids}", ids);
+            await _standardRepository.DeleteBulkAsync(ids.Split(";"));
             return Ok();
         }
 
@@ -66,14 +104,25 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(List<StandardComponent>), 200)]
         public async Task<IActionResult> GetManys([FromQuery] string ids)
         {
-            return Ok(await _mediator.Send(new GetAllStandardComponentsByIdsRequest(new Portal.Handlers.Components.Standards.Queries.GetAllStandardComponentsByIdsQuery { Ids = ids?.Split(";").ToList() })));
+            if (!string.IsNullOrEmpty(ids))
+            {
+                var result = await _standardRepository.GetAllByIdsAsync(ids.Split(";").ToList());
+                _logger.Info("Get bulk standard components: {@result}", result);
+                return Ok(result);
+            }
+            else
+            {
+                var result = await _standardRepository.GetAllAsync(isRequiredDiscriminator: true);
+                _logger.Info("Get bulk standard components: {@result}", result);
+                return Ok(result);
+            }
         }
 
         [HttpGet("check-exist/{name}")]
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> CheckExist(string name)
         {
-            return Ok(await _mediator.Send(new CheckNameIsExistRequest(new CheckNameIsExistQuery { Name = name })));
+            return Ok(await _standardRepository.IsExistAsync(a => a.Name == name));
         }
     }
 }

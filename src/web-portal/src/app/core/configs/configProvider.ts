@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { AppendShellConfigsAction } from 'stores/shell/shell.actions';
 import { ObjectUtils } from '../utils/object-util';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
 

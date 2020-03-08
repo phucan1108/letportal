@@ -1,5 +1,5 @@
-﻿using LetPortal.Identity.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using LetPortal.Identity.Entities;
 
 namespace LetPortal.Identity.Models
 {

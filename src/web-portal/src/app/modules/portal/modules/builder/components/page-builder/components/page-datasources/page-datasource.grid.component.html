@@ -1,0 +1,54 @@
+<div class="grid-container-sub">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Page Datasources
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="addNewDatasource()">New Datasource</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <m-table [(value)]="currentDatasources" #mtable [selectable]="false" [selectionHandler]="false">
+                <m-column field="name" header="Datasource Name" editable="true">
+                    <ng-template let-col let-row="row" mTemplate="editor">
+                        <mat-form-field class="field-full-width pl-4" style="width: 250px">
+                            <input [(ngModel)]="row.name" matInput>
+                        </mat-form-field>
+                    </ng-template>
+                </m-column>
+                <m-column field="triggerCondition" header="Trigger Condition" editable="true">
+                    <ng-template let-col let-row="row" mTemplate="editor">
+                        <mat-form-field class="field-full-width pl-4" style="width: 250px">
+                            <input [(ngModel)]="row.triggerCondition" matInput>
+                        </mat-form-field>
+                    </ng-template>
+                </m-column>
+                <m-column field="isActive" header="Active" editable="true">
+                    <ng-template let-col let-row="row" mTemplate="editor">
+                        <mat-slide-toggle [(ngModel)]="row.isActive" style="padding-top: 10px; padding-left: 30px;">
+                        </mat-slide-toggle>
+                    </ng-template>
+                </m-column>
+                <m-column field="name" header="Actions">
+                    <ng-template let-col let-row="row" mTemplate="body">
+                        <button mat-icon-button color="primary" type="button" matTooltip="Edit Datasource Options"
+                            (click)="editDatasourceOption(row)">
+                            <mat-icon>library_books</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" type="button" matTooltip="Delete Datasource"
+                            (click)="deleteDatasource(row)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </ng-template>
+                </m-column>
+                <ng-template mTemplate="emptyTable">
+                    <div class="align-center">No records</div>
+                </ng-template>
+            </m-table>
+        </mat-card-content>
+    </mat-card>
+</div>

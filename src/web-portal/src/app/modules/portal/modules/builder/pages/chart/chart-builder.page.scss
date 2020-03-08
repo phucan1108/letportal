@@ -1,0 +1,49 @@
+.dashboard-card {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+  }
+  
+  .dashboard-card-content {
+    text-align: center;
+  }
+  
+  .mat-card-block {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .button-tools {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+  }
+  
+  .div-stepper {
+    display: flex;
+  }
+  .div-stepper > button {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  
+  /* HIDE RADIO */
+[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* IMAGE STYLES */
+[type="radio"] + img {
+  cursor: pointer;
+  outline: 2px solid #9c9c9c;
+}
+
+/* CHECKED STYLES */
+[type="radio"]:checked + img {
+  outline: 4px dotted #ff4081;
+}

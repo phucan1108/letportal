@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore;
+﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using System.IO;
+using Microsoft.Extensions.Hosting;
 
 namespace LetPortal.ServiceManagementApis
 {
@@ -9,19 +9,22 @@ namespace LetPortal.ServiceManagementApis
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return WebHost.CreateDefaultBuilder(args)
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.SetBasePath(Directory.GetCurrentDirectory());
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+                    config.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath);
+                    var path = Path.Combine(hostingContext.HostingEnvironment.ContentRootPath, "Files");
                     config.AddServicePerDirectory(path, hostingContext.HostingEnvironment.EnvironmentName);
                 })
-                .UseStartup<Startup>();
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
         }
     }
 }

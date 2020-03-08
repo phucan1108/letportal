@@ -20,10 +20,13 @@ namespace LetPortal.ServiceManagementApis.Controllers
 
         [HttpGet("{serviceName}/{version}")]
         public IActionResult Get(string serviceName, string version)
-        {            
+        {
             var result = _configuration.GetSection($"{serviceName}:{version}").Value;
             if (!string.IsNullOrEmpty(result))
+            {
                 return Ok(result);
+            }
+
             return NotFound();
         }
     }

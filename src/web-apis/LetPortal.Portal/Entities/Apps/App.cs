@@ -1,14 +1,16 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Portal.Entities.Menus;
-using System;
-using System.Collections.Generic;
 
 namespace LetPortal.Portal.Entities.Apps
 {
     [EntityCollection(Name = "apps")]
+    [Table("apps")]
     public class App : BackupableEntity
-    {                                         
+    {
         public string Logo { get; set; }
 
         public string DefaultUrl { get; set; }
@@ -17,9 +19,9 @@ namespace LetPortal.Portal.Entities.Apps
 
         public string CurrentVersionNumber { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime CreatedDate { get; set; }
 
-        public DateTime DateModified { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
         public List<Menu> Menus { get; set; } = new List<Menu>();
 

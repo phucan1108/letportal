@@ -10,7 +10,7 @@
 
         public HttpServiceOptions HttpServiceOptions { get; set; }
 
-        public DatabaseOptions DatabaseOptions { get; set; }
+        public DatabaseExecutionChains DbExecutionChains { get; set; }
 
         public WorkflowOptions WorkflowOptions { get; set; }
 

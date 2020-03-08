@@ -17,6 +17,7 @@ export interface PageBuilderStateModel {
   availableFunctionEvents: Array<string>,
   availableShells: Array<string>,
   availableBoundDatas: Array<string>,
+  availableTriggerEventsList: Array<string>,
   isFormBuilderValid: boolean
 }
 
@@ -43,6 +44,7 @@ export interface PageBuilderStateModel {
     availableFunctionEvents: [],
     availableShells: [],
     availableBoundDatas: [],
+    availableTriggerEventsList: [],
     isFormBuilderValid: false
   }
 })
@@ -94,9 +96,7 @@ export class PageBuilderState {
   @Action(PageActions.CreatePageAction)
   public create(ctx: StateContext<PageBuilderStateModel>, { }: PageActions.CreatePageAction) {
     const state = ctx.getState()
-    return this.pagesClient.create({
-      page: state.processPage
-    }).pipe(
+    return this.pagesClient.create(state.processPage).pipe(
       tap((result: string) => {
         ctx.setState({
           ...state,
@@ -113,9 +113,7 @@ export class PageBuilderState {
   @Action(PageActions.EditPageAction)
   public editForm(ctx: StateContext<PageBuilderStateModel>, { }: PageActions.EditPageAction) {
     const state = ctx.getState()
-    return this.pagesClient.update(state.processPage.id, {
-      page: state.processPage
-    }).pipe(
+    return this.pagesClient.update(state.processPage.id, state.processPage).pipe(
       tap(() => {
         ctx.setState({
           ...state,
@@ -275,6 +273,17 @@ export class PageBuilderState {
       ...state,
       filterState: PageActions.UpdateAvailableEvents,
       availableEvents: distinctEvents
+    })
+  }
+
+  @Action(PageActions.UpdateAvailableTriggerEventsList)
+  public updateAvailableTriggerEventsList(ctx: StateContext<PageBuilderStateModel>, { availableTriggerEventsList }: PageActions.UpdateAvailableTriggerEventsList) {
+    const state = ctx.getState()
+    let distinctEvents = _.uniq(_.concat(state.availableTriggerEventsList, availableTriggerEventsList))
+    ctx.setState({
+      ...state,
+      filterState: PageActions.UpdateAvailableTriggerEventsList,
+      availableTriggerEventsList: distinctEvents
     })
   }
 

@@ -10,7 +10,7 @@ export default class StringUtils {
             console.warn("b64EncodeUnicode requirements: window.btoa and window.encodeURIComponent functions");
             return null;
         }
-    
+
     }
 
     public static b64DecodeUnicode(str: string): string {
@@ -35,5 +35,17 @@ export default class StringUtils {
         }
 
         return found
+    }
+
+    public static isAllUpperCase(text: string): boolean {
+        return text === text.toUpperCase()
+    }
+
+    public static replaceAllOccurences(text: string, replaceStr: string, replacedStr: string){
+        return text.split(replaceStr).join(replacedStr)
+    }
+
+    public static getNumberOccurencesOfStr(text: string, occurStr: string){
+        return text.split(occurStr).length - 1
     }
 }

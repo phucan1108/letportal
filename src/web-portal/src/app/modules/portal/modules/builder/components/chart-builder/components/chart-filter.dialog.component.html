@@ -1,0 +1,98 @@
+<h3 mat-dialog-title>Chart Filter</h3>
+<mat-dialog-content>
+    <form class="dialog-width" [formGroup]="chartFilterFormGroup" (ngSubmit)="onSubmit()">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Name</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter Name" #nameInput formControlName="name"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{nameInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Display Name</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter Display Name" #displayNameInput formControlName="displayName"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{displayNameInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Filter Control Type</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Choose Filter Type" formControlName="type">
+                        <mat-option *ngFor="let filterType of _filterTypes" [value]="filterType.value">
+                            {{ filterType.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="enableRangeValue()">
+            <label class="col-lg-2 col-form-label">Range Value</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter Range Value" #rangeValueInput formControlName="rangeValue"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{rangeValueInput.value?.length || 0}}/250
+                    </mat-hint>
+                    <mat-icon matSuffix
+                        matTooltip="Range Value supports NumberPicker, DatePicker, MonthYearPicker. 'Now' is supporting to get a current date. Ex: [10,20,30], [10..20], [10..2..20] or [10-20,20-30] for only NumberPicker with multiple">
+                        help
+                    </mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="enableMultiple()">
+            <label class="col-lg-2 col-form-label">Is Multiple</label>
+            <div class="col-lg-1 pt-3 align-center">
+                <mat-checkbox formControlName="isMultiple">
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Default Value</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Enter Default Value" #defaultValueInput formControlName="defaultValue"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{defaultValueInput.value?.length || 0}}/250
+                    </mat-hint>
+                    <mat-icon matSuffix
+                        matTooltip="When Allow Default Value is true, this field will be used for querying data. Still support multiple values such as [10,20,30] according to Filter Control Type">
+                        help
+                    </mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Allow Default Value</label>
+            <div class="col-lg-1 pt-3 align-center">
+                <mat-checkbox formControlName="allowDefaultValue">
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">Is Hidden</label>
+            <div class="col-lg-1 pt-3 align-center">
+                <mat-checkbox formControlName="isHidden">
+                </mat-checkbox>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
+    <button mat-button (click)="onSubmit()" color="primary">Save</button>
+</mat-dialog-actions>

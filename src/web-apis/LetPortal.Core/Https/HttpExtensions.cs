@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace LetPortal.Core.Https
 {
@@ -14,13 +14,32 @@ namespace LetPortal.Core.Https
 
         public static async Task<string> GetRawBodyAsync(this HttpRequest httpRequest)
         {
-            using(StreamReader reader = new StreamReader(httpRequest.Body, Encoding.UTF8))
-                return await reader.ReadToEndAsync();
+            try
+            {
+                using (var reader = new StreamReader(httpRequest.Body, Encoding.UTF8))
+                {
+                    return await reader.ReadToEndAsync();
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
         }
         public static async Task<string> GetRawBodyAsync(this HttpResponse httpResponse)
         {
-            using(StreamReader reader = new StreamReader(httpResponse.Body, Encoding.UTF8))
-                return await reader.ReadToEndAsync();
+            try
+            {
+                using (var reader = new StreamReader(httpResponse.Body, Encoding.UTF8))
+                {
+                    return await reader.ReadToEndAsync();
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

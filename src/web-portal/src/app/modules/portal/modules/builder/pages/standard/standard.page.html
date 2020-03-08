@@ -1,0 +1,80 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Standard Component
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onSubmit()">Save</button>
+                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="align-center">
+            <form [formGroup]="standardFormGroup">
+                <div class="row row-heading">
+                    <h3>Standard Info:</h3>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Display Name:</label>
+                    <div class="col-lg-6">
+                        <mat-form-field class="field-full-width">
+                            <input formControlName="displayName" matInput #displayNameInput
+                                placeholder="Enter Display Name" maxlength="250">
+                            <mat-hint align="end">
+                                {{displayNameInput.value?.length || 0}}/250
+                            </mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Name:</label>
+                    <div class="col-lg-6">
+                        <mat-form-field class="field-full-width">
+                            <input formControlName="name" matInput #nameInput
+                                placeholder="Auto-generated from Display Name" maxlength="250">
+                            <mat-hint align="end">
+                                {{nameInput.value?.length || 0}}/250
+                            </mat-hint>
+                            <mat-error *ngIf="standardFormGroup.get('name').hasError('uniqueName')">
+                                Name is already used
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Layout Type:</label>
+                    <div class="col-lg-10">
+                        <div class="row">
+                            <label class="col-lg-3 p-3">
+                                <input type="radio" name="layoutType" value="0" formControlName="layoutType">
+                                <img src="assets/images/Layout-OneCol.png" class="img-fluid rounded"/>
+                            </label>
+                            <label class="col-lg-3 p-3">
+                                <input type="radio" name="layoutType" value="1" formControlName="layoutType">
+                                <img src="assets/images/Layout-TwoCols.png" class="img-fluid rounded"/>
+                            </label>
+                            <label class="col-lg-3 p-3">
+                                <input type="radio" name="layoutType" value="2" formControlName="layoutType">
+                                <img src="assets/images/Layout-ThreeCols.png" class="img-fluid rounded"/>
+                            </label>
+                            <label class="col-lg-3 p-3">
+                                <input type="radio" name="layoutType" value="3" formControlName="layoutType">
+                                <img src="assets/images/Layout-FourCols.png" class="img-fluid rounded"/>
+                            </label>
+                        </div>                        
+                    </div>
+                </div>
+            </form>
+            <div class="separator-dashed"></div>
+            <let-standard-population (onPopulatedControls)="onPopulatedControls($event)"></let-standard-population>
+            <div class="separator-dashed"></div>
+            <div class="row row-heading">
+                <h3>Controls:</h3>
+            </div>
+            <let-controls-grid [controls$]="controls$" (changed)="onChanged($event)"></let-controls-grid>
+        </mat-card-content>
+    </mat-card>
+</div>

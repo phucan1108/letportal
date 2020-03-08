@@ -6,26 +6,30 @@ using System.Threading.Tasks;
 
 namespace LetPortal.Core.Persistences
 {
-    public interface IGenericRepository<T> where T : Entity
+    public interface IGenericRepository<T> : IDisposable where T : Entity
     {
-        Task<bool> IsExistAsync(string compareValue, string key = "name");
+        Task<bool> IsExistAsync(Expression<Func<T, bool>> expression);
 
         Task AddAsync(T entity);
 
         Task UpdateAsync(string id, T entity);
 
+        Task ForceUpdateAsync(string id, T forceEntity);
+
         Task DeleteAsync(string id);
 
         IQueryable<T> GetAsQueryable();
 
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, bool isRequiredDiscriminator = false);
 
-        Task<IEnumerable<T>> GetAllByIdsAsync(List<string> ids);
+        Task<IEnumerable<T>> GetAllByIdsAsync(IEnumerable<string> ids);
 
         Task<T> GetOneAsync(string id);
 
         Task AddBulkAsync(IEnumerable<T> entities);
 
         Task DeleteBulkAsync(IEnumerable<string> ids);
+
+        Task<ComparisonResult> Compare(T comparedEntity);
     }
 }

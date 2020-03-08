@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace LetPortal.Core.Files
 {
@@ -13,6 +13,13 @@ namespace LetPortal.Core.Files
         /// <param name="storedMedia">Contains IFormFiles</param>
         /// <returns>Stored File Id or file path</returns>
         Task<StoredFile> StoreFileAsync(IFormFile file, string tempFilePath);
+
+        /// <summary>
+        /// This method allows to copy one local file to another place
+        /// </summary>
+        /// <param name="localFilePath">Local file path</param>
+        /// <returns></returns>
+        Task<StoredFile> StoreFileAsync(string localFilePath);
 
         /// <summary>
         /// This method helps to retrieve a file from Connector

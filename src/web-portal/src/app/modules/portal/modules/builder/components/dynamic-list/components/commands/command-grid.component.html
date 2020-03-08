@@ -1,0 +1,75 @@
+<div class="pt-3">
+    <mat-card class="mat-card-block">
+        <mat-card-header>
+            <mat-card-title>
+                Commands List
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menuCommand" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menuCommand="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="addNewCommand()">Add Command</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="row align-items-center collapse m-form__group-actions m--margin-top-20 m--margin-bottom-20"
+                [ngClass]="{'show' : selection.selected.length > 0}">
+                <div class="col-xl-12 selector-box">
+                    <label>Selected records count:
+                        {{ selection.selected.length }}</label>
+                    <button mat-raised-button color="primary" (click)="deleteSelectedCommands()"
+                        matTooltip="Delete selected commands">
+                        <mat-icon>delete</mat-icon> Delete All
+                    </button>
+                </div>
+            </div>
+
+            <m-table [(value)]="commandsInList" #mtable [selectable]="false" [selectionHandler]="false">
+                <m-column field="displayName" header="Name">
+                </m-column>
+                <m-column field="commandPositionType" header="Position">
+                    <ng-template let-col let-row="row" mTemplate="body">
+                        {{translateCommadnPositionType(row.commandPositionType)}}
+                    </ng-template>
+                </m-column>
+                <m-column field="icon" header="Icon">
+                    <ng-template let-col let-row="row" mTemplate="body">
+                        <mat-icon>{{ row.icon }}</mat-icon>
+                    </ng-template>
+                </m-column>
+                <m-column field="value" header="Actions">
+                    <ng-template let-col let-row="row" mTemplate="body">
+                        <button *ngIf="isSmallDevice" mat-icon-button color="primary" matTooltip="Actions" [matMenuTriggerFor]="action"
+                            aria-label="Toggle menu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #action="matMenu" xPosition="after">
+                            <button mat-menu-item color="primary" matTooltip="Edit Command"
+                                (click)="editCommand(row)">
+                                <mat-icon color="warn">create</mat-icon>
+                                Edit
+                            </button>&nbsp;
+                            <button mat-menu-item color="warn" type="button" matTooltip="Delete Command"
+                                (click)="deleteCommand(row)">
+                                <mat-icon color="accent">delete</mat-icon>
+                                Delete
+                            </button>                            
+                        </mat-menu>
+                        <button *ngIf="!isSmallDevice" mat-icon-button color="primary" matTooltip="Edit Command" (click)="editCommand(row)">
+                            <mat-icon>create</mat-icon>
+                        </button>&nbsp;
+                        <button *ngIf="!isSmallDevice" mat-icon-button color="warn" type="button" matTooltip="Delete Command"
+                            (click)="deleteCommand(row)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </ng-template>
+                </m-column>
+                <ng-template mTemplate="emptyTable">
+                    <div class="align-center">
+                        No records
+                    </div>
+                </ng-template>
+            </m-table>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,7 +1,14 @@
-﻿using LetPortal.Core.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using LetPortal.Core.Configurations;
+using LetPortal.Core.Extensions;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
-using LetPortal.Identity.Configurations;
 using LetPortal.Identity.Entities;
 using LetPortal.Identity.Exceptions;
 using LetPortal.Identity.Models;
@@ -10,13 +17,6 @@ using LetPortal.Identity.Repositories.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LetPortal.Identity.Providers.Identity
 {
@@ -93,24 +93,27 @@ namespace LetPortal.Identity.Providers.Identity
         {
             _serviceLogger.Info("User Login {$loginModel}", loginModel.ToJson());
             var user = await _userManager.FindByNameAsync(loginModel.Username);
-            var validationResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, true);
-            if (validationResult.Succeeded)
+
+            if (user != null)
             {
-
-                var userClaims = await _userManager.GetClaimsAsync(user);
-
-                var token = SignedToken(userClaims);
-
-                // Create UserSession
-                var userSession = new UserSession
+                var validationResult = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, true);
+                if (validationResult.Succeeded)
                 {
-                    Id = DataUtil.GenerateUniqueId(),
-                    RequestIpAddress = loginModel.ClientIp,
-                    SoftwareAgent = loginModel.SoftwareAgent,
-                    VersionInstalled = loginModel.VersionInstalled,
-                    SignInDate = DateTime.UtcNow,
-                    UserId = user.Id,
-                    UserActivities = new List<UserActivity>
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+
+                    var token = SignedToken(userClaims);
+
+                    // Create UserSession
+                    var userSession = new UserSession
+                    {
+                        Id = DataUtil.GenerateUniqueId(),
+                        RequestIpAddress = loginModel.ClientIp,
+                        SoftwareAgent = loginModel.SoftwareAgent,
+                        InstalledVersion = loginModel.VersionInstalled,
+                        SignInDate = DateTime.UtcNow,
+                        UserId = user.Id,
+                        Username = user.Username,
+                        UserActivities = new List<UserActivity>
                     {
                         new UserActivity
                         {
@@ -120,37 +123,51 @@ namespace LetPortal.Identity.Providers.Identity
                             ActivityType = ActivityType.Info
                         }
                     }
-                };
-                await _userSessionRepository.AddAsync(userSession);
+                    };
+                    await _userSessionRepository.AddAsync(userSession);
 
-                // Create refresh token
-                var expToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.TokenExpiration);
-                var expRefreshToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.RefreshTokenExpiration);
-                var issuedToken = new IssuedToken
-                {
-                    Id = DataUtil.GenerateUniqueId(),
-                    UserId = user.Id,
-                    JwtToken = token,
-                    ExpiredJwtToken = expToken,
-                    ExpiredRefreshToken = expRefreshToken,
-                    RefreshToken = CryptoUtil.ToSHA256(Guid.NewGuid().ToString()),
-                    UserSessionId = userSession.Id,
-                    Deactive = false
-                };
+                    // Create refresh token
+                    var expToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.TokenExpiration);
+                    var expRefreshToken = DateTime.UtcNow.AddMinutes(_jwtBearerOptions.CurrentValue.RefreshTokenExpiration);
+                    var issuedToken = new IssuedToken
+                    {
+                        Id = DataUtil.GenerateUniqueId(),
+                        UserId = user.Id,
+                        JwtToken = token,
+                        ExpiredJwtToken = expToken,
+                        ExpiredRefreshToken = expRefreshToken,
+                        RefreshToken = CryptoUtil.ToSHA256(Guid.NewGuid().ToString()),
+                        UserSessionId = userSession.Id,
+                        Deactive = false
+                    };
 
-                await _issuedTokenRepository.AddAsync(issuedToken);
-                _serviceLogger.Info("User Login Successfully {$issuedToken}", issuedToken.ToJson());
-                return new TokenModel
-                {
-                    Token = token,
-                    Exp = ((DateTimeOffset)expToken).ToUnixTimeSeconds(),
-                    ExpRefresh = ((DateTimeOffset)expRefreshToken).ToUnixTimeSeconds(),
-                    RefreshToken = issuedToken.RefreshToken,
-                    UserSessionId = userSession.Id
-                };
+                    await _issuedTokenRepository.AddAsync(issuedToken);
+                    _serviceLogger.Info("User Login Successfully {$issuedToken}", issuedToken.ToJson());
+                    return new TokenModel
+                    {
+                        Token = token,
+                        Exp = ((DateTimeOffset)expToken).ToUnixTimeSeconds(),
+                        ExpRefresh = ((DateTimeOffset)expRefreshToken).ToUnixTimeSeconds(),
+                        RefreshToken = issuedToken.RefreshToken,
+                        UserSessionId = userSession.Id
+                    };
+                }
             }
 
             throw new IdentityException(ErrorCodes.CannotSignIn);
+        }   
+
+        public async Task SignOutAsync(LogoutModel logoutModel)
+        {
+            // In fact, we just add a signout date for auditing
+            // Because JWT is helping us to validate service-self instead of connecting back to Identity Server
+            // For micro-services, we need to implement distributed JWT cache for signing out all sessions
+
+            var userSession = await _userSessionRepository.GetOneAsync(logoutModel.UserSession);
+
+            userSession.SignOutDate = DateTime.UtcNow;
+            userSession.AlreadySignOut = true;
+            await _userSessionRepository.UpdateAsync(userSession.Id, userSession);
         }
 
         public async Task<TokenModel> RefreshTokenAsync(string refreshToken)
@@ -221,15 +238,17 @@ namespace LetPortal.Identity.Providers.Identity
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
             if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
                 throw new SecurityTokenException("Invalid token");
+            }
 
             return principal;
         }
 
-        public async Task ForgotPassword(string email)
+        public async Task ForgotPasswordAsync(string email)
         {
             var verifyingUser = await _userManager.FindByEmailAsync(email);
 
@@ -246,7 +265,7 @@ namespace LetPortal.Identity.Providers.Identity
             }
         }
 
-        public async Task RecoveryPassword(RecoveryPasswordModel recoveryPasswordModel)
+        public async Task RecoveryPasswordAsync(RecoveryPasswordModel recoveryPasswordModel)
         {
             var verifyingUser = await _userManager.FindByIdAsync(recoveryPasswordModel.UserId);
 
@@ -275,7 +294,7 @@ namespace LetPortal.Identity.Providers.Identity
             await _roleRepository.UpdateAsync(role.Id, role);
         }
 
-        public async Task<List<RolePortalClaimModel>> GetPortalClaims(string username)
+        public async Task<List<RolePortalClaimModel>> GetPortalClaimsAsync(string username)
         {
             var roles = (await _userManager.FindByNameAsync(username)).Roles;
 
@@ -286,11 +305,11 @@ namespace LetPortal.Identity.Providers.Identity
             return claims;
         }
 
-        public async Task<List<RolePortalClaimModel>> GetPortalClaimsByRole(string roleName)
+        public async Task<List<RolePortalClaimModel>> GetPortalClaimsByRoleAsync(string roleName)
         {
-            var dicClaims = await _roleRepository.GetBaseClaims(new string[]{roleName});
+            var dicClaims = await _roleRepository.GetBaseClaims(new string[] { roleName });
 
-            var claims = dicClaims.SelectMany(a => a.Value).GroupBy(a => a.ClaimType).Select(g => new RolePortalClaimModel { Name = g.Key, Claims = g.Select(k => k.ClaimValue).Distinct().ToList() }).ToList();
+            var claims = dicClaims.Where(b => b.Value != null).SelectMany(a => a.Value).GroupBy(a => a.ClaimType).Select(g => new RolePortalClaimModel { Name = g.Key, Claims = g.Select(k => k.ClaimValue).Distinct().ToList() }).ToList();
 
             return claims;
         }

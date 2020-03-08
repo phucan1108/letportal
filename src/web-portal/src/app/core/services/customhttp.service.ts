@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpResponseBase, HttpResponse } from '@angula
 import { Observable, of, throwError } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { ObjectUtils } from '../utils/object-util';
 
 @Injectable({
     providedIn: 'root'
@@ -42,45 +43,7 @@ export class CustomHttpService {
     }
 
     private proceedOutputProjection(outputProjection: string, data: any) {
-        const splitted = outputProjection.split(';')
-        let fieldMaps: FieldMap[] = []
-        _.forEach(splitted, field => {
-            if (field.indexOf('=') > 0) {
-                const fieldSplitted = field.split('=')
-                fieldMaps.push({
-                    key: fieldSplitted[0],
-                    map: fieldSplitted[1]
-                })
-            }
-            else {
-                fieldMaps.push({
-                    key: field,
-                    map: field
-                })
-            }
-        })
-        if (data instanceof Array) {
-            let resData = new Array()
-            _.forEach(data, dt => {
-                let obj = new Object()
-                _.forEach(fieldMaps, map => {
-                    const evaluted = Function('data', 'return data.' + map.map)
-                    obj[map.key] = evaluted(dt)
-                })
-
-                resData.push(obj)
-            })
-
-            return resData
-        }
-        else {
-            let obj = new Object()
-            _.forEach(fieldMaps, map => {
-                const evaluted = Function('data', 'return data.' + map.map)
-                obj[map.key] = evaluted(data)
-            })
-            return obj
-        }
+        return ObjectUtils.projection(outputProjection, data)
     }
 }
 

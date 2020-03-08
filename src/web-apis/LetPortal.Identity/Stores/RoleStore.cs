@@ -1,18 +1,17 @@
-﻿using LetPortal.Core.Utils;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
+using LetPortal.Core.Utils;
 using LetPortal.Identity.Entities;
 using LetPortal.Identity.Repositories.Identity;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace LetPortal.Identity.Stores
 {
-    public class RoleStore : IRoleStore<Role>, IRoleClaimStore<Role> 
+    public class RoleStore : IRoleStore<Role>, IRoleClaimStore<Role>, IDisposable
     {
         private readonly IRoleRepository _roleRepository;
 
@@ -24,7 +23,7 @@ namespace LetPortal.Identity.Stores
         public Task AddClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
         {
             var baseClaim = claim.ToBaseClaim();
-            if(role.Claims.Any(a => a.ClaimType == baseClaim.ClaimType && a.ClaimValue == baseClaim.ClaimValue))
+            if (role.Claims.Any(a => a.ClaimType == baseClaim.ClaimType && a.ClaimValue == baseClaim.ClaimValue))
             {
                 return Task.CompletedTask;
             }
@@ -43,11 +42,6 @@ namespace LetPortal.Identity.Stores
         {
             await _roleRepository.DeleteAsync(role.Id);
             return IdentityResult.Success;
-        }
-
-        public void Dispose()
-        {
-            // Do nothing
         }
 
         public async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
@@ -88,7 +82,7 @@ namespace LetPortal.Identity.Stores
                 var foundIndex = role.Claims.IndexOf(foundClaim);
                 role.Claims.RemoveAt(foundIndex);
             }
-            
+
             return Task.CompletedTask;
         }
 
@@ -109,5 +103,26 @@ namespace LetPortal.Identity.Stores
             await _roleRepository.UpdateAsync(role.Id, role);
             return IdentityResult.Success;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _roleRepository.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

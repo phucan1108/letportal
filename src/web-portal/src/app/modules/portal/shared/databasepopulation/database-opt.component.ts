@@ -3,15 +3,14 @@ import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
-import { Constants } from 'portal/resources/constants';
-import { ExtendedFilterField } from 'portal/dynamic-list/models/extended.model';
 import { NGXLogger } from 'ngx-logger';
 import StringUtils from 'app/core/utils/string-util';
 import { MatDialog } from '@angular/material';
 import { ParamsDialogComponent } from './params-dialog.component';
-import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions } from 'services/portal.service';
-import { ShortcutUtil } from 'app/shared/components/shortcuts/shortcut-util';
-import { ToastType } from 'app/shared/components/shortcuts/shortcut.models';
+import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions, ExecuteParamModel } from 'services/portal.service';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-database-opt',
@@ -21,7 +20,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
 
     }
-    @ViewChild('jsonEditorQuery') editor: JsonEditorComponent;
+    @ViewChild('jsonEditorQuery', { static: true }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = {};
     isJsonEditorValid = true;
@@ -52,13 +51,22 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     @Output()
     changed = new EventEmitter<DatabaseOptions>();
 
-    databaseConnections: Observable<Array<DatabaseConnection>>;
+    databaseConnections$: Observable<Array<DatabaseConnection>>;
+    databaseConnections: Array<DatabaseConnection>
+    selectedDatabaseConnection: DatabaseConnection
+    ismongodb = false
+    isReadyToRender = false
+
+    code = ''
     entities: BehaviorSubject<Array<EntitySchema>> = new BehaviorSubject([]);
     shallowedEntitySchemas: Array<EntitySchema>;
 
     isRefreshClicked = false
+    isAutoPopulate = false
 
-    private params: FilledParameter[] = []
+    isEnablePopulate = false
+
+    private params: ExecuteParamModel[] = []
 
     constructor(
         private dynamicListClient: DynamicListClient,
@@ -73,17 +81,8 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.databaseConnections = this.databaseClient.getAll()
-
-        this.databaseOptionForm = this.fb.group({
-            databaseId: [this.databaseOptions.databaseConnectionId, Validators.required],
-            entityName: [this.databaseOptions.entityName],
-            query: [this.databaseOptions.query]
-        })
-
+        this.databaseConnections$ = this.databaseClient.getAll()
         this.jsonOptions.mode = 'code';
-        this.queryJsonData = this.databaseOptions.query ? JSON.parse(this.databaseOptions.query) : {}
-        this.logger.debug('current json data', this.queryJsonData)
         this.jsonOptions.onChange = () => {
             try {
                 this.onJsonEditorChange(this.editor.get())
@@ -93,13 +92,60 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 this.isJsonEditorValid = false;
             }
         }
+        const subscriber = this.databaseConnections$.subscribe(res => {
+            this.databaseConnections = res
+
+            if (this.databaseOptions.databaseConnectionId) {
+                this.selectedDatabaseConnection = this.databaseConnections.find(a => a.id == this.databaseOptions.databaseConnectionId)
+                this.ismongodb = this.selectedDatabaseConnection.databaseConnectionType == 'mongodb'
+            }
+
+            this.isReadyToRender = true
+            if (this.ismongodb) {
+
+                if(ObjectUtils.isNotNull(this.databaseOptions.query)){
+                    this.queryJsonData = JSON.parse(this.databaseOptions.query.replace(/(\r\n|\n|\r)/gm," ")) 
+                }
+                else{
+                    this.queryJsonData = {}
+                }
+                
+                this.logger.debug('current json data', this.queryJsonData)
+                if (this.isEditMode) {
+                    this.queryJsonData = JSON.parse(this.databaseOptionForm.get('query').value)
+                }
+            }
+            else {
+                this.code = this.databaseOptions.query
+            }
+
+            if (this.isEditMode) {
+                this.entityClient.getAllFromOneDatabase(this.databaseOptionForm.get('databaseId').value).subscribe(result => {
+                    this.shallowedEntitySchemas = result
+                    this.entities.next(result)
+                })
+
+                this.enablePopulateButton()
+            }
+
+            subscriber.unsubscribe()
+        })
+
+        this.databaseOptionForm = this.fb.group({
+            databaseId: [this.databaseOptions.databaseConnectionId, Validators.required],
+            entityName: [this.databaseOptions.entityName],
+            query: [this.databaseOptions.query]
+        })
 
         this.onValueChanges()
-        if (this.isEditMode) {
-            this.queryJsonData = JSON.parse(this.databaseOptionForm.get('query').value)
-            this.entityClient.getAllFromOneDatabase(this.databaseOptionForm.get('databaseId').value).subscribe(result => {
-                this.entities.next(result)
-            })
+    }
+
+    private enablePopulateButton() {
+        if (ObjectUtils.isNotNull(this.databaseOptionForm.get('query').value)) {
+            this.isEnablePopulate = true
+        }
+        else {
+            this.isEnablePopulate = false
         }
     }
 
@@ -118,10 +164,11 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         let callDialog = !!tempDcurly && tempDcurly.length > 0
         if (callDialog) {
             _.forEach(tempDcurly, (param) => {
-                this.params.push({
-                    name: param,
-                    value: ''
-                })
+                if (this.params.findIndex(a => a.name === param) < 0 && !StringUtils.isAllUpperCase(param))
+                    this.params.push({
+                        name: param,
+                        replaceValue: ''
+                    })
             })
 
             const dialogRef = this.dialog.open(ParamsDialogComponent, {
@@ -143,13 +190,14 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
     }
 
-    private extractingQuery(query: string, databaseId: string, params: FilledParameter[]) {
-        _.each(params, param => {
-            query = query.replace("{{" + param.name + "}}", param.value);
-        })
-        this.databaseClient.extractingQuery({
-            databaseId: databaseId,
-            queryJsonString: query
+    private extractingQuery(query: string, databaseId: string, params: ExecuteParamModel[]) {
+        this.logger.debug('Filled parameters', params)
+        // _.each(params, param => {
+        //     query = query.replace("{{" + param.name + "}}", param.value);
+        // })
+        this.databaseClient.extractingQuery(databaseId, {
+            content: query,
+            parameters: params
         }).subscribe(
             result => {
                 this.afterPopulatingQuery.emit(result)
@@ -165,7 +213,10 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         // Auto-populated the entity fields
         this.databaseOptionForm.get('databaseId').valueChanges.subscribe(newValue => {
             if (newValue) {
-                console.log('Before Calling')
+                this.selectedDatabaseConnection = this.databaseConnections.find(a => a.id == newValue)
+                this.ismongodb = this.selectedDatabaseConnection.databaseConnectionType === 'mongodb'
+                this.logger.debug('Selected database option', this.selectedDatabaseConnection)
+                this.logger.debug('Is selecting mongodb', this.ismongodb)
                 this.entityClient.getAllFromOneDatabase(newValue).subscribe(entitySchemas => {
                     this.shallowedEntitySchemas = entitySchemas;
                     this.entities.next(this.shallowedEntitySchemas)
@@ -188,23 +239,45 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 this.afterSelectingEntityName.emit(newValue)
                 _.forEach(this.shallowedEntitySchemas, (element) => {
                     if (element.name === newValue) {
-                        let defaultQuery = `{ "$query": { "${element.name}": [ ] } }`
-                        this.editor.set(JSON.parse(defaultQuery))
+                        let elementName =
+                            this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'postgresql'
+                                || this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'sqlserver' ? `"${element.name}"` : `\`${element.name}\``
+                        let defaultQuery =
+                            this.ismongodb ?
+                                `{ "$query": { "${element.name}": [ ] } }` :
+                                `SELECT * FROM ${elementName}`
+
+                        if (this.ismongodb) {
+                            this.editor.set(JSON.parse(defaultQuery))
+                        }
+                        else {
+                            this.code = defaultQuery
+                        }
                         this.databaseOptionForm.get('query').setValue(defaultQuery)
-                        this.dynamicListClient.extractingQuery({ query: defaultQuery, databaseId: this.databaseOptionForm.get('databaseId').value, parameters: [] }).subscribe(
-                            result => {
-                                this.logger.debug('Parsing response', result)
-                                this.afterSelectingEntity.emit(result)
-                            },
-                            err => {
-                                this.shortcutUtil.notifyMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
-                            }
-                        )
+
+                        if (this.isAutoPopulate) {
+                            this.dynamicListClient.extractingQuery({ query: defaultQuery, databaseId: this.databaseOptionForm.get('databaseId').value, parameters: [] }).subscribe(
+                                result => {
+                                    this.logger.debug('Parsing response', result)
+                                    this.afterSelectingEntity.emit(result)
+                                },
+                                err => {
+                                    this.shortcutUtil.toastMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
+                                }
+                            )
+                        }
 
                         return false;
                     }
                 })
             }
+        })
+
+        this.databaseOptionForm.get('query').valueChanges.subscribe(newValue => {
+            if (!this.ismongodb) {
+                this.code = newValue
+            }
+            this.enablePopulateButton()
         })
 
         this.databaseOptionForm.valueChanges.subscribe(newValue => {
@@ -225,12 +298,11 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             this.isRefreshClicked = false
             this.entityClient.flushOneDatabase({
                 databaseId: this.databaseOptionForm.get('databaseId').value as string,
-                keptSameName: true
+                keptSameName: false
             }).subscribe(
                 result => {
-                    this.entityClient.getAllFromOneDatabase(this.databaseOptionForm.get('databaseId').value).subscribe(result => {
-                        this.entities.next(result)
-                    })
+                    this.shallowedEntitySchemas = result;
+                    this.entities.next(result)
                 },
                 err => {
 

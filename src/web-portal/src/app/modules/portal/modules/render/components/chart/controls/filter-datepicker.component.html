@@ -1,0 +1,28 @@
+<div class="row" *ngIf="!isMultiple">
+    <label class="col-form-label col-lg-2 font-weight-bold">{{filter.displayName}}</label>
+    <div [formGroup]="formGroup" class="col-lg-4">
+        <mat-form-field class="field-full-width">
+            <input matInput [matDatepicker]="minPicker" [formControlName]="controlName">
+            <mat-datepicker-toggle matSuffix [for]="minPicker"></mat-datepicker-toggle>
+            <mat-datepicker #minPicker></mat-datepicker>
+        </mat-form-field>
+    </div>
+</div>
+<div class="row" *ngIf="isMultiple" [formGroup]="formGroup">
+    <label class="col-form-label col-lg-2 font-weight-bold">{{filter.displayName}}</label>
+    <div class="col-lg-4">
+        <mat-form-field class="field-full-width">
+            <input matInput [matDatepicker]="minPicker" [min]="minDate" [max]="maxDate" [formControlName]="controlNameMin">
+            <mat-datepicker-toggle matSuffix [for]="minPicker"></mat-datepicker-toggle>
+            <mat-datepicker #minPicker></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <label class="col-form-label col-lg-2 font-weight-bold">To</label>
+    <div class="col-lg-4">
+        <mat-form-field class="field-full-width">
+            <input matInput [matDatepicker]="maxPicker" [min]="minDate" [max]="maxDate" [formControlName]="controlNameMax">
+            <mat-datepicker-toggle matSuffix [for]="maxPicker"></mat-datepicker-toggle>
+            <mat-datepicker #maxPicker></mat-datepicker>
+        </mat-form-field>
+    </div>
+</div>

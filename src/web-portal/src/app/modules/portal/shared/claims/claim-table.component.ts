@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { PortalClaim, ClaimValueType } from 'services/portal.service';
-import { ShortcutUtil } from 'app/shared/components/shortcuts/shortcut-util';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { MatDialog, MatTable } from '@angular/material';
 import { ClaimDialogComponent } from './claim-dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import * as _ from 'lodash';
-import { MessageType, ToastType } from 'app/shared/components/shortcuts/shortcut.models';
+import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PortalStandardClaims } from 'app/core/security/portalClaims';
 import { StaticResources } from 'portal/resources/static-resources';
 
@@ -14,7 +14,7 @@ import { StaticResources } from 'portal/resources/static-resources';
     templateUrl: './claim-table.component.html'
 })
 export class ClaimTableComponent implements OnInit {
-    @ViewChild('table') table: MatTable<PortalClaim>;
+    @ViewChild('table', { static: true }) table: MatTable<PortalClaim>;
     @Input()
     claims: Array<PortalClaim> = []
 
@@ -69,7 +69,7 @@ export class ClaimTableComponent implements OnInit {
         this.claims = _.filter(this.claims, (elem) => {
             return elem.name !== claim.name
         })
-        this.shortcutUtil.notifyMessage("Delete claim successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage("Delete claim successfully!", ToastType.Success);
 
         this.refreshTable()
     }

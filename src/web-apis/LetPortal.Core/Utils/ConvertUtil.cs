@@ -11,7 +11,7 @@ namespace LetPortal.Core.Utils
     {
         public static object MoveValueBetweenTwoObjects(object sourceObject, object targetObject)
         {
-            var sourceObjectType = sourceObject.GetType();            
+            var sourceObjectType = sourceObject.GetType();
             IEnumerable<PropertyInfo> itemProperties;
 
             itemProperties = sourceObjectType.GetProperties()
@@ -27,7 +27,10 @@ namespace LetPortal.Core.Utils
                         itemProperties.FirstOrDefault(b =>
                             b.Name == a.Name && b.PropertyType.IsAssignableFrom(a.PropertyType));
 
-                    if (relevantProperty != null) a.SetValue(targetObject, relevantProperty.GetValue(sourceObject));
+                    if (relevantProperty != null)
+                    {
+                        a.SetValue(targetObject, relevantProperty.GetValue(sourceObject));
+                    }
                 });
 
             return targetObject;
@@ -35,25 +38,43 @@ namespace LetPortal.Core.Utils
 
         public static string SerializeObject(object serializingObject, bool allowCamel = false)
         {
-            if (allowCamel)
+            if (serializingObject != null)
             {
-                var contractResolver = new DefaultContractResolver
+                if (allowCamel)
                 {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                };
+                    var contractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new CamelCaseNamingStrategy()
+                    };
 
-                return JsonConvert.SerializeObject(serializingObject, new JsonSerializerSettings
-                {
-                    ContractResolver = contractResolver,
-                    Formatting = Formatting.Indented
-                });
+                    return JsonConvert.SerializeObject(serializingObject, new JsonSerializerSettings
+                    {
+                        ContractResolver = contractResolver,
+                        Formatting = Formatting.Indented
+                    });
+                }
+                return JsonConvert.SerializeObject(serializingObject);
             }
-            return JsonConvert.SerializeObject(serializingObject);
+            else
+            {
+                return string.Empty;
+            }
         }
 
         public static T DeserializeObject<T>(string deserializingObject)
         {
             return JsonConvert.DeserializeObject<T>(deserializingObject);
+        }
+
+        public static dynamic GetOneInArray(dynamic array)
+        {
+            if (array.Type == JTokenType.Array)
+            {
+                var jArray = ((JArray)array);
+                return jArray?.Count == 1 ? jArray[0].ToObject<dynamic>() : array;
+            }
+
+            return array;
         }
 
         public static object DeserializeObjectToObject(string deserializingObject)
@@ -65,7 +86,10 @@ namespace LetPortal.Core.Utils
         {
             var jObject = JObject.Parse(deserializingObject);
             var dics = new Dictionary<string, object>();
-            foreach (var elem in jObject) dics.Add(elem.Key, elem.Value.Value<string>());
+            foreach (var elem in jObject)
+            {
+                dics.Add(elem.Key, elem.Value.Value<string>());
+            }
 
             return dics;
         }

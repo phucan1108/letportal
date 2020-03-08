@@ -7,7 +7,7 @@ namespace LetPortal.Identity.Exceptions
         protected override string ExceptionService => "[Identity-Service]";
 
         public IdentityException(ErrorCode errorCode)
-            :base(errorCode)
+            : base(errorCode)
         {
         }
     }

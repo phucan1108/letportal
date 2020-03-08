@@ -39,12 +39,7 @@
         /// <summary>
         /// Check Database connection in DatabaseOptions, if not found, no data is sent
         /// </summary>
-        public bool CheckDatabaseOption { get; set; } = true;
-
-        /// <summary>
-        /// Check Database connection in LoggerOptions, if not found, no data is sent
-        /// </summary>
-        public bool CheckDatabaseLoggerOption { get; set; } = true;
+        public bool CheckDatabaseOption { get; set; } = false;
     }
 
     public class MonitorNotifyOptions
@@ -53,6 +48,6 @@
 
         public string HealthcheckEndpoint { get; set; }
 
-        public int Delay { get; set; } = 10;
+        public int Delay { get; set; } = 60;
     }
 }

@@ -1,11 +1,12 @@
-﻿using LetPortal.Core.Exceptions;
+﻿using System;
+using System.Threading.Tasks;
+using LetPortal.Core.Exceptions;
+using LetPortal.Core.Utils;
+using LetPortal.Identity.Entities;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Repositories.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using LetPortal.Identity.Entities;
 
 namespace LetPortal.IdentityApis.Controllers
 {
@@ -32,6 +33,7 @@ namespace LetPortal.IdentityApis.Controllers
 
             await _userSessionRepository.LogUserActivityAsync(model.UserSessionId, new UserActivity
             {
+                Id = DataUtil.GenerateUniqueId(),
                 ActivityName = model.ActivityName,
                 ActivityType = model.ActivityType,
                 ActivityDate = DateTime.UtcNow,

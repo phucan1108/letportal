@@ -1,165 +1,202 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using LetPortal.Core.Common;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
+using LetPortal.Portal.Entities.Databases;
+using LetPortal.Portal.Entities.Shared;
+using LetPortal.Portal.Exceptions.Databases;
+using LetPortal.Portal.Executions;
 using LetPortal.Portal.Models;
-using LetPortal.Portal.Repositories.Databases;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
+using LetPortal.Portal.Models.Databases;
 using MongoDB.Driver;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LetPortal.Portal.Services.Databases
 {
     public class DatabaseService : IDatabaseService
     {
-        private const string QUERY_KEY = "$query";
-        private const string INSERT_KEY = "$insert";
-        private const string UPDATE_KEY = "$update";
-        private const string DELETE_KEY = "$delete";
-        private const string DATA_KEY = "$data";
-        private const string WHERE_KEY = "$where";
+        private readonly IEnumerable<IExecutionDatabase> _executionDatabases;
 
-        private IDatabaseRepository _databaseRepository;
+        private readonly IEnumerable<IExtractionDatabase> _extractionDatabases;
 
-        public DatabaseService(IDatabaseRepository databaseRepository)
+        public DatabaseService(
+            IEnumerable<IExecutionDatabase> executionDatabases,
+            IEnumerable<IExtractionDatabase> extractionDatabases
+            )
         {
-            _databaseRepository = databaseRepository;
+            _executionDatabases = executionDatabases;
+            _extractionDatabases = extractionDatabases;
         }
 
-        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(string databaseId, string formattedString)
+        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
-            try
+            var connectionType = databaseConnection.GetConnectionType();
+            var executionDatabase = _executionDatabases.FirstOrDefault(a => a.ConnectionType == connectionType);
+
+            if (executionDatabase != null)
             {
-                var result = new ExecuteDynamicResultModel { IsSuccess = true };
-                var query = EliminateRedundantFormat(formattedString);
-                var database = await _databaseRepository.GetOneAsync(databaseId);
-                var mongoDatabase = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
-                BsonDocument parsingBson = BsonSerializer.Deserialize<BsonDocument>(query);
-                var executionGroupType = parsingBson.First().Name;
+                return await executionDatabase.Execute(databaseConnection, formattedString, parameters);
+            }
+            throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
+        }
 
-                switch(executionGroupType)
+        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(List<DatabaseConnection> databaseConnections, DatabaseExecutionChains executionChains, IEnumerable<ExecuteParamModel> parameters)
+        {
+            var context = new ExecutionDynamicContext
+            {
+                Data = JObject.Parse("{}")
+            };
+
+            var result = new ExecuteDynamicResultModel { IsSuccess = true }; 
+            var parametersList = parameters.ToList();
+            for (int i = 1; i <= executionChains?.Steps.Count; i++)
+            {
+                var step = executionChains.Steps[i - 1];
+                var executingDatabaseConnection = databaseConnections.First(a => a.Id == step.DatabaseConnectionId);
+                var connectionType =
+                    executingDatabaseConnection.GetConnectionType();
+                var executionDatabase = _executionDatabases.First(a => a.ConnectionType == connectionType);
+                if (executionDatabase != null)
                 {
-                    case QUERY_KEY:
-                        var mongoCollection = GetCollection(mongoDatabase, parsingBson, QUERY_KEY);
-                        List<PipelineStageDefinition<BsonDocument, BsonDocument>> aggregatePipes = parsingBson[QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
-                        IAggregateFluent<BsonDocument> aggregateFluent = mongoCollection.Aggregate();
-                        foreach(PipelineStageDefinition<BsonDocument, BsonDocument> pipe in aggregatePipes)
+                    step.ExecuteCommand = ReplaceValueWithContext(step.ExecuteCommand, context, ref parametersList, connectionType != Core.Persistences.ConnectionType.MongoDB);
+                    var stepResult = await executionDatabase.ExecuteStep(executingDatabaseConnection, step.ExecuteCommand, parametersList, context);
+                    if (stepResult.IsSuccess)
+                    {
+                        switch (stepResult.ExecutionType)
                         {
-                            aggregateFluent = aggregateFluent.AppendStage(pipe);
-                        }
-                        using(IAsyncCursor<BsonDocument> executingCursor = await aggregateFluent.ToCursorAsync())
-                        {
-                            while(executingCursor.MoveNext())
-                            {
-                                BsonDocument currentDocument = executingCursor.Current.FirstOrDefault();
-                                if(currentDocument != null)
+                            case StepExecutionType.Query:
+                                WriteDataToContext($"step{i.ToString()}", ConvertUtil.SerializeObject(stepResult.Result, true), context);
+                                break;
+                            case StepExecutionType.Insert:
+                                // Due to JSON .NET Serialize problem for dynamic properties isn't working with Camel cast
+                                // We need to exchange a anonymous class (or object) before serializing
+                                WriteDataToContext(
+                                    $"step{i.ToString()}", 
+                                    connectionType == Core.Persistences.ConnectionType.MongoDB 
+                                        ? ConvertUtil.SerializeObject(new { stepResult.Result.Id }, true)
+                                            : ConvertUtil.SerializeObject(stepResult.Result, true), context);
+                                break;
+                            case StepExecutionType.Update:
+                                if(connectionType != Core.Persistences.ConnectionType.MongoDB && stepResult.Result != null)
                                 {
-                                    // Note: Server will decrease the performance for deserializing JSON instead of client
-                                    var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
-                                    {
-                                        OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
-                                    })).Select(b => 
-                                            JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter())).ToList();
-                                    result.Result = objsList.Count > 1 ? objsList : objsList[0];
-                                    result.IsSuccess = true;
+                                    WriteDataToContext(
+                                    $"step{i.ToString()}",
+                                    ConvertUtil.SerializeObject(stepResult.Result, true), context);
                                 }
-                            }
+                                break;
+                            case StepExecutionType.Delete:
+                                if(connectionType != Core.Persistences.ConnectionType.MongoDB && stepResult.Result != null)
+                                {
+                                    WriteDataToContext(
+                                    $"step{i.ToString()}",
+                                    ConvertUtil.SerializeObject(stepResult.Result, true), context);
+                                }
+                                break;
                         }
-                        break;
-                    case INSERT_KEY:
-                        var mongoInsertCollection = GetCollection(mongoDatabase, parsingBson, INSERT_KEY);
-                        BsonDocument collectionCreateBson = parsingBson[INSERT_KEY][0][DATA_KEY].AsBsonDocument;
-                        var insertId = ObjectId.GenerateNewId();
-                        if(collectionCreateBson.Any(a => a.Name == "_id"))
-                        {
-                            collectionCreateBson["_id"] = insertId;
-                        }
-                        else
-                        {
-                            collectionCreateBson.Add("_id", insertId);
-                        }
+                    }
+                    else
+                    {
+                        return ExecuteDynamicResultModel.IsFailed(stepResult.Error);
+                    }
+                }
+                else
+                {
+                    throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
+                }
+            }
+            result.Result = context.Data.ToObject<dynamic>();
+            return result;
+        }
 
-                        // Ensure any trouble, remove id field
-                        collectionCreateBson.Remove("id");
-                        // Getting another fields
-                        var anotherFields = parsingBson[INSERT_KEY][0].AsBsonDocument.Where(a => a.Name != DATA_KEY);
-                        if(anotherFields.Any())
+        public async Task<ExtractingSchemaQueryModel> ExtractColumnSchema(DatabaseConnection databaseConnection, string formattedString, IEnumerable<ExecuteParamModel> parameters)
+        {
+            var connectionType = databaseConnection.GetConnectionType();
+            var extractionDatabase = _extractionDatabases.First(a => a.ConnectionType == connectionType);
+
+            return await extractionDatabase.Extract(databaseConnection, formattedString, parameters);
+        }
+
+        private static string ReplaceValueWithContext(string str, ExecutionDynamicContext context, ref List<ExecuteParamModel> executeParamModels, bool isSql = false)
+        {
+            if (context == null || context.Data == null)
+            {
+                return str;
+            }
+            var allFields = StringUtil.GetByRegexMatchs(@"{{\$(.*?)}}", str, false);
+            if (allFields.Length > 0)
+            {
+                foreach (var field in allFields)
+                {
+                    var replacedValue = context.Data.SelectToken(field);
+                    if(replacedValue == null)
+                    {
+                        throw new ArgumentNullException($"Cannot found a replaced value in context. Name: {field}");
+                    }
+
+                    if (isSql)
+                    {
+                        var paramName = GetSqlParam(field, replacedValue.Type);
+                        var executeParam = new ExecuteParamModel
                         {
-                            collectionCreateBson.AddRange(anotherFields);
-                        }
-
-                        await mongoInsertCollection.InsertOneAsync(collectionCreateBson);
-                        // Only return new id
-                        result.Result = new { id = insertId };
-                        break;
-                    case UPDATE_KEY:
-                        var mongoUpdateCollection = GetCollection(mongoDatabase, parsingBson, UPDATE_KEY);
-                        BsonDocument collectionWhereBson = parsingBson[UPDATE_KEY][0][WHERE_KEY].AsBsonDocument;
-                        var updateData = parsingBson[UPDATE_KEY][0][DATA_KEY].AsBsonDocument;
-
-                        // Important hack: because mongodb used '_id' is a primary key so that we need to convert id -> _id when update
-                        // Remove id
-                        updateData.Remove(" _id");
-                        updateData.Remove("id");
-
-                        var anotherUpdateFields = parsingBson[UPDATE_KEY][0].AsBsonDocument.Where(a => a.Name != DATA_KEY && a.Name != WHERE_KEY);
-                        if(anotherUpdateFields.Any())
-                        {
-                            updateData.AddRange(anotherUpdateFields);
+                            Name = paramName,
+                            ReplaceValue = replacedValue.Value<string>()
                         };
 
-                        BsonDocument set = new BsonDocument("$set", updateData);
-                        await mongoUpdateCollection.UpdateOneAsync(collectionWhereBson, set);
-
-                        break;
-                    case DELETE_KEY:
-                        var mongoDeleteCollection = GetCollection(mongoDatabase, parsingBson, DELETE_KEY);                        
-                        BsonDocument collectionWhereDeleteBson = parsingBson[DELETE_KEY][0][WHERE_KEY].AsBsonDocument;
-                        var deleteResult = await mongoDeleteCollection.DeleteOneAsync(collectionWhereDeleteBson);
-                        result.Result = deleteResult.DeletedCount;
-                        break;
+                        executeParamModels.Add(executeParam);
+                        str = str.Replace("{{$" + field + "}}","{{" + paramName + "}}", StringComparison.Ordinal);
+                    }
+                    else
+                    {
+                        switch (replacedValue.Type)
+                        {
+                            case JTokenType.Object:
+                                str = str.Replace("\"{{$" + field + "}}\"", replacedValue.ToString(), StringComparison.Ordinal);
+                                break;
+                            case JTokenType.Boolean:
+                            case JTokenType.Integer:
+                                str = str.Replace("\"{{$" + field + "}}\"", replacedValue.Value<string>(), StringComparison.Ordinal);
+                                break;
+                            default:
+                                str = str.Replace("{{$" + field + "}}", replacedValue.Value<string>(), StringComparison.Ordinal);                               
+                                break;
+                        }
+                    }                     
                 }
-                return result;
+
+                return str;
             }
-            catch(Exception ex)
+            else
             {
-                return ExecuteDynamicResultModel.IsFailed(ex.Message);
+                return str;
             }
         }
 
-        private string EliminateRedundantFormat(string query)
+        private static string GetSqlParam(string fieldName, JTokenType tokenType) => fieldName + "|" + MapperConstants.ConvertFromJToken(tokenType);
+
+        private void WriteDataToContext(string name, string data, ExecutionDynamicContext context)
         {
-            // Eliminate ObjectId
-            var indexObjectId = query.IndexOf("\"ObjectId(");
-            while(indexObjectId > 0)
+            if (!string.IsNullOrEmpty(data))
             {
-                var closedCurly = query.IndexOf(")\"", indexObjectId);
-                query = query.Remove(closedCurly + 1, 1);
-                query = query.Remove(indexObjectId, 1);
-                indexObjectId = query.IndexOf("\"ObjectId(");
+                if (context.Data.Children().Any(a => (a as JProperty).Name == name))
+                {
+                    var mergeObject = (JObject)context.Data[name];
+                    var dataJObject = JObject.Parse(data);
+                    mergeObject.Merge(dataJObject, new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Merge,
+                        MergeNullValueHandling = MergeNullValueHandling.Merge
+                    });
+
+                    context.Data.Remove(name);
+                    context.Data.Add(name, mergeObject);
+                }
+                else
+                {
+                    context.Data.Add(name, JToken.Parse(data));
+                }
             }
-
-            // Eliminate ISODate
-            var indexISODate = query.IndexOf("\"ISODate(");
-            while(indexISODate > 0)
-            {
-                var closedCurly = query.IndexOf(")\"", indexISODate);
-                query = query.Remove(closedCurly + 1, 1);
-                query = query.Remove(indexISODate, 1);
-                indexISODate = query.IndexOf("\"ISODate(");
-            }
-
-            return query;
-        }
-
-        private IMongoCollection<BsonDocument> GetCollection(IMongoDatabase mongoDatabase, BsonDocument parsingBson, string operatorName)
-        {
-            var collectionName = parsingBson[operatorName].AsBsonDocument.First().Name;
-            return mongoDatabase.GetCollection<BsonDocument>(collectionName);
         }
     }
 }

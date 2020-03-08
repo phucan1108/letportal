@@ -1,10 +1,13 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Extensions;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Portal.Constants;
 
 namespace LetPortal.Portal.Entities.Databases
 {
     [EntityCollection(Name = DatabaseConstants.DatabaseCollection)]
+    [Table("databases")]
     public class DatabaseConnection : BackupableEntity
     {
         public string ConnectionString { get; set; }
@@ -12,5 +15,10 @@ namespace LetPortal.Portal.Entities.Databases
         public string DataSource { get; set; }
 
         public string DatabaseConnectionType { get; set; }
+
+        public ConnectionType GetConnectionType()
+        {
+            return DatabaseConnectionType.ToEnum<ConnectionType>(true);
+        }
     }
 }

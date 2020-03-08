@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormBuilder } from '@angular/forms';
-import { FilledParameterModel } from 'services/portal.service';
+import { FilledParameterModel, ExecuteParamModel } from 'services/portal.service';
 
 @Component({
     selector: 'let-params-dialog',
@@ -9,7 +9,7 @@ import { FilledParameterModel } from 'services/portal.service';
 })
 export class ParamsDialogComponent implements OnInit {
 
-    params: FilledParameterModel[]
+    params: ExecuteParamModel[]
 
     constructor(
         public dialogRef: MatDialogRef<any>,

@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 /src/web-portal/src/app/core/sessions
+
+/src/web-apis/LetPortal.Core/nuget.config

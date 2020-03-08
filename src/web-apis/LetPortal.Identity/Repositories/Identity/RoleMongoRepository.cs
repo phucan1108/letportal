@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Identity.Entities;
-using MongoDB.Driver.Linq;
 using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Linq;
+using MongoDB.Driver.Linq;
 
 namespace LetPortal.Identity.Repositories.Identity
 {
@@ -22,7 +22,7 @@ namespace LetPortal.Identity.Repositories.Identity
             var foundRoles = await Collection.AsQueryable().Where(a => roles.Contains(a.Name)).ToListAsync();
 
             var kvps = foundRoles.Select(a => new KeyValuePair<string, List<BaseClaim>>(a.Name, a.Claims)).ToList();
-            foreach(var kv in kvps)
+            foreach (var kv in kvps)
             {
                 dic.Add(kv.Key, kv.Value);
             }

@@ -1,20 +1,19 @@
-﻿using LetPortal.Portal.Entities.Pages;
-using LetPortal.Portal.Models.Pages;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Models.Pages;
 
 namespace LetPortal.Portal.Providers.Pages
 {
     public interface IPageServiceProvider
     {
-        Task<Page> GetOne(string id);
+        Task<IEnumerable<Page>> GetPagesByIds(IEnumerable<string> ids);
+
+        Task<IEnumerable<ComparisonResult>> ComparePages(IEnumerable<Page> pages);
 
         Task<List<ShortPageModel>> GetAllPages();
 
-        Task CreateAsync(Page page);
-
-        Task UpdateAsync(string id, Page page);
-
-        Task DeleteAsync(string id);
+        Task ForceUpdatePages(IEnumerable<Page> pages);
     }
 }

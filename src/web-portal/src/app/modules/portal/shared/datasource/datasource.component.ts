@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angula
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DynamicListDataSourceComponent } from '../../dynamic-list/builder/components/dynamic-list.datasource.component';
+import { DynamicListDataSourceComponent } from '../../modules/builder/components/dynamic-list/components/dynamic-list.datasource.component';
 import { Datasource, DatasourceClient, DatasourceType, DatabaseConnection, DatabasesClient } from 'services/portal.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -11,8 +11,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
     templateUrl: './datasource.component.html'
 })
 export class DatasourceDialogComponent implements OnInit {
-    @ViewChild('formDirective') ngForm: NgForm;
-    @ViewChild(JsonEditorComponent) editor: JsonEditorComponent;
+    @ViewChild('formDirective', { static: true }) ngForm: NgForm;
+    @ViewChild(JsonEditorComponent, { static: true }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any;
 
@@ -107,9 +107,7 @@ export class DatasourceDialogComponent implements OnInit {
         if (this.isAddingNewDatasource) {
             const newDatasource = this.combineFormData();
 
-            this.datasourceClient.create({
-                datasource: newDatasource
-            }).subscribe(rep => {
+            this.datasourceClient.create(newDatasource).subscribe(rep => {
                 this.dialogRef.close(rep.id)
             })
         }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace LetPortal.Identity.Models
 {
@@ -19,7 +16,7 @@ namespace LetPortal.Identity.Models
 
         [Required]
         [MinLength(5)]
-        [MaxLength(30)]        
+        [MaxLength(30)]
         public string Repassword { get; set; }
 
         [Required]

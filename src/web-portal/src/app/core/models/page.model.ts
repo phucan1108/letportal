@@ -10,6 +10,7 @@ export interface PageResponse{
 
 export interface RenderingPageSectionState{
     sectionName: string,
+    sectionClass: string,
     state: RenderingSectionState
 }
 
@@ -23,7 +24,7 @@ export interface PageRenderedControl<T> extends PageControl{
     defaultOptions: T
 }
 
-export interface PageControlEvent {
+export interface PageControlActionEvent {
     name: string
     sectionName: string
     controlName: string
@@ -51,7 +52,7 @@ export interface TriggeredControlEvent{
 
 export interface DefaultControlOptions {
     label: string
-    tooltip: string
+    placeholder: string
     disabled: string
     hidden: string
     bindname: string
@@ -61,7 +62,10 @@ export interface DefaultControlOptions {
     // For Uploader only
     allowfileurl: boolean
     saveonchange: boolean
-
+    // For checkbox/slider only
+    allowZero: boolean   
+    allowYesNo: boolean
+    
     checkDisabled: boolean
     checkedHidden: boolean
 }
@@ -84,7 +88,7 @@ export interface PageShellData{
 
 export class ControlOptions{
     label: string
-    tooltip: string
+    placeholder: string
     hidden: boolean
     disabled: boolean
     bindname: string
@@ -92,7 +96,7 @@ export class ControlOptions{
     public static getDefaultControlOptions(control: PageControl){
         let labelOpt = ControlOptions.LabelOption
         labelOpt.value = control.name
-        let toolTipOpt = ControlOptions.TooltipOption
+        let placeholderOpt = ControlOptions.PlaceholderOption
         let disabledOpt = ControlOptions.DisabledOption
         let hiddenOpt = ControlOptions.HiddenOption
         hiddenOpt.value = (control.name === 'id' || control.name === '_id' || (control.name.toLowerCase().indexOf('id') > -1)) ? 'true' : 'false'
@@ -100,7 +104,7 @@ export class ControlOptions{
         bindnameOpt.value = control.name
         return [
             labelOpt,
-            toolTipOpt,
+            placeholderOpt,
             disabledOpt,
             hiddenOpt,
             bindnameOpt
@@ -115,10 +119,10 @@ export class ControlOptions{
         allowDelete: false
     }
 
-    public static TooltipOption: ExtendedShellOption = {
+    public static PlaceholderOption: ExtendedShellOption = {
         id: '',
-        description: 'Tooltip will be displayed when it isn\'t empty',
-        key: 'tooltip',
+        description: 'Placeholder will be displayed when it isn\'t empty',
+        key: 'placeholder',
         value: '',
         allowDelete: false
     }

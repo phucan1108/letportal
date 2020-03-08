@@ -1,18 +1,15 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { MatDialog, MatTable } from '@angular/material';
-import { ShortcutUtil } from 'app/shared/components/shortcuts/shortcut-util';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { NGXLogger } from 'ngx-logger';
 import { Guid } from 'guid-typescript';
-import { Constants } from 'portal/resources/constants';
-import { ArrayUtils } from 'app/core/utils/array-util';
 import * as _ from 'lodash';
-import { MessageType, ToastType } from 'app/shared/components/shortcuts/shortcut.models';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { ExtendedShellOption } from './extened.shell.model';
-import { ListOptions } from 'portal/dynamic-list/models/extended.model';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { slideInRightOnEnterAnimation, slideOutRightOnLeaveAnimation, collapseAnimation, slideInRightAnimation, slideOutRightAnimation, fadeInRightAnimation, fadeOutRightAnimation } from 'angular-animations';
+import { Observable } from 'rxjs';
 import { DataTable } from 'momentum-table';
 import { ShellOptionDialogComponent } from './shelloption.dialog.component';
+import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
 
 @Component({
     selector: 'let-shell-option',
@@ -22,9 +19,9 @@ import { ShellOptionDialogComponent } from './shelloption.dialog.component';
 export class ShellOptionComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
     }
-    @ViewChild('table') table: MatTable<ExtendedShellOption>;
+    @ViewChild('table', { static: false }) table: MatTable<ExtendedShellOption>;
 
-    @ViewChild('mtable')
+    @ViewChild('mtable', { static: true })
     mtable: DataTable;
 
     displayedListColumns = ['hint', 'key', 'value', 'actions']
@@ -73,7 +70,7 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
         this.shellOptions = _.filter(this.shellOptions, (elem) => {
             return elem.id !== shell.id
         })
-        this.shortcutUtil.notifyMessage("Delete option successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage("Delete option successfully!", ToastType.Success);
         this.changed.emit(this.shellOptions)
     }
 

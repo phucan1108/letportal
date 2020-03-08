@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LetPortal.Portal.Models.Pages
+﻿namespace LetPortal.Portal.Models.Pages
 {
     public class ShortPageModel
     {

@@ -10,3 +10,4 @@ export class toJsonStringTranslator implements ShellMethod  {
         return JSON.stringify(params[0])
     }
 }
+    

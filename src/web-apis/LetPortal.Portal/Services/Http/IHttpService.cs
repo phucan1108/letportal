@@ -1,9 +1,6 @@
-﻿using LetPortal.Portal.Entities.Shared;
+﻿using System.Threading.Tasks;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Https;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Http
 {

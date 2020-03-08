@@ -1,4 +1,9 @@
-﻿using LetPortal.Core.Logger;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Threading;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Services;
@@ -6,10 +11,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
+using Npgsql;
 
 namespace LetPortal.Core.Monitors
 {
@@ -38,10 +41,10 @@ namespace LetPortal.Core.Monitors
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
             var pushHealthCheckModel = new PushHealthCheckModel();
-            if(_monitorOptions.CurrentValue.CheckDatabaseOption
+            if (_monitorOptions.CurrentValue.CheckDatabaseOption
                 && _databaseOptions.CurrentValue != null)
             {
-                switch(_databaseOptions.CurrentValue.ConnectionType)
+                switch (_databaseOptions.CurrentValue.ConnectionType)
                 {
                     case ConnectionType.MongoDB:
                         try
@@ -49,20 +52,79 @@ namespace LetPortal.Core.Monitors
                             var mongoClient = new MongoClient(_databaseOptions.CurrentValue.ConnectionString);
                             var mongoDatabase = mongoClient.GetDatabase(_databaseOptions.CurrentValue.Datasource);
                             var ping = await mongoDatabase.RunCommandAsync<BsonDocument>(new BsonDocument { { "ping", 1 } });
-                            if(ping.Contains("ok") &&
+                            if (ping.Contains("ok") &&
                                     (ping["ok"].IsDouble && (int)ping["ok"].AsDouble == 1 ||
                                     ping["ok"].IsInt32 && ping["ok"].AsInt32 == 1))
                             {
                                 pushHealthCheckModel.DatabaseHealthy = true;
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             pushHealthCheckModel.DatabaseHealthy = false;
                             pushHealthCheckModel.ErrorStack = ex.ToString();
                         }
                         break;
                     case ConnectionType.SQLServer:
+                        try
+                        {
+                            using (var sqlDbConnection = new SqlConnection(_databaseOptions.CurrentValue.ConnectionString))
+                            {
+                                sqlDbConnection.Open();
+                                using (var sqlCommand = new SqlCommand("Select 1"))
+                                {
+                                    sqlCommand.ExecuteScalar();
+                                    pushHealthCheckModel.DatabaseHealthy = true;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            pushHealthCheckModel.DatabaseHealthy = false;
+                            pushHealthCheckModel.ErrorStack = ex.ToString();
+                        }
+                        break;
+                    case ConnectionType.MySQL:
+                        try
+                        {
+                            using (var mysqlDbConnection = new MySqlConnection(_databaseOptions.CurrentValue.ConnectionString))
+                            {
+                                mysqlDbConnection.Open();
+                                using (var mysqlCommand = new MySqlCommand("Select 1"))
+                                {
+                                    mysqlCommand.ExecuteScalar();
+                                    pushHealthCheckModel.DatabaseHealthy = true;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            pushHealthCheckModel.DatabaseHealthy = false;
+                            pushHealthCheckModel.ErrorStack = ex.ToString();
+                        }
+                        break;
+                    case ConnectionType.PostgreSQL:
+                        try
+                        {
+                            using (var postgreDbConnection = new NpgsqlConnection(_databaseOptions.CurrentValue.ConnectionString))
+                            {
+                                postgreDbConnection.Open();
+                                using (var postgreCommand = new NpgsqlCommand("Select 1"))
+                                {
+                                    postgreCommand.ExecuteScalar();
+                                    pushHealthCheckModel.DatabaseHealthy = true;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            pushHealthCheckModel.DatabaseHealthy = false;
+                            pushHealthCheckModel.ErrorStack = ex.ToString();
+                        }
+                        break;
+                    default:
+                        pushHealthCheckModel.DatabaseHealthy = false;
+                        pushHealthCheckModel.ErrorStack = string.Format("A database type isn't supported in Healthcheck. Databse type: {0}", _databaseOptions.CurrentValue.ConnectionType.ToString());
                         break;
                 }
             }
@@ -71,43 +133,12 @@ namespace LetPortal.Core.Monitors
                 pushHealthCheckModel.DatabaseHealthy = true;
             }
 
-            if(_monitorOptions.CurrentValue.CheckDatabaseLoggerOption
-                && _loggerOptions.CurrentValue != null)
-            {
-                switch(_loggerOptions.CurrentValue.Type)
-                {
-                    case LoggerStorageType.Mongodb:
-                        try
-                        {
-                            var mongoClient = new MongoClient(_loggerOptions.CurrentValue.MongoOptions.ConnectionString);
-                            var databaseName = MongoUrl.Create(_loggerOptions.CurrentValue.MongoOptions.ConnectionString).DatabaseName;
-                            var mongoDatabase = mongoClient.GetDatabase(databaseName);
-                            var ping = await mongoDatabase.RunCommandAsync<BsonDocument>(new BsonDocument { { "ping", 1 } });
-                            if(ping.Contains("ok") &&
-                                    (ping["ok"].IsDouble && (int)ping["ok"].AsDouble == 1 ||
-                                    ping["ok"].IsInt32 && ping["ok"].AsInt32 == 1))
-                            {
-                                pushHealthCheckModel.LoggerDatabaseHealthy = true;
-                            }
-                        }
-                        catch(Exception ex)
-                        {
-                            pushHealthCheckModel.LoggerDatabaseHealthy = false;
-                            pushHealthCheckModel.ErrorStack += ex.ToString();
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                pushHealthCheckModel.LoggerDatabaseHealthy = true;
-            }
             _monitorHealthCheck.CalculateAvg();
             var hardwareCheck = _monitorHealthCheck.GetCurrentHardwareInfoHealthCheck();
             pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage = hardwareCheck.CpuUsage;
             pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed = hardwareCheck.MemoryUsed;
 
-            if(_monitorOptions.CurrentValue.CheckCpuBottleneck)
+            if (_monitorOptions.CurrentValue.CheckCpuBottleneck)
             {
                 pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck = pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage > _monitorOptions.CurrentValue.BottleneckCpu;
             }
@@ -116,7 +147,7 @@ namespace LetPortal.Core.Monitors
                 pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck = false;
             }
 
-            if(_monitorOptions.CurrentValue.CheckMemoryThreshold)
+            if (_monitorOptions.CurrentValue.CheckMemoryThreshold)
             {
                 pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold = pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed > _monitorOptions.CurrentValue.ThresholdMemory;
             }
@@ -131,7 +162,6 @@ namespace LetPortal.Core.Monitors
             pushHealthCheckModel.ServiceName = _serviceOptions.CurrentValue.Name;
             pushHealthCheckModel.Healthy = !pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck
                                             && !pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold
-                                            && pushHealthCheckModel.LoggerDatabaseHealthy
                                             && pushHealthCheckModel.DatabaseHealthy;
 
             pushHealthCheckModel.BeatDate = DateTime.UtcNow;
@@ -141,14 +171,29 @@ namespace LetPortal.Core.Monitors
                 {  Constants.LetPortalHealthCheckData, pushHealthCheckModel }
             };
 
-            if(pushHealthCheckModel.Healthy)
+            if (pushHealthCheckModel.Healthy)
             {
-                return new HealthCheckResult(HealthStatus.Healthy, description: "Healthy", data: data);
+                return new HealthCheckResult(HealthStatus.Healthy,
+                    description:
+                        string.Format("Healthy with checking statuses: CPU - {0}; Memory - {1}; Database - {2}",
+                                GetHealthyWord(pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck),
+                                GetHealthyWord(pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold),
+                                GetHealthyWord(pushHealthCheckModel.DatabaseHealthy)), data: data);
             }
             else
             {
-                return new HealthCheckResult(HealthStatus.Unhealthy, description: "Unhealthy", data: data);
+                return new HealthCheckResult(HealthStatus.Unhealthy,
+                    description:
+                        string.Format("Unhealthy with checking statuses: CPU - {0}; Memory - {1}; Database - {2}",
+                                GetHealthyWord(pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck),
+                                GetHealthyWord(pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold),
+                                GetHealthyWord(pushHealthCheckModel.DatabaseHealthy)), data: data);
             }
+        }
+
+        private string GetHealthyWord(bool isHealthy)
+        {
+            return isHealthy ? "Healthy" : "Unhealthy";
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LetPortal.Portal.Models.Shared
+﻿namespace LetPortal.Portal.Models.Shared
 {
     public class ColumnField
     {

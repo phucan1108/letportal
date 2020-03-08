@@ -10,6 +10,11 @@ export class ArrayUtils {
         return arrays
     }
 
+    public static updateOneItemByIndex<T>(arrays: Array<T>, updatingItem: T, index: number){
+        arrays.splice(index, 1, updatingItem)
+        return arrays
+    }
+
     public static removeOneItem<T>(arrays: Array<T>, predicate?: ListIterateeCustom<T, boolean>): Array<T> {
         const removingItemIndex = _.findIndex(arrays, predicate)
         arrays.splice(removingItemIndex, 1)

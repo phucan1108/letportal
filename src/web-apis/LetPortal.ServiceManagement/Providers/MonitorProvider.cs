@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Utils;
-using LetPortal.ServiceManagement.Repositories;
+using LetPortal.ServiceManagement.Repositories.Abstractions;
 
 namespace LetPortal.ServiceManagement.Providers
 {
@@ -27,18 +25,22 @@ namespace LetPortal.ServiceManagement.Providers
                 ServiceName = pushHealthCheckModel.ServiceName,
                 HttpCounter = new Entities.HttpCounter
                 {
-                    AvgDuration = pushHealthCheckModel.HttpHealthCheck.AvgDuration,
+                    AvgDuration = Math.Round(pushHealthCheckModel.HttpHealthCheck.AvgDuration, 0, MidpointRounding.AwayFromZero),
                     FailedRequests = pushHealthCheckModel.HttpHealthCheck.FailedRequests,
-                    MeansureDateTime = pushHealthCheckModel.HttpHealthCheck.MeansureDateTime,
+                    MeansureDate = pushHealthCheckModel.BeatDate,
                     SuccessRequests = pushHealthCheckModel.HttpHealthCheck.SuccessRequests,
-                    TotalRequestsPerDay = pushHealthCheckModel.HttpHealthCheck.TotalRequestsPerDay
+                    TotalRequestsPerDay = pushHealthCheckModel.HttpHealthCheck.TotalRequestsPerDay,
+                    ServiceId = pushHealthCheckModel.ServiceId
                 },
                 HardwareCounter = new Entities.HardwareCounter
                 {
-                    CpuUsage = pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage,
+                    CpuUsage = Math.Round(pushHealthCheckModel.HardwareInfoHealthCheck.CpuUsage, 0, MidpointRounding.AwayFromZero),
                     MemoryUsed = pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed,
+                    MemoryUsedInMb = (int)Math.Round((double)(pushHealthCheckModel.HardwareInfoHealthCheck.MemoryUsed / 1024), 0, MidpointRounding.AwayFromZero),
                     IsCpuBottleneck = pushHealthCheckModel.HardwareInfoHealthCheck.IsCpuBottleneck,
-                    IsMemoryThreshold = pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold
+                    IsMemoryThreshold = pushHealthCheckModel.HardwareInfoHealthCheck.IsMemoryThreshold,
+                    MeansureDate = pushHealthCheckModel.BeatDate,
+                    ServiceId = pushHealthCheckModel.ServiceId
                 }
             });
         }

@@ -1,0 +1,150 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Chart Builder
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item disabled="{{!isCanSubmit}}" (click)="onSubmit()">Save</button>
+                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-horizontal-stepper linear>
+                <ng-template matStepperIcon="edit">
+                    <mat-icon>check</mat-icon>
+                </ng-template>
+                <!-- Page info step-->
+                <mat-step [stepControl]="componentInfo" errorMessage="Chart Info is required">
+                    <ng-template matStepLabel>
+                        <span class="d-none d-sm-block">Chart Info</span>
+                    </ng-template>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button [disabled]="componentInfo.invalid" matStepperNext mat-raised-button
+                                color="primary">Next</button>
+                        </div>
+                    </div>
+                    <div class="row row-heading">
+                        <h3>Chart Info:</h3>
+                    </div>
+                    <form [formGroup]="componentInfo">
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Display Name:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <input formControlName="displayName" matInput #formDisplayNameInput
+                                        placeholder="Display Name" maxlength="250">
+                                    <mat-hint align="end">
+                                        {{formDisplayNameInput.value?.length || 0}}/250
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Name:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <input formControlName="name" matInput #formNameInput
+                                        placeholder="Auto-generated from Display Name" maxlength="250">
+                                    <mat-hint align="end">
+                                        {{formNameInput.value?.length || 0}}/250
+                                    </mat-hint>
+                                    <mat-error *ngIf="componentInfo.get('name').hasError('uniqueName')">
+                                        Name is already used
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Chart Title:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <input formControlName="chartTitle" matInput #formChartTitleInput
+                                        placeholder="Chart Title" maxlength="250">
+                                    <mat-hint align="end">
+                                        {{formChartTitleInput.value?.length || 0}}/250
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Layout Type:</label>
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <label class="col-lg-3 p-3">
+                                        <input type="radio" name="layoutType" value="0" formControlName="layoutType">
+                                        <img src="assets/images/Layout-OneCol.png" class="img-fluid rounded"/>
+                                    </label>
+                                    <label class="col-lg-3 p-3">
+                                        <input type="radio" name="layoutType" value="1" formControlName="layoutType">
+                                        <img src="assets/images/Layout-TwoCols.png" class="img-fluid rounded"/>
+                                    </label>
+                                    <label class="col-lg-3 p-3">
+                                        <input type="radio" name="layoutType" value="2" formControlName="layoutType">
+                                        <img src="assets/images/Layout-ThreeCols.png" class="img-fluid rounded"/>
+                                    </label>
+                                    <label class="col-lg-3 p-3">
+                                        <input type="radio" name="layoutType" value="3" formControlName="layoutType">
+                                        <img src="assets/images/Layout-FourCols.png" class="img-fluid rounded"/>
+                                    </label>
+                                </div>                        
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Chart Type:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <mat-select placeholder="Choose Chart Type" formControlName="chartType">
+                                        <mat-option *ngFor="let chartType of _chartTypes" [value]="chartType.value">
+                                            {{ chartType.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-2 col-form-label">Mapping Projection:</label>
+                            <div class="col-lg-6">
+                                <mat-form-field class="field-full-width">
+                                    <input formControlName="mappingProjection" matInput #formMappingProjectionInput
+                                        placeholder="Required Format: name=name;value=value;group=group"
+                                        maxlength="250">
+                                    <mat-hint align="end">
+                                        {{formMappingProjectionInput.value?.length || 0}}/250
+                                    </mat-hint>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="separator-dashed"></div>
+                    <div class="row row-heading">
+                        <h3>Options:</h3>
+                    </div>
+                    <let-shell-option [shellOptions$]="shellOptions$" (changed)="onChangingOptions($event)">
+                    </let-shell-option>
+                </mat-step>
+                <mat-step>
+                    <ng-template matStepLabel>
+                        <span class="d-none d-sm-block">Databases & Filters</span>
+                    </ng-template>
+                    <div class="row">
+                        <div class="col-lg-12 div-stepper">
+                            <button matStepperPrevious mat-raised-button color="primary">Back</button>
+                        </div>
+                    </div>
+                    <let-chart-datasource [isEditMode]="isEditMode" [databaseOptions]="databaseOptions"
+                        (afterSelectingEntity)="afterSelectingEntity($event)"
+                        (afterPopulatingQuery)="afterPopulatingQuery($event)"
+                        (changed)="databaseOptionsChanged($event)"></let-chart-datasource>
+                    <let-chart-filter-grid [chartFilters]="chartFilters"
+                        (chartFiltersChanged)="chartFiltersChanged($event)"></let-chart-filter-grid>
+                </mat-step>
+            </mat-horizontal-stepper>
+        </mat-card-content>
+    </mat-card>
+</div>

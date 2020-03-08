@@ -1,27 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PagesModule } from './modules/pages.module';
-import { LoginComponent } from './modules/login/login.component';
 import { ErrorComponent } from './modules/error/error.component';
-import { ForgotPasswordComponent } from './modules/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './modules/reset-password/reset-password.component';
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: './modules/pages.module#PagesModule'
+    loadChildren: () => import('./modules/login/login.module').then(m => m.LoginModule)
   },
   {
-    path: 'login',
-    component: LoginComponent,
-  },
-  {
-    path: 'forgot-password',
-    component: ForgotPasswordComponent
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent
+    path: 'portal',
+    loadChildren: () => import('./modules/portal/portalpages.module').then(m => m.PortalPagesModule)
   },
   {
     path: '404',

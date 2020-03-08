@@ -1,13 +1,11 @@
-﻿using LetPortal.Core.Logger;
+﻿using System;
+using System.Net.Http;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Logger.Models;
-using LetPortal.Core.Logger.Repositories;
 using LetPortal.Core.Monitors;
 using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Services.Models;
 using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Net.Http;
 
 namespace LetPortal.Core.Services
 {
@@ -23,21 +21,17 @@ namespace LetPortal.Core.Services
 
         private readonly IOptionsMonitor<MonitorOptions> _monitorOptions;
 
-        private readonly ILogRepository _logRepository;
-
         private readonly HttpClient _httpClient;
 
         public ServiceContext(
-            IOptionsMonitor<ServiceOptions> serviceOptions, 
-            IOptionsMonitor<LoggerOptions> loggerOptions,
+            IOptionsMonitor<ServiceOptions> serviceOptions,
             IOptionsMonitor<MonitorOptions> monitorOptions,
-            ILogRepository logRepository,
+            IOptionsMonitor<LoggerOptions> loggerOptions,
             HttpClient httpClient)
         {
             _serviceOptions = serviceOptions;
-            _loggerOptions = loggerOptions;
             _monitorOptions = monitorOptions;
-            _logRepository = logRepository;
+            _loggerOptions = loggerOptions;
             _httpClient = httpClient;
         }
 
@@ -62,7 +56,9 @@ namespace LetPortal.Core.Services
                 httpResponseMessage.EnsureSuccessStatusCode();
                 serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
                 if (postAction != null)
+                {
                     postAction.Invoke();
+                }
             }
             catch (Exception ex)
             {
@@ -80,7 +76,9 @@ namespace LetPortal.Core.Services
                 serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
                 if (postAction != null)
+                {
                     postAction.Invoke();
+                }
             }
             catch (Exception ex)
             {
@@ -92,13 +90,14 @@ namespace LetPortal.Core.Services
         {
             try
             {
-                var task = _httpClient.GetAsync(_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/services/" + serviceId);
+                var task = _httpClient.PutAsync(_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/services/" + serviceId, new StringContent(string.Empty));
                 var httpResponseMessage = task.Result;
                 httpResponseMessage.EnsureSuccessStatusCode();
-                serviceId = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
                 if (postAction != null)
+                {
                     postAction.Invoke();
+                }
             }
             catch (Exception ex)
             {
@@ -110,10 +109,8 @@ namespace LetPortal.Core.Services
         {
             if (_loggerOptions.CurrentValue.NotifyOptions.Enable)
             {
-                var allLogTraces = _logRepository.GetAllLogs(_serviceOptions.CurrentValue.Name, pushLogModel.UserSessionId, pushLogModel.TraceId).Result;
                 pushLogModel.RegisteredServiceId = serviceId;
                 pushLogModel.ServiceName = _serviceOptions.CurrentValue.Name;
-                pushLogModel.StackTraces = allLogTraces.ToList();
                 try
                 {
                     var task = _httpClient.PostAsJsonAsync(_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/logs", pushLogModel);
@@ -135,7 +132,7 @@ namespace LetPortal.Core.Services
                 {
                     pushHealthCheckModel.ServiceId = serviceId;
                     var task = _httpClient.PostAsJsonAsync(
-                        (!string.IsNullOrEmpty(_monitorOptions.CurrentValue.NotifyOptions.HealthcheckEndpoint) 
+                        (!string.IsNullOrEmpty(_monitorOptions.CurrentValue.NotifyOptions.HealthcheckEndpoint)
                             ? _monitorOptions.CurrentValue.NotifyOptions.HealthcheckEndpoint : (_serviceOptions.CurrentValue.ServiceManagementEndpoint + "/api/monitors")), pushHealthCheckModel);
                     var httpResponseMessage = task.Result;
                     httpResponseMessage.EnsureSuccessStatusCode();

@@ -1,6 +1,3 @@
-import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import { ControlType } from 'services/portal.service';
-
 export class Constants {
     public static readonly PREFIX_FORM_URL = 'portal/page/'
     public static readonly PREFIX_LIST_URL = 'portal/page/'

@@ -1,13 +1,14 @@
-﻿using LetPortal.Portal.Entities.Components.Controls;
+﻿using System;
+using System.Collections.Generic;
+using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Shared;
-using System.Collections.Generic;
 
 namespace LetPortal.Portal.Entities.SectionParts.Controls
 {
     public class PageControl
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         public string Name { get; set; }
 
@@ -67,6 +68,7 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
         RichTextEditor,
         Uploader,
         MultiUploader,
-        IconPicker
+        IconPicker,
+        MarkdownEditor
     }
 }

@@ -1,9 +1,11 @@
-﻿using LetPortal.Core.Persistences;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
+using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Repositories.Apps
 {
@@ -14,11 +16,43 @@ namespace LetPortal.Portal.Repositories.Apps
             Connection = mongoConnection;
         }
 
+        public Task<IEnumerable<ShortEntityModel>> GetShortApps(string keyWord = null)
+        {
+            if (!string.IsNullOrEmpty(keyWord))
+            {
+                var filterBuilder = Builders<App>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
+
+                return Task.FromResult(Collection.Find(filterBuilder).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            }
+            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+        }
+
         public async Task UpdateMenuAsync(string appId, List<Menu> menus)
         {
-            var collection = Connection.GetDatabaseConnection().GetCollection<App>(CollectionName);
             var updateBuilder = Builders<App>.Update.Set(a => a.Menus, menus);
-            await collection.FindOneAndUpdateAsync(a => a.Id == appId, updateBuilder);
+            await Collection.FindOneAndUpdateAsync(a => a.Id == appId, updateBuilder);
+        }
+
+        public async Task UpdateMenuProfileAsync(string appId, MenuProfile menuProfile)
+        {
+            var app = await GetOneAsync(appId);
+            if (app.MenuProfiles.Any(a => a.Role == menuProfile.Role))
+            {
+                foreach (var menu in app.MenuProfiles)
+                {
+                    if (menuProfile.Role == menuProfile.Role)
+                    {
+                        menuProfile.MenuIds = menuProfile.MenuIds;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                app.MenuProfiles.Add(menuProfile);
+            }
+
+            await UpdateAsync(app.Id, app);
         }
     }
 }

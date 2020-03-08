@@ -1,15 +1,16 @@
-﻿using LetPortal.Core.Files;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Files;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Repositories.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LetPortal.Portal.Services.Files
 {
@@ -35,17 +36,41 @@ namespace LetPortal.Portal.Services.Files
             _fileRepository = fileRepository;
         }
 
-        public async Task<ResponseDownloadFile> DownloadFileAsync(string fileId)
+        public async Task<ResponseDownloadFile> DownloadFileAsync(string fileId, bool wantCompress)
         {
             var file = await _fileRepository.GetOneAsync(fileId);
 
             var fileConnector = _fileConnectorExecutions.First(a => a.FileStorageType == file.FileStorageType);
 
+            var fileBytes = await fileConnector.GetFileAsync(new StoredFile { FileIdentifierOptions = file.IdentifierOptions });
+            byte[] returnedBytes;
+            if (wantCompress && file.AllowCompress)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    using (var zipArchive = new ZipArchive(ms, ZipArchiveMode.Create, true))
+                    {
+                        var zipEntry = zipArchive.CreateEntry(file.Name, CompressionLevel.Fastest);
+                        using (var zipStream = zipEntry.Open())
+                        {
+                            zipStream.Write(fileBytes, 0, fileBytes.Length);
+                        }
+                    }
+                    returnedBytes = ms.ToArray();
+                    file.Name = file.Name.Split(".")[0] + ".zip";
+                    file.MIMEType = "application/zip";
+                    GC.SuppressFinalize(fileBytes);
+                }
+            }
+            else
+            {
+                returnedBytes = fileBytes;
+            }
             return new ResponseDownloadFile
             {
                 FileName = file.Name,
                 MIMEType = file.MIMEType,
-                FileBytes = await fileConnector.GetFileAsync(new StoredFile { FileIdentifierOptions = file.IdentifierOptions })
+                FileBytes = returnedBytes
             };
         }
 
@@ -57,8 +82,7 @@ namespace LetPortal.Portal.Services.Files
         public Task<string> GetFileMIMEType(string fileName)
         {
             var provider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if(!provider.TryGetContentType(fileName, out contentType))
+            if (!provider.TryGetContentType(fileName, out var contentType))
             {
                 contentType = "application/octet-stream";
             }
@@ -66,13 +90,13 @@ namespace LetPortal.Portal.Services.Files
             return Task.FromResult(contentType);
         }
 
-        public async Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader)
+        public async Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader, bool allowCompress)
         {
             // Store a file into temp disk before proceeding
             var localFilePath = await SaveFormFileAsync(file);
 
             // 1. Check all rules
-            foreach(var rule in _fileValidatorRules)
+            foreach (var rule in _fileValidatorRules)
             {
                 await rule.Validate(file, localFilePath);
             }
@@ -92,8 +116,9 @@ namespace LetPortal.Portal.Services.Files
                 FileSize = file.Length,
                 FileStorageType = _fileOptions.CurrentValue.FileStorageType,
                 IdentifierOptions = storedFile.FileIdentifierOptions,
-                DownloadableUrl = storedFile.UseServerHost 
-                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId 
+                AllowCompress = allowCompress,
+                DownloadableUrl = storedFile.UseServerHost
+                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId
                         : storedFile.DownloadableUrl
             };
 
@@ -107,13 +132,90 @@ namespace LetPortal.Portal.Services.Files
             };
         }
 
+        public async Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader, bool allowCompress)
+        {
+            // 1. Check all rules
+            foreach (var rule in _fileValidatorRules)
+            {
+                await rule.Validate(localFilePath);
+            }
+
+            // 2. Call Media Connector to upload
+            var storedFile = await
+                _fileConnectorExecutions
+                    .First(a => a.FileStorageType == _fileOptions.CurrentValue.FileStorageType)
+                    .StoreFileAsync(localFilePath);
+
+            // 3. Store its into database
+            var createdId = DataUtil.GenerateUniqueId();
+            var file = new FileInfo(localFilePath);
+            var createFile = new Entities.Files.File
+            {
+                Id = createdId,
+                Name = file.Name,
+                DateUploaded = DateTime.UtcNow,
+                Uploader = uploader,
+                MIMEType = await GetFileMIMEType(localFilePath),
+                FileSize = file.Length,
+                FileStorageType = _fileOptions.CurrentValue.FileStorageType,
+                IdentifierOptions = storedFile.FileIdentifierOptions,
+                AllowCompress = allowCompress,
+                DownloadableUrl = storedFile.UseServerHost
+                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId
+                        : storedFile.DownloadableUrl
+            };
+
+            await _fileRepository.AddAsync(createFile);
+
+            System.IO.File.Delete(localFilePath);
+            return new ResponseUploadFile
+            {
+                FileId = createFile.Id,
+                DownloadableUrl = createFile.DownloadableUrl
+            };
+        }
+
+        public async Task<bool> ValidateFile(IFormFile file)
+        {
+            try
+            {
+                var localFilePath = await SaveFormFileAsync(file);
+                foreach (var rule in _fileValidatorRules)
+                {
+                    await rule.Validate(file, localFilePath);
+                }
+                System.IO.File.Delete(localFilePath);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> ValidateFile(string localFilePath)
+        {
+            try
+            {
+                foreach (var rule in _fileValidatorRules)
+                {
+                    await rule.Validate(localFilePath);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private async Task<string> SaveFormFileAsync(IFormFile file)
         {
             var tempFileName = Path.GetRandomFileName();
 
             tempFileName = tempFileName.Split(".")[0] + "." + file.FileName.Split(".")[1];
 
-            using(var stream = new FileStream(tempFileName, FileMode.Create))
+            using (var stream = new FileStream(tempFileName, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }

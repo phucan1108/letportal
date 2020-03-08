@@ -8,7 +8,9 @@ namespace LetPortal.Portal.Entities.Components.Controls
 
         public EventActionType EventActionType { get; set; }
 
-        public EventHttpServiceOptions HttpServiceOptions { get; set; }
+        public EventHttpServiceOptions EventHttpServiceOptions { get; set; }
+
+        public EventDatabaseOptions EventDatabaseOptions { get; set; }
 
         public TriggerEventOptions TriggerEventOptions { get; set; }
 
@@ -24,9 +26,17 @@ namespace LetPortal.Portal.Entities.Components.Controls
         public string[] BoundData { get; set; }
     }
 
+    public class EventDatabaseOptions: DatabaseOptions
+    {
+        public string OutputProjection { get; set; }
+
+        public string[] BoundData { get; set; }
+    }
+
     public enum EventActionType
     {
         TriggerEvent,
+        QueryDatabase,
         WebService
     }
 }

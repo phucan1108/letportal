@@ -1,11 +1,11 @@
-﻿using LetPortal.Core.Exceptions;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Exceptions;
 using LetPortal.Core.Https;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Providers.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LetPortal.IdentityApis.Controllers
 {
@@ -16,7 +16,7 @@ namespace LetPortal.IdentityApis.Controllers
         private readonly IIdentityServiceProvider _identityServiceProvider;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
+
         public AccountsController(
             IIdentityServiceProvider identityServiceProvider,
             IHttpContextAccessor httpContextAccessor)
@@ -43,8 +43,16 @@ namespace LetPortal.IdentityApis.Controllers
             return Ok(result);
         }
 
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout([FromBody] LogoutModel logoutModel)
+        {
+            await _identityServiceProvider.SignOutAsync(logoutModel);
+            return Ok();
+        }
+
         [HttpPost("register")]
-        [AllowAnonymous]
+        [Authorize]
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
         {
@@ -64,7 +72,7 @@ namespace LetPortal.IdentityApis.Controllers
         }
 
         [HttpGet("refresh/{refreshToken}")]
-        [AllowAnonymous]
+        [Authorize]
         [ProducesResponseType(typeof(TokenModel), 200)]
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> RefreshToken(string refreshToken)
@@ -84,7 +92,7 @@ namespace LetPortal.IdentityApis.Controllers
                 return BadRequest();
             }
 
-            await _identityServiceProvider.ForgotPassword(model.Email);
+            await _identityServiceProvider.ForgotPasswordAsync(model.Email);
 
             return NoContent();
         }
@@ -99,7 +107,7 @@ namespace LetPortal.IdentityApis.Controllers
                 return BadRequest();
             }
 
-            await _identityServiceProvider.RecoveryPassword(model);
+            await _identityServiceProvider.RecoveryPasswordAsync(model);
 
             return NoContent();
         }

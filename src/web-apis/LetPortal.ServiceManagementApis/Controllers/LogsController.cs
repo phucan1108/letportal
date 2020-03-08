@@ -1,7 +1,7 @@
-﻿using LetPortal.Core.Logger.Models;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Logger.Models;
 using LetPortal.ServiceManagement.Providers;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LetPortal.ServiceManagementApis.Controllers
 {
@@ -20,6 +20,13 @@ namespace LetPortal.ServiceManagementApis.Controllers
         public async Task<IActionResult> ConsumeLog([FromBody] PushLogModel pushLogModel)
         {
             await _logEventProvider.AddLogEvent(pushLogModel);
+            return Ok();
+        }
+
+        [HttpGet("gather/{traceId}")]
+        public async Task<IActionResult> GatherLog(string traceId)
+        {
+            await _logEventProvider.GatherAllLogs(traceId);
             return Ok();
         }
     }

@@ -1,16 +1,17 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, RedirectType, NotificationOptions } from 'services/portal.service';
+import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, NotificationOptions, DatabaseExecutionStep } from 'services/portal.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActionCommandRenderOptions } from './actioncommandrenderoptions';
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { StaticResources } from 'portal/resources/static-resources';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { ClipboardService } from 'ngx-clipboard';
-import { ShortcutUtil } from 'app/shared/components/shortcuts/shortcut-util';
-import { ToastType } from 'app/shared/components/shortcuts/shortcut.models';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import * as _ from 'lodash';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-commandoptions',
@@ -39,23 +40,25 @@ export class CommandOptionsComponent implements OnInit {
 
     notificationOptionsForm: FormGroup
 
-    @ViewChild('jsonPayloadEditor') jsonPayloadEditor: JsonEditorComponent
+    steps: Array<DatabaseExecutionStep> = []
+
+    @ViewChild('jsonPayloadEditor', { static: false }) jsonPayloadEditor: JsonEditorComponent
     public editorOptions1: JsonEditorOptions = new JsonEditorOptions()
     jsonHttpBodyData: any = {};
     isJsonHttpBodyEditorValid = true;
     _httpMethods = StaticResources.httpCallMethods()
 
-    @ViewChild('jsonDataEditor') jsonDataEditor: JsonEditorComponent
+    @ViewChild('jsonDataEditor', { static: false }) jsonDataEditor: JsonEditorComponent
     public editorOptions3: JsonEditorOptions = new JsonEditorOptions()
     jsonData: any = {}
-    databaseConnections: Observable<Array<DatabaseConnection>>;
+    databaseConnections: Array<DatabaseConnection>;
     hintText = ''
     isHintClicked = false
     mapWorkflowInputs: MapWorkflowInput[] = []
-    
-    page$: Observable<Array<ShortPageModel>>;
-    _redirectionTypes = StaticResources.redirectionTypes()
-    redirectionType = RedirectType
+    isReadyToRender = false
+
+    page$: BehaviorSubject<Array<ShortPageModel>> = new BehaviorSubject([])
+    pages: Array<ShortPageModel> = []
 
     hideDatabaseOption = false
     hideHttpOption = false
@@ -67,7 +70,8 @@ export class CommandOptionsComponent implements OnInit {
         private databaseClient: DatabasesClient,
         private clipboardService: ClipboardService,
         private shortcutUtil: ShortcutUtil,
-        private pagesClient: PagesClient
+        private pagesClient: PagesClient,
+        private logger: NGXLogger
     ) { }
 
     ngOnInit(): void {
@@ -95,13 +99,24 @@ export class CommandOptionsComponent implements OnInit {
         
         this.actionCommandOptions = ObjectUtils.clone(this.actionCommandOptions)
         this.currentActionType = this.actionCommandOptions.actionType
-        this.initDatabaseOptions()
+        this.initDatabaseChains()
         this.initHttpOptions()
         this.initWorkflowOptions()
         this.initRedirectionOptions()
         this.initNotificationOptions()
 
-        this.databaseConnections = this.databaseClient.getAll()
+        this.steps = ObjectUtils.clone(this.actionCommandOptions.dbExecutionChains.steps)
+
+        this.databaseClient.getAll().subscribe(
+            res => {
+                this.databaseConnections = res
+                this.isReadyToRender = true
+            }
+        )
+
+        this.page$.subscribe(res => {
+            this.pages = res
+        })
     }
 
     initNotificationOptions() {
@@ -122,20 +137,25 @@ export class CommandOptionsComponent implements OnInit {
         if(!this.actionCommandOptions.redirectOptions){
             this.actionCommandOptions.redirectOptions = {
                 redirectUrl: '',
-                isSameDomain: true,
-                passParams: '',
-                redirectType: RedirectType.ThroughPage,
-                targetPageId: ''
+                isSameDomain: true
             }
         }
 
-        this.page$ = this.pagesClient.getAllShortPages()
-        this.redirectionOptionsForm = this.fb.group({
-            redirectionType : [this.actionCommandOptions.redirectOptions.redirectType, Validators.required],
+        this.pagesClient.getAllShortPages().subscribe(res => {
+            this.page$.next(res)
+        })
+        
+        this.redirectionOptionsForm = this.fb.group({            
             isSameDomain: [this.actionCommandOptions.redirectOptions.isSameDomain],
-            targetPageId: [this.actionCommandOptions.redirectOptions.targetPageId],
-            passParams: [this.actionCommandOptions.redirectOptions.passParams],
-            redirectUrl: [this.actionCommandOptions.redirectOptions.redirectUrl]
+            redirectUrl: [this.actionCommandOptions.redirectOptions.redirectUrl],
+            targetPageId: ['']
+        })
+
+        this.redirectionOptionsForm.get('targetPageId').valueChanges.subscribe(newValue => {
+            if(newValue){
+                const found = this.pages.find(a => a.id == newValue)
+                this.redirectionOptionsForm.get('redirectUrl').setValue(found.urlPath)
+            }
         })
     }
 
@@ -149,39 +169,14 @@ export class CommandOptionsComponent implements OnInit {
         this.mapWorkflowInputs = this.actionCommandOptions.workflowOptions.mapWorkflowInputs
     }
 
-    initDatabaseOptions(){
-        if(!this.actionCommandOptions.databaseOptions){
-            this.actionCommandOptions.databaseOptions = {
-                databaseConnectionId: '',
-                query: '',
-                entityName: ''
+    initDatabaseChains(){
+        if(!this.actionCommandOptions.dbExecutionChains){
+            this.actionCommandOptions.dbExecutionChains = {
+                steps: []
             }
         }
-        
-        this.editorOptions3.mode = 'code'
-        this.jsonData = this.actionCommandOptions.databaseOptions.query ? JSON.parse(this.actionCommandOptions.databaseOptions.query) : {}
-        this.editorOptions3.onChange = () => {
-            try {
-                const jsonStr = JSON.stringify(this.jsonDataEditor.get())
-                if (!!jsonStr && jsonStr !== '{}') {
-                    this.databaseOptionsForm.get('query').setValue(jsonStr)
-                }
-            }
-            catch{
-
-            }
-        }
-
-        this.databaseOptionsForm = this.fb.group({
-            databaseConnectionId: [this.actionCommandOptions.databaseOptions.databaseConnectionId, Validators.required],
-            query: [this.actionCommandOptions.databaseOptions.query, Validators.required]
-        })
-
-        this.databaseOptionsForm.valueChanges.subscribe(newValue => {
-
-        })
     }
-
+    
     initHttpOptions() {
         if (!this.actionCommandOptions.httpServiceOptions) {
             this.actionCommandOptions.httpServiceOptions = {
@@ -213,45 +208,10 @@ export class CommandOptionsComponent implements OnInit {
         })
     }
 
-    openQueryHint() {
-        let query = '{\r\n  \"$query\":{\r\n    \"{{options.entityname}}\":[\r\n        {\r\n          \"$match\": {\r\n            \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n          }\r\n        }\r\n      ]\r\n  }\r\n}'
-        this.hintText = query
-        this.isHintClicked = true
-    }
-
-    openInsertHint() {
-        let insert = '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}'
-        this.hintText = insert
-        this.isHintClicked = true
-    }
-
-    openUpdateHint() {
-        let update = '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
-        this.hintText = update
-        this.isHintClicked = true
-    }
-
-    openUpdatePartsHint(){
-        let updatePart = '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
-        this.hintText = updatePart
-        this.isHintClicked = true
-    }
-
-    openDeleteHint() {
-        let deleteText = '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
-        this.hintText = deleteText
-        this.isHintClicked = true
-    }
-
-    copy(){
-        this.shortcutUtil.notifyMessage('Copied content', ToastType.Info)
-        this.clipboardService.copyFromContent(this.hintText)
-    }
-
     isValid(){
         switch(this.currentActionType){
             case ActionType.ExecuteDatabase:
-                return this.databaseOptionsForm.valid && this.notificationOptionsForm.valid
+                return this.isDbChainsValid() && this.notificationOptionsForm.valid
             case ActionType.CallHttpService:
                 return this.httpOptionsForm.valid && this.notificationOptionsForm.valid
             case ActionType.Redirect:
@@ -259,17 +219,31 @@ export class CommandOptionsComponent implements OnInit {
         }
     }
 
+    onExecutionDrop($event){
+
+    }
+
+    addStep(){
+        let newStep = {
+            databaseConnectionId: '',
+            executeCommand: ''
+        }
+        this.actionCommandOptions.dbExecutionChains.steps.push(newStep)
+
+        this.steps.push(newStep)
+    }
+
+    stepChanged($event: DatabaseExecutionStep,index){
+        this.actionCommandOptions.dbExecutionChains.steps[index] = $event
+        this.logger.debug('After changed', this.actionCommandOptions.dbExecutionChains)
+    }
     get(): ActionCommandOptions{
         switch(this.currentActionType){
             case ActionType.ExecuteDatabase:
-                let databaseFormValue = this.databaseOptionsForm.value
                 return {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
-                    databaseOptions: {
-                        databaseConnectionId: databaseFormValue.databaseConnectionId,
-                        query: databaseFormValue.query                        
-                    },
+                    dbExecutionChains: this.actionCommandOptions.dbExecutionChains,
                     notificationOptions: this.getNotification()
                 }
             case ActionType.CallHttpService:
@@ -292,11 +266,8 @@ export class CommandOptionsComponent implements OnInit {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
                     redirectOptions: {
-                        redirectType: redirectFormValue.redirectionType,
                         redirectUrl: redirectFormValue.redirectUrl,
-                        isSameDomain: redirectFormValue.isSameDomain,
-                        passParams: redirectFormValue.passParams,
-                        targetPageId: redirectFormValue.targetPageId
+                        isSameDomain: redirectFormValue.isSameDomain
                     }
                 }
         }
@@ -308,5 +279,17 @@ export class CommandOptionsComponent implements OnInit {
             completeMessage: notificationFormValues.completeMessage,
             failedMessage: notificationFormValues.failedMessage
         }
+    }
+
+    private isDbChainsValid(): boolean{
+        let isValid = true
+        this.actionCommandOptions.dbExecutionChains.steps.forEach(step => {
+            if(!ObjectUtils.isNotNull(step.databaseConnectionId) || !ObjectUtils.isNotNull(step.executeCommand)){
+                isValid = false
+                return false
+            }
+        });
+
+        return isValid
     }
 }

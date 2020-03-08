@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,10 +27,10 @@ namespace LetPortal.Portal.Services.Http
                     response = await _httpClient.GetAsync(httpServiceOptions.HttpServiceUrl);
                     break;
                 case "Post":
-                    using(var stringContent = new StringContent(httpServiceOptions.JsonBody, Encoding.UTF8))
+                    using (var stringContent = new StringContent(httpServiceOptions.JsonBody, Encoding.UTF8))
                     {
                         response = await _httpClient.PostAsync(httpServiceOptions.HttpServiceUrl, stringContent);
-                    }                    
+                    }
                     break;
                 case "Put":
                     using (var stringContent = new StringContent(httpServiceOptions.JsonBody, Encoding.UTF8))
@@ -48,7 +46,7 @@ namespace LetPortal.Portal.Services.Http
             if (successCodes.Any(a => a == (int)response.StatusCode))
             {
                 httpResult.IsSuccess = true;
-                httpResult.Result = await response.Content.ReadAsAsync<dynamic>();
+                httpResult.Result = await response.Content.ReadAsJsonAsync<dynamic>();
             }
             return httpResult;
         }

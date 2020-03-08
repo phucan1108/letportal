@@ -1,11 +1,13 @@
-﻿using LetPortal.Core.Persistences;
-using LetPortal.Core.Persistences.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using LetPortal.Core.Persistences;
+using LetPortal.Core.Persistences.Attributes;
 
 namespace LetPortal.ServiceManagement.Entities
 {
     [EntityCollection(Name = "logevents")]
+    [Table("logevents")]
     public class LogEvent : Entity
     {
         public string TraceId { get; set; }
@@ -14,7 +16,7 @@ namespace LetPortal.ServiceManagement.Entities
 
         public string SourceId { get; set; }
 
-        public List<string> StackTrace { get; set; }
+        public IEnumerable<string> StackTrace { get; set; }
 
         public string HttpRequestUrl { get; set; }
 

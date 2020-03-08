@@ -1,14 +1,15 @@
-﻿using LetPortal.Portal.Entities.Databases;
-using LetPortal.Portal.Handlers.Databases.Commands;
-using LetPortal.Portal.Handlers.Databases.Queries;
-using LetPortal.Portal.Handlers.Databases.Requests;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Core.Logger;
+using LetPortal.Core.Utils;
+using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
-using MediatR;
+using LetPortal.Portal.Models.Shared;
+using LetPortal.Portal.Repositories.Databases;
+using LetPortal.Portal.Services.Databases;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LetPortal.WebApis.Controllers
 {
@@ -16,102 +17,188 @@ namespace LetPortal.WebApis.Controllers
     [ApiController]
     public class DatabasesController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IDatabaseRepository _databaseRepository;
 
-        private readonly ILogger _logger;
+        private readonly IDatabaseService _databaseService;
 
-        public DatabasesController(IMediator mediator, ILoggerFactory loggerFactory)
+        private readonly IServiceLogger<DatabasesController> _logger;
+
+        public DatabasesController(
+            IDatabaseRepository databaseRepository,
+            IDatabaseService databaseService,
+            IServiceLogger<DatabasesController> logger
+            )
         {
-            _mediator = mediator;
-            _logger = loggerFactory.CreateLogger<DatabasesController>();
+            _databaseRepository = databaseRepository;
+            _databaseService = databaseService;
+            _logger = logger;
         }
 
-        // GET: api/Databases
         [HttpGet]
         [ProducesResponseType(typeof(List<DatabaseConnection>), 200)]
         public async Task<IActionResult> Get()
         {
-            List<DatabaseConnection> results = await _mediator.Send(new GetAllDatabasesRequest(new GetAllDatabasesQuery()));
+            var result = await _databaseRepository.GetAllAsync();
+            _logger.Info("Found database connections: {@result}", result);
+            if (!result.Any())
+            {
+                return NotFound();
+            }
 
-            return Ok(results);
+            // Empty all connection strings for security risks
+            foreach (var databaseConnection in result)
+            {
+                databaseConnection.ConnectionString = string.Empty;
+                databaseConnection.DataSource = string.Empty;
+            }
+            return Ok(result);
         }
 
-        // GET: api/Databases/5
         [HttpGet("{id}", Name = "Get")]
         [ProducesResponseType(typeof(DatabaseConnection), 200)]
         public async Task<IActionResult> Get(string id)
         {
-            DatabaseConnection result = await _mediator.Send(new GetOneDatabaseRequest(new GetOneDatabaseQuery { Id = id }));
+            _logger.Info("Requesting to get database id = {id}", id);
+            var result = await _databaseRepository.GetOneAsync(id);
+            _logger.Info("Found database = {@result}", result);
+            if (result == null)
+            {
+                return NotFound();
+            }
 
+            result.ConnectionString = string.Empty;
+            result.DataSource = string.Empty;
             return Ok(result);
         }
 
-        // POST: api/Databases
+        [HttpGet("short-databases")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        public async Task<IActionResult> GetShortDatabases([FromQuery] string keyWord = null)
+        {
+            return Ok(await _databaseRepository.GetShortDatatabases(keyWord));
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(DatabaseConnection), 200)]
-        public async Task<IActionResult> Post([FromBody] CreateDatabaseCommand command)
+        public async Task<IActionResult> Post([FromBody] DatabaseConnection databaseConnection)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                DatabaseConnection result = await _mediator.Send(new CreateDatabaseRequest(command));
+                databaseConnection.Id = DataUtil.GenerateUniqueId();
+                _logger.Info("Creating database: {@databaseConnection}", databaseConnection);
+                await _databaseRepository.AddAsync(databaseConnection);
 
-                return Ok(result);
+                return Ok(databaseConnection);
             }
-
+            _logger.Info("Creating database isn't correct format. Errors: {@error}", ModelState.Values.SelectMany(a => a.Errors));
             return BadRequest();
         }
 
-        // PUT: api/Databases/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] UpdateDatabaseCommand command)
+        public async Task<IActionResult> Put(string id, [FromBody] DatabaseConnection databaseConnection)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                await _mediator.Send(new UpdateDatabaseRequest(command));
+                databaseConnection.Id = id;
+                _logger.Info("Updating database: {@databaseConnection}", databaseConnection);
+                await _databaseRepository.UpdateAsync(id, databaseConnection);
 
                 return Ok();
             }
-
+            _logger.Info("Updating database isn't correct format. Errors: {@error}", ModelState.Values.SelectMany(a => a.Errors));
             return BadRequest();
         }
 
-        // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            if(ModelState.IsValid)
-            {
-                await _mediator.Send(new DeleteDatabaseRequest(new DeleteDatabaseCommand { Id = id }));
+            _logger.Info("Deleting database id = {id}", id);
+            await _databaseRepository.DeleteAsync(id);
 
-                return Ok();
-            }
-
-            return BadRequest();
+            return Ok();
         }
 
-        [HttpPost("execution/{databaseId}")]
+        [HttpPost("{databaseId}/execution")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
         public async Task<IActionResult> ExecutionDynamic(string databaseId, [FromBody] dynamic content)
         {
-            var result = await _mediator.Send(new ExecuteDynamicRequest(new ExecuteDynamicCommand { DatabaseId = databaseId, FormattedCommand = content.ToString() }));
+            _logger.Info("Execution dynamic in database id = {databaseId} with content = {@content}", databaseId, content);
+            var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
+            if (databaseConnection == null)
+            {
+                return BadRequest();
+            }
 
+            string formattedContent;
+            if (databaseConnection.GetConnectionType() != Core.Persistences.ConnectionType.MongoDB)
+            {
+                formattedContent = content;
+            }
+            else
+            {
+                if (content.GetType() == typeof(string))
+                {
+                    formattedContent = content;
+                }
+                else
+                {
+                    formattedContent = ConvertUtil.SerializeObject(content);
+                }
+
+            }
+
+            var result = await _databaseService.ExecuteDynamic(databaseConnection, formattedContent, new List<ExecuteParamModel>());
+            _logger.Info("Result of execution dynamic: {@result}", result);
             return Ok(result);
         }
 
-        [HttpPost("extract-raw")]
+        [HttpPost("{databaseId}/extract-raw")]
         [ProducesResponseType(typeof(ExtractingSchemaQueryModel), 200)]
-        public async Task<IActionResult> ExtractingQuery([FromBody] ExtractingColumnSchemaQuery extractingColumnSchemaQuery)
+        public async Task<IActionResult> ExtractingQuery(string databaseId, [FromBody] ExtractionDatabaseRequestModel model)
         {
-            var result = await _mediator.Send(new ExtractingColumnSchemaRequest(extractingColumnSchemaQuery));
+            _logger.Info("Extracting query dynamic in database id = {databaseId} with model = {@model}", databaseId, model);
+            var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
+            if (databaseConnection == null)
+            {
+                return BadRequest();
+            }
+
+            string formattedContent;
+            if (databaseConnection.GetConnectionType() != Core.Persistences.ConnectionType.MongoDB)
+            {
+                formattedContent = model.Content;
+            }
+            else
+            {
+                if(model.Content.GetType() == typeof(string))
+                {
+                    formattedContent = model.Content;
+                }
+                else
+                {
+                    formattedContent = ConvertUtil.SerializeObject(model.Content);
+                }
+                
+            }
+
+            var result = await _databaseService.ExtractColumnSchema(databaseConnection, formattedContent, model.Parameters);
+            _logger.Info("Result of extracting dynamic: {@result}", result);
             return Ok(result);
         }
 
-        [HttpPost("query-datasource")]
+        [HttpPost("{databaseId}/query-datasource")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
-        public async Task<IActionResult> ExecuteQueryDatasource([FromBody] ExecuteQueryForDatasourceQuery executeQueryForDatasourceQuery)
+        public async Task<IActionResult> ExecuteQueryDatasource(string databaseId, [FromBody] dynamic content)
         {
-            var result = await _mediator.Send(new ExecuteQueryForDatasourceRequest(executeQueryForDatasourceQuery));
+            _logger.Info("Execute query for datasource in database id = {databaseId} with content = {@content}", databaseId, content);
+            var databaseConnection = await _databaseRepository.GetOneAsync(databaseId);
+            if (databaseConnection == null)
+            {
+                return BadRequest();
+            }
 
+            var result = await _databaseService.ExecuteDynamic(databaseConnection, content, new List<ExecuteParamModel>());
+            _logger.Info("Result of dynamic datasource: {@result}", result);
             return Ok(result);
         }
     }

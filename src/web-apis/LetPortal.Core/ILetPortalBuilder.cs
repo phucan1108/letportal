@@ -1,9 +1,6 @@
 ﻿using LetPortal.Core.Persistences;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LetPortal.Core
 {
@@ -19,6 +16,6 @@ namespace LetPortal.Core
 
         LetPortalOptions LetPortalOptions { get; }
 
-        void Build(); 
+        void Build();
     }
 }

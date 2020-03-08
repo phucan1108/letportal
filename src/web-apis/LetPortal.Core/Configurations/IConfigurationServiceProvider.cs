@@ -5,6 +5,6 @@ namespace LetPortal.Core.Configurations
 {
     public interface IConfigurationServiceProvider
     {
-        Task<Dictionary<string,string>> GetConfiguration(string serviceName, string version);
+        Task<Dictionary<string, string>> GetConfiguration(string serviceName, string version);
     }
 }

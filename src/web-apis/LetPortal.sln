@@ -33,6 +33,44 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{3B51
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Gateway", "LetPortal.Gateway\LetPortal.Gateway.csproj", "{72690FBC-70B3-41E6-BE91-5C5606B0C1B4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{C0B07BA7-A9AA-42C7-998B-3B94A9865E74}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tools", "LetPortal.Tools\LetPortal.Tools.csproj", "{E59307FD-3CE2-4F35-AEFA-E929DFEB7F65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Versions", "LetPortal.Versions\LetPortal.Versions.csproj", "{4EC699C2-C403-4FB4-918E-ADF280E47245}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6374B681-D6A6-4E7A-8DF1-DDBE348F9ADA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{441CDE0D-9472-411D-AC47-34768FD0342E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{1AD0B019-3412-475C-BC7E-1479D67D1BE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.UTs.Portal", "..\..\test\UnitTests\LetPortal.Tests.UTs.Portal\LetPortal.Tests.UTs.Portal.csproj", "{AE221F24-BAC9-4367-8C1F-EEDE87840E1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Portal", "..\..\test\IntegrationTests\LetPortal.Tests.ITs.Portal\LetPortal.Tests.ITs.Portal.csproj", "{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Identity", "..\..\test\IntegrationTests\LetPortal.Tests.ITs.Identity\LetPortal.Tests.ITs.Identity.csproj", "{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{768D0C05-5520-40C6-851D-CF4F2E490BD5}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.local.yml = docker-compose.local.yml
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{183E4E42-4D6B-411B-835B-77A5EC5FC8A4}"
+	ProjectSection(SolutionItems) = preProject
+		installation.ps1 = installation.ps1
+		installation.sh = installation.sh
+		publish-win.ps1 = publish-win.ps1
+		run-win.ps1 = run-win.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67C40109-BFB0-472A-B6C5-03E5DA204777}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		editorconfig.props = editorconfig.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +109,26 @@ Global
 		{72690FBC-70B3-41E6-BE91-5C5606B0C1B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72690FBC-70B3-41E6-BE91-5C5606B0C1B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72690FBC-70B3-41E6-BE91-5C5606B0C1B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E59307FD-3CE2-4F35-AEFA-E929DFEB7F65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E59307FD-3CE2-4F35-AEFA-E929DFEB7F65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E59307FD-3CE2-4F35-AEFA-E929DFEB7F65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E59307FD-3CE2-4F35-AEFA-E929DFEB7F65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EC699C2-C403-4FB4-918E-ADF280E47245}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EC699C2-C403-4FB4-918E-ADF280E47245}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EC699C2-C403-4FB4-918E-ADF280E47245}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EC699C2-C403-4FB4-918E-ADF280E47245}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE221F24-BAC9-4367-8C1F-EEDE87840E1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE221F24-BAC9-4367-8C1F-EEDE87840E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE221F24-BAC9-4367-8C1F-EEDE87840E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE221F24-BAC9-4367-8C1F-EEDE87840E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +145,13 @@ Global
 		{AEEEE9AB-0177-4011-8AD7-72D786A20151} = {FCDBA824-B82A-4688-BF14-FF866A0B25C3}
 		{79B71987-C62C-4BDE-8A0E-E0830BD81BD1} = {AEEEE9AB-0177-4011-8AD7-72D786A20151}
 		{72690FBC-70B3-41E6-BE91-5C5606B0C1B4} = {3B514339-AA57-4F82-9E6D-82E8CF645694}
+		{E59307FD-3CE2-4F35-AEFA-E929DFEB7F65} = {C0B07BA7-A9AA-42C7-998B-3B94A9865E74}
+		{4EC699C2-C403-4FB4-918E-ADF280E47245} = {C0B07BA7-A9AA-42C7-998B-3B94A9865E74}
+		{441CDE0D-9472-411D-AC47-34768FD0342E} = {6374B681-D6A6-4E7A-8DF1-DDBE348F9ADA}
+		{1AD0B019-3412-475C-BC7E-1479D67D1BE4} = {6374B681-D6A6-4E7A-8DF1-DDBE348F9ADA}
+		{AE221F24-BAC9-4367-8C1F-EEDE87840E1E} = {441CDE0D-9472-411D-AC47-34768FD0342E}
+		{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B} = {1AD0B019-3412-475C-BC7E-1479D67D1BE4}
+		{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD} = {1AD0B019-3412-475C-BC7E-1479D67D1BE4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B8132CF7-7C19-457C-8BD0-D7F09DA986EC}

@@ -22,7 +22,7 @@ export class ButtonOptionsComponent implements OnInit {
         modes: ['database', 'http', 'workflow']
     }
 
-    @ViewChild('actionOptions') actionOptions: CommandOptionsComponent
+    @ViewChild('actionOptions', { static: true }) actionOptions: CommandOptionsComponent
 
     constructor(
         private logger: NGXLogger,
@@ -49,10 +49,8 @@ export class ButtonOptionsComponent implements OnInit {
         else {
             this.buttonOptions.actionCommandOptions = {
                 actionType: ActionType.ExecuteDatabase,
-                databaseOptions: {
-                    databaseConnectionId: '',
-                    entityName: '',
-                    query: ''
+                dbExecutionChains: {
+                    steps:[]
                 },
                 isEnable: false,
                 notificationOptions: {

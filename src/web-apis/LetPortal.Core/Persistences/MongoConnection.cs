@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace LetPortal.Core.Persistences
 {
@@ -10,22 +9,23 @@ namespace LetPortal.Core.Persistences
         protected string DatabaseName;
 
         private IMongoClient mongoClient;
-                
-        public MongoConnection(IOptionsMonitor<DatabaseOptions> databaseOptions)
-        {
-            ConnectionString = databaseOptions.CurrentValue.ConnectionString;
-            DatabaseName = databaseOptions.CurrentValue.Datasource;
-        }
 
         public MongoConnection(DatabaseOptions databaseOptions)
         {
             ConnectionString = databaseOptions.ConnectionString;
+            if (string.IsNullOrEmpty(databaseOptions.Datasource))
+            {
+                databaseOptions.Datasource = MongoUrl.Create(databaseOptions.ConnectionString).DatabaseName;
+            }
             DatabaseName = databaseOptions.Datasource;
         }
 
         public IMongoDatabase GetDatabaseConnection(string databaseName = null)
         {
-            if (mongoClient == null) mongoClient = new MongoClient(ConnectionString);
+            if (mongoClient == null)
+            {
+                mongoClient = new MongoClient(ConnectionString);
+            }
 
             return mongoClient.GetDatabase(databaseName ?? DatabaseName);
         }

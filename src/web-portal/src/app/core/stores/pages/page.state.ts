@@ -1,6 +1,6 @@
 import { Page, PageButton } from 'services/portal.service';
 import * as PageActions from './page.actions'
-import { PageControlEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl } from 'app/core/models/page.model';
+import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl } from 'app/core/models/page.model';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { patch, append, updateItem } from '@ngxs/store/operators';
 import { ObjectUtils } from 'app/core/utils/object-util';
@@ -24,8 +24,8 @@ export interface PageStateModel {
     options: any
     queryparams: any
     pageSectionsData: PageSectionBoundData[]
-    eventsList: PageControlEvent[]
-    lastEvent: PageControlEvent
+    eventsList: PageControlActionEvent[]
+    lastEvent: PageControlActionEvent
     filterState: any
 }
 
@@ -109,7 +109,8 @@ export class PageState {
                 })
             }
             else {
-                tempData[pageSectionBoundData.name] = pageSectionBoundData.data
+                // Keep a mapping data with section name. Ex: data.appinfo.id
+                tempData = pageSectionBoundData.data
             }
         }
         if (sectionsMap && sectionsMap.length > 0) {
@@ -191,6 +192,7 @@ export class PageState {
         _.forEach(cloneRenderingSections, s => {
             if (s.sectionName === renderedSection.sectionName) {
                 s.state = renderedSection.state
+                s.sectionClass = renderedSection.sectionClass
             }
         })
 

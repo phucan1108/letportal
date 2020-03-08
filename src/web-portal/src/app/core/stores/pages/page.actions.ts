@@ -1,5 +1,5 @@
 import { Page, PageButton } from 'services/portal.service';
-import { PageControlEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl } from 'app/core/models/page.model';
+import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl } from 'app/core/models/page.model';
 
 const PAGE_ACTION = '[Page]'
 
@@ -69,7 +69,7 @@ export class EndRenderingPageSectionsAction implements PageAction {
 
 export class ChangeControlValueEvent implements PageAction {
     public static readonly type = `${PAGE_ACTION} Change control value`
-    constructor(public event: PageControlEvent) { }
+    constructor(public event: PageControlActionEvent) { }
 }
 
 export class OnDestroyingPage implements PageAction {
@@ -99,7 +99,7 @@ export class CompleteGatherSectionValidations implements PageAction {
 
 export class ClickControlEvent implements PageAction {
     public static readonly type = `${PAGE_ACTION} User clicks on control`
-    constructor(public event: PageControlEvent) { }
+    constructor(public event: PageControlActionEvent) { }
 }
 
 export type All =
@@ -114,5 +114,5 @@ export type All =
     AddSectionBoundData |
     GatherSectionValidations |
     SectionValidationStateAction |
-    CompleteGatherSectionValidations
-OnDestroyingPage
+    CompleteGatherSectionValidations |
+    OnDestroyingPage

@@ -1,12 +1,14 @@
-﻿using LetPortal.Portal.Entities.Pages;
-using LetPortal.Portal.Models.Pages;
-using LetPortal.Portal.Repositories.Pages;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Models.Pages;
+using LetPortal.Portal.Repositories.Pages;
 
 namespace LetPortal.Portal.Providers.Pages
 {
-    public class InternalPageServiceProvider : IPageServiceProvider
+    public class InternalPageServiceProvider : IPageServiceProvider, IDisposable
     {
         private readonly IPageRepository _pageRepository;
 
@@ -15,29 +17,54 @@ namespace LetPortal.Portal.Providers.Pages
             _pageRepository = pageRepository;
         }
 
-        public async Task CreateAsync(Page page)
+        public async Task<IEnumerable<ComparisonResult>> ComparePages(IEnumerable<Page> pages)
         {
-            await _pageRepository.AddAsync(page);
+            var results = new List<ComparisonResult>();
+            foreach (var page in pages)
+            {
+                results.Add(await _pageRepository.Compare(page));
+            }
+            return results;
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task ForceUpdatePages(IEnumerable<Page> pages)
         {
-            await _pageRepository.DeleteAsync(id);
+            foreach (var page in pages)
+            {
+                await _pageRepository.ForceUpdateAsync(page.Id, page);
+            }
         }
 
         public async Task<List<ShortPageModel>> GetAllPages()
         {
-            return await _pageRepository.GetAllShortPages();
+            return await _pageRepository.GetAllShortPagesAsync();
         }
 
-        public async Task<Page> GetOne(string id)
+        public async Task<IEnumerable<Page>> GetPagesByIds(IEnumerable<string> ids)
         {
-            return await _pageRepository.GetOneAsync(id);
+            return await _pageRepository.GetAllByIdsAsync(ids);
         }
 
-        public async Task UpdateAsync(string id, Page page)
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
         {
-            await _pageRepository.UpdateAsync(id, page);
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _pageRepository.Dispose();
+                }
+
+                disposedValue = true;
+            }
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

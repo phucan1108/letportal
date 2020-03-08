@@ -43,12 +43,20 @@ export class ObjectUtils {
         return value && typeof value === 'object' && value.constructor === Object;
     }
 
-    public static isNumber(value){
+    public static isNumber(value: number){
         return !isNaN(value)
     }
 
-    public static isBoolean(value){
+    public static isBoolean(value: any){
         return typeof value === 'boolean'
+    }
+
+    public static isArray(value: any){
+        return Array.isArray(value);
+    }
+
+    public static isNotNull(value: any){
+        return typeof value !== 'undefined' && value != null && value != ""
     }
 
     public static clone(source: any): any {
@@ -57,5 +65,45 @@ export class ObjectUtils {
         return JSON.parse(jsonStr)
     }
 
-    
+    public static projection(outputProjection: string, data: any){
+        const splitted = outputProjection.split(';')
+        let fieldMaps: any = []
+        splitted.forEach(field => {
+            if (field.indexOf('=') > 0) {
+                const fieldSplitted = field.split('=')
+                fieldMaps.push({
+                    key: fieldSplitted[0],
+                    map: fieldSplitted[1]
+                })
+            }
+            else {
+                fieldMaps.push({
+                    key: field,
+                    map: field
+                })
+            }
+        })
+        if (data instanceof Array) {
+            let resData = new Array()
+            data.forEach(dt => {
+                let obj = new Object()
+                fieldMaps.forEach(map => {
+                    const evaluted = Function('data', 'return data.' + map.map)
+                    obj[map.key] = evaluted(dt)
+                })
+
+                resData.push(obj)
+            })
+
+            return resData
+        }
+        else {
+            let obj = new Object()
+            fieldMaps.forEach(map => {
+                const evaluted = Function('data', 'return data.' + map.map)
+                obj[map.key] = evaluted(data)
+            })
+            return obj
+        }
+    }
 }

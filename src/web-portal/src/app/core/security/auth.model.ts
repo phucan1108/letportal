@@ -4,15 +4,31 @@ import { RolePortalClaimModel } from 'services/identity.service';
 
 export class AuthToken {
     public jsonTokenPayload: any;
-
-    constructor(public jwtToken: string, public expiresIn: number, public refreshToken: string, public expireRefresh: number) {
+    public expireDate: Date
+    public expireRefreshDate: Date
+    constructor(
+        public jwtToken: string, 
+        public expiresIn: number, 
+        public refreshToken: string, 
+        public expireRefresh: number) {
         if (jwtToken) {
             this.jsonTokenPayload = decode(jwtToken);
         }
+
+        this.expireDate = new Date(0)
+        this.expireDate.setUTCSeconds(expiresIn)
+
+        this.expireRefreshDate = new Date(0)
+        this.expireRefreshDate.setUTCSeconds(expireRefresh)
     }
 
     public toAuthUser() {
         return new AuthUser(this.jsonTokenPayload.id, this.jsonTokenPayload.name, this.jsonTokenPayload.roles, this.jsonTokenPayload);
+    }
+
+    public isExpired(): boolean{
+        let isExpired = this.expireDate < new Date()
+        return isExpired
     }
 }
 
@@ -20,7 +36,7 @@ export class AuthUser {
 
     claims: Array<RolePortalClaimModel> = []
 
-    constructor(public userid: string, public username: string, private roles: string[], private tokenPayload: any) { }
+    constructor(public userid: string, public username: string, public roles: string[], private tokenPayload: any) { }
 
     hasClaim(claimType: string, claimValue: string): boolean{
         const foundClaim = _.find(this.claims, claim => claim.name === claimType)

@@ -1,12 +1,12 @@
 ﻿using LetPortal.Core;
-using LetPortal.Core.Persistences;
 using LetPortal.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 namespace LetPortal.IdentityApis
 {
@@ -25,12 +25,13 @@ namespace LetPortal.IdentityApis
             // Only for Development
             services.AddCors(options =>
             {
-                options.AddPolicy("Cors", builder =>
+                options.AddDevCors();
+                options.AddLocalCors();
+                options.AddDockerLocalCors();
+
+                options.AddPolicy("ProdCors", builder =>
                 {
-                    builder.AllowAnyHeader();
-                    builder.AllowAnyMethod();
-                    builder.AllowAnyOrigin();
-                    builder.AllowCredentials();
+                    builder.WithExposedHeaders(Constants.TokenExpiredHeader);
                 });
             });
 
@@ -38,25 +39,40 @@ namespace LetPortal.IdentityApis
             services.AddOpenApiDocument();
 
             services.AddLetPortal(Configuration, options =>
-            {           
+            {
                 options.EnableMicroservices = true;
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
             }).AddIdentity();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    // Important note: we still use Newtonsoft instead of .NET JSON because they still don't support Timezone
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
-                // Support allow any in Development mode
-                app.UseCors("Cors");
+                app.UseDevCors();
+            }
+            else if (env.IsLocalEnv())
+            {
+                app.UseLocalCors();
+            }
+            else if (env.IsDockerLocalEnv())
+            {
+                app.UseDockerLocalCors();
             }
             else
             {
                 app.UseHsts();
+                app.UseCors("ProdCors");
             }
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -66,11 +82,22 @@ namespace LetPortal.IdentityApis
 
             app.UseLetPortal(appLifetime, options =>
             {
+                options.EnableCheckUserSession = true;
+                options.EnableCheckTraceId = false;
                 options.EnableWrapException = true;
+                options.SkipCheckUrls = new string[] { "api/accounts/login", "api/accounts/forgot-password", "api/accounts/recovery-password" };
             });
 
+            app.UseRouting();
+
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
             app.UseOpenApi();
             app.UseSwaggerUi3();
         }
