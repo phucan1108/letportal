@@ -76,7 +76,6 @@ import { FilterRadioComponent } from './components/chart/controls/filter-radio.c
 import { MarkdownModule } from 'ngx-markdown';
 import { CoreModule } from 'app/core/core.module';
 import { AutocompleteMultipleComponent } from './controls/autocomplete-multiple.component';
-import { AutocompletePipe } from './pipe/autocomplete.pipe';
 import { GeneralControlComponent } from './controls/general-control.component';
 
 export const FULL_MONTH_FORMATS = {
@@ -194,8 +193,7 @@ export const FULL_MONTH_FORMATS = {
 		FilterDatepickerComponent,
 		FilterSelectComponent,
 		FilterNumberComponent,
-		FilterRadioComponent,
-		AutocompletePipe
+		FilterRadioComponent
 	]
 })
 export class PortalRenderModule { }

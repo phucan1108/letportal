@@ -19,10 +19,12 @@ import { UnlockScreenDialogComponent } from './security/components/unlock-screen
 import { MatFormFieldModule, MatDialogModule, MatInputModule, MatIconModule, MatButtonModule } from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
+import { AutoCompletePipe } from './pipe/autocomplete.pipe';
 @NgModule({
   declarations: [
     UnlockScreenDialogComponent,        
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    AutoCompletePipe
   ],
   imports: [
     CommonModule,
@@ -39,7 +41,8 @@ import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
   exports: [
     SafeHtmlPipe,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AutoCompletePipe
   ],
   providers: [
     TranslateConfigs,

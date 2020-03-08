@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'autocomplete'
 })
-export class AutocompletePipe implements PipeTransform {
+export class AutoCompletePipe implements PipeTransform {
   transform(dropdownList: any[], filterObj: any): any {
     if (dropdownList.length > 0 && filterObj) {
       const filterStringLower = filterObj.filterKey.toLowerCase();
