@@ -1,12 +1,12 @@
 {
   "MongoStoringConnections": {
     "PortalConnection": {
-      "ConnectionString": "mongodb://localhost:27017",
+      "ConnectionString": "mongodb://localhost:27017/letportal",
       "DataSource": "letportal",
       "ConnectionType": "MongoDB"
     },
     "IdentityConnection": {
-      "ConnectionString": "mongodb://localhost:27017",
+      "ConnectionString": "mongodb://localhost:27017/letportalidentity",
       "DataSource": "letportalidentity",
       "ConnectionType": "MongoDB"
     },

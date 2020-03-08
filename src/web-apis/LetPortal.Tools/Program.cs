@@ -71,7 +71,8 @@ namespace LET.Tools.Installation
             var dbType = DatabseType.ToEnum<ConnectionType>(true);
             var databaseOption = new DatabaseOptions
             {
-                ConnectionString = !string.IsNullOrEmpty(Connection) ? Connection : GetDefaultConnectionString(dbType, App),
+                ConnectionString = !string.IsNullOrEmpty(Connection) 
+                    ? Connection : GetDefaultConnectionString(dbType, App, toolsOption),
                 ConnectionType = dbType
             };
 
@@ -234,20 +235,64 @@ namespace LET.Tools.Installation
             return ReflectionUtil.GetAllInstances<IFeatureCommand>(currentAssembly);
         }
 
-        private string GetDefaultConnectionString(ConnectionType connectionType, string app)
+        private string GetDefaultConnectionString(ConnectionType connectionType, string app, ToolsOptions toolsOptions)
         {
             switch (connectionType)
             {
-                case ConnectionType.MongoDB:
-                    return string.Format("mongodb://localhost:27017/{0}", app == "portal" ? "letportal" : "letportalidentity");
+                case ConnectionType.MongoDB:     
+                    if(app == "portal")
+                    {
+                        return toolsOptions.MongoStoringConnections.PortalConnection.ConnectionString;
+                    }
+                    else if (app == "identity")
+                    {
+                        return toolsOptions.MongoStoringConnections.IdentityConnection.ConnectionString;
+                    }
+                    else
+                    {
+                        return null;
+                    }                    
                 case ConnectionType.SQLServer:
-                    return string.Format("Server=.;Database={0};User Id=sa;Password=123456;", app == "portal" ? "letportal" : "letportalidentity");
+                    if (app == "portal")
+                    {
+                        return toolsOptions.SqlServerStoringConnections.PortalConnection.ConnectionString;
+                    }
+                    else if (app == "identity")
+                    {
+                        return toolsOptions.SqlServerStoringConnections.IdentityConnection.ConnectionString;
+                    }
+                    else
+                    {
+                        return null;
+                    }                    
                 case ConnectionType.PostgreSQL:
-                    return string.Format("Host=localhost;Port=5432;Database={0};Username=postgres;Password=123456", app == "portal" ? "letportal" : "letportalidentity");
+                    if (app == "portal")
+                    {
+                        return toolsOptions.PostgreSqlStoringConnections.PortalConnection.ConnectionString;
+                    }
+                    else if (app == "identity")
+                    {
+                        return toolsOptions.PostgreSqlStoringConnections.IdentityConnection.ConnectionString;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 case ConnectionType.MySQL:
-                    return string.Format("server=localhost;uid=root;pwd=123456;database={0}", app == "portal" ? "letportal" : "letportalidentity");
+                    if (app == "portal")
+                    {
+                        return toolsOptions.MySqlStoringConnections.PortalConnection.ConnectionString;
+                    }
+                    else if (app == "identity")
+                    {
+                        return toolsOptions.MySqlStoringConnections.IdentityConnection.ConnectionString;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 default:
-                    return "";
+                    return null;
             }
         }
     }
