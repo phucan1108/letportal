@@ -3,11 +3,11 @@ using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
-namespace LetPortal.Versions.Components
+namespace LetPortal.Versions.Components.DynamicLists
 {
-    public class DynamicList_0_0_2 : IPortalVersion
+    public class DynamicList_0_2_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.2";
+        public string VersionNumber => "0.2.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -104,6 +104,35 @@ namespace LetPortal.Versions.Components
                                 ActionType = ActionType.Redirect
                             },
                             Order = 1
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "delete",
+                            DisplayName = "Delete",
+                            Icon = "delete",
+                            Color = "warn",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/dynamiclists/{{data.id}}",
+                                    HttpMethod = "DELETE",
+                                    HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to delete this dynamic list?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Dynamic List has been deleted successfully!",
+                                    FailedMessage = "Oops! We can't delete this Dynamic List."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 2
                         }
                     }
                 }
@@ -196,6 +225,35 @@ namespace LetPortal.Versions.Components
                                 ActionType = ActionType.Redirect
                             },
                             Order = 1
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "delete",
+                            DisplayName = "Delete",
+                            Icon = "delete",
+                            Color = "warn",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/standards/{{data.id}}",
+                                    HttpMethod = "DELETE",
+                                    HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to delete this standard component?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Standard component has been deleted successfully!",
+                                    FailedMessage = "Oops! We can't delete this Standard component."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 2
                         }
                     }
                 }

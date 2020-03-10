@@ -139,5 +139,12 @@ namespace LetPortal.WebApis.Controllers
 
             return Ok(result);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _appRepository.DeleteAsync(id);
+            return Ok();
+        }
     }
 }

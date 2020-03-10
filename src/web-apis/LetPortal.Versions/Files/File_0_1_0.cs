@@ -2,9 +2,9 @@
 
 namespace LetPortal.Versions.Files
 {
-    public class File_0_0_1 : IPortalVersion
+    public class File_0_1_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.1";
+        public string VersionNumber => "0.1.0";
 
         public void Downgrade(IVersionContext versionContext)
         {

@@ -6,9 +6,9 @@ using LetPortal.Portal.Entities.Shared;
 
 namespace LetPortal.Versions.Pages
 {
-    public class Page_0_0_2 : IPortalVersion
+    public class Page_0_2_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.2";
+        public string VersionNumber => "0.2.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -90,12 +90,7 @@ namespace LetPortal.Versions.Pages
                         AllowHidden = "!!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to create a database?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.ExecuteDatabase,
@@ -119,6 +114,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Insert new database successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to create a database?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -136,12 +136,7 @@ namespace LetPortal.Versions.Pages
                         AllowHidden = "!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to update a database?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.ExecuteDatabase,
@@ -165,6 +160,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Update database successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to update a database?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -181,11 +181,7 @@ namespace LetPortal.Versions.Pages
                         Color = "basic",
                         AllowHidden = "false",
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = false
-                            },
+                        {                                
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = false
@@ -278,12 +274,7 @@ namespace LetPortal.Versions.Pages
                         AllowHidden = "!!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to create a app?"
-                            },
+                        {   
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = true,
@@ -307,6 +298,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Insert new app successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to create a app?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -325,12 +321,7 @@ namespace LetPortal.Versions.Pages
                         AllowHidden = "!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                               IsEnable = true,
-                               ConfirmationText = "Are you sure to update a app?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = true,
@@ -353,6 +344,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Update app successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to update a app?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -369,11 +365,7 @@ namespace LetPortal.Versions.Pages
                         Color = "primary",
                         AllowHidden = "false",
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = false
-                            },
+                        {                                
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = false

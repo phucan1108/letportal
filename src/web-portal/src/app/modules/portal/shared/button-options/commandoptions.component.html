@@ -1,3 +1,28 @@
+
+<div class="row row-heading">
+    <h3>Confirmation Options</h3>
+</div>
+<form [formGroup]="confirmationFormGroup">
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">Confirmation Text</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="confirmationText" matInput #confirmationTextInput maxlength="250">
+                <mat-hint align="end">{{confirmationTextInput.value?.length || 0}}/250</mat-hint>
+                <mat-icon matSuffix matTooltip="A confirmation text displays when user clicks on the button">help_outline</mat-icon>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">Enable</label>
+        <div class="col-lg-6 pt-3">
+            <mat-slide-toggle formControlName="isEnable"></mat-slide-toggle>
+        </div>
+    </div>
+</form>
+<div class="row row-heading">
+    <h3>Action Options</h3>
+</div>
 <div class="form-group row">
     <label class="col-lg-2 col-form-label">Action Type</label>
     <div class="col-lg-6">

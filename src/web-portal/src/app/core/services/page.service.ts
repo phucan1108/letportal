@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions, ActionCommandOptions, ConfirmationOptions } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -136,7 +136,12 @@ export class PageService {
                                     this.store.dispatch(new GatherSectionValidations())
                                 }
                                 else {
-                                    this.executingCommandHit(state.clickingButton)
+                                    this.executeByActionOptions(
+                                        state.clickingButton.name,
+                                        state.clickingButton.buttonOptions.actionCommandOptions,
+                                        () => {
+                                            this.routingCommand(state.clickingButton)
+                                        })
                                 }
                                 break
                             case SectionValidationStateAction:
@@ -148,8 +153,12 @@ export class PageService {
                                 break
                             case CompleteGatherSectionValidations:
                                 if (state.wholePageValid) {
-                                    this.logger.debug('Hit all valid')
-                                    this.executingCommandHit(state.clickingButton)
+                                    this.executeByActionOptions(
+                                        state.clickingButton.name,
+                                        state.clickingButton.buttonOptions.actionCommandOptions,
+                                        () => {
+                                            this.routingCommand(state.clickingButton)
+                                        })
                                 }
                                 else {
                                     this.shortcutUtil.toastMessage('Please complete all required fields', ToastType.Warning)
@@ -363,9 +372,9 @@ export class PageService {
         return this.translator.retrieveParameters(translateStr, preparedData)
     }
 
-    getPageShellData(): PageShellData {
+    getPageShellData(data?: any): PageShellData {
         return {
-            data: this.data,
+            data: ObjectUtils.isNotNull(data) ? data: this.data,
             appsettings: {},
             claims: this.claims,
             configs: this.configs,
@@ -413,6 +422,112 @@ export class PageService {
             translatedBody,
             httpServiceOptions.httpSuccessCode,
             httpServiceOptions.outputProjection)
+    }
+
+    executeByActionOptions(
+        buttonName: string, 
+        actionCommandOptions: ActionCommandOptions, 
+        onComplete: () => void, 
+        data?: any){
+        if (actionCommandOptions.isEnable) {           
+            
+            switch (actionCommandOptions.actionType) {
+                case ActionType.ExecuteDatabase:
+                    let combinedCommand = ''
+                    actionCommandOptions.dbExecutionChains.steps.forEach((step, index) => {
+                        if (index > 0)
+                            combinedCommand += ';' + step.executeCommand
+                        else
+                            combinedCommand += step.executeCommand
+                    })
+                    const params = this.translator.retrieveParameters(
+                        combinedCommand, this.getPageShellData(data));
+                    this.pageClients
+                        .submitCommand(this.page.id, {
+                            buttonName: buttonName,
+                            parameters: params
+                        }).subscribe(
+                            res => {
+                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                if(onComplete){
+                                    onComplete()
+                                }
+                            },
+                            err => {
+                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                            })
+                    break
+                case ActionType.CallHttpService:
+                    let url = this.translator.translateDataWithShell(
+                        actionCommandOptions.httpServiceOptions.httpServiceUrl,
+                        this.getPageShellData(data)
+                    )
+                    let body = this.translator.translateDataWithShell(
+                        actionCommandOptions.httpServiceOptions.jsonBody,
+                        this.getPageShellData(data)
+                    )
+
+                    this.customHttpService.performHttp(
+                        url,
+                        actionCommandOptions.httpServiceOptions.httpMethod,
+                        body,
+                        actionCommandOptions.httpServiceOptions.httpSuccessCode,
+                        actionCommandOptions.httpServiceOptions.outputProjection).subscribe(
+                            res => {
+                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                if(onComplete){
+                                    onComplete()
+                                }
+                            },
+                            err => {
+                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                            }
+                        )
+
+                    break
+                case ActionType.CallWorkflow:
+                    break
+                case ActionType.Redirect:
+                    if(onComplete){
+                        onComplete()
+                    }
+                    break
+            }
+        }
+        else {
+            if(onComplete){
+                onComplete()
+            }
+        }
+    }
+
+    openConfirmationDialog(confirmationOptions: ConfirmationOptions, onProceed: () => void){
+        if(confirmationOptions.isEnable){
+            const _title = 'Confirmation'
+            const _description = confirmationOptions.confirmationText
+            const _waitDesciption = "Waiting..."
+            const dialogRef = this.shortcutUtil
+                .confirmationDialog(
+                    _title,
+                    _description,
+                    _waitDesciption,
+                    MessageType.Custom,
+                    'Proceed');
+            dialogRef.afterClosed().subscribe(res => {
+                if (!res) {
+                    return
+                }
+    
+                if(onProceed){
+                    onProceed()
+                }
+            })
+        }
+        else{
+            if(onProceed){
+                onProceed()
+            }
+        }        
     }
 
     private mergeData(mergingData: any) {
@@ -550,99 +665,15 @@ export class PageService {
     }
 
     private executeCommandClickEvent(command: ExtendedPageButton) {
-        if (command.buttonOptions.confirmationOptions.isEnable) {
-            const _title = 'Confirmation'
-            const _description = command.buttonOptions.confirmationOptions.confirmationText
-            const _waitDesciption = "Waiting..."
-            const dialogRef = this.shortcutUtil
-                .confirmationDialog(
-                    _title,
-                    _description,
-                    _waitDesciption,
-                    MessageType.Custom,
-                    'Proceed');
-            dialogRef.afterClosed().subscribe(res => {
-                if (!res) {
-                    return
-                }
-
-                this.store.dispatch(new UserClicksOnButtonAction(command))
-            })
+        if(command.buttonOptions.actionCommandOptions.isEnable){
+            this.openConfirmationDialog(
+                command.buttonOptions.actionCommandOptions.confirmationOptions,
+                () => {
+                    this.store.dispatch(new UserClicksOnButtonAction(command))
+                })
         }
-        else {
+        else{
             this.store.dispatch(new UserClicksOnButtonAction(command))
-        }
-    }
-
-    private executingCommandHit(command: PageButton) {
-        if (command.buttonOptions.actionCommandOptions.isEnable) {
-            switch (command.buttonOptions.actionCommandOptions.actionType) {
-                case ActionType.ExecuteDatabase:
-                    let combinedCommand = ''
-                    command.buttonOptions.actionCommandOptions.dbExecutionChains.steps.forEach((step, index) => {
-                        if (index > 0)
-                            combinedCommand += ';' + step.executeCommand
-                        else
-                            combinedCommand += step.executeCommand
-                    })
-                    const params = this.translator.retrieveParameters(
-                        combinedCommand, this.getPageShellData());
-                    this.pageClients
-                        .submitCommand(this.page.id, {
-                            buttonName: command.name,
-                            parameters: params
-                        }).subscribe(
-                            res => {
-                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                this.routingCommand(command)
-                            },
-                            err => {
-                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
-                            })
-                    break
-                case ActionType.CallHttpService:
-                    let translatorFactors = {
-                        user: this.security.getAuthUser(),
-                        configs: this.configs,
-                        claims: this.claims,
-                        data: this.data,
-                        options: this.options,
-                        queryparams: this.queryparams
-                    }
-                    let url = this.translator.translateDataWithShell(
-                        command.buttonOptions.actionCommandOptions.httpServiceOptions.httpServiceUrl,
-                        this.getPageShellData()
-                    )
-                    let body = this.translator.translateDataWithShell(
-                        command.buttonOptions.actionCommandOptions.httpServiceOptions.jsonBody,
-                        this.getPageShellData()
-                    )
-
-                    this.customHttpService.performHttp(
-                        url,
-                        command.buttonOptions.actionCommandOptions.httpServiceOptions.httpMethod,
-                        body,
-                        command.buttonOptions.actionCommandOptions.httpServiceOptions.httpSuccessCode,
-                        command.buttonOptions.actionCommandOptions.httpServiceOptions.outputProjection).subscribe(
-                            res => {
-                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                this.routingCommand(command)
-                            },
-                            err => {
-                                this.shortcutUtil.toastMessage(command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
-                            }
-                        )
-
-                    break
-                case ActionType.CallWorkflow:
-                    break
-                case ActionType.Redirect:
-                    this.routingCommand(command)
-                    break
-            }
-        }
-        else {
-            this.routingCommand(command)
         }
     }
 

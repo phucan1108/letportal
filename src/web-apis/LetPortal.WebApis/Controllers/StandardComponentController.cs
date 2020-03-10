@@ -92,14 +92,6 @@ namespace LetPortal.WebApis.Controllers
             return Ok();
         }
 
-        [HttpDelete("bulk")]
-        public async Task<IActionResult> DeleteBulk([FromQuery] string ids)
-        {
-            _logger.Info("Deleted bulk standard components: {ids}", ids);
-            await _standardRepository.DeleteBulkAsync(ids.Split(";"));
-            return Ok();
-        }
-
         [HttpGet("bulk")]
         [ProducesResponseType(typeof(List<StandardComponent>), 200)]
         public async Task<IActionResult> GetManys([FromQuery] string ids)
@@ -123,6 +115,13 @@ namespace LetPortal.WebApis.Controllers
         public async Task<IActionResult> CheckExist(string name)
         {
             return Ok(await _standardRepository.IsExistAsync(a => a.Name == name));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _standardRepository.DeleteAsync(id);
+            return Ok();
         }
     }
 }

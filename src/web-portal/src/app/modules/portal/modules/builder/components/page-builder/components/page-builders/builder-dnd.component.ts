@@ -11,9 +11,11 @@ import { filter, tap, combineLatest } from 'rxjs/operators';
 import { ShellContants } from 'app/core/shell/shell.contants';
 import { NGXLogger } from 'ngx-logger';
 import { InitEditPageBuilderAction, GeneratePageBuilderInfoAction, NextToWorkflowAction, UpdatePageBuilderInfoAction, UpdateAvailableEvents, UpdateAvailableShells, NextToDatasourceAction, GatherAllChanges, UpdateAvailableBoundDatas, UpdateAvailableTriggerEventsList } from 'stores/pages/pagebuilder.actions';
-import { SectionContructionType, PageSection, StandardComponent, PageSectionLayoutType, StandardComponentClient, DynamicListClient, PageControl, DynamicList, ControlType } from 'services/portal.service';
+import { SectionContructionType, PageSection, StandardComponent, PageSectionLayoutType, StandardComponentClient, DynamicListClient, PageControl, DynamicList, ControlType, ChartsClient } from 'services/portal.service';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 
 @Component({
     selector: 'let-builder-dnd',
@@ -26,7 +28,9 @@ export class BuilderDnDComponent implements OnInit {
 
     constructor(
         private standardsClient: StandardComponentClient,
+        private shortcutUtil: ShortcutUtil,
         private dynamicListsClient: DynamicListClient,
+        private chartsClient: ChartsClient,
         public dialog: MatDialog,
         private cd: ChangeDetectorRef,
         private store: Store,
@@ -66,6 +70,36 @@ export class BuilderDnDComponent implements OnInit {
                                                 tap(
                                                     standard => {
                                                         section.relatedStandard = standard
+                                                    },
+                                                    err => {
+                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        section.isBroken = true
+                                                    }
+                                                )
+                                            ).subscribe()
+                                            break
+                                        case SectionContructionType.DynamicList:
+                                            this.dynamicListsClient.getOne(section.componentId).pipe(
+                                                tap(
+                                                    dynamicList => {
+                                                        section.relatedDynamicList = dynamicList
+                                                    },
+                                                    err => {
+                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        section.isBroken = true
+                                                    }
+                                                )
+                                            ).subscribe()
+                                            break
+                                        case SectionContructionType.Chart:
+                                            this.chartsClient.getOne(section.componentId).pipe(
+                                                tap(
+                                                    chart => {
+                                                        section.relatedChart = chart
+                                                    },
+                                                    err => {
+                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        section.isBroken = true
                                                     }
                                                 )
                                             ).subscribe()
@@ -134,7 +168,8 @@ export class BuilderDnDComponent implements OnInit {
             relatedStandard: null,
             relatedDynamicList: null,
             relatedChart: null,
-            isLoaded: false
+            isLoaded: false,
+            isBroken: false
         }
         const availableSectionNames = this.pageSections.map(a => a.name)
         const dialogRef = this.dialog.open(SectionDialogComponent, { 

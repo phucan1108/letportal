@@ -5,9 +5,9 @@ using LetPortal.Portal.Entities.Databases;
 
 namespace LetPortal.Versions.Databases
 {
-    public class Database_0_0_2 : IPortalVersion
+    public class Database_0_2_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.2";
+        public string VersionNumber => "0.2.0";
 
         public void Downgrade(IVersionContext versionContext)
         {

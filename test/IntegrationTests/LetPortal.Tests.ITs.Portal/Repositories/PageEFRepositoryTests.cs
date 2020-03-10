@@ -176,12 +176,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                         AllowHidden = "!!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to create a database?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.ExecuteDatabase,
@@ -200,6 +195,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                                 {
                                     CompleteMessage = "Insert new database successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to create a database?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -377,11 +377,6 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to create a database?"
-                            },
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.ExecuteDatabase,
@@ -400,6 +395,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                                 {
                                     CompleteMessage = "Insert new database successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to create a database?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -576,12 +576,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                         AllowHidden = "!!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to create a database?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.ExecuteDatabase,
@@ -600,6 +595,11 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                                 {
                                     CompleteMessage = "Insert new database successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to create a database?"
                                 }
                             },
                             RouteOptions = new RouteOptions

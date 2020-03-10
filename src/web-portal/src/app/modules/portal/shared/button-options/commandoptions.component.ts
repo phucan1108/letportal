@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, NotificationOptions, DatabaseExecutionStep } from 'services/portal.service';
+import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, NotificationOptions, DatabaseExecutionStep, ConfirmationOptions } from 'services/portal.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActionCommandRenderOptions } from './actioncommandrenderoptions';
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
@@ -39,6 +39,9 @@ export class CommandOptionsComponent implements OnInit {
     redirectionOptionsForm: FormGroup
 
     notificationOptionsForm: FormGroup
+
+    confirmationOptions: ConfirmationOptions
+    confirmationFormGroup: FormGroup
 
     steps: Array<DatabaseExecutionStep> = []
 
@@ -95,7 +98,18 @@ export class CommandOptionsComponent implements OnInit {
         
         if(this.hideRedirectionOption){
             this.actionTypes = ArrayUtils.removeOneItem(this.actionTypes, a => a.value === ActionType.Redirect)
-        }      
+        }  
+        
+        if (this.actionCommandOptions.confirmationOptions) {
+            this.confirmationOptions = this.actionCommandOptions.confirmationOptions
+        }
+        else {
+            this.actionCommandOptions.confirmationOptions = {
+                isEnable: true,
+                confirmationText: 'Are you sure to proceed it?'
+            }
+            this.confirmationOptions = this.actionCommandOptions.confirmationOptions
+        }
         
         this.actionCommandOptions = ObjectUtils.clone(this.actionCommandOptions)
         this.currentActionType = this.actionCommandOptions.actionType
@@ -104,7 +118,8 @@ export class CommandOptionsComponent implements OnInit {
         this.initWorkflowOptions()
         this.initRedirectionOptions()
         this.initNotificationOptions()
-
+        this.initConfirmationFormGroup()
+        
         this.steps = ObjectUtils.clone(this.actionCommandOptions.dbExecutionChains.steps)
 
         this.databaseClient.getAll().subscribe(
@@ -208,12 +223,19 @@ export class CommandOptionsComponent implements OnInit {
         })
     }
 
+    initConfirmationFormGroup() {
+        this.confirmationFormGroup = this.fb.group({
+            isEnable: [this.confirmationOptions.isEnable],
+            confirmationText: [this.confirmationOptions.confirmationText, [Validators.required, Validators.maxLength(250)]]
+        })
+    }
+
     isValid(){
         switch(this.currentActionType){
             case ActionType.ExecuteDatabase:
-                return this.isDbChainsValid() && this.notificationOptionsForm.valid
+                return this.confirmationFormGroup.valid && this.isDbChainsValid() && this.notificationOptionsForm.valid
             case ActionType.CallHttpService:
-                return this.httpOptionsForm.valid && this.notificationOptionsForm.valid
+                return this.confirmationFormGroup.valid && this.httpOptionsForm.valid && this.notificationOptionsForm.valid
             case ActionType.Redirect:
                 return this.redirectionOptionsForm.valid
         }
@@ -237,6 +259,7 @@ export class CommandOptionsComponent implements OnInit {
         this.actionCommandOptions.dbExecutionChains.steps[index] = $event
         this.logger.debug('After changed', this.actionCommandOptions.dbExecutionChains)
     }
+
     get(): ActionCommandOptions{
         switch(this.currentActionType){
             case ActionType.ExecuteDatabase:
@@ -244,7 +267,8 @@ export class CommandOptionsComponent implements OnInit {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
                     dbExecutionChains: this.actionCommandOptions.dbExecutionChains,
-                    notificationOptions: this.getNotification()
+                    notificationOptions: this.getNotification(),
+                    confirmationOptions: this.getConfirmationOptions()
                 }
             case ActionType.CallHttpService:
                 let httpFormValue = this.httpOptionsForm.value
@@ -258,7 +282,8 @@ export class CommandOptionsComponent implements OnInit {
                         jsonBody: httpFormValue.httpJsonPayload,
                         outputProjection: httpFormValue.httpOutputProjection                     
                     },
-                    notificationOptions: this.getNotification()
+                    notificationOptions: this.getNotification(),
+                    confirmationOptions: this.getConfirmationOptions()
                 }            
             case ActionType.Redirect:
                 let redirectFormValue = this.redirectionOptionsForm.value
@@ -270,6 +295,14 @@ export class CommandOptionsComponent implements OnInit {
                         isSameDomain: redirectFormValue.isSameDomain
                     }
                 }
+        }
+    }
+
+    private getConfirmationOptions(){        
+        let confirmationValues = this.confirmationFormGroup.value
+        return {
+            isEnable: confirmationValues.isEnable,
+            confirmationText: confirmationValues.confirmationText 
         }
     }
 

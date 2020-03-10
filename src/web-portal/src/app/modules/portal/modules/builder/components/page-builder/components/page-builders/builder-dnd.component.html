@@ -16,7 +16,7 @@
                 <mat-expansion-panel *ngFor="let pageSection of pageSections" cdkDrag>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            <span style="padding-top: calc(.375rem + 5px);">Section:
+                            <span style="padding-top: calc(.375rem + 5px);" [ngStyle]="{ 'text-decoration': pageSection.isBroken ? 'line-through' : 'initial' }">Section:
                                 {{ pageSection.displayName }}</span>
                             <button mat-icon-button color="primary" type="button" matTooltip="Edit"
                                 (click)="editSection(pageSection);$event.stopPropagation()">

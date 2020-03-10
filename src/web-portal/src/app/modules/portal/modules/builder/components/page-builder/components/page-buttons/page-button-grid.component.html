@@ -23,13 +23,13 @@
                 <ng-container matColumnDef="confirmation">
                     <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Confirmation
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let command" class="mat-column-vinCode">{{command.buttonOptions.confirmationOptions.isEnable}}</mat-cell>
+                    <mat-cell *matCellDef="let command" class="mat-column-vinCode">{{command.buttonOptions.actionCommandOptions.confirmationOptions ? command.buttonOptions.actionCommandOptions.confirmationOptions.isEnable : false}}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="action">
                     <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Action Enable
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let command" class="mat-column-vinCode">{{command.buttonOptions.actionCommandOptions.isEnable}}</mat-cell>
+                    <mat-cell *matCellDef="let command" class="mat-column-vinCode">{{command.buttonOptions.actionCommandOptions?.isEnable}}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="actions">

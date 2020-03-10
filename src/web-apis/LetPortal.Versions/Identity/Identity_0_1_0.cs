@@ -5,9 +5,9 @@ using LetPortal.Identity.Entities;
 
 namespace LetPortal.Versions.Identity
 {
-    public class Identity_0_0_1 : IIdentityVersion
+    public class Identity_0_1_0 : IIdentityVersion
     {
-        public string VersionNumber => "0.0.1";
+        public string VersionNumber => "0.1.0";
 
         public void Downgrade(IVersionContext versionContext)
         {

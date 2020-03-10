@@ -3,11 +3,11 @@ using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
-namespace LetPortal.Versions.Components
+namespace LetPortal.Versions.Components.DynamicLists
 {
-    public class DynamicList_0_0_5 : IPortalVersion
+    public class DynamicList_0_5_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.5";
+        public string VersionNumber => "0.5.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -136,8 +136,7 @@ namespace LetPortal.Versions.Components
                                 {
                                    IsSameDomain = true,
                                    RedirectUrl = "portal/builder/backup"
-                                },
-                                IsEnable = true
+                                }
                             }
                         },
                         new CommandButtonInList
@@ -155,8 +154,7 @@ namespace LetPortal.Versions.Components
                                 {
                                    IsSameDomain = true,
                                    RedirectUrl = "portal/builder/backup/upload"
-                                },
-                                IsEnable = true
+                                }
                             }
                         },
                         new CommandButtonInList

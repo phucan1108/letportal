@@ -2,7 +2,7 @@
 {
     public class ActionCommandOptions
     {
-        public bool IsEnable { get; set; }
+        public bool IsEnable { get; set; } = true;
 
         public ActionType ActionType { get; set; } = ActionType.Redirect;
 
@@ -15,5 +15,7 @@
         public WorkflowOptions WorkflowOptions { get; set; }
 
         public NotificationOptions NotificationOptions { get; set; }
+
+        public ConfirmationOptions ConfirmationOptions { get; set; }
     }
 }

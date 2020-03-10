@@ -57,7 +57,7 @@ namespace LetPortal.WebApis.Controllers
             return Ok(result);
         }
 
-        [HttpGet("id/{id}")]
+        [HttpGet("get-by-id/{id}")]
         [ProducesResponseType(typeof(Page), 200)]
         public async Task<IActionResult> GetOneById(string id)
         {
