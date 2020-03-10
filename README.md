@@ -14,6 +14,18 @@ You can reach this [Home page](https://letportal.app) to keep up-to-date feature
 
 You can read here [Documentation](https://docs.letportal.app) for full documentation
 
+# Code Quality
+
+![Result](https://codescene.io/projects/7362/status.svg)
+
+Seems I have a lot of things to do which this hotspot :satisfied:
+
+[![CodeScene Code Health](https://codescene.io/projects/7362/status-badges/code-health)](https://codescene.io/projects/7362)
+
+[![CodeScene System Mastery](https://codescene.io/projects/7362/status-badges/system-mastery)](https://codescene.io/projects/7362)
+
+[![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/7362)
+
 # Licenses
 
 LET Portal typically use [MIT](LICENSE).
