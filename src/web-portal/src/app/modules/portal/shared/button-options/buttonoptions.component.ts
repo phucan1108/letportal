@@ -14,9 +14,6 @@ export class ButtonOptionsComponent implements OnInit {
     @Input()
     buttonOptions: ButtonOptions
 
-    confirmationOptions: ConfirmationOptions
-    confirmationFormGroup: FormGroup
-
     actionCommandOptions: ActionCommandOptions
     options: ActionCommandRenderOptions = {
         modes: ['database', 'http', 'workflow']
@@ -31,17 +28,7 @@ export class ButtonOptionsComponent implements OnInit {
     ngOnInit(): void {
         
         this.logger.debug('Input button options', this.buttonOptions)
-
-        if (this.buttonOptions.confirmationOptions) {
-            this.confirmationOptions = this.buttonOptions.confirmationOptions
-        }
-        else {
-            this.buttonOptions.confirmationOptions = {
-                isEnable: false,
-                confirmationText: 'Are you sure to proceed it?'
-            }
-            this.confirmationOptions = this.buttonOptions.confirmationOptions
-        }
+        
 
         if (this.buttonOptions.actionCommandOptions) {
             this.actionCommandOptions = this.buttonOptions.actionCommandOptions
@@ -70,29 +57,14 @@ export class ButtonOptionsComponent implements OnInit {
                 routes: []
             }
         }        
-
-        this.initConfirmationFormGroup()
-    }
-
-    initConfirmationFormGroup() {
-        this.confirmationFormGroup = this.fb.group({
-            isEnable: [this.confirmationOptions.isEnable],
-            confirmationText: [this.confirmationOptions.confirmationText, [Validators.required, Validators.maxLength(250)]]
-        })
     }
 
     valid(){
-        return this.confirmationFormGroup.valid && this.actionOptions.isValid()
+        return this.actionOptions.isValid()
     }
 
     get(): ButtonOptions{
-        let confirmationValues = this.confirmationFormGroup.value
-
         return {
-            confirmationOptions: {
-                isEnable: confirmationValues.isEnable,
-                confirmationText: confirmationValues.confirmationText 
-            },
             actionCommandOptions: this.actionOptions.get(),
             routeOptions: this.buttonOptions.routeOptions
         }

@@ -6,9 +6,9 @@ using LetPortal.Portal.Entities.Shared;
 
 namespace LetPortal.Versions.Pages
 {
-    public class Page_0_0_5 : IPortalVersion
+    public class Page_0_5_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.5";
+        public string VersionNumber => "0.5.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -89,11 +89,7 @@ namespace LetPortal.Versions.Pages
                         Color = "basic",
                         AllowHidden = "false",
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = false
-                            },
+                        {                                
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = false

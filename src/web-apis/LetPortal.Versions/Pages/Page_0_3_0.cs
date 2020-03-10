@@ -6,9 +6,9 @@ using LetPortal.Portal.Entities.Shared;
 
 namespace LetPortal.Versions.Pages
 {
-    public class Page_0_0_3 : IPortalVersion
+    public class Page_0_3_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.3";
+        public string VersionNumber => "0.3.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -89,12 +89,7 @@ namespace LetPortal.Versions.Pages
                         AllowHidden = "!!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to create a role?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = true,
@@ -118,6 +113,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Insert new role successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to create a role?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -145,12 +145,7 @@ namespace LetPortal.Versions.Pages
                         AllowHidden = "!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                               IsEnable = true,
-                               ConfirmationText = "Are you sure to update a role?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = true,
@@ -174,6 +169,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Update role successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to update a role?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -190,11 +190,7 @@ namespace LetPortal.Versions.Pages
                         Color = "basic",
                         AllowHidden = "false",
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = false
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = false
@@ -256,12 +252,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "save",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to create a new user?"
-                            },
+                        {                               
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 ActionType = ActionType.CallHttpService,
@@ -278,6 +269,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Add user successfully!",
                                     FailedMessage = "Oops, something went wrong, please check again"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to create a new user?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -303,11 +299,7 @@ namespace LetPortal.Versions.Pages
                         Color = "basic",
                         AllowHidden = "false",
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = false
-                            },
+                        {                                
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = false
@@ -399,12 +391,7 @@ namespace LetPortal.Versions.Pages
                         AllowHidden = "!queryparams.id",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = true,
-                                ConfirmationText = "Are you sure to update a user?"
-                            },
+                        {                                
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = true,
@@ -428,6 +415,11 @@ namespace LetPortal.Versions.Pages
                                 {
                                     CompleteMessage = "Update user successfully!",
                                     FailedMessage = "Oops! Something went wrong, please try again!"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to update a user?"
                                 }
                             },
                             RouteOptions = new RouteOptions
@@ -454,11 +446,7 @@ namespace LetPortal.Versions.Pages
                         Color = "basic",
                         AllowHidden = "false",
                         ButtonOptions = new ButtonOptions
-                        {
-                            ConfirmationOptions = new ConfirmationOptions
-                            {
-                                IsEnable = false
-                            },
+                        {                                
                             ActionCommandOptions = new ActionCommandOptions
                             {
                                 IsEnable = false

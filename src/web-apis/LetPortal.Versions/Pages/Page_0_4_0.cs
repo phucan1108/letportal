@@ -5,9 +5,9 @@ using LetPortal.Portal.Entities.Pages;
 
 namespace LetPortal.Versions.Pages
 {
-    public class Page_0_0_4 : IPortalVersion
+    public class Page_0_4_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.4";
+        public string VersionNumber => "0.4.0";
 
         public void Downgrade(IVersionContext versionContext)
         {

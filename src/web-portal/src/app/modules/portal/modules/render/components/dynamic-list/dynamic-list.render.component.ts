@@ -22,6 +22,7 @@ import { EndRenderingPageSectionsAction, BeginBuildingBoundData, AddSectionBound
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { PageService } from 'services/page.service';
 import { TriggeredControlEvent } from 'app/core/models/page.model';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-dynamic-list-render',
@@ -58,7 +59,6 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
         private store: Store,
         public dialog: MatDialog,
         private shortcutUtil: ShortcutUtil,
-        private route: ActivatedRoute,
         private redirectRoute: Router,
         private logger: NGXLogger,
         private translatePipe: Translator,
@@ -67,12 +67,12 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
     ) {
     }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.gatherAllButtonFullNames()
-        this.gatherListName()       
+        this.gatherListName()
         this.pageState$ = this.store.select<PageStateModel>(state => state.page)
         this.subscription = this.pageState$.pipe(
-            filter(state => state.filterState 
+            filter(state => state.filterState
                 && (state.filterState === BeginBuildingBoundData
                     || state.filterState === GatherSectionValidations)),
             tap(
@@ -92,18 +92,18 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                 }
             )
         ).subscribe()
-        this.subscriptionControl = 
+        this.subscriptionControl =
             this.pageService.listenTriggeringControlEvent$()
                 .pipe(
                     debounceTime(500),
-                    filter(state => state 
+                    filter(state => state
                         && (this.buttonFullNames.indexOf(state.controlFullName) > -1
                             || state.controlFullName === this.dynamicListFullName)),
                     tap(
                         state => {
-                            switch(state.eventType){
+                            switch (state.eventType) {
                                 case 'refetch':
-                                    if(state.controlFullName === this.dynamicListFullName){
+                                    if (state.controlFullName === this.dynamicListFullName) {
                                         this.dynamicListGrid.submitGrid()
                                     }
                                     break
@@ -112,16 +112,16 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                     )
                 )
                 .subscribe()
-                                
-        if(this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0){
+
+        if (this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0) {
             const commandOutList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
                 return element.commandPositionType === CommandPositionType.OutList
             })
-            if(commandOutList){
+            if (commandOutList) {
                 this.commandOutList = commandOutList
             }
-        }        
-        
+        }
+
         this.redirectRoute.routeReuseStrategy.shouldReuseRoute = () => false;
     }
     ngAfterViewInit(): void {
@@ -132,9 +132,9 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
     }
 
     ngOnDestroy(): void {
-        if(this.subscription){
+        if (this.subscription) {
             this.subscription.unsubscribe()
-        }        
+        }
     }
 
     onCommandClicked(commandClicked: CommandClicked) {
@@ -150,7 +150,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                         this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {
                             ...this.pageService.getPageShellData(),
                             data: commandClicked.data
-                        }) : 
+                        }) :
                         this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, this.pageService.getPageShellData())
                     this.logger.debug('redirecit url', url)
                     this.redirectRoute.navigateByUrl(url, navigationExtras)
@@ -166,103 +166,33 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                     window.open(url, '_blank')
                 }
                 break
-            case ActionType.CallHttpService:
-                let url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
-                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.httpServiceUrl, {
-                        ...this.pageService.getPageShellData(),
-                        data: commandClicked.data
-                    }) :
-                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.httpServiceUrl, this.pageService.getPageShellData())
-                let body = commandClicked.command.commandPositionType === CommandPositionType.InList ?
-                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.jsonBody, {
-                        ...this.pageService.getPageShellData(),
-                        data: commandClicked.data
-                    }) :
-                    this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.httpServiceOptions.jsonBody, this.pageService.getPageShellData())
-                switch (commandClicked.command.actionCommandOptions.httpServiceOptions.httpMethod.toUpperCase()) {
-                    case 'GET':
-                        const get$ = this.httpClient.get(url, {
-                            headers: new HttpHeaders({
-                                'Content-Type': 'application/json'
-                            }), observe: 'response'
-                        }).pipe(
-                            tap(result => {
-                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if (commandClicked.command.allowRefreshList) {
+            default:
+                this.pageService.openConfirmationDialog(commandClicked.command.actionCommandOptions.confirmationOptions,
+                    () => {
+                        this.pageService.executeByActionOptions(
+                            this.dynamicList.name + '_' + commandClicked.command.name + '_click', 
+                            commandClicked.command.actionCommandOptions, 
+                            () => {
+                                if(commandClicked.command.allowRefreshList){
                                     this.refreshList()
                                 }
-                            },
-                                err => {
-                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
-                                })
-                        ).subscribe()
-                        break
-                    case 'POST':
-                        const post$ = this.httpClient.post(url, body, {
-                            headers: new HttpHeaders({
-                                'Content-Type': 'application/json'
-                            }), observe: 'response'
-                        }).pipe(
-                            tap(result => {
-                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if (commandClicked.command.allowRefreshList) {
-                                    this.refreshList()
-                                }
-                            },
-                                err => {
-                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
-                                })
-                        ).subscribe()
-                        break
-                    case 'DELETE':
-                        const delete$ = this.httpClient.delete(url, {
-                            headers: new HttpHeaders({
-                                'Content-Type': 'application/json'
-                            }), observe: 'response'
-                        }).pipe(
-                            tap(result => {
-                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if (commandClicked.command.allowRefreshList) {
-                                    this.refreshList()
-                                }
-                            },
-                                err => {
-                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
-                                })
-                        ).subscribe()
-                        break
-                    case 'PUT':
-                        const put$ = this.httpClient.put(url, body, {
-                            headers: new HttpHeaders({
-                                'Content-Type': 'application/json'
-                            }), observe: 'response'
-                        }).pipe(
-                            tap(result => {
-                                this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if (commandClicked.command.allowRefreshList) {
-                                    this.refreshList()
-                                }
-                            },
-                                err => {
-                                    this.shortcutUtil.toastMessage(commandClicked.command.actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
-                                })
-                        ).subscribe()
-                        break
-                }
+                            }, 
+                            commandClicked.command.commandPositionType == CommandPositionType.OutList ? null : commandClicked.data)
+                    })
 
                 break
         }
     }
 
-    private gatherAllButtonFullNames(){
-        if(this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0){
+    private gatherAllButtonFullNames() {
+        if (this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0) {
             _.forEach(this.dynamicList.commandsList.commandButtonsInList, command => {
                 this.buttonFullNames.push(this.section.name + '_' + command.name)
             })
-        }        
+        }
     }
 
-    private gatherListName(){
+    private gatherListName() {
         this.dynamicListFullName = this.section.name + '_' + this.dynamicList.name
     }
 

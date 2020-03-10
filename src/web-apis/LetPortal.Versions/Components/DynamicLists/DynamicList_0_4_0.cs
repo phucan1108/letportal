@@ -3,11 +3,11 @@ using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
-namespace LetPortal.Versions.Components
+namespace LetPortal.Versions.Components.DynamicLists
 {
-    public class DynamicList_0_0_4 : IPortalVersion
+    public class DynamicList_0_4_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.4";
+        public string VersionNumber => "0.4.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -345,7 +345,11 @@ namespace LetPortal.Versions.Components
                                     HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/logs/gather/{{data.traceId}}",
                                     HttpSuccessCode = "200;204"
                                 },
-                                IsEnable = true,
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                  IsEnable = true,
+                                  ConfirmationText = "Are you sure to collect all logs for this service?"
+                                },
                                 NotificationOptions = new NotificationOptions
                                 {
                                     CompleteMessage = "System has collected all logs that belongs to trace id.",

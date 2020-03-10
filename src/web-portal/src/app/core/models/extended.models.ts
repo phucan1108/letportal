@@ -21,6 +21,7 @@ export interface ExtendedPageSection extends PageSection {
     relatedDynamicList: DynamicList
     relatedChart: Chart
     isLoaded: boolean
+    isBroken: boolean // Use for deleted relating component
 }
 
 export interface ExtendedPageButton extends PageButton {

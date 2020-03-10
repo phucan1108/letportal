@@ -295,6 +295,7 @@ export interface IChartsClient {
     create(chart: Chart): Observable<Chart>;
     getOne(id: string | null): Observable<Chart>;
     update(id: string | null, chart: Chart): Observable<FileResponse>;
+    delete(id: string | null): Observable<FileResponse>;
     getOneForBuilder(id: string | null): Observable<Chart>;
     getShortCharts(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     checkExist(name: string | null): Observable<boolean>;
@@ -495,6 +496,55 @@ export class ChartsClient implements IChartsClient {
     }
 
     protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
+    }
+
+    delete(id: string | null): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/charts/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -769,6 +819,7 @@ export class ChartsClient implements IChartsClient {
 export interface IAppsClient {
     getOne(id: string | null): Observable<App>;
     update(id: string | null, app: App): Observable<FileResponse>;
+    delete(id: string | null): Observable<FileResponse>;
     getMany(ids: string | null | undefined): Observable<App[]>;
     getShortApps(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     getAvailableUrls(id: string | null): Observable<AvailableUrl[]>;
@@ -873,6 +924,55 @@ export class AppsClient implements IAppsClient {
     }
 
     protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
+    }
+
+    delete(id: string | null): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/apps/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -3099,7 +3199,7 @@ export class PagesClient implements IPagesClient {
     }
 
     getOneById(id: string | null): Observable<Page> {
-        let url_ = this.baseUrl + "/api/pages/id/{id}";
+        let url_ = this.baseUrl + "/api/pages/get-by-id/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
@@ -3774,11 +3874,11 @@ export class PagesClient implements IPagesClient {
 export interface IStandardComponentClient {
     getOne(id: string | null): Observable<StandardComponent>;
     updateOne(id: string | null, standardComponent: StandardComponent): Observable<FileResponse>;
+    delete(id: string | null): Observable<FileResponse>;
     getOneForRender(id: string | null): Observable<StandardComponent>;
     getSortStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     createOne(standardComponent: StandardComponent): Observable<string>;
     createBulk(standardComponents: StandardComponent[]): Observable<FileResponse>;
-    deleteBulk(ids: string | null | undefined): Observable<FileResponse>;
     getManys(ids: string | null | undefined): Observable<StandardComponent[]>;
     checkExist(name: string | null): Observable<boolean>;
 }
@@ -3878,6 +3978,55 @@ export class StandardComponentClient implements IStandardComponentClient {
     }
 
     protected processUpdateOne(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
+    }
+
+    delete(id: string | null): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/standards/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -4078,54 +4227,6 @@ export class StandardComponentClient implements IStandardComponentClient {
     }
 
     protected processCreateBulk(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    deleteBulk(ids: string | null | undefined): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/standards/bulk?";
-        if (ids !== undefined)
-            url_ += "ids=" + encodeURIComponent("" + ids) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",			
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteBulk(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDeleteBulk(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDeleteBulk(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -4684,6 +4785,7 @@ export interface ActionCommandOptions {
     dbExecutionChains?: DatabaseExecutionChains | undefined;
     workflowOptions?: WorkflowOptions | undefined;
     notificationOptions?: NotificationOptions | undefined;
+    confirmationOptions?: ConfirmationOptions | undefined;
 }
 
 export enum ActionType {
@@ -4720,6 +4822,11 @@ export interface MapWorkflowInput {
 export interface NotificationOptions {
     completeMessage?: string | undefined;
     failedMessage?: string | undefined;
+}
+
+export interface ConfirmationOptions {
+    isEnable?: boolean;
+    confirmationText?: string | undefined;
 }
 
 export interface DynamicListResponseDataModel {
@@ -4956,14 +5063,8 @@ export interface PageButton {
 }
 
 export interface ButtonOptions {
-    confirmationOptions?: ConfirmationOptions | undefined;
     actionCommandOptions?: ActionCommandOptions | undefined;
     routeOptions?: RouteOptions | undefined;
-}
-
-export interface ConfirmationOptions {
-    isEnable?: boolean;
-    confirmationText?: string | undefined;
 }
 
 export interface RouteOptions {

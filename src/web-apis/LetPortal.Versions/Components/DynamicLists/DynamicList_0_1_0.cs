@@ -3,11 +3,11 @@ using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
-namespace LetPortal.Versions.SectionParts
+namespace LetPortal.Versions.SectionParts.DynamicLists
 {
-    public class DynamicList_0_0_1 : IPortalVersion
+    public class DynamicList_0_1_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.1";
+        public string VersionNumber => "0.1.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -71,7 +71,7 @@ namespace LetPortal.Versions.SectionParts
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/page/database-form?id={{data.id}}"                                    
+                                    RedirectUrl = "portal/page/database-form?id={{data.id}}"
                                 }
                             },
                             Order = 1
@@ -84,13 +84,25 @@ namespace LetPortal.Versions.SectionParts
                             Color = "warn",
                             ActionCommandOptions = new ActionCommandOptions
                             {
-                                ActionType = ActionType.Redirect,
-                                RedirectOptions = new RedirectOptions
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
                                 {
-                                    IsSameDomain = true,
-                                    RedirectUrl = "portal/page/database-form?id={{data.id}}"                                    
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/databases/{{data.id}}",
+                                    HttpMethod = "DELETE",
+                                    HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to delete this database?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Database has been deleted successfully!",
+                                    FailedMessage = "Oops! We can't delete this database."
                                 }
                             },
+                            AllowRefreshList = true,
                             Order = 2
                         },
                         new CommandButtonInList
@@ -108,6 +120,16 @@ namespace LetPortal.Versions.SectionParts
                                     JsonBody = "{\"databaseId\":\"{{data.id}}\",\"keptSameName\":true}",
                                     HttpMethod = "POST",
                                     HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to flush this database?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Database has been flushed successfully!",
+                                    FailedMessage = "Oops! We can't flush this database."
                                 }
                             },
                             Order = 3
@@ -486,6 +508,35 @@ namespace LetPortal.Versions.SectionParts
                                 }
                             },
                             Order = 1
+                        },
+                         new CommandButtonInList
+                        {
+                            Name = "delete",
+                            DisplayName = "Delete",
+                            Icon = "delete",
+                            Color = "warn",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {                                                                   
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/pages/{{data.id}}",
+                                    HttpMethod = "DELETE",
+                                    HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to delete this page?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Page has been deleted successfully!",
+                                    FailedMessage = "Oops! We can't delete this page."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 2
                         }
                     }
                 }
@@ -574,7 +625,7 @@ namespace LetPortal.Versions.SectionParts
                                         "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$project\": {\r\n          \"name\": \"$displayName\",\r\n          \"value\": \"$name\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
                                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select `displayName` as name, name as value from `roles`" : "Select \"displayName\" as name, name as value from roles")
                                 }
-                            },           
+                            },
                             Order = 3
                         },
                         new ColumndDef

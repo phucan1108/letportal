@@ -3,11 +3,11 @@ using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
-namespace LetPortal.Versions.Components
+namespace LetPortal.Versions.Components.DynamicLists
 {
-    public class DynamicList_0_0_3 : IPortalVersion
+    public class DynamicList_0_3_0 : IPortalVersion
     {
-        public string VersionNumber => "0.0.3";
+        public string VersionNumber => "0.3.0";
 
         public void Downgrade(IVersionContext versionContext)
         {
@@ -103,6 +103,35 @@ namespace LetPortal.Versions.Components
                                 ActionType = ActionType.Redirect
                             },
                             Order = 1
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "delete",
+                            DisplayName = "Delete",
+                            Icon = "delete",
+                            Color = "warn",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/charts/{{data.id}}",
+                                    HttpMethod = "DELETE",
+                                    HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to delete this chart?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Chart has been deleted successfully!",
+                                    FailedMessage = "Oops! We can't delete this Chart"
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 2
                         }
                     }
                 }

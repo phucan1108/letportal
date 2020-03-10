@@ -111,12 +111,12 @@ export class PageButtonGridComponent implements OnInit {
                     workflowOptions: {
                         mapWorkflowInputs: [],
                         workflowId: ''
+                    },                    
+                    confirmationOptions: {
+                        isEnable: false,
+                        confirmationText: 'Are you sure to proceed it?'
                     },
                     isEnable: false
-                },
-                confirmationOptions: {
-                    isEnable: false,
-                    confirmationText: 'Are you sure to proceed it?'
                 },
                 routeOptions: {
                     isEnable: false,
