@@ -8,6 +8,8 @@ namespace LetPortal.Portal.Repositories.Components
 {
     public interface IStandardRepository : IGenericRepository<StandardComponent>
     {
+        Task CloneAsync(string cloneId, string cloneName);
+
         Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null);
 
         Task<StandardComponent> GetOneForRenderAsync(string id);

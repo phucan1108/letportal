@@ -18,5 +18,7 @@ namespace LetPortal.Portal.Repositories.Pages
         Task<List<ShortPortalClaimModel>> GetShortPortalClaimModelsAsync();
 
         Task<IEnumerable<ShortEntityModel>> GetShortPages(string keyWord = null);
+
+        Task CloneAsync(string cloneId, string cloneName);
     }
 }

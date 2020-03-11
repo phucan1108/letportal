@@ -301,5 +301,14 @@ namespace LetPortal.WebApis.Controllers
 
             return NotFound();
         }
+
+
+        [HttpPost("clone")]
+        public async Task<IActionResult> Clone([FromBody] CloneModel model)
+        {
+            _logger.Info("Requesting clone page with {@model}", model);
+            await _pageRepository.CloneAsync(model.CloneId, model.CloneName);
+            return Ok();
+        }
     }
 }

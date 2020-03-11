@@ -20,6 +20,15 @@ namespace LetPortal.Portal.Repositories.Pages
             _context = context;
         }
 
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var clonePage = await _context.Pages.AsNoTracking().FirstAsync(a => a.Id == cloneId);
+            clonePage.Id = DataUtil.GenerateUniqueId();
+            clonePage.Name = cloneName;
+            clonePage.DisplayName += " Clone";
+            await AddAsync(clonePage);
+        }
+
         public Task<List<ShortPageModel>> GetAllShortPagesAsync()
         {
             var pages = _context.Pages.Select(a => new ShortPageModel { Id = a.Id, Name = a.Name, DisplayName = a.DisplayName, UrlPath = a.UrlPath });

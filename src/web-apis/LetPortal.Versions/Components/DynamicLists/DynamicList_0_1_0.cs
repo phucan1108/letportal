@@ -133,6 +133,36 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                                 }
                             },
                             Order = 3
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "clone",
+                            DisplayName = "Clone",
+                            Icon = "file_copy",
+                            Color = "primary",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/databases/clone",
+                                    HttpMethod = "POST",
+                                    HttpSuccessCode = "200",
+                                    JsonBody = "{\r\n  \"cloneId\": \"{{data.id}}\",\r\n  \"cloneName\": \"{{data.name}}_clone\"\r\n}"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to clone this database?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Database has been cloned successfully!",
+                                    FailedMessage = "Oops! We can't clone this database."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 4
                         }
                     }
                 },
@@ -283,13 +313,26 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             Color = "warn",
                             ActionCommandOptions = new ActionCommandOptions
                             {
-                                ActionType  = ActionType.Redirect,
-                                RedirectOptions = new RedirectOptions
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
                                 {
-                                    IsSameDomain = true,
-                                    RedirectUrl = "portal/page/app-form?id={{data.id}}"
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/apps/{{data.id}}",
+                                    HttpMethod = "DELETE",
+                                    HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to delete this app?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "App has been deleted successfully!",
+                                    FailedMessage = "Oops! We can't delete this app."
                                 }
-                            }
+                            },
+                            AllowRefreshList = true,
+                            Order = 2
                         },
                         new CommandButtonInList
                         {
@@ -307,6 +350,36 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                                 }
                             },
                             Order = 2
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "clone",
+                            DisplayName = "Clone",
+                            Icon = "file_copy",
+                            Color = "primary",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/apps/clone",
+                                    HttpMethod = "POST",
+                                    HttpSuccessCode = "200",
+                                    JsonBody = "{\r\n  \"cloneId\": \"{{data.id}}\",\r\n  \"cloneName\": \"{{data.name}}_clone\"\r\n}"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to clone this app?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "App has been cloned successfully!",
+                                    FailedMessage = "Oops! We can't clone this app."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 4
                         }
                     }
                 },
@@ -318,6 +391,19 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                         {
                             Name = "id",
                             DisplayName = "Id",
+                            IsHidden = true,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
+                                AllowTextSearch = false
+                            },
+                            Order = 0
+                        },
+                        new ColumndDef
+                        {
+                            Name = "name",
+                            DisplayName = "Name",
                             IsHidden = true,
                             DisplayFormat = "{0}",
                             SearchOptions = new SearchOptions
@@ -537,6 +623,36 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             AllowRefreshList = true,
                             Order = 2
+                        },
+                         new CommandButtonInList
+                        {
+                            Name = "clone",
+                            DisplayName = "Clone",
+                            Icon = "file_copy",
+                            Color = "primary",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/pages/clone",
+                                    HttpMethod = "POST",
+                                    HttpSuccessCode = "200",
+                                    JsonBody = "{\r\n  \"cloneId\": \"{{data.id}}\",\r\n  \"cloneName\": \"{{data.name}}_clone\"\r\n}"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to clone this page?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Page has been cloned successfully!",
+                                    FailedMessage = "Oops! We can't clone this page."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 3
                         }
                     }
                 }

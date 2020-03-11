@@ -135,5 +135,14 @@ namespace LetPortal.WebApis.Controllers
         {
             return Ok(await _dynamicListRepository.IsExistAsync(a => a.Name == name));
         }
+
+        
+        [HttpPost("clone")]
+        public async Task<IActionResult> Clone([FromBody] CloneModel model)
+        {
+            _logger.Info("Requesting clone dynamic list with {@model}", model);
+            await _dynamicListRepository.CloneAsync(model.CloneId, model.CloneName);
+            return Ok();
+        }
     }
 }

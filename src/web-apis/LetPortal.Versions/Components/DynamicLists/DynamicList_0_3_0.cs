@@ -51,6 +51,19 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 0
                         },
+                         new ColumndDef
+                        {
+                            Name = "name",
+                            DisplayName = "Name",
+                            IsHidden = true,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
+                                AllowTextSearch = false
+                            },
+                            Order = 0
+                        },
                         new ColumndDef
                         {
                             Name = "displayName",
@@ -132,6 +145,36 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             AllowRefreshList = true,
                             Order = 2
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "clone",
+                            DisplayName = "Clone",
+                            Icon = "file_copy",
+                            Color = "primary",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/charts/clone",
+                                    HttpMethod = "POST",
+                                    HttpSuccessCode = "200",
+                                    JsonBody = "{\r\n  \"cloneId\": \"{{data.id}}\",\r\n  \"cloneName\": \"{{data.name}}_clone\"\r\n}"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to clone this chart?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Chart has been cloned successfully!",
+                                    FailedMessage = "Oops! We can't clone this chart."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 3
                         }
                     }
                 }

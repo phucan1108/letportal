@@ -54,6 +54,19 @@ namespace LetPortal.Versions.Components.DynamicLists
                         },
                         new ColumndDef
                         {
+                            Name = "name",
+                            DisplayName = "Name",
+                            IsHidden = true,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
+                                AllowTextSearch = false
+                            },
+                            Order = 0
+                        },
+                        new ColumndDef
+                        {
                             Name = "displayName",
                             DisplayName = "Name",
                             AllowSort = true,
@@ -133,6 +146,36 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             AllowRefreshList = true,
                             Order = 2
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "clone",
+                            DisplayName = "Clone",
+                            Icon = "file_copy",
+                            Color = "primary",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/dynamiclists/clone",
+                                    HttpMethod = "POST",
+                                    HttpSuccessCode = "200",
+                                    JsonBody = "{\r\n  \"cloneId\": \"{{data.id}}\",\r\n  \"cloneName\": \"{{data.name}}_clone\"\r\n}"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to clone this dynamic list?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Dynamic list has been cloned successfully!",
+                                    FailedMessage = "Oops! We can't clone this dynamic list."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 3
                         }
                     }
                 }
@@ -164,6 +207,19 @@ namespace LetPortal.Versions.Components.DynamicLists
                         {
                             Name = "id",
                             DisplayName = "Id",
+                            IsHidden = true,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
+                                AllowTextSearch = false
+                            },
+                            Order = 0
+                        },
+                         new ColumndDef
+                        {
+                            Name = "name",
+                            DisplayName = "Name",
                             IsHidden = true,
                             DisplayFormat = "{0}",
                             SearchOptions = new SearchOptions
@@ -254,6 +310,36 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             AllowRefreshList = true,
                             Order = 2
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "clone",
+                            DisplayName = "Clone",
+                            Icon = "file_copy",
+                            Color = "primary",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/standards/clone",
+                                    HttpMethod = "POST",
+                                    HttpSuccessCode = "200",
+                                    JsonBody = "{\r\n  \"cloneId\": \"{{data.id}}\",\r\n  \"cloneName\": \"{{data.name}}_clone\"\r\n}"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to clone this standard?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Standard has been cloned successfully!",
+                                    FailedMessage = "Oops! We can't clone this standard."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 3
                         }
                     }
                 }

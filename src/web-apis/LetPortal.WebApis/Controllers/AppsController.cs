@@ -146,5 +146,13 @@ namespace LetPortal.WebApis.Controllers
             await _appRepository.DeleteAsync(id);
             return Ok();
         }
+
+        [HttpPost("clone")]
+        public async Task<IActionResult> Clone([FromBody] CloneModel model)
+        {
+            _logger.Info("Requesting clone app with {@model}", model);
+            await _appRepository.CloneAsync(model.CloneId, model.CloneName);
+            return Ok();
+        }
     }
 }
