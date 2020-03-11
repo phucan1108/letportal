@@ -1,5 +1,4 @@
-name: .NET Core
-
+name: LET Portal Build
 on:
   push:
     branches: [ master ]
@@ -22,4 +21,9 @@ jobs:
     - name: Build with dotnet
       run: dotnet build
       working-directory: ./src/web-apis
+    - name: Install npm packages
+      run: npm install
+      working-directory: ./src/web-portal
+    - name: Build npm packages
+      run: npm run debug
     
