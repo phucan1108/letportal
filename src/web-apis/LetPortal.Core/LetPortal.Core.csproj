@@ -19,10 +19,6 @@
     <Compile Remove="Logger\Attributes\**" />
     <EmbeddedResource Remove="Logger\Attributes\**" />
     <None Remove="Logger\Attributes\**" />
-    <None Include="logo.ico">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>  
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
