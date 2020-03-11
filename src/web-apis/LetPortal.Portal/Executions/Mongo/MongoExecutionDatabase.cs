@@ -243,10 +243,12 @@ namespace LetPortal.Portal.Executions.Mongo
                 }
                 return result;
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
             {
                 return StepExecutionResult.IsFailed(ex.ToString());
             }
+#pragma warning restore CA1031 // Do not catch general exception types
 
         }
 

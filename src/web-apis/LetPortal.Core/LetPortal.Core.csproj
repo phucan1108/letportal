@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>0.5.0</Version>
+    <Version>0.5.01</Version>
     <Company>LetPortal</Company>
     <Product>LetPortal</Product>
     <Authors>An Quang Phuc Le</Authors>
@@ -12,17 +12,16 @@
     <PackageTags>Web Portal; .NET Core; 3.1; LET Portal;</PackageTags>
     <IsPackable>true</IsPackable>
     <RepositoryUrl>https://github.com/phucan1108/letportal</RepositoryUrl>
-    <PackageIconUrl>https://docs.letportal.app/assets/images/logo.png</PackageIconUrl>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
   <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
     <Compile Remove="Logger\Attributes\**" />
     <EmbeddedResource Remove="Logger\Attributes\**" />
     <None Remove="Logger\Attributes\**" />
-    <None Include="logo.ico">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <None Include="logo.png" Pack="true" PackagePath=""/>
+    <None Include="LICENSE.txt" Pack="true" PackagePath=""/>
   </ItemGroup>  
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

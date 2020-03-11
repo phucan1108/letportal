@@ -4,11 +4,7 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'src/web-apis/LetPortal.Core/**'
-  pull_request:
-    branches: [ master ]
-    paths:
-      - 'src/web-apis/LetPortal.Core/**'
+      - 'src/web-apis/LetPortal.Core/LetPortal.Core.csproj'
 
 jobs:
   build:
@@ -25,5 +21,5 @@ jobs:
       run: dotnet pack --configuration Release --output nupkgs
       working-directory: src/web-apis/LetPortal.Core
     - name: Publish NuGet
-      run: dotnet nuget push nupkgs/LetPortal.Core.nupkg -k ${{ secrets.NugetPublishKey }} -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NugetPublishKey }} -s https://api.nuget.org/v3/index.json --skip-duplicate
       working-directory: src/web-apis/LetPortal.Core
