@@ -26,3 +26,4 @@ jobs:
       working-directory: src/web-apis/LetPortal.Core
     - name: Publish NuGet
       run: dotnet nuget push nupkgs/LetPortal.Core.nupkg -k ${{ secrets.NugetPublishKey }} -s https://api.nuget.org/v3/index.json
+      working-directory: src/web-apis/LetPortal.Core
