@@ -441,7 +441,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.insertingName", ReplaceValue = "testdatabase123" },
                             new ExecuteParamModel { Name = "data.updatingDisplayName", ReplaceValue = "Test Database ABC" },
                             new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+#pragma warning disable CA1305 // Specify IFormatProvider
                             new ExecuteParamModel { Name = "currentTick()|long", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+#pragma warning restore CA1305 // Specify IFormatProvider
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
@@ -700,7 +702,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.insertingName", ReplaceValue = "testdatabase123" },
                             new ExecuteParamModel { Name = "data.updatingDisplayName", ReplaceValue = "Test Database ABC" },
                             new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+#pragma warning disable CA1305 // Specify IFormatProvider
                             new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+#pragma warning restore CA1305 // Specify IFormatProvider
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
@@ -961,7 +965,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.insertingName", ReplaceValue = "testdatabase123" },
                             new ExecuteParamModel { Name = "data.updatingDisplayName", ReplaceValue = "Test Database ABC" },
                             new ExecuteParamModel { Name = "data.displayName", ReplaceValue = "Test Database" },
+#pragma warning disable CA1305 // Specify IFormatProvider
                             new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+#pragma warning restore CA1305 // Specify IFormatProvider
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }

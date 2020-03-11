@@ -175,7 +175,7 @@ namespace LetPortal.Core.Utils
                 var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().Select(b => "{{" + b + "}}").ToArray();
                 if (removeList != null)
                 {
-                    results = results.AsQueryable().Where(a => !removeList.Any(b => b.Equals(a))).ToArray();
+                    results = results.AsQueryable().Where(a => !removeList.Any(b => b.Equals(a, StringComparison.Ordinal))).ToArray();
                 }
                 return results;
             }
@@ -184,7 +184,7 @@ namespace LetPortal.Core.Utils
                 var results = matches.Cast<Match>().Select(a => a.Groups[1].Value).Distinct().ToArray();
                 if (removeList != null)
                 {
-                    results = results.AsQueryable().Where(a => !removeList.Any(b => b.Equals(a))).ToArray();
+                    results = results.AsQueryable().Where(a => !removeList.Any(b => b.Equals(a, StringComparison.Ordinal))).ToArray();
                 }
                 return results;
             }

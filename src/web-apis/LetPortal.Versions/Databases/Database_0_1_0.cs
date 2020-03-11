@@ -21,7 +21,7 @@ namespace LetPortal.Versions.Databases
             {
                 Id = Constants.PortalDatabaseId,
                 ConnectionString = databaseOptions.ConnectionString,
-                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseOptions.ConnectionType).ToLower(),
+                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseOptions.ConnectionType).ToLower(System.Globalization.CultureInfo.CurrentCulture),
                 DataSource = databaseOptions.Datasource,
                 Name = "portalDatabase",
                 DisplayName = "Portal Database"

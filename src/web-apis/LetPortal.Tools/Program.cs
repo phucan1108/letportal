@@ -235,7 +235,7 @@ namespace LET.Tools.Installation
             return ReflectionUtil.GetAllInstances<IFeatureCommand>(currentAssembly);
         }
 
-        private string GetDefaultConnectionString(ConnectionType connectionType, string app, ToolsOptions toolsOptions)
+        private static string GetDefaultConnectionString(ConnectionType connectionType, string app, ToolsOptions toolsOptions)
         {
             switch (connectionType)
             {

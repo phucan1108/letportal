@@ -23,7 +23,7 @@ namespace LetPortal.Versions.Databases
             {
                 Id = Constants.ServiceManagementDatabaseId,
                 ConnectionString = databaseSMOptions.ConnectionString,
-                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseSMOptions.ConnectionType).ToLower(),
+                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databaseSMOptions.ConnectionType).ToLower(System.Globalization.CultureInfo.CurrentCulture),
                 DataSource = databaseSMOptions.Datasource,
                 Name = "serviceManagement",
                 DisplayName = "Service Management"
@@ -33,7 +33,7 @@ namespace LetPortal.Versions.Databases
             {
                 Id = Constants.IdentityDatabaseId,
                 ConnectionString = databseIdOptions.ConnectionString,
-                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databseIdOptions.ConnectionType).ToLower(),
+                DatabaseConnectionType = Enum.GetName(typeof(ConnectionType), databseIdOptions.ConnectionType).ToLower(System.Globalization.CultureInfo.CurrentCulture),
                 DataSource = databseIdOptions.Datasource,
                 Name = "identityDatabase",
                 DisplayName = "Identity Database"
