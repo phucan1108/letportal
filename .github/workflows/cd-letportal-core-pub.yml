@@ -21,10 +21,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+    - name: Pack a LetPortal.Core
+      run: dotnet pack --configuration Release --output nupkgs
+      working-directory: src/web-apis/LetPortal.Core
     - name: Publish NuGet
-      uses: rohith/publish-nuget@v2.1.2
-      with:
-        # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: ./src/web-apis/LetPortal.Core/LetPortal.Core.csproj
-        # API key for the NuGet feed
-        NUGET_KEY: ${{ secrets.NugetPublishKey }}
+      run: dotnet nuget push nupkgs/LetPortal.Core.nupkg -k ${{ secrets.NugetPublishKey }} -s https://api.nuget.org/v3/index.json
