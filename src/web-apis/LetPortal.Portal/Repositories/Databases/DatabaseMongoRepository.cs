@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Databases;
@@ -14,6 +15,15 @@ namespace LetPortal.Portal.Repositories
         public DatabaseMongoRepository(MongoConnection mongoConnection)
         {
             Connection = mongoConnection;
+        }
+
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var cloneDatabase = await GetOneAsync(cloneId);
+            cloneDatabase.Id = DataUtil.GenerateUniqueId();
+            cloneDatabase.Name = cloneName;
+            cloneDatabase.DisplayName += " Clone";
+            await AddAsync(cloneDatabase);
         }
 
         public Task<IEnumerable<ShortEntityModel>> GetShortDatatabases(string keyWord = null)

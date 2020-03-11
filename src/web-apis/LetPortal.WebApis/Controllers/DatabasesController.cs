@@ -201,5 +201,13 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Result of dynamic datasource: {@result}", result);
             return Ok(result);
         }
+
+        [HttpPost("clone")]
+        public async Task<IActionResult> Clone([FromBody] CloneModel model)
+        {
+            _logger.Info("Requesting clone database with {@model}", model);
+            await _databaseRepository.CloneAsync(model.CloneId, model.CloneName);
+            return Ok();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,15 @@ namespace LetPortal.Portal.Repositories.Components
             : base(context)
         {
             _context = context;
+        }
+
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var cloneList = await _context.DynamicLists.AsNoTracking().FirstAsync(a => a.Id == cloneId);
+            cloneList.Id = DataUtil.GenerateUniqueId();
+            cloneList.Name = cloneName;
+            cloneList.DisplayName += " Clone";
+            await AddAsync(cloneList);
         }
 
         public async Task<IEnumerable<ShortEntityModel>> GetShortDynamicLists(string keyWord = null)

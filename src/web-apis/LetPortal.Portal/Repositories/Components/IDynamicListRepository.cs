@@ -8,6 +8,8 @@ namespace LetPortal.Portal.Repositories.Components
 {
     public interface IDynamicListRepository : IGenericRepository<DynamicList>
     {
+        Task CloneAsync(string cloneId, string cloneName);
+
         Task<IEnumerable<ShortEntityModel>> GetShortDynamicLists(string keyWord = null);
     }
 }

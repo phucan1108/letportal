@@ -148,5 +148,14 @@ namespace LetPortal.PortalApis.Controllers
             await _chartRepository.DeleteAsync(id);
             return Ok();
         }
+
+        
+        [HttpPost("clone")]
+        public async Task<IActionResult> Clone([FromBody] CloneModel model)
+        {
+            _logger.Info("Requesting clone chart with {@model}", model);
+            await _chartRepository.CloneAsync(model.CloneId, model.CloneName);
+            return Ok();
+        }
     }
 }

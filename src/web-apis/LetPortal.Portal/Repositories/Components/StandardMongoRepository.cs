@@ -16,6 +16,15 @@ namespace LetPortal.Portal.Repositories.Components
             Connection = mongoConnection;
         }
 
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var cloneStandard = await GetOneAsync(cloneId);
+            cloneStandard.Id = DataUtil.GenerateUniqueId();
+            cloneStandard.Name = cloneName;
+            cloneStandard.DisplayName += " Clone";
+            await AddAsync(cloneStandard);
+        }
+
         public async Task<StandardComponent> GetOneForRenderAsync(string id)
         {
             var standard = await GetOneAsync(id);

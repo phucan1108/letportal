@@ -19,6 +19,15 @@ namespace LetPortal.Portal.Repositories.Components
             _context = context;
         }
 
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var cloneStandard = await _context.StandardComponents.AsNoTracking().FirstAsync(a => a.Id == cloneId);
+            cloneStandard.Id = cloneId;
+            cloneStandard.Name = cloneName;
+            cloneStandard.DisplayName += " Clone";
+            await AddAsync(cloneStandard);
+        }
+
         public async Task<StandardComponent> GetOneForRenderAsync(string id)
         {
             var standard = await GetOneAsync(id);

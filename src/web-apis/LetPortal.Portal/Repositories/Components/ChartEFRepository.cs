@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,15 @@ namespace LetPortal.Portal.Repositories.Components
             : base(context)
         {
             _context = context;
+        }
+
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var cloneChart = await _context.Charts.AsNoTracking().FirstAsync(a => a.Id == cloneId);
+            cloneChart.Id = DataUtil.GenerateUniqueId();
+            cloneChart.Name = cloneName;
+            cloneChart.DisplayName += " Clone";
+            await AddAsync(cloneChart);
         }
 
         public async Task<IEnumerable<ShortEntityModel>> GetShortCharts(string keyWord = null)

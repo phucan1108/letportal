@@ -18,6 +18,15 @@ namespace LetPortal.Portal.Repositories.Pages
             Connection = mongoConnection;
         }
 
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var clonePage = await GetOneAsync(cloneId);
+            clonePage.Id = DataUtil.GenerateUniqueId();
+            clonePage.Name = cloneName;
+            clonePage.DisplayName += " Clone";
+            await AddAsync(clonePage);
+        }
+
         public async Task<List<ShortPageModel>> GetAllShortPagesAsync()
         {
             return await Collection.AsQueryable().OfType<Page>().Select(a => new ShortPageModel { Id = a.Id, Name = a.Name, DisplayName = a.DisplayName, UrlPath = a.UrlPath }).ToListAsync();

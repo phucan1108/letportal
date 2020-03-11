@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
@@ -13,6 +14,15 @@ namespace LetPortal.Portal.Repositories.Components
         public ChartMongoRepository(MongoConnection mongoConnection)
         {
             Connection = mongoConnection;
+        }
+
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var cloneChart = await GetOneAsync(cloneId);
+            cloneChart.Id = DataUtil.GenerateUniqueId();
+            cloneChart.Name = cloneName;
+            cloneChart.DisplayName += " Clone";
+            await AddAsync(cloneChart);
         }
 
         public Task<IEnumerable<ShortEntityModel>> GetShortCharts(string keyWord = null)

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
 using LetPortal.Portal.Models.Shared;
@@ -17,6 +18,16 @@ namespace LetPortal.Portal.Repositories.Apps
             : base(context)
         {
             _context = context;
+        }
+
+        public async Task CloneAsync(string cloneId, string cloneName)
+        {
+            var cloneApp = await _context.Apps.AsNoTracking().FirstAsync(a => a.Id == cloneId);
+
+            cloneApp.Id = DataUtil.GenerateUniqueId();
+            cloneApp.Name = cloneName;
+            cloneApp.DisplayName += " Clone";
+            await AddAsync(cloneApp);
         }
 
         public async Task<IEnumerable<ShortEntityModel>> GetShortApps(string keyWord = null)
