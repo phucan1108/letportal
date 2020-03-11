@@ -2,8 +2,14 @@ name: LET Portal Build
 on:
   push:
     branches: [ master ]
+    paths: 
+      - 'src/web-apis/**'
+      - 'src/web-portal/**'
   pull_request:
     branches: [ master ]
+    paths: 
+      - 'src/web-apis/**'
+      - 'src/web-portal/**'
 
 jobs:
   build:
@@ -25,6 +31,6 @@ jobs:
       run: npm install
       working-directory: ./src/web-portal
     - name: Build npm packages
-      run: npm run debug
+      run: npm run prodlocal
       working-directory: ./src/web-portal
     
