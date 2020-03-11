@@ -2,8 +2,14 @@ name: LET Portal Build
 on:
   push:
     branches: [ master ]
+    paths: 
+      - 'src/web-apis/**'
+      - 'src/web-portal/**'
   pull_request:
     branches: [ master ]
+    paths: 
+      - 'src/web-apis/**'
+      - 'src/web-portal/**'
 
 jobs:
   build:
