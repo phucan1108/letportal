@@ -26,4 +26,5 @@ jobs:
       working-directory: ./src/web-portal
     - name: Build npm packages
       run: npm run debug
+      working-directory: ./src/web-portal
     
