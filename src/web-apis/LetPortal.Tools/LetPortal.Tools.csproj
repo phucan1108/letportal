@@ -8,9 +8,9 @@
     <Company>LetPortal</Company>
     <Product>LetPortal</Product>
     <Authors>An Quang Phuc Le</Authors>
-    <Description>LetPortal is an internal web platform which helps small company to manage their data. The project is open-source project. There are no fee charged to use or modify.</Description>
+    <Description>LETPortal is a web platform to build quickly application form, grid data, data list, chart, report, users management. The project is open-source project. There are no fee charged to use or modify.</Description>
     <Copyright>An Quang Phuc Le</Copyright>
-    <PackageProjectUrl>http://letportal.app</PackageProjectUrl>
+    <PackageProjectUrl>https://letportal.app</PackageProjectUrl>
     <PackageTags>Web Portal; .NET Core;</PackageTags>
     <AssemblyName>letportal</AssemblyName>
   </PropertyGroup>
