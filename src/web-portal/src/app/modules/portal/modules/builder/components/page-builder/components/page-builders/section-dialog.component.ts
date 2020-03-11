@@ -110,7 +110,8 @@ export class SectionDialogComponent implements OnInit {
             relatedDynamicList: !!formValues.componentId ? _.find(this.dynamicLists, dynamicList => dynamicList.id === formValues.componentId) : this.currentExtendedFormSection.relatedDynamicList,
             relatedStandard: !!formValues.componentId ? _.find(this.standards, standard => standard.id === formValues.componentId) : this.currentExtendedFormSection.relatedStandard,
             relatedChart: !!formValues.componentId ? _.find(this.charts, chart => chart.id === formValues.componentId) : this.currentExtendedFormSection.relatedChart,
-            isLoaded: false
+            isLoaded: false,
+            isBroken: false
         }
 
         if (this.isEditMode) {
