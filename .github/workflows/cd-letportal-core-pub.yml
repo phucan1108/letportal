@@ -3,6 +3,8 @@ name: Publish LETPortal.Core Lib
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'src/web-apis/LetPortal.Core/**'
   pull_request:
     branches: [ master ]
     paths:
