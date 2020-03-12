@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType,  DynamicListClient, FieldValueType, DynamicListFetchDataModel } from 'services/portal.service';
 import { MatDialog, MatTable, MatPaginator, MatSort } from '@angular/material';
-import { BehaviorSubject, of, merge, Observable } from 'rxjs';
+import { BehaviorSubject, of, merge, Observable, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { tap, catchError, finalize, debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
@@ -20,7 +20,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     templateUrl: './dynamic-list.grid.component.html',
     styleUrls: ['./dynamic-list.grid.component.scss']
 })
-export class DynamicListGridComponent implements OnInit {
+export class DynamicListGridComponent implements OnInit, OnDestroy {    
 
     @ViewChild('matTable', { static: false })
     private matTable: MatTable<any>;
@@ -35,7 +35,8 @@ export class DynamicListGridComponent implements OnInit {
     @Output()
     onClick = new EventEmitter<CommandClicked>();
 
-    listOptions: ListOptions = ListOptions.DefaultListOptions
+    @Input()
+    listOptions: ListOptions
 
     dataSource: Array<any> = [];
     dataSource$: BehaviorSubject<Array<any>> = new BehaviorSubject([]);
@@ -64,6 +65,8 @@ export class DynamicListGridComponent implements OnInit {
     isHandset = false
     isContructedGrid = false
     hasDetailCols = false
+
+    datasourceSub: Subscription
     constructor(
         private datasoureOptsService: DatasourceOptionsService,
         private breakpointObserver: BreakpointObserver,
@@ -86,13 +89,21 @@ export class DynamicListGridComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.datasourceSub = this.dataSource$.pipe(
+            tap(
+                res => {
+                    this.dataSource = res
+                }
+            )
+        ).subscribe()
         this.constructGrid();
     }
 
-    private constructGrid() {
-        this.logger.debug('Dynamic list options', this.dynamicList.options)
-        this.listOptions = ListOptions.getListOptions(this.dynamicList.options)
+    ngOnDestroy(): void {
+        this.datasourceSub.unsubscribe()
+    }
 
+    private constructGrid() {
         // Extract some parts form Dynamic List 
         let counterInDetailMode = 0
         _.forEach(this.dynamicList.columnsList.columndDefs, colDef => {
@@ -190,6 +201,7 @@ export class DynamicListGridComponent implements OnInit {
         if(!needToWaitDatasource){
             this.initFetchData()
         }
+        
     }
 
     openDialogData(data) {

@@ -16,6 +16,9 @@ export class ListOptions {
     enableSearch: boolean
     enableAdvancedSearch: boolean
     enablePagination: boolean
+    enableExportExcel: boolean
+    maximumClientExport: number
+    allowExportHiddenFields: boolean
 
     public static getListOptions(options: ShellOption[]): ListOptions {
         return {
@@ -25,7 +28,10 @@ export class ListOptions {
             maximumColumns: JSON.parse(_.find(options, opt => opt.key === 'maximumcolumns').value),
             enableSearch: JSON.parse(_.find(options, opt => opt.key === 'enablesearch').value),
             enableAdvancedSearch: JSON.parse(_.find(options, opt => opt.key === 'enableadvancedsearch').value),
-            enablePagination: JSON.parse(_.find(options, opt => opt.key === 'enablepagination').value)
+            enablePagination: JSON.parse(_.find(options, opt => opt.key === 'enablepagination').value),
+            enableExportExcel: JSON.parse(_.find(options, opt => opt.key === 'enableexportexcel').value),
+            maximumClientExport: JSON.parse(_.find(options, opt => opt.key === 'maximumclientexport').value)            ,
+            allowExportHiddenFields: JSON.parse(_.find(options, opt => opt.key === 'allowexporthiddenfields').value)
         }
     }
 
@@ -85,6 +91,30 @@ export class ListOptions {
         value: 'true'
     }
 
+    public static EnableExportExcel: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'If it is false, so an export button will be disappeared. Default: true',
+        key: 'enableexportexcel',
+        value: 'true'
+    }
+
+    public static MaximumClientExport: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'Maximum records of exporting excel on client side. If a total is over this number, we will use server-side. Default: 100',
+        key: 'maximumclientexport',
+        value: '200'
+    }
+
+    public static AllowExportHiddenFields: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'If it is true, user can export hidden fields. Default: false',
+        key: 'allowexporthiddenfields',
+        value: 'false'
+    }
+
     public static isAllowEdit(shell: ExtendedShellOption): boolean {
         return shell.key !== this.PageSizeOptions.key
             && shell.key !== this.DefaultPageSize.key
@@ -93,6 +123,9 @@ export class ListOptions {
             && shell.key !== this.EnableSearch.key
             && shell.key !== this.EnableAdvancedSearch.key
             && shell.key !== this.EnablePagination.key
+            && shell.key !== this.EnableExportExcel.key
+            && shell.key !== this.MaximumClientExport.key
+            && shell.key !== this.AllowExportHiddenFields.key
     }
 
     public static getDefaultShellOptionsForList(): ExtendedShellOption[] {
@@ -103,7 +136,10 @@ export class ListOptions {
             this.MaximumColumns,
             this.EnableSearch,
             this.EnableAdvancedSearch,
-            this.EnablePagination
+            this.EnablePagination,
+            this.EnableExportExcel,
+            this.MaximumClientExport,
+            this.AllowExportHiddenFields
         ]
     }
 
@@ -130,6 +166,9 @@ export class ListOptions {
         enableSearch: true,
         fetchDataFirstTime: true,
         maximumColumns: 6,
-        sizeOptions: [5, 10, 20, 30, 50]
+        sizeOptions: [5, 10, 20, 30, 50],
+        enableExportExcel: true,
+        maximumClientExport: 1000,
+        allowExportHiddenFields: false
     }
 }

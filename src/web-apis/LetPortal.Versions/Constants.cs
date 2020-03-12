@@ -52,6 +52,21 @@ namespace LetPortal.Versions
                 {
                     Key = "enablepagination",
                     Value = "true"
+                },
+                new ShellOption
+                {
+                    Key = "enableexportexcel",
+                    Value = "true"
+                },
+                new ShellOption
+                {
+                    Key = "maximumclientexport",
+                    Value = "100"
+                },
+                new ShellOption
+                {
+                    Key = "allowexporthiddenfields",
+                    Value = "false"
                 }
             };
         }

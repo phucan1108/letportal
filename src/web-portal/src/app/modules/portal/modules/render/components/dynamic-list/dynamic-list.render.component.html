@@ -5,7 +5,7 @@
                 <mat-card-title>
                     {{ displayName ? displayName : dynamicList.displayName }}
                     <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu"
-                        *ngIf="commandOutList.length > 0">
+                        *ngIf="commandOutList.length > 0 || listOptions.enableExportExcel">
                         <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #menu="matMenu" xPosition="before">
@@ -13,11 +13,14 @@
                             <dynamic-list-command [command]="command" (onClick)="onCommandClicked($event)">
                             </dynamic-list-command>
                         </ng-container>
+                        <button mat-menu-item *ngIf="listOptions.enableExportExcel" (click)="callExportExcel()">
+                            Export Excel
+                        </button>
                     </mat-menu>
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content class="align-center">
-                <dynamic-list-grid [dynamicList]="dynamicList" (onClick)="onCommandClicked($event)"></dynamic-list-grid>
+                <dynamic-list-grid [dynamicList]="dynamicList" [listOptions]="listOptions" (onClick)="onCommandClicked($event)"></dynamic-list-grid>
             </mat-card-content>
         </mat-card>
     </div>
