@@ -2,8 +2,7 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Based on Github Security Insight, a list above is helping you to check which version has vulnerability or safe with Insight
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -13,4 +12,4 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-Based on Github Security Insight, a list above is helping you to check which version has vulnerability 
+Because we are still developing LET Portal so that we will have a lot of security vulnerability. Please help us to provide as many as you know.
