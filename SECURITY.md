@@ -13,4 +13,4 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-Based on Github Security Insight, a list above is helping you to check with version has vulnerability 
+Based on Github Security Insight, a list above is helping you to check which version has vulnerability 
