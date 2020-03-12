@@ -23,6 +23,8 @@ import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { PageService } from 'services/page.service';
 import { TriggeredControlEvent } from 'app/core/models/page.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
+import { ExportService } from 'services/export.service';
 
 @Component({
     selector: 'let-dynamic-list-render',
@@ -55,10 +57,12 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
 
     buttonFullNames: string[] = []
     dynamicListFullName: string
+
+    listOptions: ListOptions = ListOptions.DefaultListOptions
     constructor(
         private store: Store,
         public dialog: MatDialog,
-        private shortcutUtil: ShortcutUtil,
+        private exportService: ExportService,
         private redirectRoute: Router,
         private logger: NGXLogger,
         private translatePipe: Translator,
@@ -68,6 +72,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
     }
 
     ngOnInit(): void {
+        this.listOptions = ListOptions.getListOptions(this.dynamicList.options)
         this.gatherAllButtonFullNames()
         this.gatherListName()
         this.pageState$ = this.store.select<PageStateModel>(state => state.page)
@@ -181,6 +186,61 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                     })
 
                 break
+        }
+    }
+
+    callExportExcel(){
+        // Check calling client or server-side
+        if(ObjectUtils.isNotNull(this.dynamicListGrid.dataSource) && this.dynamicListGrid.dataSource.length > 0 && this.listOptions.maximumClientExport >= this.dynamicListGrid.dataSource.length){
+            // Client export
+            const excelFileName = this.dynamicList.displayName
+            const sheetFileName = this.dynamicList.displayName
+            let headers: string[] = []
+            let orderedNames: string[] = []
+            if(this.listOptions.allowExportHiddenFields){
+                headers = this.dynamicListGrid.headers.map(a => a.displayName)
+                orderedNames = this.dynamicListGrid.headers.map(a => a.name)
+            }
+            else{
+                headers = this.dynamicListGrid.headers.filter(b => !b.isHidden).map(a => a.displayName)
+                orderedNames = this.dynamicListGrid.headers.filter(b => !b.isHidden).map(a => a.name)
+            }
+            
+            // An overkill performance when exporting over 1k rows,
+            // developer needs to use server-side to export instead of client side
+            let exportedData: any[] = this.dynamicListGrid.dataSource
+            const deletedProps: string[] = []
+            const jsonParsedProps: string[] = []
+            const firstElem = exportedData[0]
+            Object.keys(firstElem).forEach(prop => {
+                let inDeletedProps = false
+                if(orderedNames.indexOf(prop) < 0){
+                    deletedProps.push(prop)
+                    inDeletedProps = true
+                }
+                
+                if((ObjectUtils.isArray(firstElem[prop]) || ObjectUtils.isObject(firstElem[prop]))
+                    && !inDeletedProps){
+                        jsonParsedProps.push(prop)
+                }
+            })
+
+            exportedData.forEach(elem => {
+                jsonParsedProps.forEach(prop => {
+                    elem[prop] = JSON.stringify(elem[prop])
+                })
+                deletedProps.forEach(prop => {
+                    elem[prop] = null
+                })
+            })
+
+            this.exportService.exportExcelFile(
+                excelFileName,
+                sheetFileName,
+                orderedNames,
+                headers,
+                exportedData
+                )
         }
     }
 

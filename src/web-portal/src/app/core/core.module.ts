@@ -20,6 +20,7 @@ import { MatFormFieldModule, MatDialogModule, MatInputModule, MatIconModule, Mat
 import { ReactiveFormsModule } from '@angular/forms';
 import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
 import { AutoCompletePipe } from './pipe/autocomplete.pipe';
+import { ExportService } from 'services/export.service';
 @NgModule({
   declarations: [
     UnlockScreenDialogComponent,        
@@ -67,7 +68,8 @@ import { AutoCompletePipe } from './pipe/autocomplete.pipe';
     PageService,
     UploadFileService,
     ChartsClient,
-    BackupsClient
+    BackupsClient,
+    ExportService
   ],
 })
 export class CoreModule {
