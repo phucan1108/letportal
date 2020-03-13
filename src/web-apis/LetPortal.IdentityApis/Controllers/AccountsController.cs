@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using LetPortal.Core.Exceptions;
 using LetPortal.Core.Https;
+using LetPortal.Identity;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Providers.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -52,7 +53,7 @@ namespace LetPortal.IdentityApis.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize]
+        [Authorize(Roles = Constants.BACK_END_ROLES)]
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
         {

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.EntitySchemas;
 using LetPortal.Portal.Models.EntitySchemas;
 using LetPortal.Portal.Repositories.EntitySchemas;
 using LetPortal.Portal.Services.EntitySchemas;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
@@ -31,6 +33,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{entityName}/{databaseId}")]
         [ProducesResponseType(typeof(EntitySchema), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetOne(string databaseId, string entityName)
         {
             _logger.Info("Get one entity schema in database id = {databaseId}, entity name = {entityName}", databaseId, entityName);
@@ -46,6 +49,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("fetch/{id}")]
         [ProducesResponseType(typeof(List<EntitySchema>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> FetchAllFromDatabase(string id)
         {
             var result = await _entitySchemaService.FetchAllEntitiesFromDatabase(id);
@@ -55,6 +59,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("database/{id}")]
         [ProducesResponseType(typeof(List<EntitySchema>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetAllFromOneDatabase(string id)
         {
             var result = await _entitySchemaRepository.GetAllAsync(a => a.DatabaseId == id);
@@ -64,6 +69,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("flush")]
         [ProducesResponseType(typeof(List<EntitySchema>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> FlushOneDatabase(FlushDatabaseModel flushDatabaseModel)
         {
             var result = await _entitySchemaService.FetchAllEntitiesFromDatabase(flushDatabaseModel.DatabaseId);
@@ -74,6 +80,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Delete(string id)
         {
             await _entitySchemaRepository.DeleteAsync(id);

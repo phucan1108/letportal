@@ -22,7 +22,7 @@ export class SessionService{
     }
 
     getDefaultAppPage(){
-        return this.getCurrentApp() ? this.getCurrentApp().defaultUrl : null
+        return this.getCurrentApp() ? this.getCurrentApp().defaultUrl : '/dashboard'
     }
 
     setUserSession(userSessionId: string){

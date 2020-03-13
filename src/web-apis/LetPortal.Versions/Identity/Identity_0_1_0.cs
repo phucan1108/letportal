@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LetPortal.Core.Versions;
 using LetPortal.Identity.Entities;
+using LetPortal.Portal.Constants;
 
 namespace LetPortal.Versions.Identity
 {
@@ -20,8 +21,8 @@ namespace LetPortal.Versions.Identity
             var superAdminRole = new Role
             {
                 Id = "5c06a15e4cc9a850bca44488",
-                Name = "SuperAdmin",
-                NormalizedName = "SUPERADMIN",
+                Name = RolesConstants.SUPER_ADMIN,
+                NormalizedName = RolesConstants.SUPER_ADMIN.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
                 DisplayName = "Super Admin",
                 Claims = new List<BaseClaim>
                 {
@@ -51,9 +52,8 @@ namespace LetPortal.Versions.Identity
                 Claims = new List<BaseClaim>
                 {
                     StandardClaims.AccessAppSelectorPage,
-                    StandardClaims.Sub("5ce287ee569d6f23e8504cef"),
-                    StandardClaims.UserId("5ce287ee569d6f23e8504cef"),
-                    StandardClaims.Name("admin")
+                    StandardClaims.Sub("admin"),
+                    StandardClaims.UserId("5ce287ee569d6f23e8504cef")
                 }
             };
 

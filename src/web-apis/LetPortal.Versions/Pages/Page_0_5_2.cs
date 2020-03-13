@@ -1,0 +1,81 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using LetPortal.Core.Security;
+using LetPortal.Core.Versions;
+using LetPortal.Portal.Entities.Pages;
+
+namespace LetPortal.Versions.Pages
+{
+    public class Page_0_5_2 : IPortalVersion
+    {
+        public string VersionNumber => "0.5.2";
+
+        public void Downgrade(IVersionContext versionContext)
+        {
+            versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4b");
+            versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4c");
+            versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4d");
+            versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4e");
+        }
+
+        public void Upgrade(IVersionContext versionContext)
+        {
+            var chartBuilderPage = new Page
+            {
+                Id = "5e6b645a29ae8d569813fd4b",
+                Name = "chart-builder",
+                DisplayName = "Chart Builder",
+                UrlPath = "portal/page/chart/:chartid",
+                Claims = new List<PortalClaim>
+                    {
+                        PortalClaimStandards.AllowAccess
+                    }
+            };
+
+            var backupBuilder = new Page
+            {
+                Id = "5e6b645a29ae8d569813fd4c",
+                Name = "backup-builder",
+                DisplayName = "Backup Builder",
+                UrlPath = "portal/page/backup",
+                ShellOptions = new List<ShellOption>(),
+                Claims = new List<PortalClaim>
+                {
+                    PortalClaimStandards.AllowAccess
+                }
+            };
+
+            var backupUploadBuilder = new Page
+            {
+                Id = "5e6b645a29ae8d569813fd4d",
+                Name = "backup-upload",
+                DisplayName = "Backup Upload Page",
+                UrlPath = "portal/page/backup/upload",
+                ShellOptions = new List<ShellOption>(),
+                Claims = new List<PortalClaim>
+                {
+                    PortalClaimStandards.AllowAccess
+                }
+            };
+
+            var backupRestoreBuilder = new Page
+            {
+                Id = "5e6b645a29ae8d569813fd4e",
+                Name = "backup-restore",
+                DisplayName = "Backup Restore Page",
+                UrlPath = "portal/page/backup/restore",
+                ShellOptions = new List<ShellOption>(),
+                Claims = new List<PortalClaim>
+                {
+                    PortalClaimStandards.AllowAccess
+                }
+            };
+
+            versionContext.InsertData(chartBuilderPage);
+            versionContext.InsertData(backupBuilder);
+            versionContext.InsertData(backupUploadBuilder);
+            versionContext.InsertData(backupRestoreBuilder);
+        }
+    }
+}

@@ -43,6 +43,7 @@ export class ChartBuilderPage implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.pageService.init('chart-builder').subscribe() 
         this.edittingChart = this.activatedRoute.snapshot.data.chart;
         if (this.edittingChart) {
             this.isEditMode = true

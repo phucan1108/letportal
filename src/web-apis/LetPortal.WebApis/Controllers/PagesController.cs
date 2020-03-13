@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
@@ -11,6 +12,7 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Components;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Repositories.Pages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
@@ -41,6 +43,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("shorts")]
         [ProducesResponseType(typeof(List<ShortPageModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetAllShortPages()
         {
             var result = await _pageRepository.GetAllShortPagesAsync();
@@ -50,6 +53,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("all-claims")]
         [ProducesResponseType(typeof(List<ShortPortalClaimModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetAllPortalClaims()
         {
             var result = await _pageRepository.GetShortPortalClaimModelsAsync();
@@ -59,6 +63,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("get-by-id/{id}")]
         [ProducesResponseType(typeof(Page), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetOneById(string id)
         {
             var result = await _pageRepository.GetOneAsync(id);
@@ -68,6 +73,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{name}")]
         [ProducesResponseType(typeof(Page), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetOne(string name)
         {
             var result = await _pageRepository.GetOneByNameAsync(name);
@@ -77,6 +83,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("render/{name}")]
         [ProducesResponseType(typeof(Page), 200)]
+        [Authorize]
         public async Task<IActionResult> GetOneForRender(string name)
         {
             var result = await _pageRepository.GetOneByNameForRenderAsync(name);
@@ -86,6 +93,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("short-pages")]
         [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetShortPages([FromQuery] string keyWord = null)
         {
             return Ok(await _pageRepository.GetShortPages(keyWord));
@@ -93,6 +101,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("")]
         [ProducesResponseType(typeof(string), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Create([FromBody] Page page)
         {
             if (ModelState.IsValid)
@@ -106,6 +115,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Update(string id, [FromBody] Page page)
         {
             if (ModelState.IsValid)
@@ -119,6 +129,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Delete(string id)
         {
             await _pageRepository.DeleteAsync(id);
@@ -128,6 +139,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("check-exist/{name}")]
         [ProducesResponseType(typeof(bool), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> CheckExist(string name)
         {
             return Ok(await _pageRepository.IsExistAsync(a => a.Name == name));
@@ -135,6 +147,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{pageId}/submit")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        [Authorize]
         public async Task<IActionResult> SubmitCommand(string pageId, [FromBody] PageSubmittedButtonModel pageSubmittedButtonModel)
         {
             var page = await _pageRepository.GetOneAsync(pageId);
@@ -160,6 +173,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{pageId}/fetch-control-datasource")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        [Authorize]
         public async Task<IActionResult> FetchControlDatasource(string pageId, [FromBody] PageSelectionDatasourceModel model)
         {
             var page = await _pageRepository.GetOneAsync(pageId);
@@ -202,6 +216,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{pageId}/trigger-control-event")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        [Authorize]
         public async Task<IActionResult> ExecuteTriggeredEvent(string pageId, [FromBody] PageTriggeringEventModel model)
         {
             var page = await _pageRepository.GetOneAsync(pageId);
@@ -245,6 +260,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{pageId}/async-validator")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        [Authorize]
         public async Task<IActionResult> ExecuteAsyncValidator(string pageId, [FromBody] PageAsyncValidatorModel validatorModel)
         {
             var page = await _pageRepository.GetOneAsync(pageId);
@@ -285,6 +301,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{pageId}/fetch-datasource")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        [Authorize]
         public async Task<IActionResult> GetDatasourceForPage(string pageId, [FromBody] PageRequestDatasourceModel pageRequestDatasourceModel)
         {
             var page = await _pageRepository.GetOneAsync(pageId);
@@ -304,6 +321,7 @@ namespace LetPortal.WebApis.Controllers
 
 
         [HttpPost("clone")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Clone([FromBody] CloneModel model)
         {
             _logger.Info("Requesting clone page with {@model}", model);

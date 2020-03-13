@@ -3,12 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Services.Databases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
@@ -36,6 +38,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(List<DatabaseConnection>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Get()
         {
             var result = await _databaseRepository.GetAllAsync();
@@ -56,6 +59,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{id}", Name = "Get")]
         [ProducesResponseType(typeof(DatabaseConnection), 200)]
+        [Authorize]
         public async Task<IActionResult> Get(string id)
         {
             _logger.Info("Requesting to get database id = {id}", id);
@@ -73,6 +77,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("short-databases")]
         [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetShortDatabases([FromQuery] string keyWord = null)
         {
             return Ok(await _databaseRepository.GetShortDatatabases(keyWord));
@@ -80,6 +85,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(DatabaseConnection), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Post([FromBody] DatabaseConnection databaseConnection)
         {
             if (ModelState.IsValid)
@@ -95,6 +101,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Put(string id, [FromBody] DatabaseConnection databaseConnection)
         {
             if (ModelState.IsValid)
@@ -110,6 +117,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Delete(string id)
         {
             _logger.Info("Deleting database id = {id}", id);
@@ -120,6 +128,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{databaseId}/execution")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        [Authorize]
         public async Task<IActionResult> ExecutionDynamic(string databaseId, [FromBody] dynamic content)
         {
             _logger.Info("Execution dynamic in database id = {databaseId} with content = {@content}", databaseId, content);
@@ -154,6 +163,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{databaseId}/extract-raw")]
         [ProducesResponseType(typeof(ExtractingSchemaQueryModel), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> ExtractingQuery(string databaseId, [FromBody] ExtractionDatabaseRequestModel model)
         {
             _logger.Info("Extracting query dynamic in database id = {databaseId} with model = {@model}", databaseId, model);
@@ -188,6 +198,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{databaseId}/query-datasource")]
         [ProducesResponseType(typeof(ExecuteDynamicResultModel), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> ExecuteQueryDatasource(string databaseId, [FromBody] dynamic content)
         {
             _logger.Info("Execute query for datasource in database id = {databaseId} with content = {@content}", databaseId, content);
@@ -203,6 +214,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPost("clone")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Clone([FromBody] CloneModel model)
         {
             _logger.Info("Requesting clone database with {@model}", model);

@@ -51,7 +51,6 @@ import { ExportService } from 'services/export.service';
     DatasourceOptionsService,
     CustomHttpService,
     Translator,
-    ConfigurationProvider,
     ShellConfigProvider,        
     RolesClient,
     DynamicListClient,

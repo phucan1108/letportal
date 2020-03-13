@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using LetPortal.Core.Logger;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Recoveries;
 using LetPortal.Portal.Exceptions.Recoveries;
 using LetPortal.Portal.Models.Recoveries;
 using LetPortal.Portal.Repositories.Recoveries;
 using LetPortal.Portal.Services.Recoveries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +34,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Backup), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> GetOne(string id)
         {
             return Ok(await _backupRepository.GetOneAsync(id));
@@ -39,6 +42,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpPost("upload")]
         [ProducesResponseType(typeof(UploadBackupResponseModel), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> UploadBackupFile(IFormFile formFile)
         {
             _logger.Info("Upload file with name = {name} size = {size}", formFile.FileName, formFile.Length);
@@ -49,6 +53,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpPost("")]
         [ProducesResponseType(typeof(BackupResponseModel), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> Create([FromBody] BackupRequestModel model)
         {
             _logger.Info("Create backup {@model}", model);
@@ -59,6 +64,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("{id}/preview")]
         [ProducesResponseType(typeof(PreviewRestoreModel), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> PreviewBackup(string id)
         {
             _logger.Info("Preview backup id = {id}", id);
@@ -68,6 +74,7 @@ namespace LetPortal.PortalApis.Controllers
         }
 
         [HttpPost("{id}/restore")]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> RestoreBackup([FromBody] RestoreRequestModel model)
         {
             _logger.Info("Request restore with data: {@request}", model);

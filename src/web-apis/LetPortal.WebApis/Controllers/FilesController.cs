@@ -3,6 +3,7 @@ using LetPortal.Core.Logger;
 using LetPortal.Portal.Entities.Files;
 using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Services.Files;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("upload")]
         [ProducesResponseType(typeof(ResponseUploadFile), 200)]
+        [Authorize]
         public async Task<IActionResult> Upload(IFormFile formFile)
         {
             _logger.Info("Upload file with name = {name} size = {size}", formFile.FileName, formFile.Length);
@@ -36,6 +38,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("metadata/{fileId}")]
         [ProducesResponseType(typeof(File), 200)]
+        [Authorize]
         public async Task<IActionResult> GetFileInfo(string fileId)
         {
             var result = await _fileService.GetFileInfo(fileId);
@@ -44,6 +47,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpGet("download/{fileId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetFile(string fileId, [FromQuery] bool? compress)
         {
             var response = await _fileService.DownloadFileAsync(fileId, compress.HasValue ? compress.Value : false);

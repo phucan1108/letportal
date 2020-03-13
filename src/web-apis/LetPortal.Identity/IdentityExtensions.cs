@@ -89,7 +89,9 @@ namespace LetPortal.Identity
                     ValidateLifetime = true,
                     RequireExpirationTime = true,
                     RequireSignedTokens = true,
-                    NameClaimType = "name",
+                    // Be careful, if we use 'sub' as username, so we need to set http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier
+                    // Because .NET Core Identity will map sub -> nameidentifier
+                    NameClaimType = ClaimTypes.NameIdentifier,
                     // Important for testing purpose with zero but in production, it should be 5m (default)
                     ClockSkew =
                         Environment

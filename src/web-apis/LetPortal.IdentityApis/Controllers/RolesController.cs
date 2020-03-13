@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Exceptions;
+using LetPortal.Identity;
 using LetPortal.Identity.Entities;
 using LetPortal.Identity.Models;
 using LetPortal.Identity.Providers.Identity;
@@ -24,17 +25,17 @@ namespace LetPortal.IdentityApis.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpGet("")]
-        [Authorize(Roles = "SuperAdmin")]
+        [HttpGet("")]        
         [ProducesResponseType(typeof(List<Role>), 200)]
         [ProducesResponseType(typeof(ErrorCode), 500)]
+        [Authorize(Roles = Constants.BACK_END_ROLES)]
         public async Task<IActionResult> GetAllRoles()
         {
             return Ok(await _identityServiceProvider.GetRolesAsync());
         }
 
         [HttpPut("{roleName}/claims/portal")]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = Constants.BACK_END_ROLES)]
         [ProducesResponseType(typeof(ErrorCode), 500)]
         public async Task<IActionResult> AddPortalClaims(string roleName, [FromBody] List<PortalClaimModel> portalClaimModels)
         {

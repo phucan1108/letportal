@@ -6,6 +6,7 @@ import { DateUtils } from 'app/core/utils/date-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { SecurityService } from 'app/core/security/security.service';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'let-backup-restore',
@@ -34,6 +35,7 @@ export class BackupRestorePage implements OnInit {
     constructor(
         private activatedRouter: ActivatedRoute,
         private router: Router,
+        private pageService: PageService,
         private logger: NGXLogger,
         private backupClient: BackupsClient,
         private shortcutUtil: ShortcutUtil,
@@ -41,6 +43,7 @@ export class BackupRestorePage implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.pageService.init('backup-restore').subscribe() 
         this.backup = this.activatedRouter.snapshot.data.backup
     }
 

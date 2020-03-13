@@ -5,6 +5,7 @@ import { BackupsClient, UploadBackupResponseModel } from 'services/portal.servic
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { Router } from '@angular/router';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'backup-upload',
@@ -40,6 +41,7 @@ export class BackupUploadpage implements OnInit {
 
     responseModel: UploadBackupResponseModel
     constructor(
+        private pageService: PageService,
         private backupClient: BackupsClient,
         private shortcutUtil: ShortcutUtil,
         private logger: NGXLogger,
@@ -49,6 +51,7 @@ export class BackupUploadpage implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.pageService.init('backup-upload').subscribe() 
         this.form = this.fb.group({
             upload: ['test', [Validators.required]]
         })

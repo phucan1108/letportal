@@ -24,7 +24,7 @@ namespace LetPortal.Versions.Apps
                 Logo = "important_devices",
                 Author = "Admin",
                 CreatedDate = DateTime.UtcNow,
-                DefaultUrl = "/portal/page/apps-management",
+                DefaultUrl = "/portal/page/pages-management",
                 CurrentVersionNumber = "0.0.1",
                 DisplayName = "Core",
                 ModifiedDate = DateTime.UtcNow,
