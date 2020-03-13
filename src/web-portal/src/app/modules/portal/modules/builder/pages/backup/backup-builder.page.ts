@@ -14,6 +14,7 @@ import { SecurityService } from 'app/core/security/security.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { Router } from '@angular/router';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'let-backup-builder',
@@ -60,6 +61,7 @@ export class BackupBuilderPage implements OnInit {
         private pageClient: PagesClient,
         private backupClient: BackupsClient,
         private security: SecurityService,
+        private pageService: PageService,
         private shortcutUtil: ShortcutUtil,
         private router: Router,
         private fb: FormBuilder,
@@ -67,6 +69,7 @@ export class BackupBuilderPage implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.pageService.init('backup-builder').subscribe() 
         this.backupFormGroup = this.fb.group({
             name: ['', [Validators.required, Validators.maxLength(250)]],
             description: ['', [Validators.required, Validators.maxLength(500)]]

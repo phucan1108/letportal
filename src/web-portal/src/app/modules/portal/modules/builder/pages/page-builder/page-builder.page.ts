@@ -264,5 +264,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
         }
     }
 
+    cancel(){
+        this.router.navigateByUrl('portal/page/pages-management')
+    }
     //#endregion
 }

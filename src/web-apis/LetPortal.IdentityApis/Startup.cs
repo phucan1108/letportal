@@ -31,7 +31,7 @@ namespace LetPortal.IdentityApis
 
                 options.AddPolicy("ProdCors", builder =>
                 {
-                    builder.WithExposedHeaders(Constants.TokenExpiredHeader);
+                    builder.WithExposedHeaders(LetPortal.Core.Constants.TokenExpiredHeader);
                 });
             });
 

@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.DynamicLists;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Services.Components;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
@@ -33,6 +35,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("")]
         [ProducesResponseType(typeof(List<DynamicList>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _dynamicListRepository.GetAllAsync(isRequiredDiscriminator: true);
@@ -47,6 +50,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(DynamicList), 200)]
+        [Authorize]
         public async Task<IActionResult> GetOne(string id)
         {
             var result = await _dynamicListRepository.GetOneAsync(id);
@@ -61,6 +65,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("short-dynamiclists")]
         [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetShortDynamicLists([FromQuery] string keyWord = null)
         {
             return Ok(await _dynamicListRepository.GetShortDynamicLists(keyWord));
@@ -68,6 +73,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("")]
         [ProducesResponseType(typeof(DynamicList), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Create([FromBody] DynamicList dynamicList)
         {
             if (ModelState.IsValid)
@@ -82,6 +88,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Update(string id, [FromBody] DynamicList dynamicList)
         {
             if (ModelState.IsValid)
@@ -95,6 +102,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Delete(string id)
         {
             await _dynamicListRepository.DeleteAsync(id);
@@ -104,6 +112,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("{id}/fetch-data")]
         [ProducesResponseType(typeof(DynamicListResponseDataModel), 200)]
+        [Authorize]
         public async Task<IActionResult> ExecuteQuery(string id, [FromBody] DynamicListFetchDataModel fetchDataModel)
         {
             _logger.Info("Execute query in dynamic list id {id} with fetch data {@fetchDataModel}", id, fetchDataModel);
@@ -121,6 +130,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("extract-query")]
         [ProducesResponseType(typeof(PopulateQueryModel), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> ExtractingQuery([FromBody] ExtractingQueryModel extractingQuery)
         {
             _logger.Info("Extracing query model {@extractingQuery}", extractingQuery);
@@ -131,6 +141,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("check-exist/{name}")]
         [ProducesResponseType(typeof(bool), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> CheckExist(string name)
         {
             return Ok(await _dynamicListRepository.IsExistAsync(a => a.Name == name));
@@ -138,6 +149,7 @@ namespace LetPortal.WebApis.Controllers
 
         
         [HttpPost("clone")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Clone([FromBody] CloneModel model)
         {
             _logger.Info("Requesting clone dynamic list with {@model}", model);

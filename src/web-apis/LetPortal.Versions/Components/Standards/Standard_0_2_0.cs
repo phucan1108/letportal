@@ -454,16 +454,16 @@ namespace LetPortal.Versions.Components
                             },
                             new Portal.Entities.SectionParts.Controls.PageControlValidator
                             {
-                                ValidatorType = Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                                ValidatorType = Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
                                 IsActive = true,
-                                ValidatorMessage = "Password requires maximum 50 characters",
-                                ValidatorOption = "50"
+                                ValidatorMessage = "Password requires at least one upper case, one lower case, one number, one special character",
+                                ValidatorOption = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{6,}$"
                             },
                             new Portal.Entities.SectionParts.Controls.PageControlValidator
                             {
                                 ValidatorType = Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
                                 IsActive = true,
-                                ValidatorMessage = "Password must have at least {{option}} characters",
+                                ValidatorMessage = "Password requires at least {{option}} characters",
                                 ValidatorOption = "6"
                             }
                         }

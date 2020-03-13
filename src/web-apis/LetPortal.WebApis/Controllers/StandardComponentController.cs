@@ -3,9 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
@@ -28,6 +30,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(StandardComponent), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetOne(string id)
         {
             var result = await _standardRepository.GetOneAsync(id);
@@ -37,6 +40,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{id}/render")]
         [ProducesResponseType(typeof(StandardComponent), 200)]
+        [Authorize]
         public async Task<IActionResult> GetOneForRender(string id)
         {
             var result = await _standardRepository.GetOneForRenderAsync(id);
@@ -46,6 +50,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("short-standards")]
         [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetSortStandards([FromQuery] string keyWord = null)
         {
             return Ok(await _standardRepository.GetShortStandards(keyWord));
@@ -53,6 +58,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("")]
         [ProducesResponseType(typeof(string), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> CreateOne([FromBody] StandardComponent standardComponent)
         {
             if (ModelState.IsValid)
@@ -67,6 +73,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> UpdateOne(string id, [FromBody] StandardComponent standardComponent)
         {
             if (ModelState.IsValid)
@@ -81,6 +88,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPost("bulk")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> CreateBulk([FromBody] List<StandardComponent> standardComponents)
         {
             standardComponents.ForEach(a =>
@@ -94,6 +102,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("bulk")]
         [ProducesResponseType(typeof(List<StandardComponent>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetManys([FromQuery] string ids)
         {
             if (!string.IsNullOrEmpty(ids))
@@ -112,12 +121,14 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("check-exist/{name}")]
         [ProducesResponseType(typeof(bool), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> CheckExist(string name)
         {
             return Ok(await _standardRepository.IsExistAsync(a => a.Name == name));
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Delete(string id)
         {
             await _standardRepository.DeleteAsync(id);
@@ -126,6 +137,7 @@ namespace LetPortal.WebApis.Controllers
 
 
         [HttpPost("clone")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Clone([FromBody] CloneModel model)
         {
             _logger.Info("Requesting clone Standard with {@model}", model);

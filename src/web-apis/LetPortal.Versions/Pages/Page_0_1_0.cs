@@ -20,7 +20,6 @@ namespace LetPortal.Versions.Pages
             versionContext.DeleteData<Page>("5d0f2dca6ba2fd4ca49e3749");
             versionContext.DeleteData<Page>("5d0f2dca6ba2fd4ca49e3748");
             versionContext.DeleteData<Page>("5cf8999e8466f54ae8743181");
-            versionContext.DeleteData<Page>("5d316bc6e7fefb62d805bfbd");
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -222,39 +221,11 @@ namespace LetPortal.Versions.Pages
                 }
             };
 
-            var workflowManagementList = new Page
-            {
-                Id = "5d316bc6e7fefb62d805bfbd",
-                Name = "workflows-management",
-                DisplayName = "Workflows Managament",
-                UrlPath = "portal/page/workflows-managament",
-                Claims = new List<PortalClaim>
-                    {
-                        PortalClaimStandards.AllowAccess
-                    },
-                Builder = new PageBuilder
-                {
-                    Sections = new List<PageSection>
-                    {
-                        new PageSection
-                        {
-                            Id = "188a0cc0-3909-3141-206c-846314b1638d",
-                            Name = "workflowslist",
-                            DisplayName = "Workflows List",
-                            ConstructionType = SectionContructionType.DynamicList,
-                            ComponentId = "5d316b88e7fefb62d805bfb5",
-                            Order = 0
-                        }
-                    }
-                }
-            };
-
             versionContext.InsertData(appManagementList);
             versionContext.InsertData(databaseManagementList);
             versionContext.InsertData(userManagementList);
             versionContext.InsertData(roleManagementList);
             versionContext.InsertData(pageManagementList);
-            versionContext.InsertData(workflowManagementList);
             #endregion
         }
     }

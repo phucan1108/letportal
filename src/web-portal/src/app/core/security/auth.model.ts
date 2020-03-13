@@ -23,7 +23,7 @@ export class AuthToken {
     }
 
     public toAuthUser() {
-        return new AuthUser(this.jsonTokenPayload.id, this.jsonTokenPayload.name, this.jsonTokenPayload.roles, this.jsonTokenPayload);
+        return new AuthUser(this.jsonTokenPayload.id, this.jsonTokenPayload.sub, this.jsonTokenPayload.roles, this.jsonTokenPayload);
     }
 
     public isExpired(): boolean{

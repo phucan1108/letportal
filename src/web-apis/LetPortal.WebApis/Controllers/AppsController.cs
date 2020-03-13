@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
 using LetPortal.Portal.Models.Apps;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories.Apps;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
@@ -37,6 +39,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(App), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> GetOne(string id)
         {
             _logger.Info("Getting App with Id = {id}", id);
@@ -52,6 +55,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("all")]
         [ProducesResponseType(typeof(List<App>), 200)]
+        [Authorize]
         public async Task<IActionResult> GetMany([FromQuery] string ids)
         {
             _logger.Info("Requesting apps with ids = {ids}", ids);
@@ -68,6 +72,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("short-apps")]
         [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetShortApps([FromQuery] string keyWord)
         {
             _logger.Info("Get short apps by keyword = {keyword}", keyWord);
@@ -78,6 +83,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{id}/urls")]
         [ProducesResponseType(typeof(IEnumerable<AvailableUrl>), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> GetAvailableUrls(string id)
         {
             // TODO: We will implement a restriction urls per App
@@ -88,6 +94,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpPost("")]
         [ProducesResponseType(typeof(App), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> Create([FromBody] App app)
         {
             _logger.Info("Creating app: {@app}", app);
@@ -101,6 +108,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> Update(string id, [FromBody] App app)
         {
             app.Id = id;
@@ -110,6 +118,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPut("{id}/menus")]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> UpdateMenu(string id, [FromBody] List<Menu> menus)
         {
             _logger.Info("Updating menu with app id = {id} and menus = {@menus}", id, menus);
@@ -118,6 +127,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPut("{id}/menus/assign-role")]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> AsssignRolesToMenu(string id, [FromBody] MenuProfile menuProfile)
         {
             _logger.Info("Updating menu profile with app id = {id} and menu profile = {@menuProfile}", id, menuProfile);
@@ -128,6 +138,7 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("")]
         [ProducesResponseType(typeof(List<App>), 200)]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> GetAllApps()
         {
             var result = await _appRepository.GetAllAsync();
@@ -141,6 +152,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> Delete(string id)
         {
             await _appRepository.DeleteAsync(id);
@@ -148,6 +160,7 @@ namespace LetPortal.WebApis.Controllers
         }
 
         [HttpPost("clone")]
+        [Authorize(Roles = RolesConstants.ALL_ADMIN_ROLES)]
         public async Task<IActionResult> Clone([FromBody] CloneModel model)
         {
             _logger.Info("Requesting clone app with {@model}", model);

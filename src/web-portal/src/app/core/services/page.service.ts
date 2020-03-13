@@ -74,7 +74,7 @@ export class PageService {
             tap(
                 result => {
                     if (!result.allowAccess) {
-                        this.shortcutUtil.toastMessage(`Sorry, you can access ${result.page.displayName} page !`, ToastType.Warning)
+                        this.shortcutUtil.toastMessage(`Sorry, you aren't allowed to access ${result.page.displayName} page !`, ToastType.Warning)
                         this.router.navigateByUrl(this.session.getDefaultAppPage())
                     }
                 },
@@ -97,6 +97,10 @@ export class PageService {
         claims$.subscribe(
             claims => {
                 this.claims = claims
+                if(!this.isAllowAccess(this.security.getAuthUser(), page)){
+                    this.shortcutUtil.toastMessage(`Sorry, you aren't allowed to access ${page.displayName} page !`, ToastType.Warning)
+                    this.router.navigateByUrl(this.session.getDefaultAppPage())
+                }
             }
         )
         const pageState = this.store.select(state => state.page)

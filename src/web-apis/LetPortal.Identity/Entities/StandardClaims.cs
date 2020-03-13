@@ -10,6 +10,8 @@ namespace LetPortal.Identity.Entities
 
         public const string DefaultArrayValueType = "Array";
 
+        public const string DefaultClaimValuePerPage = "allowaccess";
+
         public static readonly BaseClaim AccessAppSelectorPage = new BaseClaim
         {
             Issuer = DefaultIssuer,
@@ -27,6 +29,24 @@ namespace LetPortal.Identity.Entities
                 ClaimValue = coreAppId,
                 ClaimValueType = DefaultArrayValueType
             };
+        }
+
+        public static IEnumerable<BaseClaim> GenerateClaimsByPages(string[] pageNames)
+        {
+            var claims = new List<BaseClaim>();
+            
+            foreach(var pageName in pageNames)
+            {
+                claims.Add(new BaseClaim
+                {
+                    Issuer = DefaultIssuer,
+                    ClaimType = pageName,
+                    ClaimValue = DefaultClaimValuePerPage,
+                    ClaimValueType = DefaultStringValueType
+                });
+            }
+
+            return claims;
         }
 
         public static IEnumerable<BaseClaim> TransformRoleClaims(List<string> roles)

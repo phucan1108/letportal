@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
+using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Models.Charts;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Services.Components;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.PortalApis.Controllers
@@ -33,6 +35,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("")]
         [ProducesResponseType(typeof(IEnumerable<Chart>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetMany()
         {
             return Ok(await _chartRepository.GetAllAsync(isRequiredDiscriminator: true));
@@ -40,6 +43,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Chart), 200)]
+        [Authorize]
         public async Task<IActionResult> GetOne(string id)
         {
             _logger.Info("Getting Chart with Id = {id}", id);
@@ -62,6 +66,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("{id}/builder")]
         [ProducesResponseType(typeof(Chart), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetOneForBuilder(string id)
         {
             _logger.Info("Getting Chart with Id = {id}", id);
@@ -77,6 +82,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("short-charts")]
         [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetShortCharts([FromQuery] string keyWord = null)
         {
             return Ok(await _chartRepository.GetShortCharts(keyWord));
@@ -84,6 +90,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpPost("")]
         [ProducesResponseType(typeof(Chart), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Create([FromBody] Chart chart)
         {
             _logger.Info("Creating chart: {@chart}", chart);
@@ -95,6 +102,7 @@ namespace LetPortal.PortalApis.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Update(string id, [FromBody] Chart chart)
         {
             if (ModelState.IsValid)
@@ -109,6 +117,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("check-exist/{name}")]
         [ProducesResponseType(typeof(bool), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> CheckExist(string name)
         {
             return Ok(await _chartRepository.IsExistAsync(a => a.Name == name));
@@ -116,6 +125,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpGet("extract")]
         [ProducesResponseType(typeof(ExtractionChartFilter), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Extraction([FromBody] ExtractingChartQueryModel model)
         {
             if (ModelState.IsValid)
@@ -128,6 +138,7 @@ namespace LetPortal.PortalApis.Controllers
 
         [HttpPost("execution")]
         [ProducesResponseType(typeof(ExecutionChartResponseModel), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Execution([FromBody] ExecutionChartRequestModel model)
         {
             if (ModelState.IsValid)
@@ -143,6 +154,7 @@ namespace LetPortal.PortalApis.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Delete(string id)
         {
             await _chartRepository.DeleteAsync(id);
@@ -151,6 +163,7 @@ namespace LetPortal.PortalApis.Controllers
 
         
         [HttpPost("clone")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> Clone([FromBody] CloneModel model)
         {
             _logger.Info("Requesting clone chart with {@model}", model);

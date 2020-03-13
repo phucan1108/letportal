@@ -40,7 +40,7 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
 @NgModule({
   declarations: [
     AppComponent,
-    ErrorComponent
+    ErrorComponent    
   ],
   imports: [
     BrowserModule,
@@ -91,7 +91,8 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
       useValue: {
         languages: hlJSLang
       }
-    }
+    },
+    ConfigurationProvider   
   ],
   entryComponents: [
 

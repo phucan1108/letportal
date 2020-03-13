@@ -58,7 +58,7 @@ export class ShortcutUtil {
 		type: ToastType = ToastType.Info,
 		title?: string,
 		allowHtmlMessage: boolean = false,
-		timeout: number = 3000
+		timeout: number = 5000
 	) {
 		// Important note: that is a trick for avoid 'outside' angular lifecycle changedetectionstrategy
 		// Issue: https://github.com/angular/angular/issues/15634
