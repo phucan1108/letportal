@@ -778,6 +778,10 @@ namespace LetPortal.Versions.Components
             VersionUtils.GenerateControlEvents(registerNewUserFormStandard);
             VersionUtils.GenerateControlEvents(roleStandard);
 
+            VersionUtils.GenerateStandardOptions(userFormStandard);
+            VersionUtils.GenerateStandardOptions(registerNewUserFormStandard);
+            VersionUtils.GenerateStandardOptions(roleStandard);
+
             versionContext.InsertData(userFormStandard);
             versionContext.InsertData(registerNewUserFormStandard);
             versionContext.InsertData(roleStandard);

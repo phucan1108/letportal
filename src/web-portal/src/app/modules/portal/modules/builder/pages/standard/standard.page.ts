@@ -11,6 +11,9 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 import { StaticResources } from 'portal/resources/static-resources';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { BehaviorSubject } from 'rxjs';
+import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
+import { StandardOptions } from 'portal/modules/models/standard.extended.model';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-standard-page',
@@ -23,6 +26,8 @@ export class StandardPagePage implements OnInit {
     standardComponent: StandardComponent
     controls: ExtendedPageControl[] = []
     controls$: BehaviorSubject<ExtendedPageControl[]> = new BehaviorSubject([])
+    shellOptions$: BehaviorSubject<Array<ExtendedShellOption>> = new BehaviorSubject([])
+    shellOptions: Array<ExtendedShellOption> = []
     isCanSubmit = false
     isEditMode = false
 
@@ -68,18 +73,33 @@ export class StandardPagePage implements OnInit {
             this.standardFormGroup = this.fb.group({
                 name: new FormControl({ value:this.standardComponent.name, disabled: true }, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]),
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
+                allowArrayData: [this.standardComponent.allowArrayData],
                 layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
             })
+
+            
+            if(ObjectUtils.isNotNull(this.standardComponent.options)){
+                this.shellOptions =  this.standardComponent.options as ExtendedShellOption[]
+            }
+            else{
+                this.shellOptions = StandardOptions.getDefaultShellOptionsForStandard()
+            }
+            StandardOptions.combinedDefaultShellOptions(this.shellOptions)
+            this.shellOptions$.next(this.shellOptions)
         }
         else {
 
             this.standardFormGroup = this.fb.group({
                 name: [this.standardComponent.name, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]],
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
+                allowArrayData: [this.standardComponent.allowArrayData],
                 layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
             })
+
+            this.shellOptions = this.shellOptions.concat(StandardOptions.getDefaultShellOptionsForStandard())
+            this.shellOptions$.next(this.shellOptions)
         }
 
         // Auto-generated name and url path
@@ -96,6 +116,7 @@ export class StandardPagePage implements OnInit {
         const formValues = this.standardFormGroup.value
         this.standardComponent.name = this.isEditMode ? this.standardComponent.name :  formValues.name
         this.standardComponent.displayName = formValues.displayName
+        this.standardComponent.allowArrayData = formValues.allowArrayData
         this.standardComponent.controls = this.controls
         this.standardComponent.layoutType = parseInt(formValues.layoutType)
     }
@@ -138,7 +159,13 @@ export class StandardPagePage implements OnInit {
             }
         }
     }
+
     onCancel() {
 
+    }
+
+    onChangingOptions($event){
+        this.shellOptions = $event
+        this.logger.debug('Options changed', this.shellOptions)
     }
 }

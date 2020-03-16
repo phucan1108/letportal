@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, ViewChildren, QueryList, OnDestroy } from '@angular/core';
-import { SectionTemplate } from './section-template.directive';
-import { PageSection, SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType } from 'services/portal.service';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType } from 'services/portal.service';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { NGXLogger } from 'ngx-logger';
-import { debounceTime, tap, delay, filter } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { RenderingPageSectionAction, BeginRenderingPageSectionsAction, RenderedPageSectionAction, AddSectionBoundData } from 'stores/pages/page.actions';
+import { RenderingPageSectionAction, RenderedPageSectionAction } from 'stores/pages/page.actions';
 import { RenderingSectionState } from 'app/core/models/page.model';
 import { Observable, Subscription } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
@@ -60,7 +59,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                                 state: RenderingSectionState.Complete
                             }))
                         },
-                        err => {
+                        () => {
 
                         }
                     )
@@ -83,7 +82,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                                 state: RenderingSectionState.Complete
                             }))
                         },
-                        err => {
+                        () => {
 
                         }
                     )
@@ -103,7 +102,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                                 state: RenderingSectionState.Complete
                             }))
                         },
-                        err => {
+                        () => {
 
                         }
                     )

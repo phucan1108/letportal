@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ColumndDef, ActionType, FieldValueType, DatasourceControlType } from 'services/portal.service';
 import { MatDialog } from '@angular/material';
-import { DatasourceDialogComponent } from 'portal/shared/datasource/datasource.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { NGXLogger } from 'ngx-logger';
 import { StaticResources } from 'portal/resources/static-resources';

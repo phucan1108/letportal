@@ -1,4 +1,4 @@
-import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
+import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
 
 export class StaticResources {
 

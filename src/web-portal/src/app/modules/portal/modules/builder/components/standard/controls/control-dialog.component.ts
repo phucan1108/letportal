@@ -5,7 +5,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { StaticResources } from 'portal/resources/static-resources';
 import { BehaviorSubject } from 'rxjs';
 import { ControlsGridComponent } from './controls-grid.component';
-import { DatasourceDialogComponent } from 'portal/shared/datasource/datasource.component';
 import * as _ from 'lodash';
 import { NGXLogger } from 'ngx-logger';
 import { ValidatorType, ControlType, ShellOption, PageControl, PageControlEvent, EventActionType } from 'services/portal.service';

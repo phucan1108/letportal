@@ -34,6 +34,7 @@
         Insert,
         Update,
         Delete,
-        StoreProcedure
+        StoreProcedure,
+        Multiple
     }
 }

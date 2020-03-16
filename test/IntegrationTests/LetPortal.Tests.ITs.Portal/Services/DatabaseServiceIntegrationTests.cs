@@ -175,12 +175,48 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 ExecuteCommand = "{\"$insert\":{\"databases\":{ \"$data\": " + insertingDataString + "}}}"
             });
 
-            // S4: Delete
+            // S4: Insert multiple children
+            var loopDatas = new List<LetPortal.Portal.Entities.Databases.DatabaseConnection>();
+            for(int i = 0; i < 5; i++)
+            {
+                LetPortal.Portal.Entities.Databases.DatabaseConnection cloneChildConnection = mongoDatabaseConnection.Copy();
+                cloneChildConnection.Id = "";
+                cloneChildConnection.Name += $"_{i}";
+                loopDatas.Add(cloneChildConnection);
+            }
+            var loopDataModels = new List<LoopDataParamModel>();
+            var loopDataModel = new LoopDataParamModel
+            {
+                Name = "data.databases.inserts",
+                Parameters = new List<List<ExecuteParamModel>>()
+            };
+            foreach(var clone in loopDatas)
+            {
+                loopDataModel.Parameters.Add(new List<ExecuteParamModel>
+                {
+                    new ExecuteParamModel 
+                        { 
+                            Name = "data", 
+                            RemoveQuotes = true, 
+                            ReplaceValue = ConvertUtil.SerializeObject(cloneConnection, true) 
+                        }
+                });
+            }
+            loopDataModels.Add(loopDataModel);
+            executionChains.Steps.Add(new DatabaseExecutionStep
+            {
+               DatabaseConnectionId = _context.MongoDatabaseConenction.Id,
+               DataLoopKey = "data.databases.inserts",
+               ExecuteCommand = "{\"$insert\":{\"databases\":{ \"$data\": \"{{data}}\"}}}"
+            });
+
+            // S5: Delete
             executionChains.Steps.Add(new DatabaseExecutionStep
             {
                 DatabaseConnectionId = _context.MongoDatabaseConenction.Id,
                 ExecuteCommand = "{\"$delete\":{\"databases\":{\"$where\":{\"_id\":\"ObjectId('{{$step3.id}}')\"}}}}"
             });
+
             // Act
             var result = await databaserService.ExecuteDynamic(
                 new List<LetPortal.Portal.Entities.Databases.DatabaseConnection>
@@ -188,7 +224,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     _context.MongoDatabaseConenction
                 },
                 executionChains,
-                new List<ExecuteParamModel>()
+                new List<ExecuteParamModel>(),
+                loopDataModels
                 ).ConfigureAwait(false);
 
             // Assert
@@ -419,7 +456,47 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 " Select * from databases where name={{data.insertingName}}"
             });
 
-            // S4: Delete
+            // S4: Insert multiple children
+            var loopDatas = new List<LetPortal.Portal.Entities.Databases.DatabaseConnection>();
+            for(int i = 0; i < 5; i++)
+            {
+                LetPortal.Portal.Entities.Databases.DatabaseConnection cloneChildConnection = _context.PostgreSqlDatabaseConnection.Copy();
+                cloneChildConnection.Id = "";
+                cloneChildConnection.Name += $"_{i}";
+                loopDatas.Add(cloneChildConnection);
+            }
+            var loopDataModels = new List<LoopDataParamModel>();
+            var loopDataModel = new LoopDataParamModel
+            {
+                Name = "data.databases.inserts",
+                Parameters = new List<List<ExecuteParamModel>>()
+            };
+            foreach(var clone in loopDatas)
+            {
+                loopDataModel.Parameters.Add(new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = clone.Name },
+                            new ExecuteParamModel { Name = "data.insertingName", ReplaceValue = clone.Name },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = clone.DisplayName },
+#pragma warning disable CA1305 // Specify IFormatProvider
+                            new ExecuteParamModel { Name = "currentTick()|long", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+#pragma warning restore CA1305 // Specify IFormatProvider
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = clone.ConnectionString},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = clone.DataSource},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = clone.DatabaseConnectionType }
+                        });
+            }
+            loopDataModels.Add(loopDataModel);
+            executionChains.Steps.Add(new DatabaseExecutionStep
+            {
+                DatabaseConnectionId = _context.PostgreSqlDatabaseConnection.Id,
+                DataLoopKey = "data.databases.inserts",
+                ExecuteCommand = "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.insertingName}},{{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}});" +
+                " Select * from databases where name={{data.insertingName}}"
+            });
+
+            // S5: Delete
             executionChains.Steps.Add(new DatabaseExecutionStep
             {
                 DatabaseConnectionId = _context.PostgreSqlDatabaseConnection.Id,
@@ -447,7 +524,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
-                        }
+                        },
+                loopDataModels
                 ).ConfigureAwait(false);
 
             // Assert
@@ -680,7 +758,47 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 " Select * from databases where name={{data.insertingName}}"
             });
 
-            // S4: Delete
+            // S4: Insert multiple children
+            var loopDatas = new List<LetPortal.Portal.Entities.Databases.DatabaseConnection>();
+            for(int i = 0; i < 5; i++)
+            {
+                LetPortal.Portal.Entities.Databases.DatabaseConnection cloneChildConnection = _context.SqlServerDatabaseConnection.Copy();
+                cloneChildConnection.Id = "";
+                cloneChildConnection.Name += $"_{i}";
+                loopDatas.Add(cloneChildConnection);
+            }
+            var loopDataModels = new List<LoopDataParamModel>();
+            var loopDataModel = new LoopDataParamModel
+            {
+                Name = "data.databases.inserts",
+                Parameters = new List<List<ExecuteParamModel>>()
+            };
+            foreach(var clone in loopDatas)
+            {
+                loopDataModel.Parameters.Add(new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = clone.Name },
+                            new ExecuteParamModel { Name = "data.insertingName", ReplaceValue = clone.Name },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = clone.DisplayName },
+#pragma warning disable CA1305 // Specify IFormatProvider
+                            new ExecuteParamModel { Name = "currentTick()|long", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+#pragma warning restore CA1305 // Specify IFormatProvider
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = clone.ConnectionString},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = clone.DataSource},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = clone.DatabaseConnectionType }
+                        });
+            }
+            loopDataModels.Add(loopDataModel);
+            executionChains.Steps.Add(new DatabaseExecutionStep
+            {
+                DatabaseConnectionId = _context.SqlServerDatabaseConnection.Id,
+                DataLoopKey = "data.databases.inserts",
+                ExecuteCommand = "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") VALUES({{guid()}}, {{data.insertingName}},{{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}});" +
+                " Select * from databases where name={{data.insertingName}}"
+            });
+
+            // S5: Delete
             executionChains.Steps.Add(new DatabaseExecutionStep
             {
                 DatabaseConnectionId = _context.SqlServerDatabaseConnection.Id,
@@ -708,7 +826,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
-                        }
+                        },
+                loopDataModels
                 ).ConfigureAwait(false);
 
             // Assert
@@ -943,7 +1062,47 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 " Select * from `databases` where name={{data.insertingName}}"
             });
 
-            // S4: Delete
+            // S4: Insert multiple children
+            var loopDatas = new List<LetPortal.Portal.Entities.Databases.DatabaseConnection>();
+            for(int i = 0; i < 5; i++)
+            {
+                LetPortal.Portal.Entities.Databases.DatabaseConnection cloneChildConnection = _context.MySqlDatabaseConnection.Copy();
+                cloneChildConnection.Id = "";
+                cloneChildConnection.Name += $"_{i}";
+                loopDatas.Add(cloneChildConnection);
+            }
+            var loopDataModels = new List<LoopDataParamModel>();
+            var loopDataModel = new LoopDataParamModel
+            {
+                Name = "data.databases.inserts",
+                Parameters = new List<List<ExecuteParamModel>>()
+            };
+            foreach(var clone in loopDatas)
+            {
+                loopDataModel.Parameters.Add(new List<ExecuteParamModel>
+                        {
+                            new ExecuteParamModel { Name = "guid()", ReplaceValue = Guid.NewGuid().ToString() },
+                            new ExecuteParamModel { Name = "data.name", ReplaceValue = clone.Name },
+                            new ExecuteParamModel { Name = "data.insertingName", ReplaceValue = clone.Name },
+                            new ExecuteParamModel { Name = "data.displayName", ReplaceValue = clone.DisplayName },
+#pragma warning disable CA1305 // Specify IFormatProvider
+                            new ExecuteParamModel { Name = "currentTick()", ReplaceValue = DateTime.UtcNow.Ticks.ToString() },
+#pragma warning restore CA1305 // Specify IFormatProvider
+                            new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = clone.ConnectionString},
+                            new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = clone.DataSource},
+                            new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = clone.DatabaseConnectionType }
+                        });
+            }
+            loopDataModels.Add(loopDataModel);
+            executionChains.Steps.Add(new DatabaseExecutionStep
+            {
+                DatabaseConnectionId = _context.MySqlDatabaseConnection.Id,
+                DataLoopKey = "data.databases.inserts",
+                ExecuteCommand = "INSERT INTO `databases`(id, name, displayName, timeSpan, connectionString, dataSource, databaseConnectionType) VALUES({{guid()}}, {{data.insertingName}},{{data.displayName}}, {{currentTick()}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}});" +
+                " Select * from `databases` where name={{data.insertingName}}"
+            });
+
+            // S5: Delete
             executionChains.Steps.Add(new DatabaseExecutionStep
             {
                 DatabaseConnectionId = _context.MySqlDatabaseConnection.Id,
@@ -971,7 +1130,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             new ExecuteParamModel { Name = "data.connectionString", ReplaceValue = "abc"},
                             new ExecuteParamModel { Name = "data.dataSource", ReplaceValue = "localhost"},
                             new ExecuteParamModel { Name = "data.databaseConnectionType", ReplaceValue = "postgresql" }
-                        }
+                        },
+                loopDataModels
                 ).ConfigureAwait(false);
 
             // Assert

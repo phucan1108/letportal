@@ -12,7 +12,7 @@
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
-        <mat-card-content class="align-center">
+        <mat-card-content>
             <form [formGroup]="standardFormGroup">
                 <div class="row row-heading">
                     <h3>Standard Info:</h3>
@@ -45,29 +45,42 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">Standard Array</label>
+                    <div class="col-lg-6">
+                        <mat-slide-toggle formControlName="allowArrayData" name="allowArrayData" class="pt-2">
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col-lg-2 col-form-label">Layout Type:</label>
                     <div class="col-lg-10">
                         <div class="row">
                             <label class="col-lg-3 p-3">
                                 <input type="radio" name="layoutType" value="0" formControlName="layoutType">
-                                <img src="assets/images/Layout-OneCol.png" class="img-fluid rounded"/>
+                                <img src="assets/images/Layout-OneCol.png" class="img-fluid rounded" />
                             </label>
                             <label class="col-lg-3 p-3">
                                 <input type="radio" name="layoutType" value="1" formControlName="layoutType">
-                                <img src="assets/images/Layout-TwoCols.png" class="img-fluid rounded"/>
+                                <img src="assets/images/Layout-TwoCols.png" class="img-fluid rounded" />
                             </label>
                             <label class="col-lg-3 p-3">
                                 <input type="radio" name="layoutType" value="2" formControlName="layoutType">
-                                <img src="assets/images/Layout-ThreeCols.png" class="img-fluid rounded"/>
+                                <img src="assets/images/Layout-ThreeCols.png" class="img-fluid rounded" />
                             </label>
                             <label class="col-lg-3 p-3">
                                 <input type="radio" name="layoutType" value="3" formControlName="layoutType">
-                                <img src="assets/images/Layout-FourCols.png" class="img-fluid rounded"/>
+                                <img src="assets/images/Layout-FourCols.png" class="img-fluid rounded" />
                             </label>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
             </form>
+            <div class="separator-dashed"></div>
+            <div class="row row-heading">
+                <h3>Options:</h3>
+            </div>
+            <let-shell-option [shellOptions$]="shellOptions$" (changed)="onChangingOptions($event)">
+            </let-shell-option>
             <div class="separator-dashed"></div>
             <let-standard-population (onPopulatedControls)="onPopulatedControls($event)"></let-standard-population>
             <div class="separator-dashed"></div>

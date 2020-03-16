@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, HostListener } from '@angular/core';
-import { FilterGroup, FilterOption, FilterOperator, FilterChainOperator, FilledParameter, DatasourceClient, DatasourceModel, FieldValueType, DatabasesClient, DynamicListFetchDataModel } from 'services/portal.service';
+import { FilterGroup, FilterOption, FilterOperator, FilterChainOperator, FilledParameter, FieldValueType, DatabasesClient, DynamicListFetchDataModel } from 'services/portal.service';
 import { MatSelectChange, MatDialog } from '@angular/material';
 import * as _ from 'lodash';
 import { NGXLogger } from 'ngx-logger';

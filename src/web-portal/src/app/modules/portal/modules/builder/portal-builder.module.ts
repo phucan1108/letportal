@@ -10,7 +10,6 @@ import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/m
 import { QuillModule } from 'ngx-quill';
 import { CommandModalComponent } from './components/dynamic-list/components/commands/command-dialog.component';
 import { DynamicListDataSourceComponent } from './components/dynamic-list/components/dynamic-list.datasource.component';
-import { DatasourceDialogComponent } from '../../shared/datasource/datasource.component';
 import { BuilderDnDComponent } from './components/page-builder/components/page-builders/builder-dnd.component';
 import { TextboxComponent } from '../render/controls/textbox.component';
 import { SectionDialogComponent } from './components/page-builder/components/page-builders/section-dialog.component';
@@ -86,7 +85,6 @@ import { CoreModule } from 'app/core/core.module';
 		DynamicListBuilderPage,
 		CommandModalComponent,
 		DynamicListDataSourceComponent,
-		DatasourceDialogComponent,
 		BuilderDnDComponent,
 		TextboxComponent,
 		SectionDialogComponent,
@@ -202,7 +200,6 @@ import { CoreModule } from 'app/core/core.module';
 	entryComponents: [
 		CommandModalComponent,
 		DynamicListDataSourceComponent,
-		DatasourceDialogComponent,
 		BuilderDnDComponent,
 		TextboxComponent,
 		SectionDialogComponent,
