@@ -17,8 +17,17 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     templateUrl: './database-opt.component.html'
 })
 export class DatabaseOptionComponent implements OnInit, AfterViewInit {
-    ngAfterViewInit(): void {
 
+    constructor(
+        private dynamicListClient: DynamicListClient,
+        private databaseClient: DatabasesClient,
+        private entityClient: EntitySchemasClient,
+        private shortcutUtil: ShortcutUtil,
+        private logger: NGXLogger,
+        private dialog: MatDialog,
+        private fb: FormBuilder
+    ) {
+        this.databaseOptionForm = this.fb.group({})
     }
     @ViewChild('jsonEditorQuery', { static: true }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
@@ -67,17 +76,8 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     isEnablePopulate = false
 
     private params: ExecuteParamModel[] = []
+    ngAfterViewInit(): void {
 
-    constructor(
-        private dynamicListClient: DynamicListClient,
-        private databaseClient: DatabasesClient,
-        private entityClient: EntitySchemasClient,
-        private shortcutUtil: ShortcutUtil,
-        private logger: NGXLogger,
-        private dialog: MatDialog,
-        private fb: FormBuilder
-    ) {
-        this.databaseOptionForm = this.fb.group({})
     }
 
     ngOnInit(): void {
@@ -104,12 +104,12 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             if (this.ismongodb) {
 
                 if(ObjectUtils.isNotNull(this.databaseOptions.query)){
-                    this.queryJsonData = JSON.parse(this.databaseOptions.query.replace(/(\r\n|\n|\r)/gm," ")) 
+                    this.queryJsonData = JSON.parse(this.databaseOptions.query.replace(/(\r\n|\n|\r)/gm,' '))
                 }
                 else{
                     this.queryJsonData = {}
                 }
-                
+
                 this.logger.debug('current json data', this.queryJsonData)
                 if (this.isEditMode) {
                     this.queryJsonData = JSON.parse(this.databaseOptionForm.get('query').value)
@@ -154,14 +154,14 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     }
 
     onPopulatingQueryBody() {
-        let command = {
+        const command = {
             rawQuery: this.databaseOptionForm.get('query').value as string,
             databaseId: this.databaseOptionForm.get('databaseId').value as string
         }
 
         this.params = []
-        let tempDcurly = StringUtils.getContentByDCurlyBrackets(command.rawQuery)
-        let callDialog = !!tempDcurly && tempDcurly.length > 0
+        const tempDcurly = StringUtils.getContentByDCurlyBrackets(command.rawQuery)
+        const callDialog = !!tempDcurly && tempDcurly.length > 0
         if (callDialog) {
             _.forEach(tempDcurly, (param) => {
                 if (this.params.findIndex(a => a.name === param) < 0 && !StringUtils.isAllUpperCase(param))
@@ -239,10 +239,10 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                 this.afterSelectingEntityName.emit(newValue)
                 _.forEach(this.shallowedEntitySchemas, (element) => {
                     if (element.name === newValue) {
-                        let elementName =
+                        const elementName =
                             this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'postgresql'
                                 || this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'sqlserver' ? `"${element.name}"` : `\`${element.name}\``
-                        let defaultQuery =
+                        const defaultQuery =
                             this.ismongodb ?
                                 `{ "$query": { "${element.name}": [ ] } }` :
                                 `SELECT * FROM ${elementName}`

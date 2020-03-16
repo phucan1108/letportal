@@ -44,8 +44,8 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     controlType = ControlType
 
     _numberOfColumns = 2;
-    _labelClass = "col-lg-2 col-form-label"
-    _boundedClass = "col-lg-4"
+    _labelClass = 'col-lg-2 col-form-label'
+    _boundedClass = 'col-lg-4'
 
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = '';
@@ -106,13 +106,13 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         switch (this.section.relatedStandard.layoutType) {
             case PageSectionLayoutType.OneColumn:
                 this._numberOfColumns = 2
-                this._labelClass = "col-lg-2 col-form-label"
-                this._boundedClass = "col-lg-4"
+                this._labelClass = 'col-lg-2 col-form-label'
+                this._boundedClass = 'col-lg-4'
                 break;
             default:
                 this._numberOfColumns = 1
-                this._labelClass = "col-lg-2 col-form-label"
-                this._boundedClass = "col-lg-10"
+                this._labelClass = 'col-lg-2 col-form-label'
+                this._boundedClass = 'col-lg-10'
                 break
         }
     }
@@ -127,7 +127,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             isLineBreaker: false
         }
 
-        let filteredControls = _.filter<PageRenderedControl<DefaultControlOptions>>(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[], (control: PageRenderedControl<DefaultControlOptions>) => {
+        const filteredControls = _.filter<PageRenderedControl<DefaultControlOptions>>(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[], (control: PageRenderedControl<DefaultControlOptions>) => {
             control.defaultOptions = PageUtils.getControlOptions<DefaultControlOptions>(control.options)
             control.defaultOptions.checkedHidden = this.pageService.evaluatedExpression(control.defaultOptions.hidden)
             control.defaultOptions.checkDisabled = this.pageService.evaluatedExpression(control.defaultOptions.disabled)
@@ -155,7 +155,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             else if (control.type === ControlType.RichTextEditor) {
                 counterFlag = 0;
                 this.controlsGroups.push(tempGroupControls)
-                let standaloneGroup: GroupControls = {
+                const standaloneGroup: GroupControls = {
                     controlsList: [],
                     numberOfColumns: 1,
                     isLineBreaker: false
@@ -171,7 +171,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             else if (control.type === ControlType.MarkdownEditor) {
                 counterFlag = 0;
                 this.controlsGroups.push(tempGroupControls)
-                let standaloneGroup: GroupControls = {
+                const standaloneGroup: GroupControls = {
                     controlsList: [],
                     numberOfColumns: 1,
                     isLineBreaker: false
@@ -205,15 +205,15 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     }
 
     buildFormControls() {
-        let formControls: any = []
-        let tempSectionData = new Object()
+        const formControls: any = []
+        const tempSectionData = new Object()
         let foundDatasource: PageLoadedDatasource
         let sectionBoundData = {}
         // When a 'data' is bind name, so we need to keep a default structure of data. Ex: data.id, data.name
         // If bind name isn't 'data', we need to add sectioname to binding data.Ex: data.section1.id
-        let isKeepDataSection = this.section.sectionDatasource.datasourceBindName === 'data'
-        let sectionsMap: MapDataControl[] = []
-        let hasDatasources = this.datasources.length > 0
+        const isKeepDataSection = this.section.sectionDatasource.datasourceBindName === 'data'
+        const sectionsMap: MapDataControl[] = []
+        const hasDatasources = this.datasources.length > 0
 
         if (hasDatasources &&
             this.section.sectionDatasource.datasourceBindName) {
@@ -237,7 +237,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             tempSectionData[this.section.name] = new Object()
         }
         _.forEach(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[], control => {
-            let controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control)
+            const controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control)
 
             let mapDataControl: MapDataControl
             if (isKeepDataSection) {
@@ -284,9 +284,9 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     }
 
     private collectAllControlsState(controls: any) {
-        let controlStates = new Object()
+        const controlStates = new Object()
         Object.keys(controls).forEach(key => {
-            const control = <FormControl>controls[key]
+            const control = controls[key] as FormControl
             controlStates[key] = {
                 valid: control.valid,
                 errors: control.errors
@@ -298,9 +298,9 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     private getInitDataOfControl(data: any, controlBindName: string, control: PageRenderedControl<DefaultControlOptions>): any {
         let controlData = null
         if (controlBindName === 'id' || controlBindName === '_id') {
-            const boundData = data['_id']
+            const boundData = data._id
             if (!boundData) {
-                controlData = data['id']
+                controlData = data.id
             }
             else {
                 controlData = boundData
@@ -318,7 +318,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                 // If the data isn't an array, maybe it is array string, try to parse
                 if (!ObjectUtils.isArray(controlData)) {
                     try {
-                        let temp = JSON.parse(controlData)
+                        const temp = JSON.parse(controlData)
                         controlData = temp
                     }
                     catch{
@@ -362,7 +362,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     }
 
     private generateFormValidators(validators: Array<PageControlValidator>, availableControls: any): ValidatorFn[] {
-        let formValidators: Array<ValidatorFn> = []
+        const formValidators: Array<ValidatorFn> = []
         _.forEach(validators, (validator: PageControlValidator) => {
             if (validator.isActive) {
                 switch (validator.validatorType) {
@@ -422,7 +422,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         controlName: string,
         defaultValue: any,
         availableControls: any): AsyncValidatorFn[] {
-        let asyncValidatorFns: AsyncValidatorFn[] = []
+        const asyncValidatorFns: AsyncValidatorFn[] = []
 
 
         _.forEach(validators, validator => {

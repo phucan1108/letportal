@@ -25,7 +25,7 @@ export class ShellDataState {
     @Action(ShellActions.AppendShellConfigsAction)
     public add(ctx: StateContext<ShellStateModel>, { appendingConfigs }: ShellActions.AppendShellConfigsAction) {
         const state = ctx.getState()
-        let distinctConfigs = _.uniq(_.concat(state.shellConfigs, appendingConfigs))
+        const distinctConfigs = _.uniq(_.concat(state.shellConfigs, appendingConfigs))
         ctx.setState({
             ...state,
             shellConfigs: distinctConfigs,

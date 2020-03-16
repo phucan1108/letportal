@@ -29,7 +29,8 @@ export class MenuDialogComponent implements OnInit {
     ) {
         this.menu = this.data.menu
         this.isEditMode = this.data.isEditMode
-        this.appId = this.data.appId
+        this.appId = this.data.appId     
+        this.currentLevel = this.data.level
 
         this.menuFormGroup = this.fb.group({
             displayName: [this.menu.displayName, Validators.required],
@@ -49,8 +50,6 @@ export class MenuDialogComponent implements OnInit {
         this.appClient.getAvailableUrls(this.appId).subscribe(result => {
             this.availableUrls = result
         })
-
-        this.currentLevel = this.menu.level
     }
 
     ngOnInit(): void { }
@@ -62,7 +61,7 @@ export class MenuDialogComponent implements OnInit {
     }
 
     private combiningMenu(): ExtendedMenu {
-        let formValues = this.menuFormGroup.value
+        const formValues = this.menuFormGroup.value
         return {
             id: this.menu.id,
             displayName: formValues.displayName,

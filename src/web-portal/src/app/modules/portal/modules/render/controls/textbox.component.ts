@@ -7,7 +7,7 @@ import { ExtendedPageControl } from '../../../../../core/models/extended.models'
     templateUrl: './textbox.component.html'
 })
 export class TextboxComponent implements OnInit {
-    
+
     @Input()
     form: FormGroup
 
@@ -15,7 +15,7 @@ export class TextboxComponent implements OnInit {
     formControl: ExtendedPageControl
 
     @Input()
-    isPreviewMode: boolean    
+    isPreviewMode: boolean
 
     constructor() { }
 

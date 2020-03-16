@@ -23,18 +23,18 @@ import { AutoCompletePipe } from './pipe/autocomplete.pipe';
 import { ExportService } from 'services/export.service';
 @NgModule({
   declarations: [
-    UnlockScreenDialogComponent,        
+    UnlockScreenDialogComponent,
     SafeHtmlPipe,
     AutoCompletePipe
   ],
   imports: [
     CommonModule,
-    ReactiveFormsModule,    
+    ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatDialogModule,
-    MatInputModule    
+    MatInputModule
   ],
   entryComponents: [
     UnlockScreenDialogComponent
@@ -51,7 +51,7 @@ import { ExportService } from 'services/export.service';
     DatasourceOptionsService,
     CustomHttpService,
     Translator,
-    ShellConfigProvider,        
+    ShellConfigProvider,
     RolesClient,
     DynamicListClient,
     DatabasesClient,

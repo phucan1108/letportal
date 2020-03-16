@@ -14,9 +14,9 @@ const routes: Routes = [
   {
     path: '404',
     component: ErrorComponent
-  },  
+  },
   {
-    path: '**', 
+    path: '**',
     redirectTo: '/404'
   }
 ];

@@ -2,14 +2,14 @@ import * as moment from 'moment'
 
 export class DateUtils {
     public static getUTCNow() {
-        var date = new Date();
-        var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+        const date = new Date();
+        const now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
             date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
         return new Date(now_utc);
     }
 
     public static getUTCNowByDate(date: Date) {
-        var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+        const now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
             date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
         return new Date(now_utc);
     }
@@ -19,11 +19,11 @@ export class DateUtils {
     }
 
     public static toDateMMDDYYYYString(date: Date) {
-        let dd = date.getDate();
+        const dd = date.getDate();
         let dayStr = ''
-        let mm = date.getMonth() + 1;
+        const mm = date.getMonth() + 1;
         let monthStr = ''
-        let yyyy = date.getFullYear();
+        const yyyy = date.getFullYear();
         if (dd < 10) {
             dayStr = '0' + dd;
         }
@@ -32,9 +32,9 @@ export class DateUtils {
             monthStr = '0' + mm;
         }
 
-        let hrs = date.getHours()
-        let minutes = date.getMinutes()
-        let seconds = date.getSeconds()
+        const hrs = date.getHours()
+        const minutes = date.getMinutes()
+        const seconds = date.getSeconds()
         return `${monthStr}/${dayStr}/${yyyy} ${hrs}:${minutes}:${seconds}`
     }
 }

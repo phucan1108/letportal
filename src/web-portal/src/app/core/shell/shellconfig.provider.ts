@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { ShellContants } from './shell.contants';
 import { ConfigurationProvider } from '../configs/configProvider';

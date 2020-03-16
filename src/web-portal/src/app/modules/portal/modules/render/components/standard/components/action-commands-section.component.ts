@@ -35,7 +35,7 @@ export class ActionCommandsSectionComponent implements OnInit {
             res => {
                 this.options = res.options
                 this.queryparams = res.queryparams
-                //subOpts$.unsubscribe()
+                // subOpts$.unsubscribe()
             }
         ).unsubscribe()
 

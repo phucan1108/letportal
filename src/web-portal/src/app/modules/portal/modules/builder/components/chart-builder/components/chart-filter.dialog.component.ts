@@ -64,12 +64,12 @@ export class ChartFilterDialogComponent implements OnInit {
     }
 
     enableRangeValue() {
-        let currentType = this.chartFilterFormGroup.get('type').value as FilterType
+        const currentType = this.chartFilterFormGroup.get('type').value as FilterType
         return currentType !== FilterType.None && currentType !== FilterType.Checkbox && currentType !== FilterType.Select
     }
 
     enableMultiple(){
-        let currentType = this.chartFilterFormGroup.get('type').value as FilterType
+        const currentType = this.chartFilterFormGroup.get('type').value as FilterType
         return currentType !== FilterType.None && currentType !== FilterType.Checkbox
     }
 
@@ -80,8 +80,8 @@ export class ChartFilterDialogComponent implements OnInit {
     }
 
     combiningChartFilter() {
-        let formValues = this.chartFilterFormGroup.value
-        let combiningChartFilter: ChartFilter = {
+        const formValues = this.chartFilterFormGroup.value
+        const combiningChartFilter: ChartFilter = {
             name: formValues.name,
             displayName: formValues.displayName,
             type: formValues.type,

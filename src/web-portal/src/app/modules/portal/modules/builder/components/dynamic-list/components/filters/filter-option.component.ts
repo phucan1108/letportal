@@ -17,13 +17,13 @@ export class FilterOptionComponent implements OnInit {
     filtersChanged = new EventEmitter<any>()
 
     _fieldTypes = [
-        { name: "Text", value: "string" },
-        { name: "Select", value: "string-select" },
-        { name: "Slide", value: "boolean" },
-        { name: "Date Picker", value: "datetime" },
-        { name: "Check List", value: "list" },
-        { name: "Number", value: "number" },
-        { name: "Json", value: "document" }
+        { name: 'Text', value: 'string' },
+        { name: 'Select', value: 'string-select' },
+        { name: 'Slide', value: 'boolean' },
+        { name: 'Date Picker', value: 'datetime' },
+        { name: 'Check List', value: 'list' },
+        { name: 'Number', value: 'number' },
+        { name: 'Json', value: 'document' }
     ]
     isSmallDevice = false
 
@@ -33,12 +33,12 @@ export class FilterOptionComponent implements OnInit {
         private dialog: MatDialog,
         private breakpointObserver: BreakpointObserver,
         private logger: NGXLogger
-    ) {        
+    ) {
         this.breakpointObserver.observe([
             Breakpoints.HandsetPortrait,
             Breakpoints.HandsetLandscape
         ]).subscribe(result => {
-            if (result.matches) {                
+            if (result.matches) {
                 this.isSmallDevice = true
                 this.logger.debug('Small device', this.isSmallDevice)
             }
@@ -57,7 +57,7 @@ export class FilterOptionComponent implements OnInit {
     }
 
     openDatasourceDialogForFilter(currentFilter: FilterField) {
-        //if (currentFilter.filterValueType === FieldValueType.Select) {
+        // if (currentFilter.filterValueType === FieldValueType.Select) {
             // if(!currentFilter.datasourceOptions){
             //     currentFilter.datasourceOptions = {
             //         datasourceStaticOptions: {
@@ -79,14 +79,14 @@ export class FilterOptionComponent implements OnInit {
             //         this.notifyFiltersChanged()
             //     }
             // })
-        //}
+        // }
     }
 
     onFieldTypeSelectChange(currentFilter: FilterField) {
     }
 
     deleteFilter(filter: ExtendedFilterField) {
-        let index = this.filterOptions.indexOf(filter);
+        const index = this.filterOptions.indexOf(filter);
         this.filterOptions.splice(index, 1);
         this.notifyFiltersChanged()
     }

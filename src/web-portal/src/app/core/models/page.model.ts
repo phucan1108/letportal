@@ -34,7 +34,7 @@ export interface PageControlActionEvent {
 
 export interface PageLoadedDatasource {
     name: string,
-    data: any    
+    data: any
 }
 
 export interface PageSectionBoundData{
@@ -63,9 +63,9 @@ export interface DefaultControlOptions {
     allowfileurl: boolean
     saveonchange: boolean
     // For checkbox/slider only
-    allowZero: boolean   
+    allowZero: boolean
     allowYesNo: boolean
-    
+
     checkDisabled: boolean
     checkedHidden: boolean
 }
@@ -87,29 +87,6 @@ export interface PageShellData{
 }
 
 export class ControlOptions{
-    label: string
-    placeholder: string
-    hidden: boolean
-    disabled: boolean
-    bindname: string
-
-    public static getDefaultControlOptions(control: PageControl){
-        let labelOpt = ControlOptions.LabelOption
-        labelOpt.value = control.name
-        let placeholderOpt = ControlOptions.PlaceholderOption
-        let disabledOpt = ControlOptions.DisabledOption
-        let hiddenOpt = ControlOptions.HiddenOption
-        hiddenOpt.value = (control.name === 'id' || control.name === '_id' || (control.name.toLowerCase().indexOf('id') > -1)) ? 'true' : 'false'
-        let bindnameOpt = ControlOptions.BindnameOption
-        bindnameOpt.value = control.name
-        return [
-            labelOpt,
-            placeholderOpt,
-            disabledOpt,
-            hiddenOpt,
-            bindnameOpt
-        ]
-    }
 
     public static LabelOption: ExtendedShellOption = {
         id: '',
@@ -181,5 +158,28 @@ export class ControlOptions{
         key: 'saveonchange',
         value: 'false',
         allowDelete: false
+    }
+    label: string
+    placeholder: string
+    hidden: boolean
+    disabled: boolean
+    bindname: string
+
+    public static getDefaultControlOptions(control: PageControl){
+        const labelOpt = ControlOptions.LabelOption
+        labelOpt.value = control.name
+        const placeholderOpt = ControlOptions.PlaceholderOption
+        const disabledOpt = ControlOptions.DisabledOption
+        const hiddenOpt = ControlOptions.HiddenOption
+        hiddenOpt.value = (control.name === 'id' || control.name === '_id' || (control.name.toLowerCase().indexOf('id') > -1)) ? 'true' : 'false'
+        const bindnameOpt = ControlOptions.BindnameOption
+        bindnameOpt.value = control.name
+        return [
+            labelOpt,
+            placeholderOpt,
+            disabledOpt,
+            hiddenOpt,
+            bindnameOpt
+        ]
     }
 }

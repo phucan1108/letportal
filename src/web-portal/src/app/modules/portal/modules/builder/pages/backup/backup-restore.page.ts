@@ -29,9 +29,9 @@ export class BackupRestorePage implements OnInit {
         mode: 'indeterminate',
         disabled: false,
     }
-    title = "Proceed Restore"
-    description = "Are you sure to proceed this backup point?"
-    waiting = "Loading..."
+    title = 'Proceed Restore'
+    description = 'Are you sure to proceed this backup point?'
+    waiting = 'Loading...'
     constructor(
         private activatedRouter: ActivatedRoute,
         private router: Router,
@@ -43,12 +43,12 @@ export class BackupRestorePage implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.pageService.init('backup-restore').subscribe() 
+        this.pageService.init('backup-restore').subscribe()
         this.backup = this.activatedRouter.snapshot.data.backup
     }
 
     getCreatedDate() {
-        return DateUtils.toDateFormat(this.backup.createdDate, "MM/DD/YYYY HH:mm")
+        return DateUtils.toDateFormat(this.backup.createdDate, 'MM/DD/YYYY HH:mm')
     }
 
     onPreview() {
@@ -66,9 +66,9 @@ export class BackupRestorePage implements OnInit {
         )
     }
 
-    onRestore(){        
+    onRestore(){
         const dialog = this.shortcutUtil.confirmationDialog(
-            this.title, this.preview.totalChangedObjects === 0 ? "No changed object, are you sure to restore this backup?" : this.description, this.waiting, MessageType.Custom, 'Restore')
+            this.title, this.preview.totalChangedObjects === 0 ? 'No changed object, are you sure to restore this backup?' : this.description, this.waiting, MessageType.Custom, 'Restore')
         dialog.afterClosed().subscribe(
             res => {
                 if(!res){
@@ -79,7 +79,7 @@ export class BackupRestorePage implements OnInit {
                     requestor: this.security.getAuthUser().username
                 }).subscribe(
                     res => {
-                        this.shortcutUtil.toastMessage("Restore successfully!", ToastType.Success)
+                        this.shortcutUtil.toastMessage('Restore successfully!', ToastType.Success)
                     }
                 )
             }

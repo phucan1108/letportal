@@ -4,7 +4,7 @@ import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page
 
 export interface ControlEventExecution{
     execute(
-        control: PageRenderedControl<DefaultControlOptions>,        
+        control: PageRenderedControl<DefaultControlOptions>,
         pageService: PageService,
         formControl: FormControl,
         defaultValue: any,

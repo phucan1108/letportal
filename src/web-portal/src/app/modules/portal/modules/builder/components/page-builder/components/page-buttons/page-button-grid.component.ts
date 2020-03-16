@@ -84,7 +84,7 @@ export class PageButtonGridComponent implements OnInit {
     }
 
     addNewCommand() {
-        let actionCommand: PageButton = {
+        const actionCommand: PageButton = {
             id: Guid.create().toString(),
             name: 'New Command',
             icon: 'edit',
@@ -111,7 +111,7 @@ export class PageButtonGridComponent implements OnInit {
                     workflowOptions: {
                         mapWorkflowInputs: [],
                         workflowId: ''
-                    },                    
+                    },
                     confirmationOptions: {
                         isEnable: false,
                         confirmationText: 'Are you sure to proceed it?'
@@ -141,7 +141,7 @@ export class PageButtonGridComponent implements OnInit {
     editCommand(command: PageButton) {
         const dialogRef = this.dialog.open(PageButtonDialogComponent, {
             data: {
-                command: command
+                command
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -166,7 +166,7 @@ export class PageButtonGridComponent implements OnInit {
     editRoute(command: PageButton) {
         const dialogRef = this.dialog.open(PageButtonRouteDialogComponent, {
             data: {
-                command: command
+                command
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -195,7 +195,7 @@ export class PageButtonGridComponent implements OnInit {
             }
 
             command.buttonOptions = result
-            //this.currentActionCommands = ArrayUtils.updateOneItem(this.currentActionCommands, result, (command: PageButton) => { return command.id === result.id })
+            // this.currentActionCommands = ArrayUtils.updateOneItem(this.currentActionCommands, result, (command: PageButton) => { return command.id === result.id })
             this.logger.debug('Current buttons', this.currentActionCommands)
             this.refreshControlTable()
         })
@@ -217,9 +217,9 @@ export class PageButtonGridComponent implements OnInit {
     }
 
     deleteSelectedControls() {
-        const _title = "Delete Action Commands"
-        const _description = "Are you sure to delete all selected commands?"
-        const _waitDesciption = "Waiting..."
+        const _title = 'Delete Action Commands'
+        const _description = 'Are you sure to delete all selected commands?'
+        const _waitDesciption = 'Waiting...'
         const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption);
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
@@ -249,7 +249,7 @@ export class PageButtonGridComponent implements OnInit {
     }
 
     generateAvailableEvents(): Array<string> {
-        let events: Array<string> = []
+        const events: Array<string> = []
 
         _.forEach(this.currentActionCommands, (actionCommand: PageButton) => {
             events.push(`${actionCommand.name}_click`.toLowerCase())

@@ -140,7 +140,7 @@ export type All =
   InitCreatePageBuilderAction |
   InitEditPageBuilderAction |
   CreatePageAction |
-  EditPageAction | 
+  EditPageAction |
   UpdatePageActionCommandsAction |
   UpdatePageBuilderInfoAction |
   UpdatePageEventsAction |

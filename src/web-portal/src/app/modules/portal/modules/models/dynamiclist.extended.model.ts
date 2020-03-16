@@ -1,4 +1,4 @@
-import { FilterField, ShellOption } from "services/portal.service";
+import { FilterField, ShellOption } from 'services/portal.service';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import * as _ from 'lodash';
 
@@ -8,32 +8,6 @@ export interface ExtendedFilterField extends FilterField {
 }
 
 export class ListOptions {
-
-    sizeOptions: number[]
-    defaultPageSize: number
-    fetchDataFirstTime: boolean
-    maximumColumns: number
-    enableSearch: boolean
-    enableAdvancedSearch: boolean
-    enablePagination: boolean
-    enableExportExcel: boolean
-    maximumClientExport: number
-    allowExportHiddenFields: boolean
-
-    public static getListOptions(options: ShellOption[]): ListOptions {
-        return {
-            sizeOptions: JSON.parse(_.find(options, opt => opt.key === 'sizeoptions').value),
-            defaultPageSize: JSON.parse(_.find(options, opt => opt.key === 'defaultpagesize').value),
-            fetchDataFirstTime: JSON.parse(_.find(options, opt => opt.key === 'fetchfirsttime').value),
-            maximumColumns: JSON.parse(_.find(options, opt => opt.key === 'maximumcolumns').value),
-            enableSearch: JSON.parse(_.find(options, opt => opt.key === 'enablesearch').value),
-            enableAdvancedSearch: JSON.parse(_.find(options, opt => opt.key === 'enableadvancedsearch').value),
-            enablePagination: JSON.parse(_.find(options, opt => opt.key === 'enablepagination').value),
-            enableExportExcel: JSON.parse(_.find(options, opt => opt.key === 'enableexportexcel').value),
-            maximumClientExport: JSON.parse(_.find(options, opt => opt.key === 'maximumclientexport').value)            ,
-            allowExportHiddenFields: JSON.parse(_.find(options, opt => opt.key === 'allowexporthiddenfields').value)
-        }
-    }
 
     public static PageSizeOptions: ExtendedShellOption = {
         id: '',
@@ -115,6 +89,45 @@ export class ListOptions {
         value: 'false'
     }
 
+    public static DefaultListOptions: ListOptions =  {
+        defaultPageSize: 10,
+        enableAdvancedSearch: true,
+        enablePagination: true,
+        enableSearch: true,
+        fetchDataFirstTime: true,
+        maximumColumns: 6,
+        sizeOptions: [5, 10, 20, 30, 50],
+        enableExportExcel: true,
+        maximumClientExport: 1000,
+        allowExportHiddenFields: false
+    }
+
+    sizeOptions: number[]
+    defaultPageSize: number
+    fetchDataFirstTime: boolean
+    maximumColumns: number
+    enableSearch: boolean
+    enableAdvancedSearch: boolean
+    enablePagination: boolean
+    enableExportExcel: boolean
+    maximumClientExport: number
+    allowExportHiddenFields: boolean
+
+    public static getListOptions(options: ShellOption[]): ListOptions {
+        return {
+            sizeOptions: JSON.parse(_.find(options, opt => opt.key === 'sizeoptions').value),
+            defaultPageSize: JSON.parse(_.find(options, opt => opt.key === 'defaultpagesize').value),
+            fetchDataFirstTime: JSON.parse(_.find(options, opt => opt.key === 'fetchfirsttime').value),
+            maximumColumns: JSON.parse(_.find(options, opt => opt.key === 'maximumcolumns').value),
+            enableSearch: JSON.parse(_.find(options, opt => opt.key === 'enablesearch').value),
+            enableAdvancedSearch: JSON.parse(_.find(options, opt => opt.key === 'enableadvancedsearch').value),
+            enablePagination: JSON.parse(_.find(options, opt => opt.key === 'enablepagination').value),
+            enableExportExcel: JSON.parse(_.find(options, opt => opt.key === 'enableexportexcel').value),
+            maximumClientExport: JSON.parse(_.find(options, opt => opt.key === 'maximumclientexport').value)            ,
+            allowExportHiddenFields: JSON.parse(_.find(options, opt => opt.key === 'allowexporthiddenfields').value)
+        }
+    }
+
     public static isAllowEdit(shell: ExtendedShellOption): boolean {
         return shell.key !== this.PageSizeOptions.key
             && shell.key !== this.DefaultPageSize.key
@@ -149,26 +162,13 @@ export class ListOptions {
             const found = defaultOpts.find(b => b.key === a.key)
             if(found){
                 a.description = found.description
-                a.allowDelete = found.allowDelete 
+                a.allowDelete = found.allowDelete
                 a.id = found.id
-            }                       
+            }
         })
     }
 
     public static getPageSizeOptions(optValue: string) {
         return JSON.parse(optValue)
-    }
-
-    public static DefaultListOptions: ListOptions =  {
-        defaultPageSize: 10,
-        enableAdvancedSearch: true,
-        enablePagination: true,
-        enableSearch: true,
-        fetchDataFirstTime: true,
-        maximumColumns: 6,
-        sizeOptions: [5, 10, 20, 30, 50],
-        enableExportExcel: true,
-        maximumClientExport: 1000,
-        allowExportHiddenFields: false
     }
 }

@@ -49,7 +49,7 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
     allowLongTouch = true
     allowCtrlSpace = true
     startChars = '{{'
-    endChars: string = '}}'
+    endChars = '}}'
     numberChars = 2
     tempText = ''
     tempSuggestionWord = ''
@@ -96,9 +96,9 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
      * params @event any
      */
     onKeyUp($event: any) {
-        let currentCaretPos = this.formNameInput.nativeElement.selectionStart
-        let inputControl = this.formGroup.get(this.controlKey)
-        let currentInputValue = inputControl.value
+        const currentCaretPos = this.formNameInput.nativeElement.selectionStart
+        const inputControl = this.formGroup.get(this.controlKey)
+        const currentInputValue = inputControl.value
         if ($event.code.toLowerCase() === 'space'
             || $event.code.toLowerCase() === 'delete'
             || $event.code.toLowerCase() === 'enter'
@@ -120,11 +120,11 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
             this.setSelectionRange(this.formNameInput.nativeElement, currentCaretPos, currentCaretPos)
         }
         else {
-            let word = this.getCurrentSuggestWord(currentInputValue, this.startChars, this.endChars, currentCaretPos, this.numberChars)
+            const word = this.getCurrentSuggestWord(currentInputValue, this.startChars, this.endChars, currentCaretPos, this.numberChars)
             if (word) {
                 this.suggestionList = this.getSuggestionList(word)
                 this.tempText = currentInputValue.substr(0, currentCaretPos)
-                let enableSuggestion = this.suggestionList.length > 0;
+                const enableSuggestion = this.suggestionList.length > 0;
                 // Debounce 200ms
                 setTimeout(() => {
                     this.displaySuggestionBox(enableSuggestion)
@@ -135,16 +135,16 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
     }
 
     getCurrentSuggestWord(text: string, startChars: string, endChars: string, currentPos: number, numberChars: number) {
-        let leftPad = text.substr(0, currentPos)
-        let lastStartChars = leftPad.lastIndexOf(startChars)
-        // Ex: we have leftPad is 
+        const leftPad = text.substr(0, currentPos)
+        const lastStartChars = leftPad.lastIndexOf(startChars)
+        // Ex: we have leftPad is
         // abc/{{to <- leftPad
         // 01234567 <- Index
         // 4 <- leftPad.length - lastStartChars Find number of chars between startChars indx to end of leftPad
         // 4 <- startChars.length + numberChars Find minimum number of chars including startChars to display suggestion Hint
         // if 4 >= 4 means we have enough word to look up suggestion hint
         if (lastStartChars >= 0 && (leftPad.length - lastStartChars) >= (startChars.length + numberChars)) {
-            let word = leftPad.substr(lastStartChars + startChars.length, leftPad.length - (lastStartChars + startChars.length))
+            const word = leftPad.substr(lastStartChars + startChars.length, leftPad.length - (lastStartChars + startChars.length))
             this.logger.debug('suggest word:', word)
             return word
         }
@@ -152,14 +152,14 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
     }
 
     getSuggestionList(word: string) {
-        let matchedList = _.filter(this.dataSource, (elem: string) => { return elem.indexOf(word) === 0; })
+        const matchedList = _.filter(this.dataSource, (elem: string) => { return elem.indexOf(word) === 0; })
         this.logger.debug(`Input word ${word}:`, matchedList)
         return matchedList
     }
 
     displaySuggestionBox(enableSuggestion: boolean) {
         if (enableSuggestion) {
-            let maxLeftPos = this.formNameInput.nativeElement.offsetWidth - this.suggestionHint.nativeElement.offsetWidth;
+            const maxLeftPos = this.formNameInput.nativeElement.offsetWidth - this.suggestionHint.nativeElement.offsetWidth;
             if (this.spanTextWrap.nativeElement.offsetWidth > maxLeftPos) {
                 this.left = maxLeftPos + 'px';
             }
@@ -172,13 +172,13 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
 
     selectSuggestHint(suggestWord: string) {
         this.logger.debug('selected suggest word:', suggestWord)
-        let currentCaretPos = this.formNameInput.nativeElement.selectionStart
-        let inputControl = this.formGroup.get(this.controlKey)
-        let currentInputValue = inputControl.value
-        let rightPad = currentInputValue.substr(currentCaretPos, currentInputValue.length - currentCaretPos)
-        let leftPad = currentInputValue.substr(0, currentCaretPos - this.tempSuggestionWord.length)
-        let newLeftPad = leftPad + suggestWord
-        let fullNewText = newLeftPad + rightPad
+        const currentCaretPos = this.formNameInput.nativeElement.selectionStart
+        const inputControl = this.formGroup.get(this.controlKey)
+        const currentInputValue = inputControl.value
+        const rightPad = currentInputValue.substr(currentCaretPos, currentInputValue.length - currentCaretPos)
+        const leftPad = currentInputValue.substr(0, currentCaretPos - this.tempSuggestionWord.length)
+        const newLeftPad = leftPad + suggestWord
+        const fullNewText = newLeftPad + rightPad
         inputControl.setValue(fullNewText)
         this.setSelectionRange(this.formNameInput.nativeElement, newLeftPad.length, newLeftPad.length)
         this.displaySuggestionBox(false)
@@ -189,7 +189,7 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
             input.focus();
             input.setSelectionRange(selectionStart, selectionEnd);
         } else if (input.createTextRange) {
-            var range = input.createTextRange();
+            const range = input.createTextRange();
             range.collapse(true);
             range.moveEnd('character', selectionEnd);
             range.moveStart('character', selectionStart);

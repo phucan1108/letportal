@@ -23,7 +23,7 @@ export class PageEventGridComponent implements OnInit {
     availableEvents: Array<string> = []
     availableTriggerEventsList: Array<string> = []
     availableBoundDatas: Array<string> = []
-    
+
     currentEvents: Array<PageEvent> = []
     _eventActionTypes = [
         { name: 'Trigger Events', value: EventActionType.TriggerEvent },
@@ -41,10 +41,10 @@ export class PageEventGridComponent implements OnInit {
             .pipe(
                 filter(state => state.filterState && (
                     state.filterState === InitEditPageBuilderAction
-                    || state.filterState === UpdateAvailableEvents 
-                    || state.filterState === GeneratePageEventsAction 
+                    || state.filterState === UpdateAvailableEvents
+                    || state.filterState === GeneratePageEventsAction
                     || state.filterState === UpdateAvailableBoundDatas
-                    || state.filterState === NextToWorkflowAction 
+                    || state.filterState === NextToWorkflowAction
                     || state.filterState === GatherAllChanges
                     || state.filterState === NextToRouteAction)),
                 tap((state: PageBuilderStateModel) => {
@@ -84,7 +84,7 @@ export class PageEventGridComponent implements OnInit {
     }
 
     addNewEvent() {
-        let newEvent: PageEvent = {
+        const newEvent: PageEvent = {
             eventName: '',
             eventActionType: EventActionType.TriggerEvent,
             triggerEventOptions: {
@@ -125,7 +125,7 @@ export class PageEventGridComponent implements OnInit {
     editEvent(event: PageEvent) {
         const dialogRef = this.dialog.open(PageEventDialogComponent, {
             data: {
-                event: event,
+                event,
                 isEdit: true,
                 availableEvents: this.availableEvents,
                 availableBoundDatas: this.availableBoundDatas,

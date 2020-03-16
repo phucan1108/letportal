@@ -9,9 +9,9 @@ import { PageState } from './stores/pages/page.state';
 import { PageControlEventState } from './stores/pages/pagecontrol.state';
 
 export const STATES_MODULES = [
-  PageBuilderState, 
-  ShellDataState, 
-  SelectedAppState, 
+  PageBuilderState,
+  ShellDataState,
+  SelectedAppState,
   PageState,
   PageControlEventState];
 

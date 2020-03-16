@@ -17,10 +17,10 @@ export class PageEventDialogComponent implements OnInit {
     eventForm: FormGroup
 
     isEditMode = false
-    isHttpOptionsValid: boolean = false
+    isHttpOptionsValid = false
     httpOptions: HttpServiceOptions
 
-    availableEvents$: Observable<Array<string>>    
+    availableEvents$: Observable<Array<string>>
     availableEvents: string[] = []
     availableTriggerEvents: string[] = []
     availableBoundDatas: string[] = []
@@ -49,7 +49,7 @@ export class PageEventDialogComponent implements OnInit {
         if(!this.availableBoundDatas){
             this.availableBoundDatas = []
         }
-        
+
         this.availableTriggerEvents = this.data.availableTriggerEvents
         if(!this.availableTriggerEvents){
             this.availableTriggerEvents = []
@@ -86,22 +86,22 @@ export class PageEventDialogComponent implements OnInit {
         console.log('Chosen', $event)
     }
 
-    onSubmit() {   
-        let formValues = this.eventForm.value
+    onSubmit() {
+        const formValues = this.eventForm.value
         if((this.isHttpOptionsValid && formValues.eventActionType === EventActionType.WebService) || this.eventForm.valid){
             this.dialogRef.close(this.combinePageEvent())
-        }           
+        }
     }
 
     combinePageEvent(){
-        let formValues = this.eventForm.value
-        let formEvent: PageEvent = {
+        const formValues = this.eventForm.value
+        const formEvent: PageEvent = {
             eventName: formValues.eventName,
             eventActionType: formValues.eventActionType,
             triggerEventOptions: {
                 eventsList: formValues.triggerEventsList
             },
-            httpServiceOptions: this.isHttpOptionsValid && formValues.eventActionType === EventActionType.WebService ? 
+            httpServiceOptions: this.isHttpOptionsValid && formValues.eventActionType === EventActionType.WebService ?
             {
                 ...this.httpOptions,
                 boundData: formValues.boundData

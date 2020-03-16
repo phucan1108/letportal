@@ -30,23 +30,23 @@ export class HttpOptionsComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private logger: NGXLogger
-    ) { 
-        this.editorOptions1.mode = 'code'   
+    ) {
+        this.editorOptions1.mode = 'code'
         this.editorOptions1.onChange = () => {
             try
             {
                 const jsonStr = JSON.stringify(this.jsonPayloadEditor.get())
                 if(!!jsonStr && jsonStr !== '{}'){
                     this.httpOptionsForm.get('httpJsonPayload').setValue(jsonStr)
-                }    
+                }
             }
             catch{
 
             }
-        }     
+        }
     }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         if(this.httpOptions.jsonBody){
             this.jsonHttpBodyData = JSON.parse(this.httpOptions.jsonBody)
         }
@@ -73,7 +73,7 @@ export class HttpOptionsComponent implements OnInit {
     }
 
     combineHttpServiceOptions(): HttpServiceOptions{
-        let formValues = this.httpOptionsForm.value
+        const formValues = this.httpOptionsForm.value
         return {
             httpServiceUrl: formValues.httpCallUrl,
             httpMethod: formValues.httpCallMethod,

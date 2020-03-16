@@ -44,7 +44,7 @@ export class SectionDialogComponent implements OnInit {
         this.availableSectionNames = this.data.sectionNames
         this.isEditMode = this.currentExtendedFormSection.name ? true : false
         this.initialSectionForm()
-        this.populatedFormValues()        
+        this.populatedFormValues()
         this.dynamicLists$ = this.dyanmicListsClient.getAll();
         this.standards$ = this.standardsClient.getManys('');
         this.charts$ = this.chartsClient.getMany();
@@ -73,7 +73,7 @@ export class SectionDialogComponent implements OnInit {
 
     populatedFormValues() {
         this.sectionForm.get('displayName').valueChanges.subscribe(newValue => {
-            const sectionFormNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '').replace(/[$&+,:;=?@#|'<>.^*()%!-]/g, '')
+            const sectionFormNameValue = (newValue as string).toLowerCase().replace(/\s/g, '').replace(/[$&+,:;=?@#|'<>.^*()%!-]/g, '')
             this.sectionForm.get('name').setValue(sectionFormNameValue)
             this.cd.markForCheck()
         })
@@ -98,7 +98,7 @@ export class SectionDialogComponent implements OnInit {
 
     generateFormSection(): ExtendedPageSection {
         const formValues = this.sectionForm.value
-        let extendedFormSection: ExtendedPageSection = {
+        const extendedFormSection: ExtendedPageSection = {
             id: this.currentExtendedFormSection.id,
             name: formValues.name,
             displayName: formValues.displayName,
@@ -115,7 +115,7 @@ export class SectionDialogComponent implements OnInit {
         }
 
         if (this.isEditMode) {
-            //extendedFormSection.formControls = this.currentExtendedFormSection.formControls            
+            // extendedFormSection.formControls = this.currentExtendedFormSection.formControls
         }
 
         return extendedFormSection
@@ -125,6 +125,6 @@ export class SectionDialogComponent implements OnInit {
         FormUtil.triggerFormValidators(this.sectionForm)
         if(this.sectionForm.valid){
             this.dialogRef.close(this.generateFormSection())
-        }        
+        }
     }
 }

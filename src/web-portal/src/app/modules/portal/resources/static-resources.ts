@@ -1,4 +1,4 @@
-import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from "services/portal.service"
+import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from 'services/portal.service'
 
 export class StaticResources {
 
@@ -76,7 +76,7 @@ export class StaticResources {
             { name: 'Rich Text Editor', value: ControlType.RichTextEditor },
             { name: 'Uploader', value: ControlType.Uploader },
             { name: 'MultiUploader', value: ControlType.MultiUploader },
-            { name: 'Icon Picker', value: ControlType.IconPicker },            
+            { name: 'Icon Picker', value: ControlType.IconPicker },
             { name: 'Markdown Editor', value: ControlType.MarkdownEditor }
         ];
     }
@@ -116,7 +116,7 @@ export class StaticResources {
             { name: 'accent', value: 'accent' }
         ]
     }
-    
+
     public static datasourceTypes() {
         return [
             { name: 'Static Resource', value: DatasourceControlType.StaticResource },
@@ -154,12 +154,12 @@ export class StaticResources {
 
     public static chartFilterTypes(){
         return [
-           { name: 'Checkbox', value: FilterType.Checkbox } , 
+           { name: 'Checkbox', value: FilterType.Checkbox } ,
            { name: 'Select', value: FilterType.Select } ,
            { name: 'NumberPicker', value: FilterType.NumberPicker } ,
            { name: 'DatePicker', value: FilterType.DatePicker } ,
-           { name: 'MonthYearPicker', value: FilterType.MonthYearPicker } 
-        ] 
+           { name: 'MonthYearPicker', value: FilterType.MonthYearPicker }
+        ]
     }
 
     public static iconsList() {

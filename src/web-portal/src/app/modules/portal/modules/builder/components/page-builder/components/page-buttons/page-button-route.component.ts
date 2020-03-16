@@ -47,7 +47,7 @@ export class PageButtonRouteDialogComponent implements OnInit {
     }
 
     addRoute() {
-        let newRoute: Route = {
+        const newRoute: Route = {
             condition: 'true',
             redirectUrl: '',
             isSameDomain: true
@@ -80,7 +80,7 @@ export class PageButtonRouteDialogComponent implements OnInit {
             if (this.pageRouteForm.valid()) {
                 if (this.isEditRouteForm) {
                     const index = this.routes.indexOf(this.currentRoute)
-                    this.routes = ArrayUtils.updateOneItemByIndex(this.routes, this.pageRouteForm.get(), index)                    
+                    this.routes = ArrayUtils.updateOneItemByIndex(this.routes, this.pageRouteForm.get(), index)
                     this.routes$.next(this.routes)
                     this.isShowRouteForm = false
                     this.cd.detectChanges()

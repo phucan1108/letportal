@@ -4,24 +4,6 @@ import * as _ from 'lodash';
 
 export class StandardOptions {
 
-    identityfield: string
-    namefield: string
-    allowadjustment: boolean
-    allowupdateparts: boolean
-
-    public static getStandardOptions(options: ShellOption[]): StandardOptions {
-        let identityfield = _.find(options, opt => opt.key === 'identityfield')
-        let namefield = _.find(options, opt => opt.key === 'namefield')
-        let allowadjustment = _.find(options, opt => opt.key === 'allowadjustment')
-        let allowupdateparts = _.find(options, opt => opt.key === 'allowupdateparts')
-        return {
-            identityfield: identityfield ? identityfield.value : '',
-            namefield: namefield ? namefield.value : '',
-            allowadjustment: allowadjustment ? JSON.parse(allowadjustment.value) : false,
-            allowupdateparts: allowupdateparts ? JSON.parse(allowupdateparts.value) : false
-        }
-    }
-
     public static IdentityField: ExtendedShellOption = {
         id: '',
         allowDelete: false,
@@ -37,7 +19,7 @@ export class StandardOptions {
         key: 'namefield',
         value: 'name'
     }
-    
+
     public static AllowAdjustment: ExtendedShellOption = {
         id: '',
         allowDelete: false,
@@ -52,6 +34,31 @@ export class StandardOptions {
         description: 'Allow to update one changed element instead of removing all and then adding all. Default: false',
         key: 'allowupdateparts',
         value: 'false'
+    }
+
+    public static DefaultStandardOptions: StandardOptions = {
+        identityfield: 'id',
+        namefield: 'name',
+        allowadjustment: false,
+        allowupdateparts: false
+    }
+
+    identityfield: string
+    namefield: string
+    allowadjustment: boolean
+    allowupdateparts: boolean
+
+    public static getStandardOptions(options: ShellOption[]): StandardOptions {
+        const identityfield = _.find(options, opt => opt.key === 'identityfield')
+        const namefield = _.find(options, opt => opt.key === 'namefield')
+        const allowadjustment = _.find(options, opt => opt.key === 'allowadjustment')
+        const allowupdateparts = _.find(options, opt => opt.key === 'allowupdateparts')
+        return {
+            identityfield: identityfield ? identityfield.value : '',
+            namefield: namefield ? namefield.value : '',
+            allowadjustment: allowadjustment ? JSON.parse(allowadjustment.value) : false,
+            allowupdateparts: allowupdateparts ? JSON.parse(allowupdateparts.value) : false
+        }
     }
 
     public static getDefaultShellOptionsForStandard(): ExtendedShellOption[] {
@@ -73,12 +80,5 @@ export class StandardOptions {
                 a.id = found.id
             }
         })
-    }
-
-    public static DefaultStandardOptions: StandardOptions = {
-        identityfield: 'id',
-        namefield: 'name',
-        allowadjustment: false,
-        allowupdateparts: false
     }
 }

@@ -15,7 +15,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
     filterOption: ExtendedFilterOption
     filters: Array<ExtendedRenderFilterField>;
     _operators = [
-        { name: 'Contains', value: FilterOperator.Contains },        
+        { name: 'Contains', value: FilterOperator.Contains },
         { name: 'Equal', value: FilterOperator.Equal },
         { name: '>', value: FilterOperator.Great },
         { name: '<', value: FilterOperator.Less },
@@ -28,7 +28,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
         { name: 'And', value: FilterChainOperator.And },
         { name: 'Or', value: FilterChainOperator.Or }
     ]
-    
+
     fieldValueType = FieldValueType
 
     constructor(
@@ -36,7 +36,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
         private logger: NGXLogger,
         private cd: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) { 
+    ) {
         this.filterOption = this.data.filterOption
         this.logger.debug('Default filter option', this.filterOption)
         this.filters = this.data.filters
@@ -53,15 +53,15 @@ export class AdvancedFilterDialogComponent implements OnInit {
 
                 filterOption.filterValueType = element.fieldValueType
                 filterOption.filterOperators = this.getAllowedOperators(filterOption.filterValueType)
-                filterOption.filterOperator = this.getDefaultOperator(filterOption.filterValueType)        
+                filterOption.filterOperator = this.getDefaultOperator(filterOption.filterValueType)
                 this.cd.markForCheck()
             }
         })
     }
     onFilterSubmit(){
         this.dialogRef.close(this.filterOption)
-    } 
-    
+    }
+
     private getDefaultOperator(fieldType: FieldValueType): FilterOperator {
         switch (fieldType) {
             case FieldValueType.Text:
@@ -69,7 +69,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
             case FieldValueType.Slide:
             case FieldValueType.Checkbox:
             case FieldValueType.Select:
-            case FieldValueType.Number:                          
+            case FieldValueType.Number:
             case FieldValueType.DatePicker:
                 return FilterOperator.Equal
         }
@@ -101,7 +101,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
                     { name: '>', value: FilterOperator.Great },
                     { name: '<', value: FilterOperator.Less },
                     { name: '>=', value: FilterOperator.Greater },
-                    { name: '<=', value: FilterOperator.Lesser },                    
+                    { name: '<=', value: FilterOperator.Lesser },
                     { name: 'Equal', value: FilterOperator.Equal }
                 ]
         }

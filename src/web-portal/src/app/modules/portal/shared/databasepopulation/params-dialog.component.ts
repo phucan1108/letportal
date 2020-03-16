@@ -18,7 +18,7 @@ export class ParamsDialogComponent implements OnInit {
         private cd: ChangeDetectorRef,
     ) { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.params = this.data.params
     }
 

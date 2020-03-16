@@ -62,14 +62,14 @@ export class PageService {
     /**
      * *This method is using to retrieve a page info from Service and then it checks a current user who is allowed to access
      * !This method is only used when it is a custom page, after retrieving a page, pass it into initRender
-     * @param pageName 
+     * @param pageName Name of page
      * @returns Observable PageResponse
      */
     init(pageName: string): Observable<PageResponse> {
         return this.pageClients.getOneForRender(pageName).pipe(
             map<Page, PageResponse>((page: Page) => {
                 this.page = page
-                return { page: page, allowAccess: this.isAllowAccess(this.security.getAuthUser(), page) }
+                return { page, allowAccess: this.isAllowAccess(this.security.getAuthUser(), page) }
             }),
             tap(
                 result => {
@@ -79,7 +79,7 @@ export class PageService {
                     }
                 },
                 err => {
-                    this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                    this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
                     this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
             )
@@ -89,7 +89,7 @@ export class PageService {
     /**
      * *This method is using to construct some parts of Page (use render mode).
      * !This method should be passed Page object instead of performing Service to retrieve, call init() first to get Page object
-     * @param page 
+     * @param page Page object, get from API
      * @returns Observable PageStateModel
      */
     initRender(page: Page, activatedRoute: ActivatedRoute): Observable<PageStateModel> {
@@ -223,7 +223,7 @@ export class PageService {
 
     /**
      * Listens data change$
-     * @returns data change$ 
+     * @returns data change$
      */
     listenDataChange$(): Observable<any> {
         return this.store.select(state => state.page).pipe(
@@ -246,13 +246,13 @@ export class PageService {
     }
 
     getDataByBindName(bindName: string) {
-        let evaluated = Function('data', 'return data.' + bindName)
+        const evaluated = Function('data', 'return data.' + bindName)
         return evaluated(this.data)
     }
 
     /**
      * Listens control event$
-     * @returns control event$ 
+     * @returns control event$
      */
     listenControlEvent$(): Observable<PageControlActionEvent> {
         return this.store.select(state => state.page.lastEvent)
@@ -260,7 +260,7 @@ export class PageService {
 
     /**
      * Listens triggering control event$
-     * @returns triggering control event$ 
+     * @returns triggering control event$
      */
     listenTriggeringControlEvent$(): Observable<TriggeredControlEvent> {
         return this.store.select(state => state.controlevents.effectedControlEvent)
@@ -272,12 +272,12 @@ export class PageService {
      * @param data
      */
     changeControlValue(controlFullName: string, data: any) {
-        let splitted = controlFullName.split('_')
+        const splitted = controlFullName.split('_')
         this.store.dispatch(new ChangeControlValueEvent({
             name: controlFullName + '_change',
             controlName: splitted[1],
             sectionName: splitted[0],
-            data: data,
+            data,
             triggeredByEvent: ''
         }))
     }
@@ -294,10 +294,10 @@ export class PageService {
     }
 
     notifyTriggeringEvent(controlEvent: string, data: any = null) {
-        let splitted = controlEvent.split('_')
-        let event: TriggeredControlEvent = {
+        const splitted = controlEvent.split('_')
+        const event: TriggeredControlEvent = {
             controlFullName: splitted[0] + '_' + splitted[1],
-            data: data,
+            data,
             eventType: splitted[2],
             fullEventType: controlEvent
         }
@@ -316,7 +316,7 @@ export class PageService {
     }
 
     fetchDatasource(databaseId: string, query: string): Observable<any> {
-        let combineQuery = this.translator.translateDataWithShell(query, this.getPageShellData())
+        const combineQuery = this.translator.translateDataWithShell(query, this.getPageShellData())
 
         return this.databasesClient.executeQueryDatasource(databaseId, combineQuery).pipe(
             mergeMap(result => {
@@ -339,34 +339,34 @@ export class PageService {
 
     fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
         return this.pageClients.fetchControlDatasource(this.page.id, {
-            sectionName: sectionName,
-            controlName: controlName,
-            parameters: parameters
+            sectionName,
+            controlName,
+            parameters
         }).pipe(
             map(res => ObjectUtils.isArray(res.result) ? res.result : [res.result])
         )
     }
 
     evaluatedExpression(evaluteStr: string, data: any = null): boolean {
-        let func = new Function('user', 'claims', 'configs', 'options', 'queryparams', 'data', `return ${evaluteStr} ? true : false;`);
+        const func = new Function('user', 'claims', 'configs', 'options', 'queryparams', 'data', `return ${evaluteStr} ? true : false;`);
         return func(this.security.getAuthUser(), this.claims, this.configs, this.options, this.queryparams, !!data ? data : this.data) as boolean
     }
 
     translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string {
         if (ObjectUtils.isNotNull(data)) {
-            let translated = this.translator.translateDataWithShell(translateStr, data)
+            const translated = this.translator.translateDataWithShell(translateStr, data)
 
             return translated
         }
         else {
-            let translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
+            const translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
 
             return translated
         }
 
     }
     retrieveParameters(translateStr: string, data: any = null, isMergingData: boolean = false): PageParameterModel[] {
-        let preparedData = this.getPageShellData()
+        const preparedData = this.getPageShellData()
         if (data != null && isMergingData) {
             preparedData.data = {
                 ...preparedData.data,
@@ -395,8 +395,8 @@ export class PageService {
     executeActionEventOnDatabase(triggeringEvent: PageControlEvent, sectionName: string, controlName: string) {
         const paramters = this.retrieveParameters(triggeringEvent.eventDatabaseOptions.query)
         return this.pageClients.executeTriggeredEvent(this.page.id, {
-            sectionName: sectionName,
-            controlName: controlName,
+            sectionName,
+            controlName,
             eventName: triggeringEvent.eventName,
             parameters: paramters
         }).pipe(
@@ -429,12 +429,12 @@ export class PageService {
     }
 
     executeByActionOptions(
-        buttonName: string, 
-        actionCommandOptions: ActionCommandOptions, 
-        onComplete: () => void, 
+        buttonName: string,
+        actionCommandOptions: ActionCommandOptions,
+        onComplete: () => void,
         data?: any){
-        if (actionCommandOptions.isEnable) {           
-            
+        if (actionCommandOptions.isEnable) {
+
             switch (actionCommandOptions.actionType) {
                 case ActionType.ExecuteDatabase:
                     let combinedCommand = ''
@@ -448,7 +448,7 @@ export class PageService {
                         combinedCommand, this.getPageShellData(data));
                     this.pageClients
                         .submitCommand(this.page.id, {
-                            buttonName: buttonName,
+                            buttonName,
                             parameters: params
                         }).subscribe(
                             res => {
@@ -462,11 +462,11 @@ export class PageService {
                             })
                     break
                 case ActionType.CallHttpService:
-                    let url = this.translator.translateDataWithShell(
+                    const url = this.translator.translateDataWithShell(
                         actionCommandOptions.httpServiceOptions.httpServiceUrl,
                         this.getPageShellData(data)
                     )
-                    let body = this.translator.translateDataWithShell(
+                    const body = this.translator.translateDataWithShell(
                         actionCommandOptions.httpServiceOptions.jsonBody,
                         this.getPageShellData(data)
                     )
@@ -509,7 +509,7 @@ export class PageService {
         if(confirmationOptions.isEnable){
             const _title = 'Confirmation'
             const _description = confirmationOptions.confirmationText
-            const _waitDesciption = "Waiting..."
+            const _waitDesciption = 'Waiting...'
             const dialogRef = this.shortcutUtil
                 .confirmationDialog(
                     _title,
@@ -521,7 +521,7 @@ export class PageService {
                 if (!res) {
                     return
                 }
-    
+
                 if(onProceed){
                     onProceed()
                 }
@@ -531,7 +531,7 @@ export class PageService {
             if(onProceed){
                 onProceed()
             }
-        }        
+        }
     }
 
     private mergeData(mergingData: any) {
@@ -541,7 +541,7 @@ export class PageService {
         }
     }
 
-    private initPageClaims(pageName: string): Observable<Object> {
+    private initPageClaims(pageName: string): Observable<any> {
         return this.security.getPortalClaims().pipe(
             mergeMap(res => {
                 if (res) {
@@ -558,7 +558,7 @@ export class PageService {
         return activatedRoute.queryParamMap.pipe(
             map<ParamMap, ShellConfig[]>(param => {
                 this.logger.debug('Hit param', this.queryparams)
-                let shellConfigs: ShellConfig[] = []
+                const shellConfigs: ShellConfig[] = []
                 _.forEach(param.keys, key => {
                     this.queryparams[key] = param.get(key)
                     shellConfigs.push({ key: `queryparams.${key}`, value: param.get(key), type: ShellConfigType.Constant })
@@ -576,7 +576,7 @@ export class PageService {
 
     private initPageOptions(page: Page, shellConfigProvider: ShellConfigProvider): Observable<ShellConfig[]> {
         this.logger.debug('Hit options')
-        let shellConfigs: ShellConfig[] = []
+        const shellConfigs: ShellConfig[] = []
         _.forEach(page.shellOptions, option => {
             shellConfigs.push({ key: 'options.' + option.key, value: option.value, type: ShellConfigType.Constant })
             this.options[option.key] = option.value
@@ -594,7 +594,7 @@ export class PageService {
         pagesClient: PagesClient): Observable<PageLoadedDatasource[]> {
         if (!!page.pageDatasources && page.pageDatasources.length > 0) {
             store.dispatch(new LoadDatasource())
-            let datasources$: Observable<PageLoadedDatasource>[] = []
+            const datasources$: Observable<PageLoadedDatasource>[] = []
             _.forEach(page.pageDatasources, (ds: PageDatasource) => {
                 if (ds.isActive) {
                     this.logger.debug('Current options', this.options)
@@ -684,10 +684,10 @@ export class PageService {
     private routingCommand(command: PageButton) {
         let foundRoute = false
         _.forEach(command.buttonOptions.routeOptions.routes, route => {
-            let allowed = this.evaluatedExpression(route.condition)
+            const allowed = this.evaluatedExpression(route.condition)
             if (allowed && !foundRoute) {
                 foundRoute = true
-                let url = this.translator.translateDataWithShell(route.redirectUrl, this.getPageShellData())                 
+                const url = this.translator.translateDataWithShell(route.redirectUrl, this.getPageShellData())
                 this.logger.debug('Redirecting to...', url)
                 if(route.isSameDomain)
                     this.router.navigateByUrl(url)

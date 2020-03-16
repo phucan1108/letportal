@@ -77,7 +77,7 @@ export class ControlDialogComponent implements OnInit {
     }
 
     private convertValidatorTypeToFormValidator(type: ControlType) {
-        let formValidators: Array<ExtendedFormValidator> = []
+        const formValidators: Array<ExtendedFormValidator> = []
         const allowedValidatorTypes = this.getValidatorsByControlType(type)
         _.forEach(this.validatorTypes, validator => {
             if (allowedValidatorTypes.indexOf(validator.value) > -1) {
@@ -107,7 +107,7 @@ export class ControlDialogComponent implements OnInit {
                 }
                 switch (validatorForm.validatorType) {
                     case ValidatorType.Required:
-                        validatorForm.validatorMessage = 
+                        validatorForm.validatorMessage =
                             validatorForm.validatorMessage ? validatorForm.validatorMessage : this.generateRequiredMessage(this.currentControlType)
                         break
                     case ValidatorType.MinLength:
@@ -119,7 +119,7 @@ export class ControlDialogComponent implements OnInit {
                         validatorForm.validatorOptionPlaceholder = 'Input maximum length'
                         break
                     case ValidatorType.Regex:
-                        validatorForm.validatorMessage = validatorForm.validatorMessage ? validatorForm.validatorMessage : "This field's format does not match"
+                        validatorForm.validatorMessage = validatorForm.validatorMessage ? validatorForm.validatorMessage : 'This field\'s format does not match'
                         validatorForm.validatorOptionPlaceholder = 'Input regex pattern'
                         break
                     case ValidatorType.Equal:
@@ -130,7 +130,7 @@ export class ControlDialogComponent implements OnInit {
                         validatorForm.validatorMessage = validatorForm.validatorMessage ? validatorForm.validatorMessage : 'Please input correct email'
                         break
                     case ValidatorType.EqualTo:
-                        validatorForm.validatorMessage = validatorForm.validatorMessage ? validatorForm.validatorMessage : "This field doesn't match with {{option}} field"
+                        validatorForm.validatorMessage = validatorForm.validatorMessage ? validatorForm.validatorMessage : 'This field doesn\'t match with {{option}} field'
                         validatorForm.validatorOptionPlaceholder = 'Input matching field'
                         break
                     case ValidatorType.Number:
@@ -213,7 +213,7 @@ export class ControlDialogComponent implements OnInit {
         })
 
         this.controlForm.get('name').valueChanges.subscribe(newValue => {
-            const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
+            const listNameValue = (newValue as string).toLowerCase().replace(/\s/g, '')
             this.controlForm.get('key').setValue(listNameValue)
         })
     }
@@ -224,8 +224,8 @@ export class ControlDialogComponent implements OnInit {
 
     combiningControl(): ExtendedPageControl {
         this.logger.debug('Current validators', this.validators)
-        let formValues = this.controlForm.value
-        let combiningControl: ExtendedPageControl = {
+        const formValues = this.controlForm.value
+        const combiningControl: ExtendedPageControl = {
             id: this.currentExtendedFormControl.id,
             name: formValues.name,
             type: formValues.controlType,
@@ -258,7 +258,7 @@ export class ControlDialogComponent implements OnInit {
             case ControlType.LineBreaker:
                 return []
             case ControlType.AutoComplete:
-                return [                    
+                return [
                     {
                         eventName: `${control.name}_change`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
                         eventHttpServiceOptions: {
@@ -325,7 +325,7 @@ export class ControlDialogComponent implements OnInit {
         }
         if (!!control.options && isOnLoad) {
             _.forEach(defaultOptions, opt => {
-                let found = _.find(control.options, controlOpt => controlOpt.key === opt.key)
+                const found = _.find(control.options, controlOpt => controlOpt.key === opt.key)
                 if (!!found)
                     opt.value = found.value
             })

@@ -60,7 +60,7 @@ export class PageState {
     @Action(PageActions.UpdateDatasourceAction)
     public updateDatasource(ctx: StateContext<PageStateModel>, { datasource }: PageActions.UpdateDatasourceAction) {
         const state = ctx.getState()
-        let cloneDatasources = ObjectUtils.clone(state.datasources)
+        const cloneDatasources = ObjectUtils.clone(state.datasources)
         cloneDatasources.push(datasource)
         ctx.setState({
             ...state,
@@ -83,7 +83,7 @@ export class PageState {
         const state = ctx.getState()
         ctx.setState({
             ...state,
-            datasources: datasources,
+            datasources,
             filterState: PageActions.LoadDatasourceComplete
         })
     }
@@ -114,7 +114,7 @@ export class PageState {
             }
         }
         if (sectionsMap && sectionsMap.length > 0) {
-            let clonePageSectionsData = ObjectUtils.clone(state.pageSectionsData)
+            const clonePageSectionsData = ObjectUtils.clone(state.pageSectionsData)
             clonePageSectionsData.push(pageSectionBoundData)
 
             let cloneSectionsMap = ObjectUtils.clone(state.sectionsMap)
@@ -128,7 +128,7 @@ export class PageState {
             })
         }
         else {
-            let clonePageSectionsData = ObjectUtils.clone(state.pageSectionsData)
+            const clonePageSectionsData = ObjectUtils.clone(state.pageSectionsData)
             clonePageSectionsData.push(pageSectionBoundData)
             ctx.setState({
                 ...state,
@@ -153,8 +153,8 @@ export class PageState {
         const state = ctx.getState()
         ctx.setState({
             ...state,
-            options: options,
-            queryparams: queryparams,
+            options,
+            queryparams,
             filterState: PageActions.PageReadyAction
         })
     }
@@ -164,7 +164,7 @@ export class PageState {
         const state = ctx.getState()
         ctx.setState({
             ...state,
-            renderingSections: renderingSections,
+            renderingSections,
             filterState: PageActions.BeginRenderingPageSectionsAction
         })
     }
@@ -172,7 +172,7 @@ export class PageState {
     @Action(PageActions.RenderingPageSectionAction)
     public renderingPageSection(ctx: StateContext<PageStateModel>, { renderingSection }: PageActions.RenderingPageSectionAction) {
         const state = ctx.getState()
-        let cloneRenderingSections: RenderingPageSectionState[] = ObjectUtils.clone(state.renderingSections)
+        const cloneRenderingSections: RenderingPageSectionState[] = ObjectUtils.clone(state.renderingSections)
         _.forEach(cloneRenderingSections, s => {
             if (s.sectionName === renderingSection.sectionName) {
                 s.state = renderingSection.state
@@ -188,7 +188,7 @@ export class PageState {
     @Action(PageActions.RenderedPageSectionAction)
     public renderedPageSection(ctx: StateContext<PageStateModel>, { renderedSection }: PageActions.RenderedPageSectionAction) {
         const state = ctx.getState()
-        let cloneRenderingSections: RenderingPageSectionState[] = ObjectUtils.clone(state.renderingSections)
+        const cloneRenderingSections: RenderingPageSectionState[] = ObjectUtils.clone(state.renderingSections)
         _.forEach(cloneRenderingSections, s => {
             if (s.sectionName === renderedSection.sectionName) {
                 s.state = renderedSection.state
@@ -196,7 +196,7 @@ export class PageState {
             }
         })
 
-        let cloneSectionValidations: SectionValidation[] = ObjectUtils.clone(state.sectionValidations)
+        const cloneSectionValidations: SectionValidation[] = ObjectUtils.clone(state.sectionValidations)
         cloneSectionValidations.push({
             section: renderedSection.sectionName,
             isValid: false
@@ -235,25 +235,25 @@ export class PageState {
 
         const foundMap = _.find(state.sectionsMap, map => map.controlFullName === (event.sectionName + '_' + event.controlName))
         if (foundMap && foundMap.bindName) {
-            let data = ObjectUtils.clone(state.data)
+            const data = ObjectUtils.clone(state.data)
             if (foundMap.sectionMapName) {
                 data[foundMap.sectionMapName][foundMap.bindName] = event.data
             }
             else {
                 data[foundMap.bindName] = event.data
             }
-            let cloneEventsList = ObjectUtils.clone(state.eventsList)
+            const cloneEventsList = ObjectUtils.clone(state.eventsList)
             cloneEventsList.push(event)
             ctx.setState({
                 ...state,
                 eventsList: cloneEventsList,
-                data: data,
+                data,
                 lastEvent: event,
                 filterState: PageActions.ChangeControlValueEvent
             })
         }
         else {
-            let cloneEventsList = ObjectUtils.clone(state.eventsList)
+            const cloneEventsList = ObjectUtils.clone(state.eventsList)
             cloneEventsList.push(event)
             ctx.setState({
                 ...state,
@@ -267,7 +267,7 @@ export class PageState {
     @Action(PageActions.ClickControlEvent)
     public clickControlEvent(ctx: StateContext<PageStateModel>, { event }: PageActions.ClickControlEvent) {
         const state = ctx.getState()
-        let cloneEventsList = ObjectUtils.clone(state.eventsList)
+        const cloneEventsList = ObjectUtils.clone(state.eventsList)
         cloneEventsList.push(event)
         ctx.setState({
             ...state,
@@ -299,7 +299,7 @@ export class PageState {
     @Action(PageActions.SectionValidationStateAction)
     public sectionValidationState(ctx: StateContext<PageStateModel>, { section, isValid }: PageActions.SectionValidationStateAction) {
         const state = ctx.getState()
-        let clone = ObjectUtils.clone(state.sectionValidations)
+        const clone = ObjectUtils.clone(state.sectionValidations)
         _.forEach(clone, val => {
             if (val.section === section) {
                 val.isValid = isValid

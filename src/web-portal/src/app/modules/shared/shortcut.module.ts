@@ -10,10 +10,10 @@ import { ActionNotificationComponent } from './components/shortcuts/action-natif
         ConfirmationDialogComponent,
         ActionNotificationComponent,
     ],
-    imports: [ 
+    imports: [
         CommonModule,
         MatProgressBarModule,
-        MatSnackBarModule,        
+        MatSnackBarModule,
         MatDialogModule,
         MatButtonModule,
         MatIconModule

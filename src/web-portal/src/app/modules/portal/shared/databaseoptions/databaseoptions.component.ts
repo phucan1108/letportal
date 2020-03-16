@@ -31,7 +31,7 @@ export class DatabaseOptionsComponent implements OnInit {
     databaseConnections$: Observable<Array<DatabaseConnection>>;
     hintText = ''
     isHintClicked = false
-    
+
     constructor(
         private fb: FormBuilder,
         private databaseClient: DatabasesClient,
@@ -39,7 +39,7 @@ export class DatabaseOptionsComponent implements OnInit {
         private shortcutUtil: ShortcutUtil
     ) { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.initDatabaseOptions()
         this.databaseConnections$ = this.databaseClient.getAll()
         this.databaseConnections$.subscribe(res => {
@@ -59,7 +59,7 @@ export class DatabaseOptionsComponent implements OnInit {
                 entityName: ''
             }
         }
-        
+
         this.editorOptions3.mode = 'code'
         this.jsonData = this.databaseOptions.query ? JSON.parse(this.databaseOptions.query) : {}
         this.editorOptions3.onChange = () => {
@@ -78,7 +78,7 @@ export class DatabaseOptionsComponent implements OnInit {
             databaseConnectionId: [this.databaseOptions.databaseConnectionId, Validators.required],
             query: [this.databaseOptions.query, Validators.required]
         })
-        
+
         this.databaseOptionsForm.get('databaseConnectionId').valueChanges.subscribe(newValue => {
             this.selectedDatabase = this.databases.find(a => a.id == newValue)
             if(this.selectedDatabase.databaseConnectionType == 'mongodb'){
@@ -98,7 +98,7 @@ export class DatabaseOptionsComponent implements OnInit {
     }
 
     openQueryHint() {
-        let query = this.isMongoDb ? 
+        const query = this.isMongoDb ?
                     '{\r\n  \"$query\":{\r\n    \"{{options.entityname}}\":[\r\n        {\r\n          \"$match\": {\r\n            \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n          }\r\n        }\r\n      ]\r\n  }\r\n}'
                     : 'Select * From {Your_table} Where id={{data.id}}'
         this.hintText = query
@@ -106,28 +106,28 @@ export class DatabaseOptionsComponent implements OnInit {
     }
 
     openInsertHint() {
-        let insert =  this.isMongoDb ? '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}' :
+        const insert =  this.isMongoDb ? '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}' :
                         'Insert into {Your_table}(id) values ({{data.id}})'
         this.hintText = insert
         this.isHintClicked = true
     }
 
     openUpdateHint() {
-        let update = this.isMongoDb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}' :
+        const update = this.isMongoDb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}' :
                         'Update {Your_table} Set name={{data.name}} Where id={{data.id}}'
         this.hintText = update
         this.isHintClicked = true
     }
 
     openUpdatePartsHint(){
-        let updatePart = this.isMongoDb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
+        const updatePart = this.isMongoDb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
                         : 'Update {Your_table} Set name={{data.name}} Where id={{data.id}}'
         this.hintText = updatePart
         this.isHintClicked = true
     }
 
     openDeleteHint() {
-        let deleteText = this.isMongoDb ? '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
+        const deleteText = this.isMongoDb ? '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
                         : 'Delete From {Your_table} Where id={{data.id}}'
         this.hintText = deleteText
         this.isHintClicked = true
@@ -140,7 +140,7 @@ export class DatabaseOptionsComponent implements OnInit {
 
     get(): DatabaseOptions{
         if(this.databaseOptionsForm.valid){
-            let formValues = this.databaseOptionsForm.value
+            const formValues = this.databaseOptionsForm.value
             return {
                 databaseConnectionId: formValues.databaseConnectionId,
                 query: formValues.query

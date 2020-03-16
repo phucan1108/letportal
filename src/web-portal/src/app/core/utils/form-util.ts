@@ -17,7 +17,7 @@ export class FormUtil {
         return (control: AbstractControl): { [key: string]: any } | null => {
             const found = _.find(objs, obj => obj == control.value)
             if(found){
-                return found != defaultObj ? { 'isExist': { value: control.value }} : null
+                return found != defaultObj ? { isExist: { value: control.value }} : null
             }
             else{
                 return null

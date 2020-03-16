@@ -26,9 +26,9 @@ export class ButtonOptionsComponent implements OnInit {
         private fb: FormBuilder) { }
 
     ngOnInit(): void {
-        
+
         this.logger.debug('Input button options', this.buttonOptions)
-        
+
 
         if (this.buttonOptions.actionCommandOptions) {
             this.actionCommandOptions = this.buttonOptions.actionCommandOptions
@@ -49,14 +49,14 @@ export class ButtonOptionsComponent implements OnInit {
         }
 
         if (this.buttonOptions.routeOptions) {
-            
+
         }
         else {
             this.buttonOptions.routeOptions = {
                 isEnable: false,
                 routes: []
             }
-        }        
+        }
     }
 
     valid(){

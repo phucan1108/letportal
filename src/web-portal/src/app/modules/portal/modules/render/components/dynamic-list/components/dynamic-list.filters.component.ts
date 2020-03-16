@@ -15,6 +15,28 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
     templateUrl: './dynamic-list.filters.component.html'
 })
 export class DynamicListFiltersComponent implements OnInit {
+    constructor(
+        private cd: ChangeDetectorRef,
+        private datasourceOptsService: DatasourceOptionsService,
+        private breakpointObserver: BreakpointObserver,
+        public dialog: MatDialog,
+        private logger: NGXLogger) {
+            this.breakpointObserver.observe([
+                Breakpoints.HandsetPortrait,
+                Breakpoints.HandsetLandscape
+            ]).subscribe(result => {
+                if (result.matches) {
+                    this.isSmallDevice = true
+                    this.cd.markForCheck()
+                    this.logger.debug('Small device', this.isSmallDevice)
+                }
+                else {
+                    this.isSmallDevice = false
+                    this.cd.markForCheck()
+                    this.logger.debug('Small device', this.isSmallDevice)
+                }
+            });
+        }
 
     @Input()
     filters: Array<ExtendedRenderFilterField>;
@@ -33,12 +55,6 @@ export class DynamicListFiltersComponent implements OnInit {
 
     @Output()
     onSearch: EventEmitter<any> = new EventEmitter();
-
-    @HostListener('window:keydown.enter',  ['$event'])
-    handleEnterPress(event: KeyboardEvent){
-        this.logger.debug('Hit key down', event)
-        this.onSearchClick()
-    }
 
     textSearch = '';
 
@@ -64,28 +80,12 @@ export class DynamicListFiltersComponent implements OnInit {
     filterChainOperatorType = FilterChainOperator
     isSmallDevice = false
     fieldValueType = FieldValueType
-    constructor(
-        private cd: ChangeDetectorRef,
-        private datasourceOptsService: DatasourceOptionsService,
-        private breakpointObserver: BreakpointObserver,
-        public dialog: MatDialog,
-        private logger: NGXLogger) { 
-            this.breakpointObserver.observe([
-                Breakpoints.HandsetPortrait,
-                Breakpoints.HandsetLandscape
-            ]).subscribe(result => {
-                if (result.matches) {
-                    this.isSmallDevice = true
-                    this.cd.markForCheck()
-                    this.logger.debug('Small device', this.isSmallDevice)
-                }
-                else {
-                    this.isSmallDevice = false
-                    this.cd.markForCheck()
-                    this.logger.debug('Small device', this.isSmallDevice)
-                }
-            });
-        }
+
+    @HostListener('window:keydown.enter',  ['$event'])
+    handleEnterPress(event: KeyboardEvent){
+        this.logger.debug('Hit key down', event)
+        this.onSearchClick()
+    }
 
     ngOnInit(): void {
         this.filters = _.filter(this.filters, (element: ExtendedRenderFilterField) => {
@@ -101,7 +101,7 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     onSearchClick() {
-        let filterQuery: DynamicListFetchDataModel = {
+        const filterQuery: DynamicListFetchDataModel = {
             textSearch: this.textSearch,
             filledParameterOptions: {
                 filledParameters: this.combineFilledParameters()
@@ -114,13 +114,13 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     combineFilledParameters() {
-        let filledParameters: Array<FilledParameter> = [];
+        const filledParameters: Array<FilledParameter> = [];
 
         return filledParameters;
     }
 
     combineFilterGroups() {
-        let filterGroups: Array<FilterGroup> = [];
+        const filterGroups: Array<FilterGroup> = [];
 
         filterGroups.push({
             filterChainOperator: FilterChainOperator.None,
@@ -133,7 +133,7 @@ export class DynamicListFiltersComponent implements OnInit {
     onAdvancedSearchChange() {
         if (this.isOpeningAdvancedMode) {
             if (this.filterOptions.length === 0) {
-                let addingFilter = {
+                const addingFilter = {
                     fieldName: this.filters[0].name,
                     fieldValue: '',
                     filterChainOperator: FilterChainOperator.None,
@@ -324,14 +324,14 @@ export class DynamicListFiltersComponent implements OnInit {
         this.cd.markForCheck()
     }
 
-    private getDefaultOperator(fieldType: FieldValueType): FilterOperator {      
+    private getDefaultOperator(fieldType: FieldValueType): FilterOperator {
         switch (fieldType) {
             case FieldValueType.Text:
-                return FilterOperator.Contains 
+                return FilterOperator.Contains
             case FieldValueType.Slide:
             case FieldValueType.Checkbox:
             case FieldValueType.Select:
-            case FieldValueType.Number:                           
+            case FieldValueType.Number:
             case FieldValueType.DatePicker:
                 return FilterOperator.Equal
         }

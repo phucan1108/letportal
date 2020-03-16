@@ -39,14 +39,14 @@ export class ChartFilterRenderComponent implements OnInit {
 
     ngOnInit() {
         if (this.chart.chartFilters && this.chart.chartFilters.length > 0) {
-            let formControls: any = []
+            const formControls: any = []
             _.forEach(this.chart.chartFilters, c => {
                 let tempName = c.name
                 // Note: in mongodb, we allow to have '.' in name, so we need to remove this
                 if(tempName.indexOf('.') > 0){
                     tempName = StringUtils.replaceAllOccurences(tempName,'.','')
                 }
-                let temp: ExtendedChartFilter = <ExtendedChartFilter>c
+                const temp: ExtendedChartFilter = c as ExtendedChartFilter
                 temp.defaultObj = this.getDefaultObject(c.defaultValue, c.type, c.isMultiple)
                 switch (c.type) {
                     case FilterType.Checkbox:
@@ -65,7 +65,7 @@ export class ChartFilterRenderComponent implements OnInit {
                     case FilterType.NumberPicker:
                         temp.datasource = this.generateDatasourceForNumberRange(c.rangeValue, c.isMultiple)
                         let defaultValNum: any
-                        let tempDefault = StringUtils.replaceAllOccurences(c.defaultValue, "'","\"")
+                        const tempDefault = StringUtils.replaceAllOccurences(c.defaultValue, '\'','"')
                         defaultValNum = ObjectUtils.isNotNull(c.defaultValue) && c.allowDefaultValue ?
                             (c.isMultiple ? JSON.parse(tempDefault) : parseInt(c.defaultValue))
                             : 0
@@ -73,14 +73,14 @@ export class ChartFilterRenderComponent implements OnInit {
                         break
                     case FilterType.DatePicker:
                         if (ObjectUtils.isNotNull(c.rangeValue)) {
-                            let tempStr = StringUtils.replaceAllOccurences(c.rangeValue, "'", "\"")
-                            let tempDates: string[] = JSON.parse(tempStr)
+                            const tempStr = StringUtils.replaceAllOccurences(c.rangeValue, '\'', '"')
+                            const tempDates: string[] = JSON.parse(tempStr)
                             if (tempDates.length == 1) {
                                 // Only min date
                                 // Accept some values: ['2020-02-02'] or ['Now'] or ['Now-5'] or ['Now+5']
                                 temp.minDate = this.convertNowWords(tempDates[0], false)
 
-                                let currentYear = (new Date()).getFullYear()
+                                const currentYear = (new Date()).getFullYear()
                                 temp.maxDate = new Date(currentYear + 30, 1, 1)
                             }
                             else if (tempDates.length == 2) {
@@ -97,8 +97,8 @@ export class ChartFilterRenderComponent implements OnInit {
                             let defaultMinDate: any = new Date()
                             let defaultMaxDate: any = new Date()
                             if(ObjectUtils.isNotNull(c.defaultValue)){
-                                let tempStr = StringUtils.replaceAllOccurences(c.defaultValue, "'", "\"")
-                                let tempDates: string[] = JSON.parse(tempStr)
+                                const tempStr = StringUtils.replaceAllOccurences(c.defaultValue, '\'', '"')
+                                const tempDates: string[] = JSON.parse(tempStr)
                                 if (tempDates.length == 1) {
                                     defaultMinDate = this.convertNowWords(tempDates[0], false)
                                 }
@@ -111,7 +111,7 @@ export class ChartFilterRenderComponent implements OnInit {
                                 // If we don't set Default, set it to Now
                                 formControls[tempName + '_min'] = new FormControl(defaultMinDate, Validators.required)
                                 formControls[tempName + '_max'] = new FormControl(defaultMaxDate, Validators.required)
-                            }                                                       
+                            }
                         }
                         else {
                             let defaultMinDate: any
@@ -121,13 +121,13 @@ export class ChartFilterRenderComponent implements OnInit {
                         break
                     case FilterType.MonthYearPicker:
                         if (ObjectUtils.isNotNull(c.rangeValue)) {
-                            let tempStr = StringUtils.replaceAllOccurences(c.rangeValue, "'", "\"")
-                            let tempDates: string[] = JSON.parse(tempStr)
+                            const tempStr = StringUtils.replaceAllOccurences(c.rangeValue, '\'', '"')
+                            const tempDates: string[] = JSON.parse(tempStr)
                             if (tempDates.length == 1) {
                                 // Only min date
                                 temp.minDate = this.convertNowWords(tempDates[0], true)
-                                let currentYear = (new Date()).getFullYear()
-                                let currentMonth = (new Date()).getMonth()
+                                const currentYear = (new Date()).getFullYear()
+                                const currentMonth = (new Date()).getMonth()
                                 temp.maxDate = new Date(currentYear + 30, currentMonth, 1)
                             }
                             else if (tempDates.length == 2) {
@@ -142,8 +142,8 @@ export class ChartFilterRenderComponent implements OnInit {
                         if (c.isMultiple) {
                             let defaultMinDate: any
                             let defaultMaxDate: any
-                            let tempStr = StringUtils.replaceAllOccurences(c.defaultValue, "'", "\"")
-                            let tempDates: string[] = JSON.parse(tempStr)
+                            const tempStr = StringUtils.replaceAllOccurences(c.defaultValue, '\'', '"')
+                            const tempDates: string[] = JSON.parse(tempStr)
                             if (tempDates.length == 1) {
                                 defaultMinDate = this.convertNowWords(tempDates[0], true)
                             }
@@ -201,7 +201,7 @@ export class ChartFilterRenderComponent implements OnInit {
     }
 
     private getFilterValue(filter: ExtendedChartFilter, formGroup: FormGroup) {
-        let hasDot = filter.name.indexOf('.') > 0
+        const hasDot = filter.name.indexOf('.') > 0
         let tempName = filter.name
         if(hasDot){
             tempName = StringUtils.replaceAllOccurences(tempName, '.', '')
@@ -215,28 +215,28 @@ export class ChartFilterRenderComponent implements OnInit {
                 return filter.isMultiple ? JSON.stringify(formGroup.get(tempName).value) : formGroup.get(tempName).value.toString()
             case FilterType.DatePicker:
                 if (filter.isMultiple) {
-                    let minDate = new Date(formGroup.get(tempName + '_min').value)
-                    let maxDate = new Date(formGroup.get(tempName + '_max').value)
-                    let groupDates: string[] = []
+                    const minDate = new Date(formGroup.get(tempName + '_min').value)
+                    const maxDate = new Date(formGroup.get(tempName + '_max').value)
+                    const groupDates: string[] = []
                     groupDates.push(minDate.toDateString())
                     groupDates.push(maxDate.toDateString())
                     return JSON.stringify(groupDates)
                 }
                 else {
-                    let minDate = new Date(formGroup.get(tempName).value)
+                    const minDate = new Date(formGroup.get(tempName).value)
                     return minDate.toDateString()
                 }
             case FilterType.MonthYearPicker:
                 if (filter.isMultiple) {
-                    let minDate = new Date(formGroup.get(tempName + '_min').value)
-                    let maxDate = new Date(formGroup.get(tempName + '_max').value)
-                    let groupDates: string[] = []
+                    const minDate = new Date(formGroup.get(tempName + '_min').value)
+                    const maxDate = new Date(formGroup.get(tempName + '_max').value)
+                    const groupDates: string[] = []
                     groupDates.push(minDate.toDateString())
                     groupDates.push(maxDate.toDateString())
                     return JSON.stringify(groupDates)
                 }
                 else {
-                    let minDate = new Date(formGroup.get(tempName).value)
+                    const minDate = new Date(formGroup.get(tempName).value)
                     return minDate.toDateString()
                 }
         }
@@ -244,15 +244,15 @@ export class ChartFilterRenderComponent implements OnInit {
     }
 
     private convertNowWords(nowStr: string, isMonthPicker: boolean) {
-        let nowIndex = nowStr.toUpperCase().indexOf('NOW')
+        const nowIndex = nowStr.toUpperCase().indexOf('NOW')
         if (nowIndex > -1) {
-            let nowDate = new Date()
+            const nowDate = new Date()
             if (nowStr.length === 3) {
                 return nowDate
             }
             else {
-                let splitMinus = nowStr.split('-')
-                let splitPlus = nowStr.split('+')
+                const splitMinus = nowStr.split('-')
+                const splitPlus = nowStr.split('+')
                 if (splitMinus.length > 1) {
                     if (isMonthPicker) {
                         nowDate.setMonth(nowDate.getMonth() - parseInt(splitMinus[1]))
@@ -273,10 +273,10 @@ export class ChartFilterRenderComponent implements OnInit {
             }
         }
         else {
-            
+
             if (isMonthPicker) {
                 // 2020-02
-                let splitted = nowStr.split('-')
+                const splitted = nowStr.split('-')
                 return new Date(parseInt(splitted[1]), parseInt(splitted[0]), 1)
             }
             else {
@@ -290,15 +290,15 @@ export class ChartFilterRenderComponent implements OnInit {
         const hasDoublePoints = numberRange.indexOf('..') > 0
         const hasMinus = numberRange.indexOf('-') > 0
         if (hasDoublePoints) {
-            let count = StringUtils.getNumberOccurencesOfStr(numberRange, '..')
+            const count = StringUtils.getNumberOccurencesOfStr(numberRange, '..')
             if (count == 2) {
                 // Case [10..2..20]
-                let splitted = numberRange.substr(1, numberRange.length - 2).split('..')
-                let startNum = parseInt(splitted[0])
-                let endNum = parseInt(splitted[2])
-                let stepNum = parseInt(splitted[1])
+                const splitted = numberRange.substr(1, numberRange.length - 2).split('..')
+                const startNum = parseInt(splitted[0])
+                const endNum = parseInt(splitted[2])
+                const stepNum = parseInt(splitted[1])
                 if (startNum <= endNum) {
-                    let ds: any[] = []
+                    const ds: any[] = []
                     for (let i = startNum; i <= endNum; i += stepNum) {
                         ds.push({
                             name: i.toString(),
@@ -309,7 +309,7 @@ export class ChartFilterRenderComponent implements OnInit {
                     return ds
                 }
                 else {
-                    let ds: any[] = []
+                    const ds: any[] = []
                     for (let i = endNum; i <= startNum; i += stepNum) {
                         ds.push({
                             name: i.toString(),
@@ -321,11 +321,11 @@ export class ChartFilterRenderComponent implements OnInit {
             }
             else {
                 // Case [10..20]
-                let splitted = numberRange.substr(1, numberRange.length - 2).split('..')
-                let startNum = parseInt(splitted[0])
-                let endNum = parseInt(splitted[1])
+                const splitted = numberRange.substr(1, numberRange.length - 2).split('..')
+                const startNum = parseInt(splitted[0])
+                const endNum = parseInt(splitted[1])
                 if (startNum <= endNum) {
-                    let ds: any[] = []
+                    const ds: any[] = []
                     for (let i = startNum; i <= endNum; i++) {
                         ds.push({
                             name: i.toString(),
@@ -336,7 +336,7 @@ export class ChartFilterRenderComponent implements OnInit {
                     return ds
                 }
                 else {
-                    let ds: any[] = []
+                    const ds: any[] = []
                     for (let i = endNum; i <= startNum; i++) {
                         ds.push({
                             name: i.toString(),
@@ -348,7 +348,7 @@ export class ChartFilterRenderComponent implements OnInit {
             }
         }
         else if (hasMinus) {
-            let arrayStr: string[] = numberRange.slice(1, numberRange.length - 1).slice(0, numberRange.length - 2).split(',')
+            const arrayStr: string[] = numberRange.slice(1, numberRange.length - 1).slice(0, numberRange.length - 2).split(',')
             return arrayStr.map(a => ({
                 name: a,
                 value: a
@@ -356,8 +356,8 @@ export class ChartFilterRenderComponent implements OnInit {
         }
         else {
             // return as number[]
-            let temp = StringUtils.replaceAllOccurences(numberRange, "'","\"")
-            let arrayNum: number[] = JSON.parse(temp)
+            const temp = StringUtils.replaceAllOccurences(numberRange, '\'','"')
+            const arrayNum: number[] = JSON.parse(temp)
             return arrayNum.map(a => ({
                 name: a.toString(),
                 value: a
@@ -386,8 +386,8 @@ export class ChartFilterRenderComponent implements OnInit {
                     }
                 case FilterType.DatePicker:
                     if (isMultiple) {
-                        let tempDates: Date[] = []
-                        let data = JSON.parse(defaultValue)
+                        const tempDates: Date[] = []
+                        const data = JSON.parse(defaultValue)
                         tempDates.push(new Date(data[0]))
                         tempDates.push(new Date(data[1]))
                         return tempDates

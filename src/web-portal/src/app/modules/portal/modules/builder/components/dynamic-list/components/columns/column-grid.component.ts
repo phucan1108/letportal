@@ -22,15 +22,15 @@ export class ColumnGridComponent implements OnInit {
     _fieldTypes = StaticResources.fieldValueTypes()
 
     _patterns = [
-        { name: "text", displayName: "Text", format: "{0}" },
-        { name: "numberTwoDots", displayName: "Number two digits", format: "{0:0.00}" }
+        { name: 'text', displayName: 'Text', format: '{0}' },
+        { name: 'numberTwoDots', displayName: 'Number two digits', format: '{0:0.00}' }
     ]
 
     _patternGroups = [
         {
             name: 'Text',
             patterns: [
-                { name: "Text", format: "{0}" }
+                { name: 'Text', format: '{0}' }
             ]
         },
         {
@@ -84,7 +84,7 @@ export class ColumnGridComponent implements OnInit {
     }
 
     deleteColumn(column: ColumndDef) {
-        let index = this.columnDefs.indexOf(column);
+        const index = this.columnDefs.indexOf(column);
         this.columnDefs.splice(index, 1);
         this.notifyColumnDefsChanged()
     }
@@ -108,11 +108,11 @@ export class ColumnGridComponent implements OnInit {
     onFieldTypeSelectChange(columnDef: ColumndDef){
 
     }
-    
-    onListDrop($event){        
+
+    onListDrop($event){
         const prevIndex = this.columnDefs.findIndex((colDef) => colDef === $event.item.data)
         moveItemInArray(this.columnDefs, prevIndex, $event.currentIndex);
-        this.logger.debug('New columns after dragging', this.columnDefs)   
+        this.logger.debug('New columns after dragging', this.columnDefs)
     }
 
     openDatasourceDialogForColumn(columnDef: ColumndDef) {
@@ -134,7 +134,7 @@ export class ColumnGridComponent implements OnInit {
             dialogRef.afterClosed().subscribe(result => {
                 if (result) {
                     columnDef.datasourceOptions = result
-                    this.logger.debug('after changed datasource', columnDef.datasourceOptions)                    
+                    this.logger.debug('after changed datasource', columnDef.datasourceOptions)
                     this.notifyColumnDefsChanged()
                 }
             })

@@ -4,7 +4,7 @@ export interface MenuNode {
     expandable: boolean;
     name: string;
     level: number;
-    id: string;   
+    id: string;
     extMenu: ExtendedMenu;
     checked: boolean;
 }

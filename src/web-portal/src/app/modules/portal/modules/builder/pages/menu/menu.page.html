@@ -35,7 +35,7 @@
                                 <button mat-menu-item matTooltip="Edit" color="primary" (click)="editMenu(node)">
                                     Edit
                                 </button>
-                                <button mat-menu-item matTooltip="Add" color="primary" (click)="addChild(node)">
+                                <button mat-menu-item matTooltip="Add" color="primary" *ngIf="node.level < 1" (click)="addChild(node)">
                                     Add Child
                                 </button>
                                 <button mat-menu-item matTooltip="Add Below" color="primary" (click)="addBelow(node)">
@@ -62,7 +62,7 @@
                                 <button mat-menu-item matTooltip="Edit" color="primary" (click)="editMenu(node)">
                                     Edit
                                 </button>
-                                <button mat-menu-item matTooltip="Add" color="primary" (click)="addChild(node)">
+                                <button mat-menu-item matTooltip="Add" color="primary" *ngIf="node.level < 1" (click)="addChild(node)">
                                     Add Child
                                 </button>
                                 <button mat-menu-item matTooltip="Add Below" color="primary" (click)="addBelow(node)">

@@ -14,7 +14,7 @@ const routes: Routes = [
                 path: 'dashboard',
                 component: AppDashboardComponent,
                 canActivate: [AuthGuard]
-            },            
+            },
             {
                 path: 'builder',
                 loadChildren: () => import('./modules/builder/portal-builder.module').then(m => m.PortalBuilderModule),
@@ -22,7 +22,7 @@ const routes: Routes = [
             },
             {
                 path: 'page',
-                loadChildren: () => import('./modules/render/portal-render.module').then(m => m.PortalRenderModule),                
+                loadChildren: () => import('./modules/render/portal-render.module').then(m => m.PortalRenderModule),
                 canActivate: [AuthGuard , CanActivePortal]
             }
         ]

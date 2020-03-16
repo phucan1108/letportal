@@ -30,17 +30,17 @@ export function hlJSLang() {
     { name: 'sql', func: sql }
   ]
 }
-let portalBaseUrl = (configProvider: ConfigurationProvider) => {
+const portalBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().portalBaseEndpoint
 }
 
-let identityBaseUrl = (configProvider: ConfigurationProvider) => {
+const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().identityBaseEndpoint
 }
 @NgModule({
   declarations: [
     AppComponent,
-    ErrorComponent    
+    ErrorComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +54,7 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
     SharedModule,
     NgxsStoreModule,
     LoggerModule.forRoot({
-      serverLoggingUrl: "",
+      serverLoggingUrl: '',
       level: environment.production ? NgxLoggerLevel.OFF : NgxLoggerLevel.DEBUG,
       serverLogLevel: NgxLoggerLevel.OFF
     }),
@@ -92,7 +92,7 @@ let identityBaseUrl = (configProvider: ConfigurationProvider) => {
         languages: hlJSLang
       }
     },
-    ConfigurationProvider   
+    ConfigurationProvider
   ],
   entryComponents: [
 

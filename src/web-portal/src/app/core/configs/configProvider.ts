@@ -21,8 +21,8 @@ export class ConfigurationProvider {
     getShellConfigs(): Array<ShellConfig> {
         const flatten: any = ObjectUtils.flattenObjects({ configs: this.configuration })
 
-        let shellConfigs: Array<ShellConfig> = []
-        for (var prop in flatten) {
+        const shellConfigs: Array<ShellConfig> = []
+        for (const prop in flatten) {
             shellConfigs.push({
                 key: prop,
                 value: flatten[prop],
@@ -31,5 +31,5 @@ export class ConfigurationProvider {
         }
 
         return shellConfigs
-    }    
+    }
 }

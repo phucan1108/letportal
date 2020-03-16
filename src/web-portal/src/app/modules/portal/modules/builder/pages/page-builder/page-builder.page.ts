@@ -97,8 +97,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
         this.onValueChanges()
         this.databaseConnections = this.databaseClient.getAll()
     }
-    
-    
+
+
     ngOnDestroy(): void {
         this.store.dispatch(new StateReset(PageBuilderState))
     }
@@ -119,7 +119,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
         this.store.dispatch(new NextToRouteAction())
     }
 
-    //#region Angular Form methods    
+    //#region Angular Form methods
     initialDynamicForm() {
         this.store
             .select(state => state.pagebuilder)
@@ -180,7 +180,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
         this.pageInfoFormGroup.get('displayName').valueChanges.subscribe(newValue => {
             if(!this.isEditMode){
             // Apply this change to list name and url path
-            const formNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '-')
+            const formNameValue = (newValue as string).toLowerCase().replace(/\s/g, '-')
             this.pageInfoFormGroup.get('name').setValue(formNameValue)
             this.pageInfoFormGroup.get('urlPath').setValue(Constants.PREFIX_FORM_URL + formNameValue)
 
@@ -211,7 +211,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     }
 
     notifyDynamicFormInfoChange() {
-        let formValues = this.pageInfoFormGroup.value
+        const formValues = this.pageInfoFormGroup.value
         this.store.dispatch([
             new UpdatePageInfoAction(
                 this.isEditMode ? this.page.id : Guid.create().toString(),
@@ -231,9 +231,9 @@ export class PageBuilderPage implements OnInit, OnDestroy {
 
     saveChanges() {
         if (this.pageInfoFormGroup.valid) {
-            const _title = "Save changes"
-            const _description = "Are you sure to save all changes?"
-            const _waitDesciption = "Waiting..."
+            const _title = 'Save changes'
+            const _description = 'Are you sure to save all changes?'
+            const _waitDesciption = 'Waiting...'
             const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption, this.isEditMode ? MessageType.Update : MessageType.Create);
             dialogRef.afterClosed().subscribe(res => {
                 if (!res) {
@@ -246,14 +246,14 @@ export class PageBuilderPage implements OnInit, OnDestroy {
                     if (this.isEditMode) {
                         this.store.dispatch(new EditPageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.toastMessage("Update Page Successfully", ToastType.Success)
+                                this.shortcutUtil.toastMessage('Update Page Successfully', ToastType.Success)
                             }
                         );
                     }
                     else {
                         this.store.dispatch(new CreatePageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.toastMessage("Create Page Successfully", ToastType.Success)
+                                this.shortcutUtil.toastMessage('Create Page Successfully', ToastType.Success)
                                 this.router.navigateByUrl('portal/page/pages-management')
                             }
                         );

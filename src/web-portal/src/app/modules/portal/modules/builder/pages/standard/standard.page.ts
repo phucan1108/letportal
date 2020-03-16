@@ -78,7 +78,7 @@ export class StandardPagePage implements OnInit {
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
             })
 
-            
+
             if(ObjectUtils.isNotNull(this.standardComponent.options)){
                 this.shellOptions =  this.standardComponent.options as ExtendedShellOption[]
             }
@@ -106,7 +106,7 @@ export class StandardPagePage implements OnInit {
         this.standardFormGroup.get('displayName').valueChanges.subscribe(newValue => {
             if (newValue && !this.isEditMode) {
                 // Apply this change to list name and url path
-                const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
+                const listNameValue = (newValue as string).toLowerCase().replace(/\s/g, '')
                 this.standardFormGroup.get('name').setValue(listNameValue)
             }
         })
@@ -161,7 +161,7 @@ export class StandardPagePage implements OnInit {
     }
 
     onCancel() {
-
+        this.router.navigateByUrl('portal/page/standard-list-management')
     }
 
     onChangingOptions($event){

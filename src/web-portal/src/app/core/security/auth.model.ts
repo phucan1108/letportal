@@ -7,9 +7,9 @@ export class AuthToken {
     public expireDate: Date
     public expireRefreshDate: Date
     constructor(
-        public jwtToken: string, 
-        public expiresIn: number, 
-        public refreshToken: string, 
+        public jwtToken: string,
+        public expiresIn: number,
+        public refreshToken: string,
         public expireRefresh: number) {
         if (jwtToken) {
             this.jsonTokenPayload = decode(jwtToken);
@@ -27,7 +27,7 @@ export class AuthToken {
     }
 
     public isExpired(): boolean{
-        let isExpired = this.expireDate < new Date()
+        const isExpired = this.expireDate < new Date()
         return isExpired
     }
 }
@@ -47,7 +47,7 @@ export class AuthUser {
     }
 
     getClaimsPerPage(claimPageName: string){
-        let claims = new Object();
+        const claims = new Object();
         const foundClaim = _.find(this.claims, claim => claim.name === claimPageName)
         if(foundClaim){
             _.forEach(foundClaim.claims, claim => {

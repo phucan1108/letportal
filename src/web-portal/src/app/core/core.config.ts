@@ -25,7 +25,7 @@ export const TRANSLATOR_METHODS = [
 
 /**
  * Declare all listen events for page render
- * Class must be declared with annotation @ControlEvent and impletement ControlEventExecution 
+ * Class must be declared with annotation @ControlEvent and impletement ControlEventExecution
  */
 export const CONTROL_EVENTS: any[] = [
     ChangeControlEvent,

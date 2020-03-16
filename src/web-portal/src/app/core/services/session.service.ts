@@ -52,7 +52,7 @@ export class SessionService{
     }
 
     getRememberMe(){
-        let rememberMe = localStorage.getItem('rememberMe')
+        const rememberMe = localStorage.getItem('rememberMe')
         if(rememberMe){
             return rememberMe.toLowerCase() == 'true'
         }

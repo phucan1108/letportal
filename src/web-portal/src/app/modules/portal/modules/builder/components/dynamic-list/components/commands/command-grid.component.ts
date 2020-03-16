@@ -37,12 +37,12 @@ export class CommandGridComponent implements OnInit {
         private cd: ChangeDetectorRef,
         private breakpointObserver: BreakpointObserver,
         private logger: NGXLogger
-    ) { 
+    ) {
         this.breakpointObserver.observe([
             Breakpoints.HandsetPortrait,
             Breakpoints.HandsetLandscape
         ]).subscribe(result => {
-            if (result.matches) {                
+            if (result.matches) {
                 this.isSmallDevice = true
                 this.logger.debug('Small device', this.isSmallDevice)
             }
@@ -72,9 +72,9 @@ export class CommandGridComponent implements OnInit {
     }
 
     deleteSelectedCommands() {
-        const _title = "Delete Commands"
-        const _description = "Are you sure to delete all selected commands?"
-        const _waitDesciption = "Waiting..."
+        const _title = 'Delete Commands'
+        const _description = 'Are you sure to delete all selected commands?'
+        const _waitDesciption = 'Waiting...'
         const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption, MessageType.Delete);
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
@@ -120,7 +120,7 @@ export class CommandGridComponent implements OnInit {
                     completeMessage: Constants.COMPLETE_DEFAULT_MESSAGE,
                     failedMessage: Constants.FAILED_DEFAULT_MESSAGE
                 },
-            },            
+            },
             commandPositionType: CommandPositionType.InList,
             allowRefreshList: false
         }
@@ -152,7 +152,7 @@ export class CommandGridComponent implements OnInit {
             return elem.name !== deletingCommand.name
         })
         this.refreshCommandTable();
-        this.shortcutUtil.toastMessage("Delete command successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage('Delete command successfully!', ToastType.Success);
     }
 
     setCommands(commands: CommandButtonInList[]) {
@@ -169,9 +169,9 @@ export class CommandGridComponent implements OnInit {
     translateCommadnPositionType(commandPositionType: CommandPositionType) {
         switch (commandPositionType) {
             case CommandPositionType.InList:
-                return "In List"
+                return 'In List'
             case CommandPositionType.OutList:
-                return "Outside"
+                return 'Outside'
         }
     }
     translateCommandType(commandType: ActionType) {

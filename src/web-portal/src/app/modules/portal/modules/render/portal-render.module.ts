@@ -41,7 +41,7 @@ import {
 	MAT_DIALOG_DATA,
 	MAT_DATE_FORMATS
 } from '@angular/material';
-import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from "@angular/material-moment-adapter";
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { DividedColumnsSectionComponent } from './components/standard/components/divided-columns-section.component';
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
@@ -89,7 +89,7 @@ export const FULL_MONTH_FORMATS = {
 	  monthYearA11yLabel: 'MMMM YYYY',
 	},
   };
-  
+
 
 @NgModule({
 	imports: [
@@ -140,10 +140,10 @@ export const FULL_MONTH_FORMATS = {
                 syntax: true,
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    [{ 'script': 'sub' }, { 'script': 'super' }],
-                    [{ 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ script: 'sub' }, { script: 'super' }],
+                    [{ indent: '-1' }, { indent: '+1' }],
                     ['link', 'image']
                 ]
             }

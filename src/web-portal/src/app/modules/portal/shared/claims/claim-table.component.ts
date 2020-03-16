@@ -26,12 +26,12 @@ export class ClaimTableComponent implements OnInit {
         public dialog: MatDialog,
     ) { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
 
     }
 
     addClaim(){
-        let claim: PortalClaim = {
+        const claim: PortalClaim = {
             name: '',
             displayName: '',
             claimValueType: ClaimValueType.Boolean
@@ -39,7 +39,7 @@ export class ClaimTableComponent implements OnInit {
 
         const dialogRef = this.dialog.open(ClaimDialogComponent, {
             data: {
-                claim: claim
+                claim
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -53,7 +53,7 @@ export class ClaimTableComponent implements OnInit {
     editClaim(claim: PortalClaim){
         const dialogRef = this.dialog.open(ClaimDialogComponent, {
             data: {
-                claim: claim
+                claim
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -69,7 +69,7 @@ export class ClaimTableComponent implements OnInit {
         this.claims = _.filter(this.claims, (elem) => {
             return elem.name !== claim.name
         })
-        this.shortcutUtil.toastMessage("Delete claim successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage('Delete claim successfully!', ToastType.Success);
 
         this.refreshTable()
     }

@@ -12,7 +12,7 @@ import StringUtils from 'app/core/utils/string-util';
 export class FilterNumberComponent implements OnInit {
     @Input()
     filter: ExtendedChartFilter
-    
+
     @Input()
     formGroup: FormGroup
 
@@ -26,12 +26,12 @@ export class FilterNumberComponent implements OnInit {
         private fb: FormBuilder
     ) { }
 
-    ngOnInit() { 
+    ngOnInit() {
         if(this.filter.name.indexOf('.') > 0){
             this.controlName = StringUtils.replaceAllOccurences(this.filter.name, '.','')
         }
         else{
-            this.controlName = this.filter.name 
+            this.controlName = this.filter.name
         }
         this.optionsList = of(this.filter.datasource)
     }

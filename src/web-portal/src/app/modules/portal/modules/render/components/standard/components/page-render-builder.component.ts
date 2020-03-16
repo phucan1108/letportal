@@ -49,7 +49,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
             Breakpoints.HandsetPortrait,
             Breakpoints.HandsetLandscape
         ]).subscribe(result => {
-            if (result.matches) {                
+            if (result.matches) {
                 this.isSmallDevice = true
                 this.cd.markForCheck()
             }
@@ -72,7 +72,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
             data => {
                 this.data = data
                 _.forEach(this.actionCommands, (command: ExtendedPageButton) => {
-                    command.isHidden = this.pageService.evaluatedExpression(command.allowHidden)                    
+                    command.isHidden = this.pageService.evaluatedExpression(command.allowHidden)
                 })
                 this.readyToRenderButtons = true
                 sub$.unsubscribe()
@@ -94,7 +94,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                             this.counterBuildSectionData = this.page.builder.sections.length
                             this.store.dispatch(new BeginRenderingPageSectionsAction(this.prepareRenderingPageSectionsStates(this.page)))
                             break
-                        case RenderedPageSectionAction:                            
+                        case RenderedPageSectionAction:
                             this.counterRenderedSection--
                             if (this.counterRenderedSection === 0) {
                                 const timer$ = of(true).pipe(

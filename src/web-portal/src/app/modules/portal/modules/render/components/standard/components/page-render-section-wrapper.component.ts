@@ -14,8 +14,13 @@ import { PageStateModel } from 'stores/pages/page.state';
     templateUrl: './page-render-section-wrapper.component.html'
 })
 export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
-    ngOnDestroy(): void {
-        
+    constructor(
+        private chartsClient: ChartsClient,
+        private store: Store,
+        private standardClient: StandardComponentClient,
+        private dynamicsClient: DynamicListClient,
+        private logger: NGXLogger
+    ) {
     }
     @Input()
     pageSection: ExtendedPageSection
@@ -27,13 +32,8 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
     subcription$: Subscription
 
     sectionClass = 'col-lg-12'
-    constructor(
-        private chartsClient: ChartsClient,
-        private store: Store,
-        private standardClient: StandardComponentClient,
-        private dynamicsClient: DynamicListClient,
-        private logger: NGXLogger
-    ) {
+    ngOnDestroy(): void {
+
     }
 
     ngOnInit(): void {
@@ -46,7 +46,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
         switch (this.pageSection.constructionType) {
             case SectionContructionType.Standard:
                 this.standardClient.getOneForRender(this.pageSection.componentId).pipe(
-                    //delay(5000),
+                    // delay(5000),
                     tap(
                         standard => {
                             this.sectionClass = this.getSectionClass(standard.layoutType)
@@ -69,10 +69,10 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                 break
             case SectionContructionType.DynamicList:
                 this.dynamicsClient.getOne(this.pageSection.componentId).pipe(
-                    //delay(5000),
+                    // delay(5000),
                     tap(
-                        dynamicList => {  
-                            this.sectionClass = this.getSectionClass(dynamicList.layoutType)                          
+                        dynamicList => {
+                            this.sectionClass = this.getSectionClass(dynamicList.layoutType)
                             this.pageSection.relatedDynamicList = dynamicList
                             this.pageSection.isLoaded = true
                             this.readyToRender = true

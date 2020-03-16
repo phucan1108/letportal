@@ -20,7 +20,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     templateUrl: './dynamic-list.grid.component.html',
     styleUrls: ['./dynamic-list.grid.component.scss']
 })
-export class DynamicListGridComponent implements OnInit, OnDestroy {    
+export class DynamicListGridComponent implements OnInit, OnDestroy {
 
     @ViewChild('matTable', { static: false })
     private matTable: MatTable<any>;
@@ -104,7 +104,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     }
 
     private constructGrid() {
-        // Extract some parts form Dynamic List 
+        // Extract some parts form Dynamic List
         let counterInDetailMode = 0
         _.forEach(this.dynamicList.columnsList.columndDefs, colDef => {
             this.headers.push({
@@ -119,7 +119,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         })
 
         // Fetch all ready datasources and ready for filters
-        let filters: ExtendedFilterField[] = []
+        const filters: ExtendedFilterField[] = []
         let counter = this.headers.length
         let needToWaitDatasource = false
         _.forEach(this.headers, (colDef: ExtendedColDef) => {
@@ -130,14 +130,14 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                     .executeDatasourceOptions(colDef.datasourceOptions, null)
                     .subscribe(
                         res => {
-                            let datasource = {
+                            const datasource = {
                                 data: ObjectUtils.isArray(res) ? res : [res],
                                 datasourceId: Guid.create().toString()
                             }
                             this.datasourceCache.push(datasource)
                             colDef.datasourceId = datasource.datasourceId
 
-                            let filter: ExtendedFilterField = {
+                            const filter: ExtendedFilterField = {
                                 name: colDef.name,
                                 displayName: colDef.displayName,
                                 allowInAdvancedMode: colDef.searchOptions.allowInAdvancedMode,
@@ -158,7 +158,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                     )
             }
             else {
-                let filter: ExtendedFilterField = {
+                const filter: ExtendedFilterField = {
                     name: colDef.name,
                     displayName: colDef.displayName,
                     allowInAdvancedMode: colDef.searchOptions.allowInAdvancedMode,
@@ -181,19 +181,19 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         });
         if(foundSort){
             this.defaultSortColumn = foundSort.name
-        }        
+        }
 
         if(this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0){
             this.commandsInList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
                 return element.commandPositionType === CommandPositionType.InList
             })
-        }        
+        }
 
         _.forEach(this.headers, (element) => {
             if (!element.isHidden && !element.inDetailMode)
                 this.displayedColumns.push(element.name)
         })
-        // Check we have any command in list        
+        // Check we have any command in list
         if (this.commandsInList.length > 0 || this.hasDetailCols) {
             this.displayedColumns.push('actions')
         }
@@ -201,7 +201,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         if(!needToWaitDatasource){
             this.initFetchData()
         }
-        
+
     }
 
     openDialogData(data) {
@@ -228,7 +228,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     }
 
     onSubmittingSearch($event) {
-        let fetchQuery = $event as DynamicListFetchDataModel
+        const fetchQuery = $event as DynamicListFetchDataModel
         this.fetchDataQuery = this.getFetchDataQuery();
         this.fetchDataQuery.filledParameterOptions = fetchQuery.filledParameterOptions;
         this.fetchDataQuery.filterGroupOptions = fetchQuery.filterGroupOptions;
@@ -284,7 +284,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                 sortableFields: [ ]
             }
         }
-        
+
 
         return this.fetchDataQuery
     }
@@ -295,7 +295,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
             .pipe(
                 tap(res => {
                     this.logger.debug('Reponse from query', res)
-                    let readyData = res.data;
+                    const readyData = res.data;
                     this.logger.debug('table data', readyData)
                     this.dataSource$.next(readyData)
                     if (!this.isAlreadyFetchedTotal) {
@@ -313,7 +313,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     }
 
     private combineJsonStringToObject(arrayJsonStrings: Array<string>) {
-        let objects: Array<any> = new Array<any>()
+        const objects: Array<any> = new Array<any>()
 
         _.forEach(arrayJsonStrings, (json) => {
             objects.push(JSON.parse(json))
@@ -324,9 +324,9 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
 
     private translateData(renderingData: any, currentColumn: ExtendedColDef) {
         if (currentColumn.name === 'id' || currentColumn.name === '_id') {
-            let checkData = renderingData['id']
+            const checkData = renderingData.id
             if (!checkData) {
-                return renderingData['_id']
+                return renderingData._id
             }
             else {
                 return checkData
@@ -334,7 +334,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         }
         let displayData = null
         if (currentColumn.name.indexOf('.') > 0) {
-            let extractData = new Function('data', `return data.${currentColumn.name}`)
+            const extractData = new Function('data', `return data.${currentColumn.name}`)
             displayData = extractData(renderingData)
         }
         else {
@@ -370,9 +370,9 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
 
     private getBooleanValue(renderingData: any, currentColumn: ExtendedColDef) {
         if (currentColumn.name === 'id' || currentColumn.name === '_id') {
-            let checkData = renderingData['id']
+            const checkData = renderingData.id
             if (!checkData) {
-                return renderingData['_id']
+                return renderingData._id
             }
             else {
                 return checkData
@@ -380,16 +380,16 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         }
         let displayData = null
         if (currentColumn.name.indexOf('.') > 0) {
-            let extractData = new Function('data', `return data.${currentColumn.name}`)
+            const extractData = new Function('data', `return data.${currentColumn.name}`)
             displayData = extractData(renderingData)
         }
         else {
             displayData = renderingData[currentColumn.name]
         }
         switch (displayData.toString().toLowerCase()) {
-            case "true":
-            case "1":
-            case "yes":
+            case 'true':
+            case '1':
+            case 'yes':
                 return true;
             default:
                 return false;
@@ -397,17 +397,17 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     }
 
     getClassForChip(renderingData: any, currentColumn: ExtendedColDef) {
-        let displayData = renderingData[currentColumn.name]
+        const displayData = renderingData[currentColumn.name]
         const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-        let foundIndex = _.findIndex(datasource.data, (elem: any) => elem.value.toString() === displayData)
+        const foundIndex = _.findIndex(datasource.data, (elem: any) => elem.value.toString() === displayData)
         return 'mat-chip-' + (foundIndex % 4)
     }
 
     private renderInnerHtml(renderingData: any, currentColumn: ExtendedColDef) {
         if (currentColumn.name === 'id' || currentColumn.name === '_id') {
-            let checkData = renderingData['id']
+            const checkData = renderingData.id
             if (!checkData) {
-                return renderingData['_id']
+                return renderingData._id
             }
             else {
                 return checkData
@@ -415,7 +415,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         }
         let displayData = null
         if (currentColumn.name.indexOf('.') > 0) {
-            let extractData = new Function('data', `return data.${currentColumn.name}`)
+            const extractData = new Function('data', `return data.${currentColumn.name}`)
             displayData = extractData(renderingData)
         }
         else {

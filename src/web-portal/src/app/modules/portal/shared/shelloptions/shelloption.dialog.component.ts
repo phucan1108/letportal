@@ -32,7 +32,7 @@ export class ShellOptionDialogComponent implements OnInit {
 
     save() {
         if (this.shellOptForm.valid) {
-            let formValues = this.shellOptForm.value
+            const formValues = this.shellOptForm.value
             const combine: ExtendedShellOption = {
                 key: formValues.key,
                 value: formValues.value,
@@ -49,7 +49,7 @@ export class ShellOptionDialogComponent implements OnInit {
     }
 
     private getKeys(): string[]{
-        let keys: string[] = []
+        const keys: string[] = []
         _.forEach(this.availableShellOptions, opt => {
             keys.push(opt.key)
         })

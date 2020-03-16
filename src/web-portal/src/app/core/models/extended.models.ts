@@ -46,7 +46,7 @@ export interface ExtendedControlValidator{
 }
 
 export class DynamicFormOptions{
-    
+
 }
 
 export interface ExtendedPageControlEvent extends PageControlEvent {
