@@ -171,11 +171,18 @@ namespace LetPortal.Core.Persistences
             }
         }
 
-        public Task<IEnumerable<T>> GetAllByIdsAsync(IEnumerable<string> ids)
+        public Task<IEnumerable<T>> GetAllByIdsAsync(
+            IEnumerable<string> ids,
+            Expression<Func<T, bool>> expression = null,
+            bool isRequiredDiscriminator = false)
         {
             if (ids != null || ids.Any())
             {
                 var entities = _context.Set<T>().Where(a => ids.Contains(a.Id));
+                if(expression != null)
+                {
+                    entities = entities.Where(expression);
+                }
                 return Task.FromResult(entities.AsEnumerable());
             }
             return null;

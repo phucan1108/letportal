@@ -56,6 +56,14 @@ namespace LetPortal.WebApis.Controllers
             return Ok(await _standardRepository.GetShortStandards(keyWord));
         }
 
+        [HttpGet("short-array-standards")]
+        [ProducesResponseType(typeof(IEnumerable<ShortEntityModel>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        public async Task<IActionResult> GetSortArrayStandards([FromQuery] string keyWord = null)
+        {
+            return Ok(await _standardRepository.GetShortArrayStandards(keyWord));
+        }
+
         [HttpPost("")]
         [ProducesResponseType(typeof(string), 200)]
         [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
@@ -107,13 +115,43 @@ namespace LetPortal.WebApis.Controllers
         {
             if (!string.IsNullOrEmpty(ids))
             {
-                var result = await _standardRepository.GetAllByIdsAsync(ids.Split(";").ToList());
+                var result = await _standardRepository
+                    .GetAllByIdsAsync(
+                        ids.Split(";").ToList(),
+                        expression: a => a.AllowArrayData == false,
+                        isRequiredDiscriminator: true);
                 _logger.Info("Get bulk standard components: {@result}", result);
                 return Ok(result);
             }
             else
             {
-                var result = await _standardRepository.GetAllAsync(isRequiredDiscriminator: true);
+                var result = await _standardRepository
+                                .GetAllAsync(
+                                    expression: a => a.AllowArrayData == false,
+                                    isRequiredDiscriminator: true);
+                _logger.Info("Get bulk standard components: {@result}", result);
+                return Ok(result);
+            }
+        }
+
+        [HttpGet("bulk-array")]
+        [ProducesResponseType(typeof(List<StandardComponent>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        public async Task<IActionResult> GetArrayManys([FromQuery] string ids)
+        {
+            if (!string.IsNullOrEmpty(ids))
+            {
+                var result = await _standardRepository
+                                .GetAllByIdsAsync(
+                                    ids.Split(";").ToList(),
+                                    expression: a => a.AllowArrayData == true,
+                                    isRequiredDiscriminator: true);
+                _logger.Info("Get bulk standard components: {@result}", result);
+                return Ok(result);
+            }
+            else
+            {
+                var result = await _standardRepository.GetAllAsync(a => a.AllowArrayData == true, isRequiredDiscriminator: true);
                 _logger.Info("Get bulk standard components: {@result}", result);
                 return Ok(result);
             }

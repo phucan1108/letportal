@@ -21,11 +21,13 @@ export class SectionDialogComponent implements OnInit {
     dynamicLists$: Observable<DynamicList[]>;
     standards$: Observable<StandardComponent[]>;
     charts$: Observable<Chart[]>;
+    arrayStandards$: Observable<StandardComponent[]>;
     isEditMode = false;
     availableSectionNames: string[] = []
     _sectionLayouts = StaticResources.sectionLayoutTypes()
     _constructionTypes = StaticResources.constructionTypes()
     standards: StandardComponent[]
+    arrayStandards: StandardComponent[]
     dynamicLists: DynamicList[]
     charts: Chart[]
     constructionType = SectionContructionType
@@ -45,12 +47,16 @@ export class SectionDialogComponent implements OnInit {
         this.isEditMode = this.currentExtendedFormSection.name ? true : false
         this.initialSectionForm()
         this.populatedFormValues()
-        this.dynamicLists$ = this.dyanmicListsClient.getAll();
-        this.standards$ = this.standardsClient.getManys('');
-        this.charts$ = this.chartsClient.getMany();
-
+        this.dynamicLists$ = this.dyanmicListsClient.getAll()
+        this.standards$ = this.standardsClient.getManys('')
+        this.charts$ = this.chartsClient.getMany()     
+        this.arrayStandards$ = this.standardsClient.getArrayManys('')
         this.standards$.subscribe(standards => {
             this.standards = standards
+        })
+
+        this.arrayStandards$.subscribe(standards => {
+            this.arrayStandards = standards
         })
 
         this.dynamicLists$.subscribe(dynamicLists => {
@@ -84,6 +90,10 @@ export class SectionDialogComponent implements OnInit {
                     const selectedStandard = this.standards.find(a => a.id === newValue)
                     this.sectionForm.get('displayName').setValue(selectedStandard.displayName)
                     break
+                case SectionContructionType.Array:
+                    const selectedArrayStandard = this.arrayStandards.find(a => a.id === newValue)
+                    this.sectionForm.get('displayName').setValue(selectedArrayStandard.displayName)
+                    break
                 case SectionContructionType.Chart:
                     const selectedChart = this.charts.find(a => a.id === newValue)
                     this.sectionForm.get('displayName').setValue(selectedChart.displayName)
@@ -107,9 +117,26 @@ export class SectionDialogComponent implements OnInit {
             order: this.currentExtendedFormSection.order,
             overrideOptions: this.currentExtendedFormSection.overrideOptions,
             sectionDatasource: this.currentExtendedFormSection.sectionDatasource,
-            relatedDynamicList: !!formValues.componentId ? _.find(this.dynamicLists, dynamicList => dynamicList.id === formValues.componentId) : this.currentExtendedFormSection.relatedDynamicList,
-            relatedStandard: !!formValues.componentId ? _.find(this.standards, standard => standard.id === formValues.componentId) : this.currentExtendedFormSection.relatedStandard,
-            relatedChart: !!formValues.componentId ? _.find(this.charts, chart => chart.id === formValues.componentId) : this.currentExtendedFormSection.relatedChart,
+            relatedDynamicList: !!formValues.componentId 
+                        ? 
+                        _.find(this.dynamicLists, 
+                            dynamicList => dynamicList.id === formValues.componentId) 
+                            : this.currentExtendedFormSection.relatedDynamicList,
+            relatedStandard: !!formValues.componentId 
+                        ?
+                         _.find(this.standards, 
+                            standard => standard.id === formValues.componentId) 
+                            : this.currentExtendedFormSection.relatedStandard,
+            relatedChart: !!formValues.componentId 
+                        ? 
+                        _.find(this.charts, 
+                            chart => chart.id === formValues.componentId) 
+                            : this.currentExtendedFormSection.relatedChart,
+            relatedArrayStandard: !!formValues.componentId
+                        ? 
+                        _.find(this.arrayStandards,
+                            standard => standard.id === formValues.componentId)
+                            : this.currentExtendedFormSection.relatedArrayStandard,
             isLoaded: false,
             isBroken: false
         }

@@ -66,6 +66,25 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                 ).subscribe()
                 break
             case SectionContructionType.Array:
+                this.standardClient.getOneForRender(this.pageSection.componentId).pipe(
+                    // delay(5000),
+                    tap(
+                        standard => {
+                            this.sectionClass = this.getSectionClass(standard.layoutType)
+                            this.pageSection.relatedArrayStandard = standard
+                            this.pageSection.isLoaded = true
+                            this.readyToRender = true
+                            this.store.dispatch(new RenderedPageSectionAction({
+                                sectionClass: this.sectionClass,
+                                sectionName: this.pageSection.name,
+                                state: RenderingSectionState.Complete
+                            }))
+                        },
+                        () => {
+
+                        }
+                    )
+                ).subscribe()
                 break
             case SectionContructionType.DynamicList:
                 this.dynamicsClient.getOne(this.pageSection.componentId).pipe(

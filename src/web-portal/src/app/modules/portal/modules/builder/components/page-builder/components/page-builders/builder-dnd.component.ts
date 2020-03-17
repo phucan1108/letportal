@@ -78,6 +78,19 @@ export class BuilderDnDComponent implements OnInit {
                                                 )
                                             ).subscribe()
                                             break
+                                        case SectionContructionType.Array:
+                                            this.standardsClient.getOne(section.componentId).pipe(
+                                                tap(
+                                                    standard => {
+                                                        section.relatedArrayStandard = standard
+                                                    },
+                                                    err => {
+                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        section.isBroken = true
+                                                    }
+                                                )
+                                            ).subscribe()
+                                            break
                                         case SectionContructionType.DynamicList:
                                             this.dynamicListsClient.getOne(section.componentId).pipe(
                                                 tap(
@@ -168,6 +181,7 @@ export class BuilderDnDComponent implements OnInit {
             relatedStandard: null,
             relatedDynamicList: null,
             relatedChart: null,
+            relatedArrayStandard: null,
             isLoaded: false,
             isBroken: false
         }

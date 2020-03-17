@@ -51,7 +51,6 @@ import { StandardPopulationComponent } from './components/standard/standard-popu
 import { StandardControlsListComponent } from './components/page-builder/components/page-builders/standard-controls-list.component';
 import { HttpOptionsComponent } from '../../shared/httpoptions/httpoptions.component';
 import { PageDatasourceGridComponent } from './components/page-builder/components/page-datasources/page-datasource.grid.component';
-import { SectionTemplate } from '../render/components/standard/components/section-template.directive';
 import { PageRouteComponent } from './components/page-builder/components/page-buttons/page-route.component';
 import { DatabaseOptionsComponent } from '../../shared/databaseoptions/databaseoptions.component';
 import { RouterModule } from '@angular/router';
@@ -118,7 +117,6 @@ import { CoreModule } from 'app/core/core.module';
 		HttpOptionsComponent,
 		PageDatasourceGridComponent,
 		PageDatasourceDialogComponent,
-		SectionTemplate,
 		CommandOptionsComponent,
 		ShellOptionDialogComponent,
 		PageButtonRouteDialogComponent,

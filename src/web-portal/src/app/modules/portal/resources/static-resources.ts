@@ -83,10 +83,10 @@ export class StaticResources {
 
     public static constructionTypes() {
         return [
-            { name: 'Standard', value: SectionContructionType.Standard },
+            { name: 'Standard', value: SectionContructionType.Standard },            
+            { name: 'Array', value: SectionContructionType.Array },
             { name: 'Dynamic List', value: SectionContructionType.DynamicList },
             { name: 'Chart', value: SectionContructionType.Chart }
-            // { name: 'Array', value: SectionContructionType.Standard }
         ]
     }
 

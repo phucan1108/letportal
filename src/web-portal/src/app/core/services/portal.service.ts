@@ -3809,9 +3809,11 @@ export interface IStandardComponentClient {
     delete(id: string | null): Observable<FileResponse>;
     getOneForRender(id: string | null): Observable<StandardComponent>;
     getSortStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
+    getSortArrayStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     createOne(standardComponent: StandardComponent): Observable<string>;
     createBulk(standardComponents: StandardComponent[]): Observable<FileResponse>;
     getManys(ids: string | null | undefined): Observable<StandardComponent[]>;
+    getArrayManys(ids: string | null | undefined): Observable<StandardComponent[]>;
     checkExist(name: string | null): Observable<boolean>;
     clone(model: CloneModel): Observable<FileResponse>;
 }
@@ -4078,6 +4080,55 @@ export class StandardComponentClient implements IStandardComponentClient {
         return _observableOf<ShortEntityModel[]>(<any>null);
     }
 
+    getSortArrayStandards(keyWord: string | null | undefined): Observable<ShortEntityModel[]> {
+        let url_ = this.baseUrl + "/api/standards/short-array-standards?";
+        if (keyWord !== undefined)
+            url_ += "keyWord=" + encodeURIComponent("" + keyWord) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSortArrayStandards(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSortArrayStandards(<any>response_);
+                } catch (e) {
+                    return <Observable<ShortEntityModel[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ShortEntityModel[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSortArrayStandards(response: HttpResponseBase): Observable<ShortEntityModel[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <ShortEntityModel[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ShortEntityModel[]>(<any>null);
+    }
+
     createOne(standardComponent: StandardComponent): Observable<string> {
         let url_ = this.baseUrl + "/api/standards";
         url_ = url_.replace(/[?&]$/, "");
@@ -4208,6 +4259,55 @@ export class StandardComponentClient implements IStandardComponentClient {
     }
 
     protected processGetManys(response: HttpResponseBase): Observable<StandardComponent[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <StandardComponent[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StandardComponent[]>(<any>null);
+    }
+
+    getArrayManys(ids: string | null | undefined): Observable<StandardComponent[]> {
+        let url_ = this.baseUrl + "/api/standards/bulk-array?";
+        if (ids !== undefined)
+            url_ += "ids=" + encodeURIComponent("" + ids) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetArrayManys(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetArrayManys(<any>response_);
+                } catch (e) {
+                    return <Observable<StandardComponent[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StandardComponent[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetArrayManys(response: HttpResponseBase): Observable<StandardComponent[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 

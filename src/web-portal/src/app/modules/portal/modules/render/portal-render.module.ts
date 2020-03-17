@@ -43,15 +43,15 @@ import {
 } from '@angular/material';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { DividedColumnsSectionComponent } from './components/standard/components/divided-columns-section.component';
+import { DividedColumnsSectionComponent } from './components/standard/divided-columns-section.component';
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { PageRenderPage } from './pages/page-render.page';
 import { PageRenderResolve } from './resolve/page.render.resolve';
-import { ActionCommandsSectionComponent } from './components/standard/components/action-commands-section.component';
+import { ActionCommandsSectionComponent } from './components/commands/action-commands-section.component';
 import { PortalRenderRoutingModule } from './portal-render-routing.module';
 import { MomentumTableModule } from 'momentum-table';
-import { PageRenderSectionWrapperComponent } from './components/standard/components/page-render-section-wrapper.component';
-import { PageRenderBuilderComponent } from './components/standard/components/page-render-builder.component';
+import { PageRenderSectionWrapperComponent } from './components/warpper/page-render-section-wrapper.component';
+import { PageRenderBuilderComponent } from './components/warpper/page-render-builder.component';
 import { PortalRenderPageComponent } from './portal-render-page.component';
 import { FileUploaderComponent } from './controls/file-uploader.component';
 import { IconPickerComponent } from './controls/icon-picker.component';
@@ -77,6 +77,8 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CoreModule } from 'app/core/core.module';
 import { AutocompleteMultipleComponent } from './controls/autocomplete-multiple.component';
 import { GeneralControlComponent } from './controls/general-control.component';
+import { StandardSharedService } from './components/standard/services/standard-shared.service';
+import { StandardArrayRenderComponent } from './components/standard/standard-array-render.component';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -159,6 +161,7 @@ export const FULL_MONTH_FORMATS = {
 	providers: [
 		MatIconRegistry,
 		PageRenderResolve,
+		StandardSharedService,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
 		{provide: MAT_DATE_FORMATS, useValue: FULL_MONTH_FORMATS}
@@ -171,6 +174,7 @@ export const FULL_MONTH_FORMATS = {
 		PageRenderSectionWrapperComponent,
 		PageRenderPage,
 		PortalRenderPageComponent,
+		StandardArrayRenderComponent,
 		// Controls
 		GeneralControlComponent,
 		FileUploaderComponent,
