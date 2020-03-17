@@ -126,12 +126,13 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             isLineBreaker: false
         }
 
-        const filteredControls = _.filter<PageRenderedControl<DefaultControlOptions>>(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[], (control: PageRenderedControl<DefaultControlOptions>) => {
-            control.defaultOptions = PageUtils.getControlOptions<DefaultControlOptions>(control.options)
-            control.defaultOptions.checkedHidden = this.pageService.evaluatedExpression(control.defaultOptions.hidden)
-            control.defaultOptions.checkDisabled = this.pageService.evaluatedExpression(control.defaultOptions.disabled)
-            return !control.defaultOptions.checkedHidden
-        })
+
+
+        const filteredControls = this.standardSharedService
+            .buildControlOptions(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[])
+            .filter(control => {
+                return !control.defaultOptions.checkedHidden
+            })
         this.controls = filteredControls
         this.logger.debug('Rendering controls', this.controls)
         let counterControls = 0

@@ -66,6 +66,7 @@ export class ControlDialogComponent implements OnInit {
 
     ngOnInit(): void {
         this.currentExtendedFormControl = this.data.control
+        this.logger.debug('Passing control', this.currentExtendedFormControl)
         this.names = this.data.names
         this.isEditMode = this.currentExtendedFormControl.name ? true : false
         this.shellOptions = this.generateShellOptions(this.currentExtendedFormControl, true)

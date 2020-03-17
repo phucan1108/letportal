@@ -315,6 +315,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     editControl(control: ExtendedPageControl) {
+        this.logger.debug('Editing control', control)
         this.isEditControl = true
         const dialogRef = this.dialog.open(ControlDialogComponent, {
             disableClose: true,

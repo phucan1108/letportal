@@ -119,6 +119,7 @@ export class StandardPagePage implements OnInit {
         this.standardComponent.allowArrayData = formValues.allowArrayData
         this.standardComponent.controls = this.controls
         this.standardComponent.layoutType = parseInt(formValues.layoutType)
+        this.standardComponent.options = this.shellOptions
     }
 
     onPopulatedControls($event: ExtendedPageControl[]) {

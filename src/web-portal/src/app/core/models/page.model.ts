@@ -2,6 +2,7 @@ import { Page, PageControl, ShellOption } from 'services/portal.service';
 import { AuthUser } from '../security/auth.model';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import * as _ from 'lodash';
+import { ObjectUtils } from '../utils/object-util';
 
 export interface PageResponse{
     page: Page,
@@ -41,6 +42,32 @@ export interface PageSectionBoundData{
     name: string,
     data: any,
     isKeptDataName: boolean
+}
+
+export interface PageSectionStandardArrayBoundData{
+    name: string,
+    data: any,
+    isKeptDataName: boolean
+}
+
+export interface AddOneItemOnStandardArray{
+    sectionName: string,
+    isKeptDataName: boolean,
+    newData: any
+}
+
+export interface RemoveOneItemOnStandardArray{
+    sectionName: string,
+    isKeptDataName: boolean,
+    identityKey: string,
+    removeItemKey: string
+}
+
+export interface UpdateOneItemOnStandardArray{
+    sectionName: string,
+    isKeptDataName: boolean,
+    identityKey: string,
+    updatedData: any
 }
 
 export interface TriggeredControlEvent{
@@ -166,13 +193,13 @@ export class ControlOptions{
     bindname: string
 
     public static getDefaultControlOptions(control: PageControl){
-        const labelOpt = ControlOptions.LabelOption
+        const labelOpt = ObjectUtils.clone(ControlOptions.LabelOption)
         labelOpt.value = control.name
-        const placeholderOpt = ControlOptions.PlaceholderOption
-        const disabledOpt = ControlOptions.DisabledOption
-        const hiddenOpt = ControlOptions.HiddenOption
+        const placeholderOpt = ObjectUtils.clone(ControlOptions.PlaceholderOption)
+        const disabledOpt = ObjectUtils.clone(ControlOptions.DisabledOption)
+        const hiddenOpt = ObjectUtils.clone(ControlOptions.HiddenOption)
         hiddenOpt.value = (control.name === 'id' || control.name === '_id' || (control.name.toLowerCase().indexOf('id') > -1)) ? 'true' : 'false'
-        const bindnameOpt = ControlOptions.BindnameOption
+        const bindnameOpt = ObjectUtils.clone(ControlOptions.BindnameOption)
         bindnameOpt.value = control.name
         return [
             labelOpt,

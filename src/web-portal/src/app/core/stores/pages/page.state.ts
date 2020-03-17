@@ -23,7 +23,6 @@ export interface PageStateModel {
     clickingButton: PageButton
     options: any
     queryparams: any
-    pageSectionsData: PageSectionBoundData[]
     eventsList: PageControlActionEvent[]
     lastEvent: PageControlActionEvent
     filterState: any
@@ -42,7 +41,6 @@ export interface PageStateModel {
         clickingButton: null,
         options: null,
         queryparams: null,
-        pageSectionsData: [],
         eventsList: [],
         lastEvent: null,
         filterState: null
@@ -114,29 +112,40 @@ export class PageState {
             }
         }
         if (sectionsMap && sectionsMap.length > 0) {
-            const clonePageSectionsData = ObjectUtils.clone(state.pageSectionsData)
-            clonePageSectionsData.push(pageSectionBoundData)
 
             let cloneSectionsMap = ObjectUtils.clone(state.sectionsMap)
             cloneSectionsMap = ArrayUtils.appendItemsDistinct(cloneSectionsMap, sectionsMap, 'controlFullName')
             ctx.setState({
                 ...state,
                 sectionsMap: cloneSectionsMap,
-                pageSectionsData: clonePageSectionsData,
                 data: tempData,
                 filterState: PageActions.AddSectionBoundData
             })
         }
         else {
-            const clonePageSectionsData = ObjectUtils.clone(state.pageSectionsData)
-            clonePageSectionsData.push(pageSectionBoundData)
             ctx.setState({
                 ...state,
-                pageSectionsData: clonePageSectionsData,
                 data: tempData,
                 filterState: PageActions.AddSectionBoundData
             })
         }
+    }
+    @Action(PageActions.AddSectionBoundDataForStandardArray)
+    public addSectionDataForStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.AddSectionBoundDataForStandardArray) {
+        const state = ctx.getState()
+        let tempData = state.data ? ObjectUtils.clone(state.data) : new Object()
+
+        tempData[event.name] = {
+            fresh: event.data,
+            inserts: [],
+            removes: [],
+            updates: []
+        }
+        ctx.setState({
+            ...state,
+            data: tempData,
+            filterState: PageActions.AddSectionBoundDataForStandardArray
+        })
     }
 
     @Action(PageActions.EndBuildingBoundDataComplete)

@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, FormControl, ValidatorFn, Validators, AsyncValidatorFn } from '@angular/forms';
 import { PageLoadedDatasource, MapDataControl, PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
-import { StandardComponent, ControlType, PageControlValidator, ValidatorType, PageControlAsyncValidator } from 'services/portal.service';
+import { StandardComponent, ControlType, PageControlValidator, ValidatorType, PageControlAsyncValidator, PageControl } from 'services/portal.service';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import * as _ from 'lodash';
 import { CustomValidators } from 'ngx-custom-validators';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { PageService } from 'services/page.service';
 import { CustomHttpService } from 'services/customhttp.service';
+import PageUtils from 'app/core/utils/page-util';
 
 /**
  * This service is used to share common logic between Standard and Array Standard
@@ -21,6 +22,15 @@ export class StandardSharedService {
         private customHttpService: CustomHttpService
     ) { }
 
+    public buildControlOptions(controls: PageRenderedControl<DefaultControlOptions>[]): PageRenderedControl<DefaultControlOptions>[]{
+        controls.forEach(control => {
+            control.defaultOptions = PageUtils.getControlOptions<DefaultControlOptions>(control.options)
+            control.defaultOptions.checkedHidden = this.pageService.evaluatedExpression(control.defaultOptions.hidden)
+            control.defaultOptions.checkDisabled = this.pageService.evaluatedExpression(control.defaultOptions.disabled)
+        })
+        return controls
+    }
+    
     public buildFormGroups(
         sectionName: string,
         datasourceName: string,
@@ -128,7 +138,6 @@ export class StandardSharedService {
         // When a 'data' is bind name, so we need to keep a default structure of data. Ex: data.id, data.name
         // If bind name isn't 'data', we need to add sectioname to binding data.Ex: data.section1.id
         const isKeepDataSection = datasourceName === 'data'
-        const sectionsMap: MapDataControl[] = []
         const hasDatasources = datasources.length > 0
 
         if (hasDatasources &&
