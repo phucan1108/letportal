@@ -50,24 +50,29 @@ export interface PageSectionStandardArrayBoundData{
     isKeptDataName: boolean
 }
 
-export interface AddOneItemOnStandardArray{
+export interface OpenInsertDialogOnStandardArrayEvent{
     sectionName: string,
-    isKeptDataName: boolean,
-    newData: any
+    data: any,
+    identityKey: any,
+    sectionMap: MapDataControl[]
 }
 
-export interface RemoveOneItemOnStandardArray{
+export interface AddOneItemOnStandardArrayEvent{
+    sectionName: string,
+    isKeptDataName: boolean
+}
+
+export interface RemoveOneItemOnStandardArrayEvent{
     sectionName: string,
     isKeptDataName: boolean,
     identityKey: string,
     removeItemKey: string
 }
 
-export interface UpdateOneItemOnStandardArray{
+export interface UpdateOneItemOnStandardArrayEvent{
     sectionName: string,
     isKeptDataName: boolean,
-    identityKey: string,
-    updatedData: any
+    identityKey: string
 }
 
 export interface TriggeredControlEvent{

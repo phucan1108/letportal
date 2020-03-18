@@ -117,99 +117,24 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     }
 
     dividedControls() {
-        this.controlsGroups = [];
-
-        let counterFlag = 0;
-        let tempGroupControls: GroupControls = {
-            controlsList: [],
-            numberOfColumns: this._numberOfColumns,
-            isLineBreaker: false
-        }
-
-
-
         const filteredControls = this.standardSharedService
             .buildControlOptions(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[])
             .filter(control => {
                 return !control.defaultOptions.checkedHidden
             })
-        this.controls = filteredControls
-        this.logger.debug('Rendering controls', this.controls)
-        let counterControls = 0
-        _.forEach(filteredControls, (control: PageRenderedControl<DefaultControlOptions>) => {
-            // These controls must be separated group
-            if (control.type === ControlType.LineBreaker) {
-                counterFlag = 0;
-                this.controlsGroups.push(tempGroupControls)
-                this.controlsGroups.push({
-                    controlsList: [],
-                    numberOfColumns: 0,
-                    isLineBreaker: true
-                })
-                tempGroupControls = {
-                    controlsList: [],
-                    numberOfColumns: this._numberOfColumns,
-                    isLineBreaker: false
-                }
-            }
-            else if (control.type === ControlType.RichTextEditor) {
-                counterFlag = 0;
-                this.controlsGroups.push(tempGroupControls)
-                const standaloneGroup: GroupControls = {
-                    controlsList: [],
-                    numberOfColumns: 1,
-                    isLineBreaker: false
-                }
-                standaloneGroup.controlsList.push(control)
-                this.controlsGroups.push(standaloneGroup)
-                tempGroupControls = {
-                    controlsList: [],
-                    numberOfColumns: this._numberOfColumns,
-                    isLineBreaker: false
-                }
-            }
-            else if (control.type === ControlType.MarkdownEditor) {
-                counterFlag = 0;
-                this.controlsGroups.push(tempGroupControls)
-                const standaloneGroup: GroupControls = {
-                    controlsList: [],
-                    numberOfColumns: 1,
-                    isLineBreaker: false
-                }
-                standaloneGroup.controlsList.push(control)
-                this.controlsGroups.push(standaloneGroup)
-                tempGroupControls = {
-                    controlsList: [],
-                    numberOfColumns: this._numberOfColumns,
-                    isLineBreaker: false
-                }
-            }
-            else {
-
-                tempGroupControls.controlsList.push(control)
-                if (counterFlag === this._numberOfColumns - 1 || counterControls === filteredControls.length - 1) {
-                    counterFlag = 0;
-                    this.controlsGroups.push(tempGroupControls)
-                    tempGroupControls = {
-                        controlsList: [],
-                        numberOfColumns: this._numberOfColumns,
-                        isLineBreaker: false
-                    }
-                } else {
-                    counterFlag++;
-                }
-            }
-
-            counterControls++
-        })
+        this.controlsGroups = this.standardSharedService.buildControlsGroup(filteredControls, this._numberOfColumns)
     }
 
     buildFormControls() {
+        const sectionBoundData = this.standardSharedService
+                .buildSectionBoundData(
+                    this.section.sectionDatasource.datasourceBindName,
+                    this.datasources)
         this.builderFormGroup = this.standardSharedService.buildFormGroups(
             this.section.name,
-            this.section.sectionDatasource.datasourceBindName,
-            this.datasources,
             this.section.relatedStandard,
+            sectionBoundData,
+            this.section.sectionDatasource.datasourceBindName === 'data',
             (data, keptDataSection, sectionsMap) => {
                 this.store.dispatch(new AddSectionBoundData({
                     name: this.section.name,

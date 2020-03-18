@@ -79,6 +79,8 @@ import { AutocompleteMultipleComponent } from './controls/autocomplete-multiple.
 import { GeneralControlComponent } from './controls/general-control.component';
 import { StandardSharedService } from './components/standard/services/standard-shared.service';
 import { StandardArrayRenderComponent } from './components/standard/standard-array-render.component';
+import { StandardArrayDialog } from './components/standard/standard-array-dialog.component';
+import { MatProgressButtonsModule } from 'mat-progress-buttons';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -137,6 +139,7 @@ export const FULL_MONTH_FORMATS = {
 		ScrollDispatchModule,
 		MatMomentDateModule,
 		NgJsonEditorModule,
+		MatProgressButtonsModule,
 		QuillModule.forRoot({
             modules: {
                 syntax: true,
@@ -155,7 +158,8 @@ export const FULL_MONTH_FORMATS = {
 		MarkdownModule.forRoot()
 	],
 	entryComponents: [
-		DynamicListDataDialogComponent
+		DynamicListDataDialogComponent,
+		StandardArrayDialog
 	],
 	exports: [RouterModule],
 	providers: [
@@ -175,6 +179,7 @@ export const FULL_MONTH_FORMATS = {
 		PageRenderPage,
 		PortalRenderPageComponent,
 		StandardArrayRenderComponent,
+		StandardArrayDialog,
 		// Controls
 		GeneralControlComponent,
 		FileUploaderComponent,

@@ -12,6 +12,13 @@ export interface SectionValidation {
     isValid: boolean
 }
 
+export interface StandardArrayItemState {
+    sectionName: string,
+    identityKey: any,
+    data: any,
+    sectionsMap: MapDataControl[]
+}
+
 export interface PageStateModel {
     page: Page
     data: any
@@ -24,7 +31,9 @@ export interface PageStateModel {
     options: any
     queryparams: any
     eventsList: PageControlActionEvent[]
-    lastEvent: PageControlActionEvent
+    lastEvent: PageControlActionEvent,
+    isOpenStandardArray: boolean,
+    lastStandardArrayItem: StandardArrayItemState,
     filterState: any
 }
 
@@ -43,6 +52,8 @@ export interface PageStateModel {
         queryparams: null,
         eventsList: [],
         lastEvent: null,
+        isOpenStandardArray: false,
+        lastStandardArrayItem: null,
         filterState: null
     }
 })
@@ -241,35 +252,66 @@ export class PageState {
     public changeControlValue(ctx: StateContext<PageStateModel>, { event }: PageActions.ChangeControlValueEvent) {
 
         const state = ctx.getState()
-
-        const foundMap = _.find(state.sectionsMap, map => map.controlFullName === (event.sectionName + '_' + event.controlName))
-        if (foundMap && foundMap.bindName) {
-            const data = ObjectUtils.clone(state.data)
-            if (foundMap.sectionMapName) {
-                data[foundMap.sectionMapName][foundMap.bindName] = event.data
+        // Important change: we need to check isOpenStandardArray is true for detecting StandardArrayDialog
+        if (state.isOpenStandardArray) {
+            let lastStandardArrayItem: StandardArrayItemState = ObjectUtils.clone(state.lastStandardArrayItem)
+            const sectionMap = lastStandardArrayItem.sectionsMap
+            const foundMap = _.find(sectionMap, map => map.controlFullName === (event.sectionName + '_' + event.controlName))
+            if (foundMap && foundMap.bindName) {
+                const data = lastStandardArrayItem.data         
+                data[foundMap.bindName] = event.data
+                const cloneEventsList = ObjectUtils.clone(state.eventsList)
+                cloneEventsList.push(event)
+                ctx.setState({
+                    ...state,
+                    eventsList: cloneEventsList,
+                    lastStandardArrayItem: lastStandardArrayItem,
+                    lastEvent: event,
+                    filterState: PageActions.ChangeControlValueEvent
+                })
             }
             else {
-                data[foundMap.bindName] = event.data
+                const cloneEventsList = ObjectUtils.clone(state.eventsList)
+                cloneEventsList.push(event)
+                ctx.setState({
+                    ...state,
+                    eventsList: cloneEventsList,
+                    lastEvent: event,
+                    filterState: PageActions.ChangeControlValueEvent
+                })
             }
-            const cloneEventsList = ObjectUtils.clone(state.eventsList)
-            cloneEventsList.push(event)
-            ctx.setState({
-                ...state,
-                eventsList: cloneEventsList,
-                data,
-                lastEvent: event,
-                filterState: PageActions.ChangeControlValueEvent
-            })
         }
         else {
-            const cloneEventsList = ObjectUtils.clone(state.eventsList)
-            cloneEventsList.push(event)
-            ctx.setState({
-                ...state,
-                eventsList: cloneEventsList,
-                lastEvent: event,
-                filterState: PageActions.ChangeControlValueEvent
-            })
+            // Keep as usual for Standard Section
+            const foundMap = _.find(state.sectionsMap, map => map.controlFullName === (event.sectionName + '_' + event.controlName))
+            if (foundMap && foundMap.bindName) {
+                const data = ObjectUtils.clone(state.data)
+                if (foundMap.sectionMapName) {
+                    data[foundMap.sectionMapName][foundMap.bindName] = event.data
+                }
+                else {
+                    data[foundMap.bindName] = event.data
+                }
+                const cloneEventsList = ObjectUtils.clone(state.eventsList)
+                cloneEventsList.push(event)
+                ctx.setState({
+                    ...state,
+                    eventsList: cloneEventsList,
+                    data,
+                    lastEvent: event,
+                    filterState: PageActions.ChangeControlValueEvent
+                })
+            }
+            else {
+                const cloneEventsList = ObjectUtils.clone(state.eventsList)
+                cloneEventsList.push(event)
+                ctx.setState({
+                    ...state,
+                    eventsList: cloneEventsList,
+                    lastEvent: event,
+                    filterState: PageActions.ChangeControlValueEvent
+                })
+            }
         }
     }
 
@@ -336,6 +378,99 @@ export class PageState {
             ...state,
             wholePageValid: isValid,
             filterState: PageActions.CompleteGatherSectionValidations
+        })
+    }
+
+    @Action(PageActions.OpenInsertDialogForStandardArray)
+    public openInsertDialog(ctx: StateContext<PageStateModel>, { event }: PageActions.OpenInsertDialogForStandardArray) {
+        const state = ctx.getState()
+        const standardArrayItemState: StandardArrayItemState = {
+            data: event.data,
+            identityKey: event.identityKey,
+            sectionName: event.sectionName,
+            sectionsMap: event.sectionMap
+        }
+        ctx.setState({
+            ...state,
+            isOpenStandardArray: true,
+            lastStandardArrayItem: standardArrayItemState,
+            filterState: PageActions.OpenInsertDialogForStandardArray
+        })
+    }
+
+    @Action(PageActions.CloseDialogForStandardArray)
+    public closeDialogStandardArray(ctx: StateContext<PageStateModel>, {}: PageActions.CloseDialogForStandardArray){
+        const state = ctx.getState()
+        ctx.setState({
+            ...state,
+            isOpenStandardArray: false,
+            lastStandardArrayItem: null,
+            filterState: PageActions.CloseDialogForStandardArray
+        })
+    }
+
+    @Action(PageActions.InsertOneItemForStandardArray)
+    public insertOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.InsertOneItemForStandardArray){
+        const state = ctx.getState()
+        const data = ObjectUtils.clone(state.data)
+        // Always get lastStandardArrayItem
+        data[event.sectionName].inserts.push(state.lastStandardArrayItem.data)
+        ctx.setState({
+            ...state,
+            data: data,
+            filterState: PageActions.InsertOneItemForStandardArray
+        })
+    }
+
+    @Action(PageActions.UpdateOneItemForStandardArray)
+    public updateOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.UpdateOneItemForStandardArray){
+        const state = ctx.getState()
+        const data = ObjectUtils.clone(state.data)
+        // Check is in inserts list
+        const foundInsert = data[event.sectionName].inserts.find(a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])
+        if(ObjectUtils.isNotNull(foundInsert)){
+            const index = data[event.sectionName].inserts.indexOf(foundInsert)
+            ArrayUtils.updateOneItemByIndex(data[event.sectionName].inserts, state.lastStandardArrayItem.data, index)
+        }
+        else{
+            data[event.sectionName].updates.push(state.lastStandardArrayItem.data)
+            // Move away from fresh
+            ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])            
+        }
+        
+        ctx.setState({
+            ...state,
+            data: data,
+            filterState: PageActions.UpdateOneItemForStandardArray
+        })
+    }
+
+    @Action(PageActions.RemoveOneItemForStandardArray)
+    public deleteOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.RemoveOneItemForStandardArray){
+        const state = ctx.getState()
+        const data = ObjectUtils.clone(state.data)
+        // Check is in inserts/updates list
+        const foundInsert = data[event.sectionName].inserts.find(a => a[event.identityKey] === event.removeItemKey)
+        if(ObjectUtils.isNotNull(foundInsert)){            
+            ArrayUtils.removeOneItem(data[event.sectionName].inserts, a => a[event.identityKey] === event.removeItemKey)
+        }
+        else{
+            const foundUpdate = data[event.sectionName].updates.find(a => a[event.identityKey] === event.removeItemKey)
+            if(ObjectUtils.isNotNull(foundUpdate)){
+                ArrayUtils.removeOneItem(data[event.sectionName].updates, a => a[event.identityKey] === event.removeItemKey)
+            }
+            else{
+                const foundRemove = data[event.sectionName].fresh.find(a => a[event.identityKey] === event.removeItemKey)
+                data[event.sectionName].removes.push(foundRemove)
+                // Move away from fresh
+                ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === foundRemove[event.identityKey])            
+            }            
+        }
+        
+        ctx.setState({
+            ...state,
+            data: data,
+            filterState: PageActions.RemoveOneItemForStandardArray
         })
     }
 }

@@ -9,6 +9,9 @@ import { PortalValidators } from 'app/core/validators/portal.validators';
 import { PageService } from 'services/page.service';
 import { CustomHttpService } from 'services/customhttp.service';
 import PageUtils from 'app/core/utils/page-util';
+import { GroupControls } from 'app/core/models/extended.models';
+import { StandardOptions } from 'portal/modules/models/standard.extended.model';
+import { Guid } from 'guid-typescript';
 
 /**
  * This service is used to share common logic between Standard and Array Standard
@@ -22,7 +25,91 @@ export class StandardSharedService {
         private customHttpService: CustomHttpService
     ) { }
 
-    public buildControlOptions(controls: PageRenderedControl<DefaultControlOptions>[]): PageRenderedControl<DefaultControlOptions>[]{
+
+    public buildControlsGroup(
+        filteredControls: PageRenderedControl<DefaultControlOptions>[],
+        numberOfColumns: number
+    ): GroupControls[] {
+        let controlGroups: GroupControls[] = []
+        let counterFlag = 0;
+        let tempGroupControls: GroupControls = {
+            controlsList: [],
+            numberOfColumns: numberOfColumns,
+            isLineBreaker: false
+        }
+
+        let counterControls = 0
+        _.forEach(filteredControls, (control: PageRenderedControl<DefaultControlOptions>) => {
+            // These controls must be separated group
+            if (control.type === ControlType.LineBreaker) {
+                counterFlag = 0;
+                controlGroups.push(tempGroupControls)
+                controlGroups.push({
+                    controlsList: [],
+                    numberOfColumns: 0,
+                    isLineBreaker: true
+                })
+                tempGroupControls = {
+                    controlsList: [],
+                    numberOfColumns: numberOfColumns,
+                    isLineBreaker: false
+                }
+            }
+            else if (control.type === ControlType.RichTextEditor) {
+                counterFlag = 0;
+                controlGroups.push(tempGroupControls)
+                const standaloneGroup: GroupControls = {
+                    controlsList: [],
+                    numberOfColumns: 1,
+                    isLineBreaker: false
+                }
+                standaloneGroup.controlsList.push(control)
+                controlGroups.push(standaloneGroup)
+                tempGroupControls = {
+                    controlsList: [],
+                    numberOfColumns: numberOfColumns,
+                    isLineBreaker: false
+                }
+            }
+            else if (control.type === ControlType.MarkdownEditor) {
+                counterFlag = 0;
+                controlGroups.push(tempGroupControls)
+                const standaloneGroup: GroupControls = {
+                    controlsList: [],
+                    numberOfColumns: 1,
+                    isLineBreaker: false
+                }
+                standaloneGroup.controlsList.push(control)
+                controlGroups.push(standaloneGroup)
+                tempGroupControls = {
+                    controlsList: [],
+                    numberOfColumns: numberOfColumns,
+                    isLineBreaker: false
+                }
+            }
+            else {
+
+                tempGroupControls.controlsList.push(control)
+                if (counterFlag === numberOfColumns - 1 || counterControls === filteredControls.length - 1) {
+                    counterFlag = 0;
+                    controlGroups.push(tempGroupControls)
+                    tempGroupControls = {
+                        controlsList: [],
+                        numberOfColumns: numberOfColumns,
+                        isLineBreaker: false
+                    }
+                } else {
+                    counterFlag++;
+                }
+            }
+
+            counterControls++
+        })
+
+        return controlGroups
+    }
+
+    public buildControlOptions(controls: PageRenderedControl<DefaultControlOptions>[]): PageRenderedControl<DefaultControlOptions>[] {
         controls.forEach(control => {
             control.defaultOptions = PageUtils.getControlOptions<DefaultControlOptions>(control.options)
             control.defaultOptions.checkedHidden = this.pageService.evaluatedExpression(control.defaultOptions.hidden)
@@ -30,21 +117,27 @@ export class StandardSharedService {
         })
         return controls
     }
-    
+
+    public buildSectionBoundData(
+        datasourceName: string,
+        datasources: PageLoadedDatasource[]
+    ): any{
+        return this.getSectionBoundData(datasourceName, datasources)
+    }
+
     public buildFormGroups(
         sectionName: string,
-        datasourceName: string,
-        datasources: PageLoadedDatasource[],
         standard: StandardComponent,
+        boundData: any,
+        isKeepDataSection: boolean,
         onComplete: (builtData: any, keptDataSection: boolean, sectionMap: MapDataControl[]) => void
-    ): FormGroup{
+    ): FormGroup {
         const formControls: any = []
         const tempSectionData = new Object()
         // When a 'data' is bind name, so we need to keep a default structure of data. Ex: data.id, data.name
         // If bind name isn't 'data', we need to add sectioname to binding data.Ex: data.section1.id
-        const isKeepDataSection = datasourceName === 'data'
         const sectionsMap: MapDataControl[] = []
-        let sectionBoundData = this.getSectionBoundData(datasourceName, datasources)
+        let sectionBoundData = boundData
 
         if (!isKeepDataSection) {
             tempSectionData[sectionName] = new Object()
@@ -87,7 +180,7 @@ export class StandardSharedService {
                     formControls)
             )
         })
-        if(onComplete){
+        if (onComplete) {
             onComplete(tempSectionData, isKeepDataSection, sectionsMap)
         }
         return new FormGroup(formControls)
@@ -96,44 +189,88 @@ export class StandardSharedService {
     public buildDataArray(
         datasourceName: string,
         datasources: PageLoadedDatasource[]
-    ): any[]{
+    ): any[] {
         let sectionBoundData = this.getSectionBoundData(datasourceName, datasources)
 
         // Ensure section bound data is array
-        if(ObjectUtils.isArray(sectionBoundData)){
+        if (ObjectUtils.isArray(sectionBoundData)) {
             return sectionBoundData as any[]
         }
-        else{
+        else {
             return []
         }
     }
 
     public buildDataArrayForTable(
         arrayData: any[],
-        standard: StandardComponent
+        standard: StandardComponent,
+        options: StandardOptions,
+        onComplete: (idField: string, ids: any[], cloneData: any) => void
     ): any[] {
         let arrayTableData = []
-        arrayData.forEach(element => {            
-            let tempElementObject = new Object();
+        let idKey = ''
+        let ids: any[] = []
+        let cloneData: any = new Object()
+        if (arrayData.length > 0) {
+            arrayData.forEach(element => {
+                let tempElementObject = new Object();
+                (standard.controls as PageRenderedControl<DefaultControlOptions>[])
+                    .forEach(control => {
+                        const foundKey = Object.keys(element).find(a => a === control.defaultOptions.bindname)
+                        if (ObjectUtils.isNotNull(foundKey)) {
+                            tempElementObject[control.defaultOptions.bindname] = element[foundKey]
+                        }
+                        else {
+                            // Ensure object has property as control name
+                            tempElementObject[control.defaultOptions.bindname] = null
+                        }
+                    })
+
+                // If identityfield is empty, we should create an identity field
+                if (!ObjectUtils.isNotNull(options.identityfield)
+                    || Object.keys(tempElementObject).indexOf(options.identityfield) < 0) {
+                    tempElementObject['uniq_id'] = Guid.create().toString()
+                    ids.push(tempElementObject['uniq_id'])
+                    idKey = 'uniq_id'
+                }
+                else {
+                    ids.push(tempElementObject[options.identityfield])
+                    idKey = options.identityfield
+                }
+
+                arrayTableData.push(tempElementObject)
+            })
+
+            cloneData = ObjectUtils.clone(arrayTableData[0])
+            Object.keys(cloneData).forEach(e => {
+                cloneData[e] = null
+            })
+        }
+        else {
+            // If there are no data, we need to create clone object for inserting
             (standard.controls as PageRenderedControl<DefaultControlOptions>[])
                 .forEach(control => {
-                    const foundKey = Object.keys(element).find(a => a === control.defaultOptions.bindname)
-                    if(ObjectUtils.isNotNull(foundKey)){
-                        tempElementObject[control.name] = element[foundKey]
-                    }
-                    else{
-                        // Ensure object has property as control name
-                        tempElementObject[control.name] = null
-                    }
+                    cloneData[control.defaultOptions.bindname] = null
                 })
-           
-            arrayTableData.push(tempElementObject)
-        })
+
+            if (!ObjectUtils.isNotNull(options.identityfield)) {
+                cloneData['uniq_id'] = null
+                idKey = 'uniq_id'
+            }
+            else {
+                idKey = options.identityfield
+            }
+        }
+
+
+        if (ObjectUtils.isNotNull(onComplete)) {
+            onComplete(idKey, ids, cloneData)
+        }
 
         return arrayTableData
     }
 
-    private getSectionBoundData(datasourceName: string, datasources: PageLoadedDatasource[]){
+    private getSectionBoundData(datasourceName: string, datasources: PageLoadedDatasource[]) {
         let sectionBoundData = {}
         // When a 'data' is bind name, so we need to keep a default structure of data. Ex: data.id, data.name
         // If bind name isn't 'data', we need to add sectioname to binding data.Ex: data.section1.id
@@ -154,13 +291,13 @@ export class StandardSharedService {
             else {
                 const splittedDs = datasourceName.split('.')
                 let hasDot = splittedDs.length > 1
-                if(hasDot){
+                if (hasDot) {
                     foundDatasource = datasources.find(ds => ds.name === splittedDs[0])
                 }
-                else{
+                else {
                     foundDatasource = datasources.find(ds => ds.name === datasourceName)
                 }
-               
+
                 const execute = new Function(datasourceName, 'return ' + datasourceName)
                 sectionBoundData = execute(foundDatasource.data)
             }
@@ -169,8 +306,8 @@ export class StandardSharedService {
     }
 
     private getInitDataOfControl(
-        data: any, 
-        controlBindName: string, 
+        data: any,
+        controlBindName: string,
         control: PageRenderedControl<DefaultControlOptions>): any {
         let controlData = null
         if (controlBindName === 'id' || controlBindName === '_id') {
@@ -238,7 +375,7 @@ export class StandardSharedService {
     }
 
     private generateFormValidators(
-        validators: Array<PageControlValidator>, 
+        validators: Array<PageControlValidator>,
         availableControls: any): ValidatorFn[] {
         const formValidators: Array<ValidatorFn> = []
         _.forEach(validators, (validator: PageControlValidator) => {

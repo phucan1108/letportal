@@ -7,14 +7,14 @@
     <mat-card-content *ngIf="readyToRender">
         <div class="row" *ngIf="standardArrayOptions.allowadjustment">
             <div class="col-lg-12 pb-3 pl-3">
-                <button mat-raised-button color="primary">
+                <button mat-raised-button color="primary" (click)="add()">
                     Add
                 </button>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12 table-flex">
-                <mat-table [dataSource]="tableData" class="mat-elevation-z8">
+                <mat-table [dataSource]="tableData" class="mat-elevation-z8" #matTable>
                     <ng-container *ngFor="let header of headers">
                         <ng-container [matColumnDef]="header.name">
                             <mat-header-cell *matHeaderCellDef> {{header.displayName}} </mat-header-cell>
@@ -36,19 +36,19 @@
                                     <mat-icon>add_box</mat-icon>
                                 </button>
                                 <mat-menu #menu="matMenu" yPosition="above">
-                                    <button mat-icon-button color="primary" matTooltip="Edit">
+                                    <button mat-icon-button color="primary" matTooltip="Edit" (click)="edit($event, element)">
                                         <mat-icon>create</mat-icon>
                                     </button>
-                                    <button mat-icon-button color="warn" matTooltip="Remove">
+                                    <button mat-icon-button color="warn" matTooltip="Remove" (click)="delete($event, element)">
                                         <mat-icon>delete</mat-icon>
                                     </button>
                                 </mat-menu>
                             </span>
                             <span class="desktop-action">
-                                <button mat-icon-button color="primary" matTooltip="Edit">
+                                <button mat-icon-button color="primary" matTooltip="Edit" (click)="edit($event, element)">
                                     <mat-icon>create</mat-icon>
                                 </button>
-                                <button mat-icon-button color="warn" matTooltip="Remove">
+                                <button mat-icon-button color="warn" matTooltip="Remove" (click)="delete($event, element)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </span>                            

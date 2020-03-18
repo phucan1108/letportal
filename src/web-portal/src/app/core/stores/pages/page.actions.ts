@@ -1,5 +1,5 @@
 import { Page, PageButton } from 'services/portal.service';
-import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl, PageSectionStandardArrayBoundData, AddOneItemOnStandardArray, RemoveOneItemOnStandardArray, UpdateOneItemOnStandardArray } from 'app/core/models/page.model';
+import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl, PageSectionStandardArrayBoundData as PageSectionStandardArrayBoundDataEvent, AddOneItemOnStandardArrayEvent, RemoveOneItemOnStandardArrayEvent, UpdateOneItemOnStandardArrayEvent, OpenInsertDialogOnStandardArrayEvent } from 'app/core/models/page.model';
 
 const PAGE_ACTION = '[Page]'
 
@@ -105,22 +105,32 @@ export class ClickControlEvent implements PageAction {
 // For Array Standards
 export class AddSectionBoundDataForStandardArray implements PageAction {
     public static readonly type = `${PAGE_ACTION} Add section bound data on Standard Array`
-    constructor(public event: PageSectionStandardArrayBoundData) { }
+    constructor(public event: PageSectionStandardArrayBoundDataEvent) { }
+}
+
+export class OpenInsertDialogForStandardArray implements PageAction {
+    public static readonly type = `${PAGE_ACTION} Open dialog for inserting on Standard Array`
+    constructor(public event: OpenInsertDialogOnStandardArrayEvent) { }
+}
+
+export class CloseDialogForStandardArray implements PageAction {
+    public static readonly type = `${PAGE_ACTION} Close dialog for inserting on Standard Array`
+    constructor() { }
 }
 
 export class InsertOneItemForStandardArray implements PageAction {
     public static readonly type = `${PAGE_ACTION} Add new item on Standard Array`
-    constructor(public event: AddOneItemOnStandardArray) { }
+    constructor(public event: AddOneItemOnStandardArrayEvent) { }
 }
 
 export class RemoveOneItemForStandardArray implements PageAction{
     public static readonly type = `${PAGE_ACTION} remove item on Standard Array`
-    constructor(public event: RemoveOneItemOnStandardArray) { }
+    constructor(public event: RemoveOneItemOnStandardArrayEvent) { }
 }
 
 export class UpdateOneItemForStandardArray implements PageAction {
     public static readonly type = `${PAGE_ACTION} update item on Standard Array`
-    constructor(public event: UpdateOneItemOnStandardArray) { }
+    constructor(public event: UpdateOneItemOnStandardArrayEvent) { }
 }
 
 export type All =
@@ -140,4 +150,6 @@ export type All =
     AddSectionBoundDataForStandardArray |
     InsertOneItemForStandardArray |
     RemoveOneItemForStandardArray |
-    UpdateOneItemForStandardArray
+    UpdateOneItemForStandardArray |
+    OpenInsertDialogForStandardArray |
+    CloseDialogForStandardArray

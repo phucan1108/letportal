@@ -1,0 +1,55 @@
+<h3 mat-dialog-title>Filter</h3>
+<mat-dialog-content>
+    <div class="dialog-width">
+
+        <ng-container *ngFor="let groupControl of controlsGroups">
+            <div class="form-group row" *ngIf="!groupControl.isLineBreaker">
+                <ng-container *ngFor="let control of groupControl.controlsList">
+                    <ng-container *ngIf="control.type !== controlType.RichTextEditor
+                                && control.type !== controlType.MarkdownEditor
+                                && control.type !== controlType.Label">
+                        <label [ngClass]="_labelClass"
+                            class="font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div [ngClass]="_boundedClass" [formGroup]="builderFormGroup"
+                            *ngIf="control.type !== controlType.RichTextEditor">
+                            <let-general-control [section]="section" [formGroup]="builderFormGroup" [control]="control">
+                            </let-general-control>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="control.type === controlType.RichTextEditor">
+                        <label
+                            class="col-lg-2 col-form-label font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div class="col-lg-10">
+                            <let-general-control [section]="section" [formGroup]="builderFormGroup" [control]="control">
+                            </let-general-control>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="control.type === controlType.MarkdownEditor">
+                        <label
+                            class="col-lg-2 col-form-label font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div class="col-lg-10">
+                            <let-general-control [section]="section" [formGroup]="builderFormGroup" [control]="control">
+                            </let-general-control>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="control.type === controlType.Label">
+                        <label [ngClass]="_labelClass"
+                            class="font-weight-bold">{{ control.defaultOptions.label }}</label>
+                        <div [ngClass]="_boundedClass">
+                            <p class="float-left col-form-label">
+                                {{builderFormGroup.get(control.name).value}}
+                            </p>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+            <div class="separator-dashed pb-3" *ngIf="groupControl.isLineBreaker"></div>
+        </ng-container>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="">Cancel</button>
+    <!-- <button mat-button (click)="submit()" color="primary">Add</button> -->
+
+    <mat-bar-button (btnClick)="submit()" [options]="submitBtnOptions"></mat-bar-button>
+</mat-dialog-actions>
