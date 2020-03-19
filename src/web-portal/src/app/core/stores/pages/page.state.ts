@@ -16,7 +16,8 @@ export interface StandardArrayItemState {
     sectionName: string,
     identityKey: any,
     data: any,
-    sectionsMap: MapDataControl[]
+    sectionsMap: MapDataControl[],
+    allowUpdateParts: boolean
 }
 
 export interface PageStateModel {
@@ -146,11 +147,21 @@ export class PageState {
         const state = ctx.getState()
         let tempData = state.data ? ObjectUtils.clone(state.data) : new Object()
 
-        tempData[event.name] = {
-            fresh: event.data,
-            inserts: [],
-            removes: [],
-            updates: []
+        if (event.allowUpdateParts) {
+            tempData[event.name] = {
+                fresh: event.data,
+                inserts: [],
+                removes: [],
+                updates: []
+            }
+        }
+        else {
+            // Create two inserts and removes array
+            tempData[event.name] = {
+                fresh: [],
+                inserts: event.data,
+                removes: event.data
+            }
         }
         ctx.setState({
             ...state,
@@ -258,7 +269,7 @@ export class PageState {
             const sectionMap = lastStandardArrayItem.sectionsMap
             const foundMap = _.find(sectionMap, map => map.controlFullName === (event.sectionName + '_' + event.controlName))
             if (foundMap && foundMap.bindName) {
-                const data = lastStandardArrayItem.data         
+                const data = lastStandardArrayItem.data
                 data[foundMap.bindName] = event.data
                 const cloneEventsList = ObjectUtils.clone(state.eventsList)
                 cloneEventsList.push(event)
@@ -388,7 +399,8 @@ export class PageState {
             data: event.data,
             identityKey: event.identityKey,
             sectionName: event.sectionName,
-            sectionsMap: event.sectionMap
+            sectionsMap: event.sectionMap,
+            allowUpdateParts: event.allowUpdateParts
         }
         ctx.setState({
             ...state,
@@ -399,7 +411,7 @@ export class PageState {
     }
 
     @Action(PageActions.CloseDialogForStandardArray)
-    public closeDialogStandardArray(ctx: StateContext<PageStateModel>, {}: PageActions.CloseDialogForStandardArray){
+    public closeDialogStandardArray(ctx: StateContext<PageStateModel>, { }: PageActions.CloseDialogForStandardArray) {
         const state = ctx.getState()
         ctx.setState({
             ...state,
@@ -410,7 +422,7 @@ export class PageState {
     }
 
     @Action(PageActions.InsertOneItemForStandardArray)
-    public insertOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.InsertOneItemForStandardArray){
+    public insertOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.InsertOneItemForStandardArray) {
         const state = ctx.getState()
         const data = ObjectUtils.clone(state.data)
         // Always get lastStandardArrayItem
@@ -423,21 +435,21 @@ export class PageState {
     }
 
     @Action(PageActions.UpdateOneItemForStandardArray)
-    public updateOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.UpdateOneItemForStandardArray){
+    public updateOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.UpdateOneItemForStandardArray) {
         const state = ctx.getState()
         const data = ObjectUtils.clone(state.data)
         // Check is in inserts list
         const foundInsert = data[event.sectionName].inserts.find(a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])
-        if(ObjectUtils.isNotNull(foundInsert)){
+        if (ObjectUtils.isNotNull(foundInsert)) {
             const index = data[event.sectionName].inserts.indexOf(foundInsert)
             ArrayUtils.updateOneItemByIndex(data[event.sectionName].inserts, state.lastStandardArrayItem.data, index)
         }
-        else{
+        else if (event.allowUpdateParts) {
             data[event.sectionName].updates.push(state.lastStandardArrayItem.data)
             // Move away from fresh
-            ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])            
+            ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])
         }
-        
+
         ctx.setState({
             ...state,
             data: data,
@@ -446,27 +458,28 @@ export class PageState {
     }
 
     @Action(PageActions.RemoveOneItemForStandardArray)
-    public deleteOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.RemoveOneItemForStandardArray){
+    public deleteOneItemStandardArray(ctx: StateContext<PageStateModel>, { event }: PageActions.RemoveOneItemForStandardArray) {
         const state = ctx.getState()
         const data = ObjectUtils.clone(state.data)
+
         // Check is in inserts/updates list
         const foundInsert = data[event.sectionName].inserts.find(a => a[event.identityKey] === event.removeItemKey)
-        if(ObjectUtils.isNotNull(foundInsert)){            
+        if (ObjectUtils.isNotNull(foundInsert)) {
             ArrayUtils.removeOneItem(data[event.sectionName].inserts, a => a[event.identityKey] === event.removeItemKey)
         }
-        else{
+        else {            
             const foundUpdate = data[event.sectionName].updates.find(a => a[event.identityKey] === event.removeItemKey)
-            if(ObjectUtils.isNotNull(foundUpdate)){
+            if (ObjectUtils.isNotNull(foundUpdate)) {
                 ArrayUtils.removeOneItem(data[event.sectionName].updates, a => a[event.identityKey] === event.removeItemKey)
             }
-            else{
+            else {
                 const foundRemove = data[event.sectionName].fresh.find(a => a[event.identityKey] === event.removeItemKey)
                 data[event.sectionName].removes.push(foundRemove)
                 // Move away from fresh
-                ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === foundRemove[event.identityKey])            
-            }            
+                ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === foundRemove[event.identityKey])
+            }
         }
-        
+
         ctx.setState({
             ...state,
             data: data,

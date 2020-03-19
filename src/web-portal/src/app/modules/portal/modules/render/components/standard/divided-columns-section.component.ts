@@ -135,6 +135,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
             this.section.relatedStandard,
             sectionBoundData,
             this.section.sectionDatasource.datasourceBindName === 'data',
+            null,
             (data, keptDataSection, sectionsMap) => {
                 this.store.dispatch(new AddSectionBoundData({
                     name: this.section.name,

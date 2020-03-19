@@ -12,11 +12,11 @@ export class StandardOptions {
         value: 'id'
     }
 
-    public static NameField: ExtendedShellOption = {
+    public static NamesField: ExtendedShellOption = {
         id: '',
         allowDelete: false,
-        description: 'Array Standard: Name field must be used to display one element. Default: name',
-        key: 'namefield',
+        description: 'Array Standard: Names field must be used to display one element, can be multiple by ;. Default: name',
+        key: 'namesfield',
         value: 'name'
     }
 
@@ -38,24 +38,24 @@ export class StandardOptions {
 
     public static DefaultStandardOptions: StandardOptions = {
         identityfield: 'id',
-        namefield: 'name',
+        namesfield: 'name',
         allowadjustment: false,
         allowupdateparts: false
     }
 
     identityfield: string
-    namefield: string
+    namesfield: string
     allowadjustment: boolean
     allowupdateparts: boolean
 
     public static getStandardOptions(options: ShellOption[]): StandardOptions {
         const identityfield = _.find(options, opt => opt.key === 'identityfield')
-        const namefield = _.find(options, opt => opt.key === 'namefield')
+        const namefield = _.find(options, opt => opt.key === 'namesfield')
         const allowadjustment = _.find(options, opt => opt.key === 'allowadjustment')
         const allowupdateparts = _.find(options, opt => opt.key === 'allowupdateparts')
         return {
             identityfield: identityfield ? identityfield.value : '',
-            namefield: namefield ? namefield.value : '',
+            namesfield: namefield ? namefield.value : '',
             allowadjustment: allowadjustment ? JSON.parse(allowadjustment.value) : false,
             allowupdateparts: allowupdateparts ? JSON.parse(allowupdateparts.value) : false
         }
@@ -64,7 +64,7 @@ export class StandardOptions {
     public static getDefaultShellOptionsForStandard(): ExtendedShellOption[] {
         return [
             this.IdentityField,
-            this.NameField,
+            this.NamesField,
             this.AllowAdjustment,
             this.AllowUpdateParts
         ]

@@ -23,6 +23,12 @@ export enum RenderingSectionState{
 
 export interface PageRenderedControl<T> extends PageControl{
     defaultOptions: T
+    customErrorMessages: CustomValidatorMessage[]
+}
+
+export interface CustomValidatorMessage {
+    errorName: string
+    errorMessage: string
 }
 
 export interface PageControlActionEvent {
@@ -47,32 +53,37 @@ export interface PageSectionBoundData{
 export interface PageSectionStandardArrayBoundData{
     name: string,
     data: any,
-    isKeptDataName: boolean
+    isKeptDataName: boolean,
+    allowUpdateParts: boolean
 }
 
 export interface OpenInsertDialogOnStandardArrayEvent{
     sectionName: string,
     data: any,
     identityKey: any,
+    allowUpdateParts: boolean,
     sectionMap: MapDataControl[]
 }
 
 export interface AddOneItemOnStandardArrayEvent{
     sectionName: string,
-    isKeptDataName: boolean
+    isKeptDataName: boolean,
+    allowUpdateParts: boolean
 }
 
 export interface RemoveOneItemOnStandardArrayEvent{
     sectionName: string,
     isKeptDataName: boolean,
     identityKey: string,
-    removeItemKey: string
+    removeItemKey: string,
+    allowUpdateParts: boolean
 }
 
 export interface UpdateOneItemOnStandardArrayEvent{
     sectionName: string,
     isKeptDataName: boolean,
-    identityKey: string
+    identityKey: string,
+    allowUpdateParts: boolean
 }
 
 export interface TriggeredControlEvent{

@@ -8,6 +8,7 @@ import { PageService } from 'services/page.service';
 import { Store } from '@ngxs/store';
 import { ControlType } from 'services/portal.service';
 import { MatProgressButtonOptions } from 'mat-progress-buttons';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-standard-array-dialog',
@@ -21,7 +22,6 @@ export class StandardArrayDialog implements OnInit {
     _labelClass = 'col-lg-2 col-form-label'
     _boundedClass = 'col-lg-4'
     isEdit = false
-
     submitBtnOptions: MatProgressButtonOptions = {
         active: false,
         text: 'Save',

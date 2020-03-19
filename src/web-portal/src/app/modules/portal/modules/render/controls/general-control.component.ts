@@ -341,7 +341,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     getErrorMessage(validatorName: string) {
-        const errorMessage = _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
+        const errorMessage = _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage        
         return errorMessage
     }
 
@@ -389,6 +389,14 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                     validatorErrorMessage: replacedMessage
                 })
             }
+        })
+
+        // New change for custom error message
+        this.control.customErrorMessages.forEach(cusErr => {
+            this.validators.push({
+                validatorName: cusErr.errorName,
+                validatorErrorMessage: cusErr.errorMessage
+            })
         })
     }
 

@@ -18,6 +18,7 @@ import { StandardSharedService } from './services/standard-shared.service';
 import { MatDialog, MatTable } from '@angular/material';
 import { StandardArrayDialog } from './standard-array-dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { FormUtil } from 'app/core/utils/form-util';
 
 @Component({
     selector: 'let-standard-array-render',
@@ -33,7 +34,7 @@ export class StandardArrayRenderComponent implements OnInit {
 
     controlsGroups: Array<GroupControls>
     controls: Array<PageRenderedControl<DefaultControlOptions>>
-    
+
     standard: StandardComponent
     pageState$: Observable<PageStateModel>
     subscription: Subscription
@@ -55,26 +56,27 @@ export class StandardArrayRenderComponent implements OnInit {
         private dialog: MatDialog,
         private logger: NGXLogger,
         private fb: FormBuilder,
-        private store: Store,        
+        private store: Store,
         private pageService: PageService,
         private standardSharedService: StandardSharedService
     ) { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.standardArrayOptions = StandardOptions.getStandardOptions(this.section.relatedArrayStandard.options)
         this.standard = this.section.relatedArrayStandard
         this.controls = this.standardSharedService
-                .buildControlOptions(this.section.relatedArrayStandard.controls as PageRenderedControl<DefaultControlOptions>[])
-                .filter(control => {
-                    return !control.defaultOptions.checkedHidden
-                })
+            .buildControlOptions(this.section.relatedArrayStandard.controls as PageRenderedControl<DefaultControlOptions>[])
+            .filter(control => {
+                return !control.defaultOptions.checkedHidden
+            })
         this.pageState$ = this.store.select<PageStateModel>(state => state.page)
         this.subscription = this.pageState$.pipe(
             filter(state => state.filterState
                 && (state.filterState === EndRenderingPageSectionsAction
                     || state.filterState === GatherSectionValidations
                     || state.filterState === UpdateOneItemForStandardArray
-                    || state.filterState === InsertOneItemForStandardArray)),
+                    || state.filterState === InsertOneItemForStandardArray
+                    || state.filterState === RemoveOneItemForStandardArray)),
             tap(
                 state => {
                     switch (state.filterState) {
@@ -82,56 +84,64 @@ export class StandardArrayRenderComponent implements OnInit {
                             this.logger.debug('Rendered hit')
                             this.datasources = state.datasources
                             let boundData = this.standardSharedService
-                                    .buildDataArray(this.section.sectionDatasource.datasourceBindName, this.datasources)
+                                .buildDataArray(this.section.sectionDatasource.datasourceBindName, this.datasources)
                             this.tableData = this.standardSharedService
-                                    .buildDataArrayForTable(
-                                        boundData, 
-                                        this.standard,
-                                        this.standardArrayOptions,
-                                        (idField, ids, cloneData) => {
-                                            this.idField = idField,
+                                .buildDataArrayForTable(
+                                    boundData,
+                                    this.standard,
+                                    this.standardArrayOptions,
+                                    (idField, ids, cloneData) => {
+                                        this.idField = idField,
                                             this.ids = ids
-                                            this.cloneOneItem = cloneData
-                                        })       
+                                        this.cloneOneItem = cloneData
+                                    })
                             this.buildArrayTableHeaders()
                             this.formGroup = this.standardSharedService
-                                    .buildFormGroups(
-                                        this.section.name,
-                                        this.standard,
-                                        this.cloneOneItem,
-                                        true,
-                                        (builtData, keptData, sectionMap) => {
-                                            this.sectionMap = sectionMap
-                                        })
+                                .buildFormGroups(
+                                    this.section.name,
+                                    this.standard,
+                                    this.cloneOneItem,
+                                    true,
+                                    null,
+                                    (builtData, keptData, sectionMap) => {
+                                        this.sectionMap = sectionMap
+                                    })
                             this.controlsGroups = this.standardSharedService
-                                    .buildControlsGroup(
-                                        this.controls,
-                                        2)
+                                .buildControlsGroup(
+                                    this.controls,
+                                    2)
                             this.readyToRender = true
                             this.store.dispatch(new AddSectionBoundDataForStandardArray({
                                 name: this.section.name,
                                 isKeptDataName: true,
-                                data: this.tableData
+                                data: this.tableData,
+                                allowUpdateParts: this.standardArrayOptions.allowupdateparts
                             }))
                             break
                         case GatherSectionValidations:
                             this.store.dispatch(new SectionValidationStateAction(this.section.name, true))
                             break
                         case UpdateOneItemForStandardArray:
-                            if(state.lastStandardArrayItem.sectionName === this.section.name){
+                            if (state.lastStandardArrayItem.sectionName === this.section.name) {
                                 this.tableData = ArrayUtils.updateOneItem(
                                     ObjectUtils.clone(
                                         this.tableData),
-                                        state.lastStandardArrayItem.data, 
-                                        a => a[this.idField] === state.lastStandardArrayItem.data[this.idField])
+                                    state.lastStandardArrayItem.data,
+                                    a => a[this.idField] === state.lastStandardArrayItem.data[this.idField])
                                 this.matTable.renderRows()
                             }
                             break
                         case InsertOneItemForStandardArray:
-                            if(state.lastStandardArrayItem.sectionName === this.section.name){
+                            if (state.lastStandardArrayItem.sectionName === this.section.name) {
                                 this.tableData = ObjectUtils.clone(this.tableData)
                                 this.tableData.push(state.lastStandardArrayItem.data)
+                                this.ids.push(state.lastStandardArrayItem.data[this.idField])
                                 this.matTable.renderRows()
+                            }
+                            break
+                        case RemoveOneItemForStandardArray:
+                            if (state.lastStandardArrayItem.sectionName === this.section.name) {
+                                ArrayUtils.removeOneItem(this.ids, a => a === state.lastStandardArrayItem.data[this.idField])
                             }
                             break
                     }
@@ -140,12 +150,11 @@ export class StandardArrayRenderComponent implements OnInit {
         ).subscribe()
     }
 
-    buildArrayTableHeaders(){
-        if(ObjectUtils.isNotNull(this.standardArrayOptions.namefield)){
-            const arrayColumns = this.standardArrayOptions.namefield.split(';')
+    buildArrayTableHeaders() {
+        if (ObjectUtils.isNotNull(this.standardArrayOptions.namesfield)) {
+            const arrayColumns = this.standardArrayOptions.namesfield.split(';')
             arrayColumns.forEach(colName => {
-                try
-                {
+                try {
                     const control = this.controls.find(a => a.name === colName)
                     const displayName = control.defaultOptions.label
                     this.headers.push({
@@ -154,81 +163,142 @@ export class StandardArrayRenderComponent implements OnInit {
                     })
                     this.displayedColumns.push(colName)
                 }
-                catch(ex)
-                {
-                    this.logger.error('Error with name field ' + colName,ex)
-                }               
+                catch (ex) {
+                    this.logger.error('Error with name field ' + colName, ex)
+                }
             })
 
-            if(this.standardArrayOptions.allowadjustment){
+            if (this.standardArrayOptions.allowadjustment) {
                 this.displayedColumns.push('actions')
             }
         }
     }
 
-    add(){
+    add() {
         this.store.dispatch(new OpenInsertDialogForStandardArray({
             sectionName: this.section.name,
             data: this.cloneOneItem,
             identityKey: this.idField,
-            sectionMap: this.sectionMap
+            sectionMap: this.sectionMap,
+            allowUpdateParts: this.standardArrayOptions.allowupdateparts
         }))
         this.formGroup = null
-        this.formGroup = this.standardSharedService
-                                    .buildFormGroups(
-                                        this.section.name,
-                                        this.standard,
-                                        this.cloneOneItem,
-                                        true,
-                                        null)
+        if (this.idField !== 'uniq_id') {
+            this.formGroup = this.standardSharedService
+                .buildFormGroups(
+                    this.section.name,
+                    this.standard,
+                    this.cloneOneItem,
+                    true,
+                    [
+                        {
+                            controlName: this.standardArrayOptions.identityfield,
+                            validators: [
+                                FormUtil.isExist(this.ids, null)
+                            ],
+                            customErrorMessages: [
+                                {
+                                    errorName: 'isExist',
+                                    errorMessage: 'This value has been used by another'
+                                }
+                            ]
+                        }
+                    ],
+                    null)
+        }
+        else {
+            this.formGroup = this.standardSharedService
+                .buildFormGroups(
+                    this.section.name,
+                    this.standard,
+                    this.cloneOneItem,
+                    true,
+                    null,
+                    null)
+        }
+
         const dialogRef = this.dialog.open(StandardArrayDialog, {
             data: {
                 controlsGroups: this.controlsGroups,
                 formGroup: this.formGroup,
                 section: this.section,
-                isEdit: false
+                isEdit: false,
+                ids: this.ids,
+                uniqueControl: this.standardArrayOptions.identityfield
             }
         })
         dialogRef.afterClosed().subscribe(res => {
-            if(!!res){
+            if (!!res) {
                 this.store.dispatch(new InsertOneItemForStandardArray({
                     sectionName: this.section.name,
-                    isKeptDataName: true
+                    isKeptDataName: true,
+                    allowUpdateParts: this.standardArrayOptions.allowupdateparts
                 }))
             }
             this.store.dispatch(new CloseDialogForStandardArray())
         })
     }
 
-    edit($event, element: any){
+    edit($event, element: any) {
         this.store.dispatch(new OpenInsertDialogForStandardArray({
             sectionName: this.section.name,
             data: element,
             identityKey: this.idField,
-            sectionMap: this.sectionMap
+            sectionMap: this.sectionMap,
+            allowUpdateParts: this.standardArrayOptions.allowupdateparts
         }))
         this.formGroup = null
-        this.formGroup = this.standardSharedService
+        if (this.idField !== 'uniq_id') {
+            this.formGroup = this.standardSharedService
                 .buildFormGroups(
-                    this.section.name, 
-                    this.standard, 
-                    element, 
-                    true, 
+                    this.section.name,
+                    this.standard,
+                    element,
+                    true,
+                    [
+                        {
+                            controlName: this.standardArrayOptions.identityfield,
+                            validators: [
+                                FormUtil.isExist(this.ids, element[this.idField])
+                            ],
+                            customErrorMessages: [
+                                {
+                                    errorName: 'isExist',
+                                    errorMessage: 'This value has been used by another'
+                                }
+                            ]
+                        }
+                    ],
                     null)
+        }
+        else {
+            this.formGroup = this.standardSharedService
+                .buildFormGroups(
+                    this.section.name,
+                    this.standard,
+                    element,
+                    true,
+                    null,
+                    null)
+        }
+
         const dialogRef = this.dialog.open(StandardArrayDialog, {
             data: {
                 controlsGroups: this.controlsGroups,
                 formGroup: this.formGroup,
                 section: this.section,
-                isEdit: true
+                isEdit: true,
+                ids: this.ids,
+                uniqueControl: this.standardArrayOptions.identityfield
             }
         })
         dialogRef.afterClosed().subscribe(res => {
-            if(!!res){
+            if (!!res) {
                 this.store.dispatch(new UpdateOneItemForStandardArray({
                     sectionName: this.section.name,
                     identityKey: this.idField,
-                    isKeptDataName: true
+                    isKeptDataName: true,
+                    allowUpdateParts: this.standardArrayOptions.allowupdateparts
                 }))
             }
 
@@ -236,12 +306,13 @@ export class StandardArrayRenderComponent implements OnInit {
         })
     }
 
-    delete($event, element: any){
+    delete($event, element: any) {
         this.store.dispatch(new RemoveOneItemForStandardArray({
             sectionName: this.section.name,
             identityKey: this.idField,
             isKeptDataName: true,
-            removeItemKey: element[this.idField]
+            removeItemKey: element[this.idField],
+            allowUpdateParts: this.standardArrayOptions.allowupdateparts
         }))
 
         this.tableData = ArrayUtils.removeOneItem(ObjectUtils.clone(this.tableData), a => a[this.idField] === element[this.idField])

@@ -12,6 +12,7 @@ import PageUtils from 'app/core/utils/page-util';
 import { GroupControls } from 'app/core/models/extended.models';
 import { StandardOptions } from 'portal/modules/models/standard.extended.model';
 import { Guid } from 'guid-typescript';
+import { ExtendedFormControlValidators } from '../models/standard.models';
 
 /**
  * This service is used to share common logic between Standard and Array Standard
@@ -114,6 +115,7 @@ export class StandardSharedService {
             control.defaultOptions = PageUtils.getControlOptions<DefaultControlOptions>(control.options)
             control.defaultOptions.checkedHidden = this.pageService.evaluatedExpression(control.defaultOptions.hidden)
             control.defaultOptions.checkDisabled = this.pageService.evaluatedExpression(control.defaultOptions.disabled)
+            control.customErrorMessages = []
         })
         return controls
     }
@@ -130,6 +132,7 @@ export class StandardSharedService {
         standard: StandardComponent,
         boundData: any,
         isKeepDataSection: boolean,
+        extendedValidators: ExtendedFormControlValidators[] = null,
         onComplete: (builtData: any, keptDataSection: boolean, sectionMap: MapDataControl[]) => void
     ): FormGroup {
         const formControls: any = []
@@ -165,19 +168,37 @@ export class StandardSharedService {
                 sectionsMap.push(mapDataControl)
             }
 
+            const validators = this.generateFormValidators(control.validators, formControls)
+            const asyncValidators = this.generateFormAsyncValidators(
+                control.asyncValidators,
+                mapDataControl.bindName,
+                mapDataControl.controlFullName,
+                sectionName,
+                control.name,
+                controlData,
+                formControls)
+
+            if(ObjectUtils.isNotNull(extendedValidators)){
+                extendedValidators.forEach(c => {
+                    if(c.controlName === control.name){
+                        c.validators.forEach(v => {
+                            validators.push(v)
+                        })
+                        c.customErrorMessages.forEach(a => {
+                            control.customErrorMessages.push(a)
+                        })                        
+
+                        return false
+                    }
+                })
+            }
+
             formControls[control.name] = new FormControl({
                 value: this.getFormValue(control, controlData),
                 disabled: control.defaultOptions.checkDisabled
             },
-                this.generateFormValidators(control.validators, formControls),
-                this.generateFormAsyncValidators(
-                    control.asyncValidators,
-                    mapDataControl.bindName,
-                    mapDataControl.controlFullName,
-                    sectionName,
-                    control.name,
-                    controlData,
-                    formControls)
+                validators,
+                asyncValidators               
             )
         })
         if (onComplete) {
@@ -227,15 +248,16 @@ export class StandardSharedService {
                     })
 
                 // If identityfield is empty, we should create an identity field
-                if (!ObjectUtils.isNotNull(options.identityfield)
-                    || Object.keys(tempElementObject).indexOf(options.identityfield) < 0) {
+                // Identity Field is control name, we need to find a relate control
+                if (!ObjectUtils.isNotNull(options.identityfield)) {                    
                     tempElementObject['uniq_id'] = Guid.create().toString()
                     ids.push(tempElementObject['uniq_id'])
                     idKey = 'uniq_id'
                 }
                 else {
-                    ids.push(tempElementObject[options.identityfield])
-                    idKey = options.identityfield
+                    const foundControl = <PageRenderedControl<DefaultControlOptions>>standard.controls.find(a => a.name === options.identityfield)
+                    ids.push(tempElementObject[foundControl.defaultOptions.bindname])
+                    idKey = foundControl.defaultOptions.bindname
                 }
 
                 arrayTableData.push(tempElementObject)
@@ -258,7 +280,8 @@ export class StandardSharedService {
                 idKey = 'uniq_id'
             }
             else {
-                idKey = options.identityfield
+                const foundControl = <PageRenderedControl<DefaultControlOptions>>standard.controls.find(a => a.name === options.identityfield)
+                idKey = foundControl.defaultOptions.bindname
             }
         }
 
