@@ -29,7 +29,7 @@ export class JwtTokenInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let headers = req.headers
 
-        let ignorePaths = environment.ignoreSendTokenEndpoints.split(';')
+        const ignorePaths = environment.ignoreSendTokenEndpoints.split(';')
         let ignore = false
         _.forEach(ignorePaths, path => {
             if (req.url.indexOf(path) > 0) {
@@ -44,7 +44,7 @@ export class JwtTokenInterceptor implements HttpInterceptor {
             const authReq = req.clone({ headers });
             return next.handle(authReq).pipe(
                 catchError(err => {
-                    let httpErrorResponse: HttpErrorResponse = err as HttpErrorResponse
+                    const httpErrorResponse: HttpErrorResponse = err as HttpErrorResponse
                     if (httpErrorResponse.status === 401) {
 
                         this.logger.debug('Response error', httpErrorResponse.headers.getAll('X-Token-Expired'))
@@ -56,7 +56,7 @@ export class JwtTokenInterceptor implements HttpInterceptor {
                             // Popup dialog for letting user types his password
                             if(!this.isOpenningUnlock){
                                 const dialogRef = this.dialog.open(UnlockScreenDialogComponent, {
-                                    disableClose: true                                
+                                    disableClose: true
                                 });
                                 this.isOpenningUnlock = true
                                 dialogRef.afterClosed().subscribe(res => {
@@ -64,7 +64,7 @@ export class JwtTokenInterceptor implements HttpInterceptor {
                                         this.router.navigateByUrl(this.routerEx.getCurrentUrl())
                                     }
                                 })
-                            }                           
+                            }
                         }
                         else {
                             // There are some hacking cheats, force back to login page

@@ -72,12 +72,36 @@ namespace LetPortal.Core.Persistences
             return Collection.AsQueryable();
         }
 
-        public async Task<IEnumerable<T>> GetAllByIdsAsync(IEnumerable<string> ids)
+        public async Task<IEnumerable<T>> GetAllByIdsAsync(
+            IEnumerable<string> ids,
+            Expression<Func<T, bool>> expression = null,
+            bool isRequiredDiscriminator = false)
         {
-            if (ids != null && ids.Any())
+            if (isRequiredDiscriminator)
             {
-                return await Collection.AsQueryable().Where(a => ids.Contains(a.Id)).ToListAsync();
+                if (ids != null && ids.Any())
+                {
+                    var builder = Collection.OfType<T>().AsQueryable().Where(a => ids.Contains(a.Id));
+                    if (expression != null)
+                    {
+                        builder = builder.Where(expression);
+                    }
+                    return await builder.ToListAsync();
+                }
             }
+            else
+            {
+                if (ids != null && ids.Any())
+                {
+                    var builder = Collection.AsQueryable().Where(a => ids.Contains(a.Id));
+                    if(expression != null)
+                    {
+                        builder = builder.Where(expression);
+                    }
+                    return await builder.ToListAsync();
+                }
+            }
+            
             return null;
         }
 

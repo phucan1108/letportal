@@ -18,9 +18,9 @@ export class ObjectUtils {
      * @param separator separator char, default '.'
      */
     public static unflattenObjects(object: any, separator = '.') {
-        var result = {}
-        for (var i in object) {
-            var keys = i.split(separator)
+        const result = {}
+        for (const i in object) {
+            const keys = i.split(separator)
             keys.reduce(function (r, e, j) {
                 return r[e] || (r[e] = isNaN(Number(keys[j + 1])) ? (keys.length - 1 == j ? object[i] : {}) : [])
             }, result)
@@ -56,18 +56,18 @@ export class ObjectUtils {
     }
 
     public static isNotNull(value: any){
-        return typeof value !== 'undefined' && value != null && value != ""
+        return typeof value !== 'undefined' && value != null && value != ''
     }
 
     public static clone(source: any): any {
         // Prefer to Mozila docs: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
-        let jsonStr = JSON.stringify(source)
+        const jsonStr = JSON.stringify(source)
         return JSON.parse(jsonStr)
     }
 
     public static projection(outputProjection: string, data: any){
         const splitted = outputProjection.split(';')
-        let fieldMaps: any = []
+        const fieldMaps: any = []
         splitted.forEach(field => {
             if (field.indexOf('=') > 0) {
                 const fieldSplitted = field.split('=')
@@ -84,9 +84,9 @@ export class ObjectUtils {
             }
         })
         if (data instanceof Array) {
-            let resData = new Array()
+            const resData = new Array()
             data.forEach(dt => {
-                let obj = new Object()
+                const obj = new Object()
                 fieldMaps.forEach(map => {
                     const evaluted = Function('data', 'return data.' + map.map)
                     obj[map.key] = evaluted(dt)
@@ -98,7 +98,7 @@ export class ObjectUtils {
             return resData
         }
         else {
-            let obj = new Object()
+            const obj = new Object()
             fieldMaps.forEach(map => {
                 const evaluted = Function('data', 'return data.' + map.map)
                 obj[map.key] = evaluted(data)

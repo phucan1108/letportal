@@ -1,5 +1,5 @@
 import { Page, PageButton } from 'services/portal.service';
-import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl } from 'app/core/models/page.model';
+import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl, PageSectionStandardArrayBoundData as PageSectionStandardArrayBoundDataEvent, AddOneItemOnStandardArrayEvent, RemoveOneItemOnStandardArrayEvent, UpdateOneItemOnStandardArrayEvent, OpenInsertDialogOnStandardArrayEvent } from 'app/core/models/page.model';
 
 const PAGE_ACTION = '[Page]'
 
@@ -102,6 +102,37 @@ export class ClickControlEvent implements PageAction {
     constructor(public event: PageControlActionEvent) { }
 }
 
+// For Array Standards
+export class AddSectionBoundDataForStandardArray implements PageAction {
+    public static readonly type = `${PAGE_ACTION} Add section bound data on Standard Array`
+    constructor(public event: PageSectionStandardArrayBoundDataEvent) { }
+}
+
+export class OpenInsertDialogForStandardArray implements PageAction {
+    public static readonly type = `${PAGE_ACTION} Open dialog for inserting on Standard Array`
+    constructor(public event: OpenInsertDialogOnStandardArrayEvent) { }
+}
+
+export class CloseDialogForStandardArray implements PageAction {
+    public static readonly type = `${PAGE_ACTION} Close dialog for inserting on Standard Array`
+    constructor() { }
+}
+
+export class InsertOneItemForStandardArray implements PageAction {
+    public static readonly type = `${PAGE_ACTION} Add new item on Standard Array`
+    constructor(public event: AddOneItemOnStandardArrayEvent) { }
+}
+
+export class RemoveOneItemForStandardArray implements PageAction{
+    public static readonly type = `${PAGE_ACTION} remove item on Standard Array`
+    constructor(public event: RemoveOneItemOnStandardArrayEvent) { }
+}
+
+export class UpdateOneItemForStandardArray implements PageAction {
+    public static readonly type = `${PAGE_ACTION} update item on Standard Array`
+    constructor(public event: UpdateOneItemOnStandardArrayEvent) { }
+}
+
 export type All =
     PageAction |
     UpdateDatasourceAction |
@@ -115,4 +146,10 @@ export type All =
     GatherSectionValidations |
     SectionValidationStateAction |
     CompleteGatherSectionValidations |
-    OnDestroyingPage
+    OnDestroyingPage |
+    AddSectionBoundDataForStandardArray |
+    InsertOneItemForStandardArray |
+    RemoveOneItemForStandardArray |
+    UpdateOneItemForStandardArray |
+    OpenInsertDialogForStandardArray |
+    CloseDialogForStandardArray

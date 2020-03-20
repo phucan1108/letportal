@@ -17,8 +17,12 @@ import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
     styleUrls: ['./shelloption.component.scss']
 })
 export class ShellOptionComponent implements OnInit, AfterViewInit {
-    ngAfterViewInit(): void {
-    }
+
+    constructor(
+        public dialog: MatDialog,
+        private shortcutUtil: ShortcutUtil,
+        private logger: NGXLogger
+    ) { }
     @ViewChild('table', { static: false }) table: MatTable<ExtendedShellOption>;
 
     @ViewChild('mtable', { static: true })
@@ -33,12 +37,8 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
     newOptionKey: string;
     @Output()
     changed = new EventEmitter();
-
-    constructor(
-        public dialog: MatDialog,
-        private shortcutUtil: ShortcutUtil,
-        private logger: NGXLogger
-    ) { }
+    ngAfterViewInit(): void {
+    }
 
     ngOnInit(): void {
         this.shellOptions$.subscribe(options => {
@@ -70,7 +70,7 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
         this.shellOptions = _.filter(this.shellOptions, (elem) => {
             return elem.id !== shell.id
         })
-        this.shortcutUtil.toastMessage("Delete option successfully!", ToastType.Success);
+        this.shortcutUtil.toastMessage('Delete option successfully!', ToastType.Success);
         this.changed.emit(this.shellOptions)
     }
 

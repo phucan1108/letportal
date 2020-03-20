@@ -603,6 +603,9 @@ namespace LetPortal.Versions.Components.Standards
 
             VersionUtils.GenerateControlEvents(databaseStandard);
             VersionUtils.GenerateControlEvents(appStandard);
+
+            VersionUtils.GenerateStandardOptions(databaseStandard);
+            VersionUtils.GenerateStandardOptions(appStandard);
             versionContext.InsertData(databaseStandard);
             versionContext.InsertData(appStandard);
         }

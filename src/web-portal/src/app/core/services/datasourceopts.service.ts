@@ -33,7 +33,7 @@ export class DatasourceOptionsService {
 
     outputProjection(outputProjection: string, data: any) {
         const splitted = outputProjection.split(';')
-        let fieldMaps: FieldMap[] = []
+        const fieldMaps: FieldMap[] = []
         _.forEach(splitted, field => {
             if (field.indexOf('=') > 0) {
                 const fieldSplitted = field.split('=')
@@ -50,9 +50,9 @@ export class DatasourceOptionsService {
             }
         })
         if (data instanceof Array) {
-            let resData = new Array()
+            const resData = new Array()
             _.forEach(data, dt => {
-                let obj = new Object()
+                const obj = new Object()
                 _.forEach(fieldMaps, map => {
                     const evaluted = Function('data', 'return data.' + map.map)
                     obj[map.key] = evaluted(dt)
@@ -64,7 +64,7 @@ export class DatasourceOptionsService {
             return resData
         }
         else {
-            let obj = new Object()
+            const obj = new Object()
             _.forEach(fieldMaps, map => {
                 const evaluted = Function('data', 'return data.' + map.map)
                 obj[map.key] = evaluted(data)
@@ -74,7 +74,7 @@ export class DatasourceOptionsService {
     }
 
     private executeDatabase(databaseConfigs: DatabaseOptions, pageShellData: PageShellData) {
-        let command = this.translator.translateDataWithShell(databaseConfigs.query, pageShellData)
+        const command = this.translator.translateDataWithShell(databaseConfigs.query, pageShellData)
         this.logger.debug('Prepared command to execute database', command)
         return this.databaseClient
             .executionDynamic(databaseConfigs.databaseConnectionId, command)
@@ -88,8 +88,8 @@ export class DatasourceOptionsService {
     }
 
     private executeHttpService(httpConfigs: HttpServiceOptions, pageShellData: PageShellData) {
-        let url = this.translator.translateDataWithShell(httpConfigs.httpServiceUrl, pageShellData)
-        let body = this.translator.translateDataWithShell(httpConfigs.jsonBody, pageShellData)
+        const url = this.translator.translateDataWithShell(httpConfigs.httpServiceUrl, pageShellData)
+        const body = this.translator.translateDataWithShell(httpConfigs.jsonBody, pageShellData)
         switch (httpConfigs.httpMethod.toUpperCase()) {
             case 'GET':
                 return this.httpClient.get(url, {

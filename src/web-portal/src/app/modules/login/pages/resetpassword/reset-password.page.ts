@@ -25,11 +25,11 @@ export class ResetPasswordPage implements OnInit {
         private activatedRouter: ActivatedRoute,
         private accountClient: AccountsClient,
         private logger: NGXLogger
-    ) { 
-        
+    ) {
+
     }
 
-    ngOnInit(): void {         
+    ngOnInit(): void {
         this.resetPasswordForm = this.fb.group({
             newPassword: ['', Validators.required]
         })
@@ -39,7 +39,7 @@ export class ResetPasswordPage implements OnInit {
             this.code = queryParams.get('code')
             if(this.user && this.code)
             {
-                this.isRecoveryMode = true                
+                this.isRecoveryMode = true
             }
         })
     }

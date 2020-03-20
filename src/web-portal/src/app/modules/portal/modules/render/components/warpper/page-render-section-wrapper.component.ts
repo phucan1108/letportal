@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, ViewChildren, QueryList, OnDestroy } from '@angular/core';
-import { SectionTemplate } from './section-template.directive';
-import { PageSection, SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType } from 'services/portal.service';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType } from 'services/portal.service';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { NGXLogger } from 'ngx-logger';
-import { debounceTime, tap, delay, filter } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { RenderingPageSectionAction, BeginRenderingPageSectionsAction, RenderedPageSectionAction, AddSectionBoundData } from 'stores/pages/page.actions';
+import { RenderingPageSectionAction, RenderedPageSectionAction } from 'stores/pages/page.actions';
 import { RenderingSectionState } from 'app/core/models/page.model';
 import { Observable, Subscription } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
@@ -15,8 +14,13 @@ import { PageStateModel } from 'stores/pages/page.state';
     templateUrl: './page-render-section-wrapper.component.html'
 })
 export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
-    ngOnDestroy(): void {
-        
+    constructor(
+        private chartsClient: ChartsClient,
+        private store: Store,
+        private standardClient: StandardComponentClient,
+        private dynamicsClient: DynamicListClient,
+        private logger: NGXLogger
+    ) {
     }
     @Input()
     pageSection: ExtendedPageSection
@@ -28,13 +32,8 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
     subcription$: Subscription
 
     sectionClass = 'col-lg-12'
-    constructor(
-        private chartsClient: ChartsClient,
-        private store: Store,
-        private standardClient: StandardComponentClient,
-        private dynamicsClient: DynamicListClient,
-        private logger: NGXLogger
-    ) {
+    ngOnDestroy(): void {
+
     }
 
     ngOnInit(): void {
@@ -47,7 +46,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
         switch (this.pageSection.constructionType) {
             case SectionContructionType.Standard:
                 this.standardClient.getOneForRender(this.pageSection.componentId).pipe(
-                    //delay(5000),
+                    // delay(5000),
                     tap(
                         standard => {
                             this.sectionClass = this.getSectionClass(standard.layoutType)
@@ -60,20 +59,39 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                                 state: RenderingSectionState.Complete
                             }))
                         },
-                        err => {
+                        () => {
 
                         }
                     )
                 ).subscribe()
                 break
             case SectionContructionType.Array:
+                this.standardClient.getOneForRender(this.pageSection.componentId).pipe(
+                    // delay(5000),
+                    tap(
+                        standard => {
+                            this.sectionClass = this.getSectionClass(standard.layoutType)
+                            this.pageSection.relatedArrayStandard = standard
+                            this.pageSection.isLoaded = true
+                            this.readyToRender = true
+                            this.store.dispatch(new RenderedPageSectionAction({
+                                sectionClass: this.sectionClass,
+                                sectionName: this.pageSection.name,
+                                state: RenderingSectionState.Complete
+                            }))
+                        },
+                        () => {
+
+                        }
+                    )
+                ).subscribe()
                 break
             case SectionContructionType.DynamicList:
                 this.dynamicsClient.getOne(this.pageSection.componentId).pipe(
-                    //delay(5000),
+                    // delay(5000),
                     tap(
-                        dynamicList => {  
-                            this.sectionClass = this.getSectionClass(dynamicList.layoutType)                          
+                        dynamicList => {
+                            this.sectionClass = this.getSectionClass(dynamicList.layoutType)
                             this.pageSection.relatedDynamicList = dynamicList
                             this.pageSection.isLoaded = true
                             this.readyToRender = true
@@ -83,7 +101,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                                 state: RenderingSectionState.Complete
                             }))
                         },
-                        err => {
+                        () => {
 
                         }
                     )
@@ -103,7 +121,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                                 state: RenderingSectionState.Complete
                             }))
                         },
-                        err => {
+                        () => {
 
                         }
                     )

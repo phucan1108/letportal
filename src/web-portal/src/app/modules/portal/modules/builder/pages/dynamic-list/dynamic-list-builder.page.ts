@@ -35,7 +35,7 @@ export class DynamicListBuilderPage implements OnInit {
     databaseOptions: DatabaseOptions
     //#endregion
 
-    isSubmitted: boolean = false
+    isSubmitted = false
 
     edittingDynamicList: DynamicList;
     isEditMode = false;
@@ -74,11 +74,11 @@ export class DynamicListBuilderPage implements OnInit {
 
     initialBuilderForm() {
         if (this.isEditMode) {
-            this.initialEditBuilderForm()            
+            this.initialEditBuilderForm()
             this.databaseOptions = this.edittingDynamicList.listDatasource.databaseConnectionOptions
         }
         else {
-            this.createDynamicListForm()            
+            this.createDynamicListForm()
             this.databaseOptions = {
                 databaseConnectionId: '',
                 entityName: '',
@@ -93,7 +93,7 @@ export class DynamicListBuilderPage implements OnInit {
             displayName: [this.edittingDynamicList.displayName, [Validators.required, Validators.maxLength(250)]]
         })
 
-        
+
         this.filterOptions = this.edittingDynamicList.filtersList ? this.edittingDynamicList.filtersList.filterFields as Array<ExtendedFilterField> : []
         this.columnDefs = this.edittingDynamicList.columnsList ? this.edittingDynamicList.columnsList.columndDefs : []
         this.commandsInList = _.cloneDeep(this.edittingDynamicList.commandsList.commandButtonsInList)
@@ -126,19 +126,19 @@ export class DynamicListBuilderPage implements OnInit {
             if (this.isEditMode) {
                 this.dynamicListClient.update(this.edittingDynamicList.id, submittingDynamicList)
                     .subscribe(rep => {
-                        this.shortcutUtil.toastMessage("Update successfully!", ToastType.Success)
+                        this.shortcutUtil.toastMessage('Update successfully!', ToastType.Success)
                     },
                         err => {
-                            this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                            this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
                         })
             }
             else {
                 this.dynamicListClient.create(submittingDynamicList).subscribe(rep => {
                     this.router.navigateByUrl('/portal/page/dynamic-list-management')
-                    this.shortcutUtil.toastMessage("Save successfully!", ToastType.Success)
+                    this.shortcutUtil.toastMessage('Save successfully!', ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                        this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
                     })
             }
         }
@@ -184,7 +184,7 @@ export class DynamicListBuilderPage implements OnInit {
         this.componentInfo.get('displayName').valueChanges.subscribe(newValue => {
             if (newValue && !this.isEditMode) {
                 // Apply this change to list name and url path
-                const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
+                const listNameValue = (newValue as string).toLowerCase().replace(/\s/g, '')
                 this.componentInfo.get('name').setValue(listNameValue)
             }
         })

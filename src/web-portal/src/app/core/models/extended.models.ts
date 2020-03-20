@@ -20,6 +20,7 @@ export interface ExtendedPageSection extends PageSection {
     relatedStandard: StandardComponent
     relatedDynamicList: DynamicList
     relatedChart: Chart
+    relatedArrayStandard: StandardComponent
     isLoaded: boolean
     isBroken: boolean // Use for deleted relating component
 }
@@ -46,7 +47,7 @@ export interface ExtendedControlValidator{
 }
 
 export class DynamicFormOptions{
-    
+
 }
 
 export interface ExtendedPageControlEvent extends PageControlEvent {

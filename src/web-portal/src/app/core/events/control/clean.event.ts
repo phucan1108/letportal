@@ -11,7 +11,7 @@ import { ControlType } from 'services/portal.service';
 })
 export class CleanControlEvent implements ControlEventExecution{
     execute(
-        control: PageRenderedControl<DefaultControlOptions>,        
+        control: PageRenderedControl<DefaultControlOptions>,
         pageService: PageService,
         formControl: FormControl,
         defaultValue: any,
@@ -23,6 +23,6 @@ export class CleanControlEvent implements ControlEventExecution{
                 else{
                     formControl.setValue(null)
                 }
-            
+
     }
 }

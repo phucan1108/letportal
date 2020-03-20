@@ -11,7 +11,7 @@ export class DynamicListDataSourceComponent implements OnInit {
     @ViewChild(JsonEditorComponent, { static: true }) editor: JsonEditorComponent;
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any;
-    
+
     dataSourceForm: FormGroup;
 
     constructor(public dialogRef: MatDialogRef<DynamicListDataSourceComponent>,
@@ -19,7 +19,7 @@ export class DynamicListDataSourceComponent implements OnInit {
         private fb: FormBuilder,
         private cd: ChangeDetectorRef) { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.dataSourceForm = this.fb.group({
             jsonDataSource: ['', Validators.required]
         })

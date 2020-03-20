@@ -1,16 +1,17 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { ShellConfigProvider } from 'app/core/shell/shellconfig.provider';
 import { ExtendedPageButton } from 'app/core/models/extended.models';
 import * as _ from 'lodash';
 import { PageService } from 'services/page.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'action-commands',
     templateUrl: './action-commands-section.component.html'
 })
-export class ActionCommandsSectionComponent implements OnInit {
+export class ActionCommandsSectionComponent implements OnInit, OnDestroy {
 
     @Input()
     actionCommands: Array<ExtendedPageButton>
@@ -22,6 +23,8 @@ export class ActionCommandsSectionComponent implements OnInit {
     @Output()
     onClick = new EventEmitter<ExtendedPageButton>()
 
+    listenParamChanges$: Subscription
+    listenDataChanges$: Subscription
     constructor(
         private pageService: PageService,
         private shellConfigProvider: ShellConfigProvider,
@@ -31,13 +34,12 @@ export class ActionCommandsSectionComponent implements OnInit {
 
     ngOnInit(): void {
 
-        const subOpts$ = this.pageService.listenOptionsAndParamsChange$().subscribe(
+        this.listenParamChanges$ = this.pageService.listenOptionsAndParamsChange$().subscribe(
             res => {
                 this.options = res.options
-                this.queryparams = res.queryparams
-                //subOpts$.unsubscribe()
+                this.queryparams = res.queryparams                
             }
-        ).unsubscribe()
+        )
 
         const sub$ = this.pageService.listenDataChange$().subscribe(
             data => {
@@ -49,6 +51,10 @@ export class ActionCommandsSectionComponent implements OnInit {
                 sub$.unsubscribe()
             }
         )
+    }
+    
+    ngOnDestroy(): void {
+        this.listenParamChanges$.unsubscribe()
     }
 
     onCommandClick(command: ExtendedPageButton) {

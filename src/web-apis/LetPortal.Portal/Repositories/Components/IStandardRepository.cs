@@ -7,10 +7,13 @@ using LetPortal.Portal.Models.Shared;
 namespace LetPortal.Portal.Repositories.Components
 {
     public interface IStandardRepository : IGenericRepository<StandardComponent>
-    {
+    {          
+
         Task CloneAsync(string cloneId, string cloneName);
 
         Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null);
+
+        Task<IEnumerable<ShortEntityModel>> GetShortArrayStandards(string keyWord = null);
 
         Task<StandardComponent> GetOneForRenderAsync(string id);
     }

@@ -21,7 +21,7 @@ export class DynamicListDataDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<any>,
         private breakpointObserver: BreakpointObserver,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) { 
+    ) {
         this.headers = this.data.headers
         this.rawData = this.data.rawData
         this.datasourceCache = this.data.datasource
@@ -42,9 +42,9 @@ export class DynamicListDataDialogComponent implements OnInit {
 
     private translateData(renderingData: any, currentColumn: ExtendedColDef) {
         if (currentColumn.name === 'id' || currentColumn.name === '_id') {
-            let checkData = renderingData['id']
+            const checkData = renderingData.id
             if (!checkData) {
-                return renderingData['_id']
+                return renderingData._id
             }
             else {
                 return checkData
@@ -52,7 +52,7 @@ export class DynamicListDataDialogComponent implements OnInit {
         }
         let displayData = null
         if (currentColumn.name.indexOf('.') > 0) {
-            let extractData = new Function('data', `return data.${currentColumn.name}`)
+            const extractData = new Function('data', `return data.${currentColumn.name}`)
             displayData = extractData(renderingData)
         }
         else {

@@ -38,7 +38,7 @@ export class ArrayUtils {
     }
 
     public static appendItemsDistinct<T>(arrays: Array<T>, appendItems: Array<T>, identifyField: string = 'id'): Array<T> {
-        let temps: Array<any> = []
+        const temps: Array<any> = []
         _.forEach(appendItems, item => {
             let notDuplicate = true
             _.forEach(arrays, element => {
@@ -46,9 +46,9 @@ export class ArrayUtils {
                     if (element[identifyField] === item[identifyField]) {
                         temps.push({
                             key: element[identifyField],
-                            update: item                        
+                            update: item
                         })
-                        notDuplicate = false                    
+                        notDuplicate = false
                         return false
                     }
                 }
@@ -76,12 +76,12 @@ export class ArrayUtils {
     }
 
     public static sliceOneProp(arrays: Array<any>, propName: string): Array<any> {
-        let reducedArrays: Array<any> = []
+        const reducedArrays: Array<any> = []
 
         _.forEach(arrays, elem => {
             reducedArrays.push(elem[propName])
         })
 
         return reducedArrays
-    }    
+    }
 }

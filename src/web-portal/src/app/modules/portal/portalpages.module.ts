@@ -14,9 +14,9 @@ import { NavigationComponent } from './components/navigation/navigation.componen
         NavigationComponent,
         AppDashboardComponent
     ],
-    imports: [ 
-        CommonModule, 
-        PagesRoutingModule,        
+    imports: [
+        CommonModule,
+        PagesRoutingModule,
         LayoutModule,
         MatProgressButtonsModule,
         MatProgressSpinnerModule,

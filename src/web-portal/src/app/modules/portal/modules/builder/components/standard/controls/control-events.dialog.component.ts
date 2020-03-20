@@ -37,10 +37,10 @@ export class ControlEventsDialogComponent implements OnInit {
 
     isShowEditForm = false
 
-    isHttpOptionsValid: boolean = false
+    isHttpOptionsValid = false
     httpOptions: HttpServiceOptions
 
-    databaseOptions: DatabaseOptions 
+    databaseOptions: DatabaseOptions
     dbOptions: DatabaseFormOptions = {
         allowHints: ['query']
     }
@@ -112,7 +112,7 @@ export class ControlEventsDialogComponent implements OnInit {
     }
 
     prepareEventsList(control: PageControl): ExtendedPageControlEvent[] {
-        let events: ExtendedPageControlEvent[] = []
+        const events: ExtendedPageControlEvent[] = []
         _.forEach(control.pageControlEvents, event => {
             events.push({
                 ...event,
@@ -146,7 +146,7 @@ export class ControlEventsDialogComponent implements OnInit {
 
     editEvent(event: ExtendedPageControlEvent) {
         this.selectedEvent = event
-        this.isShowEditForm = true        
+        this.isShowEditForm = true
         this.loadEventFormBySelectedEvent()
     }
 
@@ -160,7 +160,7 @@ export class ControlEventsDialogComponent implements OnInit {
         if(this.eventForm.valid){
             if(this.selectedEvent.eventActionType === EventActionType.QueryDatabase
                 && this.dbOptionsComponent.isValid()){
-                    
+
                     const currentDbOptions = this.dbOptionsComponent.get()
                     this.selectedEvent.eventDatabaseOptions = {
                         ...this.selectedEvent.eventDatabaseOptions,
@@ -169,8 +169,8 @@ export class ControlEventsDialogComponent implements OnInit {
                     }
 
                     formValid = true
-                }            
-            else if(this.selectedEvent.eventActionType === EventActionType.WebService 
+                }
+            else if(this.selectedEvent.eventActionType === EventActionType.WebService
                 && this.isHttpOptionsValid){
                 formValid = true
             }
@@ -191,12 +191,12 @@ export class ControlEventsDialogComponent implements OnInit {
             })
             this.events$.next(this.events)
             this.isShowEditForm = false
-        }        
+        }
     }
 
     combineEvent(): ExtendedPageControlEvent{
         const formValues = this.eventForm.value
-        let event: ExtendedPageControlEvent = {
+        const event: ExtendedPageControlEvent = {
             id: this.selectedEvent.id,
             eventActionType: formValues.eventActionType,
             eventName: this.selectedEvent.eventName,

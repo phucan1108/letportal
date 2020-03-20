@@ -51,7 +51,7 @@ export class BackupUploadpage implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.pageService.init('backup-upload').subscribe() 
+        this.pageService.init('backup-upload').subscribe()
         this.form = this.fb.group({
             upload: ['test', [Validators.required]]
         })
@@ -73,10 +73,10 @@ export class BackupUploadpage implements OnInit {
         }
         else {
             if (this.isMaximumSize) {
-                this.form.get(this.uploadFormName).setErrors({ 'maximumsize': true })
+                this.form.get(this.uploadFormName).setErrors({ maximumsize: true })
             }
             else if (this.isInvalidFileExtension) {
-                this.form.get(this.uploadFormName).setErrors({ 'fileextensions': true })
+                this.form.get(this.uploadFormName).setErrors({ fileextensions: true })
             }
         }
         this.form.get(this.uploadFormName).markAsTouched()
@@ -149,7 +149,7 @@ export class BackupUploadpage implements OnInit {
                 this.router.navigateByUrl('portal/builder/backup/restore/' + res.id)
             },
             err => {
-                this.shortcutUtil.toastMessage("Oops! Something went wrong when uploading a file, plese try again.", ToastType.Error)
+                this.shortcutUtil.toastMessage('Oops! Something went wrong when uploading a file, plese try again.', ToastType.Error)
                 this.btnOption.active = false
             }
         )

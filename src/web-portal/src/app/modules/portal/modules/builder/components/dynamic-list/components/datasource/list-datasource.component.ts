@@ -11,7 +11,7 @@ import { Guid } from 'guid-typescript';
     templateUrl: './list-datasource.component.html'
 })
 export class ListDatasourceComponent implements OnInit {
-    heading = "Database Connection Info:"
+    heading = 'Database Connection Info:'
     format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     @Input()
     databaseOptions: DatabaseOptions
@@ -40,26 +40,26 @@ export class ListDatasourceComponent implements OnInit {
     ngOnInit(): void { }
 
     onPopulatingQuery($event: ExtractingSchemaQueryModel) {
-        let columnDefs = this.populateColumnDefs($event.columnFields)
-        let parameters: Array<Parameter> = []
+        const columnDefs = this.populateColumnDefs($event.columnFields)
+        const parameters: Array<Parameter> = []
         _.forEach(this.params, param => {
             parameters.push({ name: param.name })
         })
         this.afterPopulatingQuery.emit({
             filters: [],
-            columnDefs: columnDefs,
-            parameters: parameters
+            columnDefs,
+            parameters
         })
 
     }
 
     onSelectingEntity($event: ExtractingSchemaQueryModel) {
-        let columnDefs = this.populateColumnDefs($event.columnFields)
-        let commands = this.populateDefaultCommandsForEntityExecutionType(this.selectedEntityname)
+        const columnDefs = this.populateColumnDefs($event.columnFields)
+        const commands = this.populateDefaultCommandsForEntityExecutionType(this.selectedEntityname)
         this.afterSelectingEntity.emit({
             filters: [],
-            columnDefs: columnDefs,
-            commands: commands
+            columnDefs,
+            commands
         })
     }
     databaseOptChanged($event: DatabaseOptions){
@@ -71,7 +71,7 @@ export class ListDatasourceComponent implements OnInit {
 
     onSelectingEntityName($event: string) {
         this.selectedEntityname = $event
-    }    
+    }
 
     private convertFieldType(fieldType: string): FieldValueType{
         switch(fieldType){
@@ -91,7 +91,7 @@ export class ListDatasourceComponent implements OnInit {
     }
 
     populateColumnDefs(columnFields: ColumnField[]): Array<ColumndDef> {
-        let columnTempDefs = new Array<ColumndDef>();
+        const columnTempDefs = new Array<ColumndDef>();
 
         _.forEach(columnFields, (element) => {
             // By default, we need to remove all fields that contain id or special char
@@ -100,7 +100,7 @@ export class ListDatasourceComponent implements OnInit {
                 && !this.format.test(fieldName)
                 && !this.ignoreBsonFieldTypes(element.fieldType)) {
                 // Ignore some special fields
-                let columnDef: ColumndDef = {
+                const columnDef: ColumndDef = {
                     name: (element.name === '_id' || element.name === 'id') ? 'id' : element.name,
                     displayName: this.getBeautifulName(element.displayName),
                     displayFormat: '{0}',
@@ -237,12 +237,12 @@ export class ListDatasourceComponent implements OnInit {
         return fieldType == 'list' || fieldType == 'document'
     }
 
-    private getBeautifulName(colName: string){   
-        let firstLetter = colName[0].toUpperCase()
-        let subStr = colName.substr(1)
-        let combine = firstLetter + subStr
-        try{                 
-            let splitted = combine.split(/(?=[A-Z])/);
+    private getBeautifulName(colName: string){
+        const firstLetter = colName[0].toUpperCase()
+        const subStr = colName.substr(1)
+        const combine = firstLetter + subStr
+        try{
+            const splitted = combine.split(/(?=[A-Z])/);
             return splitted.join(' ').trim()
         }
         catch{

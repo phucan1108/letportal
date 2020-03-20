@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { Observable, of, Subscription } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
 import { filter, tap, delay } from 'rxjs/operators';
-import { PageReadyAction, BeginRenderingPageSectionsAction, RenderedPageSectionAction, EndRenderingPageSectionsAction, BeginBuildingBoundData, AddSectionBoundData, EndBuildingBoundDataComplete } from 'stores/pages/page.actions';
+import { PageReadyAction, BeginRenderingPageSectionsAction, RenderedPageSectionAction, EndRenderingPageSectionsAction, BeginBuildingBoundData, AddSectionBoundData, EndBuildingBoundDataComplete, AddSectionBoundDataForStandardArray } from 'stores/pages/page.actions';
 import * as _ from 'lodash';
 import { RenderingPageSectionState, RenderingSectionState } from 'app/core/models/page.model';
 import { NGXLogger } from 'ngx-logger';
@@ -49,7 +49,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
             Breakpoints.HandsetPortrait,
             Breakpoints.HandsetLandscape
         ]).subscribe(result => {
-            if (result.matches) {                
+            if (result.matches) {
                 this.isSmallDevice = true
                 this.cd.markForCheck()
             }
@@ -72,7 +72,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
             data => {
                 this.data = data
                 _.forEach(this.actionCommands, (command: ExtendedPageButton) => {
-                    command.isHidden = this.pageService.evaluatedExpression(command.allowHidden)                    
+                    command.isHidden = this.pageService.evaluatedExpression(command.allowHidden)
                 })
                 this.readyToRenderButtons = true
                 sub$.unsubscribe()
@@ -82,7 +82,8 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
             filter(state => state.filterState &&
                 (state.filterState === PageReadyAction
                     || state.filterState === RenderedPageSectionAction
-                    || state.filterState === AddSectionBoundData)),
+                    || state.filterState === AddSectionBoundData
+                    || state.filterState === AddSectionBoundDataForStandardArray)),
             tap(
                 pageState => {
                     switch (pageState.filterState) {
@@ -94,7 +95,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                             this.counterBuildSectionData = this.page.builder.sections.length
                             this.store.dispatch(new BeginRenderingPageSectionsAction(this.prepareRenderingPageSectionsStates(this.page)))
                             break
-                        case RenderedPageSectionAction:                            
+                        case RenderedPageSectionAction:
                             this.counterRenderedSection--
                             if (this.counterRenderedSection === 0) {
                                 const timer$ = of(true).pipe(
@@ -115,6 +116,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                             }
                             break
                         case AddSectionBoundData:
+                        case AddSectionBoundDataForStandardArray:                            
                             this.counterBuildSectionData--
                             if (this.counterBuildSectionData === 0) {
                                 const timer$ = of(true).pipe(

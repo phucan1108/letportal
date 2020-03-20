@@ -28,6 +28,9 @@
             <mat-error *ngIf="isInvalid('equalTo')">
                 {{getErrorMessage('equalTo')}}
             </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
             <mat-error *ngIf="hasAsyncInvalid">
                 {{ getAsyncErrorMessage() }}
             </mat-error>
@@ -57,6 +60,9 @@
             </mat-error>
             <mat-error *ngIf="isInvalid('equalTo')">
                 {{getErrorMessage('equalTo')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
             </mat-error>
             <mat-error *ngIf="hasAsyncInvalid">
                 {{ getAsyncErrorMessage() }}
@@ -119,6 +125,9 @@
             <mat-error *ngIf="isInvalid('equalTo')">
                 {{getErrorMessage('equalTo')}}
             </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
             <mat-error *ngIf="hasAsyncInvalid">
                 {{ getAsyncErrorMessage() }}
             </mat-error>
@@ -144,6 +153,9 @@
             <mat-error *ngIf="isInvalid('required')">
                 {{getErrorMessage('required')}}
             </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
             <mat-error *ngIf="hasAsyncInvalid">
                 {{ getAsyncErrorMessage() }}
             </mat-error>
@@ -158,17 +170,18 @@
                     <mat-error *ngIf="isInvalid('required')">
                         {{getErrorMessage('required')}}
                     </mat-error>
+                    <mat-error *ngIf="isInvalid('isExist')">
+                        {{getErrorMessage('isExist')}}
+                    </mat-error>
                     <mat-error *ngIf="hasAsyncInvalid">
                         {{ getAsyncErrorMessage() }}
                     </mat-error>
                 </mat-form-field>
             </div>
             <mat-form-field class="field-full-width" *ngIf="!control.defaultOptions.multiple">
-                <input type="text" 
-                    [placeholder]="control.defaultOptions.placeholder" [formControl]="formControlLink"
+                <input type="text" [placeholder]="control.defaultOptions.placeholder" [formControl]="formControlLink"
                     [id]="control.name" matInput [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete" 
-                    [displayWith]="displayFn"
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
                     (optionSelected)="onAutoCompleteSelected($event)">
                     <mat-option *ngFor="let option of autoOptionsList$ | async" [value]="option.value">
                         {{ option.name }}
@@ -176,6 +189,9 @@
                 </mat-autocomplete>
                 <mat-error *ngIf="isInvalid('required')">
                     {{getErrorMessage('required')}}
+                </mat-error>
+                <mat-error *ngIf="isInvalid('isExist')">
+                    {{getErrorMessage('isExist')}}
                 </mat-error>
                 <mat-error *ngIf="hasAsyncInvalid">
                     {{ getAsyncErrorMessage() }}
@@ -189,6 +205,9 @@
                 [placeholder]="control.defaultOptions.placeholder" type="number">
             <mat-error *ngIf="isInvalid('required')">
                 {{getErrorMessage('required')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
             </mat-error>
             <mat-error *ngIf="hasAsyncInvalid">
                 {{ getAsyncErrorMessage() }}

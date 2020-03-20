@@ -17,46 +17,6 @@ import { ExtendedMenu, MenuNode } from 'portal/modules/models/menu.model';
     templateUrl: './menu-profiles.page.html'
 })
 export class MenuProfilesPage implements OnInit {
-    @ViewChild('menuTree', { static: false })
-    menuTree: MatTree<any>;
-
-    private transformer = (node: ExtendedMenu, level: number) => {
-        let isChecked = false
-        if(this.selectedRole && this.menuProfile){
-            const index = this.menuProfile.menuIds.indexOf(node.id)
-            isChecked = index > -1
-        }
-        let menuNode: MenuNode = {
-            expandable: !!node.subMenus && node.subMenus.length > 0,
-            name: node.displayName,
-            level: level,
-            id: node.id,
-            extMenu: node,
-            checked: isChecked
-        }
-        if(isChecked){
-            this.checklistSelection.select(menuNode)
-        }
-        
-        return menuNode;
-    }
-    hasChild = (_: number, node: MenuNode) => node.expandable || node.level === 0;
-
-    app: App
-    selectedRole = ''
-
-    roles: Array<Role> = []
-    menus: Array<ExtendedMenu> = []
-
-    treeControl = new FlatTreeControl<MenuNode>(
-        node => node.level, node => node.expandable);
-    treeFlattener = new MatTreeFlattener(
-        this.transformer, node => node.level, node => node.expandable, (node: ExtendedMenu) => node.subMenus);
-
-    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-    checklistSelection = new SelectionModel<MenuNode>(true)
-    menuProfile: MenuProfile
     constructor(
         private activetedRouter: ActivatedRoute,
         private dialog: MatDialog,
@@ -76,6 +36,48 @@ export class MenuProfilesPage implements OnInit {
             }
         )
     }
+    @ViewChild('menuTree', { static: false })
+    menuTree: MatTree<any>;
+
+    app: App
+    selectedRole = ''
+
+    roles: Array<Role> = []
+    menus: Array<ExtendedMenu> = []
+
+    private transformer = (node: ExtendedMenu, level: number) => {
+        let isChecked = false
+        if(this.selectedRole && this.menuProfile){
+            const index = this.menuProfile.menuIds.indexOf(node.id)
+            isChecked = index > -1
+        }
+        const menuNode: MenuNode = {
+            expandable: !!node.subMenus && node.subMenus.length > 0,
+            name: node.displayName,
+            level,
+            id: node.id,
+            extMenu: node,
+            checked: isChecked
+        }
+        if(isChecked){
+            this.checklistSelection.select(menuNode)
+        }
+
+        return menuNode;
+    }
+
+    treeControl = new FlatTreeControl<MenuNode>(
+        node => node.level, node => node.expandable);
+    treeFlattener = new MatTreeFlattener(
+        this.transformer, node => node.level, node => node.expandable, (node: ExtendedMenu) => node.subMenus);
+
+    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+    checklistSelection = new SelectionModel<MenuNode>(true)
+    menuProfile: MenuProfile
+
+    
+    hasChild = (_: number, node: MenuNode) => node.expandable || node.level === 0;
 
     ngOnInit(): void {
     }
@@ -133,16 +135,16 @@ export class MenuProfilesPage implements OnInit {
             this.logger.debug('Menu profile', this.menuProfile)
         }
         else {
-            //node.checked = false
+            // node.checked = false
         }
     }
 
     private findParent(menu: ExtendedMenu) {
-        let menuPaths = menu.menuPath.split('/')
+        const menuPaths = menu.menuPath.split('/')
         let parentMenuTemp: ExtendedMenu = null;
         _.forEach(menuPaths, path => {
             if (path != '~') {
-                let lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
+                const lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
                 parentMenuTemp = {
                     ..._.find(lookingMenus, subMenu => subMenu.id === path),
                     level: 0

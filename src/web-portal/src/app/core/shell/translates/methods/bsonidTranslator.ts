@@ -9,7 +9,7 @@ const ObjectId = (rnd = (r16: number) => Math.floor(r16).toString(16)) =>
     replaceDQuote: false
 })
 export class bsonidTranslator implements ShellMethod  {
-    
+
     execute(...params: any[]) {
         return ObjectId()
     }

@@ -32,7 +32,7 @@ export class FileUploaderComponent implements OnInit {
     validators: Array<ExtendedControlValidator> = []
 
     @Input()
-    multiple: boolean = false
+    multiple = false
 
     isMaximumSize = false
     isInvalidFileExtension = false
@@ -42,7 +42,7 @@ export class FileUploaderComponent implements OnInit {
 
     uploadedFiles: DownloadableResponseFile[] = []
     disabled = false
-    
+
     progress;
     uploaded = false
     constructor(
@@ -50,7 +50,7 @@ export class FileUploaderComponent implements OnInit {
         private logger: NGXLogger) { }
 
     ngOnInit(
-    ): void { 
+    ): void {
         this.disabled = this.control.defaultOptions.checkDisabled
     }
 
@@ -58,7 +58,7 @@ export class FileUploaderComponent implements OnInit {
         if(this.disabled){
             return
         }
-        this.hasSelectedFile = true        
+        this.hasSelectedFile = true
         const latestFile: File = $event.target.files[$event.target.files.length - 1]
         this.logger.debug('Check file size', latestFile)
         this.isMaximumSize = this.isReachMaximumSize(latestFile.size)
@@ -67,7 +67,7 @@ export class FileUploaderComponent implements OnInit {
         this.logger.debug('Invalid file ext', this.isInvalidFileExtension)
         if (!this.isMaximumSize && !this.isInvalidFileExtension) {
             if (this.multiple) {
-                for (let key in $event.target.files) {
+                for (const key in $event.target.files) {
                     if (!isNaN(parseInt(key))) {
                         this.selectedFiles.add($event.target.files[key]);
                     }
@@ -80,11 +80,11 @@ export class FileUploaderComponent implements OnInit {
         }
         else {
             if (this.isMaximumSize) {
-                this.form.get(this.formControlKey).setErrors({ 'maximumsize': true })
+                this.form.get(this.formControlKey).setErrors({ maximumsize: true })
             }
             else if (this.isInvalidFileExtension) {
-                this.form.get(this.formControlKey).setErrors({ 'fileextensions': true })
-            }            
+                this.form.get(this.formControlKey).setErrors({ fileextensions: true })
+            }
         }
         this.form.get(this.formControlKey).markAsTouched()
         this.fileInput.nativeElement.value = ''
@@ -99,12 +99,12 @@ export class FileUploaderComponent implements OnInit {
     }
 
     upload(file: File) {
-        let uploadingFiles = new Set<File>()
+        const uploadingFiles = new Set<File>()
         uploadingFiles.add(file)
 
         this.progress = this.uploadFileService.upload(uploadingFiles)
-        let uploadingProgressObserables = []
-        for (let key in this.progress) {
+        const uploadingProgressObserables = []
+        for (const key in this.progress) {
             uploadingProgressObserables.push(this.progress[key].completed);
         }
 

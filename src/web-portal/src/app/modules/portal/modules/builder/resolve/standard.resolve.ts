@@ -5,7 +5,7 @@ import { StandardComponentClient } from 'services/portal.service';
 @Injectable()
 export class StandardResolve implements Resolve<any> {
 
-    constructor(private standard: StandardComponentClient){        
+    constructor(private standard: StandardComponentClient){
     }
 
     resolve(

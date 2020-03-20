@@ -67,16 +67,29 @@ namespace LetPortal.Portal.Repositories.Components
             return standard;
         }
 
-        public async Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null)
+        public async Task<IEnumerable<ShortEntityModel>> GetShortArrayStandards(string keyWord = null)
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.AllowArrayData == true).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
                 return standards?.AsEnumerable();
             }
             else
             {
-                return (await _context.StandardComponents.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.StandardComponents.Where(b => b.AllowArrayData == true).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+            }
+        }
+
+        public async Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null)
+        {
+            if (!string.IsNullOrEmpty(keyWord))
+            {
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.AllowArrayData == false).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                return standards?.AsEnumerable();
+            }
+            else
+            {
+                return (await _context.StandardComponents.Where(b => b.AllowArrayData == false).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
             }
         }
     }

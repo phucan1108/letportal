@@ -56,7 +56,7 @@ export class DatasourceOptionsDialogComponent implements OnInit {
         this.datasourceOption = {
             ...this.data.datasourceOption
         }
-        
+
         this.initEditor()
         this.initDatasourceForm()
     }
@@ -98,7 +98,7 @@ export class DatasourceOptionsDialogComponent implements OnInit {
             }
             catch{
 
-            }            
+            }
         }
 
         this.jsonStaticOptions.mode = 'code'
@@ -161,7 +161,7 @@ export class DatasourceOptionsDialogComponent implements OnInit {
             if (newValue) {
                 _.forEach(this.shallowedEntitySchemas, (element) => {
                     if (element.name === newValue) {
-                        let defaultQuery = `{ "$query": { "${element.name}": [ ] } }`
+                        const defaultQuery = `{ "$query": { "${element.name}": [ ] } }`
                         this.datasourceForm.get('query').setValue(defaultQuery)
                         this.queryJsonData = JSON.parse(defaultQuery)
                     }
@@ -171,7 +171,7 @@ export class DatasourceOptionsDialogComponent implements OnInit {
     }
 
     combineDatasourceOption(): DatasourceOptions{
-        let formValues = this.datasourceForm.value
+        const formValues = this.datasourceForm.value
         return {
             type: formValues.type,
             datasourceStaticOptions: {

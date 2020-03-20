@@ -13,8 +13,8 @@ export class ConfigurationService {
 
     fetchConfigs(): Promise<any> {
         return this.http.get(environment.configurationEndpoint)
-            .toPromise().then((config: any)=> {            
-                //this.configurationProvider.setConfiguration(config)
+            .toPromise().then((config: any)=> {
+                // this.configurationProvider.setConfiguration(config)
             });
     }
 }

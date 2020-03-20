@@ -8,7 +8,7 @@ import * as _ from 'lodash';
     templateUrl: './chart-datasource.component.html'
 })
 export class ChartDatasourceComponent implements OnInit {
-    heading = "Database Connection Info:"
+    heading = 'Database Connection Info:'
     format = /[ !@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?]/;
 
     @Input()
@@ -28,7 +28,7 @@ export class ChartDatasourceComponent implements OnInit {
 
     private chartFilters: ChartFilter[] = []
     private selectedEntityname: string
-    
+
     constructor(
         private logger: NGXLogger
     ) { }
@@ -56,14 +56,14 @@ export class ChartDatasourceComponent implements OnInit {
 
     onSelectingEntityName($event: string) {
         this.selectedEntityname = $event
-    }  
+    }
 
     onExtractingParam($event: FilledParameter[]){
         // Do nothing
     }
-    
+
     populateChartFilters(columnFields: ColumnField[]): Array<ChartFilter> {
-        let chartFilters = new Array<ChartFilter>();
+        const chartFilters = new Array<ChartFilter>();
 
         _.forEach(columnFields, (element) => {
             // By default, we need to remove all fields that contain id or special char
@@ -72,7 +72,7 @@ export class ChartDatasourceComponent implements OnInit {
                 && !this.format.test(fieldName)
                 && !this.ignoreBsonFieldTypes(element.fieldType)) {
                 // Ignore some special fields
-                let chartFilter: ChartFilter = {
+                const chartFilter: ChartFilter = {
                     name: element.name,
                     displayName: element.displayName,
                     isHidden: false,
@@ -91,7 +91,7 @@ export class ChartDatasourceComponent implements OnInit {
         })
 
         return chartFilters;
-    }  
+    }
 
     private convertFieldType(fieldType: string): FilterType{
         switch(fieldType){

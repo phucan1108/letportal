@@ -5,7 +5,7 @@ import { PagesClient } from 'services/portal.service';
 @Injectable()
 export class PageBuilderResolve implements Resolve<any> {
 
-    constructor(private pagesClient: PagesClient){        
+    constructor(private pagesClient: PagesClient){
     }
 
     resolve(

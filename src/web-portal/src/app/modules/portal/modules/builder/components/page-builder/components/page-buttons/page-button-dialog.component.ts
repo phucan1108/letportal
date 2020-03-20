@@ -63,7 +63,7 @@ export class PageButtonDialogComponent implements OnInit {
     }
 
     combiningCommand(): PageButton {
-        let formValues = this.actionCommandForm.value
+        const formValues = this.actionCommandForm.value
         return {
             id: this.pageButton.id,
             name: formValues.name,

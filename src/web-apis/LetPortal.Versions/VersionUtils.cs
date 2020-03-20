@@ -79,5 +79,34 @@ namespace LetPortal.Versions
                 }
             }
         }
+
+        public static void GenerateStandardOptions(StandardComponent standardComponent)
+        {
+            standardComponent.Options = new List<Portal.Entities.Pages.ShellOption>();
+
+            standardComponent.Options.Add(new Portal.Entities.Pages.ShellOption
+            {
+                Key = "identityfield",
+                Value = "id"
+            });
+
+            standardComponent.Options.Add(new Portal.Entities.Pages.ShellOption
+            {
+                Key = "namefield",
+                Value = "name"
+            });
+
+            standardComponent.Options.Add(new Portal.Entities.Pages.ShellOption
+            {
+                Key = "allowadjustment",
+                Value = "false"
+            });
+
+            standardComponent.Options.Add(new Portal.Entities.Pages.ShellOption
+            {
+                Key = "allowupdateparts",
+                Value = "false"
+            });
+        }
     }
 }

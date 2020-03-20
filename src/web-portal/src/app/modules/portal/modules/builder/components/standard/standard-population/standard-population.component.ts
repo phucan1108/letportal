@@ -10,7 +10,7 @@ import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.mo
     templateUrl: './standard-population.component.html'
 })
 export class StandardPopulationComponent implements OnInit {
-    heading = "Controls Population"
+    heading = 'Controls Population'
 
     databaseOptions: DatabaseOptions = {
         databaseConnectionId: '',
@@ -45,7 +45,7 @@ export class StandardPopulationComponent implements OnInit {
 
         let controlCounter = 0;
         _.forEach(schema.columnFields, (field) => {
-            let pageControl: ExtendedPageControl = {
+            const pageControl: ExtendedPageControl = {
                 id: Guid.create().toString(),
                 name: field.name,
                 type: ControlType.Textbox,
@@ -84,8 +84,8 @@ export class StandardPopulationComponent implements OnInit {
             }
 
             pageControl.pageControlEvents = this.generateEventsList(pageControl)
-            let beautifulName = this.getBeautifulName(pageControl.name)
-            let defaultOptions: ExtendedShellOption[] = [
+            const beautifulName = this.getBeautifulName(pageControl.name)
+            const defaultOptions: ExtendedShellOption[] = [
                 {
                     id: '',
                     description: 'Label will be displayed when it isn\'t empty',
@@ -181,7 +181,7 @@ export class StandardPopulationComponent implements OnInit {
             case ControlType.Label:
                 return []
             case ControlType.AutoComplete:
-                return [                   
+                return [
                     {
                         eventName: `${control.name}_change`, eventActionType: EventActionType.TriggerEvent, triggerEventOptions: { eventsList: [] },
                         eventHttpServiceOptions: {
@@ -225,12 +225,12 @@ export class StandardPopulationComponent implements OnInit {
         }
     }
 
-    private getBeautifulName(controlName: string){   
-        let firstLetter = controlName[0].toUpperCase()
-        let subStr = controlName.substr(1)
-        let combine = firstLetter + subStr
-        try{                 
-            let splitted = combine.split(/(?=[A-Z])/);
+    private getBeautifulName(controlName: string){
+        const firstLetter = controlName[0].toUpperCase()
+        const subStr = controlName.substr(1)
+        const combine = firstLetter + subStr
+        try{
+            const splitted = combine.split(/(?=[A-Z])/);
             return splitted.join(' ').trim()
         }
         catch{

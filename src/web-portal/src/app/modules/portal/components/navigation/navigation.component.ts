@@ -104,18 +104,18 @@ export class NavigationComponent implements OnInit {
                   sub.hide = true
                 }
               }
-            }         
+            }
           })
           if(count == 0){
             menu.hide = true
           }
         }
       })
-  
+
       return menus.filter(m => !m.hide)
     }
     else{
       return menus
-    }    
+    }
   }
 }

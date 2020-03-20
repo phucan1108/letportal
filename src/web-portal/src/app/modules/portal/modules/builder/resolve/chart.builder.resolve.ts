@@ -8,7 +8,7 @@ import { ChartsClient } from 'services/portal.service';
 export class ChartBuilderResolve implements Resolve<any> {
 
     constructor(private chartsClient: ChartsClient,
-        private router: Router){        
+        private router: Router){
     }
 
     resolve(
@@ -22,6 +22,6 @@ export class ChartBuilderResolve implements Resolve<any> {
                     return EMPTY
                 })
             );
-        }        
+        }
     }
 }

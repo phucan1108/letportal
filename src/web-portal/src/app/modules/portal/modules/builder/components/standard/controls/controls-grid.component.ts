@@ -89,7 +89,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     addNewControl() {
-        let newControl: ExtendedPageControl = {
+        const newControl: ExtendedPageControl = {
             id: Guid.create().toString(),
             name: '',
             type: ControlType.Textbox,
@@ -151,9 +151,9 @@ export class ControlsGridComponent implements OnInit {
     }
 
     deleteSelectedControls() {
-        const _title = "Delete Controls"
-        const _description = "Are you sure to delete all selected controls?"
-        const _waitDesciption = "Waiting..."
+        const _title = 'Delete Controls'
+        const _description = 'Are you sure to delete all selected controls?'
+        const _waitDesciption = 'Waiting...'
         const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption);
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
@@ -183,7 +183,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     getBindName(options: ShellOption[]) {
-        let found = _.find(options, opt => opt.key === 'bindname')
+        const found = _.find(options, opt => opt.key === 'bindname')
         if (!!found)
             return found.value
         return ''
@@ -227,7 +227,7 @@ export class ControlsGridComponent implements OnInit {
         const dialogRef = this.dialog.open(ControlEventsDialogComponent, {
             disableClose: true,
             data: {
-                control: control,
+                control,
                 availabelEvents: this.generateFunctionEventsList(this.controls),
                 availableBoundDatas: this.getAvailableBoundData()
             }
@@ -244,7 +244,7 @@ export class ControlsGridComponent implements OnInit {
         const dialogRef = this.dialog.open(AsyncValidatorDialogComponent, {
             disableClose: true,
             data: {
-                control: control
+                control
             }
         })
         dialogRef.afterClosed().subscribe(result => {
@@ -255,7 +255,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     generateFunctionEventsList(controls: PageControl[]): string[] {
-        let events: string[] = []
+        const events: string[] = []
 
         _.forEach(controls, control => {
             switch (control.type) {
@@ -284,7 +284,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     getAvailableEvents(): string[] {
-        let availableEvents: string[] = []
+        const availableEvents: string[] = []
         _.forEach(this.controls, control => {
             _.forEach(control.pageControlEvents, event => {
                 availableEvents.push(event.eventName)
@@ -295,7 +295,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     getAvailableBoundData(): string[] {
-        let availableBoundDatas: string[] = []
+        const availableBoundDatas: string[] = []
         _.forEach(this.controls, control => {
             availableBoundDatas.push(`${control.name}`)
         })
@@ -315,6 +315,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     editControl(control: ExtendedPageControl) {
+        this.logger.debug('Editing control', control)
         this.isEditControl = true
         const dialogRef = this.dialog.open(ControlDialogComponent, {
             disableClose: true,
@@ -353,7 +354,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     getAllAvailableControlNames(): string[] {
-        let names: string[] = []
+        const names: string[] = []
         _.forEach(this.controls, control => {
             names.push(control.name)
         })

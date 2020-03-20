@@ -12,9 +12,9 @@ export class ExportService {
     }
 
     public exportExcelFile(
-        excelFileName: string, 
-        sheetName: string, 
-        orderedCols: string[], 
+        excelFileName: string,
+        sheetName: string,
+        orderedCols: string[],
         colNames: string[],
         data: any[]) {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data, {
@@ -25,8 +25,8 @@ export class ExportService {
         // We need to read loop one by one A1 - An to replace name
         const range = XLSX.utils.decode_range(worksheet['!ref']);
         let indexName = 0;
-        for(var C = range.s.r; C <= range.e.c; ++C) {
-            const address = XLSX.utils.encode_col(C) + "1";
+        for(let C = range.s.r; C <= range.e.c; ++C) {
+            const address = XLSX.utils.encode_col(C) + '1';
           if(!worksheet[address]) continue;
           worksheet[address].v = colNames[indexName]
           indexName++

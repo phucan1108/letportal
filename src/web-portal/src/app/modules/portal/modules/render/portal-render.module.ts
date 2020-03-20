@@ -41,17 +41,17 @@ import {
 	MAT_DIALOG_DATA,
 	MAT_DATE_FORMATS
 } from '@angular/material';
-import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from "@angular/material-moment-adapter";
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { DividedColumnsSectionComponent } from './components/standard/components/divided-columns-section.component';
+import { DividedColumnsSectionComponent } from './components/standard/divided-columns-section.component';
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { PageRenderPage } from './pages/page-render.page';
 import { PageRenderResolve } from './resolve/page.render.resolve';
-import { ActionCommandsSectionComponent } from './components/standard/components/action-commands-section.component';
+import { ActionCommandsSectionComponent } from './components/commands/action-commands-section.component';
 import { PortalRenderRoutingModule } from './portal-render-routing.module';
 import { MomentumTableModule } from 'momentum-table';
-import { PageRenderSectionWrapperComponent } from './components/standard/components/page-render-section-wrapper.component';
-import { PageRenderBuilderComponent } from './components/standard/components/page-render-builder.component';
+import { PageRenderSectionWrapperComponent } from './components/warpper/page-render-section-wrapper.component';
+import { PageRenderBuilderComponent } from './components/warpper/page-render-builder.component';
 import { PortalRenderPageComponent } from './portal-render-page.component';
 import { FileUploaderComponent } from './controls/file-uploader.component';
 import { IconPickerComponent } from './controls/icon-picker.component';
@@ -77,6 +77,10 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CoreModule } from 'app/core/core.module';
 import { AutocompleteMultipleComponent } from './controls/autocomplete-multiple.component';
 import { GeneralControlComponent } from './controls/general-control.component';
+import { StandardSharedService } from './components/standard/services/standard-shared.service';
+import { StandardArrayRenderComponent } from './components/standard/standard-array-render.component';
+import { StandardArrayDialog } from './components/standard/standard-array-dialog.component';
+import { MatProgressButtonsModule } from 'mat-progress-buttons';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -89,7 +93,7 @@ export const FULL_MONTH_FORMATS = {
 	  monthYearA11yLabel: 'MMMM YYYY',
 	},
   };
-  
+
 
 @NgModule({
 	imports: [
@@ -135,15 +139,16 @@ export const FULL_MONTH_FORMATS = {
 		ScrollDispatchModule,
 		MatMomentDateModule,
 		NgJsonEditorModule,
+		MatProgressButtonsModule,
 		QuillModule.forRoot({
             modules: {
                 syntax: true,
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    [{ 'script': 'sub' }, { 'script': 'super' }],
-                    [{ 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ script: 'sub' }, { script: 'super' }],
+                    [{ indent: '-1' }, { indent: '+1' }],
                     ['link', 'image']
                 ]
             }
@@ -153,12 +158,14 @@ export const FULL_MONTH_FORMATS = {
 		MarkdownModule.forRoot()
 	],
 	entryComponents: [
-		DynamicListDataDialogComponent
+		DynamicListDataDialogComponent,
+		StandardArrayDialog
 	],
 	exports: [RouterModule],
 	providers: [
 		MatIconRegistry,
 		PageRenderResolve,
+		StandardSharedService,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
 		{provide: MAT_DATE_FORMATS, useValue: FULL_MONTH_FORMATS}
@@ -171,6 +178,8 @@ export const FULL_MONTH_FORMATS = {
 		PageRenderSectionWrapperComponent,
 		PageRenderPage,
 		PortalRenderPageComponent,
+		StandardArrayRenderComponent,
+		StandardArrayDialog,
 		// Controls
 		GeneralControlComponent,
 		FileUploaderComponent,

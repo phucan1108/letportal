@@ -5,27 +5,6 @@ import StringUtils from 'app/core/utils/string-util';
 
 export class ChartOptions {
 
-    allowrealtime: boolean
-    timetorefresh: number
-    comparerealtimefield: string
-    datarange: string
-    xformatdate: string
-    colors: string[]
-
-    public static getChartOptions(options: ShellOption[]): ChartOptions {
-        let comparedField = _.find(options, opt => opt.key === 'comparerealtimefield')
-        let datarange = _.find(options, opt => opt.key === 'datarange')
-        let xformatDate = _.find(options, opt => opt.key === 'xformatdate')
-        return {
-            allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'allowrealtime').value),
-            timetorefresh: JSON.parse(_.find(options, opt => opt.key === 'timetorefresh').value),
-            comparerealtimefield: comparedField.value ? comparedField.value : '',
-            datarange: datarange ? datarange.value : '',
-            xformatdate: xformatDate ? xformatDate.value : '',
-            colors: JSON.parse(StringUtils.replaceAllOccurences(_.find(options, opt => opt.key === 'colors').value, "'", "\""))
-        }
-    }
-
     public static AllowRealTime: ExtendedShellOption = {
         id: '',
         allowDelete: false,
@@ -69,9 +48,39 @@ export class ChartOptions {
     public static Colors: ExtendedShellOption = {
         id: '',
         allowDelete: false,
-        description: "Colors list will be used to style a chart ['red','blue','yellow'] or style name (horizon|ocean|neons|vivid|cool|nightLights). Default: ['horizon']",
+        description: 'Colors list will be used to style a chart [\'red\',\'blue\',\'yellow\'] or style name (horizon|ocean|neons|vivid|cool|nightLights). Default: [\'horizon\']',
         key: 'colors',
-        value: "[\"horizon\"]"
+        value: '["horizon"]'
+    }
+
+    public static DefaultListOptions: ChartOptions = {
+        allowrealtime: false,
+        timetorefresh: 60,
+        comparerealtimefield: '',
+        datarange: '',
+        xformatdate: '',
+        colors: ['horizon']
+    }
+
+    allowrealtime: boolean
+    timetorefresh: number
+    comparerealtimefield: string
+    datarange: string
+    xformatdate: string
+    colors: string[]
+
+    public static getChartOptions(options: ShellOption[]): ChartOptions {
+        const comparedField = _.find(options, opt => opt.key === 'comparerealtimefield')
+        const datarange = _.find(options, opt => opt.key === 'datarange')
+        const xformatDate = _.find(options, opt => opt.key === 'xformatdate')
+        return {
+            allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'allowrealtime').value),
+            timetorefresh: JSON.parse(_.find(options, opt => opt.key === 'timetorefresh').value),
+            comparerealtimefield: comparedField.value ? comparedField.value : '',
+            datarange: datarange ? datarange.value : '',
+            xformatdate: xformatDate ? xformatDate.value : '',
+            colors: JSON.parse(StringUtils.replaceAllOccurences(_.find(options, opt => opt.key === 'colors').value, '\'', '"'))
+        }
     }
 
     public static getDefaultShellOptionsForChart(): ExtendedShellOption[] {
@@ -96,20 +105,11 @@ export class ChartOptions {
             }
         })
     }
-
-    public static DefaultListOptions: ChartOptions = {
-        allowrealtime: false,
-        timetorefresh: 60,
-        comparerealtimefield: '',
-        datarange: '',
-        xformatdate: '',
-        colors: ['horizon']
-    }
 }
 
 export interface ExtendedChartFilter extends ChartFilter{
    datasource: any
    minDate: any
    maxDate: any
-   defaultObj: any 
+   defaultObj: any
 }

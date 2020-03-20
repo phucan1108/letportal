@@ -44,7 +44,7 @@ export class UnlockScreenDialogComponent implements OnInit {
 
     onUnlock() {
         if (this.confirmPasswordForm.valid) {
-            let formValues = this.confirmPasswordForm.value
+            const formValues = this.confirmPasswordForm.value
             this.accountClient.login({
                 username: this.username,
                 password: formValues.password,

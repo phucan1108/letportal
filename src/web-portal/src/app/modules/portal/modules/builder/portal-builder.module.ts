@@ -10,7 +10,6 @@ import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/m
 import { QuillModule } from 'ngx-quill';
 import { CommandModalComponent } from './components/dynamic-list/components/commands/command-dialog.component';
 import { DynamicListDataSourceComponent } from './components/dynamic-list/components/dynamic-list.datasource.component';
-import { DatasourceDialogComponent } from '../../shared/datasource/datasource.component';
 import { BuilderDnDComponent } from './components/page-builder/components/page-builders/builder-dnd.component';
 import { TextboxComponent } from '../render/controls/textbox.component';
 import { SectionDialogComponent } from './components/page-builder/components/page-builders/section-dialog.component';
@@ -52,7 +51,6 @@ import { StandardPopulationComponent } from './components/standard/standard-popu
 import { StandardControlsListComponent } from './components/page-builder/components/page-builders/standard-controls-list.component';
 import { HttpOptionsComponent } from '../../shared/httpoptions/httpoptions.component';
 import { PageDatasourceGridComponent } from './components/page-builder/components/page-datasources/page-datasource.grid.component';
-import { SectionTemplate } from '../render/components/standard/components/section-template.directive';
 import { PageRouteComponent } from './components/page-builder/components/page-buttons/page-route.component';
 import { DatabaseOptionsComponent } from '../../shared/databaseoptions/databaseoptions.component';
 import { RouterModule } from '@angular/router';
@@ -86,7 +84,6 @@ import { CoreModule } from 'app/core/core.module';
 		DynamicListBuilderPage,
 		CommandModalComponent,
 		DynamicListDataSourceComponent,
-		DatasourceDialogComponent,
 		BuilderDnDComponent,
 		TextboxComponent,
 		SectionDialogComponent,
@@ -120,7 +117,6 @@ import { CoreModule } from 'app/core/core.module';
 		HttpOptionsComponent,
 		PageDatasourceGridComponent,
 		PageDatasourceDialogComponent,
-		SectionTemplate,
 		CommandOptionsComponent,
 		ShellOptionDialogComponent,
 		PageButtonRouteDialogComponent,
@@ -189,10 +185,10 @@ import { CoreModule } from 'app/core/core.module';
 				syntax: true,
 				toolbar: [
 					['bold', 'italic', 'underline', 'strike'],
-					[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-					[{ 'list': 'ordered' }, { 'list': 'bullet' }],
-					[{ 'script': 'sub' }, { 'script': 'super' }],
-					[{ 'indent': '-1' }, { 'indent': '+1' }],
+					[{ header: [1, 2, 3, 4, 5, 6, false] }],
+					[{ list: 'ordered' }, { list: 'bullet' }],
+					[{ script: 'sub' }, { script: 'super' }],
+					[{ indent: '-1' }, { indent: '+1' }],
 					['link', 'image']
 				]
 			}
@@ -202,7 +198,6 @@ import { CoreModule } from 'app/core/core.module';
 	entryComponents: [
 		CommandModalComponent,
 		DynamicListDataSourceComponent,
-		DatasourceDialogComponent,
 		BuilderDnDComponent,
 		TextboxComponent,
 		SectionDialogComponent,

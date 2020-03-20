@@ -14,6 +14,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     templateUrl: './backup-selection.component.html'
 })
 export class BackupSelectionComponent implements OnInit {
+
+    constructor() { }
     @Input()
     data: BehaviorSubject<ShortEntityModel[]>
 
@@ -28,19 +30,20 @@ export class BackupSelectionComponent implements OnInit {
 
     @Output()
     selectionEntitiesChanged = new EventEmitter<any>()
-    
+
     @ViewChild('tree', { static: false })
     tree: MatTree<any>
     selectedEntities$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     selectedEntities: ShortEntityModel[] = []
     selectableEntityNodes: SelectableBackupNode[] = []
     checkEntitieslistSelection = new SelectionModel<BackupNode>(true)
+
     private transformer = (node: SelectableBackupNode, level: number) => {
-        let selectableNode: BackupNode = {
+        const selectableNode: BackupNode = {
             id: node.id,
             name: node.displayName,
             checked: false,
-            level: level,
+            level,
             expandable: !!node.subShortModels && node.subShortModels.length > 0,
             refModel: node
         }
@@ -56,20 +59,22 @@ export class BackupSelectionComponent implements OnInit {
 
         return selectableNode;
     }
-    hasChild = (_: number, node: BackupNode) => node.expandable || node.level === 0;
+
     treeControl = new FlatTreeControl<BackupNode>(
         node => node.level, node => node.expandable);
     treeFlattener = new MatTreeFlattener(
         this.transformer, node => node.level, node => node.expandable, (node: SelectableBackupNode) => node.subShortModels);
 
     dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    
+    hasChild = (_: number, node: BackupNode) => node.expandable || node.level === 0;
     hasSelected(node: BackupNode) {
         return this.checkEntitieslistSelection.isSelected(node)
     }
     onTreeChange($event, node: BackupNode) {
         this.checkEntitieslistSelection.toggle(node)
         const found = this.selectedEntities.find(a => a.id === node.id)
-        let canRemove = !!found
+        const canRemove = !!found
         if (canRemove) {
             this.selectedEntities = ArrayUtils.removeOneItem(this.selectedEntities, a => a.id === node.id)
             this.selectedEntities$.next(this.selectedEntities)
@@ -90,8 +95,8 @@ export class BackupSelectionComponent implements OnInit {
             this.dataSource.data = []
         }
         else {
-            let entitiesModel: SelectableBackupNode[] = []
-            let rootNode: SelectableBackupNode = {
+            const entitiesModel: SelectableBackupNode[] = []
+            const rootNode: SelectableBackupNode = {
                 id: this.name.toLowerCase(),
                 allowSelected: false,
                 parentId: '',
@@ -113,9 +118,7 @@ export class BackupSelectionComponent implements OnInit {
         }
     }
 
-    constructor() { }
-
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.data.subscribe(
             res => {
                 this.loadTree(res)

@@ -1,0 +1,68 @@
+.handset-label {
+  display: none;
+}
+
+.handset-action {
+  display: none;
+}
+
+.table-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+}
+
+.handset-data {
+  text-align: left;
+}
+
+mat-cell {
+  word-break: break-all;
+}
+
+@media (max-width: 768px) {
+  .table-flex {
+    padding-top: 30px;
+  }
+  .handset-action {
+    display: inline;
+  }
+  .desktop-action {
+    display: none;
+  }
+  .handset-label {
+    width: 80px;
+    display: inline-block;
+    font-weight: bold;
+  }
+  mat-cell:first-of-type {
+    padding-left: 0px;
+  }
+  mat-cell:first-of-type > .handset-data {
+    //text-decoration: underline;
+    //color: blue;
+    cursor: pointer;
+  }
+
+  mat-cell:not(:first-of-type) {
+    display: none;
+  }
+
+  mat-cell:last-of-type {
+    display: inherit;
+  }
+
+  .mat-header-row {
+    display: none;
+  }
+
+  .mat-row {
+    flex-direction: column;
+    align-items: start;
+    padding: 8px 24px;
+  }
+}

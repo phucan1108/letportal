@@ -13,12 +13,12 @@ export class UploadFileService {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(PORTAL_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "http://localhost:53508";
+        this.baseUrl = baseUrl ? baseUrl : 'http://localhost:53508';
     }
 
     upload(files: Set<File>): { [key: string]: { progress: Observable<number>, completed: Observable<DownloadableResponseFile> } } {
-        let url_ = this.baseUrl + "/api/files/upload";
-        url_ = url_.replace(/[?&]$/, "");
+        let url_ = this.baseUrl + '/api/files/upload';
+        url_ = url_.replace(/[?&]$/, '');
         const status: { [key: string]: { progress: Observable<number>, completed: Observable<DownloadableResponseFile> }} = {};
 
         files.forEach(file => {
@@ -37,9 +37,9 @@ export class UploadFileService {
                     progress.next(100);
                     progress.complete();
 
-                    completed.next({ 
+                    completed.next({
                         fileName: file.name,
-                        response: event.body as ResponseUploadFile 
+                        response: event.body as ResponseUploadFile
                     })
                     completed.complete()
                 }

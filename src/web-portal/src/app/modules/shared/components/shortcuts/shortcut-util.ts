@@ -25,26 +25,26 @@ export class ShortcutUtil {
 		verticalPosition: 'top' | 'bottom' = 'top'
 	): MatSnackBarRef<any> {
 		return this.snackBar.openFromComponent(ActionNotificationComponent, {
-			duration: duration,
+			duration,
 			data: {
 				message,
 				snackBar: this.snackBar,
-				showCloseButton: showCloseButton,
-				showUndoButton: showUndoButton,
+				showCloseButton,
+				showUndoButton,
 				undoButtonDuration,
 				verticalPosition,
 				type,
 				action: 'Undo'
 			},
-			verticalPosition: verticalPosition
+			verticalPosition
 		});
 	}
 
 	// Method returns instance of MatDialog
 	confirmationDialog(
-		title: string = '', 
-		description: string = '', 
-		waitDesciption: string = '', 
+		title: string = '',
+		description: string = '',
+		waitDesciption: string = '',
 		messType: MessageType = MessageType.Create,
 		confirmText: string = '') {
 		return this.dialog.open(ConfirmationDialogComponent, {
@@ -89,6 +89,6 @@ export class ShortcutUtil {
 					})
 					break
 			}
-		},300)		
+		},300)
 	}
 }

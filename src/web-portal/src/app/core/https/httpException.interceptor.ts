@@ -22,10 +22,10 @@ export class HttpExceptionInterceptor implements HttpInterceptor {
                 if (err instanceof HttpErrorResponse) {
                     if(err.error instanceof Blob){
                         const reader = new FileReader();
-                        reader.onload = event => { 
+                        reader.onload = event => {
                             // TODO: we will send a error back to BE to trace
                         };
-                        reader.readAsText(err.error);                        
+                        reader.readAsText(err.error);
                     }
                 }
                 return throwError(err)

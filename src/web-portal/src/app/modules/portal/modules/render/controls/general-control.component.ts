@@ -60,9 +60,9 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
 
     asyncValidators: PageControlAsyncValidator[] = []
     currentAsyncErrorName: string
-    hasAsyncInvalid: boolean = false
+    hasAsyncInvalid = false
 
-    sectionName: string = ''
+    sectionName = ''
 
     // Check full documentation of Markdown Editor: https://github.com/ghiscoding/angular-markdown-editor
     markdownContent: string
@@ -95,7 +95,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
             filter(state => state && (state.controlFullName === this.controlFullName)),
             tap(
                 state => {
-                    let tempData = ObjectUtils.clone(state.data)
+                    const tempData = ObjectUtils.clone(state.data)
                     // Implement some function events there based on control type
                     switch (state.eventType) {
                         case 'resetdatasource':
@@ -127,7 +127,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                                     .execute(
                                         this.control,
                                         this.pageService,
-                                        <FormControl>this.formGroup.get(this.control.name),
+                                        this.formGroup.get(this.control.name) as FormControl,
                                         this.defaultData,
                                         ObjectUtils.isNotNull(tempData) ?
                                             tempData : this.pageService.getDataByBindName(this.control.defaultOptions.bindname))
@@ -158,8 +158,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                             this.optionsList$.next(res)
                         }
                     )
-                ).subscribe() 
-                
+                ).subscribe()
+
                 this.optionsList$
                 .pipe(
                     tap(
@@ -169,8 +169,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                             }
                             if (this.control.type === ControlType.AutoComplete) {
                                 // Available only for AutoComplete and Multiple mode
-                                let arrayData: string[] = ObjectUtils.isArray(this.defaultData) ? this.defaultData : [this.defaultData]
-                                this.optionsList$.subscribe(res => {                    
+                                const arrayData: string[] = ObjectUtils.isArray(this.defaultData) ? this.defaultData : [this.defaultData]
+                                this.optionsList$.subscribe(res => {
                                     res.forEach(elem => {
                                         this.autoOptionsList.push({
                                             name: elem.name,
@@ -188,7 +188,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                             }
                         }
                     )
-                ).subscribe()  
+                ).subscribe()
         }
 
         if (this.control.type === ControlType.MarkdownEditor) {
@@ -307,12 +307,12 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     generateOptions(): Observable<any> {
         switch (this.control.datasourceOptions.type) {
             case DatasourceControlType.StaticResource:
-                return of(JSON.parse(this.control.datasourceOptions.datasourceStaticOptions.jsonResource))                
+                return of(JSON.parse(this.control.datasourceOptions.datasourceStaticOptions.jsonResource))
             case DatasourceControlType.Database:
                 const parameters = this.pageService.retrieveParameters(this.control.datasourceOptions.databaseOptions.query)
                 return this.pageService
-                    .fetchControlSelectionDatasource(this.sectionName, this.control.name, parameters)               
-            case DatasourceControlType.WebService:                
+                    .fetchControlSelectionDatasource(this.sectionName, this.control.name, parameters)
+            case DatasourceControlType.WebService:
                 return this.pageService.executeHttpWithBoundData(this.control.datasourceOptions.httpServiceOptions)
         }
     }
@@ -330,7 +330,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
 
     onAutoChanged() {
         // only for AutoComplett with multiple mode
-        let selected = this.autoOptionsList.filter(a => a.selected)
+        const selected = this.autoOptionsList.filter(a => a.selected)
         this.logger.debug('Current selected values', selected)
         this.setControlValue(selected.length > 0 ? selected.map(b => b.value) : null)
     }
@@ -341,7 +341,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     getErrorMessage(validatorName: string) {
-        const errorMessage = _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
+        const errorMessage = _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage        
         return errorMessage
     }
 
@@ -370,7 +370,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     getMaxLength(): number {
-        let validatorMaxLength = _.find(this.control.validators, validator => validator.validatorType === ValidatorType.MaxLength)
+        const validatorMaxLength = _.find(this.control.validators, validator => validator.validatorType === ValidatorType.MaxLength)
         if (validatorMaxLength) {
             return parseInt(validatorMaxLength.validatorOption)
         }
@@ -383,12 +383,20 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     private generateValidators() {
         _.forEach(this.control.validators, validator => {
             if (validator.isActive) {
-                let replacedMessage = validator.validatorMessage.replace("{{option}}", validator.validatorOption)
+                const replacedMessage = validator.validatorMessage.replace('{{option}}', validator.validatorOption)
                 this.validators.push({
                     validatorName: _.find(this.validatorTypes, type => type.value === validator.validatorType).validatorName,
                     validatorErrorMessage: replacedMessage
                 })
             }
+        })
+
+        // New change for custom error message
+        this.control.customErrorMessages.forEach(cusErr => {
+            this.validators.push({
+                validatorName: cusErr.errorName,
+                validatorErrorMessage: cusErr.errorMessage
+            })
         })
     }
 

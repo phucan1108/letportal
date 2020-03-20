@@ -69,7 +69,7 @@ export class BackupBuilderPage implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.pageService.init('backup-builder').subscribe() 
+        this.pageService.init('backup-builder').subscribe()
         this.backupFormGroup = this.fb.group({
             name: ['', [Validators.required, Validators.maxLength(250)]],
             description: ['', [Validators.required, Validators.maxLength(500)]]
@@ -263,7 +263,7 @@ export class BackupBuilderPage implements OnInit {
 
     onSubmit() {
         if (this.backupFormGroup.valid) {
-            let formValues = this.backupFormGroup.value
+            const formValues = this.backupFormGroup.value
             const requestModel: BackupRequestModel = {
                 name: formValues.name,
                 description: formValues.description,
@@ -283,7 +283,7 @@ export class BackupBuilderPage implements OnInit {
                     this.downloadableUrl = res.downloadableUrl
                 },
                 err => {
-                    this.shortcutUtil.toastMessage("Oops! Something went wrong, please try again", ToastType.Error)
+                    this.shortcutUtil.toastMessage('Oops! Something went wrong, please try again', ToastType.Error)
                 }
             )
         }

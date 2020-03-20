@@ -131,7 +131,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     }
 
     onRefresh() {
-        //this.readyToRender = false
+        // this.readyToRender = false
         this.fetchDataForChart(this.filterValues)
     }
 
@@ -183,14 +183,14 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
 
     private fetchInterval(){
         return setInterval(() => {
-            //this.readyToRender = false
+            // this.readyToRender = false
             this.fetchDataForChart(this.filterValues, true)
         }, this.chartOptions.timetorefresh * 1000)
     }
 
     private fetchDataForChart(chartFilterValues: ChartFilterValue[], isInterval = false) {
         const params = this.pageService.retrieveParameters(this.chart.databaseOptions.query)
-        let executeParamModels: ChartParameterValue[] = []
+        const executeParamModels: ChartParameterValue[] = []
         params.map(a => {
             executeParamModels.push({
                 name: a.name,
@@ -201,7 +201,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
 
         this.chartsClient.execution({
             chartId: this.chart.id,
-            chartFilterValues: chartFilterValues,
+            chartFilterValues,
             chartParameterValues: executeParamModels,
             isRealTime: this.chartOptions.allowrealtime,
             realTimeField: this.chartOptions.comparerealtimefield,
@@ -221,7 +221,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                         }
                         else {
                             _.forEach(res.result, a => {
-                                let found = _.find(this.chartData, b => b.name === a.name)
+                                const found = _.find(this.chartData, b => b.name === a.name)
                                 if (found) {
                                     _.forEach(a.series, b => {
                                         found.series.push(b)
@@ -249,7 +249,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                 else{
                     if(!isInterval){
                         this.shortcutUtil.toastMessage('No data found, please try again', ToastType.Warning)
-                    }                    
+                    }
                 }
                 if (!this.isDoneDefer) {
                     setTimeout(() => {
@@ -262,7 +262,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                     clearInterval(this.interval)
                 }
 
-                this.shortcutUtil.toastMessage("Oops! Something went wrong, please check data or refresh F5 again", ToastType.Error)
+                this.shortcutUtil.toastMessage('Oops! Something went wrong, please check data or refresh F5 again', ToastType.Error)
             }
         )
     }
@@ -285,13 +285,13 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                     _.forEach(result, e => {
                         e.name = moment(e.name).format(xFormatDate)
                     })
-                }            
-            }   
-    
+                }
+            }
+
             return result
         }
         else{
             return result
-        }        
+        }
     }
 }
