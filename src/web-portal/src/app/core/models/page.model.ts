@@ -126,7 +126,8 @@ export interface PageShellData{
     data: any,
     configs: any,
     appsettings: any,
-    queryparams: any
+    queryparams: any,
+    parent: any
 }
 
 export class ControlOptions{

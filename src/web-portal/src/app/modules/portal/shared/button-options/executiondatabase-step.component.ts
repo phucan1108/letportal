@@ -61,7 +61,8 @@ export class ExecutionDatabaseStepComponent implements OnInit {
 
         this.databaseOptionsForm = this.fb.group({
             databaseConnectionId: [this.step.databaseConnectionId, Validators.required],
-            query: [this.step.executeCommand, Validators.required]
+            query: [this.step.executeCommand, Validators.required],
+            dataLoopKey: [this.step.dataLoopKey]
         })
 
         if(ObjectUtils.isNotNull(this.step.databaseConnectionId)){
@@ -141,7 +142,8 @@ export class ExecutionDatabaseStepComponent implements OnInit {
         const formValues = this.databaseOptionsForm.value
         return {
             databaseConnectionId: formValues.databaseConnectionId,
-            executeCommand: formValues.query
+            executeCommand: formValues.query,
+            dataLoopKey: formValues.dataLoopKey
         }
     }
 }

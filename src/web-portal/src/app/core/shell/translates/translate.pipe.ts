@@ -173,6 +173,9 @@ export class Translator {
         else if (config.indexOf('configs') === 0) {
             return this.generateReplacedValue(config, 'configs', pageShellData.configs)
         }
+        else if (config.indexOf('parent') === 0){
+            return this.generateReplacedValue(config, 'parent', pageShellData.parent)
+        }
         else {
             return null
         }
@@ -180,7 +183,7 @@ export class Translator {
 
     private generateReplacedValue(key: string, keyData: string, data: any): ShellConfig {
         let foundValue = null
-
+        let requireDeleteUniqId = key.indexOf('.inserts') > 0 || key.indexOf('.updates') > 0
         // For all id or _id, we must to doublecheck two cases
         if(keyData == 'data' && (key.indexOf('.id') > 0 || key.indexOf('._id') > 0)){
             const tempKey = key.replace('.id', '._id');
@@ -198,6 +201,27 @@ export class Translator {
             foundValue = extractValue(data)
         }
         if (ObjectUtils.isObject(foundValue)) {
+            return {
+                key,
+                value: JSON.stringify(foundValue),
+                replaceDQuote: true,
+                type: ShellConfigType.Constant
+            }
+        }
+        else if(ObjectUtils.isArray(foundValue)){
+
+            // Remove need to remove 'uniq_id' field
+            if(requireDeleteUniqId){
+                foundValue = ObjectUtils.clone(foundValue)
+                if(foundValue[0]){
+                    if(foundValue[0]['uniq_id']){
+                        foundValue.forEach(a => {
+                            delete a['uniq_id']
+                        })
+                    }                    
+                }                
+            }           
+
             return {
                 key,
                 value: JSON.stringify(foundValue),

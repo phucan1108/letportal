@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions, ActionCommandOptions, ConfirmationOptions } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions, ActionCommandOptions, ConfirmationOptions, LoopDataModel } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -16,7 +16,7 @@ import { PageResponse, PageLoadedDatasource, PageControlActionEvent, TriggeredCo
 import { PageStateModel, PageState } from 'stores/pages/page.state';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
 import * as _ from 'lodash';
-import { InitPageInfo, LoadDatasource, LoadDatasourceComplete, PageReadyAction, ChangeControlValueEvent, BeginRenderingPageSectionsAction, EndBuildingBoundDataComplete, GatherSectionValidations, SectionValidationStateAction, CompleteGatherSectionValidations, UserClicksOnButtonAction, ClickControlEvent } from 'stores/pages/page.actions';
+import { InitPageInfo, LoadDatasource, LoadDatasourceComplete, PageReadyAction, ChangeControlValueEvent, BeginRenderingPageSectionsAction, EndBuildingBoundDataComplete, GatherSectionValidations, SectionValidationStateAction, CompleteGatherSectionValidations, UserClicksOnButtonAction, ClickControlEvent, UpdateOneItemForStandardArray, InsertOneItemForStandardArray, RemoveOneItemForStandardArray } from 'stores/pages/page.actions';
 import { StateReset } from 'ngxs-reset-plugin';
 import { TriggerControlChangeValueEvent } from 'stores/pages/pagecontrol.actions';
 import { ExtendedPageButton } from '../models/extended.models';
@@ -97,7 +97,7 @@ export class PageService {
         claims$.subscribe(
             claims => {
                 this.claims = claims
-                if(!this.isAllowAccess(this.security.getAuthUser(), page)){
+                if (!this.isAllowAccess(this.security.getAuthUser(), page)) {
                     this.shortcutUtil.toastMessage(`Sorry, you aren't allowed to access ${page.displayName} page !`, ToastType.Warning)
                     this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
@@ -229,7 +229,10 @@ export class PageService {
         return this.store.select(state => state.page).pipe(
             filter(state => state.filterState && (
                 state.filterState === EndBuildingBoundDataComplete
-                || state.filterState === ChangeControlValueEvent)),
+                || state.filterState === ChangeControlValueEvent
+                || state.filterState === UpdateOneItemForStandardArray
+                || state.filterState === InsertOneItemForStandardArray
+                || state.filterState === RemoveOneItemForStandardArray)),
             map(state => {
                 return state.data
             })
@@ -376,15 +379,16 @@ export class PageService {
         return this.translator.retrieveParameters(translateStr, preparedData)
     }
 
-    getPageShellData(data?: any): PageShellData {
+    getPageShellData(data?: any, parent?: any): PageShellData {
         return {
-            data: ObjectUtils.isNotNull(data) ? data: this.data,
+            data: ObjectUtils.isNotNull(data) ? data : this.data,
             appsettings: {},
             claims: this.claims,
             configs: this.configs,
             options: this.options,
             queryparams: this.queryparams,
-            user: this.security.getAuthUser()
+            user: this.security.getAuthUser(),
+            parent: parent
         }
     }
 
@@ -432,28 +436,56 @@ export class PageService {
         buttonName: string,
         actionCommandOptions: ActionCommandOptions,
         onComplete: () => void,
-        data?: any){
+        data?: any) {
         if (actionCommandOptions.isEnable) {
 
             switch (actionCommandOptions.actionType) {
                 case ActionType.ExecuteDatabase:
                     let combinedCommand = ''
+                    let loopDatas: LoopDataModel[] = []
                     actionCommandOptions.dbExecutionChains.steps.forEach((step, index) => {
-                        if (index > 0)
-                            combinedCommand += ';' + step.executeCommand
-                        else
-                            combinedCommand += step.executeCommand
+                        if (ObjectUtils.isNotNull(step.dataLoopKey)) {
+                            // Do data loop proccess
+                            const evaluated = Function('data', 'return ' + step.dataLoopKey)
+                            const passingData = evaluated(this.data)
+                            let loopData: LoopDataModel = {
+                                name: step.dataLoopKey,
+                                parameters: []
+                            }
+
+                            this.logger.debug('All loop data', passingData)
+                            if (ObjectUtils.isArray(passingData)) {
+                                passingData.forEach(p => {
+                                    loopData.parameters
+                                        .push(
+                                            this.translator.retrieveParameters(
+                                            step.executeCommand,
+                                            this.getPageShellData(p, this.data))
+                                        );                                    
+                                })
+                            }
+
+                            loopDatas.push(loopData)
+                        }
+                        else {
+                            if (index > 0)
+                                combinedCommand += ';' + step.executeCommand
+                            else
+                                combinedCommand += step.executeCommand
+                        }
+
                     })
                     const params = this.translator.retrieveParameters(
                         combinedCommand, this.getPageShellData(data));
                     this.pageClients
                         .submitCommand(this.page.id, {
                             buttonName,
-                            parameters: params
+                            parameters: params,
+                            loopDatas: loopDatas
                         }).subscribe(
                             res => {
                                 this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if(onComplete){
+                                if (onComplete) {
                                     onComplete()
                                 }
                             },
@@ -479,7 +511,7 @@ export class PageService {
                         actionCommandOptions.httpServiceOptions.outputProjection).subscribe(
                             res => {
                                 this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if(onComplete){
+                                if (onComplete) {
                                     onComplete()
                                 }
                             },
@@ -492,21 +524,21 @@ export class PageService {
                 case ActionType.CallWorkflow:
                     break
                 case ActionType.Redirect:
-                    if(onComplete){
+                    if (onComplete) {
                         onComplete()
                     }
                     break
             }
         }
         else {
-            if(onComplete){
+            if (onComplete) {
                 onComplete()
             }
         }
     }
 
-    openConfirmationDialog(confirmationOptions: ConfirmationOptions, onProceed: () => void){
-        if(confirmationOptions.isEnable){
+    openConfirmationDialog(confirmationOptions: ConfirmationOptions, onProceed: () => void) {
+        if (confirmationOptions.isEnable) {
             const _title = 'Confirmation'
             const _description = confirmationOptions.confirmationText
             const _waitDesciption = 'Waiting...'
@@ -522,22 +554,15 @@ export class PageService {
                     return
                 }
 
-                if(onProceed){
+                if (onProceed) {
                     onProceed()
                 }
             })
         }
-        else{
-            if(onProceed){
+        else {
+            if (onProceed) {
                 onProceed()
             }
-        }
-    }
-
-    private mergeData(mergingData: any) {
-        return {
-            ...this.data,
-            ...mergingData
         }
     }
 
@@ -669,14 +694,14 @@ export class PageService {
     }
 
     private executeCommandClickEvent(command: ExtendedPageButton) {
-        if(command.buttonOptions.actionCommandOptions.isEnable){
+        if (command.buttonOptions.actionCommandOptions.isEnable) {
             this.openConfirmationDialog(
                 command.buttonOptions.actionCommandOptions.confirmationOptions,
                 () => {
                     this.store.dispatch(new UserClicksOnButtonAction(command))
                 })
         }
-        else{
+        else {
             this.store.dispatch(new UserClicksOnButtonAction(command))
         }
     }
@@ -689,7 +714,7 @@ export class PageService {
                 foundRoute = true
                 const url = this.translator.translateDataWithShell(route.redirectUrl, this.getPageShellData())
                 this.logger.debug('Redirecting to...', url)
-                if(route.isSameDomain)
+                if (route.isSameDomain)
                     this.router.navigateByUrl(url)
                 else
                     window.open(url, '_blank')
