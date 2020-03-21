@@ -14,23 +14,41 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
 
         private readonly string _currentEnvironment;
 
-        public ServicePerDirectoryConfigurationProvider(string directoryPath, string env)
+        private readonly string _sharedFolder;
+
+        private readonly string _ignoreCombineSharedServices;
+
+        public ServicePerDirectoryConfigurationProvider(
+            string directoryPath,
+            string env,
+            string sharedFolder,
+            string ignoreCombineSharedServices)
         {
             _directoryPath = directoryPath;
             _currentEnvironment = env;
+            _sharedFolder = sharedFolder;
+            _ignoreCombineSharedServices = ignoreCombineSharedServices;
         }
 
         public override void Load()
         {
             Console.WriteLine("Start getting all files");
-            var keyValues = GetAllAvailableConfigurations(_directoryPath, _currentEnvironment);
+            var keyValues = GetAllAvailableConfigurations(
+                _directoryPath,
+                _currentEnvironment,
+                _sharedFolder,
+                _ignoreCombineSharedServices);
             foreach (var keyValue in keyValues)
             {
                 Data.Add(keyValue.Key, keyValue.Value);
             }
         }
 
-        private static IEnumerable<KeyValuePair<string, string>> GetAllAvailableConfigurations(string directoryPath, string environment)
+        private static IEnumerable<KeyValuePair<string, string>> GetAllAvailableConfigurations(
+            string directoryPath,
+            string environment,
+            string sharedFolder,
+            string ignoreCombinedServices)
         {
             var filesList = from serviceDirectory in new DirectoryInfo(directoryPath).EnumerateDirectories()
                             from versionDirectory in serviceDirectory.EnumerateDirectories()
@@ -43,10 +61,6 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
                                 File = file
                             };
 
-            foreach (var a in filesList)
-            {
-                Console.WriteLine("Files List: " + a.File.FullName);
-            }
             var serviceConfigs = from file in filesList
                                  group file by file.Key into mergingFile
                                  select new
@@ -55,27 +69,50 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
                                      Kvp = MergeJsonDataOfFiles(mergingFile.Key, mergingFile.Select(a => a.File).OrderBy(a => a.Name.Length))
                                  };
 
-            var versionedConfigs = from versionConfig in serviceConfigs
-                                   group versionConfig by versionConfig.ServiceName into mergeConfig
-                                   select MergeJsonDataByVersions(mergeConfig.Select(con => con.Kvp));
+            var groupedByServiceName = from versionConfig in serviceConfigs
+                                       group versionConfig by versionConfig.ServiceName;
+            var allSharedConfigs = groupedByServiceName.Where(a => a.Key.Equals(sharedFolder, StringComparison.OrdinalIgnoreCase)).ToList();
+            groupedByServiceName = groupedByServiceName.Where(a => !a.Key.Equals(sharedFolder, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            Console.WriteLine("all versioned files: " + ConvertUtil.SerializeObject(versionedConfigs.ToList()));
-            return versionedConfigs.SelectMany(a => a);
+
+            var versionedConfigs = from mergeConfig in groupedByServiceName
+                                   select MergeJsonDataByVersions(
+                                       mergeConfig.Key,
+                                       sharedFolder,
+                                       ignoreCombinedServices.Split(";").ToList(),
+                                       allSharedConfigs.First().Select(a => a.Kvp),
+                                       mergeConfig.Select(con => con.Kvp));
+
+            // Enhancement for Shared
+            var returnedConfigs = versionedConfigs.SelectMany(a => a);
+
+            return returnedConfigs;
         }
 
         /// <summary>
         /// File Name should be follow the pattern {fileName}.{env}.json, env is optional
         /// Env should be equal current env
+        /// We accept only {fileName}.json and {fileName}.{env}.json
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
         private static bool ValidFileName(FileInfo fileInfo, string environment)
         {
             var arrays = fileInfo.Name.Split(".");
-            return arrays.Length > 2 && arrays.Length <= 3 ? arrays[1].Equals(environment, StringComparison.CurrentCultureIgnoreCase) : true;
+            return arrays.Length == 3 ?
+                arrays[1].Equals(environment, StringComparison.CurrentCultureIgnoreCase) :
+                arrays.Length == 2;
         }
 
-        private static KeyValuePair<string, string> MergeJsonDataOfFiles(string fileKey, IEnumerable<FileInfo> mergingFiles)
+        /// <summary>
+        /// Merge all json data based on fileVersionKey. Ex: fileVersionKey = Portal:v1.0
+        /// </summary>
+        /// <param name="fileVersionKey"></param>
+        /// <param name="mergingFiles"></param>
+        /// <returns></returns>
+        private static KeyValuePair<string, string> MergeJsonDataOfFiles(
+            string fileVersionKey,
+            IEnumerable<FileInfo> mergingFiles)
         {
             var firstObject = JObject.Parse("{}");
 
@@ -86,12 +123,41 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
                 firstObject.Merge(parsedObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             }
 
-            return new KeyValuePair<string, string>(fileKey, ConvertUtil.SerializeObject(firstObject));
+            return new KeyValuePair<string, string>(fileVersionKey, ConvertUtil.SerializeObject(firstObject));
         }
 
-        private static IEnumerable<KeyValuePair<string, string>> MergeJsonDataByVersions(IEnumerable<KeyValuePair<string, string>> versionsKeyValues)
+        private static IEnumerable<KeyValuePair<string, string>> MergeJsonDataByVersions(
+            string serviceName,
+            string sharedFolder,
+            IEnumerable<string> ignoreServices,
+            IEnumerable<KeyValuePair<string, string>> sharedKeyValues,
+            IEnumerable<KeyValuePair<string, string>> versionsKeyValues)
         {
-            var sortedByKeys = versionsKeyValues.OrderBy(a => a.Key).ToList();
+            List<KeyValuePair<string, string>> sortedByKeys = new List<KeyValuePair<string, string>>();
+            if (!ignoreServices.Any(a => a == serviceName))
+            {
+                // Sorted Key such as Portal:v1.0 Portal:v1.1
+                // We need to append shared values before any
+                var sortedBySharedKeys = sharedKeyValues
+                    .OrderBy(a => a.Key)
+                    .Select(b => new KeyValuePair<string, string>(b.Key.Replace(sharedFolder, serviceName, StringComparison.OrdinalIgnoreCase), b.Value))
+                    .ToList();
+
+                // We will have "Portal:v1.0" from Shared and "Portal:v1.0" from original
+                // We need to group and then merging two json
+                sortedByKeys = versionsKeyValues
+                    .Union(sortedBySharedKeys)
+                    .OrderBy(a => a.Key)
+                    .GroupBy(b => b.Key)
+                    .Select(c =>
+                        new KeyValuePair<string, string>(c.Key, MergeMultipleKvp(c.Select(d => d)))
+                    )
+                    .ToList();
+            }
+            else
+            {
+                sortedByKeys = versionsKeyValues.OrderBy(a => a.Key).ToList();
+            }
 
             var cloningKeyValues = new List<KeyValuePair<string, string>>();
 
@@ -110,6 +176,20 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
             }
 
             return cloningKeyValues;
+        }
+
+        private static string MergeMultipleKvp(IEnumerable<KeyValuePair<string, string>> pairs)
+        {
+            var firstObject = JObject.Parse("{}");
+
+            foreach (var pair in pairs)
+            {
+                var parsedObject = JObject.Parse(pair.Value);
+
+                firstObject.Merge(parsedObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+            }
+
+            return ConvertUtil.SerializeObject(firstObject);
         }
     }
 }
