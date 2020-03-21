@@ -17,10 +17,14 @@ namespace LetPortal.Tests.UTs.Portal.Services
 {
     public class FileServiceTests
     {
+        public FilePublishOptions FilePublishOptions = new FilePublishOptions
+        {
+            DownloadableHost = "http://localhost:53595/v1.0/files"
+        };
+
         public LetPortal.Portal.Options.Files.FileOptions FileOptions = new LetPortal.Portal.Options.Files.FileOptions
         {
-            FileStorageType = FileStorageType.Database,
-            DownloadableHost = "http://localhost:53595/v1.0/files",
+            FileStorageType = FileStorageType.Database,            
             ValidatorOptions = new FileValidatorOptions
             {
                 CheckFileExtension = true,
@@ -65,6 +69,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
                 ConnectionType = Core.Persistences.ConnectionType.MongoDB,
                 Datasource = "letportal"
             };
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -87,7 +92,10 @@ namespace LetPortal.Tests.UTs.Portal.Services
                     UseServerHost = true
                 }));
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                mockDatabaseFileConnectorExecution.Object
             }, new List<IFileValidatorRule>
