@@ -23,7 +23,13 @@ export class AuthToken {
     }
 
     public toAuthUser() {
-        return new AuthUser(this.jsonTokenPayload.id, this.jsonTokenPayload.sub, this.jsonTokenPayload.roles, this.jsonTokenPayload);
+        return new AuthUser(
+            this.jsonTokenPayload.id, 
+            this.jsonTokenPayload.sub, 
+            this.jsonTokenPayload.roles,
+            this.jsonTokenPayload.given_name,
+            this.jsonTokenPayload.picture, 
+            this.jsonTokenPayload);
     }
 
     public isExpired(): boolean{
@@ -36,7 +42,13 @@ export class AuthUser {
 
     claims: Array<RolePortalClaimModel> = []
 
-    constructor(public userid: string, public username: string, public roles: string[], private tokenPayload: any) { }
+    constructor(
+        public userid: string, 
+        public username: string, 
+        public roles: string[], 
+        public fullName: string,
+        public avatar: string,
+        private tokenPayload: any) { }
 
     hasClaim(claimType: string, claimValue: string): boolean{
         const foundClaim = _.find(this.claims, claim => claim.name === claimType)

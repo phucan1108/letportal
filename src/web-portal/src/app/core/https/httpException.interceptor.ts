@@ -23,7 +23,7 @@ export class HttpExceptionInterceptor implements HttpInterceptor {
                     if(err.error instanceof Blob){
                         const reader = new FileReader();
                         reader.onload = event => {
-                            // TODO: we will send a error back to BE to trace
+                            // TODO: we will send an error back to BE to trace
                         };
                         reader.readAsText(err.error);
                     }

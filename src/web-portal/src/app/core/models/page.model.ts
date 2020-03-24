@@ -190,7 +190,7 @@ export class ControlOptions{
 
     public static UploaderAllowFileUrl: ExtendedShellOption = {
         id: '',
-        description: 'Allow a uploader set downloadable url back to a field after saving instead of file id. Default: false',
+        description: 'Allow an uploader set downloadable url back to a field after saving instead of file id. Default: false',
         key: 'allowfileurl',
         value: 'false',
         allowDelete: false
@@ -198,7 +198,7 @@ export class ControlOptions{
 
     public static UploaderSaveOnChange: ExtendedShellOption = {
         id: '',
-        description: 'Allow a uploader upload a file after user changes. Default: false',
+        description: 'Allow an uploader upload a file after user changes. Default: false',
         key: 'saveonchange',
         value: 'false',
         allowDelete: false

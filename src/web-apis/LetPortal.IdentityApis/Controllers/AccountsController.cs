@@ -112,5 +112,20 @@ namespace LetPortal.IdentityApis.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("change-password")]
+        [Authorize]
+        [ProducesResponseType(typeof(ErrorCode), 500)]
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            await _identityServiceProvider.ChangePasswordAsync(_httpContextAccessor.HttpContext.User.Identity.Name, model);
+
+            return NoContent();
+        }
     }
 }

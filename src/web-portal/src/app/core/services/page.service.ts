@@ -628,8 +628,9 @@ export class PageService {
                     if (allowTrigger) {
                         switch (ds.options.type) {
                             case DatasourceControlType.StaticResource:
+                                const translatedDs = this.translateData(ds.options.datasourceStaticOptions.jsonResource, this.getPageShellData(), false)
                                 datasources$.push(of<PageLoadedDatasource>({
-                                    data: JSON.parse(ds.options.datasourceStaticOptions.jsonResource),
+                                    data: JSON.parse(translatedDs),
                                     name: ds.name
                                 }))
                                 break
