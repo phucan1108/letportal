@@ -48,12 +48,12 @@
 
                         </div>
                         <div class="col-md-12">
-                            <form [formGroup]="tempBuilderForm" class="m-form m-form--label-align-right">
-                                <let-builder-dnd></let-builder-dnd>
+                            <form [formGroup]="tempBuilderForm">
+                                <let-builder-dnd (onSectionsChanged)="onSectionsChanged($event)"></let-builder-dnd>
                             </form>
                         </div>
                         <div class="col-md-12">
-                            <let-page-button-grid></let-page-button-grid>
+                            <let-page-button-grid [sections$]="sections$"></let-page-button-grid>
                         </div>
                     </div>
                 </mat-step>

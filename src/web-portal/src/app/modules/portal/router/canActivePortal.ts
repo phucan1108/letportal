@@ -16,6 +16,7 @@ export class CanActivePortal implements CanActivate{
         // 1) User must select one app before going anywhere
         // 2) User must have a permission at least accessment in this form/list
 
-        return this.sessionService.getCurrentApp() ? true : false;
+        return this.sessionService.getCurrentApp() 
+              || state.url.indexOf('portal/page/user-info') > 0 ? true : false;
       }
 }

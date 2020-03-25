@@ -88,6 +88,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "save",
                         Color = "primary",
                         AllowHidden = "!!queryparams.id",
+                        PlaceSectionId = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -134,6 +135,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "edit",
                         Color = "primary",
                         AllowHidden = "!queryparams.id",
+                        PlaceSectionId = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -180,6 +182,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "close",
                         Color = "basic",
                         AllowHidden = "false",
+                        PlaceSectionId = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
                         ButtonOptions = new ButtonOptions
                         {                                
                             ActionCommandOptions = new ActionCommandOptions
@@ -273,6 +276,7 @@ namespace LetPortal.Versions.Pages
                         Color = "primary",
                         AllowHidden = "!!queryparams.id",
                         IsRequiredValidation = true,
+                        PlaceSectionId = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
                         ButtonOptions = new ButtonOptions
                         {   
                             ActionCommandOptions = new ActionCommandOptions
@@ -319,6 +323,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "edit",
                         Color = "primary",
                         AllowHidden = "!queryparams.id",
+                        PlaceSectionId = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -362,8 +367,9 @@ namespace LetPortal.Versions.Pages
                         Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
                         Name = "Cancel",
                         Icon = "close",
-                        Color = "primary",
+                        Color = "basic",
                         AllowHidden = "false",
+                        PlaceSectionId = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
                         ButtonOptions = new ButtonOptions
                         {                                
                             ActionCommandOptions = new ActionCommandOptions

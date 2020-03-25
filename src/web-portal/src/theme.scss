@@ -1,0 +1,148 @@
+// Import material theming functions
+@import "~@angular/material/theming";
+
+@include mat-core();
+$app-primary: mat-palette($mat-indigo);
+$app-accent: mat-palette($mat-pink, A200, A100, A400);
+$app-warn: mat-palette($mat-red);
+$app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
+@include angular-material-theme($app-theme);
+// Create your Sass color vars (will be available in all the project)
+@mixin current-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  // Support material color
+  .color-primary {
+    color: mat-color($primary);
+  }
+  .color-accent {
+    color: mat-color($accent);
+  }
+  .color-warn {
+    color: mat-color($warn);
+  }
+
+  .color-bg-primary {
+    background-color: mat-color($primary);
+  }
+  .color-bg-accent {
+    background-color: mat-color($accent);
+  }
+  .color-bg-warn {
+    background-color: mat-color($warn);
+  }
+
+  .mat-chip-0 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: #fff;
+    background-color: mat-color($primary);
+  }
+
+  .mat-chip-1 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: #fff;
+    background-color: mat-color($accent);
+  }
+  .mat-chip-2 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: #fff;
+    background-color: mat-color($warn);
+  }
+
+  .mat-chip-3 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: rgba(0, 0, 0, 0.87);
+    background-color: #e0e0e0;
+  }
+
+  a:not(.mat-button):not(.mat-raised-button):not(.mat-fab):not(.mat-mini-fab):not([mat-list-item]) {
+    color: mat-color($primary); // 3
+  }
+
+  .user-tile-avatar {
+    width: 32px;
+    height: 32px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 10px;
+    background-color: rgb(255, 255, 255);
+    text-align: center;
+    color: mat-color($primary);
+  }
+}
+@include current-theme($app-theme);

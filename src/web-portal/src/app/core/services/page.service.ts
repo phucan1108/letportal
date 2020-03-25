@@ -11,7 +11,7 @@ import { Observable, of, forkJoin, Subscription, throwError } from 'rxjs';
 import { tap, map, filter, mergeMap } from 'rxjs/operators';
 import { AuthUser } from '../security/auth.model';
 import { PortalStandardClaims } from '../security/portalClaims';
-import { ToastType, MessageType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { ToastType, MessageType, EventDialogType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PageResponse, PageLoadedDatasource, PageControlActionEvent, TriggeredControlEvent, PageShellData } from '../models/page.model';
 import { PageStateModel, PageState } from 'stores/pages/page.state';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
@@ -484,13 +484,19 @@ export class PageService {
                             loopDatas: loopDatas
                         }).subscribe(
                             res => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil
+                                    .eventDialog('Success', 
+                                        actionCommandOptions.notificationOptions.completeMessage, 
+                                        EventDialogType.Success)
                                 if (onComplete) {
                                     onComplete()
                                 }
                             },
                             err => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                this.shortcutUtil
+                                    .eventDialog('Error', 
+                                        actionCommandOptions.notificationOptions.failedMessage, 
+                                        EventDialogType.Error)
                             })
                     break
                 case ActionType.CallHttpService:
@@ -510,13 +516,19 @@ export class PageService {
                         actionCommandOptions.httpServiceOptions.httpSuccessCode,
                         actionCommandOptions.httpServiceOptions.outputProjection).subscribe(
                             res => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
+                                this.shortcutUtil
+                                    .eventDialog('Success', 
+                                        actionCommandOptions.notificationOptions.completeMessage, 
+                                        EventDialogType.Success)
                                 if (onComplete) {
                                     onComplete()
                                 }
                             },
                             err => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                this.shortcutUtil
+                                    .eventDialog('Error', 
+                                        actionCommandOptions.notificationOptions.failedMessage, 
+                                        EventDialogType.Error)
                             }
                         )
 
@@ -709,6 +721,9 @@ export class PageService {
 
     private routingCommand(command: PageButton) {
         let foundRoute = false
+        if(!ObjectUtils.isNotNull(command.buttonOptions.routeOptions)){
+            return
+        }
         _.forEach(command.buttonOptions.routeOptions.routes, route => {
             const allowed = this.evaluatedExpression(route.condition)
             if (allowed && !foundRoute) {

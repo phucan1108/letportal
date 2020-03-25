@@ -16,6 +16,9 @@ export class ActionCommandsSectionComponent implements OnInit, OnDestroy {
     @Input()
     actionCommands: Array<ExtendedPageButton>
 
+    @Input()
+    isInSection: boolean = false
+
     queryparams: any
     options: any
     data: any

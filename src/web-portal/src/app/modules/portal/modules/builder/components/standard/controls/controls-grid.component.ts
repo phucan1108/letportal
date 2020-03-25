@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter, Optional, SkipSelf } from '@angular/core';
-import { ExtendedPageSection, ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
+import { ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { SelectionModel } from '@angular/cdk/collections';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { Guid } from 'guid-typescript';
 import { StaticResources } from 'portal/resources/static-resources';
@@ -10,7 +10,7 @@ import { ControlDialogComponent } from './control-dialog.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { NGXLogger } from 'ngx-logger';
 import { ControlType, PageControl, StandardComponent, ShellOption, DatasourceControlType } from 'services/portal.service';
 import { slideInRightOnEnterAnimation, slideOutRightOnLeaveAnimation, slideInLeftOnEnterAnimation, slideOutLeftOnLeaveAnimation } from 'angular-animations';

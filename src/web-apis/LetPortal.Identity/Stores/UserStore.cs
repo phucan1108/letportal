@@ -42,6 +42,10 @@ namespace LetPortal.Identity.Stores
                     var convertClaim = claim.ToBaseClaim();
                     foundClaim.ClaimValue = convertClaim.ClaimValue;                    
                 }
+                else
+                {
+                    user.Claims.Add(claim.ToBaseClaim());
+                }
             }
 
             return Task.CompletedTask;

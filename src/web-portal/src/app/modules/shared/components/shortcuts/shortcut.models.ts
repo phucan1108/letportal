@@ -12,3 +12,10 @@ export enum ToastType{
     Warning,
     Error
 }
+
+export enum EventDialogType{
+    Info,
+    Success,
+    Warning,
+    Error
+}

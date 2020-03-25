@@ -42,7 +42,7 @@ namespace LetPortal.Identity.Entities
                 Issuer = DefaultIssuer,
                 ClaimType = DefaultFullNameClaim,
                 ClaimValue = fullName,
-                ClaimValueType = DefaultArrayValueType
+                ClaimValueType = DefaultStringValueType
             };
         }
 
@@ -53,7 +53,7 @@ namespace LetPortal.Identity.Entities
                 Issuer = DefaultIssuer,
                 ClaimType = DefaultAvatarClaim,
                 ClaimValue = avatarUrl,
-                ClaimValueType = DefaultArrayValueType
+                ClaimValueType = DefaultStringValueType
             };
         }
 

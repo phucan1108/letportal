@@ -87,6 +87,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "save",
                         Color = "primary",
                         AllowHidden = "false",
+                        PlaceSectionId = "5e79c14931a1754a2cd38cbe",
                         ButtonOptions = new Portal.Entities.Shared.ButtonOptions
                         {
                             ActionCommandOptions = new Portal.Entities.Shared.ActionCommandOptions
@@ -120,6 +121,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "lock_open",
                         Color = "warn",
                         AllowHidden = "false",
+                        PlaceSectionId = "5e79c14931a1754a2cd38cc5",
                         ButtonOptions = new Portal.Entities.Shared.ButtonOptions
                         {
                             ActionCommandOptions = new Portal.Entities.Shared.ActionCommandOptions
@@ -145,7 +147,7 @@ namespace LetPortal.Versions.Pages
                                 }
                             }
                         }
-                    }
+                    },
                 }
             };
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType } from 'services/portal.service';
-import { ExtendedPageSection } from 'app/core/models/extended.models';
+import { SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType, Page, PageControl, PageButton } from 'services/portal.service';
+import { ExtendedPageSection, ExtendedPageButton } from 'app/core/models/extended.models';
 import { NGXLogger } from 'ngx-logger';
 import { tap } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -8,6 +8,8 @@ import { RenderingPageSectionAction, RenderedPageSectionAction } from 'stores/pa
 import { RenderingSectionState } from 'app/core/models/page.model';
 import { Observable, Subscription } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
+import { PageService } from 'services/page.service';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-section-wrapper',
@@ -19,9 +21,14 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
         private store: Store,
         private standardClient: StandardComponentClient,
         private dynamicsClient: DynamicListClient,
+        private pageService: PageService,
         private logger: NGXLogger
     ) {
     }
+
+    @Input()
+    page: Page
+
     @Input()
     pageSection: ExtendedPageSection
 
@@ -51,6 +58,9 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                         standard => {
                             this.sectionClass = this.getSectionClass(standard.layoutType)
                             this.pageSection.relatedStandard = standard
+                            this.pageSection.relatedButtons = []
+                            
+                            this.pageSection.relatedButtons = this.getButtons(this.pageSection.id, this.page.commands)
                             this.pageSection.isLoaded = true
                             this.readyToRender = true
                             this.store.dispatch(new RenderedPageSectionAction({
@@ -73,6 +83,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                             this.sectionClass = this.getSectionClass(standard.layoutType)
                             this.pageSection.relatedArrayStandard = standard
                             this.pageSection.isLoaded = true
+                            this.pageSection.relatedButtons = this.getButtons(this.pageSection.id, this.page.commands)
                             this.readyToRender = true
                             this.store.dispatch(new RenderedPageSectionAction({
                                 sectionClass: this.sectionClass,
@@ -93,7 +104,8 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                         dynamicList => {
                             this.sectionClass = this.getSectionClass(dynamicList.layoutType)
                             this.pageSection.relatedDynamicList = dynamicList
-                            this.pageSection.isLoaded = true
+                            this.pageSection.relatedButtons = this.getButtons(this.pageSection.id, this.page.commands)
+                            this.pageSection.isLoaded = true                            
                             this.readyToRender = true
                             this.store.dispatch(new RenderedPageSectionAction({
                                 sectionClass: this.sectionClass,
@@ -113,6 +125,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                         chart =>{
                             this.sectionClass = this.getSectionClass(chart.layoutType)
                             this.pageSection.relatedChart = chart
+                            this.pageSection.relatedButtons = this.getButtons(this.pageSection.id, this.page.commands)
                             this.pageSection.isLoaded = true
                             this.readyToRender = true
                             this.store.dispatch(new RenderedPageSectionAction({
@@ -143,5 +156,23 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
             default:
                 return 'col-lg-12'
         }
+    }
+
+    private getButtons(sectionId: string,controls: PageButton[]){
+        let relatedButtons: ExtendedPageButton[] = []
+        if(!ObjectUtils.isNotNull(controls)){
+            return []
+        }
+        controls.forEach(a => {
+            if(a.placeSectionId === sectionId){
+                let cloneControl: ExtendedPageButton = {
+                    ...a,
+                    isHidden: this.pageService.evaluatedExpression(a.allowHidden)
+                }
+                relatedButtons.push(cloneControl)
+            }
+        })
+
+        return relatedButtons
     }
 }

@@ -16,7 +16,7 @@
             </mat-menu>
         </mat-card-title>
     </mat-card-header>
-    <mat-card-content class="align-center">
+    <mat-card-content>
         <mat-tab-group [dynamicHeight]="true" *ngIf="hasFilters" [(selectedIndex)]="selectedTab">
             <mat-tab label="Chart">
                 <div class="row" *ngIf="chartData else nodata">
@@ -89,7 +89,12 @@
                 </div>
             </div>
         </ng-container>
-
+        <div class="row">
+            <div class="col-lg-6 offset-lg-2">
+                <action-commands [actionCommands]="section.relatedButtons" [isInSection]="true" (onClick)="onActionCommandClick($event)">
+                </action-commands>
+            </div>
+        </div>
     </mat-card-content>
 </mat-card>
 

@@ -5130,6 +5130,7 @@ export interface PageButton {
     color?: string | undefined;
     isRequiredValidation?: boolean;
     allowHidden?: string | undefined;
+    placeSectionId?: string | undefined;
     buttonOptions?: ButtonOptions | undefined;
 }
 

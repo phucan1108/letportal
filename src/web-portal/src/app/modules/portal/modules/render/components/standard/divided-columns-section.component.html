@@ -4,7 +4,7 @@
             {{ section.displayName }}
         </mat-card-title>
     </mat-card-header>
-    <mat-card-content class="align-center" *ngIf="readyToRender">
+    <mat-card-content *ngIf="readyToRender">
         <ng-container *ngFor="let groupControl of controlsGroups">
             <div class="form-group row" *ngIf="!groupControl.isLineBreaker">
                 <ng-container *ngFor="let control of groupControl.controlsList">
@@ -48,5 +48,11 @@
             </div>
             <div class="separator-dashed pb-3" *ngIf="groupControl.isLineBreaker"></div>
         </ng-container>
+        <div class="row">
+            <div class="col-lg-6 offset-lg-2">
+                <action-commands [actionCommands]="section.relatedButtons" [isInSection]="true" (onClick)="onActionCommandClick($event)">
+                </action-commands>
+            </div>
+        </div>
     </mat-card-content>
 </mat-card>
