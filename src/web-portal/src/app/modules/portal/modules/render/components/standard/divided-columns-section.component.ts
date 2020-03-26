@@ -18,6 +18,7 @@ import { PortalValidators } from 'app/core/validators/portal.validators';
 import { CustomHttpService } from 'services/customhttp.service';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { StandardSharedService } from './services/standard-shared.service';
+import { FormUtil } from 'app/core/utils/form-util';
 
 @Component({
     selector: 'divided-columns',
@@ -56,7 +57,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     constructor(
         private logger: NGXLogger,
         private fb: FormBuilder,
-        private store: Store,        
+        private store: Store,
         private pageService: PageService,
         private standardSharedService: StandardSharedService
     ) { }
@@ -82,10 +83,15 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                             this.readyToRender = true
                             break
                         case GatherSectionValidations:
-                            if (this.builderFormGroup.invalid) {
-                                this.logger.debug('Section errors', this.collectAllControlsState(this.builderFormGroup.controls))
+                            if (state.specificValidatingSection === this.section.name
+                                || !ObjectUtils.isNotNull(state.specificValidatingSection)) {
+                                FormUtil.triggerFormValidators(this.builderFormGroup)                                
+                                if (this.builderFormGroup.invalid) {
+                                    this.logger.debug('Section errors', this.collectAllControlsState(this.builderFormGroup.controls))
+                                }
+                                this.store.dispatch(new SectionValidationStateAction(this.section.name, this.builderFormGroup.valid))
                             }
-                            this.store.dispatch(new SectionValidationStateAction(this.section.name, this.builderFormGroup.valid))
+
                             break
                     }
                 }
@@ -127,9 +133,9 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
 
     buildFormControls() {
         const sectionBoundData = this.standardSharedService
-                .buildSectionBoundData(
-                    this.section.sectionDatasource.datasourceBindName,
-                    this.datasources)
+            .buildSectionBoundData(
+                this.section.sectionDatasource.datasourceBindName,
+                this.datasources)
         this.builderFormGroup = this.standardSharedService.buildFormGroups(
             this.section.name,
             this.section.relatedStandard,

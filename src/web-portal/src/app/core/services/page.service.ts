@@ -135,9 +135,13 @@ export class PageService {
                         switch (state.filterState) {
                             case UserClicksOnButtonAction:
                                 this.logger.debug('User has clicked on a button : ' + state.clickingButton.name)
-                                this.sectionValidationCounter = this.page.builder.sections.length
+                                this.sectionValidationCounter = ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ? 
+                                                                    1 : this.page.builder.sections.length
                                 if (state.clickingButton.isRequiredValidation) {
-                                    this.store.dispatch(new GatherSectionValidations())
+                                    this.store.dispatch(
+                                        new GatherSectionValidations(
+                                            ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ? 
+                                            this.page.builder.sections.find(a => a.id === state.clickingButton.placeSectionId).name : null))
                                 }
                                 else {
                                     this.executeByActionOptions(

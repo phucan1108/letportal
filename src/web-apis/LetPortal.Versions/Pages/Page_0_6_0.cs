@@ -86,6 +86,7 @@ namespace LetPortal.Versions.Pages
                         Name = "Update Profile",
                         Icon = "save",
                         Color = "primary",
+                        IsRequiredValidation = true,
                         AllowHidden = "false",
                         PlaceSectionId = "5e79c14931a1754a2cd38cbe",
                         ButtonOptions = new Portal.Entities.Shared.ButtonOptions
@@ -121,6 +122,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "lock_open",
                         Color = "warn",
                         AllowHidden = "false",
+                        IsRequiredValidation = true,
                         PlaceSectionId = "5e79c14931a1754a2cd38cc5",
                         ButtonOptions = new Portal.Entities.Shared.ButtonOptions
                         {

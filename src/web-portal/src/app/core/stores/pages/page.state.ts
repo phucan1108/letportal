@@ -33,6 +33,7 @@ export interface PageStateModel {
     queryparams: any
     eventsList: PageControlActionEvent[]
     lastEvent: PageControlActionEvent,
+    specificValidatingSection: string,
     isOpenStandardArray: boolean,
     lastStandardArrayItem: StandardArrayItemState,
     filterState: any
@@ -53,6 +54,7 @@ export interface PageStateModel {
         queryparams: null,
         eventsList: [],
         lastEvent: null,
+        specificValidatingSection: null,
         isOpenStandardArray: false,
         lastStandardArrayItem: null,
         filterState: null
@@ -350,10 +352,11 @@ export class PageState {
     }
 
     @Action(PageActions.GatherSectionValidations)
-    public gatherSectionValidations(ctx: StateContext<PageStateModel>, { }: PageActions.GatherSectionValidations) {
+    public gatherSectionValidations(ctx: StateContext<PageStateModel>, { specificSection }: PageActions.GatherSectionValidations) {
         const state = ctx.getState()
         ctx.setState({
             ...state,
+            specificValidatingSection: specificSection,
             filterState: PageActions.GatherSectionValidations
         })
     }
@@ -377,19 +380,32 @@ export class PageState {
     @Action(PageActions.CompleteGatherSectionValidations)
     public completeSectionValidationState(ctx: StateContext<PageStateModel>, { }: PageActions.CompleteGatherSectionValidations) {
         const state = ctx.getState()
-        let isValid = true
-        _.forEach(state.sectionValidations, val => {
-            if (!val.isValid) {
-                isValid = false
-                return false
-            }
-        })
 
-        ctx.setState({
-            ...state,
-            wholePageValid: isValid,
-            filterState: PageActions.CompleteGatherSectionValidations
-        })
+        if(ObjectUtils.isNotNull(state.specificValidatingSection)){            
+            const foundSection = state.sectionValidations.find(a => a.section === state.specificValidatingSection)
+            ctx.setState({
+                ...state,
+                wholePageValid: foundSection.isValid,
+                specificValidatingSection: null,
+                filterState: PageActions.CompleteGatherSectionValidations
+            })
+        }
+        else{
+            let isValid = true
+            _.forEach(state.sectionValidations, val => {
+                if (!val.isValid) {
+                    isValid = false
+                    return false
+                }
+            })
+    
+            ctx.setState({
+                ...state,
+                wholePageValid: isValid,
+                specificValidatingSection: null,
+                filterState: PageActions.CompleteGatherSectionValidations
+            })
+        }        
     }
 
     @Action(PageActions.OpenInsertDialogForStandardArray)
