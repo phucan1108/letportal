@@ -23,8 +23,6 @@ export class ActionCommandsSectionComponent implements OnInit, OnDestroy {
     options: any
     data: any
     readyToRender = false
-    @Output()
-    onClick = new EventEmitter<ExtendedPageButton>()
 
     listenParamChanges$: Subscription
     listenDataChanges$: Subscription
