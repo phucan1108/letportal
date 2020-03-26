@@ -11,7 +11,7 @@ import { bsonidTranslator } from './shell/translates/methods/bsonidTranslator';
 import { currentISODateTranslator } from './shell/translates/methods/currentISODateTranslator';
 
 /**
- * Declare all classes which contains a function to translate a expression data in {{ }}
+ * Declare all classes which contains a function to translate an expression data in {{ }}
  * Class must be declared with annotaion @MethodTranslator and impletement ShellMethod
  */
 export const TRANSLATOR_METHODS = [
@@ -25,7 +25,7 @@ export const TRANSLATOR_METHODS = [
 
 /**
  * Declare all listen events for page render
- * Class must be declared with annotation @ControlEvent and impletement ControlEventExecution 
+ * Class must be declared with annotation @ControlEvent and impletement ControlEventExecution
  */
 export const CONTROL_EVENTS: any[] = [
     ChangeControlEvent,

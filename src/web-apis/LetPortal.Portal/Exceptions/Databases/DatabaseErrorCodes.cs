@@ -15,5 +15,11 @@ namespace LetPortal.Portal.Exceptions.Databases
             MessageCode = "DSE000002",
             MessageContent = "SQL doesn't support object type to execute command."
         };
+
+        public static readonly ErrorCode LoopDataIsNotNull = new ErrorCode
+        {
+            MessageCode = "DSE000003",
+            MessageContent = "A request loop data is null but the steps required, please check your configuration"
+        };
     }
 }

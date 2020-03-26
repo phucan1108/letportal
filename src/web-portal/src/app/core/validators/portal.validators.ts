@@ -14,7 +14,7 @@ export class PortalValidators {
                     return chartsClient.checkExist(control.value).pipe(
                         map(
                             exist => {
-                                return exist ? { 'uniqueName': true } : null;
+                                return exist ? { uniqueName: true } : null;
                             }
                         )
                     )
@@ -30,7 +30,7 @@ export class PortalValidators {
                     return dynamicListClient.checkExist(control.value).pipe(
                         map(
                             exist => {
-                                return exist ? { 'uniqueName': true } : null;
+                                return exist ? { uniqueName: true } : null;
                             }
                         )
                     )
@@ -46,7 +46,7 @@ export class PortalValidators {
                     return standardClient.checkExist(control.value).pipe(
                         map(
                             exist => {
-                                return exist ? { 'uniqueName': true } : null;
+                                return exist ? { uniqueName: true } : null;
                             }
                         )
                     )
@@ -62,7 +62,7 @@ export class PortalValidators {
                     return pageClient.checkExist(control.value).pipe(
                         map(
                             exist => {
-                                return exist ? { 'uniqueName': true } : null;
+                                return exist ? { uniqueName: true } : null;
                             }
                         )
                     )
@@ -72,13 +72,13 @@ export class PortalValidators {
     }
 
     public static addAsyncValidator(
-            validator: PageControlAsyncValidator, 
+            validator: PageControlAsyncValidator,
             controlBindName: string,
-            controlFullName: string, 
+            controlFullName: string,
             sectionName: string,
             controlName: string,
-            defaultValue: any,  
-            pageService: PageService, 
+            defaultValue: any,
+            pageService: PageService,
             customHttpService: CustomHttpService): AsyncValidatorFn {
         return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
             if (control.value === defaultValue)
@@ -86,23 +86,23 @@ export class PortalValidators {
             switch (validator.asyncValidatorOptions.validatorType) {
                 case AsyncValidatorType.DatabaseValidator:
                     return timer(500)
-                        .pipe(                            
+                        .pipe(
                             switchMap(() => {
-                                let mergingObject = new Object()
+                                const mergingObject = new Object()
                                 mergingObject[controlBindName] = control.value
                                 const parameters = pageService.retrieveParameters(
                                     validator.asyncValidatorOptions.databaseOptions.query,
                                     mergingObject,
-                                    true)                                
+                                    true)
                                 return pageService.executeAsyncValidator({
-                                    sectionName: sectionName,
-                                    controlName: controlName,
+                                    sectionName,
+                                    controlName,
                                     asyncName: validator.validatorName,
-                                    parameters: parameters
+                                    parameters
                                 })
                                     .pipe(
                                         map(response => {
-                                            let evaluated = Function('response', 'return ' + validator.asyncValidatorOptions.evaluatedExpression)
+                                            const evaluated = Function('response', 'return ' + validator.asyncValidatorOptions.evaluatedExpression)
                                             const isValid = evaluated(response)
                                             if (isValid) {
                                                 pageService.notifyTriggeringEvent(controlFullName + '_' + 'noAsyncError', validator.validatorName)
@@ -110,7 +110,7 @@ export class PortalValidators {
                                             }
                                             else {
                                                 pageService.notifyTriggeringEvent(controlFullName + '_' + 'hasAsyncError', validator.validatorName)
-                                                let invalid = new Object()
+                                                const invalid = new Object()
                                                 invalid[validator.validatorName] = true
                                                 return invalid
                                             }
@@ -122,10 +122,10 @@ export class PortalValidators {
                     return timer(500)
                         .pipe(
                             switchMap(() => {
-                                let mergingObject = new Object()
+                                const mergingObject = new Object()
                                 mergingObject[controlBindName] = control.value
-                                let url = pageService.translateData(validator.asyncValidatorOptions.httpServiceOptions.httpServiceUrl, mergingObject, true)
-                                let body = pageService.translateData(validator.asyncValidatorOptions.httpServiceOptions.jsonBody, mergingObject, true)
+                                const url = pageService.translateData(validator.asyncValidatorOptions.httpServiceOptions.httpServiceUrl, mergingObject, true)
+                                const body = pageService.translateData(validator.asyncValidatorOptions.httpServiceOptions.jsonBody, mergingObject, true)
                                 return customHttpService.performHttp(
                                     url,
                                     validator.asyncValidatorOptions.httpServiceOptions.httpMethod,
@@ -134,7 +134,7 @@ export class PortalValidators {
                                     validator.asyncValidatorOptions.httpServiceOptions.outputProjection)
                                     .pipe(
                                         map(response => {
-                                            let evaluated = Function('response', 'return ' + validator.asyncValidatorOptions.evaluatedExpression)
+                                            const evaluated = Function('response', 'return ' + validator.asyncValidatorOptions.evaluatedExpression)
                                             const isValid = evaluated(response)
                                             if (isValid) {
                                                 pageService.notifyTriggeringEvent(controlFullName + '_' + 'noAsyncError', validator.validatorName)
@@ -142,7 +142,7 @@ export class PortalValidators {
                                             }
                                             else {
                                                 pageService.notifyTriggeringEvent(controlFullName + '_' + 'hasAsyncError', validator.validatorName)
-                                                let valid = new Object()
+                                                const valid = new Object()
                                                 valid[validator.validatorName] = true
                                                 return valid
                                             }

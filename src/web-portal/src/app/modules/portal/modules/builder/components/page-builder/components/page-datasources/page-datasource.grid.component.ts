@@ -90,7 +90,7 @@ export class PageDatasourceGridComponent implements OnInit {
         this.currentDatasources = _.filter(this.currentDatasources, (elem) => {
             return elem.id !== datasource.id
         })
-        this.shortcutUtil.toastMessage("Delete datasource successfully!", ToastType.Success)
+        this.shortcutUtil.toastMessage('Delete datasource successfully!', ToastType.Success)
     }
 
     editDatasourceOption(datasource: PageDatasource) {

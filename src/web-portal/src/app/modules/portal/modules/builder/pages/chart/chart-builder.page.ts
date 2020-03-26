@@ -43,7 +43,7 @@ export class ChartBuilderPage implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.pageService.init('chart-builder').subscribe() 
+        this.pageService.init('chart-builder').subscribe()
         this.edittingChart = this.activatedRoute.snapshot.data.chart;
         if (this.edittingChart) {
             this.isEditMode = true
@@ -93,8 +93,8 @@ export class ChartBuilderPage implements OnInit {
         // Auto-generated name
         this.componentInfo.get('displayName').valueChanges.subscribe(newValue => {
             if (newValue && !this.isEditMode) {
-                // Apply this change to name 
-                const listNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
+                // Apply this change to name
+                const listNameValue = (newValue as string).toLowerCase().replace(/\s/g, '')
                 this.componentInfo.get('name').setValue(listNameValue)
 
                 this.componentInfo.get('chartTitle').setValue(newValue)
@@ -108,8 +108,8 @@ export class ChartBuilderPage implements OnInit {
 
     onSubmit() {
         if (this.componentInfo.valid && this.isCanSubmit) {
-            let formValues = this.componentInfo.value
-            let combiningChart: Chart = {
+            const formValues = this.componentInfo.value
+            const combiningChart: Chart = {
                 name: formValues.name,
                 displayName: formValues.displayName,
                 definitions: {
@@ -131,19 +131,19 @@ export class ChartBuilderPage implements OnInit {
                 combiningChart.datasourceName = this.edittingChart.datasourceName
                 combiningChart.timeSpan = this.edittingChart.timeSpan
                 this.chartsClient.update(this.edittingChart.id, combiningChart).subscribe(rep => {
-                    this.shortcutUtil.toastMessage("Update successfully!", ToastType.Success)
+                    this.shortcutUtil.toastMessage('Update successfully!', ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                        this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
                     })
             }
             else {
                 this.chartsClient.create(combiningChart).subscribe(rep => {
                     this.router.navigateByUrl('/portal/page/charts-management')
-                    this.shortcutUtil.toastMessage("Save successfully!", ToastType.Success)
+                    this.shortcutUtil.toastMessage('Save successfully!', ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                        this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
                     })
             }
         }

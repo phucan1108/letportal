@@ -8,7 +8,7 @@ import { BackupsClient } from 'services/portal.service';
 export class BackupResolve implements Resolve<any> {
 
     constructor(private backupClient: BackupsClient,
-        private router: Router){        
+        private router: Router){
     }
 
     resolve(
@@ -22,6 +22,6 @@ export class BackupResolve implements Resolve<any> {
                     return EMPTY
                 })
             );
-        }        
+        }
     }
 }

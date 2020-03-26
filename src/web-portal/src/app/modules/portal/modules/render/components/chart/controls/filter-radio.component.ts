@@ -10,7 +10,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 export class FilterRadioComponent implements OnInit {
     @Input()
     filter: ExtendedChartFilter
-    
+
     @Input()
     formGroup: FormGroup
 

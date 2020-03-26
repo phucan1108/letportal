@@ -4,6 +4,7 @@ using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
+using LetPortal.Portal.Models.Pages;
 
 namespace LetPortal.Portal.Services.Databases
 {
@@ -17,7 +18,8 @@ namespace LetPortal.Portal.Services.Databases
         Task<ExecuteDynamicResultModel> ExecuteDynamic(
             List<DatabaseConnection> databaseConnections,
             DatabaseExecutionChains executionChains,
-            IEnumerable<ExecuteParamModel> parameters);
+            IEnumerable<ExecuteParamModel> parameters,
+            IEnumerable<LoopDataParamModel> LoopDatas = null);
 
         Task<ExtractingSchemaQueryModel> ExtractColumnSchema(
             DatabaseConnection databaseConnection,

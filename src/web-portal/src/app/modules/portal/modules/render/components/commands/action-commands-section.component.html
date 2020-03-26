@@ -1,0 +1,19 @@
+<div *ngIf="readyToRender else loading" [ngClass]="{'d-flex justify-content-start': isInSection}">
+    <ng-container *ngFor="let command of actionCommands">
+        <ng-container *ngIf="!command.isHidden && !isInSection">
+            <button mat-menu-item (click)="onCommandClick(command)">
+                <mat-icon [color]="command.color">{{command.icon}}</mat-icon>
+                {{command.name}}
+            </button>
+        </ng-container>
+        <ng-container *ngIf="!command.isHidden && isInSection">
+            <button mat-raised-button [color]="command.color" (click)="onCommandClick(command)"
+            [ngClass]="{'mr-3': isInSection }">
+                {{command.name}}
+            </button>
+        </ng-container>
+    </ng-container>
+</div>
+<ng-template #loading>
+    <!-- <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner> -->
+</ng-template>

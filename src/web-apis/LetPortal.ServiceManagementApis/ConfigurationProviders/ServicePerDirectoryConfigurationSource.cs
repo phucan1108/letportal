@@ -8,15 +8,29 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
 
         private readonly string _environment;
 
-        public ServicePerDirectoryConfigurationSource(string directoryPath, string environment)
+        private readonly string _sharedFolder;
+
+        private readonly string _ignoreCombineSharedServices;
+
+        public ServicePerDirectoryConfigurationSource(
+            string directoryPath, 
+            string environment,
+            string sharedFolder,
+            string ignoreCombineSharedServices)
         {
             _directoryPath = directoryPath;
             _environment = environment;
+            _sharedFolder = sharedFolder;
+            _ignoreCombineSharedServices = ignoreCombineSharedServices;
         }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new ServicePerDirectoryConfigurationProvider(_directoryPath, _environment);
+            return new ServicePerDirectoryConfigurationProvider(
+                _directoryPath, 
+                _environment,
+                _sharedFolder,
+                _ignoreCombineSharedServices);
         }
     }
 }

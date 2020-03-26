@@ -16,6 +16,8 @@ namespace LetPortal.Portal.Entities.Pages
 
         public string AllowHidden { get; set; }
 
+        public string PlaceSectionId { get; set; }
+
         public ButtonOptions ButtonOptions { get; set; }
     }
 }

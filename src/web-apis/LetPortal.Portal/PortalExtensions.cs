@@ -108,6 +108,7 @@ namespace LetPortal.Portal
 
             if (portalOptions.EnableFileServer)
             {
+                builder.Services.Configure<FilePublishOptions>(builder.Configuration.GetSection("FilePublishOptions"));
                 builder.Services.Configure<FileOptions>(builder.Configuration.GetSection("FileOptions"));
                 builder.Services.Configure<FileValidatorOptions>(builder.Configuration.GetSection("FileOptions").GetSection("FileValidatorOptions"));
                 builder.Services.Configure<DiskStorageOptions>(builder.Configuration.GetSection("FileOptions").GetSection("DiskStorageOptions"));

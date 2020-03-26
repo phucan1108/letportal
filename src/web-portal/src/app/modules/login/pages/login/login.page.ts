@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
         private roleClient: RolesClient
     ) { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
 
         // Ensure user will be signed out when be back to login page
         this.session.clear()
@@ -49,7 +49,7 @@ export class LoginPage implements OnInit {
 
     signIn(){
         if(!this.loginForm.invalid){
-            let formValues = this.loginForm.value;
+            const formValues = this.loginForm.value;
 
             this.accountClient.login({
                 username: formValues.username,
@@ -61,10 +61,10 @@ export class LoginPage implements OnInit {
                     this.security
                         .setAuthUser(
                             new AuthToken(result.token, result.exp, result.refreshToken, result.expRefresh))
-                    
+
                     this.session.setUserSession(result.userSessionId)
                     this.roleClient.getPortalClaims().subscribe(result =>{
-                        this.security.setPortalClaims(result)                        
+                        this.security.setPortalClaims(result)
                         this.router.navigateByUrl('/portal/dashboard')
                     })
                 },
@@ -73,7 +73,7 @@ export class LoginPage implements OnInit {
                         this.errorMessage = err.messageContent
                     }
                     else{
-                        this.errorMessage = "Oops! Something went wrong, please try again."
+                        this.errorMessage = 'Oops! Something went wrong, please try again.'
                     }
                 }
             )

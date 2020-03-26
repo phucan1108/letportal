@@ -16,7 +16,7 @@ export class PageRouteComponent implements OnInit {
     route: Route
 
     routeForm: FormGroup
-    
+
     page$: BehaviorSubject<Array<ShortPageModel>> = new BehaviorSubject([])
     pages: Array<ShortPageModel> = []
 
@@ -33,7 +33,7 @@ export class PageRouteComponent implements OnInit {
                         this.page$.next(res)
                     }
                 )
-            ).subscribe() 
+            ).subscribe()
 
         this.page$.subscribe(res => {
             this.pages = res
@@ -56,14 +56,14 @@ export class PageRouteComponent implements OnInit {
 
     get(){
         if(this.routeForm.valid){
-            let formValues = this.routeForm.value
-            let newRoute: Route = {
+            const formValues = this.routeForm.value
+            const newRoute: Route = {
                 redirectUrl: formValues.redirectUrl,
                 isSameDomain: formValues.isSameDomain,
                 condition: formValues.condition
             }
             return newRoute
-        }       
+        }
     }
 
     valid(){

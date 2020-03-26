@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LetPortal.Core.Files;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Models.Files;
+using LetPortal.Portal.Options.Files;
 using LetPortal.Portal.Repositories.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
@@ -20,17 +21,21 @@ namespace LetPortal.Portal.Services.Files
 
         private readonly IOptionsMonitor<Options.Files.FileOptions> _fileOptions;
 
+        private readonly IOptionsMonitor<FilePublishOptions> _filePublishOptions;
+
         private readonly IEnumerable<IFileValidatorRule> _fileValidatorRules;
 
         private readonly IEnumerable<IFileConnectorExecution> _fileConnectorExecutions;
 
         public FileService(
             IOptionsMonitor<Options.Files.FileOptions> fileOptions,
+            IOptionsMonitor<FilePublishOptions> filePublishOptions,
             IEnumerable<IFileConnectorExecution> fileConnectorExecutions,
             IEnumerable<IFileValidatorRule> fileValidatorRules,
             IFileRepository fileRepository)
         {
             _fileOptions = fileOptions;
+            _filePublishOptions = filePublishOptions;
             _fileValidatorRules = fileValidatorRules;
             _fileConnectorExecutions = fileConnectorExecutions;
             _fileRepository = fileRepository;
@@ -118,7 +123,7 @@ namespace LetPortal.Portal.Services.Files
                 IdentifierOptions = storedFile.FileIdentifierOptions,
                 AllowCompress = allowCompress,
                 DownloadableUrl = storedFile.UseServerHost
-                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId
+                    ? _filePublishOptions.CurrentValue.DownloadableHost + "/" + createdId
                         : storedFile.DownloadableUrl
             };
 
@@ -161,7 +166,7 @@ namespace LetPortal.Portal.Services.Files
                 IdentifierOptions = storedFile.FileIdentifierOptions,
                 AllowCompress = allowCompress,
                 DownloadableUrl = storedFile.UseServerHost
-                    ? _fileOptions.CurrentValue.DownloadableHost + "/" + createdId
+                    ? _filePublishOptions.CurrentValue.DownloadableHost + "/" + createdId
                         : storedFile.DownloadableUrl
             };
 

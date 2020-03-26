@@ -20,14 +20,14 @@ export class ErrorComponent implements OnInit {
     ngOnInit(): void { }
 
     moveToHome(){
-        let defaultPage = this.session.getDefaultAppPage()
-        let userSignedIn = this.security.isUserSignedIn()
+        const defaultPage = this.session.getDefaultAppPage()
+        const userSignedIn = this.security.isUserSignedIn()
         if(defaultPage && userSignedIn){
             this.router.navigateByUrl(defaultPage)
         }
         else{
             this.router.navigateByUrl('/')
         }
-        
+
     }
 }

@@ -2,6 +2,7 @@ import { Page, PageControl, ShellOption } from 'services/portal.service';
 import { AuthUser } from '../security/auth.model';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import * as _ from 'lodash';
+import { ObjectUtils } from '../utils/object-util';
 
 export interface PageResponse{
     page: Page,
@@ -22,6 +23,12 @@ export enum RenderingSectionState{
 
 export interface PageRenderedControl<T> extends PageControl{
     defaultOptions: T
+    customErrorMessages: CustomValidatorMessage[]
+}
+
+export interface CustomValidatorMessage {
+    errorName: string
+    errorMessage: string
 }
 
 export interface PageControlActionEvent {
@@ -34,13 +41,49 @@ export interface PageControlActionEvent {
 
 export interface PageLoadedDatasource {
     name: string,
-    data: any    
+    data: any
 }
 
 export interface PageSectionBoundData{
     name: string,
     data: any,
     isKeptDataName: boolean
+}
+
+export interface PageSectionStandardArrayBoundData{
+    name: string,
+    data: any,
+    isKeptDataName: boolean,
+    allowUpdateParts: boolean
+}
+
+export interface OpenInsertDialogOnStandardArrayEvent{
+    sectionName: string,
+    data: any,
+    identityKey: any,
+    allowUpdateParts: boolean,
+    sectionMap: MapDataControl[]
+}
+
+export interface AddOneItemOnStandardArrayEvent{
+    sectionName: string,
+    isKeptDataName: boolean,
+    allowUpdateParts: boolean
+}
+
+export interface RemoveOneItemOnStandardArrayEvent{
+    sectionName: string,
+    isKeptDataName: boolean,
+    identityKey: string,
+    removeItemKey: string,
+    allowUpdateParts: boolean
+}
+
+export interface UpdateOneItemOnStandardArrayEvent{
+    sectionName: string,
+    isKeptDataName: boolean,
+    identityKey: string,
+    allowUpdateParts: boolean
 }
 
 export interface TriggeredControlEvent{
@@ -63,9 +106,9 @@ export interface DefaultControlOptions {
     allowfileurl: boolean
     saveonchange: boolean
     // For checkbox/slider only
-    allowZero: boolean   
+    allowZero: boolean
     allowYesNo: boolean
-    
+
     checkDisabled: boolean
     checkedHidden: boolean
 }
@@ -83,33 +126,11 @@ export interface PageShellData{
     data: any,
     configs: any,
     appsettings: any,
-    queryparams: any
+    queryparams: any,
+    parent: any
 }
 
 export class ControlOptions{
-    label: string
-    placeholder: string
-    hidden: boolean
-    disabled: boolean
-    bindname: string
-
-    public static getDefaultControlOptions(control: PageControl){
-        let labelOpt = ControlOptions.LabelOption
-        labelOpt.value = control.name
-        let placeholderOpt = ControlOptions.PlaceholderOption
-        let disabledOpt = ControlOptions.DisabledOption
-        let hiddenOpt = ControlOptions.HiddenOption
-        hiddenOpt.value = (control.name === 'id' || control.name === '_id' || (control.name.toLowerCase().indexOf('id') > -1)) ? 'true' : 'false'
-        let bindnameOpt = ControlOptions.BindnameOption
-        bindnameOpt.value = control.name
-        return [
-            labelOpt,
-            placeholderOpt,
-            disabledOpt,
-            hiddenOpt,
-            bindnameOpt
-        ]
-    }
 
     public static LabelOption: ExtendedShellOption = {
         id: '',
@@ -169,7 +190,7 @@ export class ControlOptions{
 
     public static UploaderAllowFileUrl: ExtendedShellOption = {
         id: '',
-        description: 'Allow a uploader set downloadable url back to a field after saving instead of file id. Default: false',
+        description: 'Allow an uploader set downloadable url back to a field after saving instead of file id. Default: false',
         key: 'allowfileurl',
         value: 'false',
         allowDelete: false
@@ -177,9 +198,32 @@ export class ControlOptions{
 
     public static UploaderSaveOnChange: ExtendedShellOption = {
         id: '',
-        description: 'Allow a uploader upload a file after user changes. Default: false',
+        description: 'Allow an uploader upload a file after user changes. Default: false',
         key: 'saveonchange',
         value: 'false',
         allowDelete: false
+    }
+    label: string
+    placeholder: string
+    hidden: boolean
+    disabled: boolean
+    bindname: string
+
+    public static getDefaultControlOptions(control: PageControl){
+        const labelOpt = ObjectUtils.clone(ControlOptions.LabelOption)
+        labelOpt.value = control.name
+        const placeholderOpt = ObjectUtils.clone(ControlOptions.PlaceholderOption)
+        const disabledOpt = ObjectUtils.clone(ControlOptions.DisabledOption)
+        const hiddenOpt = ObjectUtils.clone(ControlOptions.HiddenOption)
+        hiddenOpt.value = (control.name === 'id' || control.name === '_id' || (control.name.toLowerCase().indexOf('id') > -1)) ? 'true' : 'false'
+        const bindnameOpt = ObjectUtils.clone(ControlOptions.BindnameOption)
+        bindnameOpt.value = control.name
+        return [
+            labelOpt,
+            placeholderOpt,
+            disabledOpt,
+            hiddenOpt,
+            bindnameOpt
+        ]
     }
 }

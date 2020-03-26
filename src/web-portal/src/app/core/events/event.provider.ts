@@ -13,7 +13,7 @@ export class EventsProvider {
     }
 
     getAvailableEventsForControlType(controlType: ControlType, controlName: string, sectionName: string = null) {
-        let availableEvents = []
+        const availableEvents = []
         this.config.events.forEach(e => {
             if (typeof e.prototype.allowedTypes === 'string' && e.prototype.allowedTypes === '*') {
                 availableEvents.push(sectionName ? `${sectionName}_${controlName}_${e.prototype.eventname}`: `${controlName}_${e.prototype.eventname}`)

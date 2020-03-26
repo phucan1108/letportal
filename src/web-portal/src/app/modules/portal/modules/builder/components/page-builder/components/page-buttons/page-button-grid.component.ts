@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { PageButton, ActionType, Route } from 'services/portal.service';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, Input } from '@angular/core';
+import { PageButton, ActionType, Route, PageSection } from 'services/portal.service';
 import { MatTable, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import * as _ from 'lodash';
@@ -16,6 +16,9 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { PageButtonRouteDialogComponent } from './page-button-route.component';
 import { PageButtonOptionsDialogComponent } from './page-button-options.component';
 import { NGXLogger } from 'ngx-logger';
+import { PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
+import { BehaviorSubject } from 'rxjs';
+import { ExtendedPageSection } from 'app/core/models/extended.models';
 
 @Component({
     selector: 'let-page-button-grid',
@@ -25,6 +28,9 @@ export class PageButtonGridComponent implements OnInit {
     @ViewChild('table', { static: true }) table: MatTable<PageButton>;
     currentActionCommands: Array<PageButton> = []
 
+    @Input()
+    sections$: BehaviorSubject<Array<any>>
+    sections: Array<any> = []
     selection = new SelectionModel<PageButton>(true, []);
     displayedListColumns = ['name', 'confirmation', 'action', 'actions'];
 
@@ -45,7 +51,7 @@ export class PageButtonGridComponent implements OnInit {
                     || result.filterState === NextToDatasourceAction
                     || result.filterState === NextToWorkflowAction
                     || result.filterState === GatherAllChanges)),
-                tap(result => {
+                tap((result: PageBuilderStateModel) => {
                     switch (result.filterState) {
                         case InitEditPageBuilderAction:
                             this.currentActionCommands = []
@@ -53,6 +59,10 @@ export class PageButtonGridComponent implements OnInit {
                             _.forEach(commandsTempEdit, action => {
                                 this.currentActionCommands.push(ObjectUtils.clone(action))
                             })
+                            if(ObjectUtils.isNotNull(result.processPage.builder.sections)){
+                                const cloned = <ExtendedPageSection[]>ObjectUtils.clone(result.processPage.builder.sections)
+                                this.sections = cloned.map(a => ({ id: a.id, displayName: a.displayName }))
+                            }                            
                             break
                         case GeneratePageActionCommandsAction:
                             this.currentActionCommands = []
@@ -81,10 +91,15 @@ export class PageButtonGridComponent implements OnInit {
                     }
                 })
             ).subscribe()
+
+        this.sections$.subscribe(res => {
+            this.logger.debug('Sections List', res)
+            this.sections = res
+        })
     }
 
     addNewCommand() {
-        let actionCommand: PageButton = {
+        const actionCommand: PageButton = {
             id: Guid.create().toString(),
             name: 'New Command',
             icon: 'edit',
@@ -111,7 +126,7 @@ export class PageButtonGridComponent implements OnInit {
                     workflowOptions: {
                         mapWorkflowInputs: [],
                         workflowId: ''
-                    },                    
+                    },
                     confirmationOptions: {
                         isEnable: false,
                         confirmationText: 'Are you sure to proceed it?'
@@ -127,7 +142,8 @@ export class PageButtonGridComponent implements OnInit {
 
         const dialogRef = this.dialog.open(PageButtonDialogComponent, {
             data: {
-                command: actionCommand
+                command: actionCommand,
+                sections: this.sections
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -141,7 +157,8 @@ export class PageButtonGridComponent implements OnInit {
     editCommand(command: PageButton) {
         const dialogRef = this.dialog.open(PageButtonDialogComponent, {
             data: {
-                command: command
+                command: command,
+                sections: this.sections
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -166,7 +183,7 @@ export class PageButtonGridComponent implements OnInit {
     editRoute(command: PageButton) {
         const dialogRef = this.dialog.open(PageButtonRouteDialogComponent, {
             data: {
-                command: command
+                command: command                
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -195,7 +212,7 @@ export class PageButtonGridComponent implements OnInit {
             }
 
             command.buttonOptions = result
-            //this.currentActionCommands = ArrayUtils.updateOneItem(this.currentActionCommands, result, (command: PageButton) => { return command.id === result.id })
+            // this.currentActionCommands = ArrayUtils.updateOneItem(this.currentActionCommands, result, (command: PageButton) => { return command.id === result.id })
             this.logger.debug('Current buttons', this.currentActionCommands)
             this.refreshControlTable()
         })
@@ -217,9 +234,9 @@ export class PageButtonGridComponent implements OnInit {
     }
 
     deleteSelectedControls() {
-        const _title = "Delete Action Commands"
-        const _description = "Are you sure to delete all selected commands?"
-        const _waitDesciption = "Waiting..."
+        const _title = 'Delete Action Commands'
+        const _description = 'Are you sure to delete all selected commands?'
+        const _waitDesciption = 'Waiting...'
         const dialogRef = this.shortcutUtil.confirmationDialog(_title, _description, _waitDesciption);
         dialogRef.afterClosed().subscribe(res => {
             if (!res) {
@@ -249,7 +266,7 @@ export class PageButtonGridComponent implements OnInit {
     }
 
     generateAvailableEvents(): Array<string> {
-        let events: Array<string> = []
+        const events: Array<string> = []
 
         _.forEach(this.currentActionCommands, (actionCommand: PageButton) => {
             events.push(`${actionCommand.name}_click`.toLowerCase())

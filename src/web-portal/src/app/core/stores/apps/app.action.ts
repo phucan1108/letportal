@@ -8,8 +8,8 @@ export class AppAction{
 
 export class UserSelectAppAction implements AppAction{
     public static readonly type = `${AppSelectorPage}-User select app`
-    constructor(public app: App){}    
+    constructor(public app: App){}
 }
 
-export type All = 
+export type All =
     UserSelectAppAction

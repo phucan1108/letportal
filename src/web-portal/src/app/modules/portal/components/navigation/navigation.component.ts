@@ -23,6 +23,7 @@ import { NGXLogger } from 'ngx-logger';
 export class NavigationComponent implements OnInit {
 
   authUser: AuthUser
+
   loading = false
   menus: Array<Menu> = [];
   isExpanded = true;
@@ -33,6 +34,8 @@ export class NavigationComponent implements OnInit {
 
   hasMenu: boolean = !!this.menus && this.menus.length > 0
   hasSelectedApp = false
+  hasAvatar = false
+  userShortName = ''
   constructor(
     private logger: NGXLogger,
     private breakpointObserver: BreakpointObserver,
@@ -62,6 +65,9 @@ export class NavigationComponent implements OnInit {
   ngOnInit(): void {
     this.hasSelectedApp = this.session.getCurrentApp() ? true : false
     this.authUser = this.security.getAuthUser()
+    this.hasAvatar = ObjectUtils.isNotNull(this.authUser.avatar)
+
+    this.userShortName = this.authUser.getShortName()
     // If user stays in App Selector page, we don't display menu
     if (this.activatedRouter.snapshot.firstChild.component !== AppDashboardComponent) {
       this.store.select(a => a.selectedApp).pipe(
@@ -85,6 +91,15 @@ export class NavigationComponent implements OnInit {
     this.router.navigateByUrl('/')
   }
 
+  profile(){
+    this.router.navigateByUrl('portal/page/user-info')
+  }
+
+  appDashboard(){
+    this.session.clearSelectedApp()
+    this.router.navigateByUrl('portal/dashboard')
+  }
+
   private removeMenusByClaims(menus: Menu[], user: AuthUser) {
     if(!user.isInRole('SuperAdmin')){
       menus.forEach(menu => {
@@ -104,18 +119,18 @@ export class NavigationComponent implements OnInit {
                   sub.hide = true
                 }
               }
-            }         
+            }
           })
           if(count == 0){
             menu.hide = true
           }
         }
       })
-  
+
       return menus.filter(m => !m.hide)
     }
     else{
       return menus
-    }    
+    }
   }
 }

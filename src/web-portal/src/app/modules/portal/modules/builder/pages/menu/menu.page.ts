@@ -23,29 +23,6 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     styleUrls: ['./menu.page.scss']
 })
 export class MenuPage implements OnInit, AfterViewInit {
-   
-    @ViewChild(MatTree, { static: true }) 
-    tree: MatTree<any>;
-
-    private transformer = (node: ExtendedMenu, level: number) => {
-        return {
-            expandable: !!node.subMenus && node.subMenus.length > 0,
-            name: node.displayName,
-            level: level,
-            id: node.id,
-            extMenu: node
-        };
-    }
-    hasChild = (_: number, node: MenuNode) => node.expandable || node.level === 0;
-
-    app: App
-    menus: Array<ExtendedMenu> = []
-    treeControl = new FlatTreeControl<MenuNode>(
-        node => node.level, node => node.expandable);
-    treeFlattener = new MatTreeFlattener(
-        this.transformer, node => node.level, node => node.expandable, (node: ExtendedMenu) => node.subMenus);
-
-    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     constructor(
         private pageService: PageService,
         private activetedRouter: ActivatedRoute,
@@ -58,8 +35,31 @@ export class MenuPage implements OnInit, AfterViewInit {
     ) {
     }
 
+    @ViewChild(MatTree, { static: true })
+    tree: MatTree<any>;
+
+    app: App
+    menus: Array<ExtendedMenu> = []
+    private transformer = (node: ExtendedMenu, level: number) => {
+        return {
+            expandable: !!node.subMenus && node.subMenus.length > 0,
+            name: node.displayName,
+            level,
+            id: node.id,
+            extMenu: node
+        };
+    }
+
+    treeControl = new FlatTreeControl<MenuNode>(
+        node => node.level, node => node.expandable);
+    treeFlattener = new MatTreeFlattener(
+        this.transformer, node => node.level, node => node.expandable, (node: ExtendedMenu) => node.subMenus);
+
+    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    hasChild = (_: number, node: MenuNode) => node.expandable || node.level === 0;
+
     ngOnInit(): void {
-        this.pageService.init('menus').subscribe()   
+        this.pageService.init('menus').subscribe()
         this.app = this.activetedRouter.snapshot.data.app
         this.menus = this.app.menus as ExtendedMenu[]
         this.dataSource.data = this.menus
@@ -85,7 +85,7 @@ export class MenuPage implements OnInit, AfterViewInit {
     }
 
     addMenu() {
-        let menu: ExtendedMenu = {
+        const menu: ExtendedMenu = {
             id: Guid.create().toString(),
             displayName: '',
             icon: '',
@@ -100,9 +100,10 @@ export class MenuPage implements OnInit, AfterViewInit {
 
         const dialogRef = this.dialog.open(MenuDialogComponent, {
             data: {
-                menu: menu,
+                menu,
                 isEditMode: false,
-                appId: this.app.id
+                appId: this.app.id,
+                level: 0
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -114,13 +115,13 @@ export class MenuPage implements OnInit, AfterViewInit {
     }
 
     addChild(node: MenuNode) {
-        let menu: ExtendedMenu = {
+        const menu: ExtendedMenu = {
             id: Guid.create().toString(),
             displayName: '',
             icon: '',
             menuPath: `${node.extMenu.menuPath}/${node.extMenu.id}`,
             url: '',
-            order: node.extMenu.parentId ? this.findParent(node.extMenu).subMenus.length : this.menus.length, 
+            order: node.extMenu.parentId ? this.findParent(node.extMenu).subMenus.length : this.menus.length,
             hide: false,
             parentId: `${node.id}`,
             subMenus: [],
@@ -129,26 +130,27 @@ export class MenuPage implements OnInit, AfterViewInit {
 
         const dialogRef = this.dialog.open(MenuDialogComponent, {
             data: {
-                menu: menu,
+                menu,
                 isEditMode: false,
-                appId: this.app.id
+                appId: this.app.id,
+                level: menu.level
             }
         });
         dialogRef.afterClosed().subscribe(result => {
-            if (result) {                
+            if (result) {
                 this.insertChild(result)
                 this.refreshTree()
             }
         })
     }
 
-    removeMenu(menu: MenuNode) {        
+    removeMenu(menu: MenuNode) {
         if(menu.extMenu.menuPath == '~'){
-            let foundMenu = this.menus.find(a => a.id == menu.extMenu.id)
+            const foundMenu = this.menus.find(a => a.id == menu.extMenu.id)
             this.menus.splice(this.menus.indexOf(foundMenu), 1)
         }
         else{
-            let parentMenu = this.findParent(menu.extMenu);            
+            const parentMenu = this.findParent(menu.extMenu);
             parentMenu.subMenus = ArrayUtils.removeOneItem(parentMenu.subMenus, m => m.id === menu.id)
         }
         this.refreshTree()
@@ -159,7 +161,8 @@ export class MenuPage implements OnInit, AfterViewInit {
             data: {
                 menu: menu.extMenu,
                 isEditMode: true,
-                appId: this.app.id
+                appId: this.app.id,
+                level: menu.level
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -171,7 +174,7 @@ export class MenuPage implements OnInit, AfterViewInit {
                             menuTemp.url = result.url
                             return false
                         }
-                    })                    
+                    })
                 }
                 else{
                     _.forEach(this.menus, menuTemp => {
@@ -194,7 +197,7 @@ export class MenuPage implements OnInit, AfterViewInit {
     }
 
     addBelow(menu: MenuNode){
-        let addMenu: ExtendedMenu = {
+        const addMenu: ExtendedMenu = {
             id: Guid.create().toString(),
             displayName: '',
             icon: '',
@@ -211,7 +214,8 @@ export class MenuPage implements OnInit, AfterViewInit {
             data: {
                 menu: addMenu,
                 isEditMode: false,
-                appId: this.app.id
+                appId: this.app.id,
+                level: menu.level
             }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -226,7 +230,7 @@ export class MenuPage implements OnInit, AfterViewInit {
                             subMenu.order += 1
                         }
                     })
-    
+
                     parentNode.subMenus.push(result)
                     parentNode.subMenus = _.orderBy(parentNode.subMenus, sub => sub.order)
                     _.forEach(this.menus, menuTemp => {
@@ -236,23 +240,23 @@ export class MenuPage implements OnInit, AfterViewInit {
                         }
                     })
                 }
-                
+
                 this.refreshTree()
             }
         })
     }
 
     insertChild(menu: ExtendedMenu){
-        let parentMenuTemp: ExtendedMenu = this.findParent(menu)
+        const parentMenuTemp: ExtendedMenu = this.findParent(menu)
         parentMenuTemp.subMenus.push(menu)
     }
 
     findParent(menu: ExtendedMenu){
-        let menuPaths = menu.menuPath.split('/')
+        const menuPaths = menu.menuPath.split('/')
         let parentMenuTemp: ExtendedMenu = null;
         _.forEach(menuPaths, path => {
             if(path != '~'){
-                let lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
+                const lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
                 parentMenuTemp = {
                     ..._.find(lookingMenus, subMenu => subMenu.id === path),
                     level: 0

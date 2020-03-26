@@ -43,7 +43,7 @@ export class CommandModalComponent implements OnInit {
         modes: ['database', 'http', 'workflow', 'redirect']
     }
     isSmallDevice = false
-    @ViewChild('actionOptions', { static: true }) actionOptions: CommandOptionsComponent            
+    @ViewChild('actionOptions', { static: true }) actionOptions: CommandOptionsComponent
 
     constructor(
         public dialogRef: MatDialogRef<CommandModalComponent>,
@@ -52,12 +52,12 @@ export class CommandModalComponent implements OnInit {
         private cd: ChangeDetectorRef,
         private breakpointObserver: BreakpointObserver,
         private logger: NGXLogger
-    ) { 
+    ) {
         this.breakpointObserver.observe([
             Breakpoints.HandsetPortrait,
             Breakpoints.HandsetLandscape
         ]).subscribe(result => {
-            if (result.matches) {                
+            if (result.matches) {
                 this.isSmallDevice = true
                 this.logger.debug('Small device', this.isSmallDevice)
             }
@@ -76,7 +76,7 @@ export class CommandModalComponent implements OnInit {
             this.enableEditMode();
         }
         else{
-            this.isInList = false;              
+            this.isInList = false;
             this.actionCommandOptions = {
                 actionType: ActionType.Redirect,
                 redirectOptions: {
@@ -86,7 +86,7 @@ export class CommandModalComponent implements OnInit {
             }
         }
         this.createCommandButtonForm();
-        this.onFormValueChanges();        
+        this.onFormValueChanges();
     }
 
     private _filterIcon(choosingIconValue: string): Array<string> {
@@ -101,13 +101,13 @@ export class CommandModalComponent implements OnInit {
             displayName: [this.commandButton.displayName, Validators.required],
             icon: [this.commandButton.icon, Validators.required],
             color: [this.commandButton.color, Validators.required],
-            commandPositionType: [this.commandButton.commandPositionType, Validators.required],            
+            commandPositionType: [this.commandButton.commandPositionType, Validators.required],
             allowRefreshList: [this.commandButton.allowRefreshList]
         })
     }
 
     enableEditMode() {
-        this.isInList = this.commandButton.commandPositionType === CommandPositionType.InList;              
+        this.isInList = this.commandButton.commandPositionType === CommandPositionType.InList;
         this.actionCommandOptions = this.commandButton.actionCommandOptions
     }
 
@@ -123,7 +123,7 @@ export class CommandModalComponent implements OnInit {
 
     onFormValueChanges() {
         this.commandButtonForm.get('displayName').valueChanges.subscribe(newValue => {
-            const commandNameValue = (<string>newValue).toLowerCase().replace(/\s/g, '')
+            const commandNameValue = (newValue as string).toLowerCase().replace(/\s/g, '')
             this.commandButtonForm.get('name').setValue(commandNameValue)
             this.cd.markForCheck()
         })
@@ -153,7 +153,7 @@ export class CommandModalComponent implements OnInit {
                 allowRefreshList: formValues.allowRefreshList,
                 actionCommandOptions: this.actionOptions.get()
             }
-        }        
+        }
     }
 
     onSubmittingCommand() {

@@ -7,7 +7,7 @@ import { RolesClient } from 'services/identity.service';
 export class RoleClaimsResolve implements Resolve<any> {
 
     constructor(
-        private roleClient: RolesClient){        
+        private roleClient: RolesClient){
     }
 
     resolve(

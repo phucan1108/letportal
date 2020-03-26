@@ -11,12 +11,12 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 })
 export class ChangeControlEvent implements ControlEventExecution {
     public execute(
-        control: PageRenderedControl<DefaultControlOptions>,        
+        control: PageRenderedControl<DefaultControlOptions>,
         pageService: PageService,
         formControl: FormControl,
         defaultValue: any,
         newValue: any) {
-            formControl.setValue(newValue)                
+            formControl.setValue(newValue)
     }
-    
+
 }

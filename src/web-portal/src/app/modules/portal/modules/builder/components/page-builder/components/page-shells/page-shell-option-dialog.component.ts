@@ -34,7 +34,7 @@ export class PageShellOptionDialogComponent implements OnInit {
     }
 
     combiningShellOption(): ShellOption {
-        let formValues = this.shellFormGroup.value
+        const formValues = this.shellFormGroup.value
         return {
             key: formValues.key,
             value: formValues.value

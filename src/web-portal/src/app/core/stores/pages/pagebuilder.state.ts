@@ -1,5 +1,5 @@
 import { State, Action, Selector, StateContext } from '@ngxs/store';
-//import { FetchDynamicFormByIdAction, CreateDynamicFormAction, UpdateDynamicFormInfoAction, UpdateDynamicFormBuilderAction, UpdateDynamicFormOptionsAction, UpdateDynamicFormActionCommandsAction, UpdateDynamicFormEventsAction, UpdateDynamicFormRouteAction, GenerateDynamicFormBuilderAction } from './dynamicform.actions';
+// import { FetchDynamicFormByIdAction, CreateDynamicFormAction, UpdateDynamicFormInfoAction, UpdateDynamicFormBuilderAction, UpdateDynamicFormOptionsAction, UpdateDynamicFormActionCommandsAction, UpdateDynamicFormEventsAction, UpdateDynamicFormRouteAction, GenerateDynamicFormBuilderAction } from './dynamicform.actions';
 import * as PageActions from './pagebuilder.actions'
 import { Guid } from 'guid-typescript';
 import { tap } from 'rxjs/operators';
@@ -130,10 +130,10 @@ export class PageBuilderState {
       ...state,
       processPage: {
         ...state.processPage,
-        id: id,
-        name: name,
-        displayName: displayName,
-        urlPath: urlPath
+        id,
+        name,
+        displayName,
+        urlPath
       },
       filterState: PageActions.UpdatePageInfoAction
     })
@@ -268,7 +268,7 @@ export class PageBuilderState {
   @Action(PageActions.UpdateAvailableEvents)
   public updateAvailableEvents(ctx: StateContext<PageBuilderStateModel>, { availableEvents }: PageActions.UpdateAvailableEvents) {
     const state = ctx.getState()
-    let distinctEvents = _.uniq(_.concat(state.availableEvents, availableEvents))
+    const distinctEvents = _.uniq(_.concat(state.availableEvents, availableEvents))
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableEvents,
@@ -279,7 +279,7 @@ export class PageBuilderState {
   @Action(PageActions.UpdateAvailableTriggerEventsList)
   public updateAvailableTriggerEventsList(ctx: StateContext<PageBuilderStateModel>, { availableTriggerEventsList }: PageActions.UpdateAvailableTriggerEventsList) {
     const state = ctx.getState()
-    let distinctEvents = _.uniq(_.concat(state.availableTriggerEventsList, availableTriggerEventsList))
+    const distinctEvents = _.uniq(_.concat(state.availableTriggerEventsList, availableTriggerEventsList))
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableTriggerEventsList,
@@ -290,18 +290,18 @@ export class PageBuilderState {
   @Action(PageActions.UpdateAvailableBoundDatas)
   public updateAvailableBoundDatas(ctx: StateContext<PageBuilderStateModel>, { availableBoundDatas }: PageActions.UpdateAvailableBoundDatas) {
     const state = ctx.getState()
-    let distinctEvents = _.uniq(_.concat(state.availableBoundDatas, availableBoundDatas))
+    const distinctEvents = _.uniq(_.concat(state.availableBoundDatas, availableBoundDatas))
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableBoundDatas,
-      availableBoundDatas: availableBoundDatas
+      availableBoundDatas
     })
   }
 
   @Action(PageActions.UpdateAvailableShells)
   public updateAvailableShells(ctx: StateContext<PageBuilderStateModel>, { availableShells }: PageActions.UpdateAvailableShells) {
     const state = ctx.getState()
-    let distinctShells = _.uniq(_.concat(state.availableShells, availableShells, this.shellConfig.getAllAvailableShells()))
+    const distinctShells = _.uniq(_.concat(state.availableShells, availableShells, this.shellConfig.getAllAvailableShells()))
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableShells,
@@ -316,7 +316,7 @@ export class PageBuilderState {
       ...state,
       processPage: {
         ...state.processPage,
-        shellOptions: shellOptions
+        shellOptions
       },
       filterState: PageActions.UpdateShellOptions
     })
@@ -329,7 +329,7 @@ export class PageBuilderState {
       ...state,
       processPage: {
         ...state.processPage,
-        claims: claims
+        claims
       },
       filterState: PageActions.UpdatePageClaims
     })
@@ -352,7 +352,7 @@ export class PageBuilderState {
       ...state,
       processPage: {
         ...state.processPage,
-        pageDatasources: pageDatasources
+        pageDatasources
       },
       filterState: PageActions.UpdatePageDatasources
     })

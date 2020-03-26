@@ -42,16 +42,20 @@ namespace LetPortal.Portal.Services.Databases
             throw new DatabaseException(DatabaseErrorCodes.NotSupportedConnectionType);
         }
 
-        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(List<DatabaseConnection> databaseConnections, DatabaseExecutionChains executionChains, IEnumerable<ExecuteParamModel> parameters)
+        public async Task<ExecuteDynamicResultModel> ExecuteDynamic(
+            List<DatabaseConnection> databaseConnections,
+            DatabaseExecutionChains executionChains,
+            IEnumerable<ExecuteParamModel> parameters,
+            IEnumerable<LoopDataParamModel> LoopDatas)
         {
             var context = new ExecutionDynamicContext
             {
                 Data = JObject.Parse("{}")
             };
 
-            var result = new ExecuteDynamicResultModel { IsSuccess = true }; 
+            var result = new ExecuteDynamicResultModel { IsSuccess = true };
             var parametersList = parameters.ToList();
-            for (int i = 1; i <= executionChains?.Steps.Count; i++)
+            for (var i = 1; i <= executionChains?.Steps.Count; i++)
             {
                 var step = executionChains.Steps[i - 1];
                 var executingDatabaseConnection = databaseConnections.First(a => a.Id == step.DatabaseConnectionId);
@@ -61,7 +65,42 @@ namespace LetPortal.Portal.Services.Databases
                 if (executionDatabase != null)
                 {
                     step.ExecuteCommand = ReplaceValueWithContext(step.ExecuteCommand, context, ref parametersList, connectionType != Core.Persistences.ConnectionType.MongoDB);
-                    var stepResult = await executionDatabase.ExecuteStep(executingDatabaseConnection, step.ExecuteCommand, parametersList, context);
+                    StepExecutionResult stepResult;                    
+                    // Single step
+                    if (string.IsNullOrEmpty(step.DataLoopKey))
+                    {
+                        stepResult = await executionDatabase
+                            .ExecuteStep(
+                                executingDatabaseConnection, step.ExecuteCommand, parametersList, context);
+                    }
+                    else
+                    {
+                        if(LoopDatas != null)
+                        {
+                            var loopData = LoopDatas.First(a => a.Name == step.DataLoopKey);
+                            var stepExecutionResults = new List<StepExecutionResult>();
+                            foreach (var subParameters in loopData.Parameters)
+                            {
+                                var subStepResult = await executionDatabase
+                                                .ExecuteStep(
+                                                    executingDatabaseConnection, step.ExecuteCommand, subParameters, context);
+
+                                stepExecutionResults.Add(subStepResult);
+                            }
+
+                            stepResult = new StepExecutionResult
+                            {
+                                IsSuccess = true,
+                                Result = stepExecutionResults.Select(a => a.Result).ToArray(),
+                                ExecutionType = StepExecutionType.Multiple
+                            };
+                        }
+                        else
+                        {
+                            throw new DatabaseException(DatabaseErrorCodes.LoopDataIsNotNull);
+                        }                                                       
+                    }
+
                     if (stepResult.IsSuccess)
                     {
                         switch (stepResult.ExecutionType)
@@ -73,13 +112,13 @@ namespace LetPortal.Portal.Services.Databases
                                 // Due to JSON .NET Serialize problem for dynamic properties isn't working with Camel cast
                                 // We need to exchange a anonymous class (or object) before serializing
                                 WriteDataToContext(
-                                    $"step{i.ToString()}", 
-                                    connectionType == Core.Persistences.ConnectionType.MongoDB 
+                                    $"step{i.ToString()}",
+                                    connectionType == Core.Persistences.ConnectionType.MongoDB
                                         ? ConvertUtil.SerializeObject(new { stepResult.Result.Id }, true)
                                             : ConvertUtil.SerializeObject(stepResult.Result, true), context);
                                 break;
                             case StepExecutionType.Update:
-                                if(connectionType != Core.Persistences.ConnectionType.MongoDB && stepResult.Result != null)
+                                if (connectionType != Core.Persistences.ConnectionType.MongoDB && stepResult.Result != null)
                                 {
                                     WriteDataToContext(
                                     $"step{i.ToString()}",
@@ -87,7 +126,15 @@ namespace LetPortal.Portal.Services.Databases
                                 }
                                 break;
                             case StepExecutionType.Delete:
-                                if(connectionType != Core.Persistences.ConnectionType.MongoDB && stepResult.Result != null)
+                                if (connectionType != Core.Persistences.ConnectionType.MongoDB && stepResult.Result != null)
+                                {
+                                    WriteDataToContext(
+                                    $"step{i.ToString()}",
+                                    ConvertUtil.SerializeObject(stepResult.Result, true), context);
+                                }
+                                break;
+                            case StepExecutionType.Multiple:
+                                if (stepResult.Result != null)
                                 {
                                     WriteDataToContext(
                                     $"step{i.ToString()}",
@@ -130,7 +177,7 @@ namespace LetPortal.Portal.Services.Databases
                 foreach (var field in allFields)
                 {
                     var replacedValue = context.Data.SelectToken(field);
-                    if(replacedValue == null)
+                    if (replacedValue == null)
                     {
                         throw new ArgumentNullException($"Cannot found a replaced value in context. Name: {field}");
                     }
@@ -145,7 +192,7 @@ namespace LetPortal.Portal.Services.Databases
                         };
 
                         executeParamModels.Add(executeParam);
-                        str = str.Replace("{{$" + field + "}}","{{" + paramName + "}}", StringComparison.Ordinal);
+                        str = str.Replace("{{$" + field + "}}", "{{" + paramName + "}}", StringComparison.Ordinal);
                     }
                     else
                     {
@@ -159,10 +206,10 @@ namespace LetPortal.Portal.Services.Databases
                                 str = str.Replace("\"{{$" + field + "}}\"", replacedValue.Value<string>(), StringComparison.Ordinal);
                                 break;
                             default:
-                                str = str.Replace("{{$" + field + "}}", replacedValue.Value<string>(), StringComparison.Ordinal);                               
+                                str = str.Replace("{{$" + field + "}}", replacedValue.Value<string>(), StringComparison.Ordinal);
                                 break;
                         }
-                    }                     
+                    }
                 }
 
                 return str;
@@ -173,7 +220,10 @@ namespace LetPortal.Portal.Services.Databases
             }
         }
 
-        private static string GetSqlParam(string fieldName, JTokenType tokenType) => fieldName + "|" + MapperConstants.ConvertFromJToken(tokenType);
+        private static string GetSqlParam(string fieldName, JTokenType tokenType)
+        {
+            return fieldName + "|" + MapperConstants.ConvertFromJToken(tokenType);
+        }
 
         private void WriteDataToContext(string name, string data, ExecutionDynamicContext context)
         {

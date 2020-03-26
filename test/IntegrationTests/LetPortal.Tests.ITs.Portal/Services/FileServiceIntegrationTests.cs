@@ -24,10 +24,14 @@ namespace LetPortal.Tests.ITs.Portal.Services
     {
         private readonly IntegrationTestsContext _context;
 
+        public FilePublishOptions FilePublishOptions = new FilePublishOptions
+        {
+            DownloadableHost = "http://localhost:53595/v1.0/files"
+        };
+
         public LetPortal.Portal.Options.Files.FileOptions FileOptions = new LetPortal.Portal.Options.Files.FileOptions
         {
             FileStorageType = FileStorageType.Database,
-            DownloadableHost = "http://localhost:53595/v1.0/files",
             ValidatorOptions = new FileValidatorOptions
             {
                 CheckFileExtension = true,
@@ -85,6 +89,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             FileMongoRepository fileRepository = new FileMongoRepository(new Core.Persistences.MongoConnection(
                     databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -102,7 +107,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -154,6 +162,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             FileMongoRepository fileRepository = new FileMongoRepository(new Core.Persistences.MongoConnection(
                     databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -171,7 +180,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -225,6 +237,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             FileEFRepository fileRepository = new FileEFRepository(_context.GetPostgreSQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -242,7 +255,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock, 
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -293,6 +309,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             FileEFRepository fileRepository = new FileEFRepository(_context.GetPostgreSQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -310,7 +327,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock, 
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -364,6 +384,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             FileEFRepository fileRepository = new FileEFRepository(_context.GetSQLServerContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -381,7 +402,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -432,6 +456,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             FileEFRepository fileRepository = new FileEFRepository(_context.GetSQLServerContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -449,7 +474,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -504,6 +532,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             FileEFRepository fileRepository = new FileEFRepository(_context.GetMySQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -521,7 +550,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -572,6 +604,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             FileEFRepository fileRepository = new FileEFRepository(_context.GetMySQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == FileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == FileOptions.ValidatorOptions);
             IOptionsMonitor<DatabaseOptions> databaseOptionsMock = Mock.Of<IOptionsMonitor<DatabaseOptions>>(_ => _.CurrentValue == databaseOptions);
@@ -589,7 +622,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 databaseStorageOptionsMock,
                 storeFileDatabases);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                databaseFileConnectorExecution
             }, new List<IFileValidatorRule>
@@ -654,6 +690,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
 #pragma warning disable CA2000 // Dispose objects before losing scope
             FileEFRepository fileRepository = new FileEFRepository(_context.GetMySQLContext());
 #pragma warning restore CA2000 // Dispose objects before losing scope
+            IOptionsMonitor<FilePublishOptions> filePublishOptionsMock = Mock.Of<IOptionsMonitor<FilePublishOptions>>(_ => _.CurrentValue == FilePublishOptions);
             IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions> fileOptionsMock = Mock.Of<IOptionsMonitor<LetPortal.Portal.Options.Files.FileOptions>>(_ => _.CurrentValue == localFileOptions);
             IOptionsMonitor<FileValidatorOptions> fileValidatorMock = Mock.Of<IOptionsMonitor<FileValidatorOptions>>(_ => _.CurrentValue == localFileOptions.ValidatorOptions);
             IOptionsMonitor<DiskStorageOptions> diskStorageOptionsMock = Mock.Of<IOptionsMonitor<DiskStorageOptions>>(_ => _.CurrentValue == diskOptions);
@@ -662,7 +699,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             DiskFileConnectorExecution diskStorage = new DiskFileConnectorExecution(diskStorageOptionsMock);
 
-            FileService fileService = new FileService(fileOptionsMock, new List<IFileConnectorExecution>
+            FileService fileService = new FileService(
+                fileOptionsMock,
+                filePublishOptionsMock,
+                new List<IFileConnectorExecution>
             {
                diskStorage
             }, new List<IFileValidatorRule>

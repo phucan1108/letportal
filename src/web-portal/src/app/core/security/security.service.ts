@@ -21,13 +21,13 @@ export class SecurityService {
         private accountsClient: AccountsClient,
         private session: SessionService,
         private roleClient: RolesClient) {
-        let tempAuthToken = this.session.getUserToken()
+        const tempAuthToken = this.session.getUserToken()
 
         if (tempAuthToken) {
             this.authToken = new AuthToken(
                 tempAuthToken.jwtToken,
-                tempAuthToken.expiresIn, 
-                tempAuthToken.refreshToken, 
+                tempAuthToken.expiresIn,
+                tempAuthToken.refreshToken,
                 tempAuthToken.expireRefresh)
             this.authUser = this.authToken ? this.authToken.toAuthUser() : null
         }
@@ -80,9 +80,9 @@ export class SecurityService {
                 token: this.authToken.jwtToken,
                 userSession: this.session.getUserSession()
             }).subscribe(res =>{
-               
+
             })
-        }  
+        }
         this.authUser = null
         this.authToken = null
         this.session.setUserSession(null)

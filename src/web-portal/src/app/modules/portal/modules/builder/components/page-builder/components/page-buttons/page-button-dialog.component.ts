@@ -1,13 +1,15 @@
-import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild, Input } from '@angular/core';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatTable } from '@angular/material';
 import { PageButtonGridComponent } from './page-button-grid.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageButton } from 'services/portal.service';
 import { StaticResources } from 'portal/resources/static-resources';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
 import { CommandOptionsComponent } from 'portal/shared/button-options/commandoptions.component';
 import { startWith, map } from 'rxjs/operators';
+import { ExtendedPageSection } from 'app/core/models/extended.models';
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-page-button-dialog',
@@ -24,19 +26,21 @@ export class PageButtonDialogComponent implements OnInit {
 
     _colors = StaticResources.colorButtons()
     isEditMode = false
-
+    sections: any[] = []
     @ViewChild('actionOptions', { static: false }) actionOptions: CommandOptionsComponent
-
     constructor(
         public dialogRef: MatDialogRef<PageButtonGridComponent>,
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fb: FormBuilder,
+        private logger: NGXLogger,
         private cd: ChangeDetectorRef) { }
 
     ngOnInit(
     ): void {
         this.pageButton = this.data.command
+        this.sections = this.data.sections
+        this.logger.debug('Passing sections', this.sections)
         this.isEditMode = this.pageButton.name ? true : false
         this.initialCommandForm()
     }
@@ -44,10 +48,11 @@ export class PageButtonDialogComponent implements OnInit {
     initialCommandForm() {
         this.actionCommandForm = this.fb.group({
             name: [this.pageButton.name, Validators.required],
-            icon: [this.pageButton.icon, Validators.required],
+            icon: [this.pageButton.icon],
             color: [this.pageButton.color, Validators.required],
             allowHidden: [this.pageButton.allowHidden],
-            isRequiredValidation: [this.pageButton.isRequiredValidation]
+            isRequiredValidation: [this.pageButton.isRequiredValidation],
+            placeSectionId: [this.pageButton.placeSectionId]
         })
 
         this.iconFilterOptions = this.actionCommandForm.get('icon').valueChanges.pipe(
@@ -63,7 +68,7 @@ export class PageButtonDialogComponent implements OnInit {
     }
 
     combiningCommand(): PageButton {
-        let formValues = this.actionCommandForm.value
+        const formValues = this.actionCommandForm.value
         return {
             id: this.pageButton.id,
             name: formValues.name,
@@ -71,7 +76,8 @@ export class PageButtonDialogComponent implements OnInit {
             allowHidden: formValues.allowHidden,
             icon: formValues.icon,
             isRequiredValidation: formValues.isRequiredValidation,
-            buttonOptions: this.pageButton.buttonOptions
+            buttonOptions: this.pageButton.buttonOptions,
+            placeSectionId: formValues.placeSectionId
         }
     }
 

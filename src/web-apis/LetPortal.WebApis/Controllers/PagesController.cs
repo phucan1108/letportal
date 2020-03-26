@@ -162,7 +162,12 @@ namespace LetPortal.WebApis.Controllers
                                     button.ButtonOptions.ActionCommandOptions.DbExecutionChains,
                                     pageSubmittedButtonModel
                                         .Parameters
-                                        .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }));
+                                        .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }),
+                                    pageSubmittedButtonModel.LoopDatas?.Select(a => new LoopDataParamModel 
+                                    {
+                                        Name = a.Name,
+                                        Parameters = a.Parameters.Select(b => b.Select(c => new ExecuteParamModel { Name = c.Name, RemoveQuotes = c.RemoveQuotes, ReplaceValue = c.ReplaceValue }).ToList()).ToList()
+                                    }));
 
                     return Ok(result);
                 }

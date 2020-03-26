@@ -12,7 +12,7 @@ export class FilterCheckboxComponent implements OnInit {
 
     @Input()
     filter: ExtendedChartFilter
-    
+
     @Input()
     formGroup: FormGroup
 
@@ -29,7 +29,7 @@ export class FilterCheckboxComponent implements OnInit {
             this.controlName = StringUtils.replaceAllOccurences(this.filter.name, '.','')
         }
         else{
-            this.controlName = this.filter.name 
+            this.controlName = this.filter.name
         }
     }
 }

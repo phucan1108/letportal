@@ -38,7 +38,7 @@ export class ClaimDialogComponent implements OnInit {
     }
 
     combiningClaim(): PortalClaim {
-        let formValues = this.claimFormGroup.value
+        const formValues = this.claimFormGroup.value
         return {
             name: formValues.name,
             displayName: formValues.displayName,

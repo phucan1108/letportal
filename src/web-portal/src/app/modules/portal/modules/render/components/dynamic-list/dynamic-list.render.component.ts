@@ -91,7 +91,10 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                             }, []))
                             break
                         case GatherSectionValidations:
-                            this.store.dispatch(new SectionValidationStateAction(this.section.name, true))
+                            if (state.specificValidatingSection === this.section.name
+                                || !ObjectUtils.isNotNull(state.specificValidatingSection)) {
+                                this.store.dispatch(new SectionValidationStateAction(this.section.name, true))
+                            }                            
                             break
                     }
                 }
@@ -147,11 +150,11 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
         switch (commandClicked.command.actionCommandOptions.actionType) {
             case ActionType.Redirect:
                 if (commandClicked.command.actionCommandOptions.redirectOptions.isSameDomain) {
-                    let navigationExtras: NavigationExtras = {
+                    const navigationExtras: NavigationExtras = {
                         preserveFragment: true,
                         preserveQueryParams: true
                     };
-                    let url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
+                    const url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
                         this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {
                             ...this.pageService.getPageShellData(),
                             data: commandClicked.data
@@ -161,7 +164,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                     this.redirectRoute.navigateByUrl(url, navigationExtras)
                 }
                 else {
-                    let url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
+                    const url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
                         this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {
                             ...this.pageService.getPageShellData(),
                             data: commandClicked.data
@@ -175,13 +178,13 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                 this.pageService.openConfirmationDialog(commandClicked.command.actionCommandOptions.confirmationOptions,
                     () => {
                         this.pageService.executeByActionOptions(
-                            this.dynamicList.name + '_' + commandClicked.command.name + '_click', 
-                            commandClicked.command.actionCommandOptions, 
+                            this.dynamicList.name + '_' + commandClicked.command.name + '_click',
+                            commandClicked.command.actionCommandOptions,
                             () => {
                                 if(commandClicked.command.allowRefreshList){
                                     this.refreshList()
                                 }
-                            }, 
+                            },
                             commandClicked.command.commandPositionType == CommandPositionType.OutList ? null : commandClicked.data)
                     })
 
@@ -205,10 +208,10 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                 headers = this.dynamicListGrid.headers.filter(b => !b.isHidden).map(a => a.displayName)
                 orderedNames = this.dynamicListGrid.headers.filter(b => !b.isHidden).map(a => a.name)
             }
-            
+
             // An overkill performance when exporting over 1k rows,
             // developer needs to use server-side to export instead of client side
-            let exportedData: any[] = this.dynamicListGrid.dataSource
+            const exportedData: any[] = this.dynamicListGrid.dataSource
             const deletedProps: string[] = []
             const jsonParsedProps: string[] = []
             const firstElem = exportedData[0]
@@ -218,7 +221,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                     deletedProps.push(prop)
                     inDeletedProps = true
                 }
-                
+
                 if((ObjectUtils.isArray(firstElem[prop]) || ObjectUtils.isObject(firstElem[prop]))
                     && !inDeletedProps){
                         jsonParsedProps.push(prop)

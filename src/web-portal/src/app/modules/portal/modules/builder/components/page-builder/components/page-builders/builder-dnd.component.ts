@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { ExtendedPageSection, ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { FormGroup } from '@angular/forms';
 import * as _ from 'lodash';
@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { SectionDialogComponent } from './section-dialog.component';
 import { Guid } from 'guid-typescript';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { filter, tap, combineLatest } from 'rxjs/operators';
 import { ShellContants } from 'app/core/shell/shell.contants';
 import { NGXLogger } from 'ngx-logger';
@@ -25,6 +25,9 @@ export class BuilderDnDComponent implements OnInit {
 
     pageSections: Array<ExtendedPageSection> = []
     constructionType = SectionContructionType
+
+    @Output()
+    onSectionsChanged: EventEmitter<any> = new EventEmitter<any>()
 
     constructor(
         private standardsClient: StandardComponentClient,
@@ -70,6 +73,19 @@ export class BuilderDnDComponent implements OnInit {
                                                 tap(
                                                     standard => {
                                                         section.relatedStandard = standard
+                                                    },
+                                                    err => {
+                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        section.isBroken = true
+                                                    }
+                                                )
+                                            ).subscribe()
+                                            break
+                                        case SectionContructionType.Array:
+                                            this.standardsClient.getOne(section.componentId).pipe(
+                                                tap(
+                                                    standard => {
+                                                        section.relatedArrayStandard = standard
                                                     },
                                                     err => {
                                                         this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
@@ -154,7 +170,7 @@ export class BuilderDnDComponent implements OnInit {
     }
 
     addNewSection() {
-        let newSection: ExtendedPageSection = {
+        const newSection: ExtendedPageSection = {
             id: Guid.create().toString(),
             name: '',
             displayName: '',
@@ -168,11 +184,13 @@ export class BuilderDnDComponent implements OnInit {
             relatedStandard: null,
             relatedDynamicList: null,
             relatedChart: null,
+            relatedArrayStandard: null,
+            relatedButtons: [],
             isLoaded: false,
             isBroken: false
         }
         const availableSectionNames = this.pageSections.map(a => a.name)
-        const dialogRef = this.dialog.open(SectionDialogComponent, { 
+        const dialogRef = this.dialog.open(SectionDialogComponent, {
             data: {
                 section: newSection,
                 sectionNames: availableSectionNames
@@ -194,7 +212,7 @@ export class BuilderDnDComponent implements OnInit {
 
     editSection(choosenSection: ExtendedPageSection) {
         const availableSectionNames = this.pageSections.map(a => a.name)
-        const dialogRef = this.dialog.open(SectionDialogComponent, { 
+        const dialogRef = this.dialog.open(SectionDialogComponent, {
             data: {
                 section: choosenSection,
                 sectionNames: availableSectionNames
@@ -229,12 +247,13 @@ export class BuilderDnDComponent implements OnInit {
         this.logger.debug('current order before', this.pageSections)
         this.pageSections = _.sortBy(this.pageSections, [function (section: ExtendedPageSection) { return section.order }])
         this.logger.debug('current order', this.pageSections)
-        //[this.formSections[$event.previousIndex], this.formSections[$event.currentIndex]] = [this.formSections[$event.currentIndex], this.formSections[$event.previousIndex]] ;
+        // [this.formSections[$event.previousIndex], this.formSections[$event.currentIndex]] = [this.formSections[$event.currentIndex], this.formSections[$event.previousIndex]] ;
         this.refreshTable()
     }
 
     refreshTable() {
-        let shallowCopy = ObjectUtils.clone(this.pageSections)
+        const shallowCopy = ObjectUtils.clone(this.pageSections)
+        this.onSectionsChanged.emit(shallowCopy)
         this.store.dispatch(new UpdatePageBuilderInfoAction({
             sections: shallowCopy
         }))
@@ -248,7 +267,7 @@ export class BuilderDnDComponent implements OnInit {
     }
 
     generateAvailableEvents(): Array<string> {
-        let events: Array<string> = []
+        const events: Array<string> = []
 
         _.forEach(this.pageSections, (section: ExtendedPageSection) => {
             switch (section.constructionType) {
@@ -269,7 +288,7 @@ export class BuilderDnDComponent implements OnInit {
     }
 
     generateAvailableTriggerEvents(): Array<string>{
-        let events: Array<string> = []
+        const events: Array<string> = []
 
         _.forEach(this.pageSections, (section: ExtendedPageSection) => {
             switch (section.constructionType) {
@@ -301,7 +320,7 @@ export class BuilderDnDComponent implements OnInit {
     }
 
     generateBoundDatas(): string[] {
-        let boundDatas: string[] = []
+        const boundDatas: string[] = []
         _.forEach(this.pageSections, (section: ExtendedPageSection) => {
             switch (section.constructionType) {
                 case SectionContructionType.Standard:
@@ -316,7 +335,7 @@ export class BuilderDnDComponent implements OnInit {
     }
 
     generateAvailableFormShells(): Array<string> {
-        let shellVars: Array<string> = []
+        const shellVars: Array<string> = []
         _.forEach(this.pageSections, (section: ExtendedPageSection) => {
             // _.forEach(section.formControls, (control: ExtendedFormControl) => {
             //     let shellVar = `${ShellContants.FORM_DATA}.${section.name.toLowerCase()}`

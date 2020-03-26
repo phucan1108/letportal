@@ -29,7 +29,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
     asyncValidatorForm: FormGroup
     validatorTypes = StaticResources.asyncValidatorTypes()
     validatorType = AsyncValidatorType
-    isHttpOptionsValid: boolean = false
+    isHttpOptionsValid = false
     httpOptions: HttpServiceOptions
     databaseOptions: DatabaseOptions
     dbOptions: DatabaseFormOptions = {
@@ -42,7 +42,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
 
     isEditMode = false
 
-    @ViewChild(DatabaseOptionsComponent, { static: false }) dbOptionsComponent: DatabaseOptionsComponent 
+    @ViewChild(DatabaseOptionsComponent, { static: false }) dbOptionsComponent: DatabaseOptionsComponent
 
     constructor(
         public dialogRef: MatDialogRef<ControlsGridComponent>,
@@ -75,7 +75,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
             this.validators$.next(this.validators)
         }
 
-        this.initAsyncValidatorForm()        
+        this.initAsyncValidatorForm()
     }
 
     initAsyncValidatorForm() {
@@ -87,11 +87,11 @@ export class AsyncValidatorDialogComponent implements OnInit {
             evaluatedExpression: ['', Validators.required]
         })
 
-        this.currentValidatorType = AsyncValidatorType.DatabaseValidator        
+        this.currentValidatorType = AsyncValidatorType.DatabaseValidator
     }
 
     getAvailableValidatorNames() {
-        let names = []
+        const names = []
         this.validators.forEach(validator => {
             names.push(validator.validatorName)
         })
@@ -153,7 +153,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
             this.selectedValidator.asyncValidatorOptions.databaseOptions = {
                 databaseConnectionId: '',
                 entityName: '',
-                query: ''    
+                query: ''
             }
         }
 
@@ -164,13 +164,13 @@ export class AsyncValidatorDialogComponent implements OnInit {
             validatorType: [this.selectedValidator.asyncValidatorOptions.validatorType, Validators.required],
             evaluatedExpression: [this.selectedValidator.asyncValidatorOptions.evaluatedExpression, Validators.required]
         })
-        
+
         this.httpOptions = {
             httpServiceUrl: this.selectedValidator.asyncValidatorOptions.httpServiceOptions.httpServiceUrl,
             httpMethod: this.selectedValidator.asyncValidatorOptions.httpServiceOptions.httpMethod,
             httpSuccessCode: this.selectedValidator.asyncValidatorOptions.httpServiceOptions.httpSuccessCode,
             jsonBody: this.selectedValidator.asyncValidatorOptions.httpServiceOptions.jsonBody,
-            outputProjection: this.selectedValidator.asyncValidatorOptions.httpServiceOptions.outputProjection            
+            outputProjection: this.selectedValidator.asyncValidatorOptions.httpServiceOptions.outputProjection
         }
 
         this.databaseOptions = {
@@ -208,7 +208,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
     private saveValidatorToList(validator: PageControlAsyncValidator){
 
         if(this.isEditMode){
-            let selectedIndex = this.validators.indexOf(this.selectedValidator)
+            const selectedIndex = this.validators.indexOf(this.selectedValidator)
             this.validators[selectedIndex] = validator
         }
         else{
@@ -220,7 +220,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
     }
 
     combineAsyncValidator(): PageControlAsyncValidator{
-        let formValues = this.asyncValidatorForm.value
+        const formValues = this.asyncValidatorForm.value
         return {
             validatorName: formValues.validatorName,
             isActive: formValues.isActive,

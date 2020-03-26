@@ -36,11 +36,11 @@ export class Translator {
         if(foundReplacingConfigs){
             foundReplacingConfigs = _.uniq(foundReplacingConfigs)
         }
-        let foundReplacedConfigs: Array<ShellConfig> = [];
+        const foundReplacedConfigs: Array<ShellConfig> = [];
         _.forEach(foundReplacingConfigs, config => {
             // New changes: we add one pipe for defining parameter type such as "data.ticks|long"
             // We need to detect this parameter has type
-            let splitted = config.split('|')
+            const splitted = config.split('|')
             let configName = ''
             if(splitted.length == 2){
                 configName = splitted[0]
@@ -48,20 +48,20 @@ export class Translator {
             else{
                 configName = config
             }
-            let shellConfig = this.getShellConfig(configName, pageShellData)            
+            const shellConfig = this.getShellConfig(configName, pageShellData)
             if (shellConfig) {
                 foundReplacedConfigs.push(shellConfig)
                 shellConfig.key = config
             }
             else {
-                let builtInMethod = this.isBuiltInMethod(configName)
+                const builtInMethod = this.isBuiltInMethod(configName)
                 if (builtInMethod) {
                     // Find all parameters in built-in method
-                    let padLeft = configName.indexOf('(')
-                    let padRight = configName.indexOf(')')
+                    const padLeft = configName.indexOf('(')
+                    const padRight = configName.indexOf(')')
                     if (padRight - 1 > padLeft) {
-                        let allMid = configName.substr(padLeft + 1, padRight - padLeft - 1)
-                        let builtInMethodExecute = new Function('user', 'claims', 'options', 'data', 'configs', 'appsettings', 'queryparams', 'builtInMethod', 'return builtInMethod.execute(' + allMid + ')')
+                        const allMid = configName.substr(padLeft + 1, padRight - padLeft - 1)
+                        const builtInMethodExecute = new Function('user', 'claims', 'options', 'data', 'configs', 'appsettings', 'queryparams', 'builtInMethod', 'return builtInMethod.execute(' + allMid + ')')
                         foundReplacedConfigs.push({ key: config, value: builtInMethodExecute(pageShellData.user, pageShellData.claims, pageShellData.options, pageShellData.data, pageShellData.configs, pageShellData.appsettings, pageShellData.queryparams, builtInMethod), type: ShellConfigType.Method, replaceDQuote: builtInMethod.replaceDQuote })
                     }
                     else {
@@ -74,9 +74,9 @@ export class Translator {
             }
         })
 
-        let params: PageParameterModel[] = []
-        _.forEach(foundReplacedConfigs, config => {  
-            this.logger.debug('Replace config', config)          
+        const params: PageParameterModel[] = []
+        _.forEach(foundReplacedConfigs, config => {
+            this.logger.debug('Replace config', config)
             params.push({
                 name: config.key,
                 removeQuotes: config.replaceDQuote,
@@ -88,12 +88,12 @@ export class Translator {
     }
 
     translateDataWithShell(text: string, pageShellData: PageShellData) {
-        let foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
-        let foundReplacedConfigs: Array<ShellConfig> = [];
+        const foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
+        const foundReplacedConfigs: Array<ShellConfig> = [];
         _.forEach(foundReplacingConfigs, config => {
             // New changes: we add one pipe for defining parameter type such as "data.ticks|long"
             // We need to detect this parameter has type
-            let splitted = config.split('|')
+            const splitted = config.split('|')
             let configName = ''
             if(splitted.length == 2){
                 configName = splitted[0]
@@ -101,20 +101,20 @@ export class Translator {
             else{
                 configName = config
             }
-            let shellConfig = this.getShellConfig(configName, pageShellData)            
+            const shellConfig = this.getShellConfig(configName, pageShellData)
             if (shellConfig) {
                 foundReplacedConfigs.push(shellConfig)
                 shellConfig.key = config
             }
             else {
-                let builtInMethod = this.isBuiltInMethod(configName)
+                const builtInMethod = this.isBuiltInMethod(configName)
                 if (builtInMethod) {
                     // Find all parameters in built-in method
-                    let padLeft = configName.indexOf('(')
-                    let padRight = configName.indexOf(')')
+                    const padLeft = configName.indexOf('(')
+                    const padRight = configName.indexOf(')')
                     if (padRight - 1 > padLeft) {
-                        let allMid = configName.substr(padLeft + 1, padRight - padLeft - 1)
-                        let builtInMethodExecute = new Function('user', 'claims', 'options', 'data', 'configs', 'appsettings', 'queryparams', 'builtInMethod', 'return builtInMethod.execute(' + allMid + ')')
+                        const allMid = configName.substr(padLeft + 1, padRight - padLeft - 1)
+                        const builtInMethodExecute = new Function('user', 'claims', 'options', 'data', 'configs', 'appsettings', 'queryparams', 'builtInMethod', 'return builtInMethod.execute(' + allMid + ')')
                         foundReplacedConfigs.push({ key: config, value: builtInMethodExecute(pageShellData.user, pageShellData.claims, pageShellData.options, pageShellData.data, pageShellData.configs, pageShellData.appsettings, pageShellData.queryparams, builtInMethod), type: ShellConfigType.Method, replaceDQuote: builtInMethod.replaceDQuote })
                     }
                     else {
@@ -173,6 +173,9 @@ export class Translator {
         else if (config.indexOf('configs') === 0) {
             return this.generateReplacedValue(config, 'configs', pageShellData.configs)
         }
+        else if (config.indexOf('parent') === 0){
+            return this.generateReplacedValue(config, 'parent', pageShellData.parent)
+        }
         else {
             return null
         }
@@ -180,26 +183,47 @@ export class Translator {
 
     private generateReplacedValue(key: string, keyData: string, data: any): ShellConfig {
         let foundValue = null
-
+        let requireDeleteUniqId = key.indexOf('.inserts') > 0 || key.indexOf('.updates') > 0
         // For all id or _id, we must to doublecheck two cases
         if(keyData == 'data' && (key.indexOf('.id') > 0 || key.indexOf('._id') > 0)){
-            let tempKey = key.replace('.id', '._id');
+            const tempKey = key.replace('.id', '._id');
             let extractValueTemp = new Function('data', 'return ' + tempKey)
             foundValue = extractValueTemp(data)
             if (foundValue === null || foundValue === undefined) {
                 // Case .id
-                let tempKeyId = key.replace('._id', '.id');
+                const tempKeyId = key.replace('._id', '.id');
                 extractValueTemp = new Function('data', 'return ' + tempKeyId)
                 foundValue = extractValueTemp(data)
             }
         }
         else {
-            let extractValue = new Function(keyData, `return ${key}`)
+            const extractValue = new Function(keyData, `return ${key}`)
             foundValue = extractValue(data)
         }
         if (ObjectUtils.isObject(foundValue)) {
             return {
-                key: key,
+                key,
+                value: JSON.stringify(foundValue),
+                replaceDQuote: true,
+                type: ShellConfigType.Constant
+            }
+        }
+        else if(ObjectUtils.isArray(foundValue)){
+
+            // Remove need to remove 'uniq_id' field
+            if(requireDeleteUniqId){
+                foundValue = ObjectUtils.clone(foundValue)
+                if(foundValue[0]){
+                    if(foundValue[0]['uniq_id']){
+                        foundValue.forEach(a => {
+                            delete a['uniq_id']
+                        })
+                    }                    
+                }                
+            }           
+
+            return {
+                key,
                 value: JSON.stringify(foundValue),
                 replaceDQuote: true,
                 type: ShellConfigType.Constant
@@ -207,7 +231,7 @@ export class Translator {
         }
         else {
             return {
-                key: key,
+                key,
                 value: foundValue,
                 replaceDQuote: ObjectUtils.isNumber(foundValue) || ObjectUtils.isBoolean(foundValue),
                 type: ShellConfigType.Constant

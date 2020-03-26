@@ -91,15 +91,15 @@ export class CommandOptionsComponent implements OnInit {
         if(this.hideHttpOption){
             this.actionTypes = ArrayUtils.removeOneItem(this.actionTypes, a => a.value === ActionType.CallHttpService)
         }
-        
+
         if(this.hideWorkflowOption){
             this.actionTypes = ArrayUtils.removeOneItem(this.actionTypes, a => a.value === ActionType.CallWorkflow)
         }
-        
+
         if(this.hideRedirectionOption){
             this.actionTypes = ArrayUtils.removeOneItem(this.actionTypes, a => a.value === ActionType.Redirect)
-        }  
-        
+        }
+
         if (this.actionCommandOptions.confirmationOptions) {
             this.confirmationOptions = this.actionCommandOptions.confirmationOptions
         }
@@ -110,7 +110,7 @@ export class CommandOptionsComponent implements OnInit {
             }
             this.confirmationOptions = this.actionCommandOptions.confirmationOptions
         }
-        
+
         this.actionCommandOptions = ObjectUtils.clone(this.actionCommandOptions)
         this.currentActionType = this.actionCommandOptions.actionType
         this.initDatabaseChains()
@@ -119,7 +119,7 @@ export class CommandOptionsComponent implements OnInit {
         this.initRedirectionOptions()
         this.initNotificationOptions()
         this.initConfirmationFormGroup()
-        
+
         this.steps = ObjectUtils.clone(this.actionCommandOptions.dbExecutionChains.steps)
 
         this.databaseClient.getAll().subscribe(
@@ -159,8 +159,8 @@ export class CommandOptionsComponent implements OnInit {
         this.pagesClient.getAllShortPages().subscribe(res => {
             this.page$.next(res)
         })
-        
-        this.redirectionOptionsForm = this.fb.group({            
+
+        this.redirectionOptionsForm = this.fb.group({
             isSameDomain: [this.actionCommandOptions.redirectOptions.isSameDomain],
             redirectUrl: [this.actionCommandOptions.redirectOptions.redirectUrl],
             targetPageId: ['']
@@ -191,7 +191,7 @@ export class CommandOptionsComponent implements OnInit {
             }
         }
     }
-    
+
     initHttpOptions() {
         if (!this.actionCommandOptions.httpServiceOptions) {
             this.actionCommandOptions.httpServiceOptions = {
@@ -246,7 +246,7 @@ export class CommandOptionsComponent implements OnInit {
     }
 
     addStep(){
-        let newStep = {
+        const newStep = {
             databaseConnectionId: '',
             executeCommand: ''
         }
@@ -271,7 +271,7 @@ export class CommandOptionsComponent implements OnInit {
                     confirmationOptions: this.getConfirmationOptions()
                 }
             case ActionType.CallHttpService:
-                let httpFormValue = this.httpOptionsForm.value
+                const httpFormValue = this.httpOptionsForm.value
                 return {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
@@ -280,13 +280,13 @@ export class CommandOptionsComponent implements OnInit {
                         httpServiceUrl: httpFormValue.httpCallUrl,
                         httpSuccessCode: httpFormValue.httpSuccessCode,
                         jsonBody: httpFormValue.httpJsonPayload,
-                        outputProjection: httpFormValue.httpOutputProjection                     
+                        outputProjection: httpFormValue.httpOutputProjection
                     },
                     notificationOptions: this.getNotification(),
                     confirmationOptions: this.getConfirmationOptions()
-                }            
+                }
             case ActionType.Redirect:
-                let redirectFormValue = this.redirectionOptionsForm.value
+                const redirectFormValue = this.redirectionOptionsForm.value
                 return {
                     isEnable: this.isEnable,
                     actionType: this.currentActionType,
@@ -298,16 +298,16 @@ export class CommandOptionsComponent implements OnInit {
         }
     }
 
-    private getConfirmationOptions(){        
-        let confirmationValues = this.confirmationFormGroup.value
+    private getConfirmationOptions(){
+        const confirmationValues = this.confirmationFormGroup.value
         return {
             isEnable: confirmationValues.isEnable,
-            confirmationText: confirmationValues.confirmationText 
+            confirmationText: confirmationValues.confirmationText
         }
     }
 
     private getNotification(): NotificationOptions{
-        let notificationFormValues =  this.notificationOptionsForm.value
+        const notificationFormValues =  this.notificationOptionsForm.value
         return {
             completeMessage: notificationFormValues.completeMessage,
             failedMessage: notificationFormValues.failedMessage

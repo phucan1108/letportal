@@ -5,7 +5,7 @@ import { AppsClient } from 'services/portal.service';
 @Injectable()
 export class MenuProfilesResolve implements Resolve<any> {
 
-    constructor(private appClient: AppsClient){        
+    constructor(private appClient: AppsClient){
     }
 
     resolve(

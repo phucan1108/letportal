@@ -5,6 +5,9 @@
 .sidenav {
   width: 300px;
 }
+.sidenav-content {
+  background-color: rgb(242, 243, 248);
+}
 
 .sidenav .mat-toolbar {
   background: inherit;
@@ -16,7 +19,7 @@
   z-index: 10;
 }
 
-.portal-container{
+.portal-container {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -26,20 +29,34 @@
   right: 0;
 }
 
-.parent-menu{
+.user-title {
+  font-size: 16px;
+  padding-top: 5px;
+}
+
+.user-avatar {
+  width: 32px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.parent-menu {
   font-size: 15px;
 }
-.sub-menu{
+.sub-menu {
   font-size: 13px;
 }
 
-.icon-side{
+.icon-side {
   font-size: 20px !important;
-  color: rgba(0,0,0,.54);
+  color: rgba(0, 0, 0, 0.54);
 }
 
+.mat-menu-item[disabled] {
+  color: initial;
+}
 
-.icon-side-small{
+.icon-side-small {
   font-size: 18px !important;
-  color: rgba(0,0,0,.54);
+  color: rgba(0, 0, 0, 0.54);
 }

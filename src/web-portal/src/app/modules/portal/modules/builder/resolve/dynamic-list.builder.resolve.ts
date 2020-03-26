@@ -8,7 +8,7 @@ import { DynamicListClient } from 'services/portal.service';
 export class DynamicListBuilderResolve implements Resolve<any> {
 
     constructor(private dynamicClient: DynamicListClient,
-        private router: Router){        
+        private router: Router){
     }
 
     resolve(
@@ -22,6 +22,6 @@ export class DynamicListBuilderResolve implements Resolve<any> {
                     return EMPTY
                 })
             );
-        }        
+        }
     }
 }

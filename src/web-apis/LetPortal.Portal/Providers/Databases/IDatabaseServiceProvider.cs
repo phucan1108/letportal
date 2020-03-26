@@ -22,13 +22,14 @@ namespace LetPortal.Portal.Providers.Databases
             IEnumerable<ExecuteParamModel> parameters);
 
         Task<ExecuteDynamicResultModel> ExecuteDatabase(
-            string databaseId, 
-            string formattedCommand, 
+            string databaseId,
+            string formattedCommand,
             IEnumerable<ExecuteParamModel> parameters);
 
         Task<ExecuteDynamicResultModel> ExecuteDatabase(
-            DatabaseExecutionChains databaseExecutionChains, 
-            IEnumerable<ExecuteParamModel> parameters);
+            DatabaseExecutionChains databaseExecutionChains,
+            IEnumerable<ExecuteParamModel> parameters,
+            IEnumerable<LoopDataParamModel> LoopDatas = null);
         Task ForceUpdateDatabases(IEnumerable<DatabaseConnection> databases);
     }
 }

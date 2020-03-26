@@ -12,7 +12,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
     selector: 'let-chart-filter-grid',
     templateUrl: './chart-filter.grid.component.html'
 })
-export class ChartFilterGridComponent implements OnInit {    
+export class ChartFilterGridComponent implements OnInit {
     @Input()
     chartFilters: Array<ChartFilter>
 
@@ -28,7 +28,7 @@ export class ChartFilterGridComponent implements OnInit {
         private breakpointObserver: BreakpointObserver,
         private cd: ChangeDetectorRef,
         private logger: NGXLogger
-    ) { 
+    ) {
         this.breakpointObserver.observe([
             Breakpoints.HandsetPortrait,
             Breakpoints.HandsetLandscape
@@ -44,17 +44,17 @@ export class ChartFilterGridComponent implements OnInit {
         });
     }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         if(!ObjectUtils.isNotNull(this.chartFilters)){
             this.chartFilters = []
         }
     }
 
     enableDatasource(row: ChartFilter){
-        return row.type === FilterType.Select && !row.isHidden 
+        return row.type === FilterType.Select && !row.isHidden
     }
     add(){
-        let newFilter: ChartFilter = {
+        const newFilter: ChartFilter = {
             name: '',
             displayName: '',
             allowDefaultValue: false,
@@ -69,13 +69,13 @@ export class ChartFilterGridComponent implements OnInit {
             disableClose: true,
             data: newFilter
         })
-        
+
         dialogRef.afterClosed().subscribe(result => {
             if(!result){
                 return
             }
 
-            this.chartFilters.push(result)            
+            this.chartFilters.push(result)
             this.refreshTable()
         })
     }
@@ -110,7 +110,7 @@ export class ChartFilterGridComponent implements OnInit {
             disableClose: true,
             data: row
         })
-        
+
         dialogRef.afterClosed().subscribe(result => {
             if(!result){
                 return

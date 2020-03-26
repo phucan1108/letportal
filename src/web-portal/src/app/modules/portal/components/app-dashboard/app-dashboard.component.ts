@@ -41,10 +41,10 @@ export class AppDashboardComponent implements OnInit {
                         ).pipe(
                             mergeMap(
                                 apps => {
-                                    let loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
+                                    const loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
                                     _.forEach(apps, app => {
                                         loadingApps.push({
-                                            app: app,
+                                            app,
                                             loading: false,
                                             btnOption: {
                                                 active: false,
@@ -59,15 +59,15 @@ export class AppDashboardComponent implements OnInit {
                                             }
                                         })
                                     })
-                
+
                                     return of(loadingApps)
                                 }
                             )
                         )
-                    }  
+                    }
                 }
             )
-        ).subscribe()        
+        ).subscribe()
     }
 
     onSelectingApp(app: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }) {
@@ -87,7 +87,7 @@ export class AppDashboardComponent implements OnInit {
             }
             else{
                 ids += element + ';'
-            }            
+            }
         });
         return ids
     }

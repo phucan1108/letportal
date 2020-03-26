@@ -34,9 +34,9 @@ export class FilterDatepickerComponent implements OnInit {
             this.controlName = StringUtils.replaceAllOccurences(this.filter.name, '.','')
         }
         else{
-            this.controlName = this.filter.name 
+            this.controlName = this.filter.name
         }
-        
+
         this.isMultiple = this.filter.isMultiple
         if(this.isMultiple){
             this.controlNameMin = this.controlName + '_min'

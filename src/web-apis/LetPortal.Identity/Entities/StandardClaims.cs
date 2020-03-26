@@ -12,6 +12,10 @@ namespace LetPortal.Identity.Entities
 
         public const string DefaultClaimValuePerPage = "allowaccess";
 
+        public const string DefaultFullNameClaim = "given_name";
+
+        public const string DefaultAvatarClaim = "picture";
+
         public static readonly BaseClaim AccessAppSelectorPage = new BaseClaim
         {
             Issuer = DefaultIssuer,
@@ -28,6 +32,28 @@ namespace LetPortal.Identity.Entities
                 ClaimType = "apps",
                 ClaimValue = coreAppId,
                 ClaimValueType = DefaultArrayValueType
+            };
+        }
+
+        public static BaseClaim FullName(string fullName)
+        {
+            return new BaseClaim
+            {
+                Issuer = DefaultIssuer,
+                ClaimType = DefaultFullNameClaim,
+                ClaimValue = fullName,
+                ClaimValueType = DefaultStringValueType
+            };
+        }
+
+        public static BaseClaim Avatar(string avatarUrl)
+        {
+            return new BaseClaim
+            {
+                Issuer = DefaultIssuer,
+                ClaimType = DefaultAvatarClaim,
+                ClaimValue = avatarUrl,
+                ClaimValueType = DefaultStringValueType
             };
         }
 

@@ -3,11 +3,11 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MessageType } from '../shortcut.models';
 
 @Component({
-	selector: 'm-custom-action-entity-dialog',
+	selector: 'let-custom-action-dialog',
 	templateUrl: './custom-action-dialog.component.html'
 })
 export class ConfirmationDialogComponent implements OnInit {
-	viewLoading: boolean = false;
+	viewLoading = false;
 
 	messType: MessageType = MessageType.Create;
 	saveButtonText = 'Create';
@@ -32,7 +32,7 @@ export class ConfirmationDialogComponent implements OnInit {
 				this.saveButtonText = this.data.confirmText
 				break
 			default:
-				this.saveButtonText = 'Save'			
+				this.saveButtonText = 'Save'
 				break
 		}
 	}

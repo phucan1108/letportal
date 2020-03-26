@@ -22,63 +22,6 @@ import { SelectablePortalClaim, ClaimNode } from 'portal/modules/models/role-cla
     styleUrls: ['./role-claims.page.scss']
 })
 export class RoleClaimsPage implements OnInit {
-    @ViewChild('claimTree', { static: false })
-    claimTree: MatTree<any>;
-    private transformer = (node: SelectablePortalClaim, level: number) => {
-        let claimNode: ClaimNode = {
-            id: node.name,
-            name: node.displayName,
-            checked: false,
-            level: level,
-            parentId: node.parentId,
-            expandable: !!node.subClaims && node.subClaims.length > 0
-        }
-        if (!!this.selectedRolePortalClaims && this.selectedRolePortalClaims.length > 0 && level > 0) {
-            const found = _.find(this.selectedRolePortalClaims, claim => claim.name === node.parentId)
-            if (!!found) {
-                claimNode.checked = found.claims.indexOf(claimNode.id) > -1
-                if (claimNode.checked) {
-                    this.checklistSelection.select(claimNode)
-                }
-            }
-        }
-
-        return claimNode;
-    }
-    hasChild = (_: number, node: ClaimNode) => node.expandable || node.level === 0;
-    selectedRole = ''
-
-    treeControl = new FlatTreeControl<ClaimNode>(
-        node => node.level, node => node.expandable);
-    treeFlattener = new MatTreeFlattener(
-        this.transformer, node => node.level, node => node.expandable, (node: SelectablePortalClaim) => node.subClaims);
-
-    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-    allPortalClaims: SelectablePortalClaim[] = []
-    checklistSelection = new SelectionModel<ClaimNode>(true)
-
-    selectedRolePortalClaims: RolePortalClaimModel[] = []
-    selectedClaims: SelectablePortalClaim[] = []
-
-    private transformerSelectedClaim = (node: SelectablePortalClaim, level: number) => {
-        let claimNode: ClaimNode = {
-            id: node.name,
-            name: node.displayName,
-            checked: false,
-            level: level,
-            expandable: !!node.subClaims && node.subClaims.length > 0,
-            parentId: node.parentId
-        }
-
-        return claimNode;
-    }
-    treeSelectedControl = new FlatTreeControl<ClaimNode>(
-        node => node.level, node => node.expandable);
-    treeSelectedFlattener = new MatTreeFlattener(
-        this.transformerSelectedClaim, node => node.level, node => node.expandable, (node: SelectablePortalClaim) => node.subClaims);
-
-    dataSourceSelectedClaims = new MatTreeFlatDataSource(this.treeSelectedControl, this.treeSelectedFlattener);
 
     constructor(
         private pageService: PageService,
@@ -96,6 +39,63 @@ export class RoleClaimsPage implements OnInit {
         private logger: NGXLogger
     ) {
     }
+    @ViewChild('claimTree', { static: false })
+    claimTree: MatTree<any>;
+    selectedRole = ''
+    private transformer = (node: SelectablePortalClaim, level: number) => {
+        const claimNode: ClaimNode = {
+            id: node.name,
+            name: node.displayName,
+            checked: false,
+            level,
+            parentId: node.parentId,
+            expandable: !!node.subClaims && node.subClaims.length > 0
+        }
+        if (!!this.selectedRolePortalClaims && this.selectedRolePortalClaims.length > 0 && level > 0) {
+            const found = _.find(this.selectedRolePortalClaims, claim => claim.name === node.parentId)
+            if (!!found) {
+                claimNode.checked = found.claims.indexOf(claimNode.id) > -1
+                if (claimNode.checked) {
+                    this.checklistSelection.select(claimNode)
+                }
+            }
+        }
+
+        return claimNode;
+    }
+    treeControl = new FlatTreeControl<ClaimNode>(
+        node => node.level, node => node.expandable);
+    treeFlattener = new MatTreeFlattener(
+        this.transformer, node => node.level, node => node.expandable, (node: SelectablePortalClaim) => node.subClaims);
+
+    dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+    allPortalClaims: SelectablePortalClaim[] = []
+    checklistSelection = new SelectionModel<ClaimNode>(true)
+
+    private transformerSelectedClaim = (node: SelectablePortalClaim, level: number) => {
+        const claimNode: ClaimNode = {
+            id: node.name,
+            name: node.displayName,
+            checked: false,
+            level,
+            expandable: !!node.subClaims && node.subClaims.length > 0,
+            parentId: node.parentId
+        }
+
+        return claimNode;
+    }
+
+    selectedRolePortalClaims: RolePortalClaimModel[] = []
+    selectedClaims: SelectablePortalClaim[] = []
+    treeSelectedControl = new FlatTreeControl<ClaimNode>(
+        node => node.level, node => node.expandable);
+    treeSelectedFlattener = new MatTreeFlattener(
+        this.transformerSelectedClaim, node => node.level, node => node.expandable, (node: SelectablePortalClaim) => node.subClaims);
+
+    dataSourceSelectedClaims = new MatTreeFlatDataSource(this.treeSelectedControl, this.treeSelectedFlattener);
+    
+    hasChild = (_: number, node: ClaimNode) => node.expandable || node.level === 0;    
 
     ngOnInit(): void {
         this.pageService.init('role-claims').subscribe()
@@ -107,8 +107,8 @@ export class RoleClaimsPage implements OnInit {
         this.logger.debug('selected claims', this.selectedRolePortalClaims)
         combineLatest(this.pagesClient.getAllPortalClaims(), this.appClient.getAllApps(), (v1, v2) => ({ v1, v2 })).subscribe(
             pair => {
-                let allclaims: SelectablePortalClaim[] = []
-                let appClaim: SelectablePortalClaim = {
+                const allclaims: SelectablePortalClaim[] = []
+                const appClaim: SelectablePortalClaim = {
                     name: 'apps',
                     parentId: '',
                     displayName: 'Apps',
@@ -128,7 +128,7 @@ export class RoleClaimsPage implements OnInit {
                 })
                 allclaims.push(appClaim)
                 _.forEach(pair.v1, page => {
-                    let pageClaim: SelectablePortalClaim = {
+                    const pageClaim: SelectablePortalClaim = {
                         parentId: '',
                         name: page.pageName,
                         displayName: page.pageDisplayName,
@@ -137,7 +137,7 @@ export class RoleClaimsPage implements OnInit {
                         claimValueType: ClaimValueType.Array
                     }
                     _.forEach(page.claims, subClaim => {
-                        let sub: SelectablePortalClaim = {
+                        const sub: SelectablePortalClaim = {
                             name: subClaim.name,
                             displayName: subClaim.displayName,
                             allowSelected: true,
@@ -175,9 +175,9 @@ export class RoleClaimsPage implements OnInit {
     }
 
     initSelectedClaims() {
-        let selectedClaims: SelectablePortalClaim[] = []
+        const selectedClaims: SelectablePortalClaim[] = []
         _.forEach(this.allPortalClaims, claim => {
-            let selectedClaim: SelectablePortalClaim = _.cloneDeep(claim)
+            const selectedClaim: SelectablePortalClaim = _.cloneDeep(claim)
             selectedClaim.subClaims = []
             let canAdd = false
             _.forEach(claim.subClaims, sub => {
@@ -199,9 +199,9 @@ export class RoleClaimsPage implements OnInit {
     }
 
     filterSelectedClaims() {
-        let selectedClaims: SelectablePortalClaim[] = []
+        const selectedClaims: SelectablePortalClaim[] = []
         _.forEach(this.allPortalClaims, claim => {
-            let selectedClaim: SelectablePortalClaim = _.cloneDeep(claim)
+            const selectedClaim: SelectablePortalClaim = _.cloneDeep(claim)
             selectedClaim.subClaims = []
             let canAdd = false
             _.forEach(claim.subClaims, sub => {
@@ -240,7 +240,7 @@ export class RoleClaimsPage implements OnInit {
     }
 
     mapToPortalClaimModel() {
-        let portalClaimModels: PortalClaimModel[] = []
+        const portalClaimModels: PortalClaimModel[] = []
         this.logger.debug('Selected Claims', this.selectedClaims)
         _.forEach(this.selectedClaims, claim => {
             _.forEach(claim.subClaims, sub => {

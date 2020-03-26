@@ -3,6 +3,7 @@
         <divided-columns [section]="pageSection" *ngIf="readyToRender else loading"></divided-columns>
     </ng-container>
     <ng-container *ngSwitchCase="constructionType.Array">
+        <let-standard-array-render [section]="pageSection" *ngIf="readyToRender else loading"></let-standard-array-render>
     </ng-container>
     <ng-container *ngSwitchCase="constructionType.DynamicList">
         <let-dynamic-list-render [section]="pageSection" [dynamicList]="pageSection.relatedDynamicList"
@@ -15,9 +16,5 @@
 </div>
 
 <ng-template #loading>
-    <mat-card>
-        <mat-card-content>
-            <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
-        </mat-card-content>
-    </mat-card>
+    <!-- <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner> -->
 </ng-template>

@@ -8,7 +8,7 @@
                     <mat-icon>add</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <action-commands [actionCommands]="actionCommands" (onClick)="onActionCommandClick($event)">
+                    <action-commands [actionCommands]="actionCommands" >
                     </action-commands>
                 </mat-menu>
             </div>
@@ -16,7 +16,7 @@
         <div class="row">
             <ng-container *ngFor="let section of page.builder.sections; index as i">
                 <div [ngClass]="sectionClasses[i]" [hidden]="!readyToRenderAllSections">
-                    <let-section-wrapper [pageSection]="section"></let-section-wrapper>
+                    <let-section-wrapper [page]="page" [pageSection]="section"></let-section-wrapper>
                 </div>
             </ng-container>
         </div>
@@ -40,5 +40,5 @@
 </ng-container>
 
 <ng-template #loading>
-    <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
+    <!-- <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner> -->
 </ng-template>

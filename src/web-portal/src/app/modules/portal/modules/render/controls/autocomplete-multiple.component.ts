@@ -12,22 +12,6 @@ import { MultipleDataSelection } from 'portal/modules/models/control.extended.mo
 })
 export class AutocompleteMultipleComponent implements ControlValueAccessor, OnChanges {
 
-    // This counter is preventing double changes on Init
-    counterChange = 0;
-    focused = false;
-    onChange = (_: any) => { };
-
-    // Custom Params
-    @Input('display-key') displayKey: string = '';
-    @Input('info-key') infoKey: string = '';
-    @Input() masterToggle: boolean = true;
-    @Input() alignInfoRight: boolean = false;
-    @Input() icon: string = '';
-    @Input() hint: string = '';
-
-    // Dropdown List 2-way binding
-    _dropdownList: Array<MultipleDataSelection>;
-
     @Input()
     get dropdownList() {
         return this._dropdownList;
@@ -39,20 +23,73 @@ export class AutocompleteMultipleComponent implements ControlValueAccessor, OnCh
         this.dropdownListChange.emit(this._dropdownList);
     }
 
+    constructor(private _elementRef: ElementRef<HTMLElement>) { }
+    get selectedDpdwnInput() {
+        return this._selectedDpdwnInput;
+    }
+
+    set selectedDpdwnInput(val) {
+        this._selectedDpdwnInput = val;
+        this.propagateChange(this._selectedDpdwnInput);
+    }
+
+    get empty() {
+        return !this._selectedDpdwnInput;
+    }
+
+    get shouldLabelFloat() { return this.focused || !this.empty; }
+
+    @Input()
+    get placeholder(): string { return this._placeholder; }
+    set placeholder(value: string) {
+        this._placeholder = value;
+    }
+
+    @Input()
+    get required(): boolean { return this._required; }
+    set required(value: boolean) {
+        this._required = coerceBooleanProperty(value);
+    }
+
+    @Input()
+    get disabled(): boolean { return this._disabled; }
+    set disabled(value: boolean) {
+        this._disabled = coerceBooleanProperty(value);
+    }
+
+    // This counter is preventing double changes on Init
+    counterChange = 0;
+    focused = false;
+
+    // Custom Params
+    @Input('display-key') displayKey = '';
+    @Input('info-key') infoKey = '';
+    @Input() masterToggle = true;
+    @Input() alignInfoRight = false;
+    @Input() icon = '';
+    @Input() hint = '';
+
+    // Dropdown List 2-way binding
+    _dropdownList: Array<MultipleDataSelection>;
+
     @Output() selectionChanged = new EventEmitter();
 
     @Output()
     dropdownListChange = new EventEmitter<Array<any>>();
 
     displayDropdown = false;
+
+    @Input() _selectedDpdwnInput: any = '';
+    private _placeholder: string;
+    private _required = false;
+    private _disabled = false;
+    onChange = (_: any) => { };
     @HostListener('document:click', ['$event'])
     clickout(event: any) {
         if (!(this._elementRef && this._elementRef.nativeElement.contains(event.target))) {
             this.displayDropdown = false;
         }
     }
-
-    constructor(private _elementRef: ElementRef<HTMLElement>) { }
 
     ngOnChanges() {
         if (!this.dropdownList) {
@@ -73,7 +110,7 @@ export class AutocompleteMultipleComponent implements ControlValueAccessor, OnCh
         } else {
             this.writeValue();
         }
-        
+
         this.counterChange++;
         if (this.counterChange > 2) {
             this.selectionChanged.emit(null);
@@ -109,16 +146,6 @@ export class AutocompleteMultipleComponent implements ControlValueAccessor, OnCh
 
     propagateChange = (_: any) => { };
 
-    @Input() _selectedDpdwnInput: any = '';
-    get selectedDpdwnInput() {
-        return this._selectedDpdwnInput;
-    }
-
-    set selectedDpdwnInput(val) {
-        this._selectedDpdwnInput = val;
-        this.propagateChange(this._selectedDpdwnInput);
-    }
-
     writeValue(value?: any) {
         this.selectedDpdwnInput = value;
     }
@@ -128,33 +155,6 @@ export class AutocompleteMultipleComponent implements ControlValueAccessor, OnCh
     }
 
     registerOnTouched() { }
-
-    get empty() {
-        return !this._selectedDpdwnInput;
-    }
-
-    get shouldLabelFloat() { return this.focused || !this.empty; }
-
-    @Input()
-    get placeholder(): string { return this._placeholder; }
-    set placeholder(value: string) {
-        this._placeholder = value;
-    }
-    private _placeholder: string;
-
-    @Input()
-    get required(): boolean { return this._required; }
-    set required(value: boolean) {
-        this._required = coerceBooleanProperty(value);
-    }
-    private _required = false;
-
-    @Input()
-    get disabled(): boolean { return this._disabled; }
-    set disabled(value: boolean) {
-        this._disabled = coerceBooleanProperty(value);
-    }
-    private _disabled = false;
 
     setDisabledState(isDisabled: boolean): void {
         this.disabled = isDisabled;

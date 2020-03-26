@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions, ActionCommandOptions, ConfirmationOptions } from './portal.service';
+import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions, ActionCommandOptions, ConfirmationOptions, LoopDataModel } from './portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store } from '@ngxs/store';
 import { SecurityService } from '../security/security.service';
@@ -11,12 +11,12 @@ import { Observable, of, forkJoin, Subscription, throwError } from 'rxjs';
 import { tap, map, filter, mergeMap } from 'rxjs/operators';
 import { AuthUser } from '../security/auth.model';
 import { PortalStandardClaims } from '../security/portalClaims';
-import { ToastType, MessageType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { ToastType, MessageType, EventDialogType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PageResponse, PageLoadedDatasource, PageControlActionEvent, TriggeredControlEvent, PageShellData } from '../models/page.model';
 import { PageStateModel, PageState } from 'stores/pages/page.state';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
 import * as _ from 'lodash';
-import { InitPageInfo, LoadDatasource, LoadDatasourceComplete, PageReadyAction, ChangeControlValueEvent, BeginRenderingPageSectionsAction, EndBuildingBoundDataComplete, GatherSectionValidations, SectionValidationStateAction, CompleteGatherSectionValidations, UserClicksOnButtonAction, ClickControlEvent } from 'stores/pages/page.actions';
+import { InitPageInfo, LoadDatasource, LoadDatasourceComplete, PageReadyAction, ChangeControlValueEvent, BeginRenderingPageSectionsAction, EndBuildingBoundDataComplete, GatherSectionValidations, SectionValidationStateAction, CompleteGatherSectionValidations, UserClicksOnButtonAction, ClickControlEvent, UpdateOneItemForStandardArray, InsertOneItemForStandardArray, RemoveOneItemForStandardArray } from 'stores/pages/page.actions';
 import { StateReset } from 'ngxs-reset-plugin';
 import { TriggerControlChangeValueEvent } from 'stores/pages/pagecontrol.actions';
 import { ExtendedPageButton } from '../models/extended.models';
@@ -62,14 +62,14 @@ export class PageService {
     /**
      * *This method is using to retrieve a page info from Service and then it checks a current user who is allowed to access
      * !This method is only used when it is a custom page, after retrieving a page, pass it into initRender
-     * @param pageName 
+     * @param pageName Name of page
      * @returns Observable PageResponse
      */
     init(pageName: string): Observable<PageResponse> {
         return this.pageClients.getOneForRender(pageName).pipe(
             map<Page, PageResponse>((page: Page) => {
                 this.page = page
-                return { page: page, allowAccess: this.isAllowAccess(this.security.getAuthUser(), page) }
+                return { page, allowAccess: this.isAllowAccess(this.security.getAuthUser(), page) }
             }),
             tap(
                 result => {
@@ -79,7 +79,7 @@ export class PageService {
                     }
                 },
                 err => {
-                    this.shortcutUtil.toastMessage("Oops, Something went wrong, please try again!", ToastType.Error)
+                    this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
                     this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
             )
@@ -89,7 +89,7 @@ export class PageService {
     /**
      * *This method is using to construct some parts of Page (use render mode).
      * !This method should be passed Page object instead of performing Service to retrieve, call init() first to get Page object
-     * @param page 
+     * @param page Page object, get from API
      * @returns Observable PageStateModel
      */
     initRender(page: Page, activatedRoute: ActivatedRoute): Observable<PageStateModel> {
@@ -97,7 +97,7 @@ export class PageService {
         claims$.subscribe(
             claims => {
                 this.claims = claims
-                if(!this.isAllowAccess(this.security.getAuthUser(), page)){
+                if (!this.isAllowAccess(this.security.getAuthUser(), page)) {
                     this.shortcutUtil.toastMessage(`Sorry, you aren't allowed to access ${page.displayName} page !`, ToastType.Warning)
                     this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
@@ -135,9 +135,13 @@ export class PageService {
                         switch (state.filterState) {
                             case UserClicksOnButtonAction:
                                 this.logger.debug('User has clicked on a button : ' + state.clickingButton.name)
-                                this.sectionValidationCounter = this.page.builder.sections.length
+                                this.sectionValidationCounter = ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ? 
+                                                                    1 : this.page.builder.sections.length
                                 if (state.clickingButton.isRequiredValidation) {
-                                    this.store.dispatch(new GatherSectionValidations())
+                                    this.store.dispatch(
+                                        new GatherSectionValidations(
+                                            ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ? 
+                                            this.page.builder.sections.find(a => a.id === state.clickingButton.placeSectionId).name : null))
                                 }
                                 else {
                                     this.executeByActionOptions(
@@ -223,13 +227,16 @@ export class PageService {
 
     /**
      * Listens data change$
-     * @returns data change$ 
+     * @returns data change$
      */
     listenDataChange$(): Observable<any> {
         return this.store.select(state => state.page).pipe(
             filter(state => state.filterState && (
                 state.filterState === EndBuildingBoundDataComplete
-                || state.filterState === ChangeControlValueEvent)),
+                || state.filterState === ChangeControlValueEvent
+                || state.filterState === UpdateOneItemForStandardArray
+                || state.filterState === InsertOneItemForStandardArray
+                || state.filterState === RemoveOneItemForStandardArray)),
             map(state => {
                 return state.data
             })
@@ -246,13 +253,13 @@ export class PageService {
     }
 
     getDataByBindName(bindName: string) {
-        let evaluated = Function('data', 'return data.' + bindName)
+        const evaluated = Function('data', 'return data.' + bindName)
         return evaluated(this.data)
     }
 
     /**
      * Listens control event$
-     * @returns control event$ 
+     * @returns control event$
      */
     listenControlEvent$(): Observable<PageControlActionEvent> {
         return this.store.select(state => state.page.lastEvent)
@@ -260,7 +267,7 @@ export class PageService {
 
     /**
      * Listens triggering control event$
-     * @returns triggering control event$ 
+     * @returns triggering control event$
      */
     listenTriggeringControlEvent$(): Observable<TriggeredControlEvent> {
         return this.store.select(state => state.controlevents.effectedControlEvent)
@@ -272,12 +279,12 @@ export class PageService {
      * @param data
      */
     changeControlValue(controlFullName: string, data: any) {
-        let splitted = controlFullName.split('_')
+        const splitted = controlFullName.split('_')
         this.store.dispatch(new ChangeControlValueEvent({
             name: controlFullName + '_change',
             controlName: splitted[1],
             sectionName: splitted[0],
-            data: data,
+            data,
             triggeredByEvent: ''
         }))
     }
@@ -294,10 +301,10 @@ export class PageService {
     }
 
     notifyTriggeringEvent(controlEvent: string, data: any = null) {
-        let splitted = controlEvent.split('_')
-        let event: TriggeredControlEvent = {
+        const splitted = controlEvent.split('_')
+        const event: TriggeredControlEvent = {
             controlFullName: splitted[0] + '_' + splitted[1],
-            data: data,
+            data,
             eventType: splitted[2],
             fullEventType: controlEvent
         }
@@ -316,7 +323,7 @@ export class PageService {
     }
 
     fetchDatasource(databaseId: string, query: string): Observable<any> {
-        let combineQuery = this.translator.translateDataWithShell(query, this.getPageShellData())
+        const combineQuery = this.translator.translateDataWithShell(query, this.getPageShellData())
 
         return this.databasesClient.executeQueryDatasource(databaseId, combineQuery).pipe(
             mergeMap(result => {
@@ -339,34 +346,34 @@ export class PageService {
 
     fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
         return this.pageClients.fetchControlDatasource(this.page.id, {
-            sectionName: sectionName,
-            controlName: controlName,
-            parameters: parameters
+            sectionName,
+            controlName,
+            parameters
         }).pipe(
             map(res => ObjectUtils.isArray(res.result) ? res.result : [res.result])
         )
     }
 
     evaluatedExpression(evaluteStr: string, data: any = null): boolean {
-        let func = new Function('user', 'claims', 'configs', 'options', 'queryparams', 'data', `return ${evaluteStr} ? true : false;`);
+        const func = new Function('user', 'claims', 'configs', 'options', 'queryparams', 'data', `return ${evaluteStr} ? true : false;`);
         return func(this.security.getAuthUser(), this.claims, this.configs, this.options, this.queryparams, !!data ? data : this.data) as boolean
     }
 
     translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string {
         if (ObjectUtils.isNotNull(data)) {
-            let translated = this.translator.translateDataWithShell(translateStr, data)
+            const translated = this.translator.translateDataWithShell(translateStr, data)
 
             return translated
         }
         else {
-            let translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
+            const translated = this.translator.translateDataWithShell(translateStr, this.getPageShellData())
 
             return translated
         }
 
     }
     retrieveParameters(translateStr: string, data: any = null, isMergingData: boolean = false): PageParameterModel[] {
-        let preparedData = this.getPageShellData()
+        const preparedData = this.getPageShellData()
         if (data != null && isMergingData) {
             preparedData.data = {
                 ...preparedData.data,
@@ -376,15 +383,16 @@ export class PageService {
         return this.translator.retrieveParameters(translateStr, preparedData)
     }
 
-    getPageShellData(data?: any): PageShellData {
+    getPageShellData(data?: any, parent?: any): PageShellData {
         return {
-            data: ObjectUtils.isNotNull(data) ? data: this.data,
+            data: ObjectUtils.isNotNull(data) ? data : this.data,
             appsettings: {},
             claims: this.claims,
             configs: this.configs,
             options: this.options,
             queryparams: this.queryparams,
-            user: this.security.getAuthUser()
+            user: this.security.getAuthUser(),
+            parent: parent
         }
     }
 
@@ -395,8 +403,8 @@ export class PageService {
     executeActionEventOnDatabase(triggeringEvent: PageControlEvent, sectionName: string, controlName: string) {
         const paramters = this.retrieveParameters(triggeringEvent.eventDatabaseOptions.query)
         return this.pageClients.executeTriggeredEvent(this.page.id, {
-            sectionName: sectionName,
-            controlName: controlName,
+            sectionName,
+            controlName,
             eventName: triggeringEvent.eventName,
             parameters: paramters
         }).pipe(
@@ -429,44 +437,78 @@ export class PageService {
     }
 
     executeByActionOptions(
-        buttonName: string, 
-        actionCommandOptions: ActionCommandOptions, 
-        onComplete: () => void, 
-        data?: any){
-        if (actionCommandOptions.isEnable) {           
-            
+        buttonName: string,
+        actionCommandOptions: ActionCommandOptions,
+        onComplete: () => void,
+        data?: any) {
+        if (actionCommandOptions.isEnable) {
+
             switch (actionCommandOptions.actionType) {
                 case ActionType.ExecuteDatabase:
                     let combinedCommand = ''
+                    let loopDatas: LoopDataModel[] = []
                     actionCommandOptions.dbExecutionChains.steps.forEach((step, index) => {
-                        if (index > 0)
-                            combinedCommand += ';' + step.executeCommand
-                        else
-                            combinedCommand += step.executeCommand
+                        if (ObjectUtils.isNotNull(step.dataLoopKey)) {
+                            // Do data loop proccess
+                            const evaluated = Function('data', 'return ' + step.dataLoopKey)
+                            const passingData = evaluated(this.data)
+                            let loopData: LoopDataModel = {
+                                name: step.dataLoopKey,
+                                parameters: []
+                            }
+
+                            this.logger.debug('All loop data', passingData)
+                            if (ObjectUtils.isArray(passingData)) {
+                                passingData.forEach(p => {
+                                    loopData.parameters
+                                        .push(
+                                            this.translator.retrieveParameters(
+                                            step.executeCommand,
+                                            this.getPageShellData(p, this.data))
+                                        );                                    
+                                })
+                            }
+
+                            loopDatas.push(loopData)
+                        }
+                        else {
+                            if (index > 0)
+                                combinedCommand += ';' + step.executeCommand
+                            else
+                                combinedCommand += step.executeCommand
+                        }
+
                     })
                     const params = this.translator.retrieveParameters(
                         combinedCommand, this.getPageShellData(data));
                     this.pageClients
                         .submitCommand(this.page.id, {
-                            buttonName: buttonName,
-                            parameters: params
+                            buttonName,
+                            parameters: params,
+                            loopDatas: loopDatas
                         }).subscribe(
                             res => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if(onComplete){
+                                this.shortcutUtil
+                                    .eventDialog('Success', 
+                                        actionCommandOptions.notificationOptions.completeMessage, 
+                                        EventDialogType.Success)
+                                if (onComplete) {
                                     onComplete()
                                 }
                             },
                             err => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                this.shortcutUtil
+                                    .eventDialog('Error', 
+                                        actionCommandOptions.notificationOptions.failedMessage, 
+                                        EventDialogType.Error)
                             })
                     break
                 case ActionType.CallHttpService:
-                    let url = this.translator.translateDataWithShell(
+                    const url = this.translator.translateDataWithShell(
                         actionCommandOptions.httpServiceOptions.httpServiceUrl,
                         this.getPageShellData(data)
                     )
-                    let body = this.translator.translateDataWithShell(
+                    const body = this.translator.translateDataWithShell(
                         actionCommandOptions.httpServiceOptions.jsonBody,
                         this.getPageShellData(data)
                     )
@@ -478,13 +520,19 @@ export class PageService {
                         actionCommandOptions.httpServiceOptions.httpSuccessCode,
                         actionCommandOptions.httpServiceOptions.outputProjection).subscribe(
                             res => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.completeMessage, ToastType.Success)
-                                if(onComplete){
+                                this.shortcutUtil
+                                    .eventDialog('Success', 
+                                        actionCommandOptions.notificationOptions.completeMessage, 
+                                        EventDialogType.Success)
+                                if (onComplete) {
                                     onComplete()
                                 }
                             },
                             err => {
-                                this.shortcutUtil.toastMessage(actionCommandOptions.notificationOptions.failedMessage, ToastType.Error)
+                                this.shortcutUtil
+                                    .eventDialog('Error', 
+                                        actionCommandOptions.notificationOptions.failedMessage, 
+                                        EventDialogType.Error)
                             }
                         )
 
@@ -492,24 +540,24 @@ export class PageService {
                 case ActionType.CallWorkflow:
                     break
                 case ActionType.Redirect:
-                    if(onComplete){
+                    if (onComplete) {
                         onComplete()
                     }
                     break
             }
         }
         else {
-            if(onComplete){
+            if (onComplete) {
                 onComplete()
             }
         }
     }
 
-    openConfirmationDialog(confirmationOptions: ConfirmationOptions, onProceed: () => void){
-        if(confirmationOptions.isEnable){
+    openConfirmationDialog(confirmationOptions: ConfirmationOptions, onProceed: () => void) {
+        if (confirmationOptions.isEnable) {
             const _title = 'Confirmation'
             const _description = confirmationOptions.confirmationText
-            const _waitDesciption = "Waiting..."
+            const _waitDesciption = 'Waiting...'
             const dialogRef = this.shortcutUtil
                 .confirmationDialog(
                     _title,
@@ -521,27 +569,20 @@ export class PageService {
                 if (!res) {
                     return
                 }
-    
-                if(onProceed){
+
+                if (onProceed) {
                     onProceed()
                 }
             })
         }
-        else{
-            if(onProceed){
+        else {
+            if (onProceed) {
                 onProceed()
             }
-        }        
-    }
-
-    private mergeData(mergingData: any) {
-        return {
-            ...this.data,
-            ...mergingData
         }
     }
 
-    private initPageClaims(pageName: string): Observable<Object> {
+    private initPageClaims(pageName: string): Observable<any> {
         return this.security.getPortalClaims().pipe(
             mergeMap(res => {
                 if (res) {
@@ -558,7 +599,7 @@ export class PageService {
         return activatedRoute.queryParamMap.pipe(
             map<ParamMap, ShellConfig[]>(param => {
                 this.logger.debug('Hit param', this.queryparams)
-                let shellConfigs: ShellConfig[] = []
+                const shellConfigs: ShellConfig[] = []
                 _.forEach(param.keys, key => {
                     this.queryparams[key] = param.get(key)
                     shellConfigs.push({ key: `queryparams.${key}`, value: param.get(key), type: ShellConfigType.Constant })
@@ -576,7 +617,7 @@ export class PageService {
 
     private initPageOptions(page: Page, shellConfigProvider: ShellConfigProvider): Observable<ShellConfig[]> {
         this.logger.debug('Hit options')
-        let shellConfigs: ShellConfig[] = []
+        const shellConfigs: ShellConfig[] = []
         _.forEach(page.shellOptions, option => {
             shellConfigs.push({ key: 'options.' + option.key, value: option.value, type: ShellConfigType.Constant })
             this.options[option.key] = option.value
@@ -594,7 +635,7 @@ export class PageService {
         pagesClient: PagesClient): Observable<PageLoadedDatasource[]> {
         if (!!page.pageDatasources && page.pageDatasources.length > 0) {
             store.dispatch(new LoadDatasource())
-            let datasources$: Observable<PageLoadedDatasource>[] = []
+            const datasources$: Observable<PageLoadedDatasource>[] = []
             _.forEach(page.pageDatasources, (ds: PageDatasource) => {
                 if (ds.isActive) {
                     this.logger.debug('Current options', this.options)
@@ -603,8 +644,9 @@ export class PageService {
                     if (allowTrigger) {
                         switch (ds.options.type) {
                             case DatasourceControlType.StaticResource:
+                                const translatedDs = this.translateData(ds.options.datasourceStaticOptions.jsonResource, this.getPageShellData(), false)
                                 datasources$.push(of<PageLoadedDatasource>({
-                                    data: JSON.parse(ds.options.datasourceStaticOptions.jsonResource),
+                                    data: JSON.parse(translatedDs),
                                     name: ds.name
                                 }))
                                 break
@@ -669,27 +711,30 @@ export class PageService {
     }
 
     private executeCommandClickEvent(command: ExtendedPageButton) {
-        if(command.buttonOptions.actionCommandOptions.isEnable){
+        if (command.buttonOptions.actionCommandOptions.isEnable) {
             this.openConfirmationDialog(
                 command.buttonOptions.actionCommandOptions.confirmationOptions,
                 () => {
                     this.store.dispatch(new UserClicksOnButtonAction(command))
                 })
         }
-        else{
+        else {
             this.store.dispatch(new UserClicksOnButtonAction(command))
         }
     }
 
     private routingCommand(command: PageButton) {
         let foundRoute = false
+        if(!ObjectUtils.isNotNull(command.buttonOptions.routeOptions)){
+            return
+        }
         _.forEach(command.buttonOptions.routeOptions.routes, route => {
-            let allowed = this.evaluatedExpression(route.condition)
+            const allowed = this.evaluatedExpression(route.condition)
             if (allowed && !foundRoute) {
                 foundRoute = true
-                let url = this.translator.translateDataWithShell(route.redirectUrl, this.getPageShellData())                 
+                const url = this.translator.translateDataWithShell(route.redirectUrl, this.getPageShellData())
                 this.logger.debug('Redirecting to...', url)
-                if(route.isSameDomain)
+                if (route.isSameDomain)
                     this.router.navigateByUrl(url)
                 else
                     window.open(url, '_blank')

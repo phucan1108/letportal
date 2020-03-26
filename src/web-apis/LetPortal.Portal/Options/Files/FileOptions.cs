@@ -5,8 +5,7 @@ using LetPortal.Core.Persistences;
 namespace LetPortal.Portal.Options.Files
 {
     public class FileOptions
-    {
-        public string DownloadableHost { get; set; }
+    {                    
         public FileStorageType FileStorageType { get; set; }
 
         public DiskStorageOptions DiskStorageOptions { get; set; }
@@ -14,6 +13,11 @@ namespace LetPortal.Portal.Options.Files
         public DatabaseStorageOptions DatabaseStorageOptions { get; set; }
 
         public FileValidatorOptions ValidatorOptions { get; set; }
+    }
+
+    public class FilePublishOptions
+    {
+        public string DownloadableHost { get; set; }
     }
 
     public class FileValidatorOptions

@@ -15,7 +15,7 @@ export class DynamicListCommandComponent implements OnInit {
     command: CommandButtonInList
 
     @Input()
-    isHansetDisplay: boolean = false
+    isHansetDisplay = false
 
     @Output()
     onClick = new EventEmitter<CommandClicked>();
@@ -24,7 +24,7 @@ export class DynamicListCommandComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.isCommandInList = this.command.commandPositionType === CommandPositionType.InList;
     }
 

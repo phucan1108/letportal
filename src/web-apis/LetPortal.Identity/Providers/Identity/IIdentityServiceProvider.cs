@@ -19,6 +19,8 @@ namespace LetPortal.Identity.Providers.Identity
 
         Task RecoveryPasswordAsync(RecoveryPasswordModel recoveryPasswordModel);
 
+        Task ChangePasswordAsync(string userName,ChangePasswordModel resetPasswordModel);
+
         Task<List<Role>> GetRolesAsync();
 
         Task AddPortalClaimsToRoleAsync(string roleName, List<PortalClaimModel> portalClaims);
@@ -26,5 +28,9 @@ namespace LetPortal.Identity.Providers.Identity
         Task<List<RolePortalClaimModel>> GetPortalClaimsByRoleAsync(string roleName);
 
         Task<List<RolePortalClaimModel>> GetPortalClaimsAsync(string username);
+
+        Task<ProfileModel> GetUserProfile(string username);
+
+        Task AddClaimsAsync(string userName, List<BaseClaim> claims);
     }
 }

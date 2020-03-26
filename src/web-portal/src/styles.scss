@@ -1,12 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "theme.scss";
 /* Add application styles & imports to this file! */
 @import "~jsoneditor/dist/jsoneditor.min.css";
 
 @import "styles.desktop.scss";
 @import "styles.tablet.scss";
 @import "styles.mobile.scss";
-
 /* You can add global styles to this file, and also import other style files */
 
 html,
@@ -37,10 +36,6 @@ div.jsoneditor-menu > button {
 
 label {
   margin-bottom: 0; // 2
-}
-
-a:not(.mat-button):not(.mat-raised-button):not(.mat-fab):not(.mat-mini-fab):not([mat-list-item]) {
-  color: #3f51b5; // 3
 }
 
 /* General styles */
@@ -195,3 +190,4 @@ label.mat-radio-label {
     height: 0px !important;
   }
 }
+

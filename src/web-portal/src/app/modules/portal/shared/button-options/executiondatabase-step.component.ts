@@ -29,7 +29,7 @@ export class ExecutionDatabaseStepComponent implements OnInit {
     jsonData: any = {}
     hintText = ''
     isHintClicked = false
-    
+
     selectedDatabaseConnection: DatabaseConnection
     ismongodb = false
     isReadyToRender = false
@@ -43,10 +43,10 @@ export class ExecutionDatabaseStepComponent implements OnInit {
         private logger: NGXLogger
     ) { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.logger.debug('Init execution database step')
-        
-        this.editorOptions3.mode = 'code'        
+
+        this.editorOptions3.mode = 'code'
         this.editorOptions3.onChange = () => {
             try {
                 const jsonStr = JSON.stringify(this.jsonDataEditor.get())
@@ -61,12 +61,13 @@ export class ExecutionDatabaseStepComponent implements OnInit {
 
         this.databaseOptionsForm = this.fb.group({
             databaseConnectionId: [this.step.databaseConnectionId, Validators.required],
-            query: [this.step.executeCommand, Validators.required]
+            query: [this.step.executeCommand, Validators.required],
+            dataLoopKey: [this.step.dataLoopKey]
         })
 
         if(ObjectUtils.isNotNull(this.step.databaseConnectionId)){
             this.selectedDatabaseConnection = this.databaseConnections.find(a => a.id == this.step.databaseConnectionId)
-            this.ismongodb = this.selectedDatabaseConnection.databaseConnectionType == "mongodb"
+            this.ismongodb = this.selectedDatabaseConnection.databaseConnectionType == 'mongodb'
         }
 
         if(this.ismongodb){
@@ -79,7 +80,7 @@ export class ExecutionDatabaseStepComponent implements OnInit {
         this.databaseOptionsForm.get('databaseConnectionId').valueChanges.subscribe(newValue => {
                 this.selectedDatabaseConnection = this.databaseConnections.find(a => a.id == newValue)
                 this.ismongodb = this.selectedDatabaseConnection.databaseConnectionType == 'mongodb'
-                
+
                 this.databaseOptionsForm.get('query').setValue('')
                 this.jsonData = {}
         })
@@ -97,7 +98,7 @@ export class ExecutionDatabaseStepComponent implements OnInit {
     }
 
     openQueryHint() {
-        let query = this.ismongodb ? 
+        const query = this.ismongodb ?
                     '{\r\n  \"$query\":{\r\n    \"{{options.entityname}}\":[\r\n        {\r\n          \"$match\": {\r\n            \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n          }\r\n        }\r\n      ]\r\n  }\r\n}'
                     : 'Select * From {Your_table} Where id={{data.id}}'
         this.hintText = query
@@ -105,28 +106,28 @@ export class ExecutionDatabaseStepComponent implements OnInit {
     }
 
     openInsertHint() {
-        let insert =  this.ismongodb ? '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}' :
+        const insert =  this.ismongodb ? '{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}' :
                         'Insert into {Your_table}(id) values ({{data.id}})'
         this.hintText = insert
         this.isHintClicked = true
     }
 
     openUpdateHint() {
-        let update = this.ismongodb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}' :
+        const update = this.ismongodb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}' :
                         'Update {Your_table} Set name={{data.name}} Where id={{data.id}}'
         this.hintText = update
         this.isHintClicked = true
     }
 
     openUpdatePartsHint(){
-        let updatePart = this.ismongodb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
+        const updatePart = this.ismongodb ? '{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": {\r\n        \"name\": \"{{data.name}}\"\r\n      },\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId(\'{{data.id}}\')\"\r\n      }\r\n    }\r\n  }\r\n}'
                         : 'Update {Your_table} Set name={{data.name}} Where id={{data.id}}'
         this.hintText = updatePart
         this.isHintClicked = true
     }
 
     openDeleteHint() {
-        let deleteText = this.ismongodb ? '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
+        const deleteText = this.ismongodb ? '{\r\n  \"$delete\":{\r\n    \"{{options.entityname}}\": {\r\n      \"$where\": {\r\n        \"_id\": \"{{data.id}}\"\r\n      }\r\n    }\r\n  }\r\n}'
                         : 'Delete From {Your_table} Where id={{data.id}}'
         this.hintText = deleteText
         this.isHintClicked = true
@@ -138,10 +139,11 @@ export class ExecutionDatabaseStepComponent implements OnInit {
     }
 
     private getStep(): DatabaseExecutionStep{
-        let formValues = this.databaseOptionsForm.value
+        const formValues = this.databaseOptionsForm.value
         return {
             databaseConnectionId: formValues.databaseConnectionId,
-            executeCommand: formValues.query
+            executeCommand: formValues.query,
+            dataLoopKey: formValues.dataLoopKey
         }
     }
 }

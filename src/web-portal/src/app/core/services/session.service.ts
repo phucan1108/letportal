@@ -25,6 +25,9 @@ export class SessionService{
         return this.getCurrentApp() ? this.getCurrentApp().defaultUrl : '/dashboard'
     }
 
+    clearSelectedApp(){
+        sessionStorage.removeItem('portal-app')
+    }
     setUserSession(userSessionId: string){
         sessionStorage.setItem('user-session-id', userSessionId)
     }
@@ -52,7 +55,7 @@ export class SessionService{
     }
 
     getRememberMe(){
-        let rememberMe = localStorage.getItem('rememberMe')
+        const rememberMe = localStorage.getItem('rememberMe')
         if(rememberMe){
             return rememberMe.toLowerCase() == 'true'
         }

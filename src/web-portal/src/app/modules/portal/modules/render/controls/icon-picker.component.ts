@@ -20,7 +20,7 @@ export class IconPickerComponent implements OnInit {
     form: FormGroup
 
     @Input()
-    formControlKey: string    
+    formControlKey: string
 
     @Input()
     tooltip: string
@@ -34,7 +34,7 @@ export class IconPickerComponent implements OnInit {
     isInPage = false
     constructor() { }
 
-    ngOnInit(): void { 
+    ngOnInit(): void {
         this.iconFilterOptions = this.form.get(this.formControlKey).valueChanges.pipe(
             startWith(''),
             map(value => this._filterIcon(value))
@@ -55,7 +55,7 @@ export class IconPickerComponent implements OnInit {
 
     getErrorMessage(validatorName: string) {
         if(ObjectUtils.isNotNull(this.validators)){
-            return _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage    
+            return _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
         }
         else{
             return ''

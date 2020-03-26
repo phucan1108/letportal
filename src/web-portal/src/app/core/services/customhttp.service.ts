@@ -12,13 +12,13 @@ export class CustomHttpService {
     constructor(public httpClient: HttpClient) { }
 
     performHttp(url: string, method: string, body: string, successStatusCode: string, outputProjection: string): Observable<any> {
-        let options_: any = {
-            body: body,
-            observe: "response",
-            responseType: "blob",
+        const options_: any = {
+            body,
+            observe: 'response',
+            responseType: 'blob',
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "application/json"
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
             })
         };
         return this.httpClient.request(method, url, options_).pipe(

@@ -53,7 +53,8 @@ namespace LetPortal.Versions.Identity
                 {
                     StandardClaims.AccessAppSelectorPage,
                     StandardClaims.Sub("admin"),
-                    StandardClaims.UserId("5ce287ee569d6f23e8504cef")
+                    StandardClaims.UserId("5ce287ee569d6f23e8504cef"),
+                    StandardClaims.FullName("Super Admin")
                 }
             };
 
