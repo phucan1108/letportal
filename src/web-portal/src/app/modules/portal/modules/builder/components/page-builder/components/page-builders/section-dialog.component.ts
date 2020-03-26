@@ -137,6 +137,7 @@ export class SectionDialogComponent implements OnInit {
                         _.find(this.arrayStandards,
                             standard => standard.id === formValues.componentId)
                             : this.currentExtendedFormSection.relatedArrayStandard,
+            relatedButtons: [],
             isLoaded: false,
             isBroken: false
         }

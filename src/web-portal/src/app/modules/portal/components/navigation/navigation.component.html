@@ -10,14 +10,26 @@
       <!-- End logo-->
       <!-- Right top bar-->
       <span class="divider-left-right-bar"></span>
-      <span>Hi {{authUser.username}}</span>
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="More">
-        <mat-icon>more_vert</mat-icon>
-      </button>
+      <ng-container *ngIf="!hasAvatar">
+        <div class="rounded-circle user-tile-avatar" [matMenuTriggerFor]="menu" aria-label="More">
+          {{userShortName}}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="hasAvatar">
+        <img [src]="authUser.avatar" class="rounded-circle user-avatar" [matMenuTriggerFor]="menu" aria-label="More" />
+      </ng-container>
       <mat-menu #menu="matMenu" xPosition="before">
-        <button mat-menu-item>
+        <p mat-menu-item disabled>
+          Hi, {{authUser.fullName}}
+        </p>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="profile()">
           <mat-icon>account_box</mat-icon>
           Profile
+        </button>
+        <button mat-menu-item (click)="appDashboard()">
+          <mat-icon>dashboard</mat-icon>
+          Apps
         </button>
         <button mat-menu-item (click)="logout()">
           <mat-icon>power_settings_new</mat-icon>
@@ -26,10 +38,9 @@
       </mat-menu>
     </mat-toolbar-row>
   </mat-toolbar>
-  <mat-sidenav-container class="sidenav-container"  [hasBackdrop]="true">
+  <mat-sidenav-container class="sidenav-container" [hasBackdrop]="true">
     <mat-sidenav #drawer class="sidenav" fixedInViewport="false"
-      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="'over'"
-      [opened]="hasMenu" fixedTopGap="56">
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="'over'" [opened]="hasMenu" fixedTopGap="56">
       <mat-expansion-panel class="no-border-box" *ngFor="let menu of menus">
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -39,8 +50,9 @@
         </mat-expansion-panel-header>
         <mat-nav-list>
           <ng-container *ngFor="let child of menu.subMenus">
-            <a *ngIf="!child.hide" mat-list-item [routerLink]="child.url.startsWith('/') ? child.url : ('/' + child.url)"
-              routerLinkActive="true" class="sub-menu">
+            <a *ngIf="!child.hide" mat-list-item
+              [routerLink]="child.url.startsWith('/') ? child.url : ('/' + child.url)" routerLinkActive="true"
+              class="sub-menu">
               <mat-icon class="icon-side-small mr-3 pt-1">{{child.icon}}</mat-icon>{{child.displayName}}
             </a>
           </ng-container>

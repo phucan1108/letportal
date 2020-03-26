@@ -33,7 +33,20 @@ namespace LetPortal.Identity.Stores
         public Task AddClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            user.Claims.AddRange(claims.Select(a => a.ToBaseClaim()).ToList());
+
+            foreach(var claim in claims)
+            {
+                var foundClaim = user.Claims.FirstOrDefault(a => a.ClaimType == claim.Type);
+                if (foundClaim != null)
+                {
+                    var convertClaim = claim.ToBaseClaim();
+                    foundClaim.ClaimValue = convertClaim.ClaimValue;                    
+                }
+                else
+                {
+                    user.Claims.Add(claim.ToBaseClaim());
+                }
+            }
 
             return Task.CompletedTask;
         }

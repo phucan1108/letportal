@@ -107,5 +107,22 @@ namespace LetPortal.Versions
                 }
             };
         }
+
+        public static List<ShellOption> UploadOptions()
+        {
+            return new List<ShellOption>
+            {
+                new ShellOption
+                {
+                    Key = "allowfileurl",
+                    Value = "true"
+                },
+                new ShellOption
+                {
+                    Key = "saveonchange",
+                    Value = "false"
+                }
+            };
+        }
     }
 }

@@ -79,7 +79,7 @@ export class OnDestroyingPage implements PageAction {
 
 export class GatherSectionValidations implements PageAction {
     public static readonly type = `${PAGE_ACTION} Gather section validations`
-    constructor() { }
+    constructor(public specificSection?: string) { }
 }
 
 export class UserClicksOnButtonAction implements PageAction {

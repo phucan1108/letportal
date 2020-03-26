@@ -54,7 +54,7 @@ namespace LetPortal.Identity
             builder.Services.AddSingleton<IEmailServiceProvider, EmailServiceProvider>();
             builder.Services.AddIdentity<User, Role>()
                 .AddUserStore<UserStore>()
-                .AddRoleStore<RoleStore>()
+                .AddRoleStore<RoleStore>()                
                 .AddDefaultTokenProviders();
 
             builder.Services.Configure<IdentityOptions>(options =>

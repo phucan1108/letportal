@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MessageType } from '../shortcut.models';
 
 @Component({
-	selector: 'm-custom-action-entity-dialog',
+	selector: 'let-custom-action-dialog',
 	templateUrl: './custom-action-dialog.component.html'
 })
 export class ConfirmationDialogComponent implements OnInit {

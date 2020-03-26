@@ -87,6 +87,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "save",
                         Color = "primary",
                         AllowHidden = "!!queryparams.id",
+                        PlaceSectionId = "5d63423dbaac7d4790b7d306",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -143,6 +144,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "edit",
                         Color = "primary",
                         AllowHidden = "!queryparams.id",
+                        PlaceSectionId = "5d63423dbaac7d4790b7d306",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -189,6 +191,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "close",
                         Color = "basic",
                         AllowHidden = "false",
+                        PlaceSectionId = "5d63423dbaac7d4790b7d306",
                         ButtonOptions = new ButtonOptions
                         {                               
                             ActionCommandOptions = new ActionCommandOptions
@@ -250,6 +253,7 @@ namespace LetPortal.Versions.Pages
                         Name = "Save",
                         Color = "primary",
                         Icon = "save",
+                        PlaceSectionId = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -298,6 +302,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "close",
                         Color = "basic",
                         AllowHidden = "false",
+                        PlaceSectionId = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
                         ButtonOptions = new ButtonOptions
                         {                                
                             ActionCommandOptions = new ActionCommandOptions
@@ -389,6 +394,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "edit",
                         Color = "primary",
                         AllowHidden = "!queryparams.id",
+                        PlaceSectionId = "5d63423dbaac7d4790b7d306",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                                
@@ -445,6 +451,7 @@ namespace LetPortal.Versions.Pages
                         Icon = "close",
                         Color = "basic",
                         AllowHidden = "false",
+                        PlaceSectionId = "5d63423dbaac7d4790b7d306",
                         ButtonOptions = new ButtonOptions
                         {                                
                             ActionCommandOptions = new ActionCommandOptions

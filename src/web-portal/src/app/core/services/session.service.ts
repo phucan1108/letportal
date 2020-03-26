@@ -25,6 +25,9 @@ export class SessionService{
         return this.getCurrentApp() ? this.getCurrentApp().defaultUrl : '/dashboard'
     }
 
+    clearSelectedApp(){
+        sessionStorage.removeItem('portal-app')
+    }
     setUserSession(userSessionId: string){
         sessionStorage.setItem('user-session-id', userSessionId)
     }

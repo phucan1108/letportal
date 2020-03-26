@@ -12,6 +12,7 @@ import { NGXLogger } from 'ngx-logger';
 import { ExtendedPageButton } from 'app/core/models/extended.models';
 import { PageService } from 'services/page.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-builder',
@@ -67,7 +68,8 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
         _.forEach(this.page.builder.sections, sec =>{
             this.sectionClasses.push('col-lg-12')
         })
-        this.actionCommands = this.page.commands
+        this.actionCommands = this.page.commands ? this.page.commands.filter(a => !ObjectUtils.isNotNull(a.placeSectionId)) : []
+        this.actionCommands = ObjectUtils.clone(this.actionCommands)
         const sub$ = this.pageService.listenDataChange$().subscribe(
             data => {
                 this.data = data

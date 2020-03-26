@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { ExtendedPageSection, ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { FormGroup } from '@angular/forms';
 import * as _ from 'lodash';
@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { SectionDialogComponent } from './section-dialog.component';
 import { Guid } from 'guid-typescript';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { filter, tap, combineLatest } from 'rxjs/operators';
 import { ShellContants } from 'app/core/shell/shell.contants';
 import { NGXLogger } from 'ngx-logger';
@@ -25,6 +25,9 @@ export class BuilderDnDComponent implements OnInit {
 
     pageSections: Array<ExtendedPageSection> = []
     constructionType = SectionContructionType
+
+    @Output()
+    onSectionsChanged: EventEmitter<any> = new EventEmitter<any>()
 
     constructor(
         private standardsClient: StandardComponentClient,
@@ -182,6 +185,7 @@ export class BuilderDnDComponent implements OnInit {
             relatedDynamicList: null,
             relatedChart: null,
             relatedArrayStandard: null,
+            relatedButtons: [],
             isLoaded: false,
             isBroken: false
         }
@@ -249,6 +253,7 @@ export class BuilderDnDComponent implements OnInit {
 
     refreshTable() {
         const shallowCopy = ObjectUtils.clone(this.pageSections)
+        this.onSectionsChanged.emit(shallowCopy)
         this.store.dispatch(new UpdatePageBuilderInfoAction({
             sections: shallowCopy
         }))

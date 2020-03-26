@@ -119,7 +119,10 @@ export class StandardArrayRenderComponent implements OnInit {
                             }))
                             break
                         case GatherSectionValidations:
-                            this.store.dispatch(new SectionValidationStateAction(this.section.name, true))
+                            if (state.specificValidatingSection === this.section.name
+                                || !ObjectUtils.isNotNull(state.specificValidatingSection)) {
+                                this.store.dispatch(new SectionValidationStateAction(this.section.name, true))
+                            }
                             break
                         case UpdateOneItemForStandardArray:
                             if (state.lastStandardArrayItem.sectionName === this.section.name) {

@@ -97,7 +97,6 @@ namespace LetPortal.Versions.Identity
                 DisplayName = RolesConstants.USER,
                 Claims = new List<BaseClaim>
                 {
-                    StandardClaims.AccessCoreApp(Constants.CoreAppId)
                 }
             };
 

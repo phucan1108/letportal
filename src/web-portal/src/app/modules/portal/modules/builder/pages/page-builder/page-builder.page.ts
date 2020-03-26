@@ -52,7 +52,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     entities: BehaviorSubject<Array<EntitySchema>> = new BehaviorSubject([]);
     shallowedEntitySchemas: Array<EntitySchema>;
 
-    formSections: Array<ExtendedPageSection>
+    sections$: BehaviorSubject<Array<any>> = new BehaviorSubject([])
 
     isEditMode = false
     editId = ''
@@ -86,7 +86,10 @@ export class PageBuilderPage implements OnInit, OnDestroy {
         this.pageService.init('page-builder').subscribe()
         this.page = this.activatedRoute.snapshot.data.page
         if (this.page) {
-            this.isEditMode = true
+            this.isEditMode = true 
+            if(ObjectUtils.isNotNull(this.page.builder.sections)){
+                this.sections$.next(this.page.builder.sections.map(a => ({ id: a.id, displayName: a.displayName })))
+            }                    
         }
         else {
             this.store.dispatch(new InitCreatePageBuilderAction())
@@ -103,7 +106,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
         this.store.dispatch(new StateReset(PageBuilderState))
     }
 
-    nextToBuilder() {
+    nextToBuilder() {        
         this.store.dispatch(new NextToPageBuilderAction())
     }
 
@@ -199,6 +202,10 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     //#endregion
 
     //#region Events
+
+    onSectionsChanged($event: Array<ExtendedPageSection>){
+        this.sections$.next($event.map(a => ({ id: a.id, displayName: a.displayName })))
+    }
 
     onSubmitDynamicFormBuilder() {
         if (this.pageInfoFormGroup.valid) {

@@ -313,5 +313,66 @@ namespace LetPortal.Identity.Providers.Identity
 
             return claims;
         }
+
+        public async Task ChangePasswordAsync(string userName, ChangePasswordModel resetPasswordModel)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if(user != null)
+            {
+                if(resetPasswordModel.NewPassword.Equals(resetPasswordModel.ReNewPassword, StringComparison.Ordinal))
+                {
+                    var result = await _userManager.ChangePasswordAsync(user, resetPasswordModel.CurrentPassword, resetPasswordModel.NewPassword);
+                    if (!result.Succeeded)
+                    {
+                        throw new IdentityException(ErrorCodes.CannotChangePassword);
+                    }
+                }
+                else
+                {
+                    throw new IdentityException(ErrorCodes.PasswordDoesNotMatchWithRePassword);
+                }
+            }
+            else
+            {
+                throw new IdentityException(ErrorCodes.WrongUserName);
+            }
+        }
+
+        public async Task AddClaimsAsync(string userName, List<BaseClaim> claims)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if(user != null)
+            {
+                var result = await _userManager.AddClaimsAsync(user, claims.Select(a => a.ToClaim()));
+                if (!result.Succeeded)
+                {
+                    throw new IdentityException(ErrorCodes.CannotUpdateClaimsOfUser);
+                }
+            }
+            else
+            {
+                throw new IdentityException(ErrorCodes.WrongUserName);
+            }
+        }
+
+        public async Task<ProfileModel> GetUserProfile(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user != null)
+            {
+                var claims = await _userManager.GetClaimsAsync(user);
+                var fullnameClaim = claims.FirstOrDefault(a => a.Type == StandardClaims.DefaultFullNameClaim);
+                var avatarClaim = claims.FirstOrDefault(a => a.Type == StandardClaims.DefaultAvatarClaim);
+                return new ProfileModel
+                {
+                    FullName = fullnameClaim?.Value,
+                    Avatar = avatarClaim?.Value
+                };
+            }
+            else
+            {
+                throw new IdentityException(ErrorCodes.WrongUserName);
+            }
+        }
     }
 }

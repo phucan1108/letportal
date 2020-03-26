@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatDialog, MatSnackBarRef } from '@angular/material';
 import { ActionNotificationComponent } from './action-natification/action-notification.component';
-import { MessageType, ToastType } from './shortcut.models';
+import { MessageType, ToastType, EventDialogType } from './shortcut.models';
 import { ConfirmationDialogComponent } from './custom-action-dialog/custom-action-dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { EventDialogComponent } from './event-dialog/event-dialog.component';
 
 
 @Injectable({
@@ -90,5 +91,20 @@ export class ShortcutUtil {
 					break
 			}
 		},300)
+	}
+
+	eventDialog(
+		header: string,
+		message: string,
+		eventType: EventDialogType =EventDialogType.Info
+	){
+		return this.dialog.open(EventDialogComponent, {
+			data: { 
+				eventHeader: header,
+				eventContent: message,
+				eventType
+			},
+			width: '440px'
+		});
 	}
 }
