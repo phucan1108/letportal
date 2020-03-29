@@ -11,9 +11,9 @@ namespace LetPortal.Portal.Repositories.Components
 {
     public class StandardEFRepository : EFGenericRepository<StandardComponent>, IStandardRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public StandardEFRepository(LetPortalDbContext context)
+        public StandardEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;

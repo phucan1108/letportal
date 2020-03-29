@@ -8,6 +8,7 @@ import { SecurityService } from 'app/core/security/security.service';
 import { AuthToken } from 'app/core/security/auth.model';
 import { Router } from '@angular/router';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { ChatService } from 'services/chat.service';
 
 @Component({
     selector: 'let-login',
@@ -26,7 +27,8 @@ export class LoginPage implements OnInit {
         private logger: NGXLogger,
         private session: SessionService,
         private security: SecurityService,
-        private roleClient: RolesClient
+        private roleClient: RolesClient,
+        private chatService: ChatService
     ) { }
 
     ngOnInit(): void {
@@ -65,6 +67,8 @@ export class LoginPage implements OnInit {
                     this.session.setUserSession(result.userSessionId)
                     this.roleClient.getPortalClaims().subscribe(result =>{
                         this.security.setPortalClaims(result)
+                        this.chatService.start()
+                        this.chatService.online()
                         this.router.navigateByUrl('/portal/dashboard')
                     })
                 },

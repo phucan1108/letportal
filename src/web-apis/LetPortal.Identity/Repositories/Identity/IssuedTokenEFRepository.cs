@@ -8,9 +8,9 @@ namespace LetPortal.Identity.Repositories.Identity
 {
     public class IssuedTokenEFRepository : EFGenericRepository<IssuedToken>, IIssuedTokenRepository
     {
-        private readonly LetPortalIdentityDbContext _context;
+        private readonly IdentityDbContext _context;
 
-        public IssuedTokenEFRepository(LetPortalIdentityDbContext context)
+        public IssuedTokenEFRepository(IdentityDbContext context)
             : base(context)
         {
             _context = context;

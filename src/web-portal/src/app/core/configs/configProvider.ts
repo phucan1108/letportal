@@ -8,6 +8,7 @@ import { ShellConfig, ShellConfigType } from '../shell/shell.model';
 export class ConfigurationProvider {
     private configuration = {
         portalBaseEndpoint:'',
+        chatBaseEndpoint: '',
         identityBaseEndpoint: ''
     }
     constructor() {

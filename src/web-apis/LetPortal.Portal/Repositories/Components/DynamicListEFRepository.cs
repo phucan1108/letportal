@@ -11,9 +11,9 @@ namespace LetPortal.Portal.Repositories.Components
 {
     public class DynamicListEFRepository : EFGenericRepository<DynamicList>, IDynamicListRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public DynamicListEFRepository(LetPortalDbContext context)
+        public DynamicListEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;

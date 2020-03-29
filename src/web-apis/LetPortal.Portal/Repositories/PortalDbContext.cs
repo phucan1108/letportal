@@ -19,7 +19,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LetPortal.Portal.Repositories
 {
-    public class LetPortalDbContext : DbContext, IDisposable
+    public class PortalDbContext : DbContext
     {
         public ConnectionType ConnectionType => _options.ConnectionType;
         public DbSet<App> Apps { get; set; }
@@ -48,7 +48,7 @@ namespace LetPortal.Portal.Repositories
 
         private readonly DatabaseOptions _options;
 
-        public LetPortalDbContext(DatabaseOptions options)
+        public PortalDbContext(DatabaseOptions options)
         {
             _options = options;
         }
@@ -64,14 +64,17 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.SerializeObject(v, true),
                 v => ConvertUtil.DeserializeObject<List<MenuProfile>>(v));
 
+            // App 
             var appBuilder = modelBuilder.Entity<App>();
             appBuilder.HasKey(a => a.Id);
             appBuilder.Property(a => a.Menus).HasConversion(jsonMenusConverter);
             appBuilder.Property(a => a.MenuProfiles).HasConversion(jsonMenuProfilesConverter);
 
+            // Portal Version
             var portalVersionBuilder = modelBuilder.Entity<LetPortal.Core.Versions.Version>();
             portalVersionBuilder.HasKey(a => a.Id);
 
+            // Component
             var componentBuilder = modelBuilder.Entity<Component>();
             componentBuilder.HasKey(a => a.Id);
 
@@ -86,6 +89,7 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.DeserializeObject<List<ShellOption>>(v));
             componentBuilder.Property(a => a.Options).HasConversion(jsonShellOptionsConverter);
 
+            // Dynamic List
             var dynamicListBuilder = modelBuilder.Entity<DynamicList>();
             dynamicListBuilder.HasBaseType<Component>();
 
@@ -111,6 +115,7 @@ namespace LetPortal.Portal.Repositories
             dynamicListBuilder.Property(a => a.ColumnsList).HasConversion(jsonColumnsListConverter);
             dynamicListBuilder.Property(a => a.CommandsList).HasConversion(jsonCommandsListConverter);
 
+            // Standard
             var standardBuilder = modelBuilder.Entity<StandardComponent>();
             standardBuilder.HasBaseType<Component>();
 
@@ -119,6 +124,12 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.DeserializeObject<List<PageControl>>(v));
             standardBuilder.Property(a => a.Controls).HasConversion(jsonControlsConverter);
 
+            if (_options.ConnectionType == ConnectionType.MySQL)
+            {
+                standardBuilder.Property(a => a.AllowArrayData).HasColumnType("BIT");
+            }
+
+            // Chart
             var chartBuilder = modelBuilder.Entity<Chart>();
             chartBuilder.HasBaseType<Component>();
 
@@ -137,6 +148,7 @@ namespace LetPortal.Portal.Repositories
                v => ConvertUtil.DeserializeObject<List<ChartFilter>>(v));
             chartBuilder.Property(a => a.ChartFilters).HasConversion(jsonChartFiltersConverter);
 
+            // Page
             var pageBuilder = modelBuilder.Entity<Page>();
             pageBuilder.HasKey(a => a.Id);
 
@@ -167,6 +179,7 @@ namespace LetPortal.Portal.Repositories
             pageBuilder.Property(a => a.Events).HasConversion(jsonPageEventConverter);
             pageBuilder.Property(a => a.Commands).HasConversion(jsonPageButtonConverter);
 
+            // Database Connection
             var databaseConnectionBuilder = modelBuilder.Entity<DatabaseConnection>();
             databaseConnectionBuilder.HasKey(a => a.Id);
 
@@ -177,6 +190,7 @@ namespace LetPortal.Portal.Repositories
                 datasourceBuilder.Property(a => a.CanCache).HasColumnType("BIT");
             }
 
+            // Entity Schema
             var entitySchemaBuilder = modelBuilder.Entity<EntitySchema>();
             entitySchemaBuilder.HasKey(a => a.Id);
 
@@ -186,6 +200,7 @@ namespace LetPortal.Portal.Repositories
 
             entitySchemaBuilder.Property(a => a.EntityFields).HasConversion(jsonEntityFieldConverter);
 
+            // File
             var fileBuilder = modelBuilder.Entity<File>();
             fileBuilder.HasKey(a => a.Id);
             if (_options.ConnectionType == ConnectionType.MySQL)
@@ -193,6 +208,7 @@ namespace LetPortal.Portal.Repositories
                 fileBuilder.Property(a => a.AllowCompress).HasColumnType("BIT");
             }
 
+            // Backup
             var backupBuilder = modelBuilder.Entity<Backup>();
             backupBuilder.HasKey(a => a.Id);
             var jsonBackupElementsConverter = new ValueConverter<BackupElements, string>(

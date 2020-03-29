@@ -13,6 +13,7 @@ import { AppDashboardComponent } from '../app-dashboard/app-dashboard.component'
 import { PortalStandardClaims } from 'app/core/security/portalClaims';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
+import { ChatService } from 'services/chat.service';
 
 @Component({
   selector: 'app-navigation',
@@ -44,6 +45,7 @@ export class NavigationComponent implements OnInit {
     private router: Router,
     private session: SessionService,
     private security: SecurityService,
+    private chatService: ChatService,
     private cd: ChangeDetectorRef) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.events.subscribe((event: Event) => {
@@ -86,8 +88,10 @@ export class NavigationComponent implements OnInit {
   }
 
   logout() {
+    this.chatService.offline()    
     this.security.userLogout()
     this.session.clear()
+    this.chatService.stop()
     this.router.navigateByUrl('/')
   }
 

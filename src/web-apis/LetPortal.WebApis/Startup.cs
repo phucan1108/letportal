@@ -34,6 +34,7 @@ namespace LetPortal.WebApis
                     options.EnableServiceMonitor = true;
                     options.EnableSerilog = true;
                 })
+                .AddJwtValidator()
                 .AddPortalService(options =>
                 {
                     options.EnableFileServer = true;
@@ -81,8 +82,11 @@ namespace LetPortal.WebApis
                 endpoints.MapControllers();
             });
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            if (env.IsDevelopment())
+            {
+                app.UseOpenApi();
+                app.UseSwaggerUi3();
+            }             
         }
     }
 }

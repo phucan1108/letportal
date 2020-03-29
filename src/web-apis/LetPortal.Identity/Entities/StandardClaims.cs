@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LetPortal.Core.Security;
 
 namespace LetPortal.Identity.Entities
 {

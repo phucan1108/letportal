@@ -11,9 +11,9 @@ namespace LetPortal.Portal.Repositories.Databases
 {
     public class DatabaseEFRepository : EFGenericRepository<DatabaseConnection>, IDatabaseRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public DatabaseEFRepository(LetPortalDbContext context)
+        public DatabaseEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;
