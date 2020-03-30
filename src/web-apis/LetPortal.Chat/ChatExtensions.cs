@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Chat.Configurations;
+using LetPortal.Chat.Hubs;
 using LetPortal.Chat.Persistences;
 using LetPortal.Chat.Repositories;
 using LetPortal.Chat.Repositories.ChatRooms;
@@ -40,7 +41,15 @@ namespace LetPortal.Chat
                 builder.Services.AddTransient<ChatDbContext>();
                 builder.Services.AddTransient<IChatRoomRepository, ChatRoomEFRepository>();
                 builder.Services.AddTransient<IChatSessionRepository, ChatSessionEFRepository>();
-            }
+            }     
+
+            services.AddTransient(typeof(HubChatClient), serviceProvider =>
+            {
+                return new HubChatClient(
+                    serviceProvider.GetRequiredService<IChatContext>(),
+                    serviceProvider.GetRequiredService<IChatRoomRepository>(),
+                    serviceProvider.GetRequiredService<IChatSessionRepository>());
+            });
 
             var chatOptions = builder.Configuration.GetSection("ChatOptions").Get<ChatOptions>();
             services.AddCors(options =>

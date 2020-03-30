@@ -7,11 +7,16 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <!-- Logo here-->
+      <img class="logo-small" src="logo.ico" />
       <!-- End logo-->
       <!-- Right top bar-->
       <span class="divider-left-right-bar"></span>
+      <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center">
+        <mat-icon matBadge="15" matBadgeColor="warn" matTooltip="Notification" [matTooltipPosition]="'below'">notifications</mat-icon>
+      </div>
       <ng-container *ngIf="!hasAvatar">
-        <div class="rounded-circle user-tile-avatar" [matMenuTriggerFor]="menu" aria-label="More">
+        <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center"
+          [matMenuTriggerFor]="menu" aria-label="More">
           {{userShortName}}
         </div>
       </ng-container>

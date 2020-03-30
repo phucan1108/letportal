@@ -72,6 +72,7 @@ namespace LetPortal.Identity.Providers.Identity
                 Claims = new List<BaseClaim>
                 {
                     StandardClaims.Sub(registerModel.Username),
+                    StandardClaims.FullName(registerModel.Username),
                     StandardClaims.AccessAppSelectorPage
                 }
             }, registerModel.Password);

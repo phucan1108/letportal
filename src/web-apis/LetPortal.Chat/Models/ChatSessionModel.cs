@@ -10,16 +10,11 @@ namespace LetPortal.Chat.Models
 
         public string ChatRoomId { get; set; }
 
-        public ConversationModel Conversation { get; set; }
+        public Queue<MessageModel> Messages { get; set; }
 
         public string PreviousSessionId { get; set; }
 
         public string NextSessionId { get; set; }
-    }
-
-    public class ConversationModel
-    {
-        public Queue<MessageModel> Messages { get; set; } = new Queue<MessageModel>();
     }
 
     public class MessageModel
@@ -31,5 +26,7 @@ namespace LetPortal.Chat.Models
         public string FormattedMessage { get; set; }
 
         public IList<string> FileUrls { get; set; }
+
+        public long TimeStamp { get; set; }
     }
 }

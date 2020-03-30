@@ -1,0 +1,7 @@
+<div class="chat-head d-flex align-items-center justify-content-center" matTooltip="Open Chat"
+    [matTooltipPosition]="'left'" (click)="showSearchBox()">
+    <mat-icon matBadge="0" [matBadgeHidden]="!showChatBadge" matBadgeColor="warn">sms</mat-icon>
+</div>
+<div class="chat-search-box arrow-bottom p-3" *ngIf="isShowSearchBox" [@fadeInUpOnEnter] [@fadeOutDownOnLeave]>
+    <let-chat-search (closed)="onSearchBoxClosed()"></let-chat-search>
+</div>

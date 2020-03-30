@@ -40,28 +40,9 @@ namespace LetPortal.Chat
             return chatRoom;
         }
 
-        public ChatSessionModel GetLastChatRoomSession(string chatRoomId)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public IList<OnlineUser> GetOnlineUsers()
         {
             return onlineUsers;
-        }
-
-        public ChatSessionModel InitChatRoomSession(string chatRoomId, string previousSessionId = null)
-        {
-            var chatSession = new ChatSessionModel
-            {
-                SessionId = DataUtil.GenerateUniqueId(),
-                Conversation = new ConversationModel(),
-                ChatRoomId = chatRoomId,
-                PreviousSessionId = previousSessionId
-            };
-
-            chatSessions.Add(chatSession);
-            return chatSession;
         }
 
         public void LoadDoubleRoom(ChatRoomModel chatRoom)
@@ -73,7 +54,7 @@ namespace LetPortal.Chat
         {
             var foundSession = chatSessions.Find(a => a.SessionId == chatSessionId);
 
-            foundSession.Conversation.Messages.Enqueue(message);
+            foundSession.Messages.Enqueue(message);
         }
 
         public Task TakeOfflineAsync(OnlineUser user)
@@ -96,6 +77,24 @@ namespace LetPortal.Chat
             onlineUsers.Add(user);
 
             return Task.CompletedTask;
+        }
+
+        public ChatRoomModel GetDoubleRoom(OnlineUser invitor, OnlineUser invitee)
+        {
+            var foundRoom = chatRooms.FirstOrDefault(a => a.Type == Entities.RoomType.Double
+                && a.Participants.Any(b => b.UserName == invitor.UserName)
+                && a.Participants.Any(c => c.UserName == invitee.UserName));
+            return foundRoom;
+        }
+
+        public OnlineUser GetOnlineUser(string userName)
+        {
+            return onlineUsers.FirstOrDefault(a => a.UserName == userName);
+        }
+
+        public void AddChatRoomSession(ChatSessionModel chatSession)
+        {
+            chatSessions.Add(chatSession);
         }
     }
 }

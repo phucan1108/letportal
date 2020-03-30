@@ -51,6 +51,8 @@ namespace LetPortal.ChatApis.Controllers
                 FullName = fullName,
                 Avatar = avatar
             };
+
+            onlineUser.Load();
             await _chatContext.TakeOnlineAsync(onlineUser);
             // Boardcast all online users
             await _hubChatContext.Clients.All.Online(onlineUser);

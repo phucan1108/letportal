@@ -25,6 +25,7 @@ import pgsql from 'highlight.js/lib/languages/pgsql'
 import sql from 'highlight.js/lib/languages/sql'
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
+import { ChatModule } from 'portal/modules/chat/chat.module';
 
 export function hlJSLang() {
   return [
@@ -46,6 +47,7 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
     ErrorComponent
   ],
   imports: [
+    ChatModule,
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,

@@ -102,4 +102,6 @@ export interface OnlineUser {
     userName: string
     fullName: string
     avatar: string
+    shortName: string
+    hasAvatar: boolean
 }

@@ -37,7 +37,6 @@ namespace LetPortal.ChatApis
 
             services
                 .AddControllers();
-
             services.AddSignalR();
         }
 

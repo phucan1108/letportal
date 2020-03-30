@@ -133,16 +133,44 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     color: mat-color($primary); // 3
   }
 
-  .user-tile-avatar {
-    width: 32px;
-    height: 32px;
+  .tile-icon {
+    width: 40px;
+    height: 40px;
     font-weight: 500;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 22px;
     margin-left: 10px;
     background-color: rgb(255, 255, 255);
     text-align: center;
     color: mat-color($primary);
+  }
+
+  .tile-icon-revert {
+    width: 40px;
+    height: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 22px;
+    margin-left: 10px;
+    background-color: mat-color($primary);
+    text-align: center;
+    color: rgb(255, 255, 255);
+  }
+
+  .chat-head {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    bottom: 40px;
+    right: 20px;
+    background-color: rgb(255, 255, 255);
+    color: mat-color($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
   }
 }
 @include current-theme($app-theme);

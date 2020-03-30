@@ -14,17 +14,19 @@ namespace LetPortal.Chat
     {
         IList<OnlineUser> GetOnlineUsers();
 
+        OnlineUser GetOnlineUser(string userName);
+
         Task TakeOnlineAsync(OnlineUser user);
 
         Task TakeOfflineAsync(OnlineUser user);
 
         void LoadDoubleRoom(ChatRoomModel chatRoom);
 
+        ChatRoomModel GetDoubleRoom(OnlineUser invitor, OnlineUser invitee);
+
         ChatRoomModel CreateDoubleRoom(OnlineUser invitor, OnlineUser invitee);
 
-        ChatSessionModel GetLastChatRoomSession(string chatRoomId);
-
-        ChatSessionModel InitChatRoomSession(string chatRoomId, string previousSessionId = null);
+        void AddChatRoomSession(ChatSessionModel chatSession);
 
         void SendMessage(string chatSessionId, MessageModel message);
     }

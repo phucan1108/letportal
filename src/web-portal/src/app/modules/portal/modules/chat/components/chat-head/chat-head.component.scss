@@ -1,0 +1,21 @@
+.chat-search-box {
+    position: fixed;
+    bottom: 110px;
+    width: 320px;
+    height: 450px;
+    right: 20px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+}
+.chat-search-box.arrow-bottom:after {
+    content: " ";
+    position: absolute;
+    right: 10px;
+    bottom: -15px;
+    border-top: 15px solid rgb(255, 255, 255);
+    border-right: 15px solid transparent;
+    border-left: 15px solid transparent;
+    border-bottom: none;
+}

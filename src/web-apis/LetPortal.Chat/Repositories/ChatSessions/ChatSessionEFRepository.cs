@@ -1,5 +1,8 @@
-﻿using LetPortal.Chat.Entities;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using LetPortal.Chat.Entities;
 using LetPortal.Core.Persistences;
+using Microsoft.EntityFrameworkCore;
 
 namespace LetPortal.Chat.Repositories.ChatSessions
 {
@@ -11,6 +14,14 @@ namespace LetPortal.Chat.Repositories.ChatSessions
             : base(context)
         {
             _context = context;
+        }
+
+        public async Task<ChatSession> GetLastChatSession(string chatRoomId)
+        {
+            return await _context.ChatSessions
+                .AsNoTracking()
+                .Include(b => b.Conversations)
+                .Where(a => a.ChatRoomId == chatRoomId).OrderByDescending(b => b.CreatedDate).FirstOrDefaultAsync();
         }
     }
 }
