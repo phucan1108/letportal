@@ -87,8 +87,7 @@ export class NavigationComponent implements OnInit {
     }
   }
 
-  logout() {
-    this.chatService.offline()    
+  logout() {  
     this.security.userLogout()
     this.session.clear()
     this.chatService.stop()

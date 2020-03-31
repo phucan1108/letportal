@@ -5,21 +5,17 @@
     padding-top: 10px;
 }
 
-.close-icon{
-    position: absolute;
-    top: -15px;
-    right: -10px;
-    font-size: 25px; 
-    cursor: pointer;
-    font-size:32px;
-}
-
 .online-user{
     cursor: pointer;
 }
 
 .online > .mat-badge-content.mat-badge-active{
     background-color: #08976d; 
+    right: -5px;
+    bottom: -5px;
+}
+
+.offline > .mat-badge-content.mat-badge-active{
     right: -5px;
     bottom: -5px;
 }

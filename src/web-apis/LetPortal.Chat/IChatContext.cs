@@ -18,7 +18,7 @@ namespace LetPortal.Chat
 
         Task TakeOnlineAsync(OnlineUser user);
 
-        Task TakeOfflineAsync(OnlineUser user);
+        Task<bool> TakeOfflineAsync(OnlineUser user);
 
         void LoadDoubleRoom(ChatRoomModel chatRoom);
 

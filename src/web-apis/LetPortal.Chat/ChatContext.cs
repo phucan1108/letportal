@@ -57,14 +57,19 @@ namespace LetPortal.Chat
             foundSession.Messages.Enqueue(message);
         }
 
-        public Task TakeOfflineAsync(OnlineUser user)
+        public Task<bool> TakeOfflineAsync(OnlineUser user)
         {
             if (onlineUsers.Any(a => a.UserName == user.UserName))
             {
                 var found = onlineUsers.Find(a => a.UserName == user.UserName);
-                onlineUsers.Remove(found);
+                found.NumberOfDevices -= 1;
+                if (found.NumberOfDevices == 0)
+                {   
+                    onlineUsers.Remove(found);
+                    return Task.FromResult(true);
+                }
             }
-            return Task.CompletedTask;
+            return Task.FromResult(false);
         }
 
         public Task TakeOnlineAsync(OnlineUser user)
@@ -72,9 +77,15 @@ namespace LetPortal.Chat
             if(onlineUsers.Any(a => a.UserName == user.UserName))
             {
                 var found = onlineUsers.Find(a => a.UserName == user.UserName);
-                onlineUsers.Remove(found);
+                // Because SignalR allows us to have multiple devices per one user (indicated by username)
+                // So we need to increase number of devices to decide when user is offline
+                found.NumberOfDevices += 1;
             }
-            onlineUsers.Add(user);
+            else
+            {
+                user.NumberOfDevices = 1;
+                onlineUsers.Add(user);
+            }                                    
 
             return Task.CompletedTask;
         }

@@ -2,6 +2,6 @@
     [matTooltipPosition]="'left'" (click)="showSearchBox()">
     <mat-icon matBadge="0" [matBadgeHidden]="!showChatBadge" matBadgeColor="warn">sms</mat-icon>
 </div>
-<div class="chat-search-box arrow-bottom p-3" *ngIf="isShowSearchBox" [@fadeInUpOnEnter] [@fadeOutDownOnLeave]>
-    <let-chat-search (closed)="onSearchBoxClosed()"></let-chat-search>
+<div class="chat-search-box arrow-right p-3" *ngIf="isShowSearchBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
+    <let-chat-search (closed)="onSearchBoxClosed()" (onClickChatUser)="clickedChatUser($event)"></let-chat-search>
 </div>

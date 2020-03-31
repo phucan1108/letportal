@@ -1,0 +1,8 @@
+<div class="chat-box-head d-flex align-items-center justify-content-center" [matTooltip]="roomName"
+    [matTooltipPosition]="'left'" (click)="showSearchBox()" matBadge="&#8288;" matBadgeColor="warn"
+    matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': isOnline, 'offline': !isOnline}">
+    {{roomShortName}}
+</div>
+<div class="chat-box arrow-right p-3" *ngIf="!isHideChatBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
+    <let-chat-box-content (closed)="onChatBoxClosed()" [chatRoom]="chatRoom"></let-chat-box-content>
+</div>

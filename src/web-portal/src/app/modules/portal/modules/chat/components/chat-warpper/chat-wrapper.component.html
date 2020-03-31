@@ -1,0 +1,10 @@
+<let-chat-head 
+    (onClickChatUser)="clickedChatUser($event)" 
+    (onClickIcon)="onClickShowSearchBox($event)"
+    [hide$]="hideSearchBox$"
+    *ngIf="isShowChatHead"></let-chat-head>
+<let-chat-box 
+    *ngIf="isShowChatBox" 
+    [chatRoom]="chatRoom" 
+    [hide$]="hideChatBox$"
+    (onClickIcon)="onClickShowChatBox($event)"></let-chat-box>

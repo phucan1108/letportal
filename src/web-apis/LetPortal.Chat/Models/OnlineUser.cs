@@ -12,6 +12,10 @@
 
         public bool HasAvatar { get; set; }
 
+        public bool IsOnline { get; set; }
+
+        public int NumberOfDevices { get; set; }
+
         public void Load()
         {
             if (string.IsNullOrEmpty(FullName))

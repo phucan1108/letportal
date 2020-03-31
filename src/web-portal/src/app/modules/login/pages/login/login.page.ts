@@ -27,8 +27,7 @@ export class LoginPage implements OnInit {
         private logger: NGXLogger,
         private session: SessionService,
         private security: SecurityService,
-        private roleClient: RolesClient,
-        private chatService: ChatService
+        private roleClient: RolesClient
     ) { }
 
     ngOnInit(): void {
@@ -67,8 +66,6 @@ export class LoginPage implements OnInit {
                     this.session.setUserSession(result.userSessionId)
                     this.roleClient.getPortalClaims().subscribe(result =>{
                         this.security.setPortalClaims(result)
-                        this.chatService.start()
-                        this.chatService.online()
                         this.router.navigateByUrl('/portal/dashboard')
                     })
                 },

@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ChatOnlineUser } from '../../models/chat.model';
 import { debounce, distinctUntilChanged, debounceTime, tap } from 'rxjs/operators';
+import { ChatService } from 'services/chat.service';
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-chat-search',
@@ -12,12 +14,17 @@ import { debounce, distinctUntilChanged, debounceTime, tap } from 'rxjs/operator
 export class ChatSearchComponent implements OnInit {
     @Output()
     closed: EventEmitter<any> = new EventEmitter<any>()
-    
-    allOnlineUsers: ChatOnlineUser[] = []
+
+    @Output()
+    onClickChatUser: EventEmitter<any> = new EventEmitter()
+
     onlineUsers$: BehaviorSubject<ChatOnlineUser[]> = new BehaviorSubject([])
     searchBoxForm: FormGroup
     isReadyRender: boolean = true
+
     constructor(
+        private logger: NGXLogger,
+        private chatService: ChatService,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef
     ) { }
@@ -27,23 +34,9 @@ export class ChatSearchComponent implements OnInit {
             userFullName: ['', [ Validators.required, Validators.maxLength(250)]]
         });
 
-        this.allOnlineUsers = [
-            {
-                fullName: 'Super Admin',
-                avatar: '',
-                userName: 'admin',
-                hasAvatar: false,
-                shortName: 'SA'
-            },
-            {
-                fullName: 'Back Office',
-                avatar: '',
-                userName: 'backoffice',
-                hasAvatar: true,
-                shortName: 'BO'
-            }
-        ]
-        this.onlineUsers$.next(this.allOnlineUsers)
+        this.onlineUsers$ = this.chatService.onlineUsers$
+        this.chatService.getAllAvailableUsers()
+        this.chatService.onlineUsers()
 
         this.searchBoxForm.get('userFullName').valueChanges.pipe(
             debounceTime(500),
@@ -53,7 +46,7 @@ export class ChatSearchComponent implements OnInit {
                     this.isReadyRender = false
                     this.cd.markForCheck()
                     setTimeout(() =>{
-                        const filters =  this.allOnlineUsers.filter(a => a.fullName.toLowerCase().indexOf(newValue.toLowerCase()) >= 0)
+                        const filters =  this.onlineUsers$.value.filter(a => a.fullName.toLowerCase().indexOf(newValue.toLowerCase()) >= 0)
                         this.onlineUsers$.next(filters)
                         this.isReadyRender = true
                     },500)                    
@@ -64,5 +57,10 @@ export class ChatSearchComponent implements OnInit {
 
     onClosed(){
         this.closed.emit(true)
+    }
+
+    selectedUser(user: ChatOnlineUser){
+        this.logger.debug('On clicking user', user)
+        this.onClickChatUser.emit(user)
     }
 }

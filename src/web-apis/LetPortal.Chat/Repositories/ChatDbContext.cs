@@ -16,6 +16,8 @@ namespace LetPortal.Chat.Repositories
 
         public DbSet<Conversation> Conversations { get; set; }
 
+        public DbSet<ChatUser> ChatUsers { get; set; }
+
         private readonly DatabaseOptions _options;
 
         public ChatDbContext(DatabaseOptions options)
@@ -46,6 +48,15 @@ namespace LetPortal.Chat.Repositories
             var conversationBuilder = modelBuilder.Entity<Conversation>();
             conversationBuilder
                 .HasKey(a => a.Id);
+
+            var chatUserBuilder = modelBuilder.Entity<ChatUser>();
+            chatUserBuilder
+                .HasKey(a => a.Id);
+
+            if (ConnectionType == ConnectionType.MySQL)
+            {
+                chatUserBuilder.Property(a => a.Deactivate).HasColumnType("BIT");
+            }
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {

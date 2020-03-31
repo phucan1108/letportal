@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Chat;
 using LetPortal.Chat.Hubs;
 using LetPortal.Chat.Models;
+using LetPortal.Chat.Repositories.ChatUsers;
 using LetPortal.Core.Https;
 using LetPortal.Core.Security;
 using Microsoft.AspNetCore.Authorization;
@@ -21,14 +23,18 @@ namespace LetPortal.ChatApis.Controllers
 
         private readonly IChatContext _chatContext;
 
+        private readonly IChatUserRepository _chatUserRepository;
+
         public ChatsController(
             IHttpContextAccessor httpContextAccessor,
             IHubContext<HubChatClient, IHubChatClient> hubChatContext,
-            IChatContext chatContext)
+            IChatContext chatContext,
+            IChatUserRepository chatUserRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _hubChatContext = hubChatContext;
             _chatContext = chatContext;
+            _chatUserRepository = chatUserRepository;
         }
 
         [HttpGet("who-online")]
@@ -36,6 +42,32 @@ namespace LetPortal.ChatApis.Controllers
         public IActionResult GetAllOnlineUser()
         {
             return Ok(_chatContext.GetOnlineUsers());
+        }
+
+        [HttpGet("all-users")]
+        [Authorize]
+        [ProducesResponseType(typeof(List<OnlineUser>), 200)]
+        public async Task<IActionResult> GetAllChatUsers()
+        {
+            var foundChatUsers = await _chatUserRepository.GetAllAsync(a => a.Deactivate == false);
+            var onlineUsers = new List<OnlineUser>();
+            if(foundChatUsers != null)
+            {
+                foreach(var chatUser in foundChatUsers)
+                {
+                    var onlineUser = new OnlineUser
+                    {
+                        UserName = chatUser.UserName,
+                        FullName = chatUser.FullName,
+                        Avatar = chatUser.Avatar,
+                        IsOnline = false
+                    };
+                    onlineUser.Load();
+                    onlineUsers.Add(onlineUser);
+                }
+            }
+
+            return Ok(onlineUsers);
         }
 
         [HttpPost("online")]
@@ -49,28 +81,22 @@ namespace LetPortal.ChatApis.Controllers
             {
                 UserName = _httpContextAccessor.HttpContext.User.Identity.Name,
                 FullName = fullName,
-                Avatar = avatar
+                Avatar = avatar,
+                IsOnline = true
             };
 
             onlineUser.Load();
+            // Persist Online user
+            await _chatUserRepository.UpsertAsync(new Chat.Entities.ChatUser
+            {
+                UserName = onlineUser.UserName,
+                Avatar = onlineUser.Avatar,
+                FullName = onlineUser.FullName
+            });
             await _chatContext.TakeOnlineAsync(onlineUser);
             // Boardcast all online users
             await _hubChatContext.Clients.All.Online(onlineUser);
-            return Ok();
-        }
-         
-        [HttpPost("offline")]
-        [Authorize]
-        public async Task<IActionResult> Offline()
-        {
-            var userName = _httpContextAccessor.HttpContext.User.Identity.Name;
-            await _chatContext.TakeOfflineAsync(new OnlineUser
-            {
-                UserName = userName
-            });
-            // Boardcast all online users
-            await _hubChatContext.Clients.All.Offline(userName);
-            return Ok();
+            return Ok(onlineUser);
         }
     }
 }

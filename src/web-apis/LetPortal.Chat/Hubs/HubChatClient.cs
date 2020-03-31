@@ -6,11 +6,14 @@ using LetPortal.Chat.Entities;
 using LetPortal.Chat.Models;
 using LetPortal.Chat.Repositories.ChatRooms;
 using LetPortal.Chat.Repositories.ChatSessions;
+using LetPortal.Chat.Repositories.ChatUsers;
 using LetPortal.Core.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace LetPortal.Chat.Hubs
 {
+    [Authorize]
     public class HubChatClient : Hub<IHubChatClient>
     {
         private readonly IChatContext _chatContext;
@@ -19,16 +22,20 @@ namespace LetPortal.Chat.Hubs
 
         private readonly IChatSessionRepository _chatSessionRepository;
 
+        private readonly IChatUserRepository _chatUserRepository;
+
         public HubChatClient(
             IChatContext chatContext,
             IChatRoomRepository chatRoomRepository,
-            IChatSessionRepository chatSessionRepository)
+            IChatSessionRepository chatSessionRepository,
+            IChatUserRepository chatUserRepository)
         {
             _chatContext = chatContext;
             _chatRoomRepository = chatRoomRepository;
             _chatSessionRepository = chatSessionRepository;
+            _chatUserRepository = chatUserRepository;
         }
-
+        
         public async Task OpenDoubleChatRoom(Models.OnlineUser invitee)
         {
             // Check this room is existed or not
@@ -162,6 +169,25 @@ namespace LetPortal.Chat.Hubs
             _chatContext.SendMessage(chatSessionId, message);
 
             await Clients.User(receiver).ReceivedMessage(chatSessionId, message);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            // When user closes a browser tab or call stop() connection
+            // we need to ensure to notify all users about offline state
+
+            // This method is a same logic of Offline
+            var isOffline = await _chatContext.TakeOfflineAsync(new OnlineUser
+            {
+                UserName = Context.UserIdentifier
+            });
+
+            if (isOffline)
+            {
+                await Clients.Others.Offline(Context.UserIdentifier);
+            }
+
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }

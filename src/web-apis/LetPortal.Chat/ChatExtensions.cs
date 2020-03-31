@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using LetPortal.Chat.Configurations;
+﻿using LetPortal.Chat.Configurations;
 using LetPortal.Chat.Hubs;
 using LetPortal.Chat.Persistences;
 using LetPortal.Chat.Repositories;
 using LetPortal.Chat.Repositories.ChatRooms;
 using LetPortal.Chat.Repositories.ChatSessions;
+using LetPortal.Chat.Repositories.ChatUsers;
 using LetPortal.Core;
 using LetPortal.Core.Persistences;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace LetPortal.Chat
 {
@@ -32,6 +25,7 @@ namespace LetPortal.Chat
                 MongoDbRegistry.RegisterEntities();
                 builder.Services.AddSingleton<IChatRoomRepository, ChatRoomMongoRepository>();
                 builder.Services.AddSingleton<IChatSessionRepository, ChatSessionMongoRepository>();
+                builder.Services.AddSingleton<IChatUserRepository, ChatUserMongoRepository>();
             }
 
             if (builder.ConnectionType == ConnectionType.PostgreSQL
@@ -41,14 +35,16 @@ namespace LetPortal.Chat
                 builder.Services.AddTransient<ChatDbContext>();
                 builder.Services.AddTransient<IChatRoomRepository, ChatRoomEFRepository>();
                 builder.Services.AddTransient<IChatSessionRepository, ChatSessionEFRepository>();
-            }     
+                builder.Services.AddTransient<IChatUserRepository, ChatUserEFRepository>();
+            }
 
             services.AddTransient(typeof(HubChatClient), serviceProvider =>
             {
                 return new HubChatClient(
-                    serviceProvider.GetRequiredService<IChatContext>(),
-                    serviceProvider.GetRequiredService<IChatRoomRepository>(),
-                    serviceProvider.GetRequiredService<IChatSessionRepository>());
+                    serviceProvider.GetService<IChatContext>(),
+                    serviceProvider.GetService<IChatRoomRepository>(),
+                    serviceProvider.GetService<IChatSessionRepository>(),
+                    serviceProvider.GetService<IChatUserRepository>());
             });
 
             var chatOptions = builder.Configuration.GetSection("ChatOptions").Get<ChatOptions>();

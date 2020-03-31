@@ -1,5 +1,5 @@
 <div class="close-icon" (click)="onClosed()">
-    <mat-icon [inline]="true" (click)="onClosed()">cancel</mat-icon>
+    <mat-icon [inline]="true">cancel</mat-icon>
 </div>
 <div class="row">
     <div class="col-lg-12">
@@ -24,12 +24,13 @@
     </div>
 </form>
 <div *ngIf="isReadyRender else loading"></div>
-<div [hidden]="!isReadyRender">
+<div [hidden]="!isReadyRender" class="scrollable">
     <div class="pt-2 row" *ngFor="let user of onlineUsers$ | async">
-        <div class="col-lg-12 d-flex align-items-end online-user">
-            <div class="w-25">
+        <div class="col-lg-12 d-flex align-items-end online-user" (click)="selectedUser(user)">
+            <div class="w-25" *ngIf="!user.hasAvatar">
                 <div matBadge="&#8288;" matBadgeColor="warn" matBadgePosition="below after" matBadgeSize="small"
-                    class="online rounded-circle tile-icon-revert d-flex align-items-center justify-content-center">
+                    class="rounded-circle tile-icon-revert d-flex align-items-center justify-content-center"
+                    [ngClass]="{'online': user.isOnline, 'offline': !user.isOnline}">
                     {{user.shortName}}
                 </div>
             </div>

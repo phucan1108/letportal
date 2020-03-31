@@ -1,4 +1,14 @@
-.chat-search-box {
+.online > .mat-badge-content.mat-badge-active{
+    background-color: #08976d; 
+    right: -5px;
+    bottom: -5px;
+}
+
+.offline > .mat-badge-content.mat-badge-active{
+    right: -5px;
+    bottom: -5px;
+}
+.chat-box {
     position: fixed;
     bottom: 35px;
     width: 320px;
@@ -9,11 +19,11 @@
     text-align: center;
     z-index: 100;
 }
-.chat-search-box.arrow-right:after {
+.chat-box.arrow-right:after {
     content: " ";
     position: absolute;
     right: -15px;
-    bottom: 15px;
+    bottom: 75px;
     border-top: 15px solid transparent;
     border-right: none;
     border-left: 15px solid rgb(255, 255, 255);

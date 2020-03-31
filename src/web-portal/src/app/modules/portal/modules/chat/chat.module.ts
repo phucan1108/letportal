@@ -5,11 +5,17 @@ import { MatProgressSpinnerModule, MatProgressBarModule, MatToolbarModule, MatBu
 import { ChatHeadComponent } from './components/chat-head/chat-head.component';
 import { ChatSearchComponent } from './components/chat-search/chat-search.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ChatWrapperComponent } from './components/chat-warpper/chat-wrapper.component';
+import { ChatBoxComponent } from './components/chat-box/chat-box.component';
+import { ChatBoxContentComponent } from './components/chat-box-content/chat-box-content.component';
 
 @NgModule({
     declarations: [
         ChatHeadComponent,
-        ChatSearchComponent
+        ChatSearchComponent,
+        ChatWrapperComponent,
+        ChatBoxContentComponent,
+        ChatBoxComponent
     ],
     imports: [ 
         CommonModule,
@@ -35,7 +41,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         MatTooltipModule
      ],
     exports: [
-        ChatHeadComponent
+        ChatWrapperComponent
     ],
     providers: [],
 })
