@@ -107,5 +107,18 @@ namespace LetPortal.Chat
         {
             chatSessions.Add(chatSession);
         }
+
+        public ChatSessionModel GetCurrentChatSession(string chatRoomId)
+        {
+            return chatSessions
+                    .Where(b => b.ChatRoomId == chatRoomId)
+                    .OrderByDescending(a => a.CreatedDate)
+                    .FirstOrDefault();
+        }
+
+        public ChatSessionModel GetChatSession(string chatSessionId)
+        {
+            return chatSessions.FirstOrDefault(a => a.SessionId == chatSessionId);
+        }
     }
 }

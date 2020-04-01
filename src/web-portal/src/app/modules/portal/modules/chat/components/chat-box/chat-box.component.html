@@ -4,5 +4,10 @@
     {{roomShortName}}
 </div>
 <div class="chat-box arrow-right p-3" *ngIf="!isHideChatBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
-    <let-chat-box-content (closed)="onChatBoxClosed()" [chatRoom]="chatRoom"></let-chat-box-content>
+    <div *ngIf="isReadyToDisplayBox else loading">
+        <let-chat-box-content (closed)="onChatBoxClosed()" [chatRoom]="chatRoom"></let-chat-box-content>
+    </div>    
 </div>
+<ng-template #loading>
+    <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
+</ng-template>

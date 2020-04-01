@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { ChatRoom, RoomType, DoubleChatRoom } from '../../models/chat.model';
+import { ChatRoom, RoomType, DoubleChatRoom, ChatOnlineUser } from '../../models/chat.model';
 import { ChatService } from 'services/chat.service';
 import { Subscription, Observable } from 'rxjs';
 import { fadeInRightOnEnterAnimation, fadeOutRightOnLeaveAnimation } from 'angular-animations';
@@ -25,16 +25,18 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     onClickIcon: EventEmitter<boolean> = new EventEmitter()
 
     doubleChatRoom: DoubleChatRoom
-
+    
     hasRoomAvatar = false
     roomShortName: string
     roomName: string
     isOnline = false
     isHideChatBox = false
+    isReadyToDisplayBox = false
 
     offlineSup: Subscription
     onlineSup: Subscription
     hideSup: Subscription
+    chatRoomSup: Subscription
     constructor(
         private chatService: ChatService
     ) { }
@@ -43,7 +45,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         if(this.chatRoom.type === RoomType.Double){
             this.doubleChatRoom = <DoubleChatRoom>this.chatRoom
             this.hasRoomAvatar = this.doubleChatRoom.invitee.hasAvatar
-            this.roomName = this.doubleChatRoom.roomName
+            this.roomName = this.doubleChatRoom.invitee.fullName
             this.roomShortName = this.doubleChatRoom.invitee.shortName
             this.isOnline = this.doubleChatRoom.invitee.isOnline
         }
@@ -63,6 +65,16 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         this.hideSup = this.hide$.subscribe(a => {
             this.isHideChatBox = a
         })
+
+        this.chatService.openDoubleChatRoom(this.doubleChatRoom.invitee)
+        this.chatRoomSup = this.chatService.chatRoom$.subscribe(a => {
+            if(a.type === RoomType.Double && a.participants.some(b => b.userName === this.doubleChatRoom.invitee.userName)){
+                this.doubleChatRoom.chatRoomId = a.chatRoomId
+                this.doubleChatRoom.chatSessions = a.chatSessions
+                this.doubleChatRoom.currentSession = a.currentSession
+                this.isReadyToDisplayBox = true                
+            }
+        })
     }
 
     
@@ -70,6 +82,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         this.offlineSup.unsubscribe()
         this.onlineSup.unsubscribe()
         this.hideSup.unsubscribe()
+        this.chatRoomSup.unsubscribe()
     }
 
     showSearchBox(){

@@ -17,6 +17,8 @@ namespace LetPortal.Chat.Entities
 
         public long Timestamp { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
         [StringLength(1000)]
         public string Message { get; set; }
 

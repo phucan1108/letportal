@@ -3,6 +3,7 @@ import { ChatOnlineUser, ChatRoom, RoomType, DoubleChatRoom } from '../../models
 import { ChatService } from 'services/chat.service';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-chat-wrapper',
@@ -23,33 +24,45 @@ export class ChatWrapperComponent implements OnInit {
 
     ngOnInit(): void { }
 
-    clickedChatUser($event: ChatOnlineUser){
-        this.logger.debug('Selected chat user', $event)  
-        const doubleChatRoom: DoubleChatRoom = {
-            chatRoomId: '',
-            chatSessions: [],
-            currentSession: null,
-            roomName: $event.fullName,
-            participants: [
-                $event,
-                this.chatService.currentUser
-            ],
-            type: RoomType.Double,
-            invitee: $event
+    clickedChatUser($event: ChatOnlineUser) {
+        this.logger.debug('Selected chat user', $event)
+        // Check this room is existed or not
+        const found = this.chatService.chatRooms.find(a => a.type === RoomType.Double && a.participants.some(b => b.userName === $event.userName))
+        if (ObjectUtils.isNotNull(found)) {
+            const doubleChatRoom: DoubleChatRoom = {
+                ...found,
+                invitee: $event
+            }
+            this.chatRoom = doubleChatRoom
+            this.isShowChatBox = true
+            this.hideChatBox$.next(false)
         }
-        this.chatRoom = doubleChatRoom
-        this.isShowChatBox = true         
-        this.chatService.openDoubleChatRoom($event)     
+        else{
+            const doubleChatRoom: DoubleChatRoom = {
+                chatRoomId: '',
+                chatSessions: [],
+                currentSession: null,
+                roomName: $event.fullName,
+                participants: [
+                    $event,
+                    this.chatService.currentUser
+                ],
+                type: RoomType.Double,
+                invitee: $event
+            }
+            this.chatRoom = doubleChatRoom
+            this.isShowChatBox = true
+        }        
     }
 
-    onClickShowSearchBox(isShowSearchBox: boolean){
-        if(isShowSearchBox){
+    onClickShowSearchBox(isShowSearchBox: boolean) {
+        if (isShowSearchBox) {
             this.hideChatBox$.next(true)
         }
     }
 
-    onClickShowChatBox(isShowChatBox: boolean){
-        if(isShowChatBox){
+    onClickShowChatBox(isShowChatBox: boolean) {
+        if (isShowChatBox) {
             this.hideSearchBox$.next(true)
         }
     }

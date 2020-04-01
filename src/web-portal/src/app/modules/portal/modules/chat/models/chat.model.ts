@@ -23,13 +23,23 @@ export interface DoubleChatRoom extends ChatRoom{
 }
 
 export interface ChatSession{
-    chatSessionId: string
-    preSessionId: string
+    sessionId: string
+    chatRoomId: string
+    previousSessionId: string
     nextSessionId: string
     messages: Message[]
 }
 
 export interface Message{
     message: string
+    formattedMessage: string
+    fileUrls: string[]
     userName: string
+    timeStamp: number
+    createdDate: Date
+}
+
+export interface ExtendedMessage extends Message{
+    isReceived: boolean
+    chatSessionId: string
 }

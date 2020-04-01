@@ -10,6 +10,7 @@ using LetPortal.Core.Persistences;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace LetPortal.Chat
 {
@@ -44,7 +45,8 @@ namespace LetPortal.Chat
                     serviceProvider.GetService<IChatContext>(),
                     serviceProvider.GetService<IChatRoomRepository>(),
                     serviceProvider.GetService<IChatSessionRepository>(),
-                    serviceProvider.GetService<IChatUserRepository>());
+                    serviceProvider.GetService<IChatUserRepository>(),
+                    serviceProvider.GetService<IOptionsMonitor<ChatOptions>>());
             });
 
             var chatOptions = builder.Configuration.GetSection("ChatOptions").Get<ChatOptions>();

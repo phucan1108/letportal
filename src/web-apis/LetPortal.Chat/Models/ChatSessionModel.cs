@@ -12,6 +12,8 @@ namespace LetPortal.Chat.Models
 
         public Queue<MessageModel> Messages { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
         public string PreviousSessionId { get; set; }
 
         public string NextSessionId { get; set; }
@@ -28,5 +30,7 @@ namespace LetPortal.Chat.Models
         public IList<string> FileUrls { get; set; }
 
         public long TimeStamp { get; set; }
+
+        public DateTime CreatedDate { get; set; }
     }
 }

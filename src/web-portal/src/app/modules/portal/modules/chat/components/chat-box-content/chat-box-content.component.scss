@@ -11,3 +11,9 @@
     width: 28px;
     height: 28px;
 }
+
+.field-full-width{
+    div.mat-form-field-wrapper{
+        padding-bottom: 5px;
+    }    
+}

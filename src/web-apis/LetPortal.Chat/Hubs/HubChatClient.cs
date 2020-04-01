@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Chat.Configurations;
 using LetPortal.Chat.Entities;
 using LetPortal.Chat.Models;
 using LetPortal.Chat.Repositories.ChatRooms;
@@ -10,6 +11,7 @@ using LetPortal.Chat.Repositories.ChatUsers;
 using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
 
 namespace LetPortal.Chat.Hubs
 {
@@ -24,16 +26,20 @@ namespace LetPortal.Chat.Hubs
 
         private readonly IChatUserRepository _chatUserRepository;
 
+        private readonly IOptionsMonitor<ChatOptions> _chatOptions;
+
         public HubChatClient(
             IChatContext chatContext,
             IChatRoomRepository chatRoomRepository,
             IChatSessionRepository chatSessionRepository,
-            IChatUserRepository chatUserRepository)
+            IChatUserRepository chatUserRepository,
+            IOptionsMonitor<ChatOptions> chatOptions)
         {
             _chatContext = chatContext;
             _chatRoomRepository = chatRoomRepository;
             _chatSessionRepository = chatSessionRepository;
             _chatUserRepository = chatUserRepository;
+            _chatOptions = chatOptions;
         }
         
         public async Task OpenDoubleChatRoom(Models.OnlineUser invitee)
@@ -42,13 +48,13 @@ namespace LetPortal.Chat.Hubs
             var invitor = _chatContext.GetOnlineUser(Context.UserIdentifier);
             var founDoubleRoom = _chatContext.GetDoubleRoom(invitor, invitee);
             string chatRoomId = string.Empty;
+            string chatSessionId = string.Empty;
             bool isExistedOnDb = false;
-            var chatSessionModel = new ChatSessionModel
-            {
-                SessionId = DataUtil.GenerateUniqueId(),
-                Messages = new Queue<MessageModel>()                
-            };
+            bool createNewSession = false;
+            ChatSessionModel chatSessionModel = null;
             ChatSessionModel previousSessionModel = null;
+            ChatRoomModel chatRoomModel = null;
+            
             if(founDoubleRoom == null)
             {
                 // Try to fetch from database
@@ -58,7 +64,7 @@ namespace LetPortal.Chat.Hubs
                         && a.Participants.Any(c => c.Username == invitee.UserName))).FirstOrDefault();
                 if (foundRoomInDb != null)
                 {
-                    _chatContext.LoadDoubleRoom(new Models.ChatRoomModel
+                    chatRoomModel = new Models.ChatRoomModel
                     {
                         ChatRoomId = foundRoomInDb.Id,
                         Participants = new System.Collections.Generic.List<Models.OnlineUser>
@@ -68,7 +74,8 @@ namespace LetPortal.Chat.Hubs
                         },
                         RoomName = invitee.FullName,
                         Type = RoomType.Double
-                    });
+                    };
+                    _chatContext.LoadDoubleRoom(chatRoomModel);
 
                     isExistedOnDb = true;
                     chatRoomId = foundRoomInDb.Id;
@@ -101,7 +108,7 @@ namespace LetPortal.Chat.Hubs
                     };
 
                     await _chatRoomRepository.AddAsync(chatRoom);
-                    _chatContext.LoadDoubleRoom(new Models.ChatRoomModel
+                    chatRoomModel = new Models.ChatRoomModel
                     {
                         ChatRoomId = chatRoom.Id,
                         Participants = new System.Collections.Generic.List<Models.OnlineUser>
@@ -111,13 +118,24 @@ namespace LetPortal.Chat.Hubs
                         },
                         RoomName = invitee.FullName,
                         Type = RoomType.Double
-                    });
+                    };
+                    _chatContext.LoadDoubleRoom(chatRoomModel);
                     chatRoomId = chatRoom.Id;
                 }
             }
             else
             {
                 chatRoomId = founDoubleRoom.ChatRoomId;
+                chatRoomModel = founDoubleRoom;
+                chatSessionModel = _chatContext.GetCurrentChatSession(chatRoomId);
+                if(chatSessionModel == null)
+                {
+                    createNewSession = true;
+                }
+                else if(!string.IsNullOrEmpty(chatSessionModel.PreviousSessionId))
+                {
+                    previousSessionModel = _chatContext.GetChatSession(chatSessionModel.PreviousSessionId);
+                }
             }
 
             if (isExistedOnDb)
@@ -126,49 +144,112 @@ namespace LetPortal.Chat.Hubs
                 var foundLastSession = await _chatSessionRepository.GetLastChatSession(chatRoomId);
                 if(foundLastSession != null)
                 {
-                    previousSessionModel = new ChatSessionModel
+                    // In mind, we only create new chat session when it reaches Threshold
+                    // Or it belongs to previous day
+                    if (foundLastSession.Conversations.Count >= _chatOptions.CurrentValue.ThresholdNumberOfMessages
+                        || foundLastSession.LeaveDate.Date < DateTime.UtcNow.Date)
                     {
-                        ChatRoomId = chatRoomId,
-                        Messages = new Queue<MessageModel>(),
-                        PreviousSessionId = foundLastSession.PreviousSessionId,
-                        NextSessionId = chatSessionModel.SessionId
-                    };
-
-                    if(foundLastSession.Conversations != null)
-                    {
-                        foreach (var message in foundLastSession.Conversations.OrderBy(a => a.Timestamp))
+                        createNewSession = true;
+                        // Load previous session
+                        previousSessionModel = new ChatSessionModel
                         {
-                            previousSessionModel.Messages.Enqueue(new MessageModel
+                            ChatRoomId = chatRoomId,
+                            Messages = new Queue<MessageModel>(),
+                            CreatedDate = foundLastSession.CreatedDate,
+                            PreviousSessionId = foundLastSession.PreviousSessionId
+                        };
+
+                        if (foundLastSession.Conversations != null)
+                        {
+                            foreach (var message in foundLastSession.Conversations.OrderBy(a => a.Timestamp))
                             {
-                                Message = message.Message,
-                                FormattedMessage = message.MessageTransform,
-                                TimeStamp = message.Timestamp,
-                                UserName = message.Username,
-                                FileUrls = message.FileUrl.Split("|")
-                            });
+                                previousSessionModel.Messages.Enqueue(new MessageModel
+                                {
+                                    Message = message.Message,
+                                    FormattedMessage = message.MessageTransform,
+                                    TimeStamp = message.Timestamp,
+                                    UserName = message.Username,
+                                    CreatedDate = message.CreatedDate,
+                                    FileUrls = message.FileUrl.Split("|")
+                                });
+                            }
                         }
+
+                        _chatContext.AddChatRoomSession(previousSessionModel);
                     }
-                    
-                    chatSessionModel.PreviousSessionId = foundLastSession.PreviousSessionId;
-                    _chatContext.AddChatRoomSession(previousSessionModel);
+                    else
+                    {
+                        chatSessionModel = new ChatSessionModel
+                        {
+                            ChatRoomId = chatRoomId,
+                            Messages = new Queue<MessageModel>(),
+                            PreviousSessionId = foundLastSession.PreviousSessionId
+                        };
+
+                        if (foundLastSession.Conversations != null)
+                        {
+                            foreach (var message in foundLastSession.Conversations.OrderBy(a => a.Timestamp))
+                            {
+                                chatSessionModel.Messages.Enqueue(new MessageModel
+                                {
+                                    Message = message.Message,
+                                    FormattedMessage = message.MessageTransform,
+                                    TimeStamp = message.Timestamp,
+                                    UserName = message.Username,
+                                    CreatedDate = message.CreatedDate,
+                                    FileUrls = message.FileUrl.Split("|")
+                                });
+                            }
+                        }
+
+                        _chatContext.AddChatRoomSession(chatSessionModel);
+                    }
+                }
+                else
+                {
+                    createNewSession = true;
                 }
             }
 
-            chatSessionModel.ChatRoomId = chatRoomId;
-            _chatContext.AddChatRoomSession(chatSessionModel);
+            if (createNewSession)
+            {
+                chatSessionModel = new ChatSessionModel
+                {
+                    SessionId = DataUtil.GenerateUniqueId(),
+                    ChatRoomId = chatRoomId,
+                    Messages = new Queue<MessageModel>(),
+                    CreatedDate = DateTime.UtcNow,
+                    PreviousSessionId = previousSessionModel?.SessionId
+                };
+
+                if(previousSessionModel != null)
+                {
+                    previousSessionModel.NextSessionId = chatSessionModel.SessionId;
+                }                 
+                                
+                _chatContext.AddChatRoomSession(chatSessionModel);
+            }
+            
             // Allow target user to prepare a chatroom
-            await Clients.User(invitee.UserName).ReadyDoubleChatRoom(chatSessionModel, invitor, previousSessionModel);
+            await Clients
+                .User(invitee.UserName)
+                .ReadyDoubleChatRoom(chatSessionModel, invitor, previousSessionModel);
 
-            await Clients.Caller.ReadyDoubleChatRoom(chatSessionModel, invitee, previousSessionModel);
-        } 
+            await Clients.Caller.LoadDoubleChatRoom(
+                chatRoomModel,
+                chatSessionModel, 
+                invitee, 
+                previousSessionModel);
+        }
 
-        public async Task SendMessage(string chatSessionId, string receiver, MessageModel message)
+        public async Task SendChatMessage(SendMessageModel model)
         {
             // Centralized timestamp
-            message.TimeStamp = DateTime.UtcNow.Ticks;
-            _chatContext.SendMessage(chatSessionId, message);
+            model.Message.TimeStamp = DateTime.UtcNow.Ticks;
+            model.Message.CreatedDate = DateTime.UtcNow;
+            _chatContext.SendMessage(model.ChatSessionId, model.Message);
 
-            await Clients.User(receiver).ReceivedMessage(chatSessionId, message);
+            await Clients.User(model.Receiver).ReceivedMessage(model.ChatSessionId, model.Message);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)

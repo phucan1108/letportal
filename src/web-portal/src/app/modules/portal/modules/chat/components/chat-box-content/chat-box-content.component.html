@@ -14,48 +14,29 @@
     </div>
 </div>
 <div class="row pt-2">
-    <div class="col-lg-12 scrollable chat-box-content-area">
-        <div class="received_mess w-75 pt-2">
-            <p class="rounded-right mb-1">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem
-                Ipsum has been the
-                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                and
-                scrambled it to make a type specimen book. It has survived not only five centuries, but also the
-                leap
-                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with
-                the
-                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-                publishing
-                software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-            <div class="time-text">
-                {{roomName}} - Friday, 10:00 AM
+    <div class="col-lg-12 scrollable chat-box-content-area" #messageContainer>
+        <ng-container *ngFor="let message of messages$ | async">
+            <div class="w-75 pt-2 d-flex flex-column " [ngClass]="{'received_mess align-items-start': message.isReceived, 'sent_mess align-items-end': !message.isReceived}">
+                <p class="mb-1">
+                    {{message.message}}</p>
+                <div class="time-text">
+                    {{translateTimeText(message)}}
+                </div>
             </div>
-        </div>
-        <div class="sent_mess w-75 pt-2">
-            <p class="rounded-left mb-1">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem
-                Ipsum has been the
-                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                and
-                scrambled it to make a type specimen book. It has survived not only five centuries, but also the
-                leap
-                into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with
-                the
-                release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-                publishing
-                software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-            <div class="time-text">
-                Friday, 10:00 AM
-            </div>
-        </div>
+        </ng-container>        
     </div>
 </div>
-<form [formGroup]="formGroup">
+<form [formGroup]="formGroup" #form="ngForm">
     <div class="row">
         <div class="col-lg-12 pl-3 pr-3">
             <mat-form-field class="field-full-width">
-                <input matInput placeholder="Aa" #textInput formControlName="text" maxlength="250" />
+                <input matInput 
+                    placeholder="Aa" 
+                    #textInput 
+                    formControlName="text" 
+                    maxlength="250"
+                    [errorStateMatcher]="errorMatcher"
+                    autocomplete="off" />
                 <mat-icon matSuffix>
                     mood</mat-icon>
             </mat-form-field>

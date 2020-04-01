@@ -31,6 +31,12 @@ namespace LetPortal.Chat.Hubs
         /// <returns></returns>
         Task ReadyDoubleChatRoom(ChatSessionModel currentChatSession, OnlineUser invitor, ChatSessionModel previousSession = null);
 
+        Task LoadDoubleChatRoom(
+            ChatRoomModel chatRoom,
+            ChatSessionModel chatSession, 
+            OnlineUser invitee, 
+            ChatSessionModel previousSession = null);
+
         Task ReceivedMessage(string chatSessionId, MessageModel message);
     }
 }

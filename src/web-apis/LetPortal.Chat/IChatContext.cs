@@ -28,6 +28,10 @@ namespace LetPortal.Chat
 
         void AddChatRoomSession(ChatSessionModel chatSession);
 
+        ChatSessionModel GetCurrentChatSession(string chatRoomId);
+
+        ChatSessionModel GetChatSession(string chatSessionId);
+
         void SendMessage(string chatSessionId, MessageModel message);
     }
 }
