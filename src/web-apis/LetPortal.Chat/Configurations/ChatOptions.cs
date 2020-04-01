@@ -21,6 +21,6 @@ namespace LetPortal.Chat.Configurations
         /// <summary>
         /// This option will be used to indicate when creating new Chat Session
         /// </summary>
-        public int ThresholdNumberOfMessages { get; set; } = 200;
+        public int ThresholdNumberOfMessages { get; set; } = 10;
     }
 }

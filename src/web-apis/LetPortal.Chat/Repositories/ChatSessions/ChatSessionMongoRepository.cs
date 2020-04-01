@@ -13,6 +13,11 @@ namespace LetPortal.Chat.Repositories.ChatSessions
             Connection = mongoConnection;
         }
 
+        public async Task<ChatSession> GetFullSessionById(string chatSessionId)
+        {
+            return await GetOneAsync(chatSessionId);
+        }
+
         public async Task<ChatSession> GetLastChatSession(string chatRoomId)
         {
             return await Collection.AsQueryable().Where(a => a.ChatRoomId == chatRoomId).OrderByDescending(b => b.CreatedDate).FirstOrDefaultAsync();

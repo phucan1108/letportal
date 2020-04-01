@@ -16,6 +16,14 @@ namespace LetPortal.Chat.Repositories.ChatSessions
             _context = context;
         }
 
+        public async Task<ChatSession> GetFullSessionById(string chatSessionId)
+        {
+            return await _context.ChatSessions
+                            .AsNoTracking()
+                            .Include(b => b.Conversations)
+                            .FirstOrDefaultAsync(a => a.Id == chatSessionId);
+        }
+
         public async Task<ChatSession> GetLastChatSession(string chatRoomId)
         {
             return await _context.ChatSessions

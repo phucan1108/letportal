@@ -1,8 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, Input, ViewChild, HostListener, ViewChildren, QueryList, ElementRef, AfterViewInit, AfterViewChecked } from '@angular/core';
-import { DoubleChatRoom, ChatRoom, RoomType, ExtendedMessage, ChatOnlineUser } from '../../models/chat.model';
+import { Component, OnInit, Output, EventEmitter, Input, ViewChild, HostListener, ViewChildren, QueryList, ElementRef, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
+import { DoubleChatRoom, ChatRoom, RoomType, ExtendedMessage, ChatOnlineUser, ChatSession } from '../../models/chat.model';
 import { FormBuilder, FormGroup, Validators, FormControl, NgForm, FormGroupDirective } from '@angular/forms';
 import { ChatService } from 'services/chat.service';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { FormUtil } from 'app/core/utils/form-util';
 import { ErrorStateMatcher } from '@angular/material';
 import { DateUtils } from 'app/core/utils/date-util';
@@ -18,7 +18,7 @@ export class CustomErrorStateMatcher implements ErrorStateMatcher {
     templateUrl: './chat-box-content.component.html',
     styleUrls: ['./chat-box-content.component.scss']
 })
-export class ChatBoxContentComponent implements OnInit, AfterViewChecked {
+export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
 
     @Input()
     chatRoom: DoubleChatRoom
@@ -34,13 +34,22 @@ export class ChatBoxContentComponent implements OnInit, AfterViewChecked {
 
     currentUser: ChatOnlineUser
 
+    displayShowMore = false
     formGroup: FormGroup
     messages$: BehaviorSubject<ExtendedMessage[]> = new BehaviorSubject([])
-
+    currentChatSession: ChatSession
+    lastChatSession: ChatSession
+    sup: Subscription = new Subscription()
     constructor(
         private chatService: ChatService,
         private fb: FormBuilder
     ) { }
+    ngAfterViewInit(): void {
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight
+    }
+    ngOnDestroy(): void {
+        this.sup.unsubscribe()
+    }
 
     @ViewChild("messageContainer", { static: true }) messageContainer: ElementRef;
 
@@ -48,9 +57,16 @@ export class ChatBoxContentComponent implements OnInit, AfterViewChecked {
     handleEnterPress(event: KeyboardEvent) {
         this.send()
     }
+
+    @HostListener("window:scroll", ['$event'])
+    scrollChat($event) {     
+        if(this.displayShowMore && this.messageContainer.nativeElement.scrollTop === 0){
+            this.chatService.loadMore(this.lastChatSession.previousSessionId)
+        }
+    }
     
     ngAfterViewChecked(): void {
-        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight
+        
     }
 
     ngOnInit(): void {
@@ -60,7 +76,9 @@ export class ChatBoxContentComponent implements OnInit, AfterViewChecked {
         this.formGroup = this.fb.group({
             text: [null, Validators.required]
         })
-
+        
+        this.currentChatSession = this.chatRoom.currentSession
+        this.lastChatSession = this.currentChatSession
         this.currentUser = this.chatService.currentUser
         // Check chat room contains any session
         // Collect all for displaying messages
@@ -77,17 +95,56 @@ export class ChatBoxContentComponent implements OnInit, AfterViewChecked {
                     })
                 }
             })
-
+            if(ObjectUtils.isNotNull(this.currentChatSession.messages)){
+                this.currentChatSession.messages.forEach(m => {
+                    messages.push({
+                        ...m,
+                        isReceived: m.userName !== this.currentUser.userName,
+                        chatSessionId: this.currentChatSession.sessionId
+                    })
+                })
+            }
             this.messages$.next(messages)
         }
+        
+        // Check we can load more session by getting most previous session
+        if(this.chatRoom.chatSessions.length > 0){
+            const mostPreSession = this.chatRoom.chatSessions[this.chatRoom.chatSessions.length - 1]
+            this.displayShowMore = ObjectUtils.isNotNull(mostPreSession.previousSessionId)
+            this.lastChatSession = mostPreSession
+        }
 
-        this.chatService.newMesage$.subscribe(newMessage => {
-            if (newMessage.chatSessionId === this.chatRoom.currentSession.sessionId) {
+        this.sup.add(this.chatService.newMesage$.subscribe(newMessage => {
+            if (newMessage.chatSessionId === this.currentChatSession.sessionId) {
                 const messages = this.messages$.value
                 messages.push(newMessage)
                 this.messages$.next(messages)
             }
-        })
+        }))
+
+        this.sup.add(this.chatService.addNewSession$.subscribe(newSession => {
+            if(newSession.previousSessionId === this.currentChatSession.sessionId){
+                this.currentChatSession = newSession
+            }
+        }))
+
+        this.sup.add(this.chatService.loadPreviousSession$.subscribe(preSession => {
+            if(ObjectUtils.isNotNull(preSession) && ObjectUtils.isNotNull(preSession.messages)){
+                let messages = this.messages$.value
+                preSession.messages.reverse().forEach(m => {
+                    // Push on first queue
+                    messages.unshift({
+                        ...m,
+                        isReceived: m.userName !== this.currentUser.userName,
+                        chatSessionId: preSession.sessionId
+                    })
+                })
+
+                this.messages$.next(messages)
+                this.lastChatSession = preSession
+                this.displayShowMore = ObjectUtils.isNotNull(preSession.previousSessionId)
+            }
+        }))
     }
 
     onClosed() {
@@ -110,10 +167,10 @@ export class ChatBoxContentComponent implements OnInit, AfterViewChecked {
                 userName: this.chatService.currentUser.userName,
                 isReceived: false,
                 createdDate: new Date(),
-                chatSessionId: this.chatRoom.currentSession.sessionId
+                chatSessionId: this.currentChatSession.sessionId
             }
             this.chatService.sendMessage(
-                this.chatRoom.currentSession.sessionId,
+                this.currentChatSession.sessionId,
                 this.chatRoom.invitee.userName,
                 sentMessage,
                 () => {

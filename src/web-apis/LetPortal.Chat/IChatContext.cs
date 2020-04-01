@@ -33,5 +33,7 @@ namespace LetPortal.Chat
         ChatSessionModel GetChatSession(string chatSessionId);
 
         void SendMessage(string chatSessionId, MessageModel message);
+
+        bool WantToAddNewSession(string chatSessionId);
     }
 }

@@ -38,5 +38,9 @@ namespace LetPortal.Chat.Hubs
             ChatSessionModel previousSession = null);
 
         Task ReceivedMessage(string chatSessionId, MessageModel message);
+
+        Task AddNewChatSession(ChatSessionModel chatSession);
+
+        Task AddPreviousSession(ChatSessionModel chatSession);
     }
 }

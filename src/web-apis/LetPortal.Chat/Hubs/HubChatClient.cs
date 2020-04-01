@@ -247,9 +247,81 @@ namespace LetPortal.Chat.Hubs
             // Centralized timestamp
             model.Message.TimeStamp = DateTime.UtcNow.Ticks;
             model.Message.CreatedDate = DateTime.UtcNow;
-            _chatContext.SendMessage(model.ChatSessionId, model.Message);
 
-            await Clients.User(model.Receiver).ReceivedMessage(model.ChatSessionId, model.Message);
+            // We will add new chat session when reaching Threshold or next day
+            if (_chatContext.WantToAddNewSession(model.ChatSessionId))
+            {
+                var currentChatSession = _chatContext.GetChatSession(model.ChatSessionId);
+                var newChatSession = new ChatSessionModel
+                {
+                    ChatRoomId = currentChatSession.ChatRoomId,
+                    CreatedDate = DateTime.UtcNow,
+                    Messages = new Queue<MessageModel>(),
+                    PreviousSessionId = currentChatSession.SessionId,
+                    SessionId = DataUtil.GenerateUniqueId()
+                };
+
+                currentChatSession.NextSessionId = newChatSession.SessionId;
+                _chatContext.AddChatRoomSession(newChatSession);
+
+                await Clients.Caller.AddNewChatSession(newChatSession);
+
+                _chatContext.SendMessage(newChatSession.SessionId, model.Message);
+
+                await Clients.User(model.Receiver).AddNewChatSession(newChatSession);
+
+                await Clients.User(model.Receiver).ReceivedMessage(newChatSession.SessionId, model.Message);
+            }
+            else
+            {
+                _chatContext.SendMessage(model.ChatSessionId, model.Message);
+
+                await Clients.User(model.Receiver).ReceivedMessage(model.ChatSessionId, model.Message);
+            }
+            
+        }
+
+        public async Task LoadPrevious(string previousSessionId)
+        {
+            // Check if it stayed on ChatContext
+            var foundSession = _chatContext.GetChatSession(previousSessionId);
+            if(foundSession != null)
+            {
+                await Clients.Caller.AddPreviousSession(foundSession);
+            }
+            else
+            {
+                // Find in Db
+                var entityChatSession = await _chatSessionRepository.GetOneAsync(previousSessionId);
+                var preChatSessionModel = new ChatSessionModel
+                {
+                    ChatRoomId = entityChatSession.ChatRoomId,
+                    CreatedDate = entityChatSession.CreatedDate,
+                    NextSessionId = entityChatSession.NextSessionId,
+                    PreviousSessionId = entityChatSession.PreviousSessionId,
+                    Messages = new Queue<MessageModel>(),
+                    SessionId = entityChatSession.Id
+                };
+
+                if(entityChatSession.Conversations != null)
+                {
+                    foreach (var message in entityChatSession.Conversations.OrderBy(a => a.Timestamp))
+                    {
+                        preChatSessionModel.Messages.Enqueue(new MessageModel
+                        {
+                            Message = message.Message,
+                            FormattedMessage = message.MessageTransform,
+                            TimeStamp = message.Timestamp,
+                            UserName = message.Username,
+                            CreatedDate = message.CreatedDate,
+                            FileUrls = message.FileUrl.Split("|")
+                        });
+                    }
+                }
+
+                _chatContext.AddChatRoomSession(preChatSessionModel);
+                await Clients.Caller.AddPreviousSession(preChatSessionModel);
+            }
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)

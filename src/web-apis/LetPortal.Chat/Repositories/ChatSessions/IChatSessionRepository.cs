@@ -10,5 +10,7 @@ namespace LetPortal.Chat.Repositories.ChatSessions
     public interface IChatSessionRepository : IGenericRepository<ChatSession>
     {
         Task<ChatSession> GetLastChatSession(string chatRoomId);
+
+        Task<ChatSession> GetFullSessionById(string chatSessionId);
     }
 }

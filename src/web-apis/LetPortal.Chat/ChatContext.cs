@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Chat.Configurations;
@@ -119,6 +120,15 @@ namespace LetPortal.Chat
         public ChatSessionModel GetChatSession(string chatSessionId)
         {
             return chatSessions.FirstOrDefault(a => a.SessionId == chatSessionId);
+        }
+
+        public bool WantToAddNewSession(string chatSessionId)
+        {
+            return chatSessions.Any(a => 
+                    a.SessionId == chatSessionId 
+                    && (
+                        (a.Messages != null && a.Messages.Count >= _options.CurrentValue.ThresholdNumberOfMessages)
+                        || a.CreatedDate.Date < DateTime.UtcNow.Date));
         }
     }
 }

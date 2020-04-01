@@ -22,7 +22,10 @@ export class ChatService {
     offlineUser$: Subject<OnlineUser> = new Subject()
 
     chatRoom$: Subject<ChatRoom> = new Subject()
+    addNewSession$: Subject<ChatSession> = new Subject()
     newMesage$: Subject<ExtendedMessage> = new Subject()
+    loadPreviousSession$: Subject<ChatSession> = new Subject()
+
     currentUser: ChatOnlineUser
     constructor(
         private security: SecurityService,
@@ -42,6 +45,8 @@ export class ChatService {
         this.listenOfflineUser()
         this.listenLoadDoubleChatRoom()
         this.listenReceivedDoubleChatRoom()
+        this.listenAddNewChatSession()
+        this.listenLoadPrevious()
     }
 
     public stop() {
@@ -79,7 +84,7 @@ export class ChatService {
                     const availableUsers = this.onlineUsers$.value
                     if (ObjectUtils.isNotNull(res)) {
                         res.forEach(a => {
-                            const found = availableUsers.find(b => b.userName === a.userName && b.userName != this.security.getAuthUser().username)
+                            const found = availableUsers.find(b => b.userName === a.userName)
                             if (ObjectUtils.isNotNull(found)) {
                                 found.isOnline = true
                             }
@@ -145,6 +150,26 @@ export class ChatService {
             })
     }
 
+    public loadMore(previousChatSessionId: string, 
+            onSuccess: () => void = null, 
+            onError: (err: any) => void = null){
+        this.hubConnection
+            .send('loadPrevious', previousChatSessionId)
+            .then(onSuccess)
+            .catch(onError)
+    }
+    private listenAddNewChatSession(){
+        this.hubConnection.on('addNewChatSession', (chatSession: ChatSession) => {
+            let foundChatRoom = this.chatRooms.find(a => a.currentSession.sessionId === chatSession.previousSessionId)
+            let currentChatSession = foundChatRoom.currentSession
+            currentChatSession.nextSessionId = chatSession.sessionId
+            foundChatRoom.chatSessions.push(currentChatSession)
+            foundChatRoom.currentSession = chatSession
+
+            this.addNewSession$.next(chatSession)
+        })
+    }
+
     private listenReceivedDoubleChatRoom(){
         this.hubConnection.on('receivedMessage', (chatSessionId: string, message: Message) => {
             // Add to current chat room for reload
@@ -174,14 +199,22 @@ export class ChatService {
                 chatRoom.chatSessions = []
                 if (ObjectUtils.isNotNull(previousSession)) {
                     chatRoom.chatSessions.push(previousSession)
-                }
-                chatRoom.chatSessions.push(chatSession)
+                }                
                 chatRoom.currentSession = chatSession
                 this.chatRooms.push(chatRoom)
-
-
                 this.chatRoom$.next(chatRoom)
             }
+        })
+    }
+
+    private listenLoadPrevious(){
+        this.hubConnection.on('addPreviousSession', (chatSession: ChatSession) => {
+            if(ObjectUtils.isNotNull(chatSession)){
+                // Push on first of chat room's sessions
+                const chatRoom = this.chatRooms.find(a => a.chatRoomId === chatSession.chatRoomId)
+                chatRoom.chatSessions.unshift(chatSession)
+                this.loadPreviousSession$.next(chatSession)
+            }            
         })
     }
 

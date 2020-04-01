@@ -14,7 +14,12 @@
     </div>
 </div>
 <div class="row pt-2">
-    <div class="col-lg-12 scrollable chat-box-content-area" #messageContainer>
+    <div class="col-lg-12 scrollable chat-box-content-area" #messageContainer (scroll)="scrollChat($event)">
+        <div class="w-100" *ngIf="displayShowMore">
+            <div class="d-flex justify-content-center">
+                <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
+            </div>
+        </div>
         <ng-container *ngFor="let message of messages$ | async">
             <div class="w-75 pt-2 d-flex flex-column " [ngClass]="{'received_mess align-items-start': message.isReceived, 'sent_mess align-items-end': !message.isReceived}">
                 <p class="mb-1">
