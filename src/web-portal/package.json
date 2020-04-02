@@ -56,6 +56,7 @@
     "ngx-bootstrap": "^3.2.0",
     "ngx-clipboard": "^12.2.0",
     "ngx-custom-validators": "^7.0.0",
+    "ngx-emoji-picker": "0.0.2",
     "ngx-highlightjs": "^3.0.3",
     "ngx-logger": "^3.3.12",
     "ngx-markdown": "^8.2.2",

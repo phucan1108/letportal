@@ -8,6 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ChatWrapperComponent } from './components/chat-warpper/chat-wrapper.component';
 import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 import { ChatBoxContentComponent } from './components/chat-box-content/chat-box-content.component';
+import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { ChatBoxContentComponent } from './components/chat-box-content/chat-box-
     imports: [ 
         CommonModule,
         ReactiveFormsModule,
+        NgxEmojiPickerModule,
         MatInputModule,
 		MatFormFieldModule,
         MatProgressButtonsModule,
