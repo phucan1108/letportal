@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, HostListener, ViewChildren, QueryList, ElementRef, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
-import { DoubleChatRoom, ChatRoom, RoomType, ExtendedMessage, ChatOnlineUser, ChatSession } from '../../models/chat.model';
+import { DoubleChatRoom, ChatRoom, RoomType, ExtendedMessage, ChatOnlineUser, ChatSession } from '../../../../../../core/models/chat.model';
 import { FormBuilder, FormGroup, Validators, FormControl, NgForm, FormGroupDirective } from '@angular/forms';
 import { ChatService } from 'services/chat.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
@@ -9,7 +9,13 @@ import { DateUtils } from 'app/core/utils/date-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { EmojiEvent } from 'ngx-emoji-picker';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, filter, map } from 'rxjs/operators';
+import { Store, Select, Actions, ofActionSuccessful } from '@ngxs/store';
+import { SentMessage, ReceivedMessage, LoadingMoreSession, AddedNewSession, ReceivedMessageFromAnotherDevice, ToggleOpenChatRoom } from 'stores/chats/chats.actions';
+import { CHAT_STATE_TOKEN, ChatStateModel } from 'stores/chats/chats.state';
+import { NGXLogger } from 'ngx-logger';
+import StringUtils from 'app/core/utils/string-util';
+import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
 
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
@@ -35,25 +41,26 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     roomName: string
     roomShortName: string
     hasAvatar: boolean
-
     currentUser: ChatOnlineUser
-
     displayShowMore = false
     formGroup: FormGroup
-    messages$: BehaviorSubject<ExtendedMessage[]> = new BehaviorSubject([])
-    currentChatSession: ChatSession
-    lastChatSession: ChatSession
+    messages$: Observable<ExtendedMessage[]>
+    currentChatSession: ChatSession   
+
     sup: Subscription = new Subscription()
 
     heightChatContent = 280
-
+    lastSentHashCode: string // Use this var for tracking who channel is sending last message
+    connectionState = true
     constructor(
+        private logger: NGXLogger,
+        private actions$: Actions,
+        private store: Store,
         private chatService: ChatService,
         private fb: FormBuilder
     ) { }
     ngAfterViewInit(): void {
-        // Make sure scroll bottom when init
-        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight
+        this.scrollToBottom()
     }
     ngOnDestroy(): void {
         this.sup.unsubscribe()
@@ -61,20 +68,20 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
 
     @ViewChild("messageContainer", { static: true }) messageContainer: ElementRef;
     @ViewChild("textInput", { static: false }) textInput: ElementRef
-    @ViewChild("formFieldWarpper", {static: true}) formFieldWarpper: ElementRef
+    @ViewChild("formFieldWarpper", { static: true }) formFieldWarpper: ElementRef
     @HostListener('window:keydown.enter', ['$event'])
     handleEnterPress(event: KeyboardEvent) {
         this.send()
     }
     lastHeight = 18
 
-    onKeydown($event: KeyboardEvent){
+    onKeydown($event: KeyboardEvent) {
         $event.preventDefault()
     }
     @HostListener("window:scroll", ['$event'])
     scrollChat($event) {
         if (this.displayShowMore && this.messageContainer.nativeElement.scrollTop === 0) {
-            this.chatService.loadMore(this.lastChatSession.previousSessionId)
+            this.store.dispatch(new LoadingMoreSession())
             // Keep scroll down a little bit for adding more message
             this.messageContainer.nativeElement.scrollTop = 20
         }
@@ -91,10 +98,16 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         this.formGroup = this.fb.group({
             text: [null, Validators.required]
         })
-
-        this.currentChatSession = this.chatRoom.currentSession
-        this.lastChatSession = this.currentChatSession
-        this.currentUser = this.chatService.currentUser
+        this.sup.add(this.chatService.connectionState$.pipe(
+            tap(
+                connectionState => {
+                    this.logger.debug('Current connection state', connectionState)
+                    this.connectionState = connectionState
+                }
+            )
+        ).subscribe())
+        this.currentUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).currentUser
+        this.currentChatSession = this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession
         // Check chat room contains any session
         // Collect all for displaying messages        
         let messages: ExtendedMessage[] = []
@@ -110,7 +123,6 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                     })
                 }
             })
-
         }
 
         if (ObjectUtils.isNotNull(this.currentChatSession.messages)) {
@@ -122,64 +134,89 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                 })
             })
         }
-        this.messages$.next(messages)
 
         // Check we can load more session by getting most previous session
-        if (this.chatRoom.chatSessions.length > 0) {
-            const mostPreSession = this.chatRoom.chatSessions[this.chatRoom.chatSessions.length - 1]
-            this.displayShowMore = ObjectUtils.isNotNull(mostPreSession.previousSessionId)
-            this.lastChatSession = mostPreSession
-        }
+        this.displayShowMore = ObjectUtils.isNotNull(this.currentChatSession.previousSessionId)
 
-        this.sup.add(this.chatService.newMesage$.subscribe(newMessage => {
-            if (newMessage.chatSessionId === this.currentChatSession.sessionId) {
-                const messages = this.messages$.value
-                messages.push(newMessage)
-                this.messages$.next(messages)
-            }
-        }))
+        this.messages$ = this.store.select(CHAT_STATE_TOKEN).pipe(
+            filter(state => state.activeChatSession.sessionId === this.currentChatSession.sessionId),
+            tap(
+                state => {
+                    this.displayShowMore = ObjectUtils.isNotNull(state.activeChatSession.previousSessionId)
+                    this.currentChatSession = {
+                        ...state.activeChatSession
+                    }
+                }
+            ),
+            map(state => state.activeChatSession.messages)
+        )
 
-        this.sup.add(this.chatService.addNewSession$.subscribe(newSession => {
-            if (newSession.previousSessionId === this.currentChatSession.sessionId) {
-                this.currentChatSession = newSession
-            }
-        }))
+        this.sup.add(
+            this.actions$.pipe(
+                ofActionSuccessful(AddedNewSession)
+            ).subscribe(
+                () => {
+                    this.currentChatSession = {
+                        ...this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession
+                    }
+                }
+            )
+        )
 
-        this.sup.add(this.chatService.loadPreviousSession$.subscribe(preSession => {
-            if (ObjectUtils.isNotNull(preSession) && ObjectUtils.isNotNull(preSession.messages)) {
-                let messages = this.messages$.value
-                preSession.messages.reverse().forEach(m => {
-                    // Push on first queue
-                    messages.unshift({
-                        ...m,
-                        isReceived: m.userName !== this.currentUser.userName,
-                        chatSessionId: preSession.sessionId
-                    })
-                })
+        this.sup.add(
+            this.actions$.pipe(
+                ofActionSuccessful(ReceivedMessage)
+            ).subscribe(
+                () => {
+                    setTimeout(() => {
+                        this.scrollToBottom()
+                    }, 300) 
+                }
+            )
+        )
 
-                this.messages$.next(messages)
-                this.lastChatSession = preSession
-                this.displayShowMore = ObjectUtils.isNotNull(preSession.previousSessionId)
-            }
-        }))
+        this.sup.add(
+            this.actions$.pipe(
+                ofActionSuccessful(SentMessage)
+            ).subscribe(
+                () => {
+                    setTimeout(() => {
+                        this.scrollToBottom()
+                    }, 300) 
+                }
+            )
+        )
 
-        this.formGroup.controls.text.valueChanges.pipe(
+        this.sup.add(
+            this.actions$.pipe(
+                ofActionSuccessful(ReceivedMessageFromAnotherDevice)
+            ).subscribe(
+                () => {
+                    setTimeout(() => {
+                        this.scrollToBottom()
+                    }, 300) 
+                }
+            )
+        )
+
+        this.sup.add(this.formGroup.controls.text.valueChanges.pipe(
             debounceTime(100),
             distinctUntilChanged(),
             tap(newValue => {
-                if(this.lastHeight < this.textInput.nativeElement.offsetHeight){
+                if (this.lastHeight < this.textInput.nativeElement.offsetHeight) {
                     this.heightChatContent -= 18
                 }
-                else if(this.lastHeight > this.textInput.nativeElement.offsetHeight){
+                else if (this.lastHeight > this.textInput.nativeElement.offsetHeight) {
                     this.heightChatContent += 18
                 }
 
                 this.lastHeight = this.textInput.nativeElement.offsetHeight
             })
-        ).subscribe()
+        ).subscribe())
     }
 
-    onClosed() {
+    onClosed() {        
+        this.store.dispatch(new ToggleOpenChatRoom(false))
         this.closed.emit()
     }
 
@@ -192,27 +229,35 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         if (this.formGroup.valid) {
             const formValues = this.formGroup.value
             const sentMessage: ExtendedMessage = {
-                message: formValues.text,
+                message: this.translateEmotionShortcuts(formValues.text),
                 formattedMessage: formValues.text,
                 fileUrls: [],
                 timeStamp: 0,
-                userName: this.chatService.currentUser.userName,
+                userName: this.currentUser.userName,
                 isReceived: false,
                 createdDate: new Date(),
                 chatSessionId: this.currentChatSession.sessionId
             }
+            sentMessage.formattedMessage = sentMessage.message
+
+            this.lastSentHashCode = StringUtils.b64EncodeUnicode(sentMessage.message + (new Date()).getUTCMilliseconds().toString())
             this.chatService.sendMessage(
+                this.chatRoom.chatRoomId,
                 this.currentChatSession.sessionId,
                 this.chatRoom.invitee.userName,
                 sentMessage,
+                this.lastSentHashCode,
                 () => {
-
-                    const messages = this.messages$.value
-                    messages.push(sentMessage)
-                    this.messages$.next(messages)
+                    this.store.dispatch(new SentMessage({
+                        chatRoomId: this.chatRoom.chatRoomId,
+                        chatSessionId: this.currentChatSession.sessionId,
+                        message: sentMessage,
+                        receiver: this.chatRoom.invitee.userName,
+                        lastSentHashCode: this.lastSentHashCode
+                    }))
                     this.formGroup.controls.text.setValue(null)
                     this.form.resetForm()
-                    
+
                     // Reset textarea
                     this.autosize.reset()
                     this.lastHeight = 18
@@ -224,5 +269,17 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     emotionPicked($event: EmojiEvent) {
         this.formGroup.controls.text.setValue(
             (this.formGroup.controls.text.value ? this.formGroup.controls.text.value : '') + $event.char)
+    }
+
+    private scrollToBottom(){
+        this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight
+    }
+
+    private translateEmotionShortcuts(message: string){
+        EMOTION_SHORTCUTS.forEach(key => {
+            message = message.replace(key.key, key.unicode)
+        })
+
+        return message
     }
 }

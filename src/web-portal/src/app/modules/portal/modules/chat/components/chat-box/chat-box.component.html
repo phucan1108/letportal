@@ -1,13 +1,14 @@
-<div class="chat-box-head d-flex align-items-center justify-content-center" [matTooltip]="roomName"
-    [matTooltipPosition]="'left'" (click)="showSearchBox()" matBadge="&#8288;" matBadgeColor="warn"
-    matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': isOnline, 'offline': !isOnline}">
-    {{roomShortName}}
+<div [attr.class]="overrideHeadClass">
+    <div class="chat-box-head d-flex align-items-center justify-content-center" [matTooltip]="roomName"
+        [matTooltipPosition]="'left'" (click)="showChatBoxContent()" matBadge="&#8288;" matBadgeColor="warn"
+        matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': isOnline, 'offline': !isOnline}">
+        {{roomShortName}}
+
+        <div class="overlay-notified-status" *ngIf="counterIncomingMessage > 0" matBadgePosition="above after" matBadgeSize="small" [matBadge]="counterIncomingMessage" matBadgeColor="warn">
+        </div>
+    </div>
 </div>
-<div class="chat-box arrow-right p-3" *ngIf="!isHideChatBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
-    <div *ngIf="isReadyToDisplayBox else loading">
-        <let-chat-box-content (closed)="onChatBoxClosed()" [chatRoom]="chatRoom"></let-chat-box-content>
-    </div>    
+
+<div [attr.class]="overrideDialogClass" *ngIf="showChatBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
+    <let-chat-box-content (closed)="onChatBoxClosed()" [chatRoom]="chatRoom"></let-chat-box-content>
 </div>
-<ng-template #loading>
-    <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
-</ng-template>

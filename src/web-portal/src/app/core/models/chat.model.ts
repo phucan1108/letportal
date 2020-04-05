@@ -10,7 +10,7 @@ export interface ChatRoom{
     type: RoomType
     participants: ChatOnlineUser[]
     chatSessions: ChatSession[]
-    currentSession: ChatSession    
+    currentSession: ChatSession 
 }
 
 export enum RoomType{
@@ -25,9 +25,9 @@ export interface DoubleChatRoom extends ChatRoom{
 export interface ChatSession{
     sessionId: string
     chatRoomId: string
+    messages: ExtendedMessage[]
     previousSessionId: string
     nextSessionId: string
-    messages: Message[]
 }
 
 export interface Message{

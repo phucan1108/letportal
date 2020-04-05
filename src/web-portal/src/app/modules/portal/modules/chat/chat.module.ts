@@ -9,6 +9,9 @@ import { ChatWrapperComponent } from './components/chat-warpper/chat-wrapper.com
 import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 import { ChatBoxContentComponent } from './components/chat-box-content/chat-box-content.component';
 import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
+import { ChatBoxWrapperComponent } from './components/chat-box-wrapper/chat-box-wrapper.component';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsStoreModule } from 'app/core/store.module';
 
 @NgModule({
     declarations: [
@@ -16,7 +19,8 @@ import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
         ChatSearchComponent,
         ChatWrapperComponent,
         ChatBoxContentComponent,
-        ChatBoxComponent
+        ChatBoxComponent,
+        ChatBoxWrapperComponent
     ],
     imports: [ 
         CommonModule,

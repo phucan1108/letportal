@@ -29,7 +29,11 @@ namespace LetPortal.Chat.Hubs
         /// <param name="invitor"></param>
         /// <param name="previousSession"></param>
         /// <returns></returns>
-        Task ReadyDoubleChatRoom(ChatSessionModel currentChatSession, OnlineUser invitor, ChatSessionModel previousSession = null);
+        Task ReadyDoubleChatRoom(
+            ChatRoomModel chatRoom,
+            ChatSessionModel currentChatSession, 
+            OnlineUser invitor, 
+            ChatSessionModel previousSession = null);
 
         Task LoadDoubleChatRoom(
             ChatRoomModel chatRoom,
@@ -37,7 +41,9 @@ namespace LetPortal.Chat.Hubs
             OnlineUser invitee, 
             ChatSessionModel previousSession = null);
 
-        Task ReceivedMessage(string chatSessionId, MessageModel message);
+        Task ReceivedMessage(string chatRoomId, string chatSessionId, MessageModel message);
+
+        Task BoardcastSentMessage(string chatRoomId, string chatSessionId, string lastSentHashCode, MessageModel message);
 
         Task AddNewChatSession(ChatSessionModel chatSession);
 

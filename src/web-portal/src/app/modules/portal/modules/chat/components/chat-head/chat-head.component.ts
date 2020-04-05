@@ -1,7 +1,10 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { fadeInOnEnterAnimation, fadeOutOnLeaveAnimation, fadeInUpOnEnterAnimation, fadeOutDownOnLeaveAnimation, fadeInRightOnEnterAnimation, fadeInLeftOnEnterAnimation, fadeOutRightOnLeaveAnimation } from 'angular-animations';
-import { ChatOnlineUser } from '../../models/chat.model';
+import { ChatOnlineUser } from '../../../../../../core/models/chat.model';
 import { Observable, Subscription } from 'rxjs';
+import { Store, Actions, ofActionCompleted, ofActionDispatched } from '@ngxs/store';
+import { ActiveChatSearchBox, ClickedOnChatUser, ActiveDoubleChatRoom } from 'stores/chats/chats.actions';
+import { ChatStateModel } from 'stores/chats/chats.state';
 
 @Component({
     selector: 'let-chat-head',
@@ -16,36 +19,42 @@ export class ChatHeadComponent implements OnInit {
 
     showChatBadge = false
     isShowSearchBox = false
+    currentUser: ChatOnlineUser
+    sup: Subscription = new Subscription()
+    constructor(
+        private store: Store,
+        private actions$: Actions
+    ) { }
 
-    @Input()
-    hide$: Observable<boolean>
+    ngOnInit(): void {         
+        this.sup.add(this.actions$.pipe(
+            ofActionCompleted(ActiveChatSearchBox)
+        ).subscribe(
+            res => {
+                this.isShowSearchBox = true
+            }
+        ))
 
-    @Output()
-    onClickChatUser: EventEmitter<ChatOnlineUser> = new EventEmitter()
-
-    @Output()
-    onClickIcon: EventEmitter<boolean> = new EventEmitter()
-
-    hideSup: Subscription
-    constructor() { }
-
-    ngOnInit(): void { 
-        this.hideSup = this.hide$.subscribe(res =>{
-            this.isShowSearchBox = false
-        })
+        this.sup.add(this.actions$.pipe(
+            ofActionCompleted(ActiveDoubleChatRoom)
+        ).subscribe(
+            () => {
+                this.isShowSearchBox = false
+            }
+        ))
     }
 
     showSearchBox() {
-        this.isShowSearchBox = !this.isShowSearchBox
-        this.onClickIcon.emit(this.isShowSearchBox)
+        this.store.dispatch(new ActiveChatSearchBox())
     }
 
     onSearchBoxClosed(){
-        this.isShowSearchBox = !this.isShowSearchBox
+        this.isShowSearchBox = false
     }
 
-    clickedChatUser($event: ChatOnlineUser){
-        this.isShowSearchBox = false
-        this.onClickChatUser.emit($event)        
+    clickedChatUser($event: ChatOnlineUser){        
+        this.store.dispatch(new ClickedOnChatUser({
+            inviee: $event
+        }))
     }
 }

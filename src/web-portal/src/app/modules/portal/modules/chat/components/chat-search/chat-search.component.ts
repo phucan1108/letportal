@@ -1,44 +1,50 @@
-import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { ChatOnlineUser } from '../../models/chat.model';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { ChatOnlineUser } from '../../../../../../core/models/chat.model';
 import { debounce, distinctUntilChanged, debounceTime, tap } from 'rxjs/operators';
 import { ChatService } from 'services/chat.service';
 import { NGXLogger } from 'ngx-logger';
+import { Store, Actions } from '@ngxs/store';
+import { ClickedOnChatUser } from 'stores/chats/chats.actions';
 
 @Component({
     selector: 'let-chat-search',
     templateUrl: './chat-search.component.html',
     styleUrls: ['./chat-search.component.scss']
 })
-export class ChatSearchComponent implements OnInit {
+export class ChatSearchComponent implements OnInit, OnDestroy {
     @Output()
-    closed: EventEmitter<any> = new EventEmitter<any>()
-
-    @Output()
-    onClickChatUser: EventEmitter<any> = new EventEmitter()
+    closed: EventEmitter<any> = new EventEmitter()
 
     onlineUsers$: BehaviorSubject<ChatOnlineUser[]> = new BehaviorSubject([])
     searchBoxForm: FormGroup
     isReadyRender: boolean = true
-
+    sup: Subscription = new Subscription()
+    connectionState = true
     constructor(
+        private store: Store,
+        private actions$: Actions,
         private logger: NGXLogger,
         private chatService: ChatService,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef
     ) { }
-
+    
     ngOnInit(): void { 
         this.searchBoxForm = this.fb.group({
             userFullName: ['', [ Validators.required, Validators.maxLength(250)]]
         });
-
+        this.sup.add(this.chatService.connectionState$.pipe(
+            tap(
+                connectionState => {
+                    this.logger.debug('Current connection state', connectionState)
+                    this.connectionState = connectionState
+                }
+            )
+        ).subscribe())
         this.onlineUsers$ = this.chatService.onlineUsers$
-        this.chatService.getAllAvailableUsers()
-        this.chatService.onlineUsers()
-
-        this.searchBoxForm.get('userFullName').valueChanges.pipe(
+        this.sup.add(this.searchBoxForm.get('userFullName').valueChanges.pipe(
             debounceTime(500),
             distinctUntilChanged(),
             tap(
@@ -52,7 +58,11 @@ export class ChatSearchComponent implements OnInit {
                     },500)                    
                 }
             )
-        ).subscribe()
+        ).subscribe())
+    }
+
+    ngOnDestroy(): void {
+       this.sup.unsubscribe()
     }
 
     onClosed(){
@@ -60,7 +70,8 @@ export class ChatSearchComponent implements OnInit {
     }
 
     selectedUser(user: ChatOnlineUser){
-        this.logger.debug('On clicking user', user)
-        this.onClickChatUser.emit(user)
+        this.store.dispatch(new ClickedOnChatUser({
+            inviee: user
+        }))
     }
 }

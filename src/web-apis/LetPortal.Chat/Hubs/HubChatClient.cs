@@ -233,7 +233,11 @@ namespace LetPortal.Chat.Hubs
             // Allow target user to prepare a chatroom
             await Clients
                 .User(invitee.UserName)
-                .ReadyDoubleChatRoom(chatSessionModel, invitor, previousSessionModel);
+                .ReadyDoubleChatRoom(
+                    chatRoomModel, 
+                    chatSessionModel, 
+                    invitor, 
+                    previousSessionModel);
 
             await Clients.Caller.LoadDoubleChatRoom(
                 chatRoomModel,
@@ -265,18 +269,22 @@ namespace LetPortal.Chat.Hubs
                 _chatContext.AddChatRoomSession(newChatSession);
 
                 await Clients.Caller.AddNewChatSession(newChatSession);
-
+                                
                 _chatContext.SendMessage(newChatSession.SessionId, model.Message);
 
                 await Clients.User(model.Receiver).AddNewChatSession(newChatSession);
 
-                await Clients.User(model.Receiver).ReceivedMessage(newChatSession.SessionId, model.Message);
+                await Clients.User(Context.UserIdentifier).BoardcastSentMessage(newChatSession.ChatRoomId, newChatSession.SessionId, model.LastSentHashCode, model.Message);
+                await Clients.User(model.Receiver).ReceivedMessage(currentChatSession.ChatRoomId, newChatSession.SessionId, model.Message);
             }
             else
             {
                 _chatContext.SendMessage(model.ChatSessionId, model.Message);
 
-                await Clients.User(model.Receiver).ReceivedMessage(model.ChatSessionId, model.Message);
+                await Clients.User(Context.UserIdentifier).BoardcastSentMessage(model.ChatRoomId, model.ChatSessionId, model.LastSentHashCode, model.Message);
+
+                await Clients.User(model.Receiver)
+                    .ReceivedMessage(model.ChatRoomId, model.ChatSessionId, model.Message);
             }
             
         }

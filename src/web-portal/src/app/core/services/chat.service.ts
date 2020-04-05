@@ -6,51 +6,74 @@ import { mergeMap, tap, catchError } from 'rxjs/operators';
 import { ObjectUtils } from '../utils/object-util';
 import { NGXLogger } from 'ngx-logger';
 import { SecurityService } from '../security/security.service';
-import { ChatOnlineUser, ChatSession, ChatRoom, RoomType, Message, ExtendedMessage } from 'portal/modules/chat/models/chat.model';
+import { ChatOnlineUser, ChatSession, ChatRoom, RoomType, Message, ExtendedMessage, DoubleChatRoom } from 'app/core/models/chat.model';
+import { Store, Actions, ofActionDispatched, ofActionCompleted } from '@ngxs/store';
+import { TakeUserOnline, FetchedNewDoubleChatRoom, FetchDoubleChatRoom, ReceivedMessage, LoadingMoreSession, LoadedMoreSession, AddedNewSession, ReceivedMessageFromAnotherDevice } from 'stores/chats/chats.actions';
+import { ChatStateModel, CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
+import { on } from 'cluster';
 export const CHAT_BASE_URL = new InjectionToken<string>('CHAT_BASE_URL');
 @Injectable()
 export class ChatService {
-    private hubConnection: HubConnection;
-    private baseUrl: string;
-    private http: HttpClient;
-    private connectionState$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private hubConnection: HubConnection
+    private baseUrl: string
+    private http: HttpClient
 
-    private maxChatRoom: number = 5
-    chatRooms: ChatRoom[] = []
-    onlineUsers$: BehaviorSubject<OnlineUser[]> = new BehaviorSubject([]);
+    connectionState$: BehaviorSubject<boolean> = new BehaviorSubject(false)
+    onlineUsers$: BehaviorSubject<OnlineUser[]> = new BehaviorSubject([])
     onlineUser$: Subject<OnlineUser> = new Subject()
     offlineUser$: Subject<OnlineUser> = new Subject()
 
-    chatRoom$: Subject<ChatRoom> = new Subject()
-    addNewSession$: Subject<ChatSession> = new Subject()
-    newMesage$: Subject<ExtendedMessage> = new Subject()
-    loadPreviousSession$: Subject<ChatSession> = new Subject()
-
-    currentUser: ChatOnlineUser
     constructor(
+        private actions$: Actions,
+        private store: Store,
         private security: SecurityService,
         private logger: NGXLogger,
         @Inject(HttpClient) http: HttpClient,
         @Optional() @Inject(CHAT_BASE_URL) baseUrl?: string) {
         this.baseUrl = baseUrl ? baseUrl : 'http://localhost:51622'
         this.http = http
+
+        this.actions$.pipe(
+            ofActionCompleted(FetchDoubleChatRoom)
+        ).subscribe(
+            () => {
+                this.openDoubleChatRoom(this.store
+                    .selectSnapshot(CHAT_STATE_TOKEN).invitingUser)
+            }
+        )
+
+        this.actions$.pipe(
+            ofActionCompleted(LoadingMoreSession)
+        ).subscribe(
+            () => {
+                const activeChatSession = this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession
+                this.loadMore(activeChatSession.previousSessionId)
+            }
+        )
     }
 
     public start() {
         this.hubConnection = this.createHubConnection(this.baseUrl, this.security.getJwtToken())
+        this.hubConnection.onreconnecting((err) => {
+            this.connectionState$.next(false)
+        })
+        this.hubConnection.onreconnected(() => {
+            this.connectionState$.next(true)
+        })
+        
         this.startHubConnection(this.hubConnection)
 
         // Register all listening events
         this.listenOnlineUser()
         this.listenOfflineUser()
         this.listenLoadDoubleChatRoom()
-        this.listenReceivedDoubleChatRoom()
+        this.listenReceivedMesage()
         this.listenAddNewChatSession()
         this.listenLoadPrevious()
+        this.listenBoardCastSentMessage()
     }
 
     public stop() {
-        this.chatRooms = []
         this.onlineUsers$.next([])
         this.hubConnection.stop()
     }
@@ -65,6 +88,7 @@ export class ChatService {
             tap(
                 res => {
                     res = res.filter(a => a.userName !== this.security.getAuthUser().username)
+                    this.onlineUsers()
                     this.onlineUsers$.next(res)
                     subscription.unsubscribe()
                 }
@@ -108,113 +132,137 @@ export class ChatService {
         }).pipe(
             tap(
                 res => {
-                    this.currentUser = res
+                    this.store.dispatch(new TakeUserOnline({
+                        user: res
+                    }))
                 }
             )
         ).subscribe()
     }
 
     public openDoubleChatRoom(user: ChatOnlineUser) {
-        const foundChatRoom = this.chatRooms.find(a => 
-            a.type === RoomType.Double 
-            && a.participants.some(b => b.userName === user.userName))
-        if (ObjectUtils.isNotNull(foundChatRoom)) {
-            this.chatRoom$.next(foundChatRoom)
-        }
-        else {
-            this.hubConnection
-                .send('openDoubleChatRoom', user)
-                .then(() => {
+        this.hubConnection
+            .send('openDoubleChatRoom', user)
+            .then(() => {
 
-                })
-        }
+            })
     }
 
-    public sendMessage(chatSessionId: string, receiver: string, message: Message, postAction: () => void){
-        const foundChatRoom = this.chatRooms.find(a => a.currentSession.sessionId === chatSessionId)
-        foundChatRoom.currentSession.messages.push(message)
+    public sendMessage(
+        chatRoomId: string, 
+        chatSessionId: string, 
+        receiver: string, 
+        message: Message,
+        lastSentHashCode: string, postAction: () => void) {
+        // const foundChatRoom = this.chatRooms.find(a => a.currentSession.sessionId === chatSessionId)
+        // foundChatRoom.currentSession.messages.push(message)
         this.hubConnection
             .send('sendChatMessage', {
+                chatRoomId: chatRoomId,
                 chatSessionId: chatSessionId,
                 receiver: receiver,
                 message: {
                     userName: message.userName,
                     message: message.message,
                     formattedMessage: message.formattedMessage
-                }
+                },
+                lastSentHashCode: lastSentHashCode
             })
             .then(() => {
-                if(postAction){
+                if (postAction) {
                     postAction()
                 }
             })
     }
 
-    public loadMore(previousChatSessionId: string, 
-            onSuccess: () => void = null, 
-            onError: (err: any) => void = null){
+    public loadMore(previousChatSessionId: string,
+        onSuccess: () => void = null,
+        onError: (err: any) => void = null) {
         this.hubConnection
             .send('loadPrevious', previousChatSessionId)
             .then(onSuccess)
             .catch(onError)
     }
-    private listenAddNewChatSession(){
+    private listenAddNewChatSession() {
         this.hubConnection.on('addNewChatSession', (chatSession: ChatSession) => {
-            let foundChatRoom = this.chatRooms.find(a => a.currentSession.sessionId === chatSession.previousSessionId)
-            let currentChatSession = foundChatRoom.currentSession
-            currentChatSession.nextSessionId = chatSession.sessionId
-            foundChatRoom.chatSessions.push(currentChatSession)
-            foundChatRoom.currentSession = chatSession
-
-            this.addNewSession$.next(chatSession)
+            this.store.dispatch(new AddedNewSession({
+                chatSession: chatSession
+            }))
         })
     }
 
-    private listenReceivedDoubleChatRoom(){
-        this.hubConnection.on('receivedMessage', (chatSessionId: string, message: Message) => {
-            // Add to current chat room for reload
-            const foundChatRoom = this.chatRooms.find(a => a.currentSession.sessionId === chatSessionId)
-            foundChatRoom.currentSession.messages.push(message)
-            this.newMesage$.next({
-                ...message,
+    private listenReceivedMesage() {
+        this.hubConnection.on('receivedMessage', (chatRoomId: string, chatSessionId: string, message: Message) => {
+            const sender = this.onlineUsers$.value.find(a => a.userName === message.userName)
+            this.store.dispatch(new ReceivedMessage({
+                chatRoomId: chatRoomId,
                 chatSessionId: chatSessionId,
-                isReceived: true
-            })
+                message: {
+                    ...message,
+                    chatSessionId: chatSessionId,
+                    isReceived: true                   
+                },
+                sender: sender
+            }))
         })
     }
 
     private listenLoadDoubleChatRoom() {
         this.hubConnection.on('loadDoubleChatRoom', (chatRoom: ChatRoom, chatSession: ChatSession, invitee: ChatOnlineUser, previousSession?: ChatSession) => {
-            const foundRoom = this.chatRooms.find(a => a.chatRoomId === chatRoom.chatRoomId)
-            if (ObjectUtils.isNotNull(foundRoom)) {
-                foundRoom.chatSessions.push(chatSession)
-                foundRoom.currentSession = chatSession
-                this.chatRoom$.next(foundRoom)
+
+            // We will combine all sessions into current sesstion but we will maintain previous session id
+            if(ObjectUtils.isNotNull(chatSession.messages)){
+                chatSession.messages.forEach(m => {
+                    m.isReceived = m.userName !== this.security.getAuthUser().username
+                })
             }
-            else {
-                // Maintain maximum chat room
-                if (this.chatRooms.length === this.maxChatRoom) {
-                    this.chatRooms.shift()
+            else{
+                chatSession.messages = []
+            }
+            if(ObjectUtils.isNotNull(previousSession)){
+                previousSession.messages.forEach(m => {
+                    m.isReceived = m.userName !== this.security.getAuthUser().username
+                    chatSession.messages.unshift(m)
+                })
+
+                chatSession.previousSessionId = previousSession.previousSessionId
+            }
+            
+            this.store.dispatch(new FetchedNewDoubleChatRoom({
+                chatRoom: {
+                    ...chatRoom,
+                    invitee: invitee,
+                    currentSession: chatSession,
+                    chatSessions: []
                 }
-                chatRoom.chatSessions = []
-                if (ObjectUtils.isNotNull(previousSession)) {
-                    chatRoom.chatSessions.push(previousSession)
-                }                
-                chatRoom.currentSession = chatSession
-                this.chatRooms.push(chatRoom)
-                this.chatRoom$.next(chatRoom)
-            }
+            }))
         })
     }
 
-    private listenLoadPrevious(){
+    private listenLoadPrevious() {
         this.hubConnection.on('addPreviousSession', (chatSession: ChatSession) => {
-            if(ObjectUtils.isNotNull(chatSession)){
-                // Push on first of chat room's sessions
-                const chatRoom = this.chatRooms.find(a => a.chatRoomId === chatSession.chatRoomId)
-                chatRoom.chatSessions.unshift(chatSession)
-                this.loadPreviousSession$.next(chatSession)
-            }            
+            chatSession.messages.forEach(m => {
+                m.isReceived = m.userName !== this.security.getAuthUser().username
+            })
+            this.store.dispatch(new LoadedMoreSession({
+                chatSession: chatSession
+            }))
+        })
+    }
+
+    private listenBoardCastSentMessage(){
+        this.hubConnection.on('boardcastSentMessage', 
+            (chatRoomId: string, 
+                chatSessionId: string,
+                lastSentHashCode: string, 
+                message: ExtendedMessage) => {
+            message.isReceived = false
+            this.store.dispatch(new ReceivedMessageFromAnotherDevice({
+                chatRoomId: chatRoomId,
+                chatSessionId: chatSessionId,
+                lastHashCode: lastSentHashCode,
+                message: message
+            }))
         })
     }
 
@@ -226,22 +274,20 @@ export class ChatService {
     private listenOnlineUser() {
         this.hubConnection.on('online', (onlineUser: OnlineUser) => {
             this.logger.debug('User is online', onlineUser)
-            let availableUsers = this.onlineUsers$.value
-            let found = false
-            availableUsers.forEach(a => {
-                if (a.userName === onlineUser.userName) {
-                    a.isOnline = true
-                    this.onlineUser$.next(a)
-                    found = true
-                    return false
-                }
-            })
-
-            if (!found) {
-                availableUsers.push(onlineUser)
+            let availableUsers = ObjectUtils.clone(this.onlineUsers$.value)
+            let found = availableUsers.find(a => a.userName === onlineUser.userName)
+            
+            if (!found && this.security.getAuthUser().username != onlineUser.userName) {
+                onlineUser.isOnline = true
+                found = onlineUser
+                availableUsers.push(found)
             }
-            availableUsers = availableUsers.filter(a => a.userName !== this.security.getAuthUser().username)
-            this.onlineUsers$.next(availableUsers)
+            else{
+                found.isOnline = true
+            }
+            
+            this.onlineUser$.next(found)
+            this.onlineUsers$.next(availableUsers)            
         })
     }
 
@@ -267,6 +313,7 @@ export class ChatService {
     private createHubConnection(baseUrl: string, jwtToken: string) {
         return new HubConnectionBuilder()
             .withUrl(baseUrl + '/chathub', { accessTokenFactory: () => jwtToken })
+            .withAutomaticReconnect()
             .build();
     }
 

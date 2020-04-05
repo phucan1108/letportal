@@ -1,3 +1,29 @@
+.chat-box-head-0{
+    .chat-box-head{
+        bottom: 100px;
+    }    
+}
+.chat-box-head-1{
+    .chat-box-head{
+        bottom: 160px;
+    }  
+}
+.chat-box-head-2{
+    .chat-box-head{
+        bottom: 220px;
+    }
+}
+.chat-box-head-3{
+    .chat-box-head{
+        bottom: 280px;
+    }
+}
+.chat-box-head-4{
+    .chat-box-head{
+        bottom: 340px;
+    }
+}
+
 .online > .mat-badge-content.mat-badge-active{
     background-color: #08976d; 
     right: -5px;
@@ -8,6 +34,7 @@
     right: -5px;
     bottom: -5px;
 }
+
 .chat-box {
     position: fixed;
     bottom: 35px;
@@ -23,10 +50,32 @@
     content: " ";
     position: absolute;
     right: -15px;
-    bottom: 75px;
     border-top: 15px solid transparent;
     border-right: none;
     border-left: 15px solid rgb(255, 255, 255);
     border-bottom: 15px solid transparent;
 }
+.chat-box-0.arrow-right:after{
+    bottom: 75px;
+}
+.chat-box-1.arrow-right:after{
+    bottom: 135px;
+}
+.chat-box-2.arrow-right:after{
+    bottom: 195px;
+}
+.chat-box-3.arrow-right:after{
+    bottom: 255px;
+}
+.chat-box-4.arrow-right:after{
+    bottom: 315px;
+}
 
+.overlay-notified-status {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}

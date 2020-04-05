@@ -6,8 +6,11 @@ namespace LetPortal.Chat.Models
 {
     public class SendMessageModel
     {
+        public string ChatRoomId { get; set; }
         public string ChatSessionId { get; set; }
         public string Receiver { get; set; }
         public MessageModel Message { get; set; }
+
+        public string LastSentHashCode { get; set; }
     }
 }
