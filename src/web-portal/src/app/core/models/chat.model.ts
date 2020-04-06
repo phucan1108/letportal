@@ -33,7 +33,7 @@ export interface ChatSession{
 export interface Message{
     message: string
     formattedMessage: string
-    fileUrls: string[]
+    attachmentFiles: AttachmentFile[]
     userName: string
     timeStamp: number
     createdDate: Date
@@ -41,5 +41,12 @@ export interface Message{
 
 export interface ExtendedMessage extends Message{
     isReceived: boolean
+    hasAttachmentFile: boolean
     chatSessionId: string
+}
+
+export interface AttachmentFile{
+    downloadUrl: string
+    fileType: string
+    fileName: string
 }

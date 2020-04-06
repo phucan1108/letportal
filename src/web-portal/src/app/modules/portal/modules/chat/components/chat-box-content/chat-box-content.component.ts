@@ -2,20 +2,21 @@ import { Component, OnInit, Output, EventEmitter, Input, ViewChild, HostListener
 import { DoubleChatRoom, ChatRoom, RoomType, ExtendedMessage, ChatOnlineUser, ChatSession } from '../../../../../../core/models/chat.model';
 import { FormBuilder, FormGroup, Validators, FormControl, NgForm, FormGroupDirective } from '@angular/forms';
 import { ChatService } from 'services/chat.service';
-import { Observable, BehaviorSubject, Subscription } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription, forkJoin, throwError } from 'rxjs';
 import { FormUtil } from 'app/core/utils/form-util';
 import { ErrorStateMatcher } from '@angular/material';
 import { DateUtils } from 'app/core/utils/date-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { EmojiEvent } from 'ngx-emoji-picker';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { debounceTime, distinctUntilChanged, tap, filter, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, filter, map, catchError } from 'rxjs/operators';
 import { Store, Select, Actions, ofActionSuccessful } from '@ngxs/store';
 import { SentMessage, ReceivedMessage, LoadingMoreSession, AddedNewSession, ReceivedMessageFromAnotherDevice, ToggleOpenChatRoom } from 'stores/chats/chats.actions';
 import { CHAT_STATE_TOKEN, ChatStateModel } from 'stores/chats/chats.state';
 import { NGXLogger } from 'ngx-logger';
 import StringUtils from 'app/core/utils/string-util';
 import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
+import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile.service';
 
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
@@ -34,7 +35,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
 
     @Output()
     closed: EventEmitter<any> = new EventEmitter()
-
+    @ViewChild('fileInput', { static: true }) fileInput: ElementRef
     @ViewChild('form', { static: false }) form: NgForm;
     @ViewChild('autosize', { static: false }) autosize: CdkTextareaAutosize
     errorMatcher = new CustomErrorStateMatcher();
@@ -45,22 +46,24 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     displayShowMore = false
     formGroup: FormGroup
     messages$: Observable<ExtendedMessage[]>
-    currentChatSession: ChatSession   
-
+    currentChatSession: ChatSession
     sup: Subscription = new Subscription()
-
-    heightChatContent = 280
+    heightChatContent = 270
     lastSentHashCode: string // Use this var for tracking who channel is sending last message
     connectionState = true
+    lastHeight = 25 // Used for adjusting textarea height when shift+enter to add line breaker
+    progress // Used for tracking an uploading progress
+    hasUploading = false
+    hasUploadingError = false
     constructor(
         private logger: NGXLogger,
         private actions$: Actions,
         private store: Store,
         private chatService: ChatService,
+        private uploadFileService: UploadFileService,
         private fb: FormBuilder
     ) { }
     ngAfterViewInit(): void {
-        this.scrollToBottom()
     }
     ngOnDestroy(): void {
         this.sup.unsubscribe()
@@ -73,8 +76,6 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     handleEnterPress(event: KeyboardEvent) {
         this.send()
     }
-    lastHeight = 18
-
     onKeydown($event: KeyboardEvent) {
         $event.preventDefault()
     }
@@ -88,7 +89,6 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     ngAfterViewChecked(): void {
-
     }
 
     ngOnInit(): void {
@@ -108,32 +108,6 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         ).subscribe())
         this.currentUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).currentUser
         this.currentChatSession = this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession
-        // Check chat room contains any session
-        // Collect all for displaying messages        
-        let messages: ExtendedMessage[] = []
-        if (ObjectUtils.isNotNull(this.chatRoom.chatSessions)) {
-            this.chatRoom.chatSessions.forEach(s => {
-                if (ObjectUtils.isNotNull(s.messages)) {
-                    s.messages.forEach(m => {
-                        messages.push({
-                            ...m,
-                            isReceived: m.userName !== this.currentUser.userName,
-                            chatSessionId: s.sessionId
-                        })
-                    })
-                }
-            })
-        }
-
-        if (ObjectUtils.isNotNull(this.currentChatSession.messages)) {
-            this.currentChatSession.messages.forEach(m => {
-                messages.push({
-                    ...m,
-                    isReceived: m.userName !== this.currentUser.userName,
-                    chatSessionId: this.currentChatSession.sessionId
-                })
-            })
-        }
 
         // Check we can load more session by getting most previous session
         this.displayShowMore = ObjectUtils.isNotNull(this.currentChatSession.previousSessionId)
@@ -148,7 +122,14 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                     }
                 }
             ),
-            map(state => state.activeChatSession.messages)
+            map(state => state.activeChatSession.messages),
+            tap(
+                (messages) => {
+                    setTimeout(() => {
+                        this.scrollToBottom()
+                    },300)
+                }
+            )
         )
 
         this.sup.add(
@@ -159,42 +140,6 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                     this.currentChatSession = {
                         ...this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession
                     }
-                }
-            )
-        )
-
-        this.sup.add(
-            this.actions$.pipe(
-                ofActionSuccessful(ReceivedMessage)
-            ).subscribe(
-                () => {
-                    setTimeout(() => {
-                        this.scrollToBottom()
-                    }, 300) 
-                }
-            )
-        )
-
-        this.sup.add(
-            this.actions$.pipe(
-                ofActionSuccessful(SentMessage)
-            ).subscribe(
-                () => {
-                    setTimeout(() => {
-                        this.scrollToBottom()
-                    }, 300) 
-                }
-            )
-        )
-
-        this.sup.add(
-            this.actions$.pipe(
-                ofActionSuccessful(ReceivedMessageFromAnotherDevice)
-            ).subscribe(
-                () => {
-                    setTimeout(() => {
-                        this.scrollToBottom()
-                    }, 300) 
                 }
             )
         )
@@ -215,7 +160,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         ).subscribe())
     }
 
-    onClosed() {        
+    onClosed() {
         this.store.dispatch(new ToggleOpenChatRoom(false))
         this.closed.emit()
     }
@@ -225,18 +170,21 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     send() {
+        this.hasUploadingError = false
+        this.hasUploading = false
         FormUtil.triggerFormValidators(this.formGroup)
         if (this.formGroup.valid) {
             const formValues = this.formGroup.value
             const sentMessage: ExtendedMessage = {
                 message: this.translateEmotionShortcuts(formValues.text),
                 formattedMessage: formValues.text,
-                fileUrls: [],
+                attachmentFiles: [],
                 timeStamp: 0,
                 userName: this.currentUser.userName,
                 isReceived: false,
                 createdDate: new Date(),
-                chatSessionId: this.currentChatSession.sessionId
+                chatSessionId: this.currentChatSession.sessionId,
+                hasAttachmentFile: false
             }
             sentMessage.formattedMessage = sentMessage.message
 
@@ -255,15 +203,13 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                         receiver: this.chatRoom.invitee.userName,
                         lastSentHashCode: this.lastSentHashCode
                     }))
-                    this.formGroup.controls.text.setValue(null)
-                    this.form.resetForm()
-
-                    // Reset textarea
-                    this.autosize.reset()
-                    this.lastHeight = 18
-                    this.heightChatContent = 280
+                    this.resetText()
                 })
         }
+    }
+
+    isImageFile(fileType: string) {
+        return ['jpg', 'jpeg', 'png', 'gif'].indexOf(fileType.toLowerCase()) >= 0
     }
 
     emotionPicked($event: EmojiEvent) {
@@ -271,11 +217,133 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
             (this.formGroup.controls.text.value ? this.formGroup.controls.text.value : '') + $event.char)
     }
 
-    private scrollToBottom(){
+    openDownloadFileTab(downloadableUrl: string) {
+        window.open(downloadableUrl, '_blank')
+    }
+
+    onFileChange($event) {
+        const file: File = $event.target.files[0]
+        let isValidFileTypes = !this.isInvalidExtension(file.name)
+        let isValidFileSize = this.getFileSizeInMb(file.size) <= 16
+
+        if (!isValidFileSize) {
+            this.formGroup.controls.text.setErrors({
+                'maximum-file-size': true
+            })
+            this.formGroup.controls.text.markAsTouched()
+        }
+        else if (!isValidFileTypes) {
+            this.formGroup.controls.text.setErrors({
+                'invalid-file-type': true
+            })
+            this.formGroup.controls.text.markAsTouched()
+        }
+        else {
+            this.hasUploading = true
+            this.upload(file,
+                (res) => {
+                    this.hasUploading = false
+                    const sentMessage: ExtendedMessage = {
+                        chatSessionId: this.currentChatSession.sessionId,
+                        attachmentFiles: [
+                            {
+                                downloadUrl: res.response.downloadableUrl,
+                                fileType: res.fileName.split('.')[1],
+                                fileName: res.fileName
+                            }
+                        ],
+                        message: null,
+                        formattedMessage: null,
+                        timeStamp: 0,
+                        userName: this.currentUser.userName,
+                        isReceived: false,
+                        hasAttachmentFile: true,
+                        createdDate: new Date()
+                    }
+                    this.lastSentHashCode = StringUtils.b64EncodeUnicode(res.fileName + (new Date()).getUTCMilliseconds().toString())
+                    this.chatService.sendMessage(
+                        this.chatRoom.chatRoomId,
+                        this.currentChatSession.sessionId,
+                        this.chatRoom.invitee.userName,
+                        sentMessage,
+                        this.lastSentHashCode,
+                        () => {
+                            this.store.dispatch(new SentMessage({
+                                chatRoomId: this.chatRoom.chatRoomId,
+                                chatSessionId: this.currentChatSession.sessionId,
+                                message: sentMessage,
+                                receiver: this.chatRoom.invitee.userName,
+                                lastSentHashCode: this.lastSentHashCode
+                            }))
+                            this.resetText()
+                        })
+                },
+                (err) => {
+                    this.hasUploadingError = true
+                    this.hasUploading = false
+                },
+                () => {
+                    this.hasUploading = false
+                })
+        }
+
+    }
+
+    private upload(file: File,
+        onSent?: (res: DownloadableResponseFile) => void, onError?: (err: any) => void, onComplete?: () => void) {
+        const uploadSub = this.uploadFileService.uploadOne(file).pipe(
+            map(res => <DownloadableResponseFile>{
+                fileName: file.name,
+                response: res
+            }),
+            tap(
+                (res: DownloadableResponseFile) => {
+                    if (onSent)
+                        onSent(res)
+                    uploadSub.unsubscribe()
+                },
+                err => {
+                    this.logger.debug('Hit error on tap')
+                    if (onError)
+                        onError(err)
+                    uploadSub.unsubscribe()
+                },
+                () => {
+                    this.logger.debug('Hit complete')
+                    if (onComplete)
+                        onComplete()
+                    uploadSub.unsubscribe()
+                }
+            )
+        ).subscribe()
+    }
+
+    private getFileSizeInMb(size: number) {
+        return Math.round(size / (1024 * 1024))
+    }
+
+    private isInvalidExtension(fileName: string) {
+        const extSplitted = fileName.split('.')
+        const fileExt = extSplitted[extSplitted.length - 1].toLowerCase()
+        const splitted = 'jpg;jpeg;gif;png;zip;rar;doc;docx;xls;xlsx;pdf'.toLowerCase().split(';')
+        return splitted.indexOf(fileExt) < 0
+    }
+
+    private resetText() {
+
+        this.formGroup.controls.text.setValue(null)
+        this.form.resetForm()
+        // Reset textarea
+        this.autosize.reset()
+        this.lastHeight = 18
+        this.heightChatContent = 280
+    }
+
+    private scrollToBottom() {
         this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight
     }
 
-    private translateEmotionShortcuts(message: string){
+    private translateEmotionShortcuts(message: string) {
         EMOTION_SHORTCUTS.forEach(key => {
             message = message.replace(key.key, key.unicode)
         })

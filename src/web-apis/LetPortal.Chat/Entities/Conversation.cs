@@ -25,7 +25,7 @@ namespace LetPortal.Chat.Entities
         [StringLength(2000)]
         public string MessageTransform { get; set; }
 
-        [StringLength(1000)]
+        [StringLength(2000)]
         public string FileUrl { get; set; }
 
         public string ChatSessionId { get; set; }

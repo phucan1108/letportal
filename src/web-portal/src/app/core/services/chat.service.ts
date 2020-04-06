@@ -164,7 +164,8 @@ export class ChatService {
                 message: {
                     userName: message.userName,
                     message: message.message,
-                    formattedMessage: message.formattedMessage
+                    formattedMessage: message.formattedMessage,
+                    attachmentFiles: message.attachmentFiles
                 },
                 lastSentHashCode: lastSentHashCode
             })
@@ -199,8 +200,9 @@ export class ChatService {
                 chatSessionId: chatSessionId,
                 message: {
                     ...message,
+                    hasAttachmentFile: message.attachmentFiles && message.attachmentFiles.length > 0,
                     chatSessionId: chatSessionId,
-                    isReceived: true                   
+                    isReceived: true                  
                 },
                 sender: sender
             }))
@@ -214,6 +216,7 @@ export class ChatService {
             if(ObjectUtils.isNotNull(chatSession.messages)){
                 chatSession.messages.forEach(m => {
                     m.isReceived = m.userName !== this.security.getAuthUser().username
+                    m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
                 })
             }
             else{
@@ -222,6 +225,7 @@ export class ChatService {
             if(ObjectUtils.isNotNull(previousSession)){
                 previousSession.messages.forEach(m => {
                     m.isReceived = m.userName !== this.security.getAuthUser().username
+                    m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
                     chatSession.messages.unshift(m)
                 })
 
@@ -243,6 +247,7 @@ export class ChatService {
         this.hubConnection.on('addPreviousSession', (chatSession: ChatSession) => {
             chatSession.messages.forEach(m => {
                 m.isReceived = m.userName !== this.security.getAuthUser().username
+                m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
             })
             this.store.dispatch(new LoadedMoreSession({
                 chatSession: chatSession
@@ -261,7 +266,10 @@ export class ChatService {
                 chatRoomId: chatRoomId,
                 chatSessionId: chatSessionId,
                 lastHashCode: lastSentHashCode,
-                message: message
+                message: {
+                    ...message,
+                    hasAttachmentFile: message.attachmentFiles && message.attachmentFiles.length > 0
+                }
             }))
         })
     }

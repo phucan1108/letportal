@@ -170,7 +170,7 @@ namespace LetPortal.Chat.Hubs
                                     TimeStamp = message.Timestamp,
                                     UserName = message.Username,
                                     CreatedDate = message.CreatedDate,
-                                    FileUrls = message.FileUrl.Split("|")
+                                    AttachmentFiles = new List<AttachmentFile>()
                                 });
                             }
                         }
@@ -197,7 +197,7 @@ namespace LetPortal.Chat.Hubs
                                     TimeStamp = message.Timestamp,
                                     UserName = message.Username,
                                     CreatedDate = message.CreatedDate,
-                                    FileUrls = message.FileUrl.Split("|")
+                                    AttachmentFiles = new List<AttachmentFile>()
                                 });
                             }
                         }
@@ -322,7 +322,7 @@ namespace LetPortal.Chat.Hubs
                             TimeStamp = message.Timestamp,
                             UserName = message.Username,
                             CreatedDate = message.CreatedDate,
-                            FileUrls = message.FileUrl.Split("|")
+                            AttachmentFiles = new List<AttachmentFile>()
                         });
                     }
                 }

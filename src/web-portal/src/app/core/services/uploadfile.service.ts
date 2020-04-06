@@ -16,10 +16,24 @@ export class UploadFileService {
         this.baseUrl = baseUrl ? baseUrl : 'http://localhost:53508';
     }
 
+    uploadOne(file: File): Observable<ResponseUploadFile> {
+        let url_ = this.baseUrl + '/api/files/upload';
+        url_ = url_.replace(/[?&]$/, '');
+        const formData: FormData = new FormData();
+        formData.append('formFile', file, file.name);
+        return this.http.post<ResponseUploadFile>(url_, formData)
+    }
+
     upload(files: Set<File>): { [key: string]: { progress: Observable<number>, completed: Observable<DownloadableResponseFile> } } {
         let url_ = this.baseUrl + '/api/files/upload';
         url_ = url_.replace(/[?&]$/, '');
-        const status: { [key: string]: { progress: Observable<number>, completed: Observable<DownloadableResponseFile> }} = {};
+        const status: {
+            [key: string]: {
+                progress: Observable<number>,
+                completed: Observable<DownloadableResponseFile>,
+                error: Observable<any>
+            }
+        } = {};
 
         files.forEach(file => {
             const formData: FormData = new FormData();
@@ -29,6 +43,7 @@ export class UploadFileService {
             });
             const progress = new Subject<number>();
             const completed = new Subject<DownloadableResponseFile>();
+            const error = new Subject<any>()
             this.http.request(req).subscribe(event => {
                 if (event.type === HttpEventType.UploadProgress) {
                     const percentDone = Math.round(100 * event.loaded / event.total);
@@ -43,17 +58,21 @@ export class UploadFileService {
                     })
                     completed.complete()
                 }
-            });
+            },
+                err => {
+                    error.next(err)
+                });
             status[file.name] = {
                 progress: progress.asObservable(),
-                completed: completed.asObservable()
+                completed: completed.asObservable(),
+                error: error.asObservable()
             };
         });
         return status;
     }
 }
 
-export interface DownloadableResponseFile{
+export interface DownloadableResponseFile {
     fileName: string,
     response: ResponseUploadFile
 }

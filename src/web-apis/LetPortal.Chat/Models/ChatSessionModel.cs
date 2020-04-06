@@ -27,10 +27,19 @@ namespace LetPortal.Chat.Models
 
         public string FormattedMessage { get; set; }
 
-        public IList<string> FileUrls { get; set; }
+        public List<AttachmentFile> AttachmentFiles { get; set; }
 
         public long TimeStamp { get; set; }
 
         public DateTime CreatedDate { get; set; }
+    }
+
+    public class AttachmentFile
+    {
+        public string DownloadUrl { get; set; }
+
+        public string FileType { get; set; }
+
+        public string FileName { get; set; }
     }
 }
