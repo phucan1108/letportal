@@ -7,7 +7,7 @@ import { Store, Actions, ofActionCompleted, ofActionSuccessful } from '@ngxs/sto
 import { ChatStateModel, CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
-import { ActiveChatSearchBox, ActiveDoubleChatRoom, ClickedOnChatBox, NotifyNewIncomingMessage, ToggleOpenChatRoom } from 'stores/chats/chats.actions';
+import { ActiveChatSearchBox, ActiveDoubleChatRoom, ClickedOnChatBox, NotifyNewIncomingMessage, ToggleOpenChatRoom, IncomingOnlineUser, IncomingOfflineUser } from 'stores/chats/chats.actions';
 import { ChatBoxContentComponent } from '../chat-box-content/chat-box-content.component';
 
 @Component({
@@ -32,6 +32,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     isActiveChat = false
 
     hasRoomAvatar = false
+    roomAvatar: string
     roomShortName: string
     roomName: string
     isOnline = false
@@ -57,6 +58,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         this.counterIncomingMessage = notifiedIncomingMessages
         if (this.chatRoom.type === RoomType.Double) {
             this.hasRoomAvatar = this.chatRoom.invitee.hasAvatar
+            this.roomAvatar = this.chatRoom.invitee.avatar
             this.roomName = this.chatRoom.invitee.fullName
             this.roomShortName = this.chatRoom.invitee.shortName
             this.isOnline = this.chatRoom.invitee.isOnline
@@ -67,16 +69,19 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
             this.openChatbox()
         }
 
-        this.sup.add(this.chatService.offlineUser$.subscribe(res => {
-            if (this.chatRoom.invitee.userName === res.userName) {
-                this.isOnline = false
-            }
+        this.sup.add(this.actions$.pipe(
+            ofActionSuccessful(IncomingOnlineUser)
+        ).subscribe(() => {
+            const foundUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).availableUsers
+                .find(a => a.userName === this.chatRoom.invitee.userName)
+            this.isOnline = foundUser.isOnline
         }))
-
-        this.sup.add(this.chatService.onlineUser$.subscribe(res => {
-            if (this.chatRoom.invitee.userName === res.userName) {
-                this.isOnline = true
-            }
+        this.sup.add(this.actions$.pipe(
+            ofActionSuccessful(IncomingOfflineUser)
+        ).subscribe(() => {
+            const foundUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).availableUsers
+                .find(a => a.userName === this.chatRoom.invitee.userName)
+            this.isOnline = foundUser.isOnline
         }))
 
         this.sup.add(this.actions$.pipe(

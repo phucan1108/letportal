@@ -33,6 +33,9 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     @Input()
     chatRoom: DoubleChatRoom
 
+    @Input()
+    isUserOnline: boolean
+
     @Output()
     closed: EventEmitter<any> = new EventEmitter()
     @ViewChild('fileInput', { static: true }) fileInput: ElementRef
@@ -42,6 +45,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     roomName: string
     roomShortName: string
     hasAvatar: boolean
+    roomAvatar: string
     currentUser: ChatOnlineUser
     displayShowMore = false
     formGroup: FormGroup
@@ -95,6 +99,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         this.roomName = this.chatRoom.invitee.fullName
         this.roomShortName = this.chatRoom.invitee.shortName
         this.hasAvatar = this.chatRoom.invitee.hasAvatar
+        this.roomAvatar = this.chatRoom.invitee.avatar
         this.formGroup = this.fb.group({
             text: [null, Validators.required]
         })

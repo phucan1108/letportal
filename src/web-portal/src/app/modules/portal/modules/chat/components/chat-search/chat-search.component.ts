@@ -1,12 +1,14 @@
 import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, Observable, of } from 'rxjs';
 import { ChatOnlineUser } from '../../../../../../core/models/chat.model';
-import { debounce, distinctUntilChanged, debounceTime, tap } from 'rxjs/operators';
+import { debounce, distinctUntilChanged, debounceTime, tap, map, filter } from 'rxjs/operators';
 import { ChatService } from 'services/chat.service';
 import { NGXLogger } from 'ngx-logger';
 import { Store, Actions } from '@ngxs/store';
 import { ClickedOnChatUser } from 'stores/chats/chats.actions';
+import { CHAT_STATE_TOKEN, ChatStateModel } from 'stores/chats/chats.state';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-chat-search',
@@ -22,6 +24,7 @@ export class ChatSearchComponent implements OnInit, OnDestroy {
     isReadyRender: boolean = true
     sup: Subscription = new Subscription()
     connectionState = true
+    filterWord: string
     constructor(
         private store: Store,
         private actions$: Actions,
@@ -43,7 +46,16 @@ export class ChatSearchComponent implements OnInit, OnDestroy {
                 }
             )
         ).subscribe())
-        this.onlineUsers$ = this.chatService.onlineUsers$
+        this.sup.add(this.store.select(CHAT_STATE_TOKEN).pipe(
+            filter(state => state.availableUsers && state.availableUsers.length > 0),
+            map((state: ChatStateModel) => ObjectUtils.clone(state.availableUsers).sort((u1: ChatOnlineUser,u2: ChatOnlineUser)=> u2.incomingMessages - u1.incomingMessages)),
+            tap(
+                (users: ChatOnlineUser[]) => {
+                    this.onlineUsers$.next(users)
+                }
+            )
+        ).subscribe())
+
         this.sup.add(this.searchBoxForm.get('userFullName').valueChanges.pipe(
             debounceTime(500),
             distinctUntilChanged(),

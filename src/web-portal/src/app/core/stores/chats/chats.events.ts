@@ -39,8 +39,7 @@ export interface SendNewMessageEvent{
 export interface ReceivedMessageEvent{
     chatRoomId: string,
     chatSessionId: string
-    message: ExtendedMessage,
-    sender: ChatOnlineUser    
+    message: ExtendedMessage   
 }
 
 export interface ReceivedMessageFromAnotherDeviceEvent{
@@ -62,4 +61,20 @@ export interface LoadedMoreSessionEvent {
 
 export interface AddedNewSessionEvent{
     chatSession: ChatSession
+}
+
+export interface LoadedAllAvailableUsersEvent{
+    availableUsers: ChatOnlineUser[]
+}
+
+export interface IncomingOnlineUserEvent{
+    onlineUser: ChatOnlineUser
+}
+
+export interface IncomingOfflineUserEvent{
+    offlineUser: string
+}
+
+export interface IncomingMessageFromUnloadUserEvent{
+    sender: string
 }

@@ -8,7 +8,7 @@ import { NGXLogger } from 'ngx-logger';
 import { SecurityService } from '../security/security.service';
 import { ChatOnlineUser, ChatSession, ChatRoom, RoomType, Message, ExtendedMessage, DoubleChatRoom } from 'app/core/models/chat.model';
 import { Store, Actions, ofActionDispatched, ofActionCompleted } from '@ngxs/store';
-import { TakeUserOnline, FetchedNewDoubleChatRoom, FetchDoubleChatRoom, ReceivedMessage, LoadingMoreSession, LoadedMoreSession, AddedNewSession, ReceivedMessageFromAnotherDevice } from 'stores/chats/chats.actions';
+import { TakeUserOnline, FetchedNewDoubleChatRoom, FetchDoubleChatRoom, ReceivedMessage, LoadingMoreSession, LoadedMoreSession, AddedNewSession, ReceivedMessageFromAnotherDevice, LoadedAllAvailableUsers, IncomingOnlineUser, IncomingOfflineUser, RemoveLastLongActiveChatRoom } from 'stores/chats/chats.actions';
 import { ChatStateModel, CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
 import { on } from 'cluster';
 export const CHAT_BASE_URL = new InjectionToken<string>('CHAT_BASE_URL');
@@ -19,9 +19,6 @@ export class ChatService {
     private http: HttpClient
 
     connectionState$: BehaviorSubject<boolean> = new BehaviorSubject(false)
-    onlineUsers$: BehaviorSubject<OnlineUser[]> = new BehaviorSubject([])
-    onlineUser$: Subject<OnlineUser> = new Subject()
-    offlineUser$: Subject<OnlineUser> = new Subject()
 
     constructor(
         private actions$: Actions,
@@ -60,7 +57,7 @@ export class ChatService {
         this.hubConnection.onreconnected(() => {
             this.connectionState$.next(true)
         })
-        
+
         this.startHubConnection(this.hubConnection)
 
         // Register all listening events
@@ -74,13 +71,12 @@ export class ChatService {
     }
 
     public stop() {
-        this.onlineUsers$.next([])
         this.hubConnection.stop()
     }
 
     public getAllAvailableUsers() {
         let url_ = this.baseUrl + "/api/chats/all-users"
-        const subscription = this.http.get<OnlineUser[]>(url_, {
+        const subscription = this.http.get<ChatOnlineUser[]>(url_, {
             headers: new HttpHeaders({
                 "Accept": "application/json"
             })
@@ -88,15 +84,14 @@ export class ChatService {
             tap(
                 res => {
                     res = res.filter(a => a.userName !== this.security.getAuthUser().username)
-                    this.onlineUsers()
-                    this.onlineUsers$.next(res)
+                    this.onlineUsers(res)
                     subscription.unsubscribe()
                 }
             )
         ).subscribe()
     }
 
-    public onlineUsers() {
+    public onlineUsers(allAvailableUsers: ChatOnlineUser[]) {
         let url_ = this.baseUrl + "/api/chats/who-online"
         const subcription = this.http.get<OnlineUser[]>(url_, {
             headers: new HttpHeaders({
@@ -105,7 +100,7 @@ export class ChatService {
         }).pipe(
             tap(
                 res => {
-                    const availableUsers = this.onlineUsers$.value
+                    const availableUsers = allAvailableUsers
                     if (ObjectUtils.isNotNull(res)) {
                         res.forEach(a => {
                             const found = availableUsers.find(b => b.userName === a.userName)
@@ -114,7 +109,9 @@ export class ChatService {
                             }
                         })
 
-                        this.onlineUsers$.next(availableUsers)
+                        this.store.dispatch(new LoadedAllAvailableUsers({
+                            availableUsers: availableUsers
+                        }))
                     }
                     subcription.unsubscribe()
                 }
@@ -125,7 +122,7 @@ export class ChatService {
 
     public online() {
         let url_ = this.baseUrl + "/api/chats/online"
-        this.http.post<OnlineUser>(url_, null, {
+        this.http.post<ChatOnlineUser>(url_, null, {
             headers: new HttpHeaders({
                 "Accept": "application/json"
             })
@@ -149,9 +146,9 @@ export class ChatService {
     }
 
     public sendMessage(
-        chatRoomId: string, 
-        chatSessionId: string, 
-        receiver: string, 
+        chatRoomId: string,
+        chatSessionId: string,
+        receiver: string,
         message: Message,
         lastSentHashCode: string, postAction: () => void) {
         // const foundChatRoom = this.chatRooms.find(a => a.currentSession.sessionId === chatSessionId)
@@ -194,7 +191,6 @@ export class ChatService {
 
     private listenReceivedMesage() {
         this.hubConnection.on('receivedMessage', (chatRoomId: string, chatSessionId: string, message: Message) => {
-            const sender = this.onlineUsers$.value.find(a => a.userName === message.userName)
             this.store.dispatch(new ReceivedMessage({
                 chatRoomId: chatRoomId,
                 chatSessionId: chatSessionId,
@@ -202,9 +198,8 @@ export class ChatService {
                     ...message,
                     hasAttachmentFile: message.attachmentFiles && message.attachmentFiles.length > 0,
                     chatSessionId: chatSessionId,
-                    isReceived: true                  
-                },
-                sender: sender
+                    isReceived: true
+                }
             }))
         })
     }
@@ -213,16 +208,16 @@ export class ChatService {
         this.hubConnection.on('loadDoubleChatRoom', (chatRoom: ChatRoom, chatSession: ChatSession, invitee: ChatOnlineUser, previousSession?: ChatSession) => {
 
             // We will combine all sessions into current sesstion but we will maintain previous session id
-            if(ObjectUtils.isNotNull(chatSession.messages)){
+            if (ObjectUtils.isNotNull(chatSession.messages)) {
                 chatSession.messages.forEach(m => {
                     m.isReceived = m.userName !== this.security.getAuthUser().username
                     m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
                 })
             }
-            else{
+            else {
                 chatSession.messages = []
             }
-            if(ObjectUtils.isNotNull(previousSession)){
+            if (ObjectUtils.isNotNull(previousSession)) {
                 previousSession.messages.forEach(m => {
                     m.isReceived = m.userName !== this.security.getAuthUser().username
                     m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
@@ -231,15 +226,17 @@ export class ChatService {
 
                 chatSession.previousSessionId = previousSession.previousSessionId
             }
-            
-            this.store.dispatch(new FetchedNewDoubleChatRoom({
-                chatRoom: {
-                    ...chatRoom,
-                    invitee: invitee,
-                    currentSession: chatSession,
-                    chatSessions: []
-                }
-            }))
+
+            this.store.dispatch(
+                new FetchedNewDoubleChatRoom({
+                    chatRoom: {
+                        ...chatRoom,
+                        invitee: invitee,
+                        currentSession: chatSession,
+                        chatSessions: []
+                    }
+                })
+            )
         })
     }
 
@@ -255,23 +252,23 @@ export class ChatService {
         })
     }
 
-    private listenBoardCastSentMessage(){
-        this.hubConnection.on('boardcastSentMessage', 
-            (chatRoomId: string, 
+    private listenBoardCastSentMessage() {
+        this.hubConnection.on('boardcastSentMessage',
+            (chatRoomId: string,
                 chatSessionId: string,
-                lastSentHashCode: string, 
+                lastSentHashCode: string,
                 message: ExtendedMessage) => {
-            message.isReceived = false
-            this.store.dispatch(new ReceivedMessageFromAnotherDevice({
-                chatRoomId: chatRoomId,
-                chatSessionId: chatSessionId,
-                lastHashCode: lastSentHashCode,
-                message: {
-                    ...message,
-                    hasAttachmentFile: message.attachmentFiles && message.attachmentFiles.length > 0
-                }
-            }))
-        })
+                message.isReceived = false
+                this.store.dispatch(new ReceivedMessageFromAnotherDevice({
+                    chatRoomId: chatRoomId,
+                    chatSessionId: chatSessionId,
+                    lastHashCode: lastSentHashCode,
+                    message: {
+                        ...message,
+                        hasAttachmentFile: message.attachmentFiles && message.attachmentFiles.length > 0
+                    }
+                }))
+            })
     }
 
     private handleGetOnlineUsersError(error: HttpErrorResponse) {
@@ -280,41 +277,23 @@ export class ChatService {
     }
 
     private listenOnlineUser() {
-        this.hubConnection.on('online', (onlineUser: OnlineUser) => {
+        this.hubConnection.on('online', (onlineUser: ChatOnlineUser) => {
             this.logger.debug('User is online', onlineUser)
-            let availableUsers = ObjectUtils.clone(this.onlineUsers$.value)
-            let found = availableUsers.find(a => a.userName === onlineUser.userName)
-            
-            if (!found && this.security.getAuthUser().username != onlineUser.userName) {
-                onlineUser.isOnline = true
-                found = onlineUser
-                availableUsers.push(found)
+            onlineUser.isOnline = true
+            onlineUser.incomingMessages = 0
+            if (onlineUser.userName !== this.security.getAuthUser().username) {
+                this.store.dispatch(new IncomingOnlineUser({
+                    onlineUser: onlineUser
+                }))
             }
-            else{
-                found.isOnline = true
-            }
-            
-            this.onlineUser$.next(found)
-            this.onlineUsers$.next(availableUsers)            
         })
     }
 
     private listenOfflineUser() {
         this.hubConnection.on('offline', (userName: string) => {
-            this.logger.debug('User is offline', userName)
-            const availableUsers = this.onlineUsers$.value
-            let found = false
-            availableUsers.forEach(a => {
-                if (a.userName === userName) {
-                    this.logger.debug('User is updated offline', a)
-                    a.isOnline = false
-                    this.offlineUser$.next(a)
-                    found = true
-                    return false
-                }
-            })
-
-            this.onlineUsers$.next(availableUsers)
+            this.store.dispatch(new IncomingOfflineUser({
+                offlineUser: userName
+            }))
         })
     }
 

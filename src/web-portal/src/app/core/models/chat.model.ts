@@ -1,7 +1,7 @@
 import { OnlineUser } from 'services/chat.service';
 
 export interface ChatOnlineUser extends OnlineUser{
-    
+    incomingMessages: number
 }
 
 export interface ChatRoom{
@@ -10,7 +10,8 @@ export interface ChatRoom{
     type: RoomType
     participants: ChatOnlineUser[]
     chatSessions: ChatSession[]
-    currentSession: ChatSession 
+    currentSession: ChatSession
+    lastVisited: number 
 }
 
 export enum RoomType{

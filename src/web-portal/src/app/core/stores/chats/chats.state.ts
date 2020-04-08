@@ -2,11 +2,13 @@ import { ChatRoom, RoomType, ChatOnlineUser, DoubleChatRoom, ChatSession, Extend
 import { State, StateToken, Action, StateContext, Actions } from '@ngxs/store';
 import * as ChatActions from './chats.actions'
 import { ObjectUtils } from 'app/core/utils/object-util';
-import { patch, updateItem, insertItem } from '@ngxs/store/operators';
+import { patch, updateItem, insertItem, removeItem } from '@ngxs/store/operators';
 import { ArrayUtils } from 'app/core/utils/array-util';
 
+const MAX_ROOMS = 5
 export const CHAT_STATE_TOKEN = new StateToken<ChatStateModel>('chats');
 export interface ChatStateModel {
+    availableUsers: ChatOnlineUser[]
     chatRooms: ChatRoom[]
     activeChatSession: ChatSession
     notifiedChatRooms: string[] // Contains chatRoomId has new message
@@ -19,6 +21,7 @@ export interface ChatStateModel {
 @State<ChatStateModel>({
     name: CHAT_STATE_TOKEN,
     defaults: {
+        availableUsers: [],
         chatRooms: [],
         activeChatSession: null,
         invitingUser: null,
@@ -53,6 +56,18 @@ export class ChatState {
     public clickedOnChatUser(ctx: StateContext<ChatStateModel>, { event }: ChatActions.ClickedOnChatUser) {
         const state = ctx.getState()
         const foundRoom = state.chatRooms.find(a => a.type === RoomType.Double && a.participants.some(b => b.userName === event.inviee.userName))
+
+        let foundUser = state.availableUsers.find(a => a.userName === event.inviee.userName)
+        foundUser = {
+            ...foundUser,
+            incomingMessages: 0
+        }
+
+        ctx.setState(
+            patch({
+                availableUsers: updateItem<ChatOnlineUser>(a => a.userName === foundUser.userName, foundUser)
+            })
+        )
         if (ObjectUtils.isNotNull(foundRoom)) {
             return ctx.dispatch(new ChatActions.ActiveDoubleChatRoom({
                 chatSession: foundRoom.currentSession
@@ -126,14 +141,23 @@ export class ChatState {
         const state = ctx.getState()
         if (ObjectUtils.isNotNull(state.activeChatSession)
             && event.chatSession.chatRoomId != state.activeChatSession.chatRoomId) {
-            console.log('Need to swap two rooms')
             // We need to bring current session of another
             let foundOldActiveRoom: DoubleChatRoom = ObjectUtils.clone(state.chatRooms.find(a => a.chatRoomId === state.activeChatSession.chatRoomId))
             foundOldActiveRoom.currentSession = {
                 ...state.activeChatSession
             }
+
             // Bring another current session
-            const foundNewActiveRoom = state.chatRooms.find(a => a.chatRoomId === event.chatSession.chatRoomId)
+            let foundNewActiveRoom = state.chatRooms.find(a => a.chatRoomId === event.chatSession.chatRoomId)
+            foundNewActiveRoom = {
+                ...foundNewActiveRoom,
+                lastVisited: (new Date()).getDate()
+            }
+            ctx.setState(
+                patch({
+                    chatRooms: updateItem<ChatRoom>(a => a.chatRoomId === foundNewActiveRoom.chatRoomId, foundNewActiveRoom)
+                })
+            )
             return ctx.setState(
                 patch({
                     activeChatSession: foundNewActiveRoom.currentSession,
@@ -143,7 +167,7 @@ export class ChatState {
 
         }
         else if (!ObjectUtils.isNotNull(state.activeChatSession)) {
-            console.log('Active a request room')
+
             return ctx.setState(
                 patch({
                     activeChatSession: event.chatSession
@@ -157,6 +181,7 @@ export class ChatState {
         const state = ctx.getState()
         // Only new chat room is reached this action        
         if (event.chatRoom.type === RoomType.Double) {
+            event.chatRoom.lastVisited = (new Date()).getDate()
             ctx.setState(
                 patch({
                     chatRooms: [
@@ -166,6 +191,10 @@ export class ChatState {
                     invitingUser: null
                 })
             )
+
+            if (ctx.getState().chatRooms.length > MAX_ROOMS) {
+                ctx.dispatch(new ChatActions.RemoveLastLongActiveChatRoom(event.chatRoom.chatRoomId))
+            }
 
             // Now we need to check the chat box is opened or not
             if (state.isOpenChatBox && ObjectUtils.isNotNull(state.activeChatSession)) {
@@ -323,14 +352,111 @@ export class ChatState {
                 }
             }
             else {
-                ctx.setState(
-                    patch({
-                        invitingUser: event.sender
-                    })
-                )
-                // We need to fetch new chat room
-                ctx.dispatch(new ChatActions.FetchDoubleChatRoom())
+                // New change: we need to check current chat rooms is reached maximum or not
+                // If it reached maximum rooms, we need to notify new chat instead of fecthing room
+                if (state.chatRooms.length < MAX_ROOMS) {
+                    const sender = state.availableUsers.find(a => a.userName === event.message.userName)
+                    ctx.setState(
+                        patch({
+                            invitingUser: sender
+                        })
+                    )
+                    // We need to fetch new chat room
+                    ctx.dispatch(new ChatActions.FetchDoubleChatRoom())
+                }
+                else {
+                    // If number of rooms is full, increase incoming messages
+                    ctx.dispatch(new ChatActions.IncomingMessageFromUnloadUser({
+                        sender: event.message.userName
+                    }))
+                }
             }
         }
+    }
+
+    @Action(ChatActions.LoadedAllAvailableUsers)
+    public loadedAllUsers(ctx: StateContext<ChatStateModel>, { event }: ChatActions.LoadedAllAvailableUsers) {
+        event.availableUsers.forEach(u => {
+            u.incomingMessages = 0
+        })
+        return ctx.setState(
+            patch({
+                availableUsers: event.availableUsers
+            })
+        )
+    }
+
+    @Action(ChatActions.IncomingOnlineUser)
+    public incomingOnlineUser(ctx: StateContext<ChatStateModel>, { event }: ChatActions.IncomingOnlineUser) {
+        const state = ctx.getState()
+        const foundUser = state.availableUsers.find(a => a.userName === event.onlineUser.userName)
+        if (ObjectUtils.isNotNull(foundUser)) {
+            return ctx.setState(
+                patch({
+                    availableUsers: updateItem<ChatOnlineUser>(a => a.userName === event.onlineUser.userName, event.onlineUser)
+                })
+            )
+        }
+        else {
+            return ctx.setState(
+                patch({
+                    availableUsers: insertItem<ChatOnlineUser>(event.onlineUser)
+                })
+            )
+        }
+    }
+
+    @Action(ChatActions.IncomingOfflineUser)
+    public incomingOfflineUser(ctx: StateContext<ChatStateModel>, { event }: ChatActions.IncomingOfflineUser) {
+        const state = ctx.getState()
+        let foundUser = state.availableUsers.find(a => a.userName === event.offlineUser)
+
+        if (ObjectUtils.isNotNull(foundUser)) {
+            foundUser = {
+                ...foundUser,
+                isOnline: false
+            }
+            return ctx.setState(
+                patch({
+                    availableUsers: updateItem<ChatOnlineUser>(a => a.userName === event.offlineUser, foundUser)
+                })
+            )
+        }
+    }
+
+    @Action(ChatActions.IncomingMessageFromUnloadUser)
+    public incomingUnloadUser(ctx: StateContext<ChatStateModel>, { event }: ChatActions.IncomingMessageFromUnloadUser) {
+        const state = ctx.getState()
+        let foundUser = state.availableUsers.find(a => a.userName === event.sender)
+
+        if (ObjectUtils.isNotNull(foundUser)) {
+            foundUser = {
+                ...foundUser,
+                incomingMessages: foundUser.incomingMessages + 1
+            }
+            return ctx.setState(
+                patch({
+                    availableUsers: updateItem<ChatOnlineUser>(a => a.userName === event.sender, foundUser)
+                })
+            )
+        }
+    }
+
+    @Action(ChatActions.RemoveLastLongActiveChatRoom)
+    public removeLastLongActiveRoom(ctx: StateContext<ChatStateModel>, { newChatRoomId }: ChatActions.RemoveLastLongActiveChatRoom) {
+        const state = ctx.getState()
+        let filtered = [...state.chatRooms.filter(a => a.chatRoomId !== state.activeChatSession.chatRoomId
+            && a.chatRoomId !== newChatRoomId)]
+        if (filtered.length > 0) {
+            const lastLongActive = [...state.chatRooms.filter(a => a.chatRoomId !== state.activeChatSession.chatRoomId
+                && a.chatRoomId !== newChatRoomId)].sort((user1, user2) => user1.lastVisited - user2.lastVisited)[0]
+            return ctx.setState(
+                patch({
+                    chatRooms: removeItem<ChatRoom>(a => a.chatRoomId === lastLongActive.chatRoomId)
+                })
+            )
+        }
+
+
     }
 }

@@ -20,9 +20,4 @@
     <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Hubs\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

@@ -1,14 +1,27 @@
 <div [attr.class]="overrideHeadClass">
-    <div class="chat-box-head d-flex align-items-center justify-content-center" [matTooltip]="roomName"
-        [matTooltipPosition]="'left'" (click)="showChatBoxContent()" matBadge="&#8288;" matBadgeColor="warn"
-        matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': isOnline, 'offline': !isOnline}">
-        {{roomShortName}}
+    <ng-container *ngIf="!hasRoomAvatar">
+        <div class="chat-box-head d-flex align-items-center justify-content-center" [matTooltip]="roomName"
+            [matTooltipPosition]="'left'" (click)="showChatBoxContent()" matBadge="&#8288;" matBadgeColor="warn"
+            matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': isOnline, 'offline': !isOnline}">
+            {{roomShortName}}
 
-        <div class="overlay-notified-status" *ngIf="counterIncomingMessage > 0" matBadgePosition="above after" matBadgeSize="small" [matBadge]="counterIncomingMessage" matBadgeColor="warn">
+            <div class="overlay-notified-status" *ngIf="counterIncomingMessage > 0" matBadgePosition="above after"
+                matBadgeSize="small" [matBadge]="counterIncomingMessage" matBadgeColor="warn">
+            </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-container *ngIf="hasRoomAvatar">
+        <div class="chat-box-head d-flex align-items-center justify-content-center" [matTooltip]="roomName"
+            [matTooltipPosition]="'left'" (click)="showChatBoxContent()" matBadge="&#8288;" matBadgeColor="warn"
+            matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': isOnline, 'offline': !isOnline}">
+            <img [src]="roomAvatar" class="rounded-circle user-avatar" />
+            <div class="overlay-notified-status" *ngIf="counterIncomingMessage > 0" matBadgePosition="above after"
+                matBadgeSize="small" [matBadge]="counterIncomingMessage" matBadgeColor="warn">
+            </div>
+        </div>
+    </ng-container>
 </div>
 
 <div [attr.class]="overrideDialogClass" *ngIf="showChatBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
-    <let-chat-box-content (closed)="onChatBoxClosed()" [chatRoom]="chatRoom"></let-chat-box-content>
+    <let-chat-box-content (closed)="onChatBoxClosed()" [(isUserOnline)]="isOnline" [chatRoom]="chatRoom"></let-chat-box-content>
 </div>

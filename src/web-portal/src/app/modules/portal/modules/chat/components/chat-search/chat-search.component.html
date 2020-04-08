@@ -33,6 +33,19 @@
                     class="rounded-circle tile-icon-revert d-flex align-items-center justify-content-center"
                     [ngClass]="{'online': user.isOnline, 'offline': !user.isOnline}">
                     {{user.shortName}}
+                    <div class="overlay-notified-status" *ngIf="user.incomingMessages > 0" matBadgePosition="above after"
+                        matBadgeSize="small" [matBadge]="user.incomingMessages" matBadgeColor="warn">
+                    </div>
+                </div>
+            </div>
+            <div class="w-25" *ngIf="user.hasAvatar">
+                <div matBadge="&#8288;" matBadgeColor="warn" matBadgePosition="below after" matBadgeSize="small"
+                    class="rounded-circle tile-icon-revert d-flex align-items-center justify-content-center"
+                    [ngClass]="{'online': user.isOnline, 'offline': !user.isOnline}">
+                    <img [src]="user.avatar" class="rounded-circle user-avatar" />
+                    <div class="overlay-notified-status" *ngIf="user.incomingMessages > 0" matBadgePosition="above after"
+                        matBadgeSize="small" [matBadge]="user.incomingMessages" matBadgeColor="warn">
+                    </div>
                 </div>
             </div>
             <div class="w-75 text-left">

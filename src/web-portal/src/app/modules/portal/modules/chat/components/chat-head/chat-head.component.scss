@@ -20,3 +20,11 @@
     border-bottom: 15px solid transparent;
 }
 
+.overlay-notified-status {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}

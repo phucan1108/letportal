@@ -16,11 +16,11 @@ namespace LetPortal.Chat.Configurations
         /// <summary>
         /// Due to memory capacity, we need to restrict chat rooms per user
         /// </summary>
-        public int MaximumChatRoomsPerUsers { get; set; } = 10;
+        public int MaximumChatRoomsPerUsers { get; set; } = 5;
 
         /// <summary>
         /// This option will be used to indicate when creating new Chat Session
         /// </summary>
-        public int ThresholdNumberOfMessages { get; set; } = 10;
+        public int ThresholdNumberOfMessages { get; set; } = 50;
     }
 }

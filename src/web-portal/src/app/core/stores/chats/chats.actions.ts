@@ -1,4 +1,4 @@
-import { ClickedOnChatUserEvent, TakeUserOnlineEvent, ActiveDoubleChatActionEvent, OpenNewDoubleChatRoomEvent as FetchedNewDoubleChatRoomEvent, SendNewMessageEvent, ReceivedMessageEvent, ClickedOnChatBoxIconEvent, LoadingMoreSessionEvent, LoadedMoreSessionEvent, AddedNewSessionEvent, ReceivedMessageFromAnotherDeviceEvent, InitialReceivedChatRoomEvent, NotifyNewIncomingMessageEvent } from './chats.events'
+import { ClickedOnChatUserEvent, TakeUserOnlineEvent, ActiveDoubleChatActionEvent, OpenNewDoubleChatRoomEvent as FetchedNewDoubleChatRoomEvent, SendNewMessageEvent, ReceivedMessageEvent, ClickedOnChatBoxIconEvent, LoadingMoreSessionEvent, LoadedMoreSessionEvent, AddedNewSessionEvent, ReceivedMessageFromAnotherDeviceEvent, InitialReceivedChatRoomEvent, NotifyNewIncomingMessageEvent, LoadedAllAvailableUsersEvent, IncomingOnlineUserEvent, IncomingOfflineUserEvent, IncomingMessageFromUnloadUserEvent } from './chats.events'
 
 const CHAT_ACTION = '[Chat Action]'
 
@@ -89,6 +89,31 @@ export class ToggleOpenChatRoom implements ChatAction{
     constructor(public toggle: boolean) { }
 }
 
+export class LoadedAllAvailableUsers implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Loaded all available users`
+    constructor(public event: LoadedAllAvailableUsersEvent) { }
+}
+
+export class IncomingOnlineUser implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Incoming online user`
+    constructor(public event: IncomingOnlineUserEvent) { }
+}
+
+export class IncomingOfflineUser implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Incoming offline user`
+    constructor(public event: IncomingOfflineUserEvent) { }
+}
+
+export class IncomingMessageFromUnloadUser implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Incoming message unload user`
+    constructor(public event: IncomingMessageFromUnloadUserEvent) { }
+}
+
+export class RemoveLastLongActiveChatRoom implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Remove last long active chat room`
+    constructor(public newChatRoomId: string) { }
+}
+
 export type All =
     ChatAction |
     TakeUserOnline |
@@ -98,4 +123,8 @@ export type All =
     FetchDoubleChatRoom |
     FetchedNewDoubleChatRoom |
     SentMessage |
-    ReceivedMessage
+    ReceivedMessage |
+    LoadedAllAvailableUsers| 
+    IncomingOnlineUser |
+    IncomingOfflineUser |
+    IncomingMessageFromUnloadUser
