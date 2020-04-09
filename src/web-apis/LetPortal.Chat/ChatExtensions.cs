@@ -21,6 +21,7 @@ namespace LetPortal.Chat
         {
             var services = builder.Services;
             services.AddSingleton<IChatContext, ChatContext>();
+            services.AddSingleton<IVideoContext, VideoContext>();
             if (builder.ConnectionType == ConnectionType.MongoDB)
             {
                 MongoDbRegistry.RegisterEntities();
@@ -39,16 +40,9 @@ namespace LetPortal.Chat
                 builder.Services.AddTransient<IChatUserRepository, ChatUserEFRepository>();
             }
 
-            services.AddTransient(typeof(HubChatClient), serviceProvider =>
-            {
-                return new HubChatClient(
-                    serviceProvider.GetService<IChatContext>(),
-                    serviceProvider.GetService<IChatRoomRepository>(),
-                    serviceProvider.GetService<IChatSessionRepository>(),
-                    serviceProvider.GetService<IChatUserRepository>(),
-                    serviceProvider.GetService<IOptionsMonitor<ChatOptions>>());
-            });
 
+            builder.Services.Configure<ChatOptions>(builder.Configuration.GetSection("ChatOptions"));
+            builder.Services.Configure<VideoCallOptions>(builder.Configuration.GetSection("VideoCallOptions"));
             var chatOptions = builder.Configuration.GetSection("ChatOptions").Get<ChatOptions>();
             services.AddCors(options =>
             {
@@ -61,6 +55,24 @@ namespace LetPortal.Chat
                             .AllowCredentials()
                             .WithExposedHeaders(LetPortal.Core.Constants.TokenExpiredHeader);
                 });
+            });
+
+
+            services.AddTransient(typeof(HubChatClient), serviceProvider =>
+            {
+                return new HubChatClient(
+                    serviceProvider.GetService<IChatContext>(),
+                    serviceProvider.GetService<IChatRoomRepository>(),
+                    serviceProvider.GetService<IChatSessionRepository>(),
+                    serviceProvider.GetService<IChatUserRepository>(),
+                    serviceProvider.GetService<IOptionsMonitor<ChatOptions>>());
+            });
+
+            services.AddTransient(typeof(HubVideoClient), serviceProvider =>
+            {
+                return new HubVideoClient(
+                    serviceProvider.GetService<IVideoContext>(),
+                    serviceProvider.GetService<IOptionsMonitor<VideoCallOptions>>());
             });
 
             return builder;

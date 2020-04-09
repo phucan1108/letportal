@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormControl, NgForm, FormGroupDirec
 import { ChatService } from 'services/chat.service';
 import { Observable, BehaviorSubject, Subscription, forkJoin, throwError } from 'rxjs';
 import { FormUtil } from 'app/core/utils/form-util';
-import { ErrorStateMatcher } from '@angular/material';
+import { ErrorStateMatcher, MatDialog } from '@angular/material';
 import { DateUtils } from 'app/core/utils/date-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { EmojiEvent } from 'ngx-emoji-picker';
@@ -17,6 +17,7 @@ import { NGXLogger } from 'ngx-logger';
 import StringUtils from 'app/core/utils/string-util';
 import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
 import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile.service';
+import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
@@ -65,6 +66,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         private store: Store,
         private chatService: ChatService,
         private uploadFileService: UploadFileService,
+        public dialog: MatDialog,
         private fb: FormBuilder
     ) { }
     ngAfterViewInit(): void {
@@ -222,10 +224,23 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
             (this.formGroup.controls.text.value ? this.formGroup.controls.text.value : '') + $event.char)
     }
 
+    popupVideoCall(){        
+        let dialogRef = this.dialog.open(VideoCallDialogComponent, {
+            disableClose: true,
+            data: {
+                invitee: this.chatRoom.invitee
+            }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+            }
+        })
+    }
+
     openDownloadFileTab(downloadableUrl: string) {
         window.open(downloadableUrl, '_blank')
     }
-
+    
     onFileChange($event) {
         const file: File = $event.target.files[0]
         let isValidFileTypes = !this.isInvalidExtension(file.name)

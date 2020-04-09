@@ -12,6 +12,8 @@ import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
 import { ChatBoxWrapperComponent } from './components/chat-box-wrapper/chat-box-wrapper.component';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsStoreModule } from 'app/core/store.module';
+import { VideoCallDialogComponent } from './components/video-call-dialog/video-call-dialog.component';
+import { AvatarComponent } from './components/avatar/avatar.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +22,12 @@ import { NgxsStoreModule } from 'app/core/store.module';
         ChatWrapperComponent,
         ChatBoxContentComponent,
         ChatBoxComponent,
-        ChatBoxWrapperComponent
+        ChatBoxWrapperComponent,
+        VideoCallDialogComponent,
+        AvatarComponent
+    ],
+    entryComponents: [
+        VideoCallDialogComponent
     ],
     imports: [ 
         CommonModule,

@@ -9,6 +9,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
 import { ActiveChatSearchBox, ActiveDoubleChatRoom, ClickedOnChatBox, NotifyNewIncomingMessage, ToggleOpenChatRoom, IncomingOnlineUser, IncomingOfflineUser } from 'stores/chats/chats.actions';
 import { ChatBoxContentComponent } from '../chat-box-content/chat-box-content.component';
+import { AvatarComponent } from '../avatar/avatar.component';
 
 @Component({
     selector: 'let-chat-box',
@@ -27,15 +28,13 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     @Input()
     index: number
 
+    @ViewChild('avatar', { static: true })
+    avatar: AvatarComponent
+    @ViewChild('chatBoxContent', { static: false})
+    chatBoxContent: ChatBoxContentComponent
     currentUser: ChatOnlineUser
-
+    invitee: ChatOnlineUser
     isActiveChat = false
-
-    hasRoomAvatar = false
-    roomAvatar: string
-    roomShortName: string
-    roomName: string
-    isOnline = false
     showChatBox = false
 
     sup: Subscription = new Subscription()
@@ -57,11 +56,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         const notifiedIncomingMessages = this.store.selectSnapshot(CHAT_STATE_TOKEN).notifiedChatRooms.filter(a => a === this.chatRoom.chatRoomId).length
         this.counterIncomingMessage = notifiedIncomingMessages
         if (this.chatRoom.type === RoomType.Double) {
-            this.hasRoomAvatar = this.chatRoom.invitee.hasAvatar
-            this.roomAvatar = this.chatRoom.invitee.avatar
-            this.roomName = this.chatRoom.invitee.fullName
-            this.roomShortName = this.chatRoom.invitee.shortName
-            this.isOnline = this.chatRoom.invitee.isOnline
+            this.invitee = ObjectUtils.clone(this.chatRoom.invitee)
         }
 
         if (this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession.chatRoomId ===
@@ -74,14 +69,16 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         ).subscribe(() => {
             const foundUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).availableUsers
                 .find(a => a.userName === this.chatRoom.invitee.userName)
-            this.isOnline = foundUser.isOnline
+            this.chatBoxContent.isUserOnline = foundUser.isOnline
+            this.avatar.user.isOnline = foundUser.isOnline
         }))
         this.sup.add(this.actions$.pipe(
             ofActionSuccessful(IncomingOfflineUser)
         ).subscribe(() => {
             const foundUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).availableUsers
                 .find(a => a.userName === this.chatRoom.invitee.userName)
-            this.isOnline = foundUser.isOnline
+            this.chatBoxContent.isUserOnline = foundUser.isOnline
+            this.avatar.user.isOnline = foundUser.isOnline
         }))
 
         this.sup.add(this.actions$.pipe(
@@ -100,7 +97,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
                 ofActionSuccessful(ActiveDoubleChatRoom)
             ).subscribe(
                 () => {
-                    this.logger.debug('This box is actived ' + this.roomName, this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession.chatRoomId === this.chatRoom.chatRoomId)
                     this.showChatBox = this.store.selectSnapshot(CHAT_STATE_TOKEN).activeChatSession.chatRoomId === this.chatRoom.chatRoomId
                     if (this.showChatBox)
                         this.openChatbox()
@@ -143,7 +139,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
 
     private getHeadBoxClass(index: number) {
-        return 'chat-box-head-' + index.toString()
+        return 'chat-box-head-' + index.toString() + ' chat-box-head'
     }
     private getChatBoxClass(index: number) {
         return `chat-box chat-box-${index.toString()} arrow-right p-3`

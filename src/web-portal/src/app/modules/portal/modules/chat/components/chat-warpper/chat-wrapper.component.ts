@@ -7,7 +7,9 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { Store, Select, Actions, ofActionSuccessful, ofActionDispatched, ofActionCompleted } from '@ngxs/store';
 import {  CHAT_STATE_TOKEN, ChatStateModel } from 'stores/chats/chats.state';
 import { tap, filter } from 'rxjs/operators';
-import { GotHubChatProblem, ActiveDoubleChatRoom } from 'stores/chats/chats.actions';
+import { GotHubChatProblem, ActiveDoubleChatRoom, NotifyIncomingVideoCall } from 'stores/chats/chats.actions';
+import { MatDialog } from '@angular/material';
+import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 
 @Component({
     selector: 'let-chat-wrapper',
@@ -26,6 +28,7 @@ export class ChatWrapperComponent implements OnInit, OnDestroy {
         private actions$: Actions,
         private chatService: ChatService,
         private store: Store,
+        public dialog: MatDialog,
         private logger: NGXLogger
     ) { }
 
@@ -55,6 +58,29 @@ export class ChatWrapperComponent implements OnInit, OnDestroy {
                 }
             )
         ).subscribe())
+
+        this.sup.add(
+            this.actions$.pipe(
+                ofActionSuccessful(NotifyIncomingVideoCall)
+            ).subscribe(
+                () => {
+                    const inviter = this.store.selectSnapshot(CHAT_STATE_TOKEN).inviterVideoCall
+                    const participant = this.store.selectSnapshot(CHAT_STATE_TOKEN).incomingVideoCall
+                    let dialogRef = this.dialog.open(VideoCallDialogComponent, {
+                        disableClose: true,
+                        data: {
+                            invitee: inviter,
+                            isRinging: true,
+                            participant: participant
+                        }
+                    });
+                    dialogRef.afterClosed().subscribe(result => {
+                        if (result) {
+                        }
+                    })
+                }
+            )
+        )
     }
     
     ngOnDestroy(): void {

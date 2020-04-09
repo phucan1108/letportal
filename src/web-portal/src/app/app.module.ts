@@ -27,7 +27,7 @@ import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ChatModule } from 'portal/modules/chat/chat.module';
 import  {  NgxEmojiPickerModule  }  from  'ngx-emoji-picker';
-
+import { VideoCallService } from 'services/videocall.service';
 export function hlJSLang() {
   return [
     { name: 'sql', func: sql }
@@ -74,6 +74,7 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   ],
   providers: [
     ChatService,
+    VideoCallService,
     ConfigurationService,
     {
       provide: PORTAL_BASE_URL,

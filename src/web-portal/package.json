@@ -36,6 +36,7 @@
     "@swimlane/ngx-charts": "^12.0.1",
     "@types/jquery": "^3.3.29",
     "@types/lodash": "^4.14.123",
+    "@types/webrtc": "0.0.26",
     "ang-jsoneditor": "^1.9.1",
     "angular-animations": "0.0.10",
     "angular-markdown-editor": "^2.0.2",
@@ -68,6 +69,7 @@
     "quill-mention": "^2.1.2",
     "rxjs": "^6.5.4",
     "tslib": "^1.10.0",
+    "webrtc-adapter": "^7.5.1",
     "xlsx": "^0.15.5",
     "zone.js": "^0.10.2"
   },

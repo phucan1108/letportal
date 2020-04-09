@@ -14,6 +14,7 @@ import { PortalStandardClaims } from 'app/core/security/portalClaims';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
 import { ChatService } from 'services/chat.service';
+import { VideoCallService } from 'services/videocall.service';
 
 @Component({
   selector: 'app-navigation',
@@ -46,6 +47,7 @@ export class NavigationComponent implements OnInit {
     private session: SessionService,
     private security: SecurityService,
     private chatService: ChatService,
+    private videoService: VideoCallService,
     private cd: ChangeDetectorRef) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.events.subscribe((event: Event) => {
@@ -91,6 +93,7 @@ export class NavigationComponent implements OnInit {
     this.security.userLogout()
     this.session.clear()
     this.chatService.stop()
+    this.videoService.stop()
     this.router.navigateByUrl('/')
   }
 

@@ -1,0 +1,77 @@
+.dialing-container{
+    background-color: #ebedf2;
+    width: 100%;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+}
+
+.ringing-container{
+    background-color: #ebedf2;
+    width: 100%;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+}
+
+.streaming-container{
+    background-color: #ebedf2;
+    width: 100%;
+    height: 500px;
+    margin: 0;
+    padding: 0;
+}
+
+.answer-call{
+    width: 48px;
+    height: 48px;
+    background-color: rgb(255,255,255);
+    cursor: pointer;
+}
+.deny-call{
+    width: 48px;
+    height: 48px;
+    background-color: rgb(255,255,255);
+    cursor: pointer;
+}
+
+.float-local-video{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 200px;
+    height: 150px;
+}
+
+@media (min-width: 576.98px) and (max-width: 991.98px) {
+
+    .dialing-container{
+        height: 400px;
+    }
+
+    .ringing-container{
+        height: 400px;
+    }
+
+    .streaming-container{
+        height: 400px;
+    }
+}
+
+@media(max-width: 576px){
+
+    .dialing-container{
+        width: 270px;
+        height: 300px;
+    }
+
+    .ringing-container{
+        width: 270px;
+        height: 300px;
+    }
+
+    .streaming-container{
+        width: 270px;
+        height: 300px;
+    }
+}

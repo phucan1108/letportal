@@ -1,4 +1,4 @@
-import { ChatOnlineUser, ChatRoom, DoubleChatRoom, ChatSession, Message, ExtendedMessage } from 'app/core/models/chat.model';
+import { ChatOnlineUser, ChatRoom, DoubleChatRoom, ChatSession, Message, ExtendedMessage, ParticipantVideo, VideoRoomModel, RtcIceServer } from 'app/core/models/chat.model';
 
 export interface TakeUserOnlineEvent{
     user: ChatOnlineUser
@@ -77,4 +77,16 @@ export interface IncomingOfflineUserEvent{
 
 export interface IncomingMessageFromUnloadUserEvent{
     sender: string
+}
+
+export interface IncomingVideoCallEvent{
+    caller: ParticipantVideo
+}
+
+export interface HandshakedVideoCallEvent{
+    videoRoom: VideoRoomModel
+}
+
+export interface ReceivedIceServerEvent{
+    iceServer: RtcIceServer
 }

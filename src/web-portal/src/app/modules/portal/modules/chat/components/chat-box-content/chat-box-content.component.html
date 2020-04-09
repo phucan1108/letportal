@@ -13,10 +13,15 @@
                 <img [src]="roomAvatar" class="rounded-circle user-avatar" />
             </div>
         </div>
-        <div class="w-75 text-left">
+        <div class="w-50 text-left">
             <h6 style="margin-bottom: 0px;">{{roomName}}</h6>
             <span *ngIf="isUserOnline" class="online-text">Online</span>
             <span *ngIf="!isUserOnline" class="online-text">Offline</span>
+        </div>
+        <div class="w-25 text-right">
+            <button [disabled]="!isUserOnline" mat-icon-button color="primary" (click)="popupVideoCall()">
+                <mat-icon>voice_chat</mat-icon>
+            </button>
         </div>
     </div>
 </div>

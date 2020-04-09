@@ -1,14 +1,18 @@
-import { ChatRoom, RoomType, ChatOnlineUser, DoubleChatRoom, ChatSession, ExtendedMessage } from 'app/core/models/chat.model';
+import { ChatRoom, RoomType, ChatOnlineUser, DoubleChatRoom, ChatSession, ExtendedMessage, ParticipantVideo, VideoRoomModel, RtcIceServer } from 'app/core/models/chat.model';
 import { State, StateToken, Action, StateContext, Actions } from '@ngxs/store';
 import * as ChatActions from './chats.actions'
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { patch, updateItem, insertItem, removeItem } from '@ngxs/store/operators';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { ErrorCode } from 'services/identity.service';
 
 const MAX_ROOMS = 5
 export const CHAT_STATE_TOKEN = new StateToken<ChatStateModel>('chats');
 export interface ChatStateModel {
+    // For maintaining online users
     availableUsers: ChatOnlineUser[]
+
+    // For chatting
     chatRooms: ChatRoom[]
     activeChatSession: ChatSession
     notifiedChatRooms: string[] // Contains chatRoomId has new message
@@ -16,6 +20,13 @@ export interface ChatStateModel {
     currentUser: ChatOnlineUser
     lastSentHashCode: string
     isOpenChatBox: boolean
+
+    // For Video call
+    incomingVideoCall: ParticipantVideo
+    inviterVideoCall: ChatOnlineUser
+    handshakedVideoCall: VideoRoomModel
+    iceServer: RtcIceServer
+    callErrorCode: ErrorCode
 }
 
 @State<ChatStateModel>({
@@ -28,7 +39,12 @@ export interface ChatStateModel {
         notifiedChatRooms: [],
         currentUser: null,
         lastSentHashCode: null,
-        isOpenChatBox: false
+        isOpenChatBox: false,
+        incomingVideoCall: null,
+        handshakedVideoCall: null,
+        inviterVideoCall: null,
+        iceServer: null,
+        callErrorCode: null
     }
 })
 export class ChatState {
@@ -456,7 +472,59 @@ export class ChatState {
                 })
             )
         }
+    }
 
+    @Action(ChatActions.NotifyIncomingVideoCall)
+    public incomingVideoCall(ctx: StateContext<ChatStateModel>, { event }: ChatActions.NotifyIncomingVideoCall) {
+        const foundUser = ctx.getState().availableUsers.find(a => a.userName === event.caller.username)
+        return ctx.setState(
+            patch({
+                incomingVideoCall: event.caller,
+                inviterVideoCall: foundUser
+            })
+        )
+    }
 
+    @Action(ChatActions.HandshakedVideoCall)
+    public handshakeVideoCall(ctx: StateContext<ChatStateModel>, { event }: ChatActions.HandshakedVideoCall) {
+        return ctx.setState(
+            patch({
+                handshakedVideoCall: event.videoRoom
+            })
+        )
+    }
+
+    @Action(ChatActions.ReceivedIceServer)
+    public receivedIceServer(ctx: StateContext<ChatStateModel>, { event }: ChatActions.ReceivedIceServer) {
+        return ctx.setState(
+            patch({
+                iceServer: event.iceServer
+            })
+        )
+    }
+
+    @Action(ChatActions.DroppedCall)
+    public droppedCall(ctx: StateContext<ChatStateModel>, { }: ChatActions.DroppedCall) {
+        return ctx.setState(
+            patch({
+                handshakedVideoCall: null,
+                iceServer: null,
+                incomingVideoCall: null,
+                inviterVideoCall: null
+            })
+        )
+    }
+
+    @Action(ChatActions.ForceDroppedCall)
+    public forceDroppedCall(ctx: StateContext<ChatStateModel>, { error }: ChatActions.ForceDroppedCall) {
+        return ctx.setState(
+            patch({
+                handshakedVideoCall: null,
+                iceServer: null,
+                incomingVideoCall: null,
+                inviterVideoCall: null,
+                callErrorCode: error
+            })
+        )
     }
 }

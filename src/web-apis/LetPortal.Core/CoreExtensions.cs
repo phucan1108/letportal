@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -93,7 +95,7 @@ namespace LetPortal.Core
             return builder;
         }
 
-        public static ILetPortalBuilder AddJwtValidator(this ILetPortalBuilder builder, Configurations.JwtBearerOptions jwtOptions = null)
+        public static ILetPortalBuilder AddJwtValidator(this ILetPortalBuilder builder, Configurations.JwtBearerOptions jwtOptions = null, List<string> hubSegments = null)
         {
             if(jwtOptions == null)
             {
@@ -137,11 +139,14 @@ namespace LetPortal.Core
 
                         // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/chathub", StringComparison.OrdinalIgnoreCase)))
+
+                        if (!string.IsNullOrEmpty(accessToken) && hubSegments != null)
                         {
-                            // Read the token out of the query string
-                            context.Token = accessToken;
+                            if(hubSegments.Any(url => (path.StartsWithSegments(url, StringComparison.OrdinalIgnoreCase))))
+                            {   
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
                         }
                         return Task.CompletedTask;
                     },

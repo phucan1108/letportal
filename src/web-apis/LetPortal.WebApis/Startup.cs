@@ -1,4 +1,5 @@
-﻿using LetPortal.Core;
+﻿using System.Collections.Generic;
+using LetPortal.Core;
 using LetPortal.Portal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

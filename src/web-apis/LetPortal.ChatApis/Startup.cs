@@ -1,4 +1,5 @@
-﻿using LetPortal.Chat;
+﻿using System.Collections.Generic;
+using LetPortal.Chat;
 using LetPortal.Chat.Hubs;
 using LetPortal.Chat.Repositories;
 using LetPortal.Core;
@@ -32,7 +33,12 @@ namespace LetPortal.ChatApis
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
             })
-            .AddJwtValidator()
+            .AddJwtValidator( 
+                    hubSegments: new List<string>
+                    {
+                        "/chathub",
+                        "/videohub"
+                    })
             .AddChat();
 
             services
@@ -88,6 +94,7 @@ namespace LetPortal.ChatApis
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<HubChatClient>("/chathub");
+                endpoints.MapHub<HubVideoClient>("/videohub");
             });
         }
     }

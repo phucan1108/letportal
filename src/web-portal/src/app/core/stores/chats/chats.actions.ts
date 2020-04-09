@@ -1,4 +1,5 @@
-import { ClickedOnChatUserEvent, TakeUserOnlineEvent, ActiveDoubleChatActionEvent, OpenNewDoubleChatRoomEvent as FetchedNewDoubleChatRoomEvent, SendNewMessageEvent, ReceivedMessageEvent, ClickedOnChatBoxIconEvent, LoadingMoreSessionEvent, LoadedMoreSessionEvent, AddedNewSessionEvent, ReceivedMessageFromAnotherDeviceEvent, InitialReceivedChatRoomEvent, NotifyNewIncomingMessageEvent, LoadedAllAvailableUsersEvent, IncomingOnlineUserEvent, IncomingOfflineUserEvent, IncomingMessageFromUnloadUserEvent } from './chats.events'
+import { ClickedOnChatUserEvent, TakeUserOnlineEvent, ActiveDoubleChatActionEvent, OpenNewDoubleChatRoomEvent as FetchedNewDoubleChatRoomEvent, SendNewMessageEvent, ReceivedMessageEvent, ClickedOnChatBoxIconEvent, LoadingMoreSessionEvent, LoadedMoreSessionEvent, AddedNewSessionEvent, ReceivedMessageFromAnotherDeviceEvent, InitialReceivedChatRoomEvent, NotifyNewIncomingMessageEvent, LoadedAllAvailableUsersEvent, IncomingOnlineUserEvent, IncomingOfflineUserEvent, IncomingMessageFromUnloadUserEvent, IncomingVideoCallEvent, HandshakedVideoCallEvent, ReceivedIceServerEvent } from './chats.events'
+import { ErrorCode } from 'services/identity.service'
 
 const CHAT_ACTION = '[Chat Action]'
 
@@ -112,6 +113,46 @@ export class IncomingMessageFromUnloadUser implements ChatAction {
 export class RemoveLastLongActiveChatRoom implements ChatAction {
     public static readonly type = `${CHAT_ACTION} Remove last long active chat room`
     constructor(public newChatRoomId: string) { }
+}
+
+export class NotifyIncomingVideoCall implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} User has upcoming video call`
+    constructor(public event: IncomingVideoCallEvent) { }
+}
+
+export class HandshakedVideoCall implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} User has handshaked video call`
+    constructor(public event: HandshakedVideoCallEvent) { }
+}
+
+export class ReceivedIceServer implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Received ICE Server`
+    constructor(public event: ReceivedIceServerEvent) { }
+}
+
+export class DroppedCall implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} User dropped a video call`
+    constructor() { }
+}
+
+export class UserCancelledCall implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Caller cancelled a video call`
+    constructor() { }
+}
+
+export class UserDroppedCall implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Partner dropped a video call`
+    constructor() { }
+}
+
+export class ForceDroppedCall implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Forced droppped a video call`
+    constructor(public error: ErrorCode) { }
+}
+
+export class UserDeniedCall implements ChatAction {
+    public static readonly type = `${CHAT_ACTION} Partner denied a video call`
+    constructor() { }
 }
 
 export type All =

@@ -23,6 +23,9 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   .color-warn {
     color: mat-color($warn);
   }
+  .color-success{
+    color: #08976d;
+  }
 
   .color-bg-primary {
     background-color: mat-color($primary);
@@ -32,6 +35,9 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   }
   .color-bg-warn {
     background-color: mat-color($warn);
+  }
+  .color-bg-success{
+    background-color:#08976d;
   }
 
   .mat-chip-0 {
@@ -188,12 +194,25 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     cursor: pointer;
   }
 
+  .avatar-head {
+    width: 48px;
+    height: 48px;
+    background-color: rgb(255, 255, 255);
+    color: mat-color($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 22px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
+  }
+
   .sent_mess {
     float: right;
     margin: 0;
     p {
       background-color: mat-color($primary);
-      color: rgb(255, 255, 255);      
+      color: rgb(255, 255, 255);
       padding-top: 6px;
       padding-bottom: 6px;
       padding-left: 10px;
@@ -204,8 +223,8 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
       border-bottom-left-radius: 10px;
       word-wrap: break-word;
       max-width: 100%;
-    }   
-    .time-text{
+    }
+    .time-text {
       color: grey;
       float: right;
     }
@@ -228,7 +247,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
       word-wrap: break-word;
       max-width: 100%;
     }
-    .time-text{
+    .time-text {
       color: grey;
       float: left;
     }

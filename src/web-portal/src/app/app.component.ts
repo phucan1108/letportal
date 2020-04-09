@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ChatService } from 'services/chat.service';
 import { SecurityService } from './core/security/security.service';
+import { VideoCallService } from 'services/videocall.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -12,6 +13,7 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private chatService: ChatService,
+    private videoService: VideoCallService,
     private securityService: SecurityService
   ){
   }
@@ -23,6 +25,7 @@ export class AppComponent implements OnInit {
           this.showChatBox = true
           this.chatService.start()
           this.chatService.online()
+          this.videoService.start()
         }
         else{
           this.showChatBox = false

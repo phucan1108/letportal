@@ -51,3 +51,28 @@ export interface AttachmentFile{
     fileType: string
     fileName: string
 }
+
+export interface VideoRoomModel{
+    id: string
+    isConnectedRtc: boolean
+    participants: ParticipantVideo[]
+    handshakeDate: Date
+    droppedDate: Date
+}
+
+export interface ParticipantVideo{
+    connectionId: string
+    username: string
+}
+
+export interface RtcIceServer{
+    urls: string
+    username: string
+    credential: string
+}
+
+export interface VideoRtcSignal{
+    roomId: string
+    signalMessage: string
+    connectionId: string
+}
