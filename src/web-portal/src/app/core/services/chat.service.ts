@@ -198,7 +198,8 @@ export class ChatService {
                     ...message,
                     hasAttachmentFile: message.attachmentFiles && message.attachmentFiles.length > 0,
                     chatSessionId: chatSessionId,
-                    isReceived: true
+                    isReceived: true,
+                    renderTime: true
                 }
             }))
         })
@@ -209,10 +210,18 @@ export class ChatService {
 
             // We will combine all sessions into current sesstion but we will maintain previous session id
             if (ObjectUtils.isNotNull(chatSession.messages)) {
-                chatSession.messages.forEach(m => {
-                    m.isReceived = m.userName !== this.security.getAuthUser().username
-                    m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
-                })
+                let i = 0
+                for (i = 0; i < chatSession.messages.length; i++) {
+                    if(i === 0){
+                        chatSession.messages[i].renderTime = true
+                    }
+                    else if(chatSession.messages[i - 1].userName !== chatSession.messages[i].userName){
+                        chatSession.messages[i].renderTime = true
+                    }
+                    
+                    chatSession.messages[i].isReceived = chatSession.messages[i].userName !== this.security.getAuthUser().username
+                    chatSession.messages[i].hasAttachmentFile = chatSession.messages[i].attachmentFiles && chatSession.messages[i].attachmentFiles.length > 0
+                }
             }
             else {
                 chatSession.messages = []

@@ -8,3 +8,4 @@
 <div class="chat-search-box arrow-right p-3" *ngIf="isShowSearchBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
     <let-chat-search (closed)="onSearchBoxClosed()" (onClickChatUser)="clickedChatUser($event)"></let-chat-search>
 </div>
+<audio src="assets/sounds/message_ring.mp3" style="visibility: hidden;" #audio></audio>

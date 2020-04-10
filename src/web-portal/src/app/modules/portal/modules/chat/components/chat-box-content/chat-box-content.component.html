@@ -35,7 +35,10 @@
         </div>
         <ng-container *ngFor="let message of messages$ | async">
             <div class="w-75 pt-2 d-flex flex-column "
-                [ngClass]="{'received_mess align-items-start': message.isReceived, 'sent_mess align-items-end': !message.isReceived}">
+                [ngClass]="{'received_mess align-items-start': message.isReceived, 'sent_mess align-items-end': !message.isReceived}">                
+                <div class="time-text" *ngIf="message.renderTime">
+                    {{translateTimeText(message)}}
+                </div>
                 <p class="mb-1" *ngIf="!message.hasAttachmentFile">
                     {{message.message}}</p>
                 <div class="mb-1" *ngIf="message.hasAttachmentFile">
@@ -56,9 +59,6 @@
                             </button>
                         </div>
                     </ng-container>
-                </div>
-                <div class="time-text">
-                    {{translateTimeText(message)}}
                 </div>
             </div>
         </ng-container>

@@ -26,8 +26,9 @@ import sql from 'highlight.js/lib/languages/sql'
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ChatModule } from 'portal/modules/chat/chat.module';
-import  {  NgxEmojiPickerModule  }  from  'ngx-emoji-picker';
+import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
 import { VideoCallService } from 'services/videocall.service';
+import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay';
 export function hlJSLang() {
   return [
     { name: 'sql', func: sql }
@@ -112,7 +113,7 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   entryComponents: [
 
   ],
-  exports:[
+  exports: [
     CoreModule
   ],
   bootstrap: [AppComponent]

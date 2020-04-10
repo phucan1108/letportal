@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { ChatRoom, RoomType, DoubleChatRoom, ChatOnlineUser, ChatSession } from '../../../../../../core/models/chat.model';
 import { ChatService } from 'services/chat.service';
 import { Subscription, Observable } from 'rxjs';
@@ -10,6 +10,7 @@ import { NGXLogger } from 'ngx-logger';
 import { ActiveChatSearchBox, ActiveDoubleChatRoom, ClickedOnChatBox, NotifyNewIncomingMessage, ToggleOpenChatRoom, IncomingOnlineUser, IncomingOfflineUser } from 'stores/chats/chats.actions';
 import { ChatBoxContentComponent } from '../chat-box-content/chat-box-content.component';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'let-chat-box',
@@ -31,6 +32,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     @ViewChild('avatar', { static: true })
     avatar: AvatarComponent
     @ViewChild('chatBoxContent', { static: false})
+    @ViewChild('audio', { static: true })
+    audio: ElementRef<HTMLAudioElement>
     chatBoxContent: ChatBoxContentComponent
     currentUser: ChatOnlineUser
     invitee: ChatOnlineUser
@@ -107,10 +110,12 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         this.sup.add(
             this.actions$.pipe(
                 ofActionSuccessful(NotifyNewIncomingMessage),
+                debounceTime(1000)
             ).subscribe(
                 () => {
                     const notifiedIncomingMessages = this.store.selectSnapshot(CHAT_STATE_TOKEN).notifiedChatRooms.filter(a => a === this.chatRoom.chatRoomId).length
                     this.counterIncomingMessage = notifiedIncomingMessages
+                    this.audio.nativeElement.play()
                 }
             )
         )

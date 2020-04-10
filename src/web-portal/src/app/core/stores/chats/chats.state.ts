@@ -6,7 +6,7 @@ import { patch, updateItem, insertItem, removeItem } from '@ngxs/store/operators
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ErrorCode } from 'services/identity.service';
 
-const MAX_ROOMS = 5
+const MAX_ROOMS = 2
 export const CHAT_STATE_TOKEN = new StateToken<ChatStateModel>('chats');
 export interface ChatStateModel {
     // For maintaining online users
@@ -283,6 +283,14 @@ export class ChatState {
     public sentMessage(ctx: StateContext<ChatStateModel>, { event }: ChatActions.SentMessage) {
         const state = ctx.getState()
         if (event.chatSessionId === state.activeChatSession.sessionId) {
+            const lastMessage = state.activeChatSession.messages[state.activeChatSession.messages.length - 1]
+            if(lastMessage){
+                event.message.renderTime = lastMessage.userName !== event.message.userName
+            }
+            else{
+                event.message.renderTime = true
+            }
+            
             return ctx.setState(
                 patch({
                     activeChatSession: {
@@ -303,6 +311,8 @@ export class ChatState {
         const state = ctx.getState()
         if (event.chatSessionId === state.activeChatSession.sessionId
             && state.lastSentHashCode !== event.lastHashCode) {
+            const lastMessage = state.activeChatSession.messages[state.activeChatSession.messages.length - 1]
+            event.message.renderTime = lastMessage.userName !== event.message.userName
             return ctx.setState(
                 patch({
                     activeChatSession: {
@@ -333,6 +343,14 @@ export class ChatState {
         // In case a received message is sent to active chat room
         if (state.isOpenChatBox && event.chatRoomId === state.activeChatSession.chatRoomId
             && event.chatSessionId === state.activeChatSession.sessionId) {
+            const lastMessage = state.activeChatSession.messages[state.activeChatSession.messages.length - 1]
+            if(lastMessage){
+                event.message.renderTime = lastMessage.userName !== event.message.userName
+            }
+            else{
+                event.message.renderTime = true
+            }
+            
             return ctx.setState(
                 patch({
                     activeChatSession: {
@@ -352,6 +370,14 @@ export class ChatState {
                 if (foundRoom.type === RoomType.Double) {
                     // Add received message into current session of chat room
                     let clonedFoundRoom: DoubleChatRoom = ObjectUtils.clone(foundRoom)
+                    const lastMessage = clonedFoundRoom.currentSession.messages[clonedFoundRoom.currentSession.messages.length - 1]
+                    if(lastMessage){
+                        event.message.renderTime = lastMessage.userName !== event.message.userName
+                    }
+                    else{
+                        event.message.renderTime = true
+                    }
+                    
                     clonedFoundRoom.currentSession.messages.push(event.message)
                     // Ensure we still keep last session
                     clonedFoundRoom.currentSession.sessionId = event.chatSessionId

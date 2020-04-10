@@ -191,7 +191,8 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                 isReceived: false,
                 createdDate: new Date(),
                 chatSessionId: this.currentChatSession.sessionId,
-                hasAttachmentFile: false
+                hasAttachmentFile: false,
+                renderTime: true
             }
             sentMessage.formattedMessage = sentMessage.message
 
@@ -278,7 +279,8 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                         userName: this.currentUser.userName,
                         isReceived: false,
                         hasAttachmentFile: true,
-                        createdDate: new Date()
+                        createdDate: new Date(),
+                        renderTime: true
                     }
                     this.lastSentHashCode = StringUtils.b64EncodeUnicode(res.fileName + (new Date()).getUTCMilliseconds().toString())
                     this.chatService.sendMessage(

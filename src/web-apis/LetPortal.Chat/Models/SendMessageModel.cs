@@ -12,5 +12,7 @@ namespace LetPortal.Chat.Models
         public MessageModel Message { get; set; }
 
         public string LastSentHashCode { get; set; }
+
+        public bool RenderTime { get; set; }
     }
 }

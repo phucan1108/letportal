@@ -14,6 +14,7 @@ import { NgxsModule } from '@ngxs/store';
 import { NgxsStoreModule } from 'app/core/store.module';
 import { VideoCallDialogComponent } from './components/video-call-dialog/video-call-dialog.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
+import { VideoStreamDialogComponent } from './components/video-stream-dialog/video-stream-dialog.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { AvatarComponent } from './components/avatar/avatar.component';
         ChatBoxComponent,
         ChatBoxWrapperComponent,
         VideoCallDialogComponent,
-        AvatarComponent
+        AvatarComponent,
+        VideoStreamDialogComponent
     ],
     entryComponents: [
         VideoCallDialogComponent
@@ -54,7 +56,8 @@ import { AvatarComponent } from './components/avatar/avatar.component';
         MatTooltipModule
      ],
     exports: [
-        ChatWrapperComponent
+        ChatWrapperComponent,
+        VideoStreamDialogComponent
     ],
     providers: [],
 })

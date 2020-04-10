@@ -44,6 +44,7 @@ export interface ExtendedMessage extends Message{
     isReceived: boolean
     hasAttachmentFile: boolean
     chatSessionId: string
+    renderTime: boolean
 }
 
 export interface AttachmentFile{

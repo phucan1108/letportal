@@ -1,25 +1,35 @@
+.dialog-content{
+    max-height: 100%;
+}
+.dialog-width-video{
+    width: 100%;
+}
+
 .dialing-container{
     background-color: #ebedf2;
-    width: 100%;
-    height: 500px;
+    width: 400px;
+    height: 300px;
     margin: 0;
     padding: 0;
 }
 
 .ringing-container{
     background-color: #ebedf2;
-    width: 100%;
-    height: 500px;
+    width: 400px;
+    height: 300px;
     margin: 0;
     padding: 0;
 }
 
 .streaming-container{
-    background-color: #ebedf2;
-    width: 100%;
-    height: 500px;
+    background-color: black;
     margin: 0;
     padding: 0;
+}
+.streaming-container:fullscreen{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
 }
 
 .answer-call{
@@ -35,14 +45,6 @@
     cursor: pointer;
 }
 
-.float-local-video{
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 200px;
-    height: 150px;
-}
-
 @media (min-width: 576.98px) and (max-width: 991.98px) {
 
     .dialing-container{
@@ -50,10 +52,6 @@
     }
 
     .ringing-container{
-        height: 400px;
-    }
-
-    .streaming-container{
         height: 400px;
     }
 }
@@ -66,11 +64,6 @@
     }
 
     .ringing-container{
-        width: 270px;
-        height: 300px;
-    }
-
-    .streaming-container{
         width: 270px;
         height: 300px;
     }
