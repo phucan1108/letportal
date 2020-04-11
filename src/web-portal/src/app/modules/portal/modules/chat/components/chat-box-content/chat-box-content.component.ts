@@ -95,6 +95,11 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     ngAfterViewChecked(): void {
+        if (this.displayShowMore && this.messageContainer.nativeElement.scrollTop === 0) {
+            this.store.dispatch(new LoadingMoreSession())
+            // Keep scroll down a little bit for adding more message
+            this.messageContainer.nativeElement.scrollTop = 20
+        }
     }
 
     ngOnInit(): void {

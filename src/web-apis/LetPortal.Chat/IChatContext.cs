@@ -12,7 +12,7 @@ namespace LetPortal.Chat
     /// </summary>
     public interface IChatContext
     {
-        IList<OnlineUser> GetOnlineUsers();
+        IEnumerable<OnlineUser> GetOnlineUsers();
 
         OnlineUser GetOnlineUser(string userName);
 
@@ -24,8 +24,6 @@ namespace LetPortal.Chat
 
         ChatRoomModel GetDoubleRoom(OnlineUser invitor, OnlineUser invitee);
 
-        ChatRoomModel CreateDoubleRoom(OnlineUser invitor, OnlineUser invitee);
-
         void AddChatRoomSession(ChatSessionModel chatSession);
 
         ChatSessionModel GetCurrentChatSession(string chatRoomId);
@@ -35,5 +33,9 @@ namespace LetPortal.Chat
         void SendMessage(string chatSessionId, MessageModel message);
 
         bool WantToAddNewSession(string chatSessionId);
+
+        IEnumerable<ChatSessionModel> GetAllActiveSessions(string userName);
+
+        void CloseAllUnlistenRooms(string relatedUser);
     }
 }

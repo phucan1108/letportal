@@ -31,5 +31,18 @@ namespace LetPortal.Chat.Repositories.ChatSessions
                 .Include(b => b.Conversations)
                 .Where(a => a.ChatRoomId == chatRoomId).OrderByDescending(b => b.CreatedDate).FirstOrDefaultAsync();
         }
+
+        public async Task UpsertAsync(ChatSession chatSession)
+        {
+            var found = await _context.ChatSessions.AsNoTracking().FirstOrDefaultAsync(a => a.Id == chatSession.Id);
+            if (found == null)
+            {
+                await AddAsync(chatSession);
+            }
+            else
+            {
+                await UpdateAsync(found.Id, chatSession);
+            }
+        }
     }
 }

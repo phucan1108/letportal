@@ -305,7 +305,7 @@ export class VideoStreamDialogComponent implements OnInit {
                 break
         }
         // If there are no special, we force drop a call
-        //this.dropped()
+        this.dropped()
     }
 
     makingOffer = false // Flag to avoid race condition

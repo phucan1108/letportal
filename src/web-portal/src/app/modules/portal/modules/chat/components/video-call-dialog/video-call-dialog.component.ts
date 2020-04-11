@@ -46,6 +46,8 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
     @ViewChild('audioDrop', { static: true })
     audioDrop: ElementRef<HTMLAudioElement>
 
+    maximumDialingTime = 5
+
     handshakedRoom: VideoRoomModel
     sup: Subscription = new Subscription()
     constructor(
@@ -85,6 +87,15 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
             this.audio.nativeElement.play()
             this.animationInterval = setInterval(() => {
                 this.isDialing = !this.isDialing
+                // Try to resend request
+                this.videoService.signalingInvitee(this.invitee)
+                if(this.maximumDialingTime > 0){
+                    this.maximumDialingTime--
+                }
+                else{
+                    this.shortcutUtil.toastMessage('User is unreachable', ToastType.Warning)
+                    this.dialogRef.close()
+                }
             }, 1000)
             // Perform calling
             this.call()

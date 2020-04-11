@@ -15,22 +15,25 @@ export class AppComponent implements OnInit {
     private chatService: ChatService,
     private videoService: VideoCallService,
     private securityService: SecurityService
-  ){
+  ) {
   }
-  ngOnInit(): void {  
+  ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        if(event.urlAfterRedirects.indexOf('/portal/') >= 0
-          && this.securityService.isUserSignedIn()){      
-          this.showChatBox = true
+        if (event.urlAfterRedirects.indexOf('/portal/') >= 0
+          && this.securityService.isUserSignedIn()) {
           this.chatService.start()
           this.chatService.online()
           this.videoService.start()
+          this.chatService.getAllAvailableUsers()
+          setTimeout(() => {
+            this.showChatBox = true
+          }, 500)
         }
-        else{
+        else {
           this.showChatBox = false
         }
       }
-    }); 
+    });
   }
 }

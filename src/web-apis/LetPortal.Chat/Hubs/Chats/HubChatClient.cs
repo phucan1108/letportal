@@ -41,7 +41,7 @@ namespace LetPortal.Chat.Hubs
             _chatUserRepository = chatUserRepository;
             _chatOptions = chatOptions;
         }
-        
+
         public async Task OpenDoubleChatRoom(Models.OnlineUser invitee)
         {
             // Check this room is existed or not
@@ -54,8 +54,8 @@ namespace LetPortal.Chat.Hubs
             ChatSessionModel chatSessionModel = null;
             ChatSessionModel previousSessionModel = null;
             ChatRoomModel chatRoomModel = null;
-            
-            if(founDoubleRoom == null)
+
+            if (founDoubleRoom == null)
             {
                 // Try to fetch from database
                 var foundRoomInDb = (await _chatRoomRepository
@@ -73,7 +73,8 @@ namespace LetPortal.Chat.Hubs
                             invitee
                         },
                         RoomName = invitee.FullName,
-                        Type = RoomType.Double
+                        Type = RoomType.Double,
+                        CreateDate = DateTime.UtcNow
                     };
                     _chatContext.LoadDoubleRoom(chatRoomModel);
 
@@ -117,10 +118,12 @@ namespace LetPortal.Chat.Hubs
                             invitee
                         },
                         RoomName = invitee.FullName,
-                        Type = RoomType.Double
+                        Type = RoomType.Double,
+                        CreateDate = DateTime.UtcNow
                     };
                     _chatContext.LoadDoubleRoom(chatRoomModel);
                     chatRoomId = chatRoom.Id;
+                    createNewSession = true;
                 }
             }
             else
@@ -128,11 +131,11 @@ namespace LetPortal.Chat.Hubs
                 chatRoomId = founDoubleRoom.ChatRoomId;
                 chatRoomModel = founDoubleRoom;
                 chatSessionModel = _chatContext.GetCurrentChatSession(chatRoomId);
-                if(chatSessionModel == null)
+                if (chatSessionModel == null)
                 {
                     createNewSession = true;
                 }
-                else if(!string.IsNullOrEmpty(chatSessionModel.PreviousSessionId))
+                else if (!string.IsNullOrEmpty(chatSessionModel.PreviousSessionId))
                 {
                     previousSessionModel = _chatContext.GetChatSession(chatSessionModel.PreviousSessionId);
                 }
@@ -142,9 +145,9 @@ namespace LetPortal.Chat.Hubs
             {
                 // Try to fetch last chat session
                 var foundLastSession = await _chatSessionRepository.GetLastChatSession(chatRoomId);
-                if(foundLastSession != null)
+                if (foundLastSession != null)
                 {
-                    // In mind, we only create new chat session when it reaches Threshold
+                    // In mind, we only create new chat session when it reached Threshold
                     // Or it belongs to previous day
                     if (foundLastSession.Conversations.Count >= _chatOptions.CurrentValue.ThresholdNumberOfMessages
                         || foundLastSession.LeaveDate.Date < DateTime.UtcNow.Date)
@@ -179,27 +182,13 @@ namespace LetPortal.Chat.Hubs
                     }
                     else
                     {
-                        chatSessionModel = new ChatSessionModel
-                        {
-                            ChatRoomId = chatRoomId,
-                            Messages = new Queue<MessageModel>(),
-                            PreviousSessionId = foundLastSession.PreviousSessionId
-                        };
+                        chatSessionModel = ChatSessionModel.LoadFrom(foundLastSession);
 
-                        if (foundLastSession.Conversations != null)
+                        // Load one previous session if it had
+                        if (!string.IsNullOrEmpty(chatSessionModel.PreviousSessionId))
                         {
-                            foreach (var message in foundLastSession.Conversations.OrderBy(a => a.Timestamp))
-                            {
-                                chatSessionModel.Messages.Enqueue(new MessageModel
-                                {
-                                    Message = message.Message,
-                                    FormattedMessage = message.MessageTransform,
-                                    TimeStamp = message.Timestamp,
-                                    UserName = message.Username,
-                                    CreatedDate = message.CreatedDate,
-                                    AttachmentFiles = new List<AttachmentFile>()
-                                });
-                            }
+                            var previousSession = await _chatSessionRepository.GetOneAsync(chatSessionModel.PreviousSessionId);
+                            previousSessionModel = ChatSessionModel.LoadFrom(previousSession);
                         }
 
                         _chatContext.AddChatRoomSession(chatSessionModel);
@@ -222,27 +211,27 @@ namespace LetPortal.Chat.Hubs
                     PreviousSessionId = previousSessionModel?.SessionId
                 };
 
-                if(previousSessionModel != null)
+                if (previousSessionModel != null)
                 {
                     previousSessionModel.NextSessionId = chatSessionModel.SessionId;
-                }                 
-                                
+                }
+
                 _chatContext.AddChatRoomSession(chatSessionModel);
             }
-            
+
             // Allow target user to prepare a chatroom
             await Clients
                 .User(invitee.UserName)
                 .ReadyDoubleChatRoom(
-                    chatRoomModel, 
-                    chatSessionModel, 
-                    invitor, 
+                    chatRoomModel,
+                    chatSessionModel,
+                    invitor,
                     previousSessionModel);
 
             await Clients.Caller.LoadDoubleChatRoom(
                 chatRoomModel,
-                chatSessionModel, 
-                invitee, 
+                chatSessionModel,
+                invitee,
                 previousSessionModel);
         }
 
@@ -262,14 +251,21 @@ namespace LetPortal.Chat.Hubs
                     CreatedDate = DateTime.UtcNow,
                     Messages = new Queue<MessageModel>(),
                     PreviousSessionId = currentChatSession.SessionId,
-                    SessionId = DataUtil.GenerateUniqueId()
+                    SessionId = DataUtil.GenerateUniqueId()  ,
+                    LastMessageDate = DateTime.UtcNow
                 };
 
                 currentChatSession.NextSessionId = newChatSession.SessionId;
+                currentChatSession.LeaveDate = DateTime.UtcNow;
+                currentChatSession.LastMessageDate = DateTime.UtcNow;
+                // Save the current one to DB   
+                await _chatSessionRepository.UpsertAsync(currentChatSession.ToSession(true));
+                currentChatSession.IsInDb = true;
+
                 _chatContext.AddChatRoomSession(newChatSession);
 
                 await Clients.Caller.AddNewChatSession(newChatSession);
-                                
+
                 _chatContext.SendMessage(newChatSession.SessionId, model.Message);
 
                 await Clients.User(model.Receiver).AddNewChatSession(newChatSession);
@@ -286,14 +282,14 @@ namespace LetPortal.Chat.Hubs
                 await Clients.User(model.Receiver)
                     .ReceivedMessage(model.ChatRoomId, model.ChatSessionId, model.Message);
             }
-            
+
         }
 
         public async Task LoadPrevious(string previousSessionId)
         {
             // Check if it stayed on ChatContext
             var foundSession = _chatContext.GetChatSession(previousSessionId);
-            if(foundSession != null)
+            if (foundSession != null)
             {
                 await Clients.Caller.AddPreviousSession(foundSession);
             }
@@ -308,15 +304,17 @@ namespace LetPortal.Chat.Hubs
                     NextSessionId = entityChatSession.NextSessionId,
                     PreviousSessionId = entityChatSession.PreviousSessionId,
                     Messages = new Queue<MessageModel>(),
-                    SessionId = entityChatSession.Id
+                    SessionId = entityChatSession.Id ,
+                    IsInDb = true
                 };
 
-                if(entityChatSession.Conversations != null)
+                if (entityChatSession.Conversations != null)
                 {
                     foreach (var message in entityChatSession.Conversations.OrderBy(a => a.Timestamp))
                     {
                         preChatSessionModel.Messages.Enqueue(new MessageModel
                         {
+                            Id = message.Id,
                             Message = message.Message,
                             FormattedMessage = message.MessageTransform,
                             TimeStamp = message.Timestamp,
@@ -345,7 +343,32 @@ namespace LetPortal.Chat.Hubs
 
             if (isOffline)
             {
-                await Clients.Others.Offline(Context.UserIdentifier);
+                try
+                {
+                    var allOpenningSessions = _chatContext.GetAllActiveSessions(Context.UserIdentifier);
+                    if(allOpenningSessions != null)
+                    {
+                        foreach(var session in allOpenningSessions)
+                        {
+                            // Persist it on Db
+                            session.LeaveDate = DateTime.UtcNow;                            
+                            await _chatSessionRepository.UpsertAsync(session.ToSession());
+                            session.IsInDb = true;
+                            session.IsDirty = false;
+                        }
+                    }
+
+                    _chatContext.CloseAllUnlistenRooms(Context.UserIdentifier);
+                }
+                catch
+                {
+                   
+                }
+                finally
+                {
+                    // Ensure we still send notify
+                    await Clients.Others.Offline(Context.UserIdentifier);
+                }                
             }
 
             await base.OnDisconnectedAsync(exception);

@@ -34,7 +34,6 @@ export class ChatWrapperComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         
-        this.chatService.getAllAvailableUsers()
         this.sup.add(this.actions$.pipe(
             ofActionCompleted(GotHubChatProblem)
         ).subscribe(() => {

@@ -11,11 +11,11 @@ namespace LetPortal.Chat
 {
     public class ChatContext : IChatContext
     {
-        private List<OnlineUser> onlineUsers;
+        private readonly List<OnlineUser> onlineUsers;
 
-        private List<ChatRoomModel> chatRooms;
+        private readonly List<ChatRoomModel> chatRooms;
 
-        private List<ChatSessionModel> chatSessions;
+        private readonly List<ChatSessionModel> chatSessions;
 
         private readonly IOptionsMonitor<ChatOptions> _options;
 
@@ -27,21 +27,7 @@ namespace LetPortal.Chat
             _options = options;
         }
 
-        public ChatRoomModel CreateDoubleRoom(OnlineUser invitor, OnlineUser invitee)
-        {
-            var chatRoom = new ChatRoomModel
-            {
-                Type = Entities.RoomType.Double,
-                Participants = new List<OnlineUser> { invitor, invitee },
-                RoomName = invitee.FullName,
-                ChatRoomId = DataUtil.GenerateUniqueId()
-            };
-
-            chatRooms.Add(chatRoom);
-            return chatRoom;
-        }
-
-        public IList<OnlineUser> GetOnlineUsers()
+        public IEnumerable<OnlineUser> GetOnlineUsers()
         {
             return onlineUsers;
         }
@@ -55,6 +41,11 @@ namespace LetPortal.Chat
         {
             var foundSession = chatSessions.Find(a => a.SessionId == chatSessionId);
 
+            if (foundSession.IsInDb && !foundSession.IsDirty)
+            {
+                foundSession.IsDirty = true;                
+            }
+            foundSession.LastMessageDate = DateTime.UtcNow;
             foundSession.Messages.Enqueue(message);
         }
 
@@ -106,7 +97,19 @@ namespace LetPortal.Chat
 
         public void AddChatRoomSession(ChatSessionModel chatSession)
         {
-            chatSessions.Add(chatSession);
+            var numberOfSessions = chatSessions.Count(a => a.ChatRoomId == chatSession.ChatRoomId);
+            if(numberOfSessions < _options.CurrentValue.MaximumSessionsPerChatRoom)
+            {  
+                chatSessions.Add(chatSession);
+            }
+            else
+            {
+                // Remove last created
+                var lastSession = chatSessions.Where(a => a.ChatRoomId == chatSession.ChatRoomId).OrderBy(a => a.LastMessageDate).First();
+                var lastSessionIndex = chatSessions.IndexOf(lastSession);
+                chatSessions.RemoveAt(lastSessionIndex);
+                chatSessions.Add(chatSession);
+            }
         }
 
         public ChatSessionModel GetCurrentChatSession(string chatRoomId)
@@ -129,6 +132,29 @@ namespace LetPortal.Chat
                     && (
                         (a.Messages != null && a.Messages.Count >= _options.CurrentValue.ThresholdNumberOfMessages)
                         || a.CreatedDate.Date < DateTime.UtcNow.Date));
+        }
+
+        public IEnumerable<ChatSessionModel> GetAllActiveSessions(string userName)
+        {
+            var allRooms = chatRooms.Where(a => a.Participants.Any(b => b.UserName == userName)).Select(c => c.ChatRoomId);
+            return chatSessions.Where(a => 
+                allRooms.Contains(a.ChatRoomId) 
+                && (!a.IsInDb || (a.IsInDb && a.IsDirty))
+                && a.Messages.Count > 0);
+
+        }
+
+        public void CloseAllUnlistenRooms(string relatedUser)
+        {
+            var allUnlistenRooms = chatRooms.Where(a => a.NoListener(onlineUsers, relatedUser)).Select(b => b.ChatRoomId).ToList();
+            if(allUnlistenRooms != null)
+            {
+                foreach(var roomId in allUnlistenRooms)
+                {
+                    var found = chatRooms.Find(a => a.ChatRoomId == roomId);
+                    chatRooms.Remove(found);
+                }
+            }               
         }
     }
 }

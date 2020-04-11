@@ -14,6 +14,8 @@ namespace LetPortal.Chat.Models
 
         public string RoomName { get; set; }
 
+        public DateTime CreateDate { get; set; }
+
         public List<OnlineUser> Participants { get; set; }
 
         public static ChatRoomModel Load(ChatRoom chatRoom)
@@ -25,6 +27,17 @@ namespace LetPortal.Chat.Models
               RoomName = chatRoom.RoomName,
               Type = chatRoom.Type
             };
+        }
+
+        public bool NoListener(IEnumerable<OnlineUser> onlineUsers, string relatedUser)
+        {
+            if(Participants.Any(a => a.UserName == relatedUser))
+            {
+                // Check remaining user is online or not
+                return !Participants.Any(a => onlineUsers.Any(b => a.UserName == b.UserName));
+            }
+
+            return false;
         }
     }
 }

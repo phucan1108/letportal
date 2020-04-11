@@ -230,8 +230,12 @@ export class ChatService {
                 previousSession.messages.forEach(m => {
                     m.isReceived = m.userName !== this.security.getAuthUser().username
                     m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
-                    chatSession.messages.unshift(m)
                 })
+
+                chatSession.messages = [
+                    ...previousSession.messages,
+                    ...chatSession.messages
+                ]
 
                 chatSession.previousSessionId = previousSession.previousSessionId
             }
