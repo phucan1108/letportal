@@ -5,7 +5,7 @@
         matBadgeSize="small" matBadge="&#8288;" matBadgeColor="warn">
     </div>
 </div>
-<div class="chat-search-box arrow-right p-3" *ngIf="isShowSearchBox" [@fadeInRightOnEnter] [@fadeOutRightOnLeave]>
+<div class="chat-search-box arrow-right p-3" *ngIf="isShowSearchBox">
     <let-chat-search (closed)="onSearchBoxClosed()" (onClickChatUser)="clickedChatUser($event)"></let-chat-search>
 </div>
 <audio src="assets/sounds/message_ring.mp3" style="visibility: hidden;" #audio></audio>

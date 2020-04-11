@@ -6,7 +6,7 @@ import { patch, updateItem, insertItem, removeItem } from '@ngxs/store/operators
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ErrorCode } from 'services/identity.service';
 
-const MAX_ROOMS = 2
+const MAX_ROOMS = 4
 export const CHAT_STATE_TOKEN = new StateToken<ChatStateModel>('chats');
 export interface ChatStateModel {
     // For maintaining online users

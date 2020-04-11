@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="row ringing-container" *ngSwitchCase="videoCallState.Ringing">
-                <ng-container *ngIf="!isHandle">
+                <ng-container *ngIf="!isHandset">
                     <div class="col-lg-4 col-xs-6 d-flex align-items-center justify-content-center">
                         <div (click)="deny()"
                             class="deny-call rounded-circle color-warn d-flex align-items-center justify-content-center">
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                 </ng-container>
-                <ng-container *ngIf="isHandle">
+                <ng-container *ngIf="isHandset">
                     <div class="w-100 col-xs-12 d-flex align-items-center justify-content-center">
                         <let-avatar [user]="invitee" [cssClasses]="'avatar-head'"></let-avatar>
                     </div>

@@ -28,3 +28,22 @@
     right: 5px;
     cursor: pointer;
 }
+
+
+@media(max-width: 576px){
+    .chat-search-box {
+        bottom: 105px;        
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .chat-search-box.arrow-right:after {
+        content: " ";
+        position: absolute;
+        right: 10px;
+        bottom: -15px;
+        border-top: 15px solid rgb(255, 255, 255);
+        border-right: 15px solid transparent;
+        border-left: 15px solid transparent;
+        border-bottom: none;
+    }
+}

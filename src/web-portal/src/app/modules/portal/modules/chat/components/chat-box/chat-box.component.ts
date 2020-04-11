@@ -17,8 +17,6 @@ import { debounceTime } from 'rxjs/operators';
     templateUrl: './chat-box.component.html',
     styleUrls: ['./chat-box.component.scss'],
     animations: [
-        fadeInRightOnEnterAnimation({ duration: 500, translate: '30px' }),
-        fadeOutRightOnLeaveAnimation({ duration: 500, translate: '30px' })
     ]
 })
 export class ChatBoxComponent implements OnInit, OnDestroy {
@@ -31,9 +29,9 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
 
     @ViewChild('avatar', { static: true })
     avatar: AvatarComponent
-    @ViewChild('chatBoxContent', { static: false})
     @ViewChild('audio', { static: true })
-    audio: ElementRef<HTMLAudioElement>
+    audio: ElementRef<HTMLAudioElement>    
+    @ViewChild('chatBoxContent', { static: false})
     chatBoxContent: ChatBoxContentComponent
     currentUser: ChatOnlineUser
     invitee: ChatOnlineUser

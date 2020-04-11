@@ -1,29 +1,3 @@
-.chat-box-head-0 {
-    .chat-box-head {
-        bottom: 100px;
-    }
-}
-.chat-box-head-1 {
-    .chat-box-head {
-        bottom: 160px;
-    }
-}
-.chat-box-head-2 {
-    .chat-box-head {
-        bottom: 220px;
-    }
-}
-.chat-box-head-3 {
-    .chat-box-head {
-        bottom: 280px;
-    }
-}
-.chat-box-head-4 {
-    .chat-box-head {
-        bottom: 340px;
-    }
-}
-
 .online > .mat-badge-content.mat-badge-active {
     background-color: #08976d;
     right: -5px;
@@ -84,6 +58,39 @@
     width: 100%;
     height: 100%;
     margin-left: 6px;
-    margin-top:3px;
+    margin-top: 3px;
     cursor: pointer;
+}
+
+@media (max-width: 576px) {    
+    .chat-box {
+        bottom: 105px;        
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .chat-box.arrow-right:after {
+        content: " ";
+        position: absolute;
+        right: 15px;
+        bottom: -15px;
+        border-top: 15px solid rgb(255, 255, 255);
+        border-right: 15px solid transparent;
+        border-left: 15px solid transparent;
+        border-bottom: none;
+    }
+    .chat-box-0.arrow-right:after {
+        right: 70px;
+    }
+    .chat-box-1.arrow-right:after {
+        right: 130px;
+    }
+    .chat-box-2.arrow-right:after {
+        right: 190px;
+    }
+    .chat-box-3.arrow-right:after {
+        right: 250px;
+    }
+    .chat-box-4.arrow-right:after {
+        right: 310px;
+    }
 }

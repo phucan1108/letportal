@@ -1,4 +1,3 @@
-
 .overlay-notified-status {
     width: 48px;
     height: 48px;
@@ -12,7 +11,7 @@
     width: 100%;
     height: 100%;
     margin-left: 3px;
-    margin-top:3px;
+    margin-top: 3px;
     cursor: pointer;
 }
 
@@ -50,4 +49,27 @@
 .offline > .mat-badge-content.mat-badge-active {
     right: -5px;
     bottom: -5px;
+}
+
+@media (max-width: 576px) {
+    .chat-box-head-0.chat-box-head{
+        right: 80px;
+        bottom: 40px;
+    }
+    .chat-box-head-1.chat-box-head{
+        right: 140px;
+        bottom: 40px;
+    }
+    .chat-box-head-2.chat-box-head{
+        right: 200px;
+        bottom: 40px;
+    }
+    .chat-box-head-3.chat-box-head{
+        right: 260px;
+        bottom: 40px;
+    }
+    .chat-box-head-4.chat-box-head{
+        right: 320px;
+        bottom: 40px;
+    }
 }

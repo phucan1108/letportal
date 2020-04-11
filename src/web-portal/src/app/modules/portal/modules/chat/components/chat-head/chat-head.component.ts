@@ -12,8 +12,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     templateUrl: './chat-head.component.html',
     styleUrls: ['./chat-head.component.scss'],
     animations: [
-        fadeInRightOnEnterAnimation({ duration: 500, translate: '30px' }),
-        fadeOutRightOnLeaveAnimation({ duration: 500 ,translate: '30px' }),
         headShakeAnimation()
     ]
 })

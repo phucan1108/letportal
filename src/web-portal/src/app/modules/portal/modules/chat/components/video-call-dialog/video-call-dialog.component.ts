@@ -38,7 +38,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
     isRinging = false
     isWaitingDrop = false
 
-    isHandle = false
+    isHandset = false
 
     allowDisplayToastError = true
     @ViewChild('audio', { static: true })
@@ -57,7 +57,19 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
         private store: Store,
         private logger: NGXLogger,
         private shortcutUtil: ShortcutUtil,
+        private breakpointObserver: BreakpointObserver
     ) {        
+        this.breakpointObserver.observe([
+            Breakpoints.Handset,
+            Breakpoints.Tablet
+        ]).subscribe(result => {
+            if (result.matches) {
+                this.isHandset = true
+            }
+            else{
+                this.isHandset = false
+            }
+        })
     }
 
     ngOnDestroy(): void {
