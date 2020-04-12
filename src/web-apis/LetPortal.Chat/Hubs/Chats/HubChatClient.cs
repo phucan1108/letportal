@@ -149,8 +149,7 @@ namespace LetPortal.Chat.Hubs
                 {
                     // In mind, we only create new chat session when it reached Threshold
                     // Or it belongs to previous day
-                    if (foundLastSession.Conversations.Count >= _chatOptions.CurrentValue.ThresholdNumberOfMessages
-                        || foundLastSession.LeaveDate.Date < DateTime.UtcNow.Date)
+                    if (foundLastSession.Conversations.Count >= _chatOptions.CurrentValue.ThresholdNumberOfMessages)
                     {
                         createNewSession = true;
                         // Load previous session
@@ -159,7 +158,8 @@ namespace LetPortal.Chat.Hubs
                             ChatRoomId = chatRoomId,
                             Messages = new Queue<MessageModel>(),
                             CreatedDate = foundLastSession.CreatedDate,
-                            PreviousSessionId = foundLastSession.PreviousSessionId
+                            PreviousSessionId = foundLastSession.PreviousSessionId,
+                            SessionId = foundLastSession.Id
                         };
 
                         if (foundLastSession.Conversations != null)
