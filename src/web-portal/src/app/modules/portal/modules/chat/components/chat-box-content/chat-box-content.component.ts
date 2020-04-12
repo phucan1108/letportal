@@ -18,6 +18,7 @@ import StringUtils from 'app/core/utils/string-util';
 import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
 import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile.service';
 import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
@@ -60,6 +61,9 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     progress // Used for tracking an uploading progress
     hasUploading = false
     hasUploadingError = false
+    toggled = false
+
+    inDesktop = true
     constructor(
         private logger: NGXLogger,
         private actions$: Actions,
@@ -67,8 +71,21 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         private chatService: ChatService,
         private uploadFileService: UploadFileService,
         public dialog: MatDialog,
-        private fb: FormBuilder
-    ) { }
+        private fb: FormBuilder,
+        private breakpointObserver: BreakpointObserver
+    ) { 
+        this.breakpointObserver.observe([
+            Breakpoints.Handset,
+            Breakpoints.Tablet
+        ]).subscribe(result => {
+            if (result.matches){
+                this.inDesktop = false
+            }
+            else{
+                this.inDesktop = true
+            }
+        })
+    }
     ngAfterViewInit(): void {
     }
     ngOnDestroy(): void {
@@ -80,10 +97,14 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     @ViewChild("formFieldWarpper", { static: true }) formFieldWarpper: ElementRef
     @HostListener('window:keydown.enter', ['$event'])
     handleEnterPress(event: KeyboardEvent) {
-        this.send()
+        if(this.inDesktop){            
+            this.send()
+        }
     }
     onKeydown($event: KeyboardEvent) {
-        $event.preventDefault()
+        if(this.inDesktop){      
+            $event.preventDefault()
+        }      
     }
     @HostListener("window:scroll", ['$event'])
     scrollChat($event) {

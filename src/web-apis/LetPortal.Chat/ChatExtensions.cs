@@ -1,4 +1,5 @@
-﻿using LetPortal.Chat.Configurations;
+﻿using System.Linq;
+using LetPortal.Chat.Configurations;
 using LetPortal.Chat.Hubs;
 using LetPortal.Chat.Persistences;
 using LetPortal.Chat.Repositories;

@@ -27,7 +27,7 @@ import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ChatModule } from 'portal/modules/chat/chat.module';
 import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
-import { VideoCallService } from 'services/videocall.service';
+import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay';
 export function hlJSLang() {
   return [
@@ -38,6 +38,7 @@ const portalBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().portalBaseEndpoint
 }
 const chatBaseUrl = (configProvider: ConfigurationProvider) => {
+  console.log('current configs', configProvider.getCurrentConfigs())
   return configProvider.getCurrentConfigs().chatBaseEndpoint
 }
 const identityBaseUrl = (configProvider: ConfigurationProvider) => {
@@ -89,6 +90,11 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
     },
     {
       provide: CHAT_BASE_URL,
+      useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: VIDEO_BASE_URL,
       useFactory: chatBaseUrl,
       deps: [ConfigurationProvider]
     },

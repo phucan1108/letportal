@@ -28,6 +28,8 @@ export class ChatService {
         @Inject(HttpClient) http: HttpClient,
         @Optional() @Inject(CHAT_BASE_URL) baseUrl?: string) {
         this.baseUrl = baseUrl ? baseUrl : 'http://localhost:51622'
+        
+        console.log('current chat url', this.baseUrl)
         this.http = http
 
         this.actions$.pipe(

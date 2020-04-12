@@ -17,7 +17,7 @@ import { bounceInLeftOnEnterAnimation, bounceOutRightOnLeaveAnimation, bounceInR
     styleUrls: ['./video-stream-dialog.component.scss'],
     animations: [
         slideInRightOnEnterAnimation({ anchor: 'enter' }),
-        slideOutLeftOnLeaveAnimation({ anchor: 'leave'})
+        slideOutLeftOnLeaveAnimation({ anchor: 'leave' })
     ]
 })
 export class VideoStreamDialogComponent implements OnInit {
@@ -29,22 +29,9 @@ export class VideoStreamDialogComponent implements OnInit {
     localVideo: ElementRef
 
     turnOn = false
-    // It will be changed by device such as Desktop, Tablet, Mobile
-    currentVideoConstraints: VideoContraints = {
-        width: 800,
-        height: 600,
-        ratio: 1.3,
-        muted: false,
-        videoOn: true
-    }
-
-    receivedVideoConstraints: VideoContraints = {
-        width: 640,
-        height: 480,
-        ratio: 1.3,
-        muted: false,
-        videoOn: true
-    }
+    // It will be changed by device such as Desktop, Tablet, Mobile    
+    currentVideoConstraints: VideoContraints 
+    receivedVideoConstraints: VideoContraints
     handshakedRoom: VideoRoomModel
     sup: Subscription = new Subscription()
     invitee: ChatOnlineUser
@@ -65,7 +52,7 @@ export class VideoStreamDialogComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches && this.currentDevice != DeviceDetect.Desktop) {
                 this.currentDevice = DeviceDetect.Desktop
-                this.applyPartnerVideoConstraints(this.getVideoConstraints(this.currentDevice))
+                this.applyCurrentVideoConstraints(this.getVideoConstraints(this.currentDevice))
                 this.logger.debug('Is Desktop', this.currentVideoConstraints)
             }
         })
@@ -75,7 +62,7 @@ export class VideoStreamDialogComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches && this.currentDevice != DeviceDetect.TabletLandscape) {
                 this.currentDevice = DeviceDetect.TabletLandscape
-                this.applyPartnerVideoConstraints(this.getVideoConstraints(this.currentDevice))
+                this.applyCurrentVideoConstraints(this.getVideoConstraints(this.currentDevice))
                 this.logger.debug('Is Tablet Landscape', this.currentVideoConstraints)
             }
         });
@@ -85,7 +72,7 @@ export class VideoStreamDialogComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches && this.currentDevice != DeviceDetect.TabletPortrait) {
                 this.currentDevice = DeviceDetect.TabletPortrait
-                this.applyPartnerVideoConstraints(this.getVideoConstraints(this.currentDevice))
+                this.applyCurrentVideoConstraints(this.getVideoConstraints(this.currentDevice))
                 this.logger.debug('Is Tablet Portrait', this.currentVideoConstraints)
             }
         })
@@ -95,7 +82,7 @@ export class VideoStreamDialogComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches && this.currentDevice != DeviceDetect.MobileLandscape) {
                 this.currentDevice = DeviceDetect.MobileLandscape
-                this.applyPartnerVideoConstraints(this.getVideoConstraints(this.currentDevice))
+                this.applyCurrentVideoConstraints(this.getVideoConstraints(this.currentDevice))
                 this.logger.debug('Is Mobile Landscape', this.currentVideoConstraints)
             }
         })
@@ -105,7 +92,7 @@ export class VideoStreamDialogComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches && this.currentDevice != DeviceDetect.MobilePortrait) {
                 this.currentDevice = DeviceDetect.MobilePortrait
-                this.applyPartnerVideoConstraints(this.getVideoConstraints(this.currentDevice))
+                this.applyCurrentVideoConstraints(this.getVideoConstraints(this.currentDevice))
                 this.logger.debug('Is Mobile Portrait', this.currentVideoConstraints)
             }
         })
@@ -125,6 +112,7 @@ export class VideoStreamDialogComponent implements OnInit {
                 () => {
                     this.turnOn = true
                     this.handshakedRoom = this.store.selectSnapshot(CHAT_STATE_TOKEN).handshakedVideoCall
+                    console.log('Got handshake room', this.handshakedRoom)
                     const allUsers = this.store.selectSnapshot(CHAT_STATE_TOKEN).availableUsers
                     const currentUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).currentUser
                     this.invitee = allUsers.find(c => c.userName === this.handshakedRoom.participants.find(a => a.username !== currentUser.userName).username)
@@ -139,11 +127,14 @@ export class VideoStreamDialogComponent implements OnInit {
             ).subscribe(
                 () => {
                     this.iceServer = this.store.selectSnapshot(CHAT_STATE_TOKEN).iceServer
+                    console.log('Received ice server', this.iceServer)
                     this.initRtcConnect(
                         this.iceServer,
                         this.handshakedRoom.id,
                         this.handshakedRoom.participants.find(a => a.username === this.invitee.userName).connectionId
                     )
+
+                    console.log('Rtc connection', this.currentRtcConnection)
                 }
             )
         )
@@ -166,33 +157,35 @@ export class VideoStreamDialogComponent implements OnInit {
         this.dropAll()
     }
 
-    muted(){
+    muted() {
         this.currentVideoConstraints.muted = !this.currentVideoConstraints.muted
         this.mediaStream.getAudioTracks().forEach(track => {
             track.enabled = !this.currentVideoConstraints.muted
         })
     }
 
-    cameraOn(){
+    cameraOn() {
         this.currentVideoConstraints.videoOn = !this.currentVideoConstraints.videoOn
         this.mediaStream.getVideoTracks().forEach(track => {
             track.enabled = this.currentVideoConstraints.videoOn
         })
     }
 
-    private dropAll(){
-        this.currentRtcConnection.close()
-        try{
+    private dropAll() {
+        try {
+            this.currentRtcConnection.close()
             this.mediaStream.getTracks().forEach(track => track.stop())
             this.mediaStream = null
         }
-        catch(err){
+        catch (err) {
             this.logger.error('Error when turning off a camera', err)
         }
         this.turnOn = false
         this.handshakedRoom = null
         this.iceServer = null
         this.invitee = null
+        this.currentVideoConstraints.muted = false
+        this.currentVideoConstraints.videoOn = true
     }
 
     private notifyDrop() {
@@ -209,19 +202,15 @@ export class VideoStreamDialogComponent implements OnInit {
                 // 1. Set RemoteRtc by sent sdp
                 // 2. Send back answer signal to let caller apply RemoteRtc as well
                 await this.proceedVideoOfferSignal(partnerConnectionId, message.spd)
-                // 3. Also, we knew clearly a incoming video stream constraints
-                this.applyPartnerVideoConstraints(message.videoConstraints)
                 break
             case VideoRtcType.Answer:
                 this.proceedVideoAnswerSignal(message.spd)
-                // Adjust received video constraints
-                this.applyPartnerVideoConstraints(message.videoConstraints)
                 break
         }
     }
 
-    private applyPartnerVideoConstraints(videoConstraint: VideoContraints) {
-        this.receivedVideoConstraints = videoConstraint
+    private applyCurrentVideoConstraints(videoConstraint: VideoContraints) {
+        this.currentVideoConstraints = videoConstraint
     }
 
     private addIceServer(candidate: RTCIceCandidate) {
@@ -271,21 +260,40 @@ export class VideoStreamDialogComponent implements OnInit {
         // For full options: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
         const videoConstraint: MediaStreamConstraints = {
             video: {
-                width: this.currentVideoConstraints.width,
-                height: this.currentVideoConstraints.height,
-                aspectRatio: this.currentVideoConstraints.ratio
+                width: {
+                    max: this.currentVideoConstraints.maxWidth,
+                    min: this.currentVideoConstraints.minWidth,
+                    ideal: this.currentVideoConstraints.idealWidth
+                },
+                height: {
+                    max: this.currentVideoConstraints.maxHeight,
+                    min: this.currentVideoConstraints.minHeight,
+                    ideal: this.currentVideoConstraints.idealHeight
+                },
+                aspectRatio: {
+                    min: 1.333333333,
+                    max: 1.777777778,
+                    ideal: 1.333333333
+                },
+                frameRate: {
+                    min: 30,
+                    max: 60,
+                    ideal: 60
+                }
             },
             audio: true
         }
 
-        try {
+        try {            
             this.mediaStream = await navigator.mediaDevices.getUserMedia(videoConstraint)
-            this.localVideo.nativeElement.srcObject = this.mediaStream
-            this.mediaStream.getTracks().forEach((track: MediaStreamTrack) => {  
+            this.localVideo.nativeElement.srcObject = this.mediaStream            
+            this.mediaStream.getTracks().forEach((track: MediaStreamTrack) => {           
                 this.currentRtcConnection.addTransceiver(track, { streams: [this.mediaStream] })
             })
         }
         catch (err) {
+            console.log('Refer constraint', videoConstraint)
+            console.log('Streaming got a problem', err)
             this.logger.error('Streaming got a problem', err)
             this.handleStreamingError(err)
         }
@@ -294,18 +302,19 @@ export class VideoStreamDialogComponent implements OnInit {
     private handleStreamingError(err: any) {
         switch (err.name) {
             case 'NotFoundError':
-                this.shortcutUtil.toastMessage('We cannot detect the camera', ToastType.Error)
+                this.shortcutUtil.toastMessage('We cannot detect the camera', ToastType.Error)                
+                this.dropped()
                 break
             case 'SecurityError':
             case 'PermissionDeniedError':
-                this.shortcutUtil.toastMessage('We cannot use the camera', ToastType.Error)
+                this.shortcutUtil.toastMessage('We cannot use the camera', ToastType.Error)                
+                this.dropped()
                 break
             default:
-                this.shortcutUtil.toastMessage('Something went wrong with the camera', ToastType.Error)
+                this.shortcutUtil.toastMessage('Something went wrong with the camera', ToastType.Error)                
+                this.dropped()
                 break
         }
-        // If there are no special, we force drop a call
-        this.dropped()
     }
 
     makingOffer = false // Flag to avoid race condition
@@ -403,44 +412,64 @@ export class VideoStreamDialogComponent implements OnInit {
         switch (device) {
             case DeviceDetect.Desktop:
                 return {
-                    width: 800,
-                    height: 600,
+                    maxWidth: 800,
+                    minWidth: 640,
+                    maxHeight: 600,
+                    minHeight: 480,
+                    ratio: 1.333333333,
+                    idealWidth: 800,
+                    idealHeight: 600,
                     muted: false,
-                    ratio: 1.3,
                     videoOn: true
                 }
             case DeviceDetect.TabletLandscape:
                 return {
-                    width: 640,
-                    height: 480,
+                    maxWidth: 800,
+                    minWidth: 640,
+                    maxHeight: 600,
+                    minHeight: 480,
+                    ratio: 1.333333333,
+                    idealWidth: 800,
+                    idealHeight: 600,
                     muted: false,
-                    ratio: 1.3,
                     videoOn: true
                 }
             case DeviceDetect.TabletPortrait:
                 return {
-                    width: 640,
-                    height: 480,
+                    maxWidth: 800,
+                    minWidth: 640,
+                    maxHeight: 600,
+                    minHeight: 480,
+                    ratio: 1.333333333,
+                    idealWidth: 800,
+                    idealHeight: 600,
                     muted: false,
-                    ratio: 1.3,
                     videoOn: true
                 }
             case DeviceDetect.MobileLandscape:
-                // Support 16:9 -> 640x360
+                // Support 16:9 -> 640x360 to 1280x720
                 return {
-                    width: 640,
-                    height: 360,
+                    maxWidth:1280,
+                    minWidth: 640,
+                    maxHeight: 720,        
+                    minHeight: 360,
+                    ratio: 1.777777778,        
+                    idealWidth: 1280,
+                    idealHeight: 720,
                     muted: false,
-                    ratio: 1.7,
                     videoOn: true
                 }
             case DeviceDetect.MobilePortrait:
                 // Support 16:9 -> 640x360
                 return {
-                    width: 360,
-                    height: 640,
+                    maxWidth:1280,
+                    minWidth: 640,
+                    maxHeight: 720,        
+                    minHeight: 360,
+                    ratio: 1.777777778,        
+                    idealWidth: 1280,
+                    idealHeight: 720,
                     muted: false,
-                    ratio: 1.7,
                     videoOn: true
                 }
         }
@@ -450,28 +479,58 @@ export class VideoStreamDialogComponent implements OnInit {
         switch (this.currentDevice) {
             case DeviceDetect.Desktop:
                 return {
-                    'width': '800px',
-                    'height': '600px'
+                    'width': '1024px',
+                    'height': '768px'
                 }
             case DeviceDetect.TabletLandscape:
                 return {
-                    'width': '800px',
-                    'height': '600px'
+                    'width': '1024px',
+                    'height': '768px'
                 }
             case DeviceDetect.TabletPortrait:
                 return {
-                    'width': '600px',
-                    'height': '800px'
+                    'width': '768px',
+                    'height': '1024px'
                 }
             case DeviceDetect.MobileLandscape:
                 return {
-                    'width': '640px',
-                    'height': '360px'
+                    'width': '100%',
+                    'height': '100%'
                 }
             case DeviceDetect.MobilePortrait:
                 return {
-                    'width': '360px',
-                    'height': '640px'
+                    'width': '100%',
+                    'height': '100%'
+                }
+        }
+    }
+
+    setLocalStreamStyle() {
+        switch (this.currentDevice) {
+            case DeviceDetect.Desktop:
+                return {
+                    'width': '200px',
+                    'height': '150px'
+                }
+            case DeviceDetect.TabletLandscape:
+                return {
+                    'width': '200px',
+                    'height': '150px'
+                }
+            case DeviceDetect.TabletPortrait:
+                return {
+                    'width': '200px',
+                    'height': '150px'
+                }
+            case DeviceDetect.MobileLandscape:
+                return {
+                    'width': '200px',
+                    'height': '112px'
+                }
+            case DeviceDetect.MobilePortrait:
+                return {
+                    'width': '200px',
+                    'height': '112px'
                 }
         }
     }
@@ -491,8 +550,12 @@ enum VideoRtcType {
 }
 
 interface VideoContraints {
-    width: number
-    height: number
+    minWidth: number
+    maxWidth: number
+    minHeight: number
+    maxHeight: number
+    idealWidth: number
+    idealHeight: number
     ratio: number
     muted: boolean
     videoOn: boolean

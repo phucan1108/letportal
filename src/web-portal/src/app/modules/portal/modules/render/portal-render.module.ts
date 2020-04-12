@@ -159,6 +159,7 @@ export const FULL_MONTH_FORMATS = {
 	],
 	entryComponents: [
 		DynamicListDataDialogComponent,
+		AdvancedFilterDialogComponent,
 		StandardArrayDialog
 	],
 	exports: [RouterModule],

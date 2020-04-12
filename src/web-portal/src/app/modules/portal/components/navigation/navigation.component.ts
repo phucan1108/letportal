@@ -93,8 +93,11 @@ export class NavigationComponent implements OnInit {
     this.security.userLogout()
     this.session.clear()
     this.chatService.stop()
-    this.videoService.stop()
-    this.router.navigateByUrl('/')
+    this.videoService.stop() 
+    // Due to prevent angular cache and store
+    // We SHOULD force reload a page
+    // Thus, we will get a performance because user will reload a page   
+    window.location.href = '/'
   }
 
   profile(){

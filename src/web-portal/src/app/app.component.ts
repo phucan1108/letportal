@@ -3,6 +3,8 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ChatService } from 'services/chat.service';
 import { SecurityService } from './core/security/security.service';
 import { VideoCallService } from 'services/videocall.service';
+import { Store, Actions, ofActionCompleted } from '@ngxs/store';
+import { UserDroppedCall, DroppedCall } from 'stores/chats/chats.actions';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,6 +12,7 @@ import { VideoCallService } from 'services/videocall.service';
 })
 export class AppComponent implements OnInit {
   showChatBox = false
+  showVideoBox = true
   constructor(
     private router: Router,
     private chatService: ChatService,
@@ -28,7 +31,8 @@ export class AppComponent implements OnInit {
           this.chatService.getAllAvailableUsers()
           setTimeout(() => {
             this.showChatBox = true
-          }, 500)
+            this.showVideoBox = true
+          }, 200)
         }
         else {
           this.showChatBox = false

@@ -13,7 +13,7 @@
 
 .float-local-video {
     position: absolute;
-    background-color: white;
+    background-color: black;
     top: 0px;
     right: 0px;
     width: 200px;
@@ -31,7 +31,7 @@
     .rounded-circle {
         width: 48px;
         height: 48px;
-        background-color: rgb(255, 255, 255);
+        background-color: rgb(255,255,255);
         cursor: pointer;
     }
 }

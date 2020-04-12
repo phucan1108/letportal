@@ -60,7 +60,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
         private logger: NGXLogger,
         private shortcutUtil: ShortcutUtil,
         private breakpointObserver: BreakpointObserver
-    ) {        
+    ) {
         this.breakpointObserver.observe([
             Breakpoints.Handset,
             Breakpoints.Tablet
@@ -68,7 +68,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
             if (result.matches) {
                 this.isHandset = true
             }
-            else{
+            else {
                 this.isHandset = false
             }
         })
@@ -89,12 +89,11 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                 this.isDialing = !this.isDialing
                 // Try to resend request
                 this.videoService.signalingInvitee(this.invitee)
-                if(this.maximumDialingTime > 0){
+                if (this.maximumDialingTime > 0) {
                     this.maximumDialingTime--
                 }
-                else{
+                else if (this.maximumDialingTime === 0) {
                     this.shortcutUtil.toastMessage('User is unreachable', ToastType.Warning)
-                    this.dialogRef.close()
                 }
             }, 1000)
             // Perform calling
@@ -106,7 +105,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
             this.audio.nativeElement.loop = true
             this.audio.nativeElement.play()
             this.animationInterval = setInterval(() => {
-                this.isRinging = !this.isRinging                
+                this.isRinging = !this.isRinging
             }, 1000)
         }
         this.sup.add(
@@ -204,12 +203,12 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.close()
     }
 
-    closed() {        
+    closed() {
         this.audioDrop.nativeElement.play()
         setTimeout(() => {
             switch (this.currentCallState) {
                 case VideoCallState.Dialing:
-    
+
                     this.isWaitingDrop = true
                     this.videoService.cancelCall(this.invitee)
                     setTimeout(() => {
@@ -232,8 +231,8 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                     this.dialogRef.close()
                     break
             }
-        },200)
-        
+        }, 200)
+
     }
 }
 

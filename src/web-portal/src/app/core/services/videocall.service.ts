@@ -7,7 +7,7 @@ import { SecurityService } from '../security/security.service';
 import { ChatOnlineUser, ChatSession, ChatRoom, RoomType, Message, ExtendedMessage, DoubleChatRoom, ParticipantVideo, VideoRoomModel, RtcIceServer, VideoRtcSignal } from 'app/core/models/chat.model';
 import { Store, Actions, ofActionDispatched, ofActionCompleted } from '@ngxs/store';
 import { NotifyIncomingVideoCall, HandshakedVideoCall, ReceivedIceServer, DroppedCall, ForceDroppedCall, UserDeniedCall, UserDroppedCall, UserCancelledCall } from 'stores/chats/chats.actions';
-export const CHAT_BASE_URL = new InjectionToken<string>('CHAT_BASE_URL');
+export const VIDEO_BASE_URL = new InjectionToken<string>('VIDEO_BASE_URL');
 import 'webrtc-adapter'
 import { ObjectUtils } from '../utils/object-util';
 @Injectable()
@@ -26,8 +26,9 @@ export class VideoCallService {
         private security: SecurityService,
         private logger: NGXLogger,
         @Inject(HttpClient) http: HttpClient,
-        @Optional() @Inject(CHAT_BASE_URL) baseUrl?: string) {
+        @Optional() @Inject(VIDEO_BASE_URL) baseUrl?: string) {
         this.baseUrl = baseUrl ? baseUrl : 'http://localhost:51622'
+        console.log('current video call url', this.baseUrl)
         this.http = http
     }
 
