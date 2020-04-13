@@ -12,13 +12,13 @@ namespace LetPortal.Chat.Entities
     [Table("chatsessions")]
     public class ChatSession : Entity
     {
-        [StringLength(100)]
+        [StringLength(50)]
         public string ChatRoomId { get; set; }
 
-        [StringLength(100)]
+        [StringLength(50)]
         public string PreviousSessionId { get; set; }
 
-        [StringLength(100)]
+        [StringLength(50)]
         public string NextSessionId { get; set; }
 
         public DateTime CreatedDate { get; set; }

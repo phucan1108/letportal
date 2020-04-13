@@ -28,6 +28,7 @@ namespace LetPortal.Chat.Entities
         [StringLength(2000)]
         public string FileUrl { get; set; }
 
+        [StringLength(50)]
         public string ChatSessionId { get; set; }
 
         public ChatSession ChatSession { get; set; }

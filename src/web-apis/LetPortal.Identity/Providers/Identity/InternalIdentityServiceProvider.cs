@@ -118,6 +118,7 @@ namespace LetPortal.Identity.Providers.Identity
                     {
                         new UserActivity
                         {
+                            Id = DataUtil.GenerateUniqueId(),
                             ActivityName = "USER_SIGNIN",
                             Content = "Signin successfully",
                             ActivityDate = DateTime.UtcNow,

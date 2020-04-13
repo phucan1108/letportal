@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
@@ -11,12 +12,16 @@ namespace LetPortal.Portal.Entities.Apps
     [Table("apps")]
     public class App : BackupableEntity
     {
+        [StringLength(250)]
         public string Logo { get; set; }
 
+        [StringLength(250)]
         public string DefaultUrl { get; set; }
 
+        [StringLength(250)]
         public string Author { get; set; }
 
+        [StringLength(50)]
         public string CurrentVersionNumber { get; set; }
 
         public DateTime CreatedDate { get; set; }

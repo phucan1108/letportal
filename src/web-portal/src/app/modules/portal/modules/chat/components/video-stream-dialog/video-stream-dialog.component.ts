@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { VideoCallService } from 'services/videocall.service';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';
 import { NGXLogger } from 'ngx-logger';
@@ -27,6 +27,14 @@ export class VideoStreamDialogComponent implements OnInit {
 
     @ViewChild('localVideo', { static: false })
     localVideo: ElementRef
+    
+    @HostListener("window:resize", [])
+    public onResize() {
+      this.maxWidth = window.innerWidth
+      this.maxHeight = window.innerHeight
+    }
+    maxWidth = window.innerWidth
+    maxHeight = window.innerHeight
 
     turnOn = false
     // It will be changed by device such as Desktop, Tablet, Mobile    
@@ -484,23 +492,23 @@ export class VideoStreamDialogComponent implements OnInit {
                 }
             case DeviceDetect.TabletLandscape:
                 return {
-                    'width': '1024px',
-                    'height': '768px'
+                    'width': this.maxWidth.toString() + 'px',
+                    'height': this.maxHeight.toString() + 'px'
                 }
             case DeviceDetect.TabletPortrait:
                 return {
-                    'width': '768px',
-                    'height': '1024px'
+                    'width': this.maxWidth.toString() + 'px',
+                    'height': this.maxHeight.toString() + 'px'
                 }
             case DeviceDetect.MobileLandscape:
                 return {
-                    'width': '100%',
-                    'height': '100%'
+                    'width': this.maxWidth.toString() + 'px',
+                    'height': this.maxHeight.toString() + 'px'
                 }
             case DeviceDetect.MobilePortrait:
                 return {
-                    'width': '100%',
-                    'height': '100%'
+                    'width': this.maxWidth.toString() + 'px',
+                    'height': this.maxHeight.toString() + 'px'
                 }
         }
     }

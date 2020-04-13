@@ -12,7 +12,7 @@ namespace LetPortal.Chat.Entities
     [Table("participants")]
     public class Participant : Entity
     {
-        [StringLength(100)]
+        [StringLength(50)]
         public string ChatRoomId { get; set; }
 
         [StringLength(250)]

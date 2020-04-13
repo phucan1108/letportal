@@ -12,7 +12,7 @@
       <!-- Right top bar-->
       <span class="divider-left-right-bar"></span>
       <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center">
-        <mat-icon matBadge="15" matBadgeColor="warn" matTooltip="Notification" [matTooltipPosition]="'below'">notifications</mat-icon>
+        <mat-icon [matBadgeHidden]="true" matBadge="0" matBadgeColor="warn" matTooltip="Notification" [matTooltipPosition]="'below'">notifications</mat-icon>
       </div>
       <ng-container *ngIf="!hasAvatar">
         <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center"

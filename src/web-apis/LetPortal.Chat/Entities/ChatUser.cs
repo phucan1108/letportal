@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using LetPortal.Core.Persistences;
@@ -11,10 +12,13 @@ namespace LetPortal.Chat.Entities
     [Table("chatusers")]
     public class ChatUser : Entity
     {
+        [StringLength(250)]
         public string UserName { get; set; }
 
+        [StringLength(250)]
         public string FullName { get; set; }
 
+        [StringLength(500)]
         public string Avatar { get; set; }
         
         public bool Deactivate { get; set; }

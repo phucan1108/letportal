@@ -123,7 +123,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                             }
                         }
 
-                        response.TotalItems = (long)cmd.ExecuteScalar();
+                        response.TotalItems = (int)cmd.ExecuteScalar();
                     }
                 }
                 postgreDbConnection.Close();

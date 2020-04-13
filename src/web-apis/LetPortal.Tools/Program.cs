@@ -139,7 +139,7 @@ namespace LET.Tools.Installation
                             sqlEFVersionContext.ServiceManagementOptions = storingConnections.ServiceManagementConnection;
                             sqlEFVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
 
-                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
+                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllPortalVersions();
                             toolsContext = new ToolsContext
                             {
                                 LatestVersion = latestVersionEF,

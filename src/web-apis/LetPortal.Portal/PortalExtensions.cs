@@ -38,6 +38,7 @@ using LetPortal.Portal.Services.Files;
 using LetPortal.Portal.Services.Files.Validators;
 using LetPortal.Portal.Services.Http;
 using LetPortal.Portal.Services.Recoveries;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -88,6 +89,10 @@ namespace LetPortal.Portal
                 || builder.ConnectionType == ConnectionType.MySQL)
             {
                 builder.Services.AddTransient<PortalDbContext>();
+                builder.Services.AddTransient<DbContext>((serviceProvider) =>
+                {
+                    return serviceProvider.GetService<PortalDbContext>();
+                });
                 // Register all EF repositories
                 builder.Services.AddTransient<IDatabaseRepository, DatabaseEFRepository>();
                 builder.Services.AddTransient<IDatasourceRepository, DatasourceEFRepository>();

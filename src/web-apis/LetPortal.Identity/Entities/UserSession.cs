@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
@@ -10,16 +11,21 @@ namespace LetPortal.Identity.Entities
     [Table("usersessions")]
     public class UserSession : Entity
     {
+        [StringLength(50)]
         public string UserId { get; set; }
 
+        [StringLength(250)]
         public string Username { get; set; }
 
         public User User { get; set; }
 
+        [StringLength(250)]
         public string InstalledVersion { get; set; }
 
+        [StringLength(250)]
         public string SoftwareAgent { get; set; }
 
+        [StringLength(250)]
         public string RequestIpAddress { get; set; }
 
         public DateTime SignInDate { get; set; }
@@ -34,10 +40,13 @@ namespace LetPortal.Identity.Entities
     [Table("useractivities")]
     public class UserActivity
     {
+        [StringLength(50)]
         public string Id { get; set; }
 
+        [StringLength(250)]
         public string ActivityName { get; set; }
 
+        [StringLength(1000)]
         public string Content { get; set; }
 
         public ActivityType ActivityType { get; set; }

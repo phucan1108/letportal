@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Chat.Entities;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace LetPortal.Chat.Repositories.ChatSessions
@@ -34,15 +36,35 @@ namespace LetPortal.Chat.Repositories.ChatSessions
 
         public async Task UpsertAsync(ChatSession chatSession)
         {
-            var found = await _context.ChatSessions.AsNoTracking().FirstOrDefaultAsync(a => a.Id == chatSession.Id);
-            if (found == null)
+            try 
             {
-                await AddAsync(chatSession);
+                var found = await _context.ChatSessions.AsNoTracking().FirstOrDefaultAsync(a => a.Id == chatSession.Id);
+                if (found == null)
+                {
+                    if (string.IsNullOrEmpty(chatSession.Id))
+                    {
+                        chatSession.Id = DataUtil.GenerateUniqueId();                            
+                    }
+                    if (chatSession.Conversations != null)
+                    {
+                        foreach (var conversation in chatSession.Conversations)
+                        {
+                            conversation.Id = DataUtil.GenerateUniqueId();
+                            conversation.ChatSessionId = chatSession.Id;
+                        }
+                    }
+                    await AddAsync(chatSession);
+                }
+                else
+                {
+                    await UpdateAsync(found.Id, chatSession);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                await UpdateAsync(found.Id, chatSession);
+                
             }
+           
         }
     }
 }

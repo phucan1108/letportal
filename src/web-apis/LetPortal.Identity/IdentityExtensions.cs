@@ -15,6 +15,7 @@ using LetPortal.Identity.Repositories.Identity;
 using LetPortal.Identity.Stores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -42,6 +43,10 @@ namespace LetPortal.Identity
                 || builder.ConnectionType == ConnectionType.SQLServer)
             {
                 builder.Services.AddTransient<IdentityDbContext>();
+                builder.Services.AddTransient<DbContext>((serviceProvider) =>
+                {
+                    return serviceProvider.GetService<IdentityDbContext>();
+                });
                 builder.Services.AddTransient<IUserRepository, UserEFRepository>();
                 builder.Services.AddTransient<IRoleRepository, RoleEFRepository>();
                 builder.Services.AddTransient<IIssuedTokenRepository, IssuedTokenEFRepository>();

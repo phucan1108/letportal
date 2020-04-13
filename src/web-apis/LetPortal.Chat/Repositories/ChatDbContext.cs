@@ -29,14 +29,14 @@ namespace LetPortal.Chat.Repositories
         {
             var chatRoomBuilder = modelBuilder.Entity<ChatRoom>();
             chatRoomBuilder
-                .HasKey(a => a.Id);
+                .HasKey(a => a.Id);   
 
             chatRoomBuilder.HasMany(a => a.Participants).WithOne(b => b.ChatRoom);
             chatRoomBuilder.HasMany(a => a.Sessions).WithOne(b => b.ChatRoom);
 
             var participantBuilder = modelBuilder.Entity<Participant>();
             participantBuilder
-                .HasKey(a => a.Id);
+                .HasKey(a => a.Id); 
 
             var chatSessionBuilder = modelBuilder.Entity<ChatSession>();
             chatSessionBuilder

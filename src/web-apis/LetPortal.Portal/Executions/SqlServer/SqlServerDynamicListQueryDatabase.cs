@@ -102,7 +102,7 @@ namespace LetPortal.Portal.Executions.SqlServer
 
                 if (fetchDataModel.PaginationOptions.NeedTotalItems && hasRows)
                 {
-                    using (var cmd = new SqlCommand(combinedQuery.CombinedQuery, sqlDbConnection))
+                    using (var cmd = new SqlCommand(combinedQuery.CombinedTotalQuery, sqlDbConnection))
                     {
                         foreach (var param in combinedQuery.Parameters)
                         {
@@ -128,7 +128,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                                   });
                             }
                         }
-                        response.TotalItems = (long)cmd.ExecuteScalar();
+                        response.TotalItems = (int)cmd.ExecuteScalar();
                     }
                 }
                 sqlDbConnection.Close();
