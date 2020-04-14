@@ -94,8 +94,8 @@ namespace LetPortal.Chat.Hubs
                 .HandshakedVideoCall(handshakeRoom);
 
             // Send ICE Server for letting them create P2P network
-            await Clients.Client(caller.ConnectionId).ReceivedIceServer(_options.CurrentValue.IceServers.First());
-            await Clients.Client(answeredUser.ConnectionId).ReceivedIceServer(_options.CurrentValue.IceServers.First());
+            await Clients.Client(caller.ConnectionId).ReceivedIceServer(_options.CurrentValue.IceServers);
+            await Clients.Client(answeredUser.ConnectionId).ReceivedIceServer(_options.CurrentValue.IceServers);
         }
 
         public async Task SendRtcSignal(VideoRtcSignalModel model)

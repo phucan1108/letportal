@@ -143,9 +143,9 @@ export class VideoCallService {
 
     private listenReceivedICEServer(){
         this.hubConnection
-            .on('receivedIceServer', (iceServer: RtcIceServer) => {
+            .on('receivedIceServer', (iceServers: RtcIceServer[]) => {
                 this.store.dispatch(new ReceivedIceServer({
-                    iceServer: iceServer
+                    iceServers: iceServers
                 }))
             })
     }

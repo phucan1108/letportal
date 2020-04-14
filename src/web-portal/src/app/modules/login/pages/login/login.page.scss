@@ -9,6 +9,14 @@
   background: linear-gradient(180deg, rgba(1,45,157,1) 50%, rgba(0,142,255,0.9) 100%);   
   height: 100%;
 }
+
+.version-text{
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: rgb(255,255,255);
+}
+
 .login-header{
   font-size: 20px;  
 }
