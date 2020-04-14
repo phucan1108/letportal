@@ -25,7 +25,7 @@ export interface ChatStateModel {
     incomingVideoCall: ParticipantVideo
     inviterVideoCall: ChatOnlineUser
     handshakedVideoCall: VideoRoomModel
-    iceServer: RtcIceServer
+    iceServers: RtcIceServer[]
     callErrorCode: ErrorCode
 }
 
@@ -43,7 +43,7 @@ export interface ChatStateModel {
         incomingVideoCall: null,
         handshakedVideoCall: null,
         inviterVideoCall: null,
-        iceServer: null,
+        iceServers: [],
         callErrorCode: null
     }
 })
@@ -524,7 +524,7 @@ export class ChatState {
     public receivedIceServer(ctx: StateContext<ChatStateModel>, { event }: ChatActions.ReceivedIceServer) {
         return ctx.setState(
             patch({
-                iceServer: event.iceServer
+                iceServers: event.iceServers
             })
         )
     }

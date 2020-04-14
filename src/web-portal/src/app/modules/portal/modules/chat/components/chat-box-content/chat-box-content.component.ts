@@ -19,7 +19,7 @@ import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
 import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile.service';
 import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-
+import { environment } from 'environments/environment';
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
         return control && control.invalid && control.touched;
@@ -266,7 +266,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     onFileChange($event) {
         const file: File = $event.target.files[0]
         let isValidFileTypes = !this.isInvalidExtension(file.name)
-        let isValidFileSize = this.getFileSizeInMb(file.size) <= 16
+        let isValidFileSize = this.getFileSizeInMb(file.size) <= environment.chatOptions.maxFileSizeInMb
 
         if (!isValidFileSize) {
             this.formGroup.controls.text.setErrors({
@@ -368,7 +368,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     private isInvalidExtension(fileName: string) {
         const extSplitted = fileName.split('.')
         const fileExt = extSplitted[extSplitted.length - 1].toLowerCase()
-        const splitted = 'jpg;jpeg;gif;png;zip;rar;doc;docx;xls;xlsx;pdf'.toLowerCase().split(';')
+        const splitted = environment.chatOptions.allowFileTypes.split(';')
         return splitted.indexOf(fileExt) < 0
     }
 

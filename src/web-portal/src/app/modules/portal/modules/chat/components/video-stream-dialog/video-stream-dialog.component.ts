@@ -38,12 +38,32 @@ export class VideoStreamDialogComponent implements OnInit {
 
     turnOn = false
     // It will be changed by device such as Desktop, Tablet, Mobile    
-    currentVideoConstraints: VideoContraints 
-    receivedVideoConstraints: VideoContraints
+    currentVideoConstraints: VideoContraints = {
+        maxWidth: 800,
+        minWidth: 640,
+        maxHeight: 600,
+        minHeight: 480,
+        ratio: 1.333333333,
+        idealWidth: 800,
+        idealHeight: 600,
+        muted: false,
+        videoOn: true
+    }
+    receivedVideoConstraints: VideoContraints = {
+        maxWidth: 800,
+        minWidth: 640,
+        maxHeight: 600,
+        minHeight: 480,
+        ratio: 1.333333333,
+        idealWidth: 800,
+        idealHeight: 600,
+        muted: false,
+        videoOn: true
+    }
     handshakedRoom: VideoRoomModel
     sup: Subscription = new Subscription()
     invitee: ChatOnlineUser
-    iceServer: RtcIceServer
+    iceServers: RtcIceServer[] = []
     currentRtcConnection: RTCPeerConnection
     mediaStream: MediaStream
     currentDevice: DeviceDetect = DeviceDetect.Desktop
@@ -133,9 +153,9 @@ export class VideoStreamDialogComponent implements OnInit {
                 ofActionSuccessful(ReceivedIceServer)
             ).subscribe(
                 () => {
-                    this.iceServer = this.store.selectSnapshot(CHAT_STATE_TOKEN).iceServer
+                    this.iceServers = this.store.selectSnapshot(CHAT_STATE_TOKEN).iceServers
                     this.initRtcConnect(
-                        this.iceServer,
+                        this.iceServers,
                         this.handshakedRoom.id,
                         this.handshakedRoom.participants.find(a => a.username === this.invitee.userName).connectionId
                     )
@@ -186,7 +206,7 @@ export class VideoStreamDialogComponent implements OnInit {
         }
         this.turnOn = false
         this.handshakedRoom = null
-        this.iceServer = null
+        this.iceServers = null
         this.invitee = null
         this.currentVideoConstraints.muted = false
         this.currentVideoConstraints.videoOn = true
@@ -320,8 +340,8 @@ export class VideoStreamDialogComponent implements OnInit {
     }
 
     makingOffer = false // Flag to avoid race condition
-    private initRtcConnect(iceServer: RtcIceServer, roomId: string, inviteeConnectionId: string) {
-        const connection = new RTCPeerConnection({ iceServers: [iceServer] })
+    private initRtcConnect(iceServers: RtcIceServer[], roomId: string, inviteeConnectionId: string) {
+        const connection = new RTCPeerConnection({ iceServers: iceServers })
         connection.onnegotiationneeded = async () => {
             // P2P will send offer to partner for making Negotiation
             // If it failed, force drop a call

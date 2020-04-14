@@ -88,5 +88,5 @@ export interface HandshakedVideoCallEvent{
 }
 
 export interface ReceivedIceServerEvent{
-    iceServer: RtcIceServer
+    iceServers: RtcIceServer[]
 }

@@ -21,7 +21,7 @@ namespace LetPortal.Chat.Hubs
 
         Task ReceivedException(VideoErrorModel error);
 
-        Task ReceivedIceServer(RtcIceServer iceServer);
+        Task ReceivedIceServer(List<RtcIceServer> iceServers);
 
         Task ReceivedRtcSignal(VideoRtcSignalModel message);
     }
