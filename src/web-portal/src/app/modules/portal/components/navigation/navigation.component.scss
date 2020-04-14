@@ -35,8 +35,8 @@
 }
 
 .user-avatar {
-  width: 32px;
-  margin-left: 10px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
 }
 
@@ -59,4 +59,9 @@
 .icon-side-small {
   font-size: 18px !important;
   color: rgba(0, 0, 0, 0.54);
+}
+
+.logo-small{
+  width: 40px;
+  height: 40px;
 }

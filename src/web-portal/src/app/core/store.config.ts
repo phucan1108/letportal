@@ -7,13 +7,15 @@ import { SelectedAppState } from './stores/apps/app.state';
 import { environment } from 'environments/environment';
 import { PageState } from './stores/pages/page.state';
 import { PageControlEventState } from './stores/pages/pagecontrol.state';
+import { ChatState } from 'stores/chats/chats.state';
 
 export const STATES_MODULES = [
   PageBuilderState,
   ShellDataState,
   SelectedAppState,
   PageState,
-  PageControlEventState];
+  PageControlEventState,
+  ChatState];
 
 export const OPTIONS_CONFIG: Partial<NgxsConfig> = {
   /**

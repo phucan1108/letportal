@@ -12,9 +12,9 @@ namespace LetPortal.Portal.Repositories.Apps
 {
     public class AppEFRepository : EFGenericRepository<App>, IAppRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public AppEFRepository(LetPortalDbContext context)
+        public AppEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;

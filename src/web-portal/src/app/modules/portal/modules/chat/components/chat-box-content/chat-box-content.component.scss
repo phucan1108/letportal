@@ -1,0 +1,83 @@
+.chat-box-content-area {
+    height: 270px;
+    font-size: 16px;
+    line-height: 16px;
+    white-space: pre-wrap;
+    text-align: start;
+    overflow-wrap: normal;
+}
+
+.avatar-chat-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.field-full-width {
+    div.mat-form-field-wrapper {
+        padding-bottom: 5px;
+    }
+}
+.text-area-chat {
+    min-height: 25px !important;
+}
+.waiting-upload {
+    width: 100px;
+    height: 100px;
+    background-color: #ebedf2;
+}
+
+.overlay-img {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: 0.5s ease;
+    background-color: #ebedf2;
+    button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+}
+.img-wrapper {
+    position: relative;
+}
+.img-wrapper:hover .overlay-img {
+    opacity: 0.7;
+}
+.overlay-emotion {
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 3px;
+    right: 2px;
+    cursor: pointer;
+}
+.file-input-overlay {
+    font-size: 25px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 35px;
+    height: 35px;
+}
+.user-avatar {
+    width: 100%;
+    height: 100%;
+    margin-left: 3px;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.online-text{
+    font-size: 12px;
+}

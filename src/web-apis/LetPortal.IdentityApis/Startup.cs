@@ -43,7 +43,9 @@ namespace LetPortal.IdentityApis
                 options.EnableMicroservices = true;
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
-            }).AddIdentity();
+            })
+            .AddIdentity()    
+            .AddJwtValidator();
 
             services
                 .AddControllers()
@@ -98,8 +100,11 @@ namespace LetPortal.IdentityApis
                 endpoints.MapControllers();
             });
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            if (env.IsDevelopment())
+            {
+                app.UseOpenApi();
+                app.UseSwaggerUi3();
+            }
         }
     }
 }

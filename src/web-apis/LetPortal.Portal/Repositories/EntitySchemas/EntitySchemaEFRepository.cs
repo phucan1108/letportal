@@ -9,9 +9,9 @@ namespace LetPortal.Portal.Repositories.EntitySchemas
 {
     public class EntitySchemaEFRepository : EFGenericRepository<EntitySchema>, IEntitySchemaRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public EntitySchemaEFRepository(LetPortalDbContext context)
+        public EntitySchemaEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;

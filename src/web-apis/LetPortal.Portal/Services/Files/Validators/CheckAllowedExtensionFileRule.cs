@@ -33,8 +33,8 @@ namespace LetPortal.Portal.Services.Files.Validators
         private void CheckAllowedFileExtensions(string fileName)
         {
             var allowFiles = _fileValidatorOptions.CurrentValue.WhiteLists.Split(";");
-
-            if (!allowFiles.Any(a => a == fileName.Split(".")[1].ToLower()))
+            var fileSplitted = fileName.Split(".");
+            if (!allowFiles.Any(a => a == fileSplitted[^1].ToLower()))
             {
                 throw new FileException(FileErrorCodes.NotAllowedFileExtension);
             }

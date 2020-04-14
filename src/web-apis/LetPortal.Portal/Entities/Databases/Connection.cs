@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using LetPortal.Core.Extensions;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
@@ -10,10 +11,13 @@ namespace LetPortal.Portal.Entities.Databases
     [Table("databases")]
     public class DatabaseConnection : BackupableEntity
     {
+        [StringLength(500)]
         public string ConnectionString { get; set; }
 
+        [StringLength(250)]
         public string DataSource { get; set; }
 
+        [StringLength(50)]
         public string DatabaseConnectionType { get; set; }
 
         public ConnectionType GetConnectionType()

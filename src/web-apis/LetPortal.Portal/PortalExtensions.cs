@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.Threading.Tasks;
 using LetPortal.Core;
 using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
@@ -40,10 +38,9 @@ using LetPortal.Portal.Services.Files;
 using LetPortal.Portal.Services.Files.Validators;
 using LetPortal.Portal.Services.Http;
 using LetPortal.Portal.Services.Recoveries;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace LetPortal.Portal
 {
@@ -91,7 +88,11 @@ namespace LetPortal.Portal
                 || builder.ConnectionType == ConnectionType.PostgreSQL
                 || builder.ConnectionType == ConnectionType.MySQL)
             {
-                builder.Services.AddTransient<LetPortalDbContext>();
+                builder.Services.AddTransient<PortalDbContext>();
+                builder.Services.AddTransient<DbContext>((serviceProvider) =>
+                {
+                    return serviceProvider.GetService<PortalDbContext>();
+                });
                 // Register all EF repositories
                 builder.Services.AddTransient<IDatabaseRepository, DatabaseEFRepository>();
                 builder.Services.AddTransient<IDatasourceRepository, DatasourceEFRepository>();
@@ -192,52 +193,8 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IFileService, FileService>();
             builder.Services.AddTransient<IChartService, ChartService>();
             builder.Services.AddTransient<IBackupService, BackupService>();
-
             builder.Services.AddHttpClient<IHttpService, HttpService>();
 
-
-            var jwtOptions = builder.Configuration.GetSection("JwtBearerOptions").Get<Core.Configurations.JwtBearerOptions>();
-            builder.Services
-                .AddAuthentication(
-                 x =>
-                 {
-                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                 })
-                .AddJwtBearer(x =>
-                {
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.Secret)),
-                        ValidIssuer = jwtOptions.Issuer,
-                        ValidAudience = jwtOptions.Audience,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        RequireExpirationTime = true,
-                        RequireSignedTokens = true,
-                        NameClaimType = "sub",
-                        // Important for testing purpose with zero but in production, it should be 5m (default)
-                        ClockSkew =
-                        Environment
-                            .GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ?
-                            TimeSpan.Zero : TimeSpan.FromMinutes(5)
-                    };
-
-                    x.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = context =>
-                        {
-                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                            {
-                                context.Response.Headers.Add("X-Token-Expired", "true");
-                            }
-
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
             return builder;
         }
     }

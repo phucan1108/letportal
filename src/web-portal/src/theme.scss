@@ -23,6 +23,9 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   .color-warn {
     color: mat-color($warn);
   }
+  .color-success{
+    color: #08976d;
+  }
 
   .color-bg-primary {
     background-color: mat-color($primary);
@@ -32,6 +35,9 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
   }
   .color-bg-warn {
     background-color: mat-color($warn);
+  }
+  .color-bg-success{
+    background-color:#08976d;
   }
 
   .mat-chip-0 {
@@ -133,16 +139,118 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     color: mat-color($primary); // 3
   }
 
-  .user-tile-avatar {
-    width: 32px;
-    height: 32px;
+  .tile-icon {
+    width: 40px;
+    height: 40px;
     font-weight: 500;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 22px;
     margin-left: 10px;
     background-color: rgb(255, 255, 255);
     text-align: center;
     color: mat-color($primary);
+  }
+
+  .tile-icon-revert {
+    width: 40px;
+    height: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 22px;
+    margin-left: 10px;
+    background-color: mat-color($primary);
+    text-align: center;
+    color: rgb(255, 255, 255);
+  }
+
+  .chat-head {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    bottom: 40px;
+    right: 20px;
+    background-color: rgb(255, 255, 255);
+    color: mat-color($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  .chat-box-head {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    right: 20px;
+    background-color: rgb(255, 255, 255);
+    color: mat-color($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 22px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  .avatar-head {
+    width: 48px;
+    height: 48px;
+    background-color: rgb(255, 255, 255);
+    color: mat-color($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 22px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  .sent_mess {
+    float: right;
+    margin: 0;
+    p {
+      background-color: mat-color($primary);
+      color: rgb(255, 255, 255);
+      padding-top: 6px;
+      padding-bottom: 6px;
+      padding-left: 10px;
+      padding-right: 10px;
+      text-align: right;
+      float: right;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+    .time-text {
+      color: grey;
+      float: right;
+    }
+  }
+
+  .received_mess {
+    float: left;
+    margin: 0;
+    p {
+      background-color: rgb(241, 240, 240);
+      color: rgb(68, 73, 80);
+      padding-top: 6px;
+      padding-bottom: 6px;
+      padding-left: 10px;
+      padding-right: 10px;
+      text-align: left;
+      float: left;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+    .time-text {
+      color: grey;
+      float: left;
+    }
   }
 }
 @include current-theme($app-theme);

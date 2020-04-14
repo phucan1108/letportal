@@ -8,9 +8,9 @@ namespace LetPortal.Identity.Repositories.Identity
 {
     public class UserSessionEFRepository : EFGenericRepository<UserSession>, IUserSessionRepository
     {
-        private readonly LetPortalIdentityDbContext _context;
+        private readonly IdentityDbContext _context;
 
-        public UserSessionEFRepository(LetPortalIdentityDbContext context)
+        public UserSessionEFRepository(IdentityDbContext context)
             : base(context)
         {
             _context = context;

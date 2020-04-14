@@ -26,6 +26,13 @@ export default class StringUtils {
         }
     }
 
+    public static getHashCode(str: string): string {
+        let h;
+        for (let i = 0; i < str.length; i++)
+            h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+        return h;
+    }
+
     public static getContentByDCurlyBrackets(text: string): string[] {
         let found = [],
             rxp = /{{([^}]+)}/g,
@@ -41,11 +48,11 @@ export default class StringUtils {
         return text === text.toUpperCase()
     }
 
-    public static replaceAllOccurences(text: string, replaceStr: string, replacedStr: string){
+    public static replaceAllOccurences(text: string, replaceStr: string, replacedStr: string) {
         return text.split(replaceStr).join(replacedStr)
     }
 
-    public static getNumberOccurencesOfStr(text: string, occurStr: string){
+    public static getNumberOccurencesOfStr(text: string, occurStr: string) {
         return text.split(occurStr).length - 1
     }
 }

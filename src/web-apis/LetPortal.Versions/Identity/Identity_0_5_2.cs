@@ -59,7 +59,8 @@ namespace LetPortal.Versions.Identity
                      "chart-builder",
                      "backup-builder",
                      "backup-upload",
-                     "backup-restore"
+                     "backup-restore",
+                     "user-info"
                 }));
 
             var developerRole = new Role
@@ -86,7 +87,8 @@ namespace LetPortal.Versions.Identity
                      "services-monitor",
                      "service-logs",
                      "service-dashboard",
-                     "chart-builder"
+                     "chart-builder",
+                     "user-info"
                 }));
 
             var userRole = new Role
@@ -97,9 +99,15 @@ namespace LetPortal.Versions.Identity
                 DisplayName = RolesConstants.USER,
                 Claims = new List<BaseClaim>
                 {
+
                 }
             };
 
+            userRole.Claims.AddRange(StandardClaims
+                .GenerateClaimsByPages(new string[]
+                {
+                     "user-info"
+                }));
             versionContext.InsertData(adminRole);
             versionContext.InsertData(developerRole);
             versionContext.InsertData(userRole);

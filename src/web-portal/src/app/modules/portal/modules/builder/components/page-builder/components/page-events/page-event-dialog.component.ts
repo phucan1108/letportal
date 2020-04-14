@@ -83,7 +83,6 @@ export class PageEventDialogComponent implements OnInit {
     }
 
     eventSelected($event: MatAutocompleteSelectedEvent) {
-        console.log('Chosen', $event)
     }
 
     onSubmit() {

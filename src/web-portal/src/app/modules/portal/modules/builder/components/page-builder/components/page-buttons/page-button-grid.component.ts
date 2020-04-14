@@ -245,7 +245,6 @@ export class PageButtonGridComponent implements OnInit {
 
             for (let i = 0; i < this.selection.selected.length; i++) {
                 this.currentActionCommands = _.remove(this.currentActionCommands, (elem) => {
-                    console.log(this.selection.selected[i].id)
                     return elem.id === this.selection.selected[i].id
                 })
             }

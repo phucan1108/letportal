@@ -1,4 +1,4 @@
-﻿namespace LetPortal.Identity.Entities
+﻿namespace LetPortal.Core.Security
 {
     public class JwtClaimTypes
     {

@@ -48,7 +48,6 @@ export class PageEventGridComponent implements OnInit {
                     || state.filterState === GatherAllChanges
                     || state.filterState === NextToRouteAction)),
                 tap((state: PageBuilderStateModel) => {
-                    console.log('Tracking', state)
                     this.availableEvents = state.availableEvents
                     this.availableBoundDatas = state.availableBoundDatas
                     this.availableTriggerEventsList = state.availableTriggerEventsList
@@ -111,7 +110,6 @@ export class PageEventGridComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                console.log(result)
                 this.currentEvents.push(result)
                 this.table.renderRows()
             }

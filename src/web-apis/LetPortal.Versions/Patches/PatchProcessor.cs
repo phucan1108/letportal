@@ -72,7 +72,7 @@ namespace LetPortal.Versions.Patches
                                 else
                                 {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                                    appRepository = new AppEFRepository(new Portal.Repositories.LetPortalDbContext(databaseOptions));
+                                    appRepository = new AppEFRepository(new Portal.Repositories.PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
 
@@ -94,7 +94,7 @@ namespace LetPortal.Versions.Patches
                                 else
                                 {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                                    standardRepository = new StandardEFRepository(new Portal.Repositories.LetPortalDbContext(databaseOptions));
+                                    standardRepository = new StandardEFRepository(new Portal.Repositories.PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
                                 var standardServiceProvider = new InternalStandardServiceProvider(standardRepository);
@@ -115,7 +115,7 @@ namespace LetPortal.Versions.Patches
                                 else
                                 {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                                    chartRepository = new ChartEFRepository(new Portal.Repositories.LetPortalDbContext(databaseOptions));
+                                    chartRepository = new ChartEFRepository(new Portal.Repositories.PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
                                 var chartServiceProvider = new InternalChartServiceProvider(chartRepository);
@@ -136,7 +136,7 @@ namespace LetPortal.Versions.Patches
                                 else
                                 {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                                    databaseRepository = new DatabaseEFRepository(new LetPortalDbContext(databaseOptions));
+                                    databaseRepository = new DatabaseEFRepository(new PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
                                 var databaseServiceProvider = new InternalDatabaseServiceProvider(new DatabaseService(null, null), databaseRepository);
@@ -157,7 +157,7 @@ namespace LetPortal.Versions.Patches
                                 else
                                 {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                                    pageRepository = new PageEFRepository(new LetPortalDbContext(databaseOptions));
+                                    pageRepository = new PageEFRepository(new PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
                                 var pageServiceProvider = new InternalPageServiceProvider(pageRepository);
@@ -178,7 +178,7 @@ namespace LetPortal.Versions.Patches
                                 else
                                 {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                                    dynamicListRepository = new DynamicListEFRepository(new LetPortalDbContext(databaseOptions));
+                                    dynamicListRepository = new DynamicListEFRepository(new PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
                                 var dynamicListServiceProvider = new InternalDynamicListServiceProvider(dynamicListRepository);

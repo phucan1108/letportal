@@ -8,6 +8,7 @@ import { SecurityService } from 'app/core/security/security.service';
 import { AuthToken } from 'app/core/security/auth.model';
 import { Router } from '@angular/router';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { ChatService } from 'services/chat.service';
 
 @Component({
     selector: 'let-login',

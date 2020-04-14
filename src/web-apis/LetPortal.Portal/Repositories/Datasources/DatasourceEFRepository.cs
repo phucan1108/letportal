@@ -5,9 +5,9 @@ namespace LetPortal.Portal.Repositories.Datasources
 {
     public class DatasourceEFRepository : EFGenericRepository<Datasource>, IDatasourceRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public DatasourceEFRepository(LetPortalDbContext context)
+        public DatasourceEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;
