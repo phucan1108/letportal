@@ -119,8 +119,7 @@ export class VideoStreamDialogComponent implements OnInit {
             ).subscribe(
                 () => {
                     this.turnOn = true
-                    this.handshakedRoom = this.store.selectSnapshot(CHAT_STATE_TOKEN).handshakedVideoCall
-                    console.log('Got handshake room', this.handshakedRoom)
+                    this.handshakedRoom = this.store.selectSnapshot(CHAT_STATE_TOKEN).handshakedVideoCall                    
                     const allUsers = this.store.selectSnapshot(CHAT_STATE_TOKEN).availableUsers
                     const currentUser = this.store.selectSnapshot(CHAT_STATE_TOKEN).currentUser
                     this.invitee = allUsers.find(c => c.userName === this.handshakedRoom.participants.find(a => a.username !== currentUser.userName).username)
@@ -135,14 +134,11 @@ export class VideoStreamDialogComponent implements OnInit {
             ).subscribe(
                 () => {
                     this.iceServer = this.store.selectSnapshot(CHAT_STATE_TOKEN).iceServer
-                    console.log('Received ice server', this.iceServer)
                     this.initRtcConnect(
                         this.iceServer,
                         this.handshakedRoom.id,
                         this.handshakedRoom.participants.find(a => a.username === this.invitee.userName).connectionId
                     )
-
-                    console.log('Rtc connection', this.currentRtcConnection)
                 }
             )
         )
@@ -300,8 +296,6 @@ export class VideoStreamDialogComponent implements OnInit {
             })
         }
         catch (err) {
-            console.log('Refer constraint', videoConstraint)
-            console.log('Streaming got a problem', err)
             this.logger.error('Streaming got a problem', err)
             this.handleStreamingError(err)
         }

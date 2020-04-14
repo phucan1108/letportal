@@ -38,7 +38,6 @@ const portalBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().portalBaseEndpoint
 }
 const chatBaseUrl = (configProvider: ConfigurationProvider) => {
-  console.log('current configs', configProvider.getCurrentConfigs())
   return configProvider.getCurrentConfigs().chatBaseEndpoint
 }
 const identityBaseUrl = (configProvider: ConfigurationProvider) => {

@@ -145,7 +145,6 @@ export class DatasourceOptionsDialogComponent implements OnInit {
 
         this.datasourceForm.get('databaseId').valueChanges.subscribe(newValue => {
             if (newValue) {
-                console.log('Before Calling')
                 this.entityClient.getAllFromOneDatabase(newValue).subscribe(entitySchemas => {
                     this.shallowedEntitySchemas = entitySchemas;
                     this.entities.next(this.shallowedEntitySchemas)

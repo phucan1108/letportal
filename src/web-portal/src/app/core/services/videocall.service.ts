@@ -28,7 +28,6 @@ export class VideoCallService {
         @Inject(HttpClient) http: HttpClient,
         @Optional() @Inject(VIDEO_BASE_URL) baseUrl?: string) {
         this.baseUrl = baseUrl ? baseUrl : 'http://localhost:51622'
-        console.log('current video call url', this.baseUrl)
         this.http = http
     }
 
