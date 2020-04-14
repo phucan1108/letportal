@@ -7,6 +7,7 @@ using LetPortal.Chat.Repositories.ChatRooms;
 using LetPortal.Chat.Repositories.ChatSessions;
 using LetPortal.Chat.Repositories.ChatUsers;
 using LetPortal.Core;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Persistences;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -66,7 +67,8 @@ namespace LetPortal.Chat
                     serviceProvider.GetService<IChatRoomRepository>(),
                     serviceProvider.GetService<IChatSessionRepository>(),
                     serviceProvider.GetService<IChatUserRepository>(),
-                    serviceProvider.GetService<IOptionsMonitor<ChatOptions>>());
+                    serviceProvider.GetService<IOptionsMonitor<ChatOptions>>(),
+                    serviceProvider.GetService<IServiceLogger<HubChatClient>>());
             });
 
             services.AddTransient(typeof(HubVideoClient), serviceProvider =>

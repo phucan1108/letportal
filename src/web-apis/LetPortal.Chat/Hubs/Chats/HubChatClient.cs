@@ -8,6 +8,7 @@ using LetPortal.Chat.Models;
 using LetPortal.Chat.Repositories.ChatRooms;
 using LetPortal.Chat.Repositories.ChatSessions;
 using LetPortal.Chat.Repositories.ChatUsers;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -28,18 +29,22 @@ namespace LetPortal.Chat.Hubs
 
         private readonly IOptionsMonitor<ChatOptions> _chatOptions;
 
+        private IServiceLogger<HubChatClient> _logger;
+
         public HubChatClient(
             IChatContext chatContext,
             IChatRoomRepository chatRoomRepository,
             IChatSessionRepository chatSessionRepository,
             IChatUserRepository chatUserRepository,
-            IOptionsMonitor<ChatOptions> chatOptions)
+            IOptionsMonitor<ChatOptions> chatOptions,
+            IServiceLogger<HubChatClient> logger)
         {
             _chatContext = chatContext;
             _chatRoomRepository = chatRoomRepository;
             _chatSessionRepository = chatSessionRepository;
             _chatUserRepository = chatUserRepository;
             _chatOptions = chatOptions;
+            _logger = logger;
         }
 
         public async Task OpenDoubleChatRoom(Models.OnlineUser invitee)
@@ -352,7 +357,7 @@ namespace LetPortal.Chat.Hubs
                         {
                             // Persist it on Db
                             session.LeaveDate = DateTime.UtcNow;                            
-                            await _chatSessionRepository.UpsertAsync(session.ToSession());
+                            await _chatSessionRepository.UpsertAsync(session.ToSession(true));
                             session.IsInDb = true;
                             session.IsDirty = false;
                         }
@@ -360,9 +365,9 @@ namespace LetPortal.Chat.Hubs
 
                     _chatContext.CloseAllUnlistenRooms(Context.UserIdentifier);
                 }
-                catch
+                catch (Exception ex)
                 {
-                   
+                    _logger.Error(ex, "There are some problems when saving chat session");   
                 }
                 finally
                 {

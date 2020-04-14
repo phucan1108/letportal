@@ -31,8 +31,14 @@ namespace LetPortal.Chat.Repositories
             chatRoomBuilder
                 .HasKey(a => a.Id);   
 
-            chatRoomBuilder.HasMany(a => a.Participants).WithOne(b => b.ChatRoom);
-            chatRoomBuilder.HasMany(a => a.Sessions).WithOne(b => b.ChatRoom);
+            chatRoomBuilder
+                .HasMany(a => a.Participants)
+                .WithOne(b => b.ChatRoom)
+                .OnDelete(DeleteBehavior.Cascade);
+            chatRoomBuilder
+                .HasMany(a => a.Sessions)
+                .WithOne(b => b.ChatRoom)
+                .OnDelete(DeleteBehavior.Cascade);
 
             var participantBuilder = modelBuilder.Entity<Participant>();
             participantBuilder
@@ -43,7 +49,8 @@ namespace LetPortal.Chat.Repositories
                 .HasKey(a => a.Id);
             chatSessionBuilder
                 .HasMany(a => a.Conversations)
-                .WithOne(b => b.ChatSession);
+                .WithOne(b => b.ChatSession)
+                .OnDelete(DeleteBehavior.Cascade);
 
             var conversationBuilder = modelBuilder.Entity<Conversation>();
             conversationBuilder
