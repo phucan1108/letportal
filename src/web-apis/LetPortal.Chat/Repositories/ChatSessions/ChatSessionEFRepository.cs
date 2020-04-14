@@ -36,35 +36,30 @@ namespace LetPortal.Chat.Repositories.ChatSessions
 
         public async Task UpsertAsync(ChatSession chatSession)
         {
-            try 
+            var found = await _context.ChatSessions.AsNoTracking().FirstOrDefaultAsync(a => a.Id == chatSession.Id);
+            if (found != null)
             {
-                var found = await _context.ChatSessions.AsNoTracking().FirstOrDefaultAsync(a => a.Id == chatSession.Id);
-                if (found == null)
+                await DeleteAsync(found.Id);
+            }
+
+            if (string.IsNullOrEmpty(chatSession.Id))
+            {
+                chatSession.Id = DataUtil.GenerateUniqueId();
+            }
+            if (chatSession.Conversations != null)
+            {
+                foreach (var conversation in chatSession.Conversations)
                 {
-                    if (string.IsNullOrEmpty(chatSession.Id))
+                    if (string.IsNullOrEmpty(conversation.Id))
                     {
-                        chatSession.Id = DataUtil.GenerateUniqueId();                            
+                        conversation.Id = DataUtil.GenerateUniqueId();
                     }
-                    if (chatSession.Conversations != null)
-                    {
-                        foreach (var conversation in chatSession.Conversations)
-                        {
-                            conversation.Id = DataUtil.GenerateUniqueId();
-                            conversation.ChatSessionId = chatSession.Id;
-                        }
-                    }
-                    await AddAsync(chatSession);
-                }
-                else
-                {
-                    await UpdateAsync(found.Id, chatSession);
+
+                    conversation.ChatSessionId = chatSession.Id;
                 }
             }
-            catch(Exception ex)
-            {
-                
-            }
-           
+            await AddAsync(chatSession);
+
         }
     }
 }

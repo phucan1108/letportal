@@ -27,9 +27,9 @@ export class AppComponent implements OnInit {
           && this.securityService.isUserSignedIn()) {
           this.chatService.start()
           this.chatService.online()
-          this.videoService.start()
-          this.chatService.getAllAvailableUsers()
+          this.videoService.start()          
           setTimeout(() => {
+            this.chatService.getAllAvailableUsers()
             this.showChatBox = true
             this.showVideoBox = true
           }, 200)

@@ -79,6 +79,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
             Breakpoints.Tablet
         ]).subscribe(result => {
             if (result.matches){
+                this.logger.debug('User in tablet or handset')
                 this.inDesktop = false
             }
             else{
