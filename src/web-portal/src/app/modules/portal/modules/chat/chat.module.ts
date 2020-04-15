@@ -15,6 +15,7 @@ import { NgxsStoreModule } from 'app/core/store.module';
 import { VideoCallDialogComponent } from './components/video-call-dialog/video-call-dialog.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { VideoStreamDialogComponent } from './components/video-stream-dialog/video-stream-dialog.component';
+import { CoreModule } from 'app/core/core.module';
 
 @NgModule({
     declarations: [
@@ -32,6 +33,7 @@ import { VideoStreamDialogComponent } from './components/video-stream-dialog/vid
         VideoCallDialogComponent
     ],
     imports: [ 
+        CoreModule.forChild(),
         CommonModule,
         ReactiveFormsModule,
         NgxEmojiPickerModule,

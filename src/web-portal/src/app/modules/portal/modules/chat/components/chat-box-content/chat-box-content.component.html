@@ -45,7 +45,7 @@
                     <ng-container *ngFor="let file of message.attachmentFiles">
                         <div class="img-wrapper" *ngIf="isImageFile(file.fileType)">
                             <img (click)="openDownloadFileTab(file.downloadUrl)" *ngIf="isImageFile(file.fileType)"
-                                [attr.src]="file.downloadUrl" class="rounded img-thumbnail">
+                                [attr.src]="file.downloadUrl | secureFile | async" class="rounded img-thumbnail">
                             <div class="overlay-img">
                                 <button mat-icon-button (click)="openDownloadFileTab(file.downloadUrl)">
                                     <mat-icon>get_app</mat-icon>

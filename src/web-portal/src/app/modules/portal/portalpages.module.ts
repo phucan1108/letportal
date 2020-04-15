@@ -9,6 +9,7 @@ import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { AppDashboardComponent } from './components/app-dashboard/app-dashboard.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { ChatModule } from './modules/chat/chat.module';
+import { CoreModule } from 'app/core/core.module';
 
 @NgModule({
     declarations: [
@@ -17,6 +18,7 @@ import { ChatModule } from './modules/chat/chat.module';
         AppDashboardComponent
     ],
     imports: [
+        CoreModule.forChild(),
         CommonModule,
         PagesRoutingModule,
         LayoutModule,

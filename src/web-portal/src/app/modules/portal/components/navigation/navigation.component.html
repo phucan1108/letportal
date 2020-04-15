@@ -23,7 +23,7 @@
       <ng-container *ngIf="hasAvatar">
         <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center"
           [matMenuTriggerFor]="menu" aria-label="More">
-          <img [src]="authUser.avatar" class="rounded-circle user-avatar"/>
+          <img [src]="authUser.avatar | secureFile | async" class="rounded-circle user-avatar"/>
         </div>
       </ng-container>
       <mat-menu #menu="matMenu" xPosition="before">
