@@ -120,7 +120,7 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
             {
                 var parsedObject = JObject.Parse(File.ReadAllText(file.FullName));
 
-                firstObject.Merge(parsedObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                firstObject.Merge(parsedObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Merge });
             }
 
             return new KeyValuePair<string, string>(fileVersionKey, ConvertUtil.SerializeObject(firstObject));
@@ -168,7 +168,7 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
                 for (var j = 0; j < i; j++)
                 {
                     var tempJsonObject = JObject.Parse(sortedByKeys[j].Value);
-                    tempJsonObject.Merge(jsonObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                    tempJsonObject.Merge(jsonObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Merge });
                     jsonObject = tempJsonObject;
                 }
 
@@ -186,7 +186,7 @@ namespace LetPortal.ServiceManagementApis.ConfigurationProviders
             {
                 var parsedObject = JObject.Parse(pair.Value);
 
-                firstObject.Merge(parsedObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                firstObject.Merge(parsedObject, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Merge });
             }
 
             return ConvertUtil.SerializeObject(firstObject);

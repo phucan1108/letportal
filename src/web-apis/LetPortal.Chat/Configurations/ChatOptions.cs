@@ -6,8 +6,6 @@ namespace LetPortal.Chat.Configurations
 {
     public class ChatOptions
     {
-        public List<string> AllowedHosts { get; set; }
-
         /// <summary>
         /// Maximum chat session will be stored in memory
         /// Due to memory capacity, we need to restrict maximum sessions per room

@@ -26,9 +26,7 @@ namespace LetPortal.Core
 {
     public static class CoreExtensions
     {
-        private const string DEV_CORS = "DevCors";
-        private const string LOCAL_CORS = "LocalCors";
-        private const string DOCK_LOCAL_CORS = "DockerLocalCors";
+        private const string PORTAL_CORS = "LETPortalCors";
 
         public static ILetPortalBuilder AddLetPortal(this IServiceCollection serviceCollection, IConfiguration configuration, Action<LetPortalOptions> action = null)
         {
@@ -37,8 +35,12 @@ namespace LetPortal.Core
             {
                 action.Invoke(letPortalOptions);
             }
-
-            var builder = new LetPortalBuilder(serviceCollection, configuration, letPortalOptions);
+            var corsOptions = configuration.GetSection("CorsPortalOptions").Get<Core.Configurations.CorsPortalOptions>();
+            var builder = new LetPortalBuilder(
+                serviceCollection, 
+                configuration, 
+                letPortalOptions,
+                corsOptions);
 
             if (letPortalOptions.EnableDatabaseConnection)
             {
@@ -90,8 +92,8 @@ namespace LetPortal.Core
 
                 builder.Services.AddSingleton(Log.Logger);
                 builder.Services.AddTransient(typeof(IServiceLogger<>), typeof(ServiceLogger<>));
-            }
-
+            }            
+           
             return builder;
         }
 
@@ -262,42 +264,73 @@ namespace LetPortal.Core
             return builder.Add(new IntegratorConfigurationServiceSource(configurationServiceOptions, serviceOptions.Name, serviceOptions.Version));
         }
 
-        public static void AddDevCors(this CorsOptions options)
+        public static ILetPortalBuilder AddPortalCors(this ILetPortalBuilder builder)
         {
-            options?.AddPolicy(DEV_CORS, builder =>
-            {
-                builder.AllowAnyHeader()
-                       .AllowAnyMethod()
-                       .AllowAnyOrigin()
-                       .WithExposedHeaders(Constants.TokenExpiredHeader);
-            });
+            builder.Services.AddCors(
+                option =>
+                {
+                    option.AddPolicy(PORTAL_CORS, corsBuilder =>
+                    {
+                        if (builder.CorsOptions.AllowAny)
+                        {
+                            corsBuilder.AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowAnyOrigin()
+                               .WithExposedHeaders(Constants.TokenExpiredHeader);
+                        }
+                        else
+                        {
+                            if (builder.CorsOptions.AllowAnyHeader)
+                            {
+                                corsBuilder.AllowAnyHeader();
+                            }
+                            else
+                            {
+                                corsBuilder.WithHeaders(builder.CorsOptions.AllowedHeaders.ToArray());
+                            }
+
+                            if (builder.CorsOptions.AllowAnyMethod)
+                            {
+                                corsBuilder.AllowAnyMethod();
+                            }
+                            else
+                            {
+                                corsBuilder.WithMethods(builder.CorsOptions.AllowedMethods.ToArray());
+                            }
+
+                            if (builder.CorsOptions.AllowAnyHost)
+                            {
+                                corsBuilder.AllowAnyOrigin();
+                            }
+                            else
+                            {
+                                corsBuilder.WithOrigins(builder.CorsOptions.AllowedHosts.ToArray());
+                            }
+
+                            if (builder.CorsOptions.ExposedHeaders != null)
+                            {
+                                corsBuilder.WithExposedHeaders(builder.CorsOptions.ExposedHeaders.ToArray());
+                            }
+                        }
+                    });
+
+                });
+            return builder;
         }
 
-        public static void AddLocalCors(this CorsOptions options)
+        public static void UsePortalCors(this IApplicationBuilder app)
         {
-            options?.AddPolicy(LOCAL_CORS, builder =>
-            {
-                builder.AllowAnyHeader()
-                       .AllowAnyMethod()
-                       .AllowAnyOrigin()
-                       .WithExposedHeaders(Constants.TokenExpiredHeader);
-            });
-        }
-
-        public static void AddDockerLocalCors(this CorsOptions options)
-        {
-            options?.AddPolicy(DOCK_LOCAL_CORS, builder =>
-            {
-                builder.AllowAnyHeader()
-                       .AllowAnyMethod()
-                       .AllowAnyOrigin()
-                       .WithExposedHeaders(Constants.TokenExpiredHeader);
-            });
-        }
+            app.UseCors(PORTAL_CORS);
+        }  
 
         public static bool IsLocalEnv(this IWebHostEnvironment environment)
         {
             return environment.IsEnvironment("Local");
+        }
+
+        public static bool IsDockerEnv(this IWebHostEnvironment environment)
+        {
+            return environment.IsEnvironment("Docker");
         }
 
         public static bool IsDockerLocalEnv(this IWebHostEnvironment environment)
@@ -305,20 +338,6 @@ namespace LetPortal.Core
             return environment.IsEnvironment("DockerLocal");
         }
 
-        public static IApplicationBuilder UseDevCors(this IApplicationBuilder builder)
-        {
-            return builder.UseCors(DEV_CORS);
-        }
-
-        public static IApplicationBuilder UseLocalCors(this IApplicationBuilder builder)
-        {
-            return builder.UseCors(LOCAL_CORS);
-        }
-
-        public static IApplicationBuilder UseDockerLocalCors(this IApplicationBuilder builder)
-        {
-            return builder.UseCors(DOCK_LOCAL_CORS);
-        }
 
         /// <summary>
         /// Notify to Service Management when service is starting or stopping
