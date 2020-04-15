@@ -49,23 +49,7 @@ namespace LetPortal.ChatApis
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseChatCors();
-            }
-            else if (env.IsLocalEnv())
-            {
-                app.UseChatCors();
-            }
-            else if (env.IsDockerLocalEnv())
-            {
-                app.UseChatCors();
-            }
-            else
-            {
-                app.UseHsts();
-                app.UseChatCors();
-            }
+            app.UseChatCors();
 
             if (!isExistedDB)
             {

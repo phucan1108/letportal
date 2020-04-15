@@ -21,11 +21,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
 import { AutoCompletePipe } from './pipe/autocomplete.pipe';
 import { ExportService } from 'services/export.service';
+import { SecurePipe } from './pipe/secure.pipe';
 @NgModule({
   declarations: [
     UnlockScreenDialogComponent,
     SafeHtmlPipe,
-    AutoCompletePipe
+    AutoCompletePipe,
+    SecurePipe
   ],
   imports: [
     CommonModule,
@@ -43,7 +45,8 @@ import { ExportService } from 'services/export.service';
     SafeHtmlPipe,
     CommonModule,
     ReactiveFormsModule,
-    AutoCompletePipe
+    AutoCompletePipe,
+    SecurePipe
   ],
   providers: [
     TranslateConfigs,

@@ -28,7 +28,6 @@ import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ChatModule } from 'portal/modules/chat/chat.module';
 import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
 import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
-import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay';
 export function hlJSLang() {
   return [
     { name: 'sql', func: sql }

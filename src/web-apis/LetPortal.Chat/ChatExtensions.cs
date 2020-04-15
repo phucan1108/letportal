@@ -48,12 +48,12 @@ namespace LetPortal.Chat
             var chatOptions = builder.Configuration.GetSection("ChatOptions").Get<ChatOptions>();
             services.AddCors(options =>
             {
-                options.AddPolicy(CHAT_POLICY_CORS, builder =>
+                options.AddPolicy(CHAT_POLICY_CORS, corsBuilder =>
                 {
-                    builder
+                    corsBuilder
                             .AllowAnyMethod()
                             .AllowAnyHeader()
-                            .WithOrigins(chatOptions.AllowedHosts.ToArray())
+                            .WithOrigins(builder.CorsOptions.AllowedHosts.ToArray())
                             .AllowCredentials()
                             .WithExposedHeaders(LetPortal.Core.Constants.TokenExpiredHeader);
                 });

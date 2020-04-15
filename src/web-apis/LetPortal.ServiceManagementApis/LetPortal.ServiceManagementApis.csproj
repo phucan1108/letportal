@@ -36,6 +36,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Files\Shared\v1.0\appsettings.Local.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Files\Shared\v1.0\appsettings.DockerLocal.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Files\Shared\v1.0\appsettings.Docker.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Files\Shared\v1.0\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

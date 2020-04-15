@@ -23,17 +23,6 @@ namespace LetPortal.Gateway
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddDevCors();
-                options.AddLocalCors();
-                options.AddDockerLocalCors();
-
-                options.AddPolicy("ProdCors", builder =>
-                {
-                    builder.WithExposedHeaders(Constants.TokenExpiredHeader);
-                });
-            });
             services.AddOcelot();
             services.AddLetPortal(Configuration, options =>
             {
@@ -41,7 +30,9 @@ namespace LetPortal.Gateway
                 options.EnableMicroservices = true;
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
-            }).AddGateway();
+            })
+            .AddPortalCors()
+            .AddGateway();
 
             services.AddControllers();
         }
@@ -51,21 +42,14 @@ namespace LetPortal.Gateway
         {
             if (env.IsDevelopment())
             {
-                app.UseDevCors();
-            }
-            else if (env.IsLocalEnv())
-            {
-                app.UseLocalCors();
-            }
-            else if (env.IsDockerLocalEnv())
-            {
-                app.UseDockerLocalCors();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
                 app.UseHsts();
-                app.UseCors("ProdCors");
             }
+
+            app.UsePortalCors();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

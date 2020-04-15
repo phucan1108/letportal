@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Configurations;
+using LetPortal.Core.Persistences;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +16,8 @@ namespace LetPortal.Core
         ConnectionType ConnectionType { get; }
 
         LetPortalOptions LetPortalOptions { get; }
+
+        CorsPortalOptions CorsOptions { get; }
 
         void Build();
     }
