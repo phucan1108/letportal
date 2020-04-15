@@ -413,7 +413,7 @@ namespace LetPortal.Versions.Pages
                                                 "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\", \"normalizedEmail\":\"{{data.email.toUpperCase()}}\",  \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
                                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                                                         ? "Update `users` Set email={{data.email}}, `normalizedEmail`={{data.email.toUpperCase()}}, `isConfirmedEmail`={{data.isConfirmedEmail|bool}}, `isLockoutEnabled`={{data.isLockoutEnabled|bool}}, `lockoutEndDate`={{data.lockoutEndDate|date}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}"
-                                                        : "Update users Set email={{data.email}}, \"normalizedEmail\"={{data.email.toUpperCase()}}, \"isConfirmedEmail\"={{data.isConfirmedEmail}}, \"isLockoutEnabled\"={{data.isLockoutEnabled|bool}}, \"lockoutEndDate\"={{data.lockoutEndDate|date}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}")
+                                                        : "Update users Set email={{data.email}}, \"normalizedEmail\"={{data.email.toUpperCase()}}, \"isConfirmedEmail\"={{data.isConfirmedEmail|bool}}, \"isLockoutEnabled\"={{data.isLockoutEnabled|bool}}, \"lockoutEndDate\"={{data.lockoutEndDate|date}}, roles={{toJsonString(data.roles)}} Where id={{data.id}}")
                                         }
                                     }
                                 },

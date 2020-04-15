@@ -12,9 +12,9 @@ namespace LetPortal.Portal.Repositories.Pages
 {
     public class PageEFRepository : EFGenericRepository<Page>, IPageRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public PageEFRepository(LetPortalDbContext context)
+        public PageEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;

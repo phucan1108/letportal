@@ -24,7 +24,10 @@ import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import pgsql from 'highlight.js/lib/languages/pgsql'
 import sql from 'highlight.js/lib/languages/sql'
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
-
+import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
+import { ChatModule } from 'portal/modules/chat/chat.module';
+import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
+import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 export function hlJSLang() {
   return [
     { name: 'sql', func: sql }
@@ -33,7 +36,9 @@ export function hlJSLang() {
 const portalBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().portalBaseEndpoint
 }
-
+const chatBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().chatBaseEndpoint
+}
 const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().identityBaseEndpoint
 }
@@ -43,6 +48,7 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
     ErrorComponent
   ],
   imports: [
+    ChatModule,
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
@@ -62,9 +68,13 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
     ClipboardModule,
 
     // Portal Module Sections
-    CoreModule.forRoot()
+    CoreModule.forRoot(),
+
+    NgxEmojiPickerModule.forRoot()
   ],
   providers: [
+    ChatService,
+    VideoCallService,
     ConfigurationService,
     {
       provide: PORTAL_BASE_URL,
@@ -74,6 +84,16 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
     {
       provide: IDENTITY_BASE_URL,
       useFactory: identityBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: CHAT_BASE_URL,
+      useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: VIDEO_BASE_URL,
+      useFactory: chatBaseUrl,
       deps: [ConfigurationProvider]
     },
     {
@@ -97,7 +117,7 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   entryComponents: [
 
   ],
-  exports:[
+  exports: [
     CoreModule
   ],
   bootstrap: [AppComponent]

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>0.6.0</Version>
+    <Version>0.7.0</Version>
     <Company>LetPortal</Company>
     <Product>LetPortal</Product>
     <Authors>An Quang Phuc Le</Authors>
@@ -20,11 +20,12 @@
     <Compile Remove="Logger\Attributes\**" />
     <EmbeddedResource Remove="Logger\Attributes\**" />
     <None Remove="Logger\Attributes\**" />
-    <None Include="logo.png" Pack="true" PackagePath=""/>
-    <None Include="LICENSE.txt" Pack="true" PackagePath=""/>
+    <None Include="logo.png" Pack="true" PackagePath="" />
+    <None Include="LICENSE.txt" Pack="true" PackagePath="" />
   </ItemGroup>  
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -45,6 +46,7 @@
 	<PackageReference Include="Serilog.Sinks.MongoDB" Version="4.0.0" />
 	<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	<PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
+	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
 	<PackageReference Include="TimeZoneConverter" Version="3.2.0" />  
   </ItemGroup>
 </Project>

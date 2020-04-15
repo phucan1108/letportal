@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Persistences;
+﻿using LetPortal.Core.Configurations;
+using LetPortal.Core.Persistences;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,8 @@ namespace LetPortal.Core
 
         public LetPortalOptions LetPortalOptions { get; }
 
+        public CorsPortalOptions CorsOptions { get; }
+
         public ConnectionType ConnectionType { get; private set; }
 
         public IHealthChecksBuilder HealthChecksBuilder { get; private set; }
@@ -19,11 +22,14 @@ namespace LetPortal.Core
         public LetPortalBuilder(
             IServiceCollection serviceCollection,
             IConfiguration configuration,
-            LetPortalOptions letPortalOptions)
+            LetPortalOptions letPortalOptions,
+            CorsPortalOptions corsOptions)
         {
             Services = serviceCollection;
             Configuration = configuration;
             LetPortalOptions = letPortalOptions;
+            CorsOptions = corsOptions;
+
         }
 
         public void SetConnectionType(ConnectionType connectionType)

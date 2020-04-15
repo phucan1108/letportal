@@ -5,9 +5,9 @@ namespace LetPortal.Portal.Repositories.Files
 {
     public class FileEFRepository : EFGenericRepository<File>, IFileRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public FileEFRepository(LetPortalDbContext context)
+        public FileEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;

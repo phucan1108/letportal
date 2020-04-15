@@ -9,9 +9,9 @@ namespace LetPortal.Identity.Repositories.Identity
 {
     public class RoleEFRepository : EFGenericRepository<Role>, IRoleRepository
     {
-        private readonly LetPortalIdentityDbContext _context;
+        private readonly IdentityDbContext _context;
 
-        public RoleEFRepository(LetPortalIdentityDbContext context)
+        public RoleEFRepository(IdentityDbContext context)
             : base(context)
         {
             _context = context;

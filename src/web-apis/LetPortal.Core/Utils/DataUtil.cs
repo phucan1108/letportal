@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System;
+using MongoDB.Bson;
 
 namespace LetPortal.Core.Utils
 {
@@ -6,7 +7,7 @@ namespace LetPortal.Core.Utils
     {
         public static string GenerateUniqueId()
         {
-            return ObjectId.GenerateNewId().ToString();
+            return ObjectId.GenerateNewId(DateTime.UtcNow).ToString();
         }
     }
 }

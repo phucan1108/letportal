@@ -11,9 +11,9 @@ namespace LetPortal.Portal.Repositories.Components
 {
     public class ChartEFRepository : EFGenericRepository<Chart>, IChartRepository
     {
-        private readonly LetPortalDbContext _context;
+        private readonly PortalDbContext _context;
 
-        public ChartEFRepository(LetPortalDbContext context)
+        public ChartEFRepository(PortalDbContext context)
             : base(context)
         {
             _context = context;

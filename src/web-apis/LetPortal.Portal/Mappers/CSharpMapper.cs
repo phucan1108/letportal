@@ -55,11 +55,20 @@ namespace LetPortal.Portal.Mappers
                         {
                             return tempBool;
                         }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     break;
                 case "date":
                     if (DateTime.TryParse(value, out var dateTime))
                     {
+                        // Very dangerous if we accepts < 1973
+                        if(dateTime.Year < 1973)
+                        {
+                            dateTime = new DateTime(1973, 1, 1);
+                        }
                         return dateTime;
                     }
                     break;

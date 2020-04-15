@@ -22,18 +22,6 @@ namespace LetPortal.IdentityApis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Only for Development
-            services.AddCors(options =>
-            {
-                options.AddDevCors();
-                options.AddLocalCors();
-                options.AddDockerLocalCors();
-
-                options.AddPolicy("ProdCors", builder =>
-                {
-                    builder.WithExposedHeaders(LetPortal.Core.Constants.TokenExpiredHeader);
-                });
-            });
 
             services.AddHttpContextAccessor();
             services.AddOpenApiDocument();
@@ -43,7 +31,10 @@ namespace LetPortal.IdentityApis
                 options.EnableMicroservices = true;
                 options.EnableSerilog = true;
                 options.EnableServiceMonitor = true;
-            }).AddIdentity();
+            })              
+            .AddPortalCors()
+            .AddIdentity() 
+            .AddJwtValidator();
 
             services
                 .AddControllers()
@@ -59,21 +50,14 @@ namespace LetPortal.IdentityApis
         {
             if (env.IsDevelopment())
             {
-                app.UseDevCors();
-            }
-            else if (env.IsLocalEnv())
-            {
-                app.UseLocalCors();
-            }
-            else if (env.IsDockerLocalEnv())
-            {
-                app.UseDockerLocalCors();
+                app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseHsts();
-                app.UseCors("ProdCors");
+                app.UseHsts();                 
             }
+
+            app.UsePortalCors();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -98,8 +82,11 @@ namespace LetPortal.IdentityApis
                 endpoints.MapControllers();
             });
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            if (env.IsDevelopment())
+            {
+                app.UseOpenApi();
+                app.UseSwaggerUi3();
+            }
         }
     }
 }

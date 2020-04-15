@@ -1,0 +1,8 @@
+<let-avatar #avatar [user]="invitee" trackOnline="true" hasCounterNumber="true"
+    [(counterNumber)]="counterIncomingMessage" [cssClasses]="overrideHeadClass" (clicked)="showChatBoxContent()">
+</let-avatar>
+<div [attr.class]="overrideDialogClass" *ngIf="showChatBox">
+    <let-chat-box-content #chatBoxContent (closed)="onChatBoxClosed()" [isUserOnline]="invitee.isOnline" [chatRoom]="chatRoom">
+    </let-chat-box-content>
+</div>
+<audio src="assets/sounds/message_ring.mp3" style="visibility: hidden;" #audio></audio>

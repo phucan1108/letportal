@@ -13,6 +13,18 @@ export class FormUtil {
         });
     }
 
+    public static resetFormValidators(formGroup: FormGroup){
+        Object.keys(formGroup.controls).forEach(field => {
+            const control = formGroup.get(field);
+            if (control instanceof FormControl) {
+                control.markAsPristine()
+                control.markAsUntouched()
+            } else if (control instanceof FormGroup) {
+                this.resetFormValidators(control);
+            }
+        });
+    }
+
     public static isExist(objs: any[], defaultObj: any): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } | null => {
             const found = _.find(objs, obj => obj == control.value)

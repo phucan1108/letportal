@@ -72,6 +72,7 @@ namespace LetPortal.Identity.Providers.Identity
                 Claims = new List<BaseClaim>
                 {
                     StandardClaims.Sub(registerModel.Username),
+                    StandardClaims.FullName(registerModel.Username),
                     StandardClaims.AccessAppSelectorPage
                 }
             }, registerModel.Password);
@@ -117,6 +118,7 @@ namespace LetPortal.Identity.Providers.Identity
                     {
                         new UserActivity
                         {
+                            Id = DataUtil.GenerateUniqueId(),
                             ActivityName = "USER_SIGNIN",
                             Content = "Signin successfully",
                             ActivityDate = DateTime.UtcNow,

@@ -55,7 +55,7 @@ export class FileUploaderComponent implements OnInit {
     }
 
     onFileChange($event) {
-        if(this.disabled){
+        if (this.disabled) {
             return
         }
         this.hasSelectedFile = true
@@ -135,7 +135,7 @@ export class FileUploaderComponent implements OnInit {
             this.uploadedFiles.splice(index, 1)
         }
 
-        if(this.selectedFiles.size === 0){
+        if (this.selectedFiles.size === 0) {
             this.form.get(this.formControlKey).setValue(null)
         }
     }
@@ -151,7 +151,8 @@ export class FileUploaderComponent implements OnInit {
     isInvalidExtension(fileName: string) {
         const fileExtensionsValidator = this.control.validators.find(a => a.validatorType === ValidatorType.FileExtensions)
         if (fileExtensionsValidator.isActive) {
-            const fileExt = fileName.split('.')[1].toLowerCase()
+            const extSplitted = fileName.split('.')
+            const fileExt = extSplitted[extSplitted.length - 1].toLowerCase()
             const splitted = fileExtensionsValidator.validatorOption.toLowerCase().split(';')
             return splitted.indexOf(fileExt) < 0
         }

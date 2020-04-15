@@ -97,44 +97,55 @@ namespace LetPortal.Portal.Services.Files
 
         public async Task<ResponseUploadFile> UploadFileAsync(IFormFile file, string uploader, bool allowCompress)
         {
-            // Store a file into temp disk before proceeding
-            var localFilePath = await SaveFormFileAsync(file);
-
-            // 1. Check all rules
-            foreach (var rule in _fileValidatorRules)
+            string localFilePath = string.Empty;
+            try
             {
-                await rule.Validate(file, localFilePath);
+                // Store a file into temp disk before proceeding
+                localFilePath = await SaveFormFileAsync(file);
+
+                // 1. Check all rules
+                foreach (var rule in _fileValidatorRules)
+                {
+                    await rule.Validate(file, localFilePath);
+                }
+
+                // 2. Call Media Connector to upload
+                var storedFile = await _fileConnectorExecutions.First(a => a.FileStorageType == _fileOptions.CurrentValue.FileStorageType).StoreFileAsync(file, tempFilePath: localFilePath);
+
+                // 3. Store its into database
+                var createdId = DataUtil.GenerateUniqueId();
+                var createFile = new Entities.Files.File
+                {
+                    Id = createdId,
+                    Name = file.FileName,
+                    DateUploaded = DateTime.UtcNow,
+                    Uploader = uploader,
+                    MIMEType = await GetFileMIMEType(localFilePath),
+                    FileSize = file.Length,
+                    FileStorageType = _fileOptions.CurrentValue.FileStorageType,
+                    IdentifierOptions = storedFile.FileIdentifierOptions,
+                    AllowCompress = allowCompress,
+                    DownloadableUrl = storedFile.UseServerHost
+                        ? _filePublishOptions.CurrentValue.DownloadableHost + "/" + createdId
+                            : storedFile.DownloadableUrl
+                };
+
+                await _fileRepository.AddAsync(createFile);
+
+                System.IO.File.Delete(localFilePath);
+                return new ResponseUploadFile
+                {
+                    FileId = createFile.Id,
+                    DownloadableUrl = createFile.DownloadableUrl
+                };
             }
-
-            // 2. Call Media Connector to upload
-            var storedFile = await _fileConnectorExecutions.First(a => a.FileStorageType == _fileOptions.CurrentValue.FileStorageType).StoreFileAsync(file, tempFilePath: localFilePath);
-
-            // 3. Store its into database
-            var createdId = DataUtil.GenerateUniqueId();
-            var createFile = new Entities.Files.File
+            finally
             {
-                Id = createdId,
-                Name = file.FileName,
-                DateUploaded = DateTime.UtcNow,
-                Uploader = uploader,
-                MIMEType = await GetFileMIMEType(localFilePath),
-                FileSize = file.Length,
-                FileStorageType = _fileOptions.CurrentValue.FileStorageType,
-                IdentifierOptions = storedFile.FileIdentifierOptions,
-                AllowCompress = allowCompress,
-                DownloadableUrl = storedFile.UseServerHost
-                    ? _filePublishOptions.CurrentValue.DownloadableHost + "/" + createdId
-                        : storedFile.DownloadableUrl
-            };
-
-            await _fileRepository.AddAsync(createFile);
-
-            System.IO.File.Delete(localFilePath);
-            return new ResponseUploadFile
-            {
-                FileId = createFile.Id,
-                DownloadableUrl = createFile.DownloadableUrl
-            };
+                if (!string.IsNullOrEmpty(localFilePath))
+                {
+                    System.IO.File.Delete(localFilePath);
+                }                                                        
+            }               
         }
 
         public async Task<ResponseUploadFile> UploadFileAsync(string localFilePath, string uploader, bool allowCompress)
@@ -217,8 +228,8 @@ namespace LetPortal.Portal.Services.Files
         private async Task<string> SaveFormFileAsync(IFormFile file)
         {
             var tempFileName = Path.GetRandomFileName();
-
-            tempFileName = tempFileName.Split(".")[0] + "." + file.FileName.Split(".")[1];
+            var fileNameSplitted = file.FileName.Split(".");
+            tempFileName = tempFileName.Split(".")[0] + "." + fileNameSplitted[^1];
 
             using (var stream = new FileStream(tempFileName, FileMode.Create))
             {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LetPortal.Identity.Repositories
 {
-    public class LetPortalIdentityDbContext : DbContext
+    public class IdentityDbContext : DbContext
     {
         public ConnectionType ConnectionType => _options.ConnectionType;
 
@@ -26,7 +26,7 @@ namespace LetPortal.Identity.Repositories
 
         private readonly DatabaseOptions _options;
 
-        public LetPortalIdentityDbContext(DatabaseOptions options)
+        public IdentityDbContext(DatabaseOptions options)
         {
             _options = options;
         }
@@ -36,7 +36,7 @@ namespace LetPortal.Identity.Repositories
             var userBuilder = modelBuilder.Entity<User>();
             userBuilder.HasKey(a => a.Id);
 
-            if (_options.ConnectionType == ConnectionType.MySQL)
+            if (ConnectionType == ConnectionType.MySQL)
             {
                 userBuilder.Property(a => a.IsConfirmedEmail).HasColumnType("BIT");
                 userBuilder.Property(a => a.IsLockoutEnabled).HasColumnType("BIT");
@@ -60,7 +60,7 @@ namespace LetPortal.Identity.Repositories
 
             var issueTokenBuilder = modelBuilder.Entity<IssuedToken>();
             issueTokenBuilder.HasKey(a => a.Id);
-            if (_options.ConnectionType == ConnectionType.MySQL)
+            if (ConnectionType == ConnectionType.MySQL)
             {
                 issueTokenBuilder.Property(a => a.Deactive).HasColumnType("BIT");
             }
@@ -68,6 +68,10 @@ namespace LetPortal.Identity.Repositories
             var userSessionBuilder = modelBuilder.Entity<UserSession>();
             userSessionBuilder.HasKey(a => a.Id);
             userSessionBuilder.HasMany(a => a.UserActivities).WithOne().OnDelete(DeleteBehavior.Cascade);
+            if (ConnectionType == ConnectionType.MySQL)
+            {
+                userSessionBuilder.Property(a => a.AlreadySignOut).HasColumnType("BIT");
+            }  
 
             var userActivityBuilder = modelBuilder.Entity<UserActivity>();
             userActivityBuilder.HasKey(a => a.Id);

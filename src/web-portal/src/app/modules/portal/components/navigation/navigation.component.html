@@ -7,16 +7,24 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <!-- Logo here-->
+      <img class="logo-small" src="logo.ico" />
       <!-- End logo-->
       <!-- Right top bar-->
       <span class="divider-left-right-bar"></span>
+      <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center">
+        <mat-icon [matBadgeHidden]="true" matBadge="0" matBadgeColor="warn" matTooltip="Notification" [matTooltipPosition]="'below'">notifications</mat-icon>
+      </div>
       <ng-container *ngIf="!hasAvatar">
-        <div class="rounded-circle user-tile-avatar" [matMenuTriggerFor]="menu" aria-label="More">
+        <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center"
+          [matMenuTriggerFor]="menu" aria-label="More">
           {{userShortName}}
         </div>
       </ng-container>
       <ng-container *ngIf="hasAvatar">
-        <img [src]="authUser.avatar" class="rounded-circle user-avatar" [matMenuTriggerFor]="menu" aria-label="More" />
+        <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center"
+          [matMenuTriggerFor]="menu" aria-label="More">
+          <img [src]="authUser.avatar | secureFile | async" class="rounded-circle user-avatar"/>
+        </div>
       </ng-container>
       <mat-menu #menu="matMenu" xPosition="before">
         <p mat-menu-item disabled>

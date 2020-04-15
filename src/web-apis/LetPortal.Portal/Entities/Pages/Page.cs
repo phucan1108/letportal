@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
@@ -10,6 +11,7 @@ namespace LetPortal.Portal.Entities.Pages
     [Table("pages")]
     public class Page : BackupableEntity
     {
+        [StringLength(250)]
         public string UrlPath { get; set; }
 
         public List<ShellOption> ShellOptions { get; set; }

@@ -1,0 +1,60 @@
+.full-screen {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    z-index: 1001;
+    position: fixed;
+}
+
+.stream-container {
+    max-width: 1024px;
+    padding-top: 5%;
+}
+
+.float-local-video {
+    position: absolute;
+    background-color: black;
+    top: 0px;
+    right: 0px;
+    width: 200px;
+    height: 150px;
+}
+
+.video-warpper {
+    position: relative;
+}
+.button-wrapper {
+    position: absolute;
+    left: 35%;
+    bottom: 30px;
+    width: 30%;
+    .rounded-circle {
+        width: 48px;
+        height: 48px;
+        background-color: rgb(255,255,255);
+        cursor: pointer;
+    }
+}
+
+@media (min-width: 576.98px) and (max-width: 991.98px) {
+    .stream-container {
+        padding-top: 30%;
+    }
+
+    .button-wrapper{
+        left: 30%;
+        width: 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    .stream-container {
+        max-width: 360px;
+        padding: 0;
+    }
+
+    .button-wrapper{
+        left: 20%;
+        width: 60%;
+    }
+}

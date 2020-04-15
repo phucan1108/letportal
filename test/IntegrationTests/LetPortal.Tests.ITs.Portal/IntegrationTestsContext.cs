@@ -164,7 +164,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowPostgreSQL)
             {
-                LetPortalDbContext postgreContext = GetPostgreSQLContext();
+                PortalDbContext postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureDeleted();
                 postgreContext.Dispose();
 
@@ -175,7 +175,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowSQLServer)
             {
-                LetPortalDbContext sqlContext = GetSQLServerContext();
+                PortalDbContext sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureDeleted();
                 sqlContext.Dispose();
 
@@ -186,7 +186,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowMySQL)
             {
-                LetPortalDbContext mysqlContext = GetMySQLContext();
+                PortalDbContext mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureDeleted();
                 mysqlContext.Dispose();
 
@@ -211,7 +211,7 @@ namespace LetPortal.Tests.ITs.Portal
             return new MongoConnection(databaseOptionsMock.CurrentValue);
         }
 
-        public LetPortalDbContext GetPostgreSQLContext()
+        public PortalDbContext GetPostgreSQLContext()
         {
             DatabaseOptions databaseOptions = new DatabaseOptions
             {
@@ -219,7 +219,7 @@ namespace LetPortal.Tests.ITs.Portal
                 ConnectionType = ConnectionType.PostgreSQL,
                 Datasource = PostgreSqlDatabaseConnection.DataSource
             };
-            LetPortalDbContext letportalDbContext = new LetPortalDbContext(databaseOptions);
+            PortalDbContext letportalDbContext = new PortalDbContext(databaseOptions);
             return letportalDbContext;
         }
 
@@ -235,7 +235,7 @@ namespace LetPortal.Tests.ITs.Portal
             return letportalDbContext;
         }
 
-        public LetPortalDbContext GetSQLServerContext()
+        public PortalDbContext GetSQLServerContext()
         {
             DatabaseOptions databaseOptions = new DatabaseOptions
             {
@@ -243,7 +243,7 @@ namespace LetPortal.Tests.ITs.Portal
                 ConnectionType = ConnectionType.SQLServer,
                 Datasource = SqlServerDatabaseConnection.DataSource
             };
-            LetPortalDbContext letportalDbContext = new LetPortalDbContext(databaseOptions);
+            PortalDbContext letportalDbContext = new PortalDbContext(databaseOptions);
             return letportalDbContext;
         }
 
@@ -259,7 +259,7 @@ namespace LetPortal.Tests.ITs.Portal
             return letportalDbContext;
         }
 
-        public LetPortalDbContext GetMySQLContext()
+        public PortalDbContext GetMySQLContext()
         {
             DatabaseOptions databaseOptions = new DatabaseOptions
             {
@@ -267,7 +267,7 @@ namespace LetPortal.Tests.ITs.Portal
                 ConnectionType = ConnectionType.MySQL,
                 Datasource = MySqlDatabaseConnection.DataSource
             };
-            LetPortalDbContext letportalDbContext = new LetPortalDbContext(databaseOptions);
+            PortalDbContext letportalDbContext = new PortalDbContext(databaseOptions);
             return letportalDbContext;
         }
 
@@ -312,7 +312,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowPostgreSQL)
             {
-                LetPortalDbContext postgreContext = GetPostgreSQLContext();
+                PortalDbContext postgreContext = GetPostgreSQLContext();
                 postgreContext.Database.EnsureCreated();
                 postgreContext.Databases.Add(PostgreSqlDatabaseConnection);
                 postgreContext.Apps.Add(SampleApp());
@@ -322,7 +322,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowSQLServer)
             {
-                LetPortalDbContext sqlContext = GetSQLServerContext();
+                PortalDbContext sqlContext = GetSQLServerContext();
                 sqlContext.Database.EnsureCreated();
                 sqlContext.Databases.Add(SqlServerDatabaseConnection);
                 sqlContext.Apps.Add(SampleApp());
@@ -334,7 +334,7 @@ namespace LetPortal.Tests.ITs.Portal
 
             if(AllowMySQL)
             {
-                LetPortalDbContext mysqlContext = GetMySQLContext();
+                PortalDbContext mysqlContext = GetMySQLContext();
                 mysqlContext.Database.EnsureCreated();
                 mysqlContext.Databases.Add(MySqlDatabaseConnection);
                 mysqlContext.Apps.Add(SampleApp());

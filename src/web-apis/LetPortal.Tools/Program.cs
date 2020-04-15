@@ -122,12 +122,12 @@ namespace LET.Tools.Installation
                         if (IsPortal())
                         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                            var letportalContext = new LetPortalDbContext(databaseOption);
+                            var letportalContext = new PortalDbContext(databaseOption);
 #pragma warning restore CA2000 // Dispose objects before losing scope
                             letportalContext.Database.EnsureCreated();
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                            var letportalContextForRepo = new LetPortalDbContext(databaseOption);
+                            var letportalContextForRepo = new PortalDbContext(databaseOption);
 #pragma warning restore CA2000 // Dispose objects before losing scope
                             var sqlEFVersionContext = new EFVersionContext(letportalContext)
                             {
@@ -139,7 +139,7 @@ namespace LET.Tools.Installation
                             sqlEFVersionContext.ServiceManagementOptions = storingConnections.ServiceManagementConnection;
                             sqlEFVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
 
-                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
+                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllPortalVersions();
                             toolsContext = new ToolsContext
                             {
                                 LatestVersion = latestVersionEF,
@@ -153,12 +153,12 @@ namespace LET.Tools.Installation
                         else if (IsIdentity())
                         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                            var letIdentityContext = new LetPortalIdentityDbContext(databaseOption);
+                            var letIdentityContext = new IdentityDbContext(databaseOption);
 #pragma warning restore CA2000 // Dispose objects before losing scope
                             letIdentityContext.Database.EnsureCreated();
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                            var letportalContextForRepo = new LetPortalIdentityDbContext(databaseOption);
+                            var letportalContextForRepo = new IdentityDbContext(databaseOption);
 #pragma warning restore CA2000 // Dispose objects before losing scope
                             var sqlEFVersionContext = new EFVersionContext(letportalContextForRepo)
                             {
