@@ -2,7 +2,7 @@
 
 # LET Portal
 
-## Version: 0.6.0
+## Version: 0.7.0
 
 ![LET Portal Build](https://github.com/phucan1108/letportal/workflows/LET%20Portal%20Build/badge.svg)
 
@@ -10,7 +10,7 @@
 
 LET Portal is a web platform to build quickly User Form, Data List, Chart and Page. The project is open-source project. There are no fee charged to use or modify.
 
-The current version is **0.6.0**, so it **isn't ready to use on Production**. We are trying to push quickly many changes so you can help us by logging many issues which you found, that's great. 
+The current version is **0.7.0**, so it **isn't ready to use on Production**. We are trying to push quickly many changes so you can help us by logging many issues which you found, that's great. 
 
 # Visit our homepage
 
