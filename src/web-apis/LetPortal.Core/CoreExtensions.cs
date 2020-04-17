@@ -172,7 +172,6 @@ namespace LetPortal.Core
 
         public static void UseLetPortal(
             this IApplicationBuilder app,
-            IHostApplicationLifetime hostLifeTime,
             Action<LetPortalMiddlewareOptions> options = null)
         {
             var defaultOptions = new LetPortalMiddlewareOptions();
@@ -180,8 +179,6 @@ namespace LetPortal.Core
             {
                 options.Invoke(defaultOptions);
             }
-
-            hostLifeTime.RegisterServiceLifecycle(app);
 
             if (defaultOptions.EnableCheckUserSession || defaultOptions.EnableCheckTraceId)
             {
@@ -237,6 +234,11 @@ namespace LetPortal.Core
             }
 
             app.UseMiddleware<CatchGlobalExceptionMiddleware>();
+        }
+
+        public static void UseLetPortalMonitor(this IApplicationBuilder app, IHostApplicationLifetime hostLifeTime)
+        {
+            hostLifeTime.RegisterServiceLifecycle(app);
         }
 
         /// <summary>

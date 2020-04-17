@@ -57,13 +57,14 @@ namespace LetPortal.Gateway
             });
 
             app.UseMiddleware<GenerateTraceIdMiddleware>();
-            app.UseLetPortal(appLifetime, options =>
+            app.UseLetPortal(options =>
             {
                 options.EnableCheckUserSession = true;
                 options.EnableCheckTraceId = true;
                 options.EnableWrapException = true;
                 options.SkipCheckUrls = new string[] { "api/configurations" };
             });
+            app.UseLetPortalMonitor(appLifetime);
             app.UseOcelot().Wait();
         }
     }

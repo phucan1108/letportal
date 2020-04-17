@@ -66,13 +66,14 @@ namespace LetPortal.WebApis
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            app.UseLetPortal(appLifetime, options =>
+            app.UseLetPortal(options =>
             {
                 options.EnableCheckUserSession = true;
                 options.EnableCheckTraceId = true;
                 options.EnableWrapException = true;
             });
 
+            app.UseLetPortalMonitor(appLifetime);
             app.UseRouting();
 
             app.UseAuthentication();
