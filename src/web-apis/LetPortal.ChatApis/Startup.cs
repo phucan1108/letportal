@@ -47,7 +47,7 @@ namespace LetPortal.ChatApis
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             app.UseChatCors();
 
@@ -70,6 +70,7 @@ namespace LetPortal.ChatApis
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
+            app.UseLetPortalMonitor(appLifetime);
             app.UseRouting();
 
             app.UseAuthentication();
