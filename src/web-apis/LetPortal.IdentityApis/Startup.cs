@@ -64,13 +64,15 @@ namespace LetPortal.IdentityApis
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            app.UseLetPortal(appLifetime, options =>
+            app.UseLetPortal(options =>
             {
                 options.EnableCheckUserSession = true;
                 options.EnableCheckTraceId = false;
                 options.EnableWrapException = true;
                 options.SkipCheckUrls = new string[] { "api/accounts/login", "api/accounts/forgot-password", "api/accounts/recovery-password" };
             });
+
+            app.UseLetPortalMonitor(appLifetime);
 
             app.UseRouting();
 
