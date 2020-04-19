@@ -94,6 +94,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                 }
                 else if (this.maximumDialingTime === 0) {
                     this.shortcutUtil.toastMessage('User is unreachable', ToastType.Warning)
+                    clearInterval(this.animationInterval)
                 }
             }, 1000)
             // Perform calling
@@ -126,6 +127,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                 ofActionSuccessful(ForceDroppedCall)
             ).subscribe(
                 () => {
+                    clearInterval(this.animationInterval)
                     if (this.allowDisplayToastError) {
                         const error = this.store.selectSnapshot(CHAT_STATE_TOKEN).callErrorCode
                         this.shortcutUtil.toastMessage(error.messageContent, ToastType.Error)
@@ -140,6 +142,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                 ofActionSuccessful(UserDeniedCall)
             ).subscribe(
                 () => {
+                    clearInterval(this.animationInterval)
                     if (this.allowDisplayToastError) {
                         this.shortcutUtil.toastMessage('User rejected a call', ToastType.Warning)
                     }
