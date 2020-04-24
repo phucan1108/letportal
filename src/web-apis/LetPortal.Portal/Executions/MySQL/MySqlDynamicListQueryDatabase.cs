@@ -132,7 +132,7 @@ namespace LetPortal.Portal.Executions.MySQL
                             }
 
                         }
-                        response.TotalItems = (int)cmd.ExecuteScalar();
+                        response.TotalItems = (long)cmd.ExecuteScalar();
                     }
                 }
                 mysqlDbConnection.Close();
