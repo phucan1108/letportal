@@ -175,7 +175,7 @@ namespace LetPortal.Versions.Components.Charts
             };
             httpRealTimeChart.SetRealTimeField("reportedDate");
             httpRealTimeChart.SetXFormatDate("HH:mm");
-
+            httpRealTimeChart.SetDataRange("y=[0,1000]");
             versionContext.InsertData(httpCounterChart);
             versionContext.InsertData(hardwareCounterChart);
 

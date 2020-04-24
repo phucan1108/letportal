@@ -5,7 +5,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
 import { NGXLogger } from 'ngx-logger';
 import StringUtils from 'app/core/utils/string-util';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ParamsDialogComponent } from './params-dialog.component';
 import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions, ExecuteParamModel } from 'services/portal.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';

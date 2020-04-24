@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/extended.model';
 import { FilterOperator, FilterChainOperator, FieldValueType } from 'services/portal.service';
 import * as _ from 'lodash';

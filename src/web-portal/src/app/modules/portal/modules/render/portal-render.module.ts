@@ -2,49 +2,21 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-import {
-	MatIconRegistry,
-	MatInputModule,
-	MatDatepickerModule,
-	MatFormFieldModule,
-	MatAutocompleteModule,
-	MatSliderModule,
-	MatListModule,
-	MatCardModule,
-	MatSelectModule,
-	MatButtonModule,
-	MatIconModule,
-	MatNativeDateModule,
-	MatSlideToggleModule,
-	MatCheckboxModule,
-	MatMenuModule,
-	MatTabsModule,
-	MatTooltipModule,
-	MatSidenavModule,
-	MatProgressBarModule,
-	MatProgressSpinnerModule,
-	MatSnackBarModule,
-	MatGridListModule,
-	MatTableModule,
-	MatExpansionModule,
-	MatToolbarModule,
-	MatSortModule,
-	MatDividerModule,
-	MatStepperModule,
-	MatChipsModule,
-	MatPaginatorModule,
-	MatDialogModule,
-	MatRadioModule,
-	MatDialog,
-	MatTreeModule,
-	MAT_DIALOG_DATA,
-	MAT_DATE_FORMATS
-} from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatDatepickerModule } from '@angular/material/datepicker'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatSliderModule } from '@angular/material/slider'
+import { MatListModule } from '@angular/material/list'
+import { MatCardModule } from '@angular/material/card'
+import { MatSelectModule } from '@angular/material/select'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { DividedColumnsSectionComponent } from './components/standard/divided-columns-section.component';
-import { ScrollDispatchModule } from '@angular/cdk/scrolling';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { PageRenderPage } from './pages/page-render.page';
 import { PageRenderResolve } from './resolve/page.render.resolve';
 import { ActionCommandsSectionComponent } from './components/commands/action-commands-section.component';
@@ -81,6 +53,28 @@ import { StandardSharedService } from './components/standard/services/standard-s
 import { StandardArrayRenderComponent } from './components/standard/standard-array-render.component';
 import { StandardArrayDialog } from './components/standard/standard-array-dialog.component';
 import { MatProgressButtonsModule } from 'mat-progress-buttons';
+import { MatNativeDateModule, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatDividerModule } from '@angular/material/divider'
+import { MatStepperModule } from '@angular/material/stepper'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatRadioModule } from '@angular/material/radio'
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -136,7 +130,7 @@ export const FULL_MONTH_FORMATS = {
 		MatTreeModule,
 		DragDropModule,
 		MomentumTableModule,
-		ScrollDispatchModule,
+		ScrollingModule,
 		MatMomentDateModule,
 		NgJsonEditorModule,
 		MatProgressButtonsModule,

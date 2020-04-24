@@ -1,6 +1,6 @@
 {
   "compileOnSave": false,
-  "compilerOptions": {    
+  "compilerOptions": {
     "baseUrl": "./src",
     "downlevelIteration": true,
     "outDir": "./dist/out-tsc",
@@ -28,10 +28,18 @@
       ],
       "stores/*": [
         "app/core/stores/*"
+      ],
+      "emoji-picker": [
+        "dist/emoji-picker/emoji-picker",
+        "dist/emoji-picker"        
+      ],
+      "momentum-table": [
+        "dist/momentum-table/momentum-table",
+        "dist/momentum-table"
       ]
     }
   },
   "angularCompilerOptions": {
-    "enableIvy": false
-  } 
+    "enableIvy": true
+  }
 }

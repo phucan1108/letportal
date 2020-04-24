@@ -159,7 +159,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                         },
                         new ColumndDef
                         {
-                            Name = versionContext.ConnectionType != Core.Persistences.ConnectionType.MongoDB ? "os" : "servicehardwareinfos.os",
+                            Name = versionContext.ConnectionType != Core.Persistences.ConnectionType.MongoDB ? "os" : "serviceHardwareInfo.os",
                             DisplayName = "OS",
                             AllowSort = false,
                             DisplayFormat = "{0}",

@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { MatDialog, MatTable } from '@angular/material';
 import { ActivatedRoute, Router, Route } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
@@ -24,6 +23,8 @@ import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { StateReset } from 'ngxs-reset-plugin';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
     selector: 'let-page-builder',
     templateUrl: './page-builder.page.html',

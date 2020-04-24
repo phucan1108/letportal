@@ -15,7 +15,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { StandardArrayTableHeader } from './models/standard-array.models';
 import { StandardComponent } from 'services/portal.service';
 import { StandardSharedService } from './services/standard-shared.service';
-import { MatDialog, MatTable } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table'
 import { StandardArrayDialog } from './standard-array-dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { FormUtil } from 'app/core/utils/form-util';
@@ -154,8 +155,8 @@ export class StandardArrayRenderComponent implements OnInit {
     }
 
     buildArrayTableHeaders() {
-        if (ObjectUtils.isNotNull(this.standardArrayOptions.namesfield)) {
-            const arrayColumns = this.standardArrayOptions.namesfield.split(';')
+        if (ObjectUtils.isNotNull(this.standardArrayOptions.namefield)) {
+            const arrayColumns = this.standardArrayOptions.namefield.split(';')
             arrayColumns.forEach(colName => {
                 try {
                     const control = this.controls.find(a => a.name === colName)

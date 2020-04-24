@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { App, Menu, AppsClient, PagesClient } from 'services/portal.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { MatTreeFlattener, MatTreeFlatDataSource, MatDialog, MatTree } from '@angular/material';
 import { Guid } from 'guid-typescript';
 import { MenuDialogComponent } from '../../components/menu/components/menu-dialog.component';
 import { NGXLogger } from 'ngx-logger';
@@ -16,6 +15,8 @@ import { PageService } from 'services/page.service';
 import { ExtendedMenu, MenuNode } from 'portal/modules/models/menu.model';
 import { SessionService } from 'services/session.service';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTree, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 
 @Component({
     selector: 'let-menu',

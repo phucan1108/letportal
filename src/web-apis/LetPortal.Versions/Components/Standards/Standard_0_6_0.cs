@@ -23,7 +23,7 @@ namespace LetPortal.Versions.Components.Standards
                 Id = "5e79c14931a1754a2cd38cbc",
                 Name = "profile-form",
                 DisplayName = "Profile Form",
-                LayoutType = PageSectionLayoutType.OneColumn,
+                LayoutType = PageSectionLayoutType.TwoColumns,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
@@ -138,7 +138,7 @@ namespace LetPortal.Versions.Components.Standards
                 Id = "5e79c14931a1754a2cd38cc3",
                 Name = "change-password-form",
                 DisplayName = "Change Password Form",
-                LayoutType = PageSectionLayoutType.OneColumn,
+                LayoutType = PageSectionLayoutType.TwoColumns,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
@@ -326,6 +326,8 @@ namespace LetPortal.Versions.Components.Standards
                 }
             };
 
+            VersionUtils.GenerateStandardOptions(profileStandard);
+            VersionUtils.GenerateStandardOptions(changePasswordStandard);
             versionContext.InsertData(profileStandard);
             versionContext.InsertData(changePasswordStandard);
         }

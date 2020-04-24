@@ -1,6 +1,4 @@
 import { Component, OnInit, Input, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { Guid } from 'guid-typescript';
-import { MatTable, MatDialog } from '@angular/material';
 import { PageEventDialogComponent } from './page-event-dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { Store } from '@ngxs/store';
@@ -11,6 +9,8 @@ import * as _ from 'lodash';
 import { UpdateAvailableEvents, NextToWorkflowAction, NextToRouteAction, GeneratePageEventsAction, UpdatePageEventsAction, InitEditPageBuilderAction, GatherAllChanges, UpdateAvailableBoundDatas } from 'stores/pages/pagebuilder.actions';
 import { PageEvent, EventActionType } from 'services/portal.service';
 import { PageBuilderState, PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'let-page-event-grid',

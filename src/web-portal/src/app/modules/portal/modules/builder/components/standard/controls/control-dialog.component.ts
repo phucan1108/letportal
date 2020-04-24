@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ExtendedPageControl, ExtendedFormValidator } from 'app/core/models/extended.models';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { StaticResources } from 'portal/resources/static-resources';
 import { BehaviorSubject } from 'rxjs';
 import { ControlsGridComponent } from './controls-grid.component';

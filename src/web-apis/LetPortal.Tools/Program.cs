@@ -51,13 +51,11 @@ namespace LET.Tools.Installation
                 Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
                 Console.WriteLine("");
                 await CommandLineApplication.ExecuteAsync<Program>(args);
-                Console.ReadLine();
                 return 0;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Oops, something went wrong. Exception stack: " + ex.ToString());
-                Console.ReadLine();
                 return 0;
             }
 

@@ -5,6 +5,7 @@ import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { DEVTOOLS_REDUX_CONFIG, LOGGER_CONFIG, OPTIONS_CONFIG, STATES_MODULES } from './store.config';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
+import { CoreModule } from './core.module';
 
 @NgModule({
   imports: [

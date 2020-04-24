@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { PortalClaim, ClaimValueType } from 'services/portal.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { MatDialog, MatTable } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table'
 import { ClaimDialogComponent } from './claim-dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import * as _ from 'lodash';

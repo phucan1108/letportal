@@ -1,6 +1,7 @@
 import * as PageControlActions from './pagecontrol.actions'
 import { TriggeredControlEvent } from 'app/core/models/page.model';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
+import { Injectable } from '@angular/core';
 
 export interface PageControlEventStateModel {
     effectedControlEvent: TriggeredControlEvent,
@@ -14,6 +15,7 @@ export interface PageControlEventStateModel {
         filterState: null
     }
 })
+@Injectable()
 export class PageControlEventState {
     constructor(
     ) { }

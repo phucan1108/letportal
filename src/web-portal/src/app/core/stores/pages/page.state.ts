@@ -6,6 +6,7 @@ import { patch, append, updateItem } from '@ngxs/store/operators';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import * as _ from 'lodash';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { Injectable } from '@angular/core';
 
 export interface SectionValidation {
     section: string
@@ -60,6 +61,7 @@ export interface PageStateModel {
         filterState: null
     }
 })
+@Injectable()
 export class PageState {
     constructor(
     ) { }

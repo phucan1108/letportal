@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PageService } from 'services/page.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DynamicListClient, ChartsClient, Chart, DatabaseOptions, ChartType, ChartFilter, PageSectionLayoutType } from 'services/portal.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';

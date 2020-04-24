@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@an
 import { ChatService } from 'services/chat.service';
 import { NGXLogger } from 'ngx-logger';
 import { VideoCallService } from 'services/videocall.service';
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageDatasourceGridComponent } from 'portal/modules/builder/components/page-builder/components/page-datasources/page-datasource.grid.component';
 import { ChatOnlineUser, VideoRoomModel, RtcIceServer, ParticipantVideo } from 'app/core/models/chat.model';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';

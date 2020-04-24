@@ -20,7 +20,7 @@ import { MarkdownService } from 'ngx-markdown';
 import { MultipleDataSelection } from 'portal/modules/models/control.extended.model';
 import { AutocompleteMultipleComponent } from './autocomplete-multiple.component';
 import { CustomHttpService } from 'services/customhttp.service';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType,  DynamicListClient, FieldValueType, DynamicListFetchDataModel } from 'services/portal.service';
-import { MatDialog, MatTable, MatPaginator, MatSort } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, of, merge, Observable, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { tap, catchError, finalize, debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators';
@@ -14,6 +14,9 @@ import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
 import { ListOptions, ExtendedFilterField } from 'portal/modules/models/dynamiclist.extended.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTable } from '@angular/material/table';
 
 @Component({
     selector: 'dynamic-list-grid',

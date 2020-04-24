@@ -8,6 +8,7 @@ import { ShellConfigProvider } from 'app/core/shell/shellconfig.provider';
 import { Page, PagesClient, StandardComponent } from 'services/portal.service';
 import { patch, append } from '@ngxs/store/operators';
 import { state } from '@angular/animations';
+import { Injectable } from '@angular/core';
 
 export interface PageBuilderStateModel {
   processPage: Page,
@@ -48,6 +49,7 @@ export interface PageBuilderStateModel {
     isFormBuilderValid: false
   }
 })
+@Injectable()
 export class PageBuilderState {
 
   constructor(
