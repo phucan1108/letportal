@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FilterField, FieldValueType } from 'services/portal.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { NGXLogger } from 'ngx-logger';
 import { ExtendedFilterField } from 'portal/modules/models/dynamiclist.extended.model';

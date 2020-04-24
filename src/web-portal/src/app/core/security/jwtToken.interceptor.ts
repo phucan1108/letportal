@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { UnlockScreenDialogComponent } from './components/unlock-screen.component';
 import { RouterExtService } from '../ext-service/routerext.service';
 

@@ -1,10 +1,11 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatAutocompleteSelectedEvent } from '@angular/material';
 import { PageEventGridComponent } from './page-event-grid.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageEvent, EventActionType, HttpServiceOptions } from 'services/portal.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
     selector: 'let-page-event-dialog',

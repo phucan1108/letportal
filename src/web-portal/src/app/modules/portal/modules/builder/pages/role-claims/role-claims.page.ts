@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { MatTree, MatDialog, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionService } from 'services/session.service';
@@ -15,6 +14,8 @@ import { NGXLogger } from 'ngx-logger';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PageService } from 'services/page.service';
 import { SelectablePortalClaim, ClaimNode } from 'portal/modules/models/role-claims.model';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTree, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 
 @Component({
     selector: 'let-role-claims',

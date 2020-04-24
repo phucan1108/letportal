@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 import { GroupControls, ExtendedPageSection } from 'app/core/models/extended.models';
 import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 import { FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NGXLogger } from 'ngx-logger';
 import { PageService } from 'services/page.service';
 import { Store } from '@ngxs/store';

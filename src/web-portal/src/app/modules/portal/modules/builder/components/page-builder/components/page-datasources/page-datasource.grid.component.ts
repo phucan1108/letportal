@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { MatDialog, MatTable } from '@angular/material';
 import { Store } from '@ngxs/store';
 import { PageDatasource, DatasourceControlType } from 'services/portal.service';
 import { filter, tap } from 'rxjs/operators';
@@ -12,6 +11,8 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 import { NGXLogger } from 'ngx-logger';
 import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'let-page-datasource-grid',

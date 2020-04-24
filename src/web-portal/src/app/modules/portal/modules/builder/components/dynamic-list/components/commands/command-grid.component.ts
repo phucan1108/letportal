@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } fro
 import { BehaviorSubject } from 'rxjs';
 import { CommandButtonInList, ActionType, CommandPositionType } from 'services/portal.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { Constants } from 'portal/resources/constants';

@@ -13,7 +13,9 @@ import { ConfigurationProvider } from './core/configs/configProvider';
 import { environment } from 'environments/environment';
 import { PORTAL_BASE_URL } from 'services/portal.service';
 import { ErrorComponent } from './modules/error/error.component';
-import { MatCardModule, MatButtonModule, MatIconModule } from '@angular/material';
+import { MatCardModule } from '@angular/material/card'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
 import { IDENTITY_BASE_URL } from 'services/identity.service';
 import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
 import { ToastrModule } from 'ngx-toastr';
@@ -26,7 +28,7 @@ import sql from 'highlight.js/lib/languages/sql'
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ChatModule } from 'portal/modules/chat/chat.module';
-import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
+import { EmojiPickerModule } from 'emoji-picker'
 import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 export function hlJSLang() {
   return [
@@ -70,7 +72,7 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
     // Portal Module Sections
     CoreModule.forRoot(),
 
-    NgxEmojiPickerModule.forRoot()
+    EmojiPickerModule.forRoot()
   ],
   providers: [
     ChatService,

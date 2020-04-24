@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } fro
 import { ExtendedPageSection, ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { FormGroup } from '@angular/forms';
 import * as _ from 'lodash';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { SectionDialogComponent } from './section-dialog.component';
 import { Guid } from 'guid-typescript';
 import { Store } from '@ngxs/store';

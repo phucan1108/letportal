@@ -203,5 +203,16 @@ namespace LetPortal.Core.Utils
 
             return datasourceName;
         }
+
+        public static string GenerateUniqueNumber()
+        {
+            var currentTickString = DateTime.UtcNow.Ticks.ToString();
+            for (var i = 0; i < 5; i++)
+            {
+                var randomIndx = (new Random()).Next(0, 9);
+                currentTickString += randomIndx.ToString();
+            }
+            return currentTickString;
+        }
     }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit } from '@angular/core';
-import { MatDialog, MatTable } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table'
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { NGXLogger } from 'ngx-logger';
 import { Guid } from 'guid-typescript';

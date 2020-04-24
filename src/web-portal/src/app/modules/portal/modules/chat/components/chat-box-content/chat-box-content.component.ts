@@ -4,10 +4,10 @@ import { FormBuilder, FormGroup, Validators, FormControl, NgForm, FormGroupDirec
 import { ChatService } from 'services/chat.service';
 import { Observable, BehaviorSubject, Subscription, forkJoin, throwError } from 'rxjs';
 import { FormUtil } from 'app/core/utils/form-util';
-import { ErrorStateMatcher, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DateUtils } from 'app/core/utils/date-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
-import { EmojiEvent } from 'ngx-emoji-picker';
+import { EmojiEvent } from 'emoji-picker';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { debounceTime, distinctUntilChanged, tap, filter, map, catchError } from 'rxjs/operators';
 import { Store, Select, Actions, ofActionSuccessful } from '@ngxs/store';
@@ -20,6 +20,7 @@ import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile
 import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { environment } from 'environments/environment';
+import { ErrorStateMatcher } from '@angular/material/core';
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
         return control && control.invalid && control.touched;

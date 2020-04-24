@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, HostListener } from '@angular/core';
 import { FilterGroup, FilterOption, FilterOperator, FilterChainOperator, FilledParameter, FieldValueType, DatabasesClient, DynamicListFetchDataModel } from 'services/portal.service';
-import { MatSelectChange, MatDialog } from '@angular/material';
 import * as _ from 'lodash';
 import { NGXLogger } from 'ngx-logger';
 import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/extended.model';
@@ -8,6 +7,8 @@ import { AdvancedFilterDialogComponent } from './advancedfilter-dialog.component
 import { DatasourceOptionsService } from 'services/datasourceopts.service';
 import { DatasourceCache } from '../models/commandClicked';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 
 
 @Component({

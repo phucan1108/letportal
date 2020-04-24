@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, Input } from '@angular/core';
 import { PageButton, ActionType, Route, PageSection } from 'services/portal.service';
-import { MatTable, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import * as _ from 'lodash';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -19,6 +18,8 @@ import { NGXLogger } from 'ngx-logger';
 import { PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
 import { BehaviorSubject } from 'rxjs';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'let-page-button-grid',

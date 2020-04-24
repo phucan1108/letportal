@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy, Input, Output, AfterContentChecked, EventEmitter, AfterViewChecked } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DynamicList, CommandButtonInList, CommandPositionType, EntitySchemasClient, DatabasesClient, ActionType, PageSection } from 'services/portal.service';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Dictionary } from 'lodash';

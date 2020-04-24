@@ -5,6 +5,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { patch, updateItem, insertItem, removeItem } from '@ngxs/store/operators';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ErrorCode } from 'services/identity.service';
+import { Injectable } from '@angular/core';
 
 const MAX_ROOMS = 4
 export const CHAT_STATE_TOKEN = new StateToken<ChatStateModel>('chats');
@@ -47,6 +48,7 @@ export interface ChatStateModel {
         callErrorCode: null
     }
 })
+@Injectable()
 export class ChatState {
 
     @Action(ChatActions.TakeUserOnline)
