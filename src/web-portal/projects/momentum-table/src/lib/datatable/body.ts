@@ -215,6 +215,7 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
       }
       td:last-of-type  {
         padding: var(--last-column-padding, 0 24px 0 0);
+        width: 100%;
       }
       .m-row-selected {
         background: #eeeeee;
@@ -235,9 +236,10 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
         background: #f7f7f7;
         padding: 0px 0px !important;
         top: 0px !important;
+        width: 500px;
       }
       .m-input-form {
-        width: 150px;
+        width: 100%;
         padding: 0px 12px;
       }
       .m-cell-editor {
@@ -271,6 +273,11 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
         padding: 0 1rem;
         line-height: calc(var(--row-height, 48px) - 1px);
       }
+      @media (max-width: 576px) {   
+        .m-input-card {
+          width:200px;
+        }
+      }
     `
   ]
 })
@@ -285,6 +292,7 @@ export class TableBodyComponent {
 
   @Input()
   tableContainerScrollX = 0;
+
 
   hoverRowIndex;
   hoverCellIndex;

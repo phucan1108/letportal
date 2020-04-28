@@ -6,7 +6,7 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { Translator } from './shell/translates/translate.pipe';
 import { ConfigurationProvider } from './configs/configProvider';
 import { ShellConfigProvider } from './shell/shellconfig.provider';
-import { DatabasesClient, EntitySchemasClient, AppsClient, StandardComponentClient, PagesClient, DynamicListClient, ChartsClient, BackupsClient } from 'services/portal.service';
+import { DatabasesClient, EntitySchemasClient, AppsClient, StandardComponentClient, PagesClient, DynamicListClient, ChartsClient, BackupsClient, LocalizationClient } from 'services/portal.service';
 import { RouterExtService } from './ext-service/routerext.service';
 import { SessionService } from 'services/session.service';
 import { AccountsClient, UserSessionClient, RolesClient } from 'services/identity.service';
@@ -74,7 +74,8 @@ import { MatInputModule } from '@angular/material/input'
     UploadFileService,
     ChartsClient,
     BackupsClient,
-    ExportService
+    ExportService,
+    LocalizationClient
   ],
 })
 export class CoreModule {

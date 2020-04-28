@@ -20,7 +20,7 @@ namespace LetPortal.Versions.Components
             var userFormStandard = new StandardComponent
             {
                 Id = "5d615e501773a96ee8eb5ed3",
-                Name = "user-form",
+                Name = "userFform",
                 DisplayName = "User Form",
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
@@ -330,7 +330,7 @@ namespace LetPortal.Versions.Components
             var registerNewUserFormStandard = new StandardComponent
             {
                 Id = "5d6222ec3aae6a79ecf035e9",
-                Name = "register-form",
+                Name = "registerForm",
                 DisplayName = "Register Form",
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
@@ -606,7 +606,7 @@ namespace LetPortal.Versions.Components
             var roleStandard = new StandardComponent
             {
                 Id = "5d63423dbaac7d4790b7d300",
-                Name = "role-form",
+                Name = "roleForm",
                 DisplayName = "Role Form",
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>

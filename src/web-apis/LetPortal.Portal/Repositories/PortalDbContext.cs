@@ -9,6 +9,7 @@ using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Entities.EntitySchemas;
 using LetPortal.Portal.Entities.Files;
+using LetPortal.Portal.Entities.Localizations;
 using LetPortal.Portal.Entities.Menus;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Recoveries;
@@ -39,6 +40,10 @@ namespace LetPortal.Portal.Repositories
         public DbSet<Datasource> Datasources { get; set; }
 
         public DbSet<EntitySchema> EntitySchemas { get; set; }
+
+        public DbSet<Localization> Localizations { get; set; }
+
+        public DbSet<LocalizationContent> LocalizationContents { get; set; }
 
         public DbSet<File> Files { get; set; }
 
@@ -215,6 +220,16 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.SerializeObject(v, true),
                 v => ConvertUtil.DeserializeObject<BackupElements>(v));
             backupBuilder.Property(a => a.BackupElements).HasConversion(jsonBackupElementsConverter);
+
+            // Localization
+            var localizationBuilder = modelBuilder.Entity<Localization>();
+            localizationBuilder.HasKey(a => a.Id);
+            localizationBuilder.HasMany(a => a.LocalizationContents)
+                               .WithOne(b => b.Localization)
+                               .OnDelete(DeleteBehavior.Cascade);
+
+            var localizationContentBuilder = modelBuilder.Entity<LocalizationContent>();
+            localizationContentBuilder.HasKey(a => a.Id);
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {

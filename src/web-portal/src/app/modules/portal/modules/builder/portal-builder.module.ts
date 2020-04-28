@@ -108,6 +108,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTreeModule } from '@angular/material/tree';
+import { LocalizationPage } from './pages/localization/localization.page';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -165,7 +166,8 @@ import { MatTreeModule } from '@angular/material/tree';
 		BackupUploadpage,
 		BackupRestorePage,
 		ExecutionDatabaseStepComponent,
-		IconPickerSharedComponent
+		IconPickerSharedComponent,
+		LocalizationPage
 	],
 	imports: [
 		CoreModule.forChild(),

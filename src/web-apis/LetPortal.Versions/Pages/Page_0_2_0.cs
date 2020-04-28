@@ -45,7 +45,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
-                            Name = "databaseinfo",
+                            Name = "databaseInfo",
                             DisplayName = "Database Info",
                             ConstructionType = SectionContructionType.Standard,
                             ComponentId = "5d25f6abe88d28422061cfaf",
@@ -232,7 +232,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "d69b69db-9850-15aa-08cf-ee6b3c1afa81",
-                            Name = "appinfo",
+                            Name = "appInfo",
                             DisplayName = "App Info",
                             ConstructionType = SectionContructionType.Standard,
                             ComponentId = "5d3836194d8fa90874135d68",
@@ -414,7 +414,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "5d0c7da473e71f3330054792",
-                            Name = "dynamiclists",
+                            Name = "dynamicList",
                             DisplayName = "Dynamic List",
                             ComponentId = "5d4d8adfae5f5b68b811ec1d",
                             ConstructionType = SectionContructionType.DynamicList,
@@ -441,7 +441,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "5d0c7da473e71f3330054792",
-                            Name = "standardslist",
+                            Name = "standardsList",
                             DisplayName = "Standards List",
                             ComponentId = "5d4d8adfae5f5b68b811ec1e",
                             ConstructionType = SectionContructionType.DynamicList,

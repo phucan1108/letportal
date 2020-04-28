@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Models.Shared;
 
@@ -20,5 +21,7 @@ namespace LetPortal.Portal.Repositories.Pages
         Task<IEnumerable<ShortEntityModel>> GetShortPages(string keyWord = null);
 
         Task CloneAsync(string cloneId, string cloneName);
+
+        Task<IEnumerable<LanguageKey>> GetLanguageKeys(string pageId);
     }
 }

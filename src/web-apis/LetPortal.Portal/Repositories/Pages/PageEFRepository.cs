@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,12 @@ namespace LetPortal.Portal.Repositories.Pages
             var pages = _context.Pages.Select(a => new ShortPageModel { Id = a.Id, Name = a.Name, DisplayName = a.DisplayName, UrlPath = a.UrlPath });
 
             return Task.FromResult(pages.ToList());
+        }
+
+        public async Task<IEnumerable<LanguageKey>> GetLanguageKeys(string pageId)
+        {
+            var page = await GetOneAsync(pageId);
+            return GetPageLanguages(page);
         }
 
         public Task<Page> GetOneByNameAsync(string name)
@@ -99,6 +106,59 @@ namespace LetPortal.Portal.Repositories.Pages
         {
             var portalClaims = _context.Pages.Select(a => new ShortPortalClaimModel { PageDisplayName = a.DisplayName, PageName = a.Name, Claims = a.Claims });
             return Task.FromResult(portalClaims.ToList());
+        }
+
+        private IEnumerable<LanguageKey> GetPageLanguages(Page page)
+        {
+            var languages = new List<LanguageKey>();
+
+            var pageName = new LanguageKey
+            {
+                Key = $"page.options.displayName",
+                Value = page.DisplayName
+            };
+
+            languages.Add(pageName);
+
+            if (page.Commands != null && page.Commands.Count > 0)
+            {
+                foreach (var command in page.Commands)
+                {
+                    var commandName = new LanguageKey
+                    {
+                        Key = $"page.commands.{command.Name}.options.name",
+                        Value = command.Name
+                    };
+
+                    languages.Add(commandName);
+                    if (command.ButtonOptions.ActionCommandOptions.ConfirmationOptions != null
+                        && command.ButtonOptions.ActionCommandOptions.ConfirmationOptions.IsEnable)
+                    {
+                        var commandConfirmationName = new LanguageKey
+                        {
+                            Key = $"page.commands.{command.Name}.options.confirmation",
+                            Value = command.ButtonOptions.ActionCommandOptions.ConfirmationOptions.ConfirmationText
+                        };
+
+                        languages.Add(commandConfirmationName);
+                    }
+
+                    var commandSuccessText = new LanguageKey
+                    {
+                        Key = $"page.commands.{command.Name}.options.success",
+                        Value = command.ButtonOptions.ActionCommandOptions.NotificationOptions.CompleteMessage
+                    };
+
+                    var commandFailedText = new LanguageKey
+                    {
+                        Key = $"page.commands.{command.Name}.options.failed",
+                        Value = command.ButtonOptions.ActionCommandOptions.NotificationOptions.FailedMessage
+                    };
+                    languages.Add(commandSuccessText);
+                    languages.Add(commandFailedText);
+                }
+            }
+            return languages;
         }
     }
 }

@@ -47,7 +47,7 @@ namespace LetPortal.Versions.Pages
                            Id = "5d63423dbaac7d4790b7d306",
                            ComponentId ="5d63423dbaac7d4790b7d300",
                            ConstructionType = SectionContructionType.Standard,
-                           Name = "roleform",
+                           Name = "roleForm",
                            DisplayName = "Role Form",
                            SectionDatasource = new SectionDatasource
                            {
@@ -236,7 +236,7 @@ namespace LetPortal.Versions.Pages
                             ComponentId = "5d6222ec3aae6a79ecf035e9",
                             ConstructionType = SectionContructionType.Standard,
                             DisplayName = "Add User",
-                            Name = "adduser",
+                            Name = "addUser",
                             SectionDatasource = new SectionDatasource
                             {
                                 DatasourceBindName = "data"

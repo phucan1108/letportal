@@ -1,0 +1,41 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Localization
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="form-group row" [formGroup]="formGroup">
+                <label class="col-lg-2 col-form-label">Language:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <input matInput placeholder="Select one language" aria-label="Select one language"
+                            [matAutocomplete]="autoLang" formControlName="language">
+                        <mat-autocomplete #autoLang="matAutocomplete">
+                            <mat-option *ngFor="let tag of localeTags$ | async" [value]="tag.value">
+                                {{tag.name}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <m-table [(value)]="languageKeys" #mtable [selectable]="false" [selectionHandler]="false"
+                        (onEditComplete)="editComplete($event)">
+                        <m-column field="key" header="Key">
+                        </m-column>
+                        <m-column field="value" header="Value" editable="true">
+                        </m-column>
+                        <ng-template mTemplate="emptyTable">
+                            <div class="align-center">
+                                No records
+                            </div>
+                        </ng-template>
+                    </m-table>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

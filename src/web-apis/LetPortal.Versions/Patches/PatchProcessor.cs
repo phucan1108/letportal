@@ -160,7 +160,7 @@ namespace LetPortal.Versions.Patches
                                     pageRepository = new PageEFRepository(new PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
-                                var pageServiceProvider = new InternalPageServiceProvider(pageRepository);
+                                var pageServiceProvider = new InternalPageServiceProvider(pageRepository, null, null, null);
                                 await pageServiceProvider.ForceUpdatePages(pagesList);
                                 pageServiceProvider.Dispose();
                                 break;

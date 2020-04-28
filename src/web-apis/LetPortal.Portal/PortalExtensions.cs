@@ -28,6 +28,7 @@ using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Repositories.Datasources;
 using LetPortal.Portal.Repositories.EntitySchemas;
 using LetPortal.Portal.Repositories.Files;
+using LetPortal.Portal.Repositories.Localizations;
 using LetPortal.Portal.Repositories.Pages;
 using LetPortal.Portal.Repositories.Recoveries;
 using LetPortal.Portal.Services.Components;
@@ -79,6 +80,7 @@ namespace LetPortal.Portal
                 builder.Services.AddSingleton<IChartRepository, ChartMongoRepository>();
                 builder.Services.AddSingleton<IBackupRepository, BackupMongoRepository>();
                 builder.Services.AddSingleton<IVersionRepository, VersionMongoRepository>();
+                builder.Services.AddSingleton<ILocalizationRepository, LocalizationMongoRepository>();
 
                 builder.Services.AddSingleton<IExecutionChartReport, MongoExecutionChartReport>();
                 builder.Services.AddSingleton<IMongoQueryExecution, MongoQueryExecution>();
@@ -105,6 +107,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IChartRepository, ChartEFRepository>();
                 builder.Services.AddTransient<IBackupRepository, BackupEFRepository>();
                 builder.Services.AddTransient<IVersionRepository, VersionEFRepository>();
+                builder.Services.AddTransient<ILocalizationRepository, LocalizationEFRepository>();
             }
 
             if (portalOptions.EnableFileServer)

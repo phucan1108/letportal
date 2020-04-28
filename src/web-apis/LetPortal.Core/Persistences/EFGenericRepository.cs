@@ -193,7 +193,7 @@ namespace LetPortal.Core.Persistences
             return _context.Set<T>().AsNoTracking();
         }
 
-        public Task<T> GetOneAsync(string id)
+        public virtual Task<T> GetOneAsync(string id)
         {
             return Task.FromResult(_context.Set<T>().First(a => a.Id == id));
         }

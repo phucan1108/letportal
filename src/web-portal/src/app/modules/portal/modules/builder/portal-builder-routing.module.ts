@@ -19,6 +19,8 @@ import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 import { BackupUploadpage } from './pages/backup/backup-upload.page';
 import { BackupRestorePage } from './pages/backup/backup-restore.page';
 import { BackupResolve } from './resolve/backup.resolve';
+import { LocalizationPage } from './pages/localization/localization.page';
+import { LocaleResolve } from './resolve/locale.resolve';
 
 const routes: Routes = [
     {
@@ -103,6 +105,17 @@ const routes: Routes = [
 				component: BackupRestorePage,
 				resolve: {
 					backup: BackupResolve
+				}
+			},
+			{
+				path: 'localization',
+				component: LocalizationPage
+			},
+			{
+				path: 'localization/:localeId',
+				component: LocalizationPage,
+				resolve: {
+					localization: LocaleResolve
 				}
 			}
         ]

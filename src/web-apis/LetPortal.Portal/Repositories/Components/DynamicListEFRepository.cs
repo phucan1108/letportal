@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,13 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneList);
         }
 
+        public async Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string dynamicListId)
+        {
+            var dynamicList = await GetOneAsync(dynamicListId);
+
+            return GetDynamicListLanguages(dynamicList);
+        }
+
         public async Task<IEnumerable<ShortEntityModel>> GetShortDynamicLists(string keyWord = null)
         {
             if (!string.IsNullOrEmpty(keyWord))
@@ -39,6 +47,34 @@ namespace LetPortal.Portal.Repositories.Components
             {
                 return (await _context.DynamicLists.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
             }
+        }
+
+        private IEnumerable<LanguageKey> GetDynamicListLanguages(DynamicList dynamicList)
+        {
+            var langauges = new List<LanguageKey>();
+
+            var dynamicListName = new LanguageKey
+            { 
+                Key = $"{dynamicList.Name}.options.displayName",
+                Value = dynamicList.DisplayName
+            };
+
+            langauges.Add(dynamicListName);
+            foreach (var column in dynamicList.ColumnsList.ColumndDefs)
+            {
+                if (!column.IsHidden)
+                {
+                    var columnName = new LanguageKey
+                    {
+                        Key = $"{dynamicList.Name}.cols.{column.Name}.displayName",
+                        Value = column.DisplayName
+                    };
+
+                    langauges.Add(columnName);
+                }                  
+            }
+
+            return langauges;
         }
     }
 }

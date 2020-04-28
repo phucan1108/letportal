@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
 
@@ -25,6 +26,13 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneChart);
         }
 
+        public async Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string chartId)
+        {
+            var chart = await GetOneAsync(chartId);
+
+            return GetChartLanguages(chart);
+        }
+
         public Task<IEnumerable<ShortEntityModel>> GetShortCharts(string keyWord = null)
         {
             if (!string.IsNullOrEmpty(keyWord))
@@ -35,6 +43,34 @@ namespace LetPortal.Portal.Repositories.Components
                 return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
             }
             return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+        }
+
+        private List<LanguageKey> GetChartLanguages(Chart chart)
+        {
+            var languages = new List<LanguageKey>();
+
+            var chartName = new LanguageKey
+            {
+                Key = $"{chart.Name}.options.displayName",
+                Value = chart.DisplayName
+            };
+
+            languages.Add(chartName);
+
+            if (chart.ChartFilters != null && chart.ChartFilters.Count > 0)
+            {
+                foreach (var chartFilter in chart.ChartFilters)
+                {
+                    var chartFilterName = new LanguageKey
+                    {
+                        Key = $"{chart.Name}.filters.{chartFilter.Name}.name",
+                        Value = chartFilter.DisplayName
+                    };
+                    languages.Add(chartFilterName);
+                }
+            }
+
+            return languages;
         }
     }
 }

@@ -5,12 +5,14 @@ using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Components;
 using LetPortal.Portal.Providers.Databases;
+using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories.Pages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +27,8 @@ namespace LetPortal.WebApis.Controllers
 
         private readonly IStandardServiceProvider _standardServiceProvider;
 
+        private readonly IPageServiceProvider _pageServiceProvider;
+
         private readonly IPageRepository _pageRepository;
 
         private readonly IServiceLogger<PagesController> _logger;
@@ -33,11 +37,13 @@ namespace LetPortal.WebApis.Controllers
             IPageRepository pageRepository,
             IDatabaseServiceProvider databaseServiceProvider,
             IStandardServiceProvider standardServiceProvider,
+            IPageServiceProvider pageServiceProvider,
             IServiceLogger<PagesController> logger)
         {
             _pageRepository = pageRepository;
             _databaseServiceProvider = databaseServiceProvider;
             _standardServiceProvider = standardServiceProvider;
+            _pageServiceProvider = pageServiceProvider;
             _logger = logger;
         }
 
@@ -332,6 +338,15 @@ namespace LetPortal.WebApis.Controllers
             _logger.Info("Requesting clone page with {@model}", model);
             await _pageRepository.CloneAsync(model.CloneId, model.CloneName);
             return Ok();
+        }
+
+        [HttpGet("{id}/languages")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        [ProducesResponseType(typeof(List<LanguageKey>), 200)]
+        public async Task<IActionResult> GenerateLanguages(string id)
+        {
+            _logger.Info("Requesting generate languages {@id}", id);
+            return Ok(await _pageServiceProvider.GetPageLanguages(id));
         }
     }
 }
