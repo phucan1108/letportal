@@ -7,7 +7,7 @@
       </div>
       <mat-card-title>
         <div class="pt-2 login-header">
-          Login
+          {{'pages.login.header' | translate}}
         </div>
       </mat-card-title>
     </mat-card-header>
@@ -16,13 +16,15 @@
         <div class="form-group row">
           <div class="col-lg-12">
             <mat-form-field class="field-full-width">
-              <input formControlName="username" matInput placeholder="Enter your username">
+              <input formControlName="username" matInput
+                placeholder="{{'pages.login.username.placeholder' | translate}}">
               <mat-icon matSuffix>perm_identity</mat-icon>
             </mat-form-field>
           </div>
           <div class="col-lg-12">
             <mat-form-field class="field-full-width">
-              <input formControlName="password" matInput type="password" placeholder="Enter password">
+              <input formControlName="password" matInput type="password"
+                placeholder="{{'pages.login.password.placeholder' | translate}}">
               <mat-icon matSuffix>vpn_key</mat-icon>
             </mat-form-field>
           </div>
@@ -32,16 +34,29 @@
             </mat-error>
           </div>
         </div>
+        <div class="form-group row">
+          <label class="col-form-label col-lg-4 col-xs-6">{{ 'pages.login.selectLanguage.label' | translate }}</label>
+          <div class="col-lg-8 col-xs-6">
+            <mat-form-field class="field-full-width">
+              <mat-select placeholder="{{ 'pages.login.selectLanguage.placeholder' | translate }}" formControlName="language">
+                <mat-option *ngFor="let language of languages" [value]="language.value">
+                  {{ language.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
       </form>
     </mat-card-content>
     <mat-card-actions>
       <button mat-flat-button color="primary" type="submit" (click)="signIn()"
-        [disabled]="loginForm.invalid">Login</button>
-      <button mat-flat-button (click)="moveToForgot()">Forgot Password?</button>
+        [disabled]="loginForm.invalid">{{ 'pages.login.buttons.login.text' | translate }}</button>
+      <button mat-flat-button
+        (click)="moveToForgot()">{{ 'pages.login.buttons.forgotpassword.text' | translate }}</button>
     </mat-card-actions>
   </mat-card>
 
   <div class="version-text">
-    Version: {{versionText}}
+    {{'pages.login.version.text' | translate }}: {{versionText}}
   </div>
 </div>

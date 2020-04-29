@@ -75,6 +75,7 @@ import { MatDividerModule } from '@angular/material/divider'
 import { MatStepperModule } from '@angular/material/stepper'
 import { MatChipsModule } from '@angular/material/chips'
 import { MatRadioModule } from '@angular/material/radio'
+import { TranslateModule } from '@ngx-translate/core';
 
 export const FULL_MONTH_FORMATS = {
 	parse: {
@@ -134,6 +135,7 @@ export const FULL_MONTH_FORMATS = {
 		MatMomentDateModule,
 		NgJsonEditorModule,
 		MatProgressButtonsModule,
+		TranslateModule,
 		QuillModule.forRoot({
             modules: {
                 syntax: true,

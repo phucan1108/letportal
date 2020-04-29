@@ -5,6 +5,10 @@ import { SecurityService } from './core/security/security.service';
 import { VideoCallService } from 'services/videocall.service';
 import { Store, Actions, ofActionCompleted } from '@ngxs/store';
 import { UserDroppedCall, DroppedCall } from 'stores/chats/chats.actions';
+import { TranslateService } from '@ngx-translate/core';
+import { ObjectUtils } from './core/utils/object-util';
+import { environment } from 'environments/environment';
+import * as moment from 'moment'
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -17,7 +21,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     private chatService: ChatService,
     private videoService: VideoCallService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private translate: TranslateService
   ) {
   }
   ngOnInit(): void {
@@ -39,5 +44,14 @@ export class AppComponent implements OnInit {
         }
       }
     });
+
+    if(ObjectUtils.isNotNull(localStorage.getItem('lang'))){
+      this.translate.use(localStorage.getItem('lang'))
+      moment.locale(localStorage.getItem('lang'))
+    }
+    else{
+      localStorage.setItem('lang', environment.localization.defaultLanguage)      
+      moment.locale(environment.localization.defaultLanguage)
+    }
   }
 }

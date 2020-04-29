@@ -110,6 +110,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTreeModule } from '@angular/material/tree';
 import { LocalizationPage } from './pages/localization/localization.page';
 import { LocaleResolve } from './resolve/locale.resolve';
+import { TranslateModule } from '@ngx-translate/core';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -214,6 +215,7 @@ import { LocaleResolve } from './resolve/locale.resolve';
 		ScrollingModule,
 		MatMomentDateModule,
 		MatProgressButtonsModule,
+		TranslateModule,
 		QuillModule.forRoot({
 			modules: {
 				syntax: true,

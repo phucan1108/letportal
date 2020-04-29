@@ -11,6 +11,7 @@ import { MatProgressButtonOptions } from 'mat-progress-buttons';
 import { SecurityService } from 'app/core/security/security.service';
 import { AuthUser } from 'app/core/security/auth.model';
 import { NGXLogger } from 'ngx-logger';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-app-dashboard',
@@ -22,16 +23,23 @@ export class AppDashboardComponent implements OnInit {
     apps$: Observable<Array<App>>
 
     loadingApps$: Observable<{ app: App, loading: boolean, btnOption: MatProgressButtonOptions }[]>
+    enterText: string = 'Enter'
     constructor(
         private appsClient: AppsClient,
         private security: SecurityService,
         private sessionService: SessionService,
         private router: Router,
         private store: Store,
+        private translate: TranslateService,
         private logger: NGXLogger
     ) { }
 
     ngOnInit(): void {
+        this.translate.get('pages.appDashboard.buttons.enter').subscribe(
+            text => {
+                this.enterText = text
+            }
+        )
         this.security.getPortalClaims().pipe(
             tap(
                 res => {
@@ -48,7 +56,7 @@ export class AppDashboardComponent implements OnInit {
                                             loading: false,
                                             btnOption: {
                                                 active: false,
-                                                text: 'Enter',
+                                                text: this.enterText,
                                                 buttonColor: 'primary',
                                                 barColor: 'primary',
                                                 raised: false,

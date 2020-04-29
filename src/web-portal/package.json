@@ -13,7 +13,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prod": "ng build --prod --deleteOutputPath=true",
-    "prodlocal": "ng build --configuration=prodlocal --deleteOutputPath=true"
+    "prodlocal": "ng build --configuration=prodlocal --deleteOutputPath=true",
+    "extract-translations": "ngx-translate-extract --input ./src --output ./src/assets/i18n/vi-VN.json --clean --sort --format json --marker _"
   },
   "private": true,
   "dependencies": {
@@ -29,6 +30,8 @@
     "@angular/platform-browser-dynamic": "~9.1.3",
     "@angular/router": "~9.1.3",
     "@microsoft/signalr": "^3.1.3",
+    "@ngx-translate/core": "^12.1.2",
+    "@ngx-translate/http-loader": "^4.0.0",
     "@ngxs/devtools-plugin": "^3.6.2",
     "@ngxs/logger-plugin": "^3.6.2",
     "@ngxs/schematics": "^0.0.1-alpha.5",
@@ -80,6 +83,7 @@
     "@angular/cli": "~9.1.3",
     "@angular/compiler-cli": "~9.1.3",
     "@angular/language-service": "~9.1.3",
+    "@biesbjerg/ngx-translate-extract": "^6.0.4",
     "@types/dompurify": "^2.0.1",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",

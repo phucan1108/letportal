@@ -25,6 +25,7 @@ import { AppDashboardComponent } from './components/app-dashboard/app-dashboard.
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { ChatModule } from './modules/chat/chat.module';
 import { CoreModule } from 'app/core/core.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -53,7 +54,8 @@ import { CoreModule } from 'app/core/core.module';
         MatTreeModule,
         MatExpansionModule,
         MatBadgeModule,
-        MatTooltipModule
+        MatTooltipModule,
+        TranslateModule
     ],
     exports: [],
     providers: [

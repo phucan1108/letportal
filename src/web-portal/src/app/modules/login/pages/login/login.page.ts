@@ -9,6 +9,8 @@ import { AuthToken } from 'app/core/security/auth.model';
 import { Router } from '@angular/router';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { ChatService } from 'services/chat.service';
+import { TranslateService } from '@ngx-translate/core';
+import * as moment from 'moment'
 @Component({
     selector: 'let-login',
     templateUrl: './login.page.html',
@@ -19,7 +21,10 @@ export class LoginPage implements OnInit {
     loginForm: FormGroup
     errorMessage = ''
     versionText = environment.version
+    languages = environment.localization.allowedLanguages
+    selectedLanguage: string = environment.localization.defaultLanguage
     constructor(
+        private translate: TranslateService,
         private fb: FormBuilder,
         private router: Router,
         private accountClient: AccountsClient,
@@ -34,11 +39,16 @@ export class LoginPage implements OnInit {
         // Ensure user will be signed out when be back to login page
         this.session.clear()
         this.security.userLogout()
-
         this.loginForm = this.fb.group({
             username: ['', Validators.required],
             password: ['', Validators.required],
-            rememberMe: [false]
+            rememberMe: [false],
+            language: [this.translate.currentLang, Validators.required]
+        })
+
+        this.loginForm.get('language').valueChanges.subscribe(newValue => {
+            this.selectedLanguage = newValue
+            this.translate.use(newValue)
         })
     }
 
@@ -65,6 +75,8 @@ export class LoginPage implements OnInit {
                     this.session.setUserSession(result.userSessionId)
                     this.roleClient.getPortalClaims().subscribe(result =>{
                         this.security.setPortalClaims(result)
+                        localStorage.setItem('lang', this.selectedLanguage)
+                        moment.locale(this.selectedLanguage)
                         this.router.navigateByUrl('/portal/dashboard')
                     })
                 },
@@ -73,7 +85,11 @@ export class LoginPage implements OnInit {
                         this.errorMessage = err.messageContent
                     }
                     else{
-                        this.errorMessage = 'Oops! Something went wrong, please try again.'
+                        this.translate.get('pages.login.errors.common').subscribe(
+                            res => {
+                                this.errorMessage = res
+                            }
+                        )
                     }
                 }
             )

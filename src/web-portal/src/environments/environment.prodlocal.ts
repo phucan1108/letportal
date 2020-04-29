@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  version: '0.7.0',
+  version: '0.8.0',
   configurationEndpoint: 'http://letportal.internal:8080/v1.0/api/configurations/Portal/v1.0',
   ignoreSendTokenEndpoints: 'api/accounts/login;api/accounts/refresh;api/accounts/forgot-password;api/accounts/recovery-password',
   chatOptions: {
