@@ -74,6 +74,55 @@ namespace LetPortal.Portal.Repositories.Components
                 }                  
             }
 
+            if(dynamicList.CommandsList != null && dynamicList.CommandsList.CommandButtonsInList != null)
+            {
+                foreach(var command in dynamicList.CommandsList.CommandButtonsInList)
+                {
+                    var commandName = new LanguageKey
+                    {
+                        Key = $"{dynamicList.Name}.commands.{command.Name}.displayName",
+                        Value = command.DisplayName
+                    };
+
+                    langauges.Add(commandName);
+
+                    switch (command.ActionCommandOptions.ActionType)
+                    {
+                        case ActionType.Redirect:
+                            break;
+                        case ActionType.ExecuteDatabase:
+                        case ActionType.CallHttpService:
+                        default:
+                            if(command.ActionCommandOptions.ConfirmationOptions != null)
+                            {
+                                var confirmationText = new LanguageKey
+                                {
+                                    Key = $"{dynamicList.Name}.commands.{command.Name}.confirmation.text",
+                                    Value = command.ActionCommandOptions.ConfirmationOptions.ConfirmationText
+                                };
+                                langauges.Add(confirmationText);
+                            }
+
+                            if(command.ActionCommandOptions.NotificationOptions != null)
+                            {
+                                var notificationSuccess = new LanguageKey
+                                {
+                                    Key = $"{dynamicList.Name}.commands.{command.Name}.notification.success",
+                                    Value = command.ActionCommandOptions.NotificationOptions.CompleteMessage
+                                };
+                                var notificationFailed = new LanguageKey
+                                {
+                                    Key = $"{dynamicList.Name}.commands.{command.Name}.notification.failed",
+                                    Value = command.ActionCommandOptions.NotificationOptions.FailedMessage
+                                };
+                                langauges.Add(notificationSuccess);
+                                langauges.Add(notificationFailed);
+                            }                            
+                            break;
+                    }
+                }
+            }
+
             return langauges;
         }
     }

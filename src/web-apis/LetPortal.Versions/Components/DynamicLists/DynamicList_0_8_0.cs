@@ -54,13 +54,25 @@ namespace LetPortal.Versions.Components.DynamicLists
                         new ColumndDef
                         {
                             Name = "pageId",
-                            DisplayName = "pageId",
-                            IsHidden = true,
+                            DisplayName = "Page Name",
+                            IsHidden = false,
                             DisplayFormat = "{0}",
                             SearchOptions = new SearchOptions
                             {
+                                FieldValueType = FieldValueType.Select,
                                 AllowInAdvancedMode = false,
                                 AllowTextSearch = false
+                            },
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                              Type = DatasourceControlType.Database,
+                              DatabaseOptions = new DatabaseOptions
+                              {
+                                  DatabaseConnectionId = Constants.PortalDatabaseId,
+                                  Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                    "{\"$query\":{\"pages\":[{\"$project\":{\"name\":\"$displayName\",\"value\":\"$_id\"}}]}}" 
+                                    : (versionContext.ConnectionType != Core.Persistences.ConnectionType.MySQL ? "SELECT `displayName` as `name`, `id` as `value` FROM pages" : "SELECT displayName as name, id as value FROM pages")  
+                              }
                             },
                             Order = 0
                         },
@@ -106,7 +118,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             Name = "edit",
                             DisplayName = "Edit",
                             Icon = "create",
-                            Color = "warn",
+                            Color = "primary",
                             CommandPositionType = CommandPositionType.InList,
                             AllowRefreshList = false,
                             ActionCommandOptions = new ActionCommandOptions
@@ -118,6 +130,35 @@ namespace LetPortal.Versions.Components.DynamicLists
                                    RedirectUrl = "portal/builder/localization/{{data.id}}"
                                 }
                             }
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "delete",
+                            DisplayName = "Delete",
+                            Icon = "delete",
+                            Color = "warn",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType = ActionType.CallHttpService,
+                                HttpServiceOptions = new HttpServiceOptions
+                                {
+                                    HttpServiceUrl = "{{configs.portalBaseEndpoint}}/api/localizations/{{data.id}}",
+                                    HttpMethod = "DELETE",
+                                    HttpSuccessCode = "200"
+                                },
+                                ConfirmationOptions = new ConfirmationOptions
+                                {
+                                    IsEnable = true,
+                                    ConfirmationText = "Are you sure to delete this language package?"
+                                },
+                                NotificationOptions = new NotificationOptions
+                                {
+                                    CompleteMessage = "Language package has been deleted successfully!",
+                                    FailedMessage = "Oops! We can't delete this Language package."
+                                }
+                            },
+                            AllowRefreshList = true,
+                            Order = 2
                         }
                     }
                 }

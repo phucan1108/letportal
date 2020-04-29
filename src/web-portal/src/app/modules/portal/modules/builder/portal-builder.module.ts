@@ -109,6 +109,7 @@ import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTreeModule } from '@angular/material/tree';
 import { LocalizationPage } from './pages/localization/localization.page';
+import { LocaleResolve } from './resolve/locale.resolve';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -276,6 +277,7 @@ import { LocalizationPage } from './pages/localization/localization.page';
 		StandardResolve,
 		ChartBuilderResolve,
 		BackupResolve,
+		LocaleResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
 	],

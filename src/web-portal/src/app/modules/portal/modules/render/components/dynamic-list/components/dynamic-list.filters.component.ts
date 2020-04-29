@@ -9,6 +9,7 @@ import { DatasourceCache } from '../models/commandClicked';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { PageService } from 'services/page.service';
 
 
 @Component({
@@ -116,7 +117,6 @@ export class DynamicListFiltersComponent implements OnInit {
 
     combineFilledParameters() {
         const filledParameters: Array<FilledParameter> = [];
-
         return filledParameters;
     }
 

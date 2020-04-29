@@ -98,7 +98,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                 ).subscribe()
                 break
             case SectionContructionType.DynamicList:
-                this.dynamicsClient.getOne(this.pageSection.componentId).pipe(
+                this.dynamicsClient.getOneForRender(this.pageSection.componentId).pipe(
                     // delay(5000),
                     tap(
                         dynamicList => {

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType,  DynamicListClient, FieldValueType, DynamicListFetchDataModel } from 'services/portal.service';
+import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType,  DynamicListClient, FieldValueType, DynamicListFetchDataModel, DynamicListSourceType, FilledParameter } from 'services/portal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, of, merge, Observable, Subscription } from 'rxjs';
 import * as _ from 'lodash';
@@ -17,6 +17,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'dynamic-list-grid',
@@ -74,6 +75,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         private datasoureOptsService: DatasourceOptionsService,
         private breakpointObserver: BreakpointObserver,
         private dynamicClient: DynamicListClient,
+        private pageService: PageService,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
@@ -233,7 +235,6 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     onSubmittingSearch($event) {
         const fetchQuery = $event as DynamicListFetchDataModel
         this.fetchDataQuery = this.getFetchDataQuery();
-        this.fetchDataQuery.filledParameterOptions = fetchQuery.filledParameterOptions;
         this.fetchDataQuery.filterGroupOptions = fetchQuery.filterGroupOptions;
         this.fetchDataQuery.textSearch = fetchQuery.textSearch;
         this.fetchData();
@@ -288,7 +289,21 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
             }
         }
 
-
+        this.fetchDataQuery.filledParameterOptions = {
+            filledParameters: []
+        }
+        if(this.dynamicList.listDatasource.sourceType === DynamicListSourceType.Database){
+            const params = this.pageService.retrieveParameters(this.dynamicList.listDatasource.databaseConnectionOptions.query)
+            if(ObjectUtils.isNotNull(params)){
+                this.fetchDataQuery.filledParameterOptions = {
+                    filledParameters: params.map(a => <FilledParameter>{
+                        name: a.name,
+                        value: a.replaceValue
+                    })
+                }
+            }
+        }
+        
         return this.fetchDataQuery
     }
 

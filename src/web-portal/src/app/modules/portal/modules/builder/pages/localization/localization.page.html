@@ -3,6 +3,13 @@
         <mat-card-header>
             <mat-card-title>
                 Localization
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="saveChanges()">Save</button>
+                    <button mat-menu-item (click)="cancel()">Cancel</button>
+                </mat-menu>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
@@ -11,12 +18,15 @@
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
                         <input matInput placeholder="Select one language" aria-label="Select one language"
-                            [matAutocomplete]="autoLang" formControlName="language">
+                            [matAutocomplete]="autoLang" formControlName="language" #languageInput>
                         <mat-autocomplete #autoLang="matAutocomplete">
                             <mat-option *ngFor="let tag of localeTags$ | async" [value]="tag.value">
                                 {{tag.name}}
                             </mat-option>
                         </mat-autocomplete>
+                        <mat-error *ngIf="formGroup.get('language').hasError('required')">
+                            Please select one language
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
