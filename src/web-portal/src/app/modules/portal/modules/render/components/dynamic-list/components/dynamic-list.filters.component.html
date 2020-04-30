@@ -9,7 +9,7 @@
                 </mat-form-field>
             </div>
             <div class="col-md-2" *ngIf="enableSearch || enableAdvancedSearch">
-                <button (click)="onSearchClick()" mat-raised-button matTooltip="Search" color="primary" type="button"
+                <button (click)="onSearchClick()" mat-raised-button matTooltip="{{ 'pageRender.dynamicList.filters.buttons.search' | translate }}" color="primary" type="button"
                     class="">
                     <span>{{ 'pageRender.dynamicList.filters.buttons.search' | translate }}</span>
                 </button>
@@ -83,7 +83,7 @@
                             placeholder="{{ 'pageRender.dynamicList.filters.selectCombinationPick.placeholder' | translate }}"
                             [(ngModel)]="filterOption.filterChainOperator"
                             (selectionChange)="onCombineOperatorValueChange($event)">
-                            <mat-option *ngFor="let combineOperator of _combineOperators"
+                            <mat-option *ngFor="let combineOperator of combineOperators$ | async"
                                 [value]="combineOperator.value">
                                 {{ combineOperator.name }}
                             </mat-option>
@@ -116,7 +116,7 @@
         </div>
         <div class="row align-items-center d-flex">
             <div class="col-12 pt-3" *ngIf="isOpeningAdvancedMode">
-                <div class="row">
+                <div class="row" style="height: 40px;">
                     <div class="col-3 d-flex align-items-center">
                         <b>
                             {{ 'pageRender.dynamicList.filters.advancedMode.filed' | translate }}
@@ -130,7 +130,7 @@
             <div class="separator-dashed" style="width: 90%" *ngIf="isOpeningAdvancedMode"></div>
             <ng-container *ngFor="let filterOption of filterOptions; index as i">
                 <div class="col-12">
-                    <div class="row">
+                    <div class="row" style="height: 40px;">
                         <div class="col-3 d-flex align-items-center"><b>{{translateHeader(filterOption.fieldName)}}</b>
                         </div>
                         <div class="col-3 d-flex align-items-center">{{translateOperator(filterOption.filterOperator)}}
@@ -138,7 +138,8 @@
                         <div class="col-3 d-flex align-items-center">
                             {{translateFieldValue(filterOption, filterOption.fieldValue)}}</div>
                         <div class="col-3 d-flex align-items-center">
-                            <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu">
+                            <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu" 
+                                [hidden]="filterOption.filterChainOperator !== filterChainOperatorType.None">
                                 <mat-icon>add</mat-icon>
                             </button>
                             <mat-menu #menu="matMenu" yPosition="above">
@@ -152,10 +153,12 @@
                                     {{ 'pageRender.dynamicList.filters.advancedMode.remove' | translate }}
                                 </button>
                             </mat-menu>
-                        </div>
+                        </div>                       
+                    </div>
+                    <div class="row" style="height: 40px;">
                         <div class="col-12 d-flex align-items-center"
-                            *ngIf="filterOption.filterChainOperator !== filterChainOperatorType.None">
-                            {{translateChainOperator(filterOption.filterChainOperator)}}</div>
+                        *ngIf="filterOption.filterChainOperator !== filterChainOperatorType.None">
+                        {{translateChainOperator(filterOption.filterChainOperator)}}</div>
                     </div>
                 </div>
             </ng-container>

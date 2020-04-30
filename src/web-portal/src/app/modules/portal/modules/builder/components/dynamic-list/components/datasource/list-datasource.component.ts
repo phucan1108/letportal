@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { Constants } from 'portal/resources/constants';
 import { NGXLogger } from 'ngx-logger';
 import { Guid } from 'guid-typescript';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-list-datasource',
@@ -32,12 +33,19 @@ export class ListDatasourceComponent implements OnInit {
     private selectedEntityname: string
 
     constructor(
+        private translate: TranslateService,
         private fb: FormBuilder,
         private logger: NGXLogger
     ) {
     }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+        this.translate.get('pageBuilder.chart.datasource.heading').subscribe(
+            text => {
+                this.heading = text
+            }
+        )
+     }
 
     onPopulatingQuery($event: ExtractingSchemaQueryModel) {
         const columnDefs = this.populateColumnDefs($event.columnFields)

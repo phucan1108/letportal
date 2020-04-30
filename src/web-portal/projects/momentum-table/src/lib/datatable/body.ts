@@ -215,7 +215,6 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
       }
       td:last-of-type  {
         padding: var(--last-column-padding, 0 24px 0 0);
-        width: 100%;
       }
       .m-row-selected {
         background: #eeeeee;

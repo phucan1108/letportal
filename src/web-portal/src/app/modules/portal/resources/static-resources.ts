@@ -154,11 +154,11 @@ export class StaticResources {
 
     public static chartFilterTypes(){
         return [
-           { name: 'Checkbox', value: FilterType.Checkbox } ,
-           { name: 'Select', value: FilterType.Select } ,
-           { name: 'NumberPicker', value: FilterType.NumberPicker } ,
-           { name: 'DatePicker', value: FilterType.DatePicker } ,
-           { name: 'MonthYearPicker', value: FilterType.MonthYearPicker }
+           { name: 'staticResources.chartFilterType.checkbox', value: FilterType.Checkbox } ,
+           { name: 'staticResources.chartFilterType.select', value: FilterType.Select } ,
+           { name: 'staticResources.chartFilterType.numberPicker', value: FilterType.NumberPicker } ,
+           { name: 'staticResources.chartFilterType.datePicker', value: FilterType.DatePicker } ,
+           { name: 'staticResources.chartFilterType.monthYearPicker', value: FilterType.MonthYearPicker }
         ]
     }
 

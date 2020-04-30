@@ -11,14 +11,14 @@
             <mat-menu #menu="matMenu" xPosition="before">
                 <button mat-menu-item (click)="onRefresh()">
                     <mat-icon>cached</mat-icon>
-                    Refresh
+                    {{ 'pageRender.chart.buttons.refresh' | translate }}
                 </button>
             </mat-menu>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
         <mat-tab-group [dynamicHeight]="true" *ngIf="hasFilters" [(selectedIndex)]="selectedTab">
-            <mat-tab label="Chart">
+            <mat-tab label="{{ 'pageRender.chart.tabChart.label' | translate }}">
                 <div class="row" *ngIf="chartData else nodata">
                     <div class="col-lg-12" [ngSwitch]="chart.definitions.chartType">
                         <ng-container *ngSwitchCase="chartType.VerticalBarChart">
@@ -52,7 +52,7 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="Filter">
+            <mat-tab label="{{ 'pageRender.chart.tabFilter.label' | translate }}">
                 <chart-filter-render [chart]="chart" [chartOptions]="chartOptions" (applied)="applied($event)">
                 </chart-filter-render>
             </mat-tab>
@@ -107,7 +107,7 @@
 </ng-template>
 
 <ng-template #nodata>
-    No data
+    {{ 'pageRender.chart.noData' | translate }}
 </ng-template>
 
 <ng-template #deferData>

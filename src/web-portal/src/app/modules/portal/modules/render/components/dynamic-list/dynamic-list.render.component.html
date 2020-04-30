@@ -12,7 +12,7 @@
                     </dynamic-list-command>
                 </ng-container>
                 <button mat-menu-item *ngIf="listOptions.enableExportExcel" (click)="callExportExcel()">
-                    Export Excel
+                    {{ 'pageRender.dynamicList.render.buttons.exportExcel' | translate }}
                 </button>
             </mat-menu>
         </mat-card-title>

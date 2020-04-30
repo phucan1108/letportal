@@ -34,7 +34,7 @@
         </div>
         <div class="col-md-12" *ngIf="filterOption.filterValueType == fieldValueType.DatePicker">
             <mat-form-field class="field-full-width">
-                <input matInput [matDatepicker]="picker" placeholder="Choose a date"
+                <input matInput [matDatepicker]="picker" placeholder="{{ 'pageRender.dynamicList.filters.datePicker.placeholder' | translate }}"
                     [(ngModel)]="filterOption.fieldValue">
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
@@ -42,7 +42,7 @@
         </div>
         <div class="col-md-12" *ngIf="filterOption.filterValueType == fieldValueType.Select">
             <mat-form-field class="field-full-width">
-                <mat-select placeholder="Pick one field search" [(ngModel)]="filterOption.fieldValue" [disabled]="filterOption.filterDataSource.length < 2">
+                <mat-select placeholder="{{ 'pageRender.dynamicList.advancedFilterDialog.fieldSearch.placeholder' | translate }}" [(ngModel)]="filterOption.fieldValue" [disabled]="filterOption.filterDataSource.length < 2">
                     <mat-option *ngFor="let filter of filterOption.filterDataSource" [value]="filter.value">
                         {{ filter.name }}
                     </mat-option>
