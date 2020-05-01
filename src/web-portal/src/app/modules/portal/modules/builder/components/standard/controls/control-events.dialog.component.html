@@ -1,23 +1,24 @@
-<h3 mat-dialog-title>Events</h3>
+<h3 mat-dialog-title>{{ 'common.events' | translate }}</h3>
 <mat-dialog-content>
     <ng-container *ngIf="isShowEditForm">
         <form [formGroup]="eventForm" class="dialog-width" action="#">
             <div class="row row-heading">
-                <h3>Event Form:</h3>
+                <h3>{{ 'pageBuilder.standard.eventsDialog.eventForm' | translate }}:</h3>
             </div>
             <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Event Name:</label>
+                <label class="col-lg-2 col-form-label">{{ 'common.eventName' | translate }}:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
-                        <input matInput placeholder="Event Name" formControlName="eventName" readonly />
+                        <input matInput placeholder="{{ 'common.eventName' | translate }}" formControlName="eventName" readonly />
                     </mat-form-field>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Event Action Type:</label>
+                <label class="col-lg-2 col-form-label">
+                    {{ 'pageBuilder.standard.eventsDialog.eventActionType' | translate }}:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
-                        <mat-select placeholder="Pick one action type" formControlName="eventActionType">
+                        <mat-select placeholder="{{ 'common.pickOneActionType' | translate }}" formControlName="eventActionType">
                             <mat-option *ngFor="let type of _eventActionTypes" [value]="type.value">
                                 {{ type.name }}
                             </mat-option>
@@ -33,7 +34,8 @@
                 *ngIf="eventForm.get('eventActionType').value == eventActionType.WebService">
             </let-httpoptions>
             <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.WebService">
-                <label class=" col-lg-2 col-form-label">Bound data fields:</label>
+                <label class=" col-lg-2 col-form-label">
+                    {{ 'pageBuilder.standard.eventsDialog.bounDataFields' | translate }}:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
                         <mat-select formControlName="boundDataHttp" multiple>
@@ -44,15 +46,17 @@
                 </div>
             </div>
             <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.QueryDatabase">
-                <label class=" col-lg-2 col-form-label">Bound data fields:</label>
+                <label class=" col-lg-2 col-form-label">
+                    {{ 'pageBuilder.standard.eventsDialog.bounDataFields' | translate }}:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
-                        <input matInput placeholder="Output Projection" formControlName="outputProjectionDatabase" />
+                        <input matInput placeholder="{{ 'common.outputProjection' | translate }}" formControlName="outputProjectionDatabase" />
                     </mat-form-field>
                 </div>
             </div>
             <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.QueryDatabase">
-                <label class=" col-lg-2 col-form-label">Bound data fields:</label>
+                <label class=" col-lg-2 col-form-label">
+                    {{ 'pageBuilder.standard.eventsDialog.bounDataFields' | translate }}:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
                         <mat-select formControlName="boundDataDatabase" multiple>
@@ -63,7 +67,8 @@
                 </div>
             </div>
             <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.TriggerEvent">
-                <label class=" col-lg-2 col-form-label">Trigger events list:</label>
+                <label class=" col-lg-2 col-form-label">
+                    {{ 'common.triggerEventsList' | translate }}:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
                         <mat-select formControlName="triggerEventsList" multiple>
@@ -78,20 +83,22 @@
         <div class="col-lg-12">
             <mat-table #table class="lmat-elevation-z8" [dataSource]="events$" *ngIf="!isHandset">
                 <ng-container matColumnDef="eventName">
-                    <mat-header-cell *matHeaderCellDef>Name
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ 'common.nameText' | translate }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let event">
                         {{event.eventName}}</mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="eventActionType">
-                    <mat-header-cell *matHeaderCellDef>Trigger Type
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ 'common.triggerType' | translate }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let event">
                         {{translateEventActionType(event)}}</mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="actions">
                     <mat-header-cell *matHeaderCellDef>
-                        Actions
+                        {{ 'common.actionsText' | translate }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let event">
                         <button mat-icon-button color="primary" matTooltip="Edit Event" (click)="editEvent(event)">
@@ -116,26 +123,26 @@
                 </mat-expansion-panel-header>
                 <div class="row">
                     <label class="col-lg-2 col-form-label font-weight-bold">
-                        Event name
+                        {{ 'common.eventName' | translate }}
                     </label>
                     <label class="col-lg-2 col-form-label">
                         {{event.eventName}}
                     </label>
                     <label class="col-lg-2 col-form-label font-weight-bold">
-                        Trigger Type
+                        {{ 'common.triggerType' | translate }}
                     </label>
                     <label class="col-lg-2 col-form-label">
                         {{translateEventActionType(event)}}
                     </label>
                     <div class="col-lg-2 d-flex justify-content-center">
-                        <button mat-button color="primary" matTooltip="Actions" [matMenuTriggerFor]="action"
+                        <button mat-button color="primary" matTooltip="{{ 'common.actionsText' | translate }}" [matMenuTriggerFor]="action"
                             aria-label="Toggle menu">
-                            Actions
+                            {{ 'common.actionsText' | translate }}
                         </button>
                         <mat-menu #action="matMenu" xPosition="after">
-                            <button mat-menu-item color="primary" matTooltip="Edit Event" (click)="editEvent(event)">
+                            <button mat-menu-item color="primary" matTooltip="{{ 'common.editEvent' | translate }}" (click)="editEvent(event)">
                                 <mat-icon>create</mat-icon>
-                                Edit Event
+                                {{ 'common.editEvent' | translate }}
                             </button>
                         </mat-menu>
                     </div>
@@ -145,8 +152,16 @@
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button [mat-dialog-close]="" *ngIf="!isShowEditForm">Cancel</button>
-    <button mat-button (click)="onSave()" color="primary" *ngIf="!isShowEditForm">Save</button>
-    <button mat-button (click)="cancelEditEvent()" *ngIf="isShowEditForm">Cancel</button>&nbsp;
-    <button mat-button (click)="saveEvent()" color="primary" *ngIf="isShowEditForm">Save</button>
+    <button mat-button [mat-dialog-close]="" *ngIf="!isShowEditForm">
+        {{ 'common.cancelButton' | translate }}
+    </button>
+    <button mat-button (click)="onSave()" color="primary" *ngIf="!isShowEditForm">
+        {{ 'common.saveButton' | translate }}
+    </button>
+    <button mat-button (click)="cancelEditEvent()" *ngIf="isShowEditForm">
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="saveEvent()" color="primary" *ngIf="isShowEditForm">
+        {{ 'common.saveButton' | translate }}
+    </button>
 </mat-dialog-actions>

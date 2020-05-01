@@ -2,22 +2,22 @@
     <mat-card>
         <mat-card-header>
             <mat-card-title>
-                Localization
+                {{ 'pageBuilder.page.localization.header' | translate }}
                 <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="saveChanges()">Save</button>
-                    <button mat-menu-item (click)="cancel()">Cancel</button>
+                    <button mat-menu-item (click)="saveChanges()">{{ 'common.saveButton' | translate }}</button>
+                    <button mat-menu-item (click)="cancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
             <div class="form-group row" [formGroup]="formGroup">
-                <label class="col-lg-2 col-form-label">Language:</label>
+                <label class="col-lg-2 col-form-label">{{ 'pageBuilder.page.localization.language' | translate }}:</label>
                 <div class="col-lg-6">
                     <mat-form-field class="field-full-width">
-                        <input matInput placeholder="Select one language" aria-label="Select one language"
+                        <input matInput placeholder="{{ 'pageBuilder.page.localization.language.placeholder' | translate }}"
                             [matAutocomplete]="autoLang" formControlName="language" #languageInput>
                         <mat-autocomplete #autoLang="matAutocomplete">
                             <mat-option *ngFor="let tag of localeTags$ | async" [value]="tag.value">
@@ -25,7 +25,7 @@
                             </mat-option>
                         </mat-autocomplete>
                         <mat-error *ngIf="formGroup.get('language').hasError('required')">
-                            Please select one language
+                            {{ 'pageBuilder.page.localization.language.error.required' | translate }}
                         </mat-error>
                     </mat-form-field>
                 </div>
@@ -34,13 +34,13 @@
                 <div class="col-lg-12">
                     <m-table [(value)]="languageKeys" #mtable [selectable]="false" [selectionHandler]="false"
                         (onEditComplete)="editComplete($event)">
-                        <m-column field="key" header="Key">
+                        <m-column field="key" header="{{ 'common.keyText' | translate }}">
                         </m-column>
-                        <m-column field="value" header="Value" editable="true">
+                        <m-column field="value" header="{{ 'common.valueText' | translate }}" editable="true">
                         </m-column>
                         <ng-template mTemplate="emptyTable">
                             <div class="align-center">
-                                No records
+                                {{ 'common.noRecordsText' | translate }}
                             </div>
                         </ng-template>
                     </m-table>

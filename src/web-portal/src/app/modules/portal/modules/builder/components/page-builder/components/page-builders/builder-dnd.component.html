@@ -2,12 +2,14 @@
     <mat-card>
         <mat-card-header>
             <mat-card-title>
-                Sections List
+                {{ 'pageBuilder.builderDnd.header' | translate }}
                 <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button (click)="addNewSection()" mat-menu-item>New Section</button>
+                    <button (click)="addNewSection()" mat-menu-item>
+                        {{ 'pageBuilder.builderDnd.buttons.newSection' | translate }}
+                    </button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
@@ -16,7 +18,8 @@
                 <mat-expansion-panel *ngFor="let pageSection of pageSections" cdkDrag>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            <span style="padding-top: calc(.375rem + 5px);" [ngStyle]="{ 'text-decoration': pageSection.isBroken ? 'line-through' : 'initial' }">Section:
+                            <span style="padding-top: calc(.375rem + 5px);" [ngStyle]="{ 'text-decoration': pageSection.isBroken ? 'line-through' : 'initial' }">
+                                {{ 'pageBuilder.builderDnd.sectionText' | translate }}:
                                 {{ pageSection.displayName }}</span>
                             <button mat-icon-button color="primary" type="button" matTooltip="Edit"
                                 (click)="editSection(pageSection);$event.stopPropagation()">
@@ -29,11 +32,11 @@
                         </mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="row" *ngIf="!!pageSection.relatedStandard || !!pageSection.relatedArrayStandard">
-                        <label class="col-lg-2 col-form-label">Datasource Bind Name:</label>
+                        <label class="col-lg-2 col-form-label">{{ 'pageBuilder.builderDnd.datasourceBindText' | translate }}:</label>
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
                                 <input [(ngModel)]="pageSection.sectionDatasource.datasourceBindName" matInput
-                                    #displayNameInput placeholder="Enter Datasource Bind name. Default: data"
+                                    #displayNameInput placeholder="{{ 'pageBuilder.builderDnd.bindname.placeholder' | translate }}"
                                     autocomplete="off">
                                 <mat-hint align="end">
                                     {{displayNameInput.value?.length || 0}}/255

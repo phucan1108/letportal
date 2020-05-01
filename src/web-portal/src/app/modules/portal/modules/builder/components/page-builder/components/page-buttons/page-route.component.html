@@ -1,21 +1,21 @@
 <form [formGroup]="routeForm">
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Condition**</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.condition' | translate }}**</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <input formControlName="condition" matInput #conditionInput maxlength="250"
-                    placeholder="Enter a condition expression **">
+                    placeholder="{{ 'pageBuilder.pageRoute.condition.placeholder' | translate }}">
                 <mat-hint align="end">{{conditionInput.value?.length || 0}}/250</mat-hint>
-                <mat-icon matSuffix matTooltip="A condition expression must be evaluted to true/false">code
+                <mat-icon matSuffix matTooltip="{{ 'pageBuilder.pageRoute.condition.tooltip' | translate }}">code
                 </mat-icon>
             </mat-form-field>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Page:</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.page' | translate }}:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <mat-select placeholder="Pick one page" formControlName="targetPageId">
+                <mat-select placeholder="{{ 'common.pickPage' | translate }}" formControlName="targetPageId">
                     <mat-option *ngFor="let page of page$ | async" [value]="page.id">
                         {{ page.displayName }}
                     </mat-option>
@@ -24,15 +24,15 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Url:</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.url' | translate }}:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <input matInput placeholder="Redirect Url" formControlName="redirectUrl" />
+                <input matInput placeholder="{{ 'common.redirectUrl' | translate }}" formControlName="redirectUrl" />
             </mat-form-field>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Same domain:</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.sameDomain' | translate }}:</label>
         <div class="col-lg-6">
             <mat-slide-toggle formControlName="isSameDomain" name="isSameDomain">
             </mat-slide-toggle>
