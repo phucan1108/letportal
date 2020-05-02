@@ -14,5 +14,7 @@ namespace LetPortal.Portal.Repositories.Components
         Task<IEnumerable<ShortEntityModel>> GetShortCharts(string keyWord = null);
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string chartId);
+
+        Task<IEnumerable<LanguageKey>> CollectAllLanguages();
     }
 }

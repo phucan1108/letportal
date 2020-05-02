@@ -31,6 +31,7 @@ import { ChatModule } from 'portal/modules/chat/chat.module';
 import { EmojiPickerModule } from 'emoji-picker'
 import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader'
+import { LocalizationService } from 'services/localization.service';
 
 export function hlJSLang() {
   return [
@@ -93,6 +94,7 @@ function HttpLoaderFactory(http: HttpClient) {
   providers: [
     ChatService,
     VideoCallService,
+    LocalizationService,
     ConfigurationService,
     {
       provide: PORTAL_BASE_URL,

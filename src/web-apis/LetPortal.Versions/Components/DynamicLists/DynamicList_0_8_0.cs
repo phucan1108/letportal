@@ -30,7 +30,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB
-                       ? "{\r\n  \"$query\": {\r\n    \"localizations\":[\r\n      {\r\n        \"$match\": {\r\n          \"pageId\": \"{{queryparams.pageId}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}" : "SELECT * FROM localizations"
+                       ? "{\r\n  \"$query\": {\r\n    \"localizations\":[]\r\n  }\r\n}" : "SELECT * FROM localizations"
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -48,31 +48,6 @@ namespace LetPortal.Versions.Components.DynamicLists
                             {
                                 AllowInAdvancedMode = false,
                                 AllowTextSearch = false
-                            },
-                            Order = 0
-                        },
-                        new ColumndDef
-                        {
-                            Name = "pageId",
-                            DisplayName = "Page Name",
-                            IsHidden = false,
-                            DisplayFormat = "{0}",
-                            SearchOptions = new SearchOptions
-                            {
-                                FieldValueType = FieldValueType.Select,
-                                AllowInAdvancedMode = false,
-                                AllowTextSearch = false
-                            },
-                            DatasourceOptions = new DynamicListDatasourceOptions
-                            {
-                              Type = DatasourceControlType.Database,
-                              DatabaseOptions = new DatabaseOptions
-                              {
-                                  DatabaseConnectionId = Constants.PortalDatabaseId,
-                                  Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                    "{\"$query\":{\"pages\":[{\"$project\":{\"name\":\"$displayName\",\"value\":\"$_id\"}}]}}" 
-                                    : (versionContext.ConnectionType != Core.Persistences.ConnectionType.MySQL ? "SELECT `displayName` as `name`, `id` as `value` FROM pages" : "SELECT displayName as name, id as value FROM pages")  
-                              }
                             },
                             Order = 0
                         },
@@ -109,7 +84,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 RedirectOptions = new RedirectOptions
                                 {
                                    IsSameDomain = true,
-                                   RedirectUrl = "portal/builder/localization?pageId={{queryparams.pageId}}"
+                                   RedirectUrl = "portal/builder/localization"
                                 }
                             }
                         },

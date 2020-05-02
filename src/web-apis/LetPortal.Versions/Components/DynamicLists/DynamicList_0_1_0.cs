@@ -653,23 +653,6 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             AllowRefreshList = true,
                             Order = 3
-                        },
-                         new CommandButtonInList
-                        {
-                            Name = "locale",
-                            DisplayName = "Localization",
-                            Icon = "format_shapes",
-                            Color = "warn",
-                            ActionCommandOptions = new ActionCommandOptions
-                            {
-                                ActionType = ActionType.Redirect,
-                                RedirectOptions = new RedirectOptions
-                                {
-                                    RedirectUrl = "portal/page/localizations-management?pageId={{data.id}}",
-                                    IsSameDomain = true
-                                }
-                            },
-                            Order = 4
                         }
                     }
                 }

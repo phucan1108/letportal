@@ -26,6 +26,20 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneChart);
         }
 
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        {
+            var allCharts = await GetAllAsync();
+
+            var languages = new List<LanguageKey>();
+
+            foreach (var chart in allCharts)
+            {
+                languages.AddRange(GetChartLanguages(chart));
+            }
+
+            return languages;
+        }
+
         public async Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string chartId)
         {
             var chart = await GetOneAsync(chartId);
@@ -51,7 +65,7 @@ namespace LetPortal.Portal.Repositories.Components
 
             var chartName = new LanguageKey
             {
-                Key = $"{chart.Name}.options.displayName",
+                Key = $"charts.{chart.Name}.options.displayName",
                 Value = chart.DisplayName
             };
 
@@ -63,7 +77,7 @@ namespace LetPortal.Portal.Repositories.Components
                 {
                     var chartFilterName = new LanguageKey
                     {
-                        Key = $"{chart.Name}.filters.{chartFilter.Name}.name",
+                        Key = $"charts.{chart.Name}.filters.{chartFilter.Name}.name",
                         Value = chartFilter.DisplayName
                     };
                     languages.Add(chartFilterName);

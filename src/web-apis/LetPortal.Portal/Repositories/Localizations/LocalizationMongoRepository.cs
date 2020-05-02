@@ -13,9 +13,14 @@ namespace LetPortal.Portal.Repositories.Localizations
             Connection = mongoConnection;
         }
 
-        public async Task<Localization> GetByPageIdAndLocaleId(string pageId, string localeId)
+        public async Task<bool> CheckLocaleExisted(string localeId)
         {
-            return await Collection.AsQueryable().FirstAsync(a => a.PageId == pageId && a.LocaleId == localeId);
+            return await Collection.AsQueryable().AnyAsync(a => a.LocaleId == localeId);
+        }
+
+        public async Task<Localization> GetByLocaleId(string localeId)
+        {
+            return await Collection.AsQueryable().FirstAsync(a => a.LocaleId == localeId);
         }
     }
 }

@@ -23,6 +23,7 @@ export class LoginPage implements OnInit {
     versionText = environment.version
     languages = environment.localization.allowedLanguages
     selectedLanguage: string = environment.localization.defaultLanguage
+    enableSwitchLanguage = environment.localization.allowSwitchLanguage
     constructor(
         private translate: TranslateService,
         private fb: FormBuilder,
@@ -30,7 +31,7 @@ export class LoginPage implements OnInit {
         private accountClient: AccountsClient,
         private logger: NGXLogger,
         private session: SessionService,
-        private security: SecurityService,
+        private security: SecurityService,        
         private roleClient: RolesClient
     ) { }
 

@@ -23,5 +23,7 @@ namespace LetPortal.Portal.Repositories.Pages
         Task CloneAsync(string cloneId, string cloneName);
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeys(string pageId);
+
+        Task<IEnumerable<LanguageKey>> CollectAllLanguages();
     }
 }

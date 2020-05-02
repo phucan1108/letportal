@@ -29,6 +29,20 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneList);
         }
 
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        {
+            var allDynamicLists = await GetAllAsync();
+
+            var languages = new List<LanguageKey>();
+
+            foreach(var dynamicList in allDynamicLists)
+            {
+                languages.AddRange(GetDynamicListLanguages(dynamicList));
+            }
+
+            return languages;
+        }
+
         public async Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string dynamicListId)
         {
             var dynamicList = await GetOneAsync(dynamicListId);
@@ -54,33 +68,38 @@ namespace LetPortal.Portal.Repositories.Components
             var langauges = new List<LanguageKey>();
 
             var dynamicListName = new LanguageKey
-            { 
-                Key = $"{dynamicList.Name}.options.displayName",
+            {
+                Key = $"dynamicLists.{dynamicList.Name}.options.displayName",
                 Value = dynamicList.DisplayName
             };
 
             langauges.Add(dynamicListName);
-            foreach (var column in dynamicList.ColumnsList.ColumndDefs)
-            {
-                if (!column.IsHidden)
-                {
-                    var columnName = new LanguageKey
-                    {
-                        Key = $"{dynamicList.Name}.cols.{column.Name}.displayName",
-                        Value = column.DisplayName
-                    };
 
-                    langauges.Add(columnName);
-                }                  
+            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumndDefs != null && dynamicList.ColumnsList.ColumndDefs.Count > 0)
+            {
+
+                foreach (var column in dynamicList.ColumnsList.ColumndDefs)
+                {
+                    if (!column.IsHidden)
+                    {
+                        var columnName = new LanguageKey
+                        {
+                            Key = $"dynamicLists.{dynamicList.Name}.cols.{column.Name}.displayName",
+                            Value = column.DisplayName
+                        };
+
+                        langauges.Add(columnName);
+                    }
+                }
             }
 
-            if(dynamicList.CommandsList != null && dynamicList.CommandsList.CommandButtonsInList != null)
+            if (dynamicList.CommandsList != null && dynamicList.CommandsList.CommandButtonsInList != null)
             {
-                foreach(var command in dynamicList.CommandsList.CommandButtonsInList)
+                foreach (var command in dynamicList.CommandsList.CommandButtonsInList)
                 {
                     var commandName = new LanguageKey
                     {
-                        Key = $"{dynamicList.Name}.commands.{command.Name}.displayName",
+                        Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.displayName",
                         Value = command.DisplayName
                     };
 
@@ -93,31 +112,31 @@ namespace LetPortal.Portal.Repositories.Components
                         case ActionType.ExecuteDatabase:
                         case ActionType.CallHttpService:
                         default:
-                            if(command.ActionCommandOptions.ConfirmationOptions != null)
+                            if (command.ActionCommandOptions.ConfirmationOptions != null)
                             {
                                 var confirmationText = new LanguageKey
                                 {
-                                    Key = $"{dynamicList.Name}.commands.{command.Name}.confirmation.text",
+                                    Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.confirmation.text",
                                     Value = command.ActionCommandOptions.ConfirmationOptions.ConfirmationText
                                 };
                                 langauges.Add(confirmationText);
                             }
 
-                            if(command.ActionCommandOptions.NotificationOptions != null)
+                            if (command.ActionCommandOptions.NotificationOptions != null)
                             {
                                 var notificationSuccess = new LanguageKey
                                 {
-                                    Key = $"{dynamicList.Name}.commands.{command.Name}.notification.success",
+                                    Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.notification.success",
                                     Value = command.ActionCommandOptions.NotificationOptions.CompleteMessage
                                 };
                                 var notificationFailed = new LanguageKey
                                 {
-                                    Key = $"{dynamicList.Name}.commands.{command.Name}.notification.failed",
+                                    Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.notification.failed",
                                     Value = command.ActionCommandOptions.NotificationOptions.FailedMessage
                                 };
                                 langauges.Add(notificationSuccess);
                                 langauges.Add(notificationFailed);
-                            }                            
+                            }
                             break;
                     }
                 }

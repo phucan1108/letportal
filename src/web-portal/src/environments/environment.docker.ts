@@ -6,5 +6,13 @@ export const environment = {
   chatOptions: {
     allowFileTypes: 'jpg;jpeg;gif;png;zip;rar;doc;docx;xls;xlsx;pdf',
     maxFileSizeInMb: 16
+  },
+  localization:{
+    defaultLanguage: 'en-Us',
+    allowSwitchLanguage: true,
+    allowedLanguages: [
+      { name: 'English', value: 'en-Us' },
+      { name: 'Tiếng Việt', value: 'vi-VN' }
+    ]
   }
 };

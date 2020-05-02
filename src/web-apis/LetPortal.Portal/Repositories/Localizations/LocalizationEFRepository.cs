@@ -23,13 +23,18 @@ namespace LetPortal.Portal.Repositories.Localizations
                         .FirstAsync(a => a.Id == id);
         }
 
-        public async Task<Localization> GetByPageIdAndLocaleId(string pageId, string localeId)
+        public async Task<Localization> GetByLocaleId(string localeId)
         {
             return await _context
                 .Localizations
                 .AsNoTracking()
                 .Include(a => a.LocalizationContents)
-                .FirstAsync(b => b.PageId == pageId && b.LocaleId == localeId);
+                .FirstAsync(b => b.LocaleId == localeId);
+        }
+
+        public async Task<bool> CheckLocaleExisted(string localeId)
+        {
+            return await _context.Localizations.AnyAsync(a => a.LocaleId == localeId);
         }
     }
 }

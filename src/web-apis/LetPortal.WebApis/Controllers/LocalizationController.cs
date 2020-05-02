@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Localizations;
+using LetPortal.Portal.Entities.Shared;
+using LetPortal.Portal.Providers.Localizations;
 using LetPortal.Portal.Repositories.Localizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +18,17 @@ namespace LetPortal.PortalApis.Controllers
     {
         private readonly ILocalizationRepository _localizationRepository;
 
+        private readonly ILocalizationProvider _localizationProvider;
+
         private readonly IServiceLogger<LocalizationController> _logger;
 
         public LocalizationController(
             ILocalizationRepository localizationRepository,
+            ILocalizationProvider localizationProvider,
             IServiceLogger<LocalizationController> logger)
         {
             _localizationRepository = localizationRepository;
+            _localizationProvider = localizationProvider;
             _logger = logger;
         }
 
@@ -35,14 +42,30 @@ namespace LetPortal.PortalApis.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{pageId}/{localeId}")]
+        [HttpGet("locale/{localeId}")]
         [ProducesResponseType(typeof(Localization), 200)]
         [Authorize]
-        public async Task<IActionResult> GetOne(string pageId, string localeId)
+        public async Task<IActionResult> GetOne(string localeId)
         {
-            var result = await _localizationRepository.GetByPageIdAndLocaleId(pageId, localeId);
+            var result = await _localizationRepository.GetByLocaleId(localeId);
             _logger.Info("Found localization: {@result}", result);
             return Ok(result);
+        }
+
+        [HttpGet("exist/{localeId}")]
+        [ProducesResponseType(typeof(Localization), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        public async Task<IActionResult> CheckExist(string localeId)
+        {
+            return Ok(await _localizationRepository.CheckLocaleExisted(localeId));
+        }
+
+        [HttpGet("collectAll")]
+        [ProducesResponseType(typeof(IEnumerable<LanguageKey>), 200)]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        public async Task<IActionResult> CollectAll()
+        {
+            return Ok(await _localizationProvider.CollectAlls());
         }
 
         [HttpPost("")]

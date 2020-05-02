@@ -21,9 +21,9 @@ namespace LetPortal.Versions.Pages
             var localizationListPage = new Page
             {
                Id = "5ea80612bf1ac062f89f6f55",
-                Name = "localizations-management",
-                DisplayName = "Localizations Management",
-                UrlPath = "portal/page/localizations-management",
+                Name = "localization-management",
+                DisplayName = "Localization",
+                UrlPath = "portal/page/localization-management",
                 Claims = new List<PortalClaim>
                     {
                         PortalClaimStandards.AllowAccess

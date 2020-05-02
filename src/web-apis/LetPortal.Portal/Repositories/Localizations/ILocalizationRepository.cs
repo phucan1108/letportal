@@ -6,6 +6,8 @@ namespace LetPortal.Portal.Repositories.Localizations
 {
     public interface ILocalizationRepository : IGenericRepository<Localization>
     {
-        Task<Localization> GetByPageIdAndLocaleId(string pageId, string localeId);
+        Task<Localization> GetByLocaleId(string localeId);
+
+        Task<bool> CheckLocaleExisted(string localeId);
     }
 }

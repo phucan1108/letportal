@@ -14,9 +14,6 @@ namespace LetPortal.Portal.Entities.Localizations
     {
         public IList<LocalizationContent> LocalizationContents { get; set; }
 
-        [StringLength(50)]
-        public string PageId { get; set; }
-
         /// <summary>
         /// BCP 47
         /// Prefer to this list: https://docs.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a

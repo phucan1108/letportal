@@ -19,5 +19,7 @@ namespace LetPortal.Portal.Repositories.Components
         Task<StandardComponent> GetOneForRenderAsync(string id);
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string standardId);
+
+        Task<IEnumerable<LanguageKey>> CollectAllLanguages();
     }
 }

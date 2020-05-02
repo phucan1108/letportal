@@ -1,4 +1,4 @@
-import { DynamicListClient, StandardComponentClient, PagesClient, PageControlAsyncValidator, AsyncValidatorType, DatabasesClient, ChartsClient } from 'services/portal.service';
+import { DynamicListClient, StandardComponentClient, PagesClient, PageControlAsyncValidator, AsyncValidatorType, DatabasesClient, ChartsClient, LocalizationClient } from 'services/portal.service';
 import { AsyncValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable, timer, of } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
@@ -60,6 +60,22 @@ export class PortalValidators {
             return timer(500).pipe(
                 switchMap(() => {
                     return pageClient.checkExist(control.value).pipe(
+                        map(
+                            exist => {
+                                return exist ? { uniqueName: true } : null;
+                            }
+                        )
+                    )
+                })
+            )
+        };
+    }
+
+    public static localeUniqueName(localizationClient: LocalizationClient): AsyncValidatorFn {
+        return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+            return timer(500).pipe(
+                switchMap(() => {
+                    return localizationClient.checkExist(control.value).pipe(
                         map(
                             exist => {
                                 return exist ? { uniqueName: true } : null;

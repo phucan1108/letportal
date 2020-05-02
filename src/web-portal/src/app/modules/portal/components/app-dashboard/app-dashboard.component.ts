@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppsClient, App } from 'services/portal.service';
+import { AppsClient, App, LocalizationClient } from 'services/portal.service';
 import { Observable, of } from 'rxjs';
 import { SessionService } from 'services/session.service';
 import { Router } from '@angular/router';
@@ -12,6 +12,9 @@ import { SecurityService } from 'app/core/security/security.service';
 import { AuthUser } from 'app/core/security/auth.model';
 import { NGXLogger } from 'ngx-logger';
 import { TranslateService } from '@ngx-translate/core';
+import { LocalizationService } from 'services/localization.service';
+import { environment } from 'environments/environment';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-app-dashboard',
@@ -43,7 +46,7 @@ export class AppDashboardComponent implements OnInit {
         this.security.getPortalClaims().pipe(
             tap(
                 res => {
-                    if(res){
+                    if (res) {
                         this.loadingApps$ = this.appsClient.getMany(
                             this.getAvailableAppIds(this.security.getAuthUser())
                         ).pipe(
@@ -85,15 +88,15 @@ export class AppDashboardComponent implements OnInit {
         this.router.navigateByUrl(app.app.defaultUrl);
     }
 
-    private getAvailableAppIds(user: AuthUser){
+    private getAvailableAppIds(user: AuthUser) {
         let ids = ''
 
         const apps = user.claims.find(a => a.name === 'apps')
         apps.claims.forEach(element => {
-            if(apps.claims.indexOf(element) === apps.claims.length - 1){
+            if (apps.claims.indexOf(element) === apps.claims.length - 1) {
                 ids += element
             }
-            else{
+            else {
                 ids += element + ';'
             }
         });

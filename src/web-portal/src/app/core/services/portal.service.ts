@@ -869,7 +869,9 @@ export class ChartsClient implements IChartsClient {
 
 export interface ILocalizationClient {
     getOneBuilder(localeId: string | null): Observable<Localization>;
-    getOne(pageId: string | null, localeId: string | null): Observable<Localization>;
+    getOne(localeId: string | null): Observable<Localization>;
+    checkExist(localeId: string | null): Observable<Localization>;
+    collectAll(): Observable<LanguageKey[]>;
     create(localization: Localization): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
 }
@@ -935,11 +937,8 @@ export class LocalizationClient implements ILocalizationClient {
         return _observableOf<Localization>(<any>null);
     }
 
-    getOne(pageId: string | null, localeId: string | null): Observable<Localization> {
-        let url_ = this.baseUrl + "/api/localizations/{pageId}/{localeId}";
-        if (pageId === undefined || pageId === null)
-            throw new Error("The parameter 'pageId' must be defined.");
-        url_ = url_.replace("{pageId}", encodeURIComponent("" + pageId)); 
+    getOne(localeId: string | null): Observable<Localization> {
+        let url_ = this.baseUrl + "/api/localizations/locale/{localeId}";
         if (localeId === undefined || localeId === null)
             throw new Error("The parameter 'localeId' must be defined.");
         url_ = url_.replace("{localeId}", encodeURIComponent("" + localeId)); 
@@ -986,6 +985,103 @@ export class LocalizationClient implements ILocalizationClient {
             }));
         }
         return _observableOf<Localization>(<any>null);
+    }
+
+    checkExist(localeId: string | null): Observable<Localization> {
+        let url_ = this.baseUrl + "/api/localizations/exist/{localeId}";
+        if (localeId === undefined || localeId === null)
+            throw new Error("The parameter 'localeId' must be defined.");
+        url_ = url_.replace("{localeId}", encodeURIComponent("" + localeId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCheckExist(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCheckExist(<any>response_);
+                } catch (e) {
+                    return <Observable<Localization>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Localization>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCheckExist(response: HttpResponseBase): Observable<Localization> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Localization>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Localization>(<any>null);
+    }
+
+    collectAll(): Observable<LanguageKey[]> {
+        let url_ = this.baseUrl + "/api/localizations/collectAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCollectAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCollectAll(<any>response_);
+                } catch (e) {
+                    return <Observable<LanguageKey[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LanguageKey[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCollectAll(response: HttpResponseBase): Observable<LanguageKey[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <LanguageKey[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LanguageKey[]>(<any>null);
     }
 
     create(localization: Localization): Observable<FileResponse> {
@@ -5007,7 +5103,6 @@ export interface CloneModel {
 
 export interface Localization extends Entity {
     localizationContents?: LocalizationContent[] | undefined;
-    pageId?: string | undefined;
     localeId?: string | undefined;
 }
 
@@ -5016,6 +5111,11 @@ export interface LocalizationContent extends Entity {
     text?: string | undefined;
     localizationId?: string | undefined;
     localization?: Localization | undefined;
+}
+
+export interface LanguageKey {
+    key?: string | undefined;
+    value?: string | undefined;
 }
 
 export interface App extends BackupableEntity {
@@ -5526,11 +5626,6 @@ export interface PageAsyncValidatorModel {
 export interface PageRequestDatasourceModel {
     datasourceId?: string | undefined;
     parameters?: PageParameterModel[] | undefined;
-}
-
-export interface LanguageKey {
-    key?: string | undefined;
-    value?: string | undefined;
 }
 
 export interface StandardComponent extends Component {

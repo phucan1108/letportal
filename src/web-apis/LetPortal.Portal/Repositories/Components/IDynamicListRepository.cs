@@ -14,5 +14,7 @@ namespace LetPortal.Portal.Repositories.Components
         Task<IEnumerable<ShortEntityModel>> GetShortDynamicLists(string keyWord = null);
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string dynamicListId);
+
+        Task<IEnumerable<LanguageKey>> CollectAllLanguages();
     }
 }

@@ -27,7 +27,17 @@
                         <mat-error *ngIf="formGroup.get('language').hasError('required')">
                             {{ 'pageBuilder.page.localization.language.error.required' | translate }}
                         </mat-error>
+                        <mat-error *ngIf="formGroup.get('language').hasError('uniqueName')">
+                            {{ 'pageBuilder.page.localization.error.uniqueName' | translate }}
+                        </mat-error>
                     </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <button mat-raised-button color="primary" (click)="onCollect()">
+                        {{ 'common.collect' | translate }}
+                    </button>
                 </div>
             </div>
             <div class="row">

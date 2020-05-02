@@ -225,6 +225,7 @@
     "pageBuilder.page.localization.addMenu": "Add Menu",
     "pageBuilder.page.menuProfiles.selectRole": "Select one role",
     "pageBuilder.page.pageBuilder.header": "Page Builder",
+    "pageBuilder.page.localization.error.uniqueName": "Locale is already used",
     "shared.shelloptions.buttons.add": "Add Option",
     "shared.shelloptions.buttons.delete.tooltip": "Delete Shell",
     "shared.shelloptions.dialog.key.placeholder": "Enter key name",
@@ -404,5 +405,6 @@
     "common.chooseMethod": "Choose Method",
     "common.body": "Body",
     "common.pageName": "Page Name",
-    "common.urlPath": "Url Path"
+    "common.urlPath": "Url Path",
+    "common.collect": "Collect"
 }

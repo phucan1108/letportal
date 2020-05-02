@@ -31,6 +31,20 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneStandard);
         }
 
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        {
+            var allStandards = await GetAllAsync();
+
+            var languages = new List<LanguageKey>();
+
+            foreach (var standard in allStandards)
+            {
+                languages.AddRange(GetStandardLanguages(standard));
+            }
+
+            return languages;
+        }
+
         public async Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string standardId)
         {
             var standard = await GetOneAsync(standardId);
@@ -107,51 +121,54 @@ namespace LetPortal.Portal.Repositories.Components
         {
             var languages = new List<LanguageKey>();
 
-            foreach (var control in standard.Controls)
+            if (standard.Controls != null && standard.Controls.Count > 0)
             {
-                if (control.Options.First(a => a.Key == "hidden").Value != "true")
+                foreach (var control in standard.Controls)
                 {
-                    // Control options
-                    var labelLang = new LanguageKey
+                    if (control.Options.First(a => a.Key == "hidden").Value != "true")
                     {
-                        Key = $"{standard.Name}.{control.Name}.options.label",
-                        Value = control.Options.First(a => a.Key == "label").Value
-                    };
-
-                    var placeholderLang = new LanguageKey
-                    {
-                        Key = $"{standard.Name}.{control.Name}.options.placeholder",
-                        Value = control.Options.First(a => a.Key == "placeholder").Value
-                    };
-
-                    languages.Add(labelLang);
-                    languages.Add(placeholderLang);
-                    // Control validators
-                    foreach (var validator in control.Validators)
-                    {
-                        if (validator.IsActive)
+                        // Control options
+                        var labelLang = new LanguageKey
                         {
-                            var validatorLang = new LanguageKey
-                            {
-                                Key = $"{standard.Name}.{control.Name}.validators.{Enum.GetName(typeof(ValidatorType), validator.ValidatorType)}",
-                                Value = validator.ValidatorMessage
-                            };
+                            Key = $"standardComponents.{standard.Name}.{control.Name}.options.label",
+                            Value = control.Options.First(a => a.Key == "label").Value
+                        };
 
-                            languages.Add(validatorLang);
-                        }                        
-                    }
-
-                    // Control asyncValidators
-                    foreach (var validator in control.AsyncValidators)
-                    {
-                        if (validator.IsActive)
+                        var placeholderLang = new LanguageKey
                         {
-                            var asyncValidatorLang = new LanguageKey
+                            Key = $"standardComponents.{standard.Name}.{control.Name}.options.placeholder",
+                            Value = control.Options.First(a => a.Key == "placeholder").Value
+                        };
+
+                        languages.Add(labelLang);
+                        languages.Add(placeholderLang);
+                        // Control validators
+                        foreach (var validator in control.Validators)
+                        {
+                            if (validator.IsActive)
                             {
-                                Key = $"{standard.Name}.{control.Name}.asyncValidators.{validator.ValidatorName}",
-                                Value = validator.ValidatorMessage
-                            };
-                            languages.Add(asyncValidatorLang);
+                                var validatorLang = new LanguageKey
+                                {
+                                    Key = $"standardComponents.{standard.Name}.{control.Name}.validators.{Enum.GetName(typeof(ValidatorType), validator.ValidatorType)}",
+                                    Value = validator.ValidatorMessage
+                                };
+
+                                languages.Add(validatorLang);
+                            }
+                        }
+
+                        // Control asyncValidators
+                        foreach (var validator in control.AsyncValidators)
+                        {
+                            if (validator.IsActive)
+                            {
+                                var asyncValidatorLang = new LanguageKey
+                                {
+                                    Key = $"standardComponents.{standard.Name}.{control.Name}.asyncValidators.{validator.ValidatorName}",
+                                    Value = validator.ValidatorMessage
+                                };
+                                languages.Add(asyncValidatorLang);
+                            }
                         }
                     }
                 }

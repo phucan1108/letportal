@@ -20,6 +20,7 @@ using LetPortal.Portal.Providers.Components;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.EntitySchemas;
 using LetPortal.Portal.Providers.Files;
+using LetPortal.Portal.Providers.Localizations;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories;
 using LetPortal.Portal.Repositories.Apps;
@@ -184,6 +185,7 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IChartServiceProvider, InternalChartServiceProvider>();
             builder.Services.AddTransient<IDynamicListServiceProvider, InternalDynamicListServiceProvider>();
             builder.Services.AddTransient<IFileSeviceProvider, InternalFileServiceProvider>();
+            builder.Services.AddTransient<ILocalizationProvider, InternalLocalizationProvider>();
 
             builder.Services.AddTransient<IDynamicQueryBuilder, DynamicQueryBuilder>();
             builder.Services.AddTransient<IChartReportProjection, ChartReportProjection>();
