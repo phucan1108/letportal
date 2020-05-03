@@ -13,6 +13,7 @@ import { StaticResources } from 'portal/resources/static-resources';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Guid } from 'guid-typescript';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-command-grid',
@@ -32,6 +33,7 @@ export class CommandGridComponent implements OnInit {
     _commandTypes = StaticResources.actionTypes()
     isSmallDevice = false
     constructor(
+        private translate: TranslateService,
         private dialog: MatDialog,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
@@ -152,7 +154,7 @@ export class CommandGridComponent implements OnInit {
             return elem.name !== deletingCommand.name
         })
         this.refreshCommandTable();
-        this.shortcutUtil.toastMessage('Delete command successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
     }
 
     setCommands(commands: CommandButtonInList[]) {

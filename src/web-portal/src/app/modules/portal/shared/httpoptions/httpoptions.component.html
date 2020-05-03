@@ -1,21 +1,24 @@
 <div class="row row-heading">
-    <h3>Web service Info:</h3>
+    <h3>{{ 'shared.httpOptions.header' | translate }}:</h3>
 </div>
 <form [formGroup]="httpOptionsForm" action="#">
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Service Url:</label>
+        <label class="col-lg-2 col-form-label">
+            {{ 'shared.commandOptions.serviceUrl' | translate }}:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <input formControlName="httpCallUrl" matInput #httpUrlInput placeholder="Enter Url" autocomplete="off">
+                <input formControlName="httpCallUrl" matInput #httpUrlInput placeholder="{{ 'shared.commandOptions.enterUrl' | translate }}" autocomplete="off">
                 <mat-hint align="end">{{httpUrlInput.value?.length || 0}}/255</mat-hint>
             </mat-form-field>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Http Method</label>
+        <label class="col-lg-2 col-form-label">
+            {{ 'shared.commandOptions.httpMethod' | translate }}
+        </label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <mat-select placeholder="Pick one HTTP method" formControlName="httpCallMethod">
+                <mat-select placeholder="{{ 'shared.commandOptions.pickOneHttpMethod' | translate }}" formControlName="httpCallMethod">
                     <mat-option *ngFor="let httpMethod of _httpMethods" [value]="httpMethod.value">
                         {{ httpMethod.name }}
                     </mat-option>
@@ -24,17 +27,17 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Http Success Code:</label>
+        <label class="col-lg-2 col-form-label">{{ 'shared.commandOptions.successCode' | translate }}:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <input formControlName="httpSuccessCode" matInput #httpSuccessCodeInput
-                    placeholder="Enter HTTP Success Code">
+                    placeholder="{{ 'shared.commandOptions.successCode.placeholder' | translate }}">
                 <mat-hint align="end">{{httpSuccessCodeInput.value?.length || 0}}/255</mat-hint>
             </mat-form-field>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Json Body:</label>
+        <label class="col-lg-2 col-form-label">{{ 'shared.commandOptions.jsonBody' | translate }}:</label>
         <div class="col-lg-10">
             <mat-form-field class="field-full-width">
                 <json-editor #jsonPayloadEditor [options]="editorOptions1" [data]="jsonHttpBodyData"></json-editor>
@@ -44,11 +47,11 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Output Projection:</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.outputProjection' | translate }}:</label>
         <div class="col-lg-10">
             <mat-form-field class="field-full-width">
                 <input formControlName="httpOutputProjection" matInput #httpOutputProjectionInput
-                    placeholder="Enter output projection">
+                    placeholder="{{ 'shared.httpOptions.outputProjection.placeholder' | translate }}">
                 <mat-hint align="end">{{httpOutputProjectionInput.value?.length || 0}}/255</mat-hint>
             </mat-form-field>
         </div>

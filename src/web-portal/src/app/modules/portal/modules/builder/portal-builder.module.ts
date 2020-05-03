@@ -108,6 +108,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTreeModule } from '@angular/material/tree';
+import { LocalizationPage } from './pages/localization/localization.page';
+import { LocaleResolve } from './resolve/locale.resolve';
+import { TranslateModule } from '@ngx-translate/core';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -165,7 +168,8 @@ import { MatTreeModule } from '@angular/material/tree';
 		BackupUploadpage,
 		BackupRestorePage,
 		ExecutionDatabaseStepComponent,
-		IconPickerSharedComponent
+		IconPickerSharedComponent,
+		LocalizationPage
 	],
 	imports: [
 		CoreModule.forChild(),
@@ -211,6 +215,7 @@ import { MatTreeModule } from '@angular/material/tree';
 		ScrollingModule,
 		MatMomentDateModule,
 		MatProgressButtonsModule,
+		TranslateModule,
 		QuillModule.forRoot({
 			modules: {
 				syntax: true,
@@ -274,6 +279,7 @@ import { MatTreeModule } from '@angular/material/tree';
 		StandardResolve,
 		ChartBuilderResolve,
 		BackupResolve,
+		LocaleResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
 	],

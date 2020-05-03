@@ -33,6 +33,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -72,7 +73,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         MatTreeModule,
         MatExpansionModule,
         MatBadgeModule,
-        MatTooltipModule
+        MatTooltipModule,
+        TranslateModule
      ],
     exports: [
         ChatWrapperComponent,

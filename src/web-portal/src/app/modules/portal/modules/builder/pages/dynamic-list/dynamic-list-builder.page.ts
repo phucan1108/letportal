@@ -15,6 +15,7 @@ import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ExtendedFilterField, ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'dynamic-list-builder',
@@ -46,6 +47,7 @@ export class DynamicListBuilderPage implements OnInit {
     @ViewChild(CommandGridComponent, { static: true }) commandGrid: CommandGridComponent
 
     constructor(
+        private translate: TranslateService,
         private pageService: PageService,
         private fb: FormBuilder,
         private dynamicListClient: DynamicListClient,
@@ -126,19 +128,19 @@ export class DynamicListBuilderPage implements OnInit {
             if (this.isEditMode) {
                 this.dynamicListClient.update(this.edittingDynamicList.id, submittingDynamicList)
                     .subscribe(rep => {
-                        this.shortcutUtil.toastMessage('Update successfully!', ToastType.Success)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
                     },
                         err => {
-                            this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
+                            this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                         })
             }
             else {
                 this.dynamicListClient.create(submittingDynamicList).subscribe(rep => {
                     this.router.navigateByUrl('/portal/page/dynamic-list-management')
-                    this.shortcutUtil.toastMessage('Save successfully!', ToastType.Success)
+                    this.shortcutUtil.toastMessage(this.translate.instant('common.saveSuccessfully'), ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                     })
             }
         }

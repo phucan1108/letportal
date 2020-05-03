@@ -12,6 +12,7 @@ import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.mo
 import { ChartOptions } from 'portal/modules/models/chart.extended.model';
 import { StaticResources } from 'portal/resources/static-resources';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chart-builder',
@@ -33,7 +34,7 @@ export class ChartBuilderPage implements OnInit {
         private chartsClient: ChartsClient,
         private pageService: PageService,
         private fb: FormBuilder,
-        private dynamicListClient: DynamicListClient,
+        private translate: TranslateService,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
         private shortcutUtil: ShortcutUtil,
@@ -131,19 +132,19 @@ export class ChartBuilderPage implements OnInit {
                 combiningChart.datasourceName = this.edittingChart.datasourceName
                 combiningChart.timeSpan = this.edittingChart.timeSpan
                 this.chartsClient.update(this.edittingChart.id, combiningChart).subscribe(rep => {
-                    this.shortcutUtil.toastMessage('Update successfully!', ToastType.Success)
+                    this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                     })
             }
             else {
                 this.chartsClient.create(combiningChart).subscribe(rep => {
                     this.router.navigateByUrl('/portal/page/charts-management')
-                    this.shortcutUtil.toastMessage('Save successfully!', ToastType.Success)
+                    this.shortcutUtil.toastMessage(this.translate.instant('common.saveSuccessfully'), ToastType.Success)
                 },
                     err => {
-                        this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                     })
             }
         }

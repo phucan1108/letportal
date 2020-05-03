@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map, filter, tap } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { UserSelectAppAction } from 'stores/apps/app.action';
-import { Menu } from 'services/portal.service';
+import { Menu, App } from 'services/portal.service';
 import { Router, Event, ActivatedRoute, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { SessionService } from 'services/session.service';
 import { SecurityService } from 'app/core/security/security.service';
@@ -15,6 +15,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
 import { ChatService } from 'services/chat.service';
 import { VideoCallService } from 'services/videocall.service';
+import { LocalizationService } from 'services/localization.service';
 
 @Component({
   selector: 'app-navigation',

@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { DataTable } from 'momentum-table';
 import { ShellOptionDialogComponent } from './shelloption.dialog.component';
 import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-shell-option',
@@ -21,6 +22,7 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
 
     constructor(
         public dialog: MatDialog,
+        private translate: TranslateService,
         private shortcutUtil: ShortcutUtil,
         private logger: NGXLogger
     ) { }
@@ -71,7 +73,7 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
         this.shellOptions = _.filter(this.shellOptions, (elem) => {
             return elem.id !== shell.id
         })
-        this.shortcutUtil.toastMessage('Delete option successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
         this.changed.emit(this.shellOptions)
     }
 

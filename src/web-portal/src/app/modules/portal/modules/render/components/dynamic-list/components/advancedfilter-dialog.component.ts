@@ -5,6 +5,7 @@ import { FilterOperator, FilterChainOperator, FieldValueType } from 'services/po
 import * as _ from 'lodash';
 import { NGXLogger } from 'ngx-logger';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-advanced-filer-dialog',
@@ -14,25 +15,18 @@ export class AdvancedFilterDialogComponent implements OnInit {
 
     filterOption: ExtendedFilterOption
     filters: Array<ExtendedRenderFilterField>;
-    _operators = [
-        { name: 'Contains', value: FilterOperator.Contains },
-        { name: 'Equal', value: FilterOperator.Equal },
-        { name: '>', value: FilterOperator.Great },
-        { name: '<', value: FilterOperator.Less },
-        { name: '>=', value: FilterOperator.Greater },
-        { name: '<=', value: FilterOperator.Lesser }
-    ]
-
-    _combineOperators = [
-        { name: 'None', value: FilterChainOperator.None },
-        { name: 'And', value: FilterChainOperator.And },
-        { name: 'Or', value: FilterChainOperator.Or }
-    ]
 
     fieldValueType = FieldValueType
 
+    containsText = 'Contains'
+    equalText = 'Equal'
+    noneText = 'None'
+    andText = 'And'
+    orText = 'Or'
+
     constructor(
         public dialogRef: MatDialogRef<any>,
+        private translate: TranslateService,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -42,7 +36,33 @@ export class AdvancedFilterDialogComponent implements OnInit {
         this.filters = this.data.filters
     }
 
-    ngOnInit(): void { }
+    ngOnInit(): void { 
+        this.translate.get('pageRender.dynamicList.advancedFilter.containsText').subscribe(
+            text => {
+                this.containsText = text
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.equalText').subscribe(
+            text => {
+                this.equalText = text
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.noneText').subscribe(
+            text => {
+                this.noneText = text
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.andText').subscribe(
+            text => {
+                this.andText = text
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.orText').subscribe(
+            text => {
+                this.orText = text
+            }
+        )
+    }
 
     onFieldNameSelected(filterOption: ExtendedFilterOption) {
         _.forEach(this.filters, (element) => {
@@ -79,18 +99,18 @@ export class AdvancedFilterDialogComponent implements OnInit {
         switch (fieldType) {
             case FieldValueType.Text:
                 return [
-                    { name: 'Contains', value: FilterOperator.Contains },
-                    { name: 'Equal', value: FilterOperator.Equal }
+                    { name: this.containsText, value: FilterOperator.Contains },
+                    { name: this.equalText, value: FilterOperator.Equal }
                 ]
             case FieldValueType.Checkbox:
             case FieldValueType.Slide:
             case FieldValueType.Select:
                 return [
-                    { name: 'Equal', value: FilterOperator.Equal }
+                    { name: this.equalText , value: FilterOperator.Equal }
                 ]
             case FieldValueType.Number:
                 return [
-                    { name: 'Equal', value: FilterOperator.Equal },
+                    { name: this.equalText, value: FilterOperator.Equal },
                     { name: '>', value: FilterOperator.Great },
                     { name: '<', value: FilterOperator.Less },
                     { name: '>=', value: FilterOperator.Greater },
@@ -102,7 +122,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
                     { name: '<', value: FilterOperator.Less },
                     { name: '>=', value: FilterOperator.Greater },
                     { name: '<=', value: FilterOperator.Lesser },
-                    { name: 'Equal', value: FilterOperator.Equal }
+                    { name: this.equalText, value: FilterOperator.Equal }
                 ]
         }
     }

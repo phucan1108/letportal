@@ -7,6 +7,7 @@ import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-u
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { SecurityService } from 'app/core/security/security.service';
 import { PageService } from 'services/page.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-backup-restore',
@@ -39,7 +40,8 @@ export class BackupRestorePage implements OnInit {
         private logger: NGXLogger,
         private backupClient: BackupsClient,
         private shortcutUtil: ShortcutUtil,
-        private security: SecurityService
+        private security: SecurityService,
+        private translate: TranslateService
     ) { }
 
     ngOnInit(): void {
@@ -79,7 +81,7 @@ export class BackupRestorePage implements OnInit {
                     requestor: this.security.getAuthUser().username
                 }).subscribe(
                     res => {
-                        this.shortcutUtil.toastMessage('Restore successfully!', ToastType.Success)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.restoreSuccessfully'), ToastType.Success)
                     }
                 )
             }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Shared;
 using MongoDB.Driver;
 
@@ -25,6 +26,27 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneList);
         }
 
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        {
+            var allDynamicLists = await GetAllAsync(isRequiredDiscriminator: true);
+
+            var languages = new List<LanguageKey>();
+
+            foreach (var dynamicList in allDynamicLists)
+            {
+                languages.AddRange(GetDynamicListLanguages(dynamicList));
+            }
+
+            return languages;
+        }
+
+        public async Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string dynamicListId)
+        {
+            var dynamicList = await GetOneAsync(dynamicListId);
+
+            return GetDynamicListLanguages(dynamicList);
+        }
+
         public Task<IEnumerable<ShortEntityModel>> GetShortDynamicLists(string keyWord = null)
         {
             if (!string.IsNullOrEmpty(keyWord))
@@ -35,6 +57,88 @@ namespace LetPortal.Portal.Repositories.Components
                 return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
             }
             return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+        }
+
+        private IEnumerable<LanguageKey> GetDynamicListLanguages(DynamicList dynamicList)
+        {
+            var langauges = new List<LanguageKey>();
+
+            var dynamicListName = new LanguageKey
+            {
+                Key = $"dynamicLists.{dynamicList.Name}.options.displayName",
+                Value = dynamicList.DisplayName
+            };
+
+            langauges.Add(dynamicListName);
+
+            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumndDefs != null && dynamicList.ColumnsList.ColumndDefs.Count > 0)
+            {
+
+                foreach (var column in dynamicList.ColumnsList.ColumndDefs)
+                {
+                    if (!column.IsHidden)
+                    {
+                        var columnName = new LanguageKey
+                        {
+                            Key = $"dynamicLists.{dynamicList.Name}.cols.{column.Name}.displayName",
+                            Value = column.DisplayName
+                        };
+
+                        langauges.Add(columnName);
+                    }
+                }
+            }
+
+            if (dynamicList.CommandsList != null && dynamicList.CommandsList.CommandButtonsInList != null)
+            {
+                foreach (var command in dynamicList.CommandsList.CommandButtonsInList)
+                {
+                    var commandName = new LanguageKey
+                    {
+                        Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.displayName",
+                        Value = command.DisplayName
+                    };
+
+                    langauges.Add(commandName);
+
+                    switch (command.ActionCommandOptions.ActionType)
+                    {
+                        case ActionType.Redirect:
+                            break;
+                        case ActionType.ExecuteDatabase:
+                        case ActionType.CallHttpService:
+                        default:
+                            if (command.ActionCommandOptions.ConfirmationOptions != null)
+                            {
+                                var confirmationText = new LanguageKey
+                                {
+                                    Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.confirmation.text",
+                                    Value = command.ActionCommandOptions.ConfirmationOptions.ConfirmationText
+                                };
+                                langauges.Add(confirmationText);
+                            }
+
+                            if (command.ActionCommandOptions.NotificationOptions != null)
+                            {
+                                var notificationSuccess = new LanguageKey
+                                {
+                                    Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.notification.success",
+                                    Value = command.ActionCommandOptions.NotificationOptions.CompleteMessage
+                                };
+                                var notificationFailed = new LanguageKey
+                                {
+                                    Key = $"dynamicLists.{dynamicList.Name}.commands.{command.Name}.notification.failed",
+                                    Value = command.ActionCommandOptions.NotificationOptions.FailedMessage
+                                };
+                                langauges.Add(notificationSuccess);
+                                langauges.Add(notificationFailed);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            return langauges;
         }
     }
 }

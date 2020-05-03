@@ -1,19 +1,25 @@
-<h3 mat-dialog-title>Page Button</h3>
+<h3 mat-dialog-title>
+    {{ 'pageBuilder.buttonDialog.header' | translate }}
+</h3>
 <mat-dialog-content>
     <form class="dialog-width" [formGroup]="actionCommandForm" (ngSubmit)="onSubmittingCommand()">
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Button Name</label>
+            <label class="col-lg-2 col-form-label">
+                {{ 'pageBuilder.buttonDialog.buttonName' | translate }}
+            </label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Enter Button Name" formControlName="name" />
+                    <input matInput placeholder="{{ 'pageBuilder.buttonDialog.buttonName.placeholder' | translate }}" formControlName="name" />
                 </mat-form-field>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Place Section</label>
+            <label class="col-lg-2 col-form-label">
+                {{ 'pageBuilder.buttonDialog.placeSection' | translate }}
+            </label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
-                    <mat-select placeholder="Pick one section" formControlName="placeSectionId">
+                    <mat-select placeholder="{{ 'pageBuilder.buttonDialog.placeSection.placeholder' | translate }}" formControlName="placeSectionId">
                         <mat-option *ngFor="let section of sections" [value]="section.id">
                             {{section.displayName}}
                         </mat-option>
@@ -22,10 +28,12 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Color</label>
+            <label class="col-lg-2 col-form-label">
+                {{ 'pageBuilder.buttonDialog.color' | translate }}
+            </label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
-                    <mat-select placeholder="Pick one color" formControlName="color">
+                    <mat-select placeholder="{{ 'pageBuilder.buttonDialog.color.placeholder' | translate }}" formControlName="color">
                         <mat-option *ngFor="let color of _colors" [value]="color.value">
                             {{ color.name }}
                         </mat-option>
@@ -34,10 +42,10 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Icon</label>
+            <label class="col-lg-2 col-form-label">{{ 'common.icon' | translate }}</label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Icon" aria-label="Icon" [matAutocomplete]="autoIcon"
+                    <input matInput placeholder="{{ 'common.icon' | translate }}" aria-label="Icon" [matAutocomplete]="autoIcon"
                         formControlName="icon">
                     <mat-autocomplete #autoIcon="matAutocomplete">
                         <mat-option *ngFor="let _icon of iconFilterOptions | async" [value]="_icon">
@@ -48,17 +56,17 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Hidden**</label>
+            <label class="col-lg-2 col-form-label">{{ 'common.isHidden' | translate }}**</label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Enter hidden expression **" formControlName="allowHidden" />
-                    <mat-icon matSuffix matTooltip="This expression must be equal true/false. Ex: !!queryparams.id">
+                    <input matInput placeholder="{{ 'pageBuilder.buttonDialog.hidden.placeholder' | translate }}" formControlName="allowHidden" />
+                    <mat-icon matSuffix matTooltip="{{ 'pageBuilder.buttonDialog.hidden.tootlip' | translate }}">
                         help_outline</mat-icon>
                 </mat-form-field>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Required Validation</label>
+            <label class="col-lg-2 col-form-label">{{ 'pageBuilder.buttonDialog.requiredValidation' | translate }}</label>
             <div class="col-lg-6">
                 <mat-slide-toggle formControlName="isRequiredValidation" name="isRequiredValidation">
                 </mat-slide-toggle>
@@ -67,6 +75,10 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
-    <button mat-button (click)="onSubmittingCommand()" color="primary">Save</button>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="onSubmittingCommand()" color="primary">
+        {{ 'common.saveButton' | translate }}
+    </button>
 </mat-dialog-actions>

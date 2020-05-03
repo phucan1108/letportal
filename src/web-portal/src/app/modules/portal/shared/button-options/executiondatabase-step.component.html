@@ -1,12 +1,12 @@
 <form [formGroup]="databaseOptionsForm">
     <div class="row row-heading">
-        <h3>Execute Database Info:</h3>
+        <h3>{{ 'shared.executeDatabase.executeDatabaseInfo' | translate }}:</h3>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Database</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.database' | translate }}</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <mat-select placeholder="Pick one connection" formControlName="databaseConnectionId">
+                <mat-select placeholder="{{ 'common.connectionPlaceholder' | translate }}" formControlName="databaseConnectionId">
                     <mat-option *ngFor="let database of databaseConnections" [value]="database.id">
                         {{ database.displayName }}
                     </mat-option>
@@ -15,24 +15,36 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Data Loop Key</label>
+        <label class="col-lg-2 col-form-label">
+            {{ 'common.dataLoopKey' | translate }}
+        </label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <input formControlName="dataLoopKey" matInput #dataLoopKeyInput maxlength="250">
                 <mat-hint align="end">{{dataLoopKeyInput.value?.length || 0}}/250</mat-hint>
-                <mat-icon matSuffix matTooltip="Data loop key will help to indicate a step requires array data. Default: null">
+                <mat-icon matSuffix matTooltip="{{ 'shared.executeDatabase.loopKey.tooltip' | translate }}">
                     help_outline</mat-icon>
             </mat-form-field>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-lg-2 col-form-label">Hint</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.hintText' | translate }}</label>
         <div class="col-lg-10 pt-2">
-            <button mat-button (click)="openQueryHint()" color="primary">Query</button>
-            <button mat-button (click)="openInsertHint()" color="primary">Insert</button>
-            <button mat-button (click)="openUpdateHint()" color="primary">Update</button>
-            <button mat-button (click)="openUpdatePartsHint()" color="primary">Update Parts</button>
-            <button mat-button (click)="openDeleteHint()" color="primary">Delete</button>
+            <button mat-button (click)="openQueryHint()" color="primary">
+                {{ 'common.query' | translate }}
+            </button>
+            <button mat-button (click)="openInsertHint()" color="primary">
+                {{ 'common.insert' | translate }}
+            </button>
+            <button mat-button (click)="openUpdateHint()" color="primary">
+                {{ 'common.update' | translate }}
+            </button>
+            <button mat-button (click)="openUpdatePartsHint()" color="primary">
+                {{ 'common.updateParts' | translate }}
+            </button>
+            <button mat-button (click)="openDeleteHint()" color="primary">
+                {{ 'common.deleteText' | translate }}
+            </button>
         </div>
     </div>
     <div class="form-group row" *ngIf="isHintClicked">
@@ -46,7 +58,9 @@
     </div>
     <div class="form-group row"
         *ngIf="ismongodb && isReadyToRender && databaseOptionsForm.get('databaseConnectionId').value">
-        <label class="col-lg-2 col-form-label">Execute Command</label>
+        <label class="col-lg-2 col-form-label">
+            {{ 'shared.executeDatabase.executeCommand' | translate }}
+        </label>
         <div class="col-lg-10">
             <mat-form-field class="field-full-width">
                 <json-editor #jsonDataEditor [options]="editorOptions3" [data]="jsonData">
@@ -58,7 +72,8 @@
     </div>
     <div class="form-group row"
         *ngIf="!ismongodb && isReadyToRender && databaseOptionsForm.get('databaseConnectionId').value">
-        <label class="col-lg-2 col-form-label">Execute SQL:</label>
+        <label class="col-lg-2 col-form-label">
+            {{ 'shared.executeDatabase.executeSql' | translate}}:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <textarea formControlName="query" matInput rows="10"></textarea>

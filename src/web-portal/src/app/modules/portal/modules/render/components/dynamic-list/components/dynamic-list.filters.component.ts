@@ -9,6 +9,9 @@ import { DatasourceCache } from '../models/commandClicked';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import { PageService } from 'services/page.service';
+import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Component({
@@ -21,6 +24,7 @@ export class DynamicListFiltersComponent implements OnInit {
         private datasourceOptsService: DatasourceOptionsService,
         private breakpointObserver: BreakpointObserver,
         public dialog: MatDialog,
+        private translate: TranslateService,
         private logger: NGXLogger) {
             this.breakpointObserver.observe([
                 Breakpoints.HandsetPortrait,
@@ -63,24 +67,36 @@ export class DynamicListFiltersComponent implements OnInit {
 
     isOpeningAdvancedMode = false;
 
-    _operators = [
-        { name: 'Contains', value: FilterOperator.Contains },
-        { name: 'Equal', value: FilterOperator.Equal },
-        { name: '>', value: FilterOperator.Great },
-        { name: '<', value: FilterOperator.Less },
-        { name: '>=', value: FilterOperator.Greater },
-        { name: '<=', value: FilterOperator.Lesser }
-    ]
+    _operators = function(){
+        return [
+            { name: this.containsText, value: FilterOperator.Contains },
+            { name: this.equalText, value: FilterOperator.Equal },
+            { name: '>', value: FilterOperator.Great },
+            { name: '<', value: FilterOperator.Less },
+            { name: '>=', value: FilterOperator.Greater },
+            { name: '<=', value: FilterOperator.Lesser }
+        ]
+    } 
 
-    _combineOperators = [
-        { name: 'None', value: FilterChainOperator.None },
-        { name: 'And', value: FilterChainOperator.And },
-        { name: 'Or', value: FilterChainOperator.Or }
-    ]
+    combineOperators$: BehaviorSubject<any[]> = new BehaviorSubject([])
+
+    _combineOperators = function() {
+        return [
+            { name: this.noneText, value: FilterChainOperator.None },
+            { name: this.andText, value: FilterChainOperator.And },
+            { name: this.orText, value: FilterChainOperator.Or }
+        ]
+    } 
 
     filterChainOperatorType = FilterChainOperator
     isSmallDevice = false
     fieldValueType = FieldValueType
+
+    containsText = 'Contains'
+    equalText = 'Equal'
+    noneText = 'None'
+    andText = 'And'
+    orText = 'Or'
 
     @HostListener('window:keydown.enter',  ['$event'])
     handleEnterPress(event: KeyboardEvent){
@@ -89,6 +105,34 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.translate.get('pageRender.dynamicList.advancedFilter.containsText').subscribe(
+            text => {
+                this.containsText = text
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.equalText').subscribe(
+            text => {
+                this.equalText = text
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.noneText').subscribe(
+            text => {
+                this.noneText = text
+                this.combineOperators$.next(this._combineOperators())
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.andText').subscribe(
+            text => {
+                this.andText = text
+                this.combineOperators$.next(this._combineOperators())
+            }
+        )
+        this.translate.get('pageRender.dynamicList.advancedFilter.orText').subscribe(
+            text => {
+                this.orText = text
+                this.combineOperators$.next(this._combineOperators())
+            }
+        )
         this.filters = _.filter(this.filters, (element: ExtendedRenderFilterField) => {
             return element.allowInAdvancedMode;
         })
@@ -116,7 +160,6 @@ export class DynamicListFiltersComponent implements OnInit {
 
     combineFilledParameters() {
         const filledParameters: Array<FilledParameter> = [];
-
         return filledParameters;
     }
 
@@ -249,7 +292,7 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     translateOperator(operator) {
-        return _.find(this._operators, opt => opt.value === operator).name
+        return _.find(this._operators(), opt => opt.value === operator).name
     }
 
     translateHeader(fieldName) {
@@ -257,7 +300,7 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     translateChainOperator(chainOperator) {
-        return _.find(this._combineOperators, opt => opt.value === chainOperator).name
+        return _.find(this._combineOperators(), opt => opt.value === chainOperator).name
     }
 
     translateFieldValue(filterOption: ExtendedFilterOption, fieldValue) {
@@ -268,8 +311,7 @@ export class DynamicListFiltersComponent implements OnInit {
         return fieldValue
     }
 
-    addFilterAnd(filterOption: ExtendedFilterOption) {
-        filterOption.filterChainOperator = FilterChainOperator.And
+    addFilterAnd(filterOption: ExtendedFilterOption) {        
         const dialogRef = this.dialog.open(AdvancedFilterDialogComponent, {
             data: {
                 filterOption: {
@@ -286,14 +328,14 @@ export class DynamicListFiltersComponent implements OnInit {
         })
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                filterOption.filterChainOperator = FilterChainOperator.And
                 this.filterOptions.push(result)
                 this.cd.markForCheck()
             }
         })
     }
 
-    addFilterOr(filterOption: ExtendedFilterOption) {
-        filterOption.filterChainOperator = FilterChainOperator.Or
+    addFilterOr(filterOption: ExtendedFilterOption) {        
         const dialogRef = this.dialog.open(AdvancedFilterDialogComponent, {
             data: {
                 filterOption: {
@@ -310,6 +352,7 @@ export class DynamicListFiltersComponent implements OnInit {
         })
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                filterOption.filterChainOperator = FilterChainOperator.Or
                 this.filterOptions.push(result)
                 this.cd.markForCheck()
             }
@@ -342,18 +385,18 @@ export class DynamicListFiltersComponent implements OnInit {
         switch (fieldType) {
             case FieldValueType.Text:
                 return [
-                    { name: 'Contains', value: FilterOperator.Contains },
-                    { name: 'Equal', value: FilterOperator.Equal }
+                    { name: this.containsText, value: FilterOperator.Contains },
+                    { name: this.equalText, value: FilterOperator.Equal }
                 ]
             case FieldValueType.Checkbox:
             case FieldValueType.Slide:
             case FieldValueType.Select:
                 return [
-                    { name: 'Equal', value: FilterOperator.Equal }
+                    { name: this.equalText, value: FilterOperator.Equal }
                 ]
             case FieldValueType.Number:
                 return [
-                    { name: 'Equal', value: FilterOperator.Equal },
+                    { name: this.equalText, value: FilterOperator.Equal },
                     { name: '>', value: FilterOperator.Great },
                     { name: '<', value: FilterOperator.Less },
                     { name: '>=', value: FilterOperator.Greater },
@@ -361,7 +404,7 @@ export class DynamicListFiltersComponent implements OnInit {
                 ]
             case FieldValueType.DatePicker:
                 return [
-                    { name: 'Equal', value: FilterOperator.Equal },
+                    { name: this.equalText, value: FilterOperator.Equal },
                     { name: '>', value: FilterOperator.Great },
                     { name: '<', value: FilterOperator.Less },
                     { name: '>=', value: FilterOperator.Greater },

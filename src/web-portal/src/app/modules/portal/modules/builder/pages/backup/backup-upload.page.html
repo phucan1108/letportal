@@ -2,24 +2,25 @@
     <mat-card>
         <mat-card-header>
             <mat-card-title>
-                Restore Backup
+                {{ 'pageBuilder.page.backupUpload.header' | translate }}
                 <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                    <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
             <div class="row row-heading">
-                <h3>Upload File</h3>
+                <h3>{{ 'common.uploadFile' | translate }}</h3>
             </div>
             <div [formGroup]="form" class="row">
-                <label class="col-lg-2 col-form-label">Select one file</label>
+                <label class="col-lg-2 col-form-label">{{ 'common.selectOneFile' | translate }}</label>
                 <div class="col-lg-6 pt-2">
-                    <button mat-stroked-button color="primary" class="float-left" [disabled]="disabled">Choose
-                        File</button>
+                    <button mat-stroked-button color="primary" class="float-left" [disabled]="disabled">
+                        {{ 'common.chooseFile' | translate }}
+                    </button>
                     <input class="file-input" type="file" #fileInput (change)="onFileChange($event)"
                         [disabled]="disabled">
 
@@ -42,7 +43,7 @@
                             </mat-form-field>
                         </div>
                         <div class="col-lg-3 offset-lg-2" *ngIf="hasSelectedFile && form.get(uploadFormName).valid">
-                            Chosen file: {{selectedFile.name}} - {{selectedFile.size}} bytes
+                            {{ 'common.chosenFile' | translate }}: {{selectedFile.name}} - {{selectedFile.size}} bytes
                         </div>
                     </div>
                 </div>

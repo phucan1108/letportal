@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Pages;
+using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Pages;
 
 namespace LetPortal.Portal.Providers.Pages
@@ -15,5 +16,7 @@ namespace LetPortal.Portal.Providers.Pages
         Task<List<ShortPageModel>> GetAllPages();
 
         Task ForceUpdatePages(IEnumerable<Page> pages);
+
+        Task<IEnumerable<LanguageKey>> GetPageLanguages(string pageId);
     }
 }

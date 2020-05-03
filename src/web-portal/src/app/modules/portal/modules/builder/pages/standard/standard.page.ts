@@ -14,6 +14,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { StandardOptions } from 'portal/modules/models/standard.extended.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-standard-page',
@@ -33,6 +34,7 @@ export class StandardPagePage implements OnInit {
 
     _layoutTypes = StaticResources.sectionLayoutTypes()
     constructor(
+        private translate: TranslateService,
         private fb: FormBuilder,
         private activatedRoute: ActivatedRoute,
         private router: Router,
@@ -140,7 +142,7 @@ export class StandardPagePage implements OnInit {
             if (!this.isEditMode) {
                 this.standardsClient.createOne(this.standardComponent).subscribe(
                     result => {
-                        this.shortcutUtil.toastMessage('Create standard successfully', ToastType.Success)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.createSuccessfully'), ToastType.Success)
                         this.router.navigateByUrl('portal/page/standard-list-management')
                     },
                     err => {
@@ -151,7 +153,7 @@ export class StandardPagePage implements OnInit {
             else {
                 this.standardsClient.updateOne(this.standardComponent.id, this.standardComponent).subscribe(
                     result => {
-                        this.shortcutUtil.toastMessage('Update standard successfully', ToastType.Success)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
                     },
                     err => {
 

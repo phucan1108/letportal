@@ -1,21 +1,21 @@
 <div class="grid-container">
     <div class="row">
         <div class="col-lg-12 pb-2">
-            <h4>{{app.displayName}} App</h4>
+            <h4>{{app.displayName}} {{ 'common.app' | translate }}</h4>
             <button mat-icon-button class="more-button revert-button" [matMenuTriggerFor]="menu"
                 aria-label="Toggle menu">
                 <mat-icon>more_horiz</mat-icon>
             </button>
             <mat-menu #menu="matMenu" xPosition="before">
-                <button mat-menu-item (click)="saveChange()">Save</button>
-                <button mat-menu-item (click)="backToAppList()">Cancel</button>
+                <button mat-menu-item (click)="saveChange()">{{ 'common.saveButton' | translate }}</button>
+                <button mat-menu-item (click)="backToAppList()">{{ 'common.cancelButton' | translate }}</button>
             </mat-menu>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <mat-label>Select one role</mat-label>
+                <mat-label>{{ 'pageBuilder.page.menuProfiles.selectRole' | translate }}</mat-label>
                 <mat-select [(value)]="selectedRole" (selectionChange)="onRoleChange()">
                     <mat-option *ngFor="let role of roles" [value]="role.name">
                         {{ role.name }}
@@ -30,7 +30,7 @@
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>
-                        Menu
+                        {{ 'common.menu' | translate }}
                     </mat-card-title>
                 </mat-card-header>
                 <mat-card-content class="align-center">

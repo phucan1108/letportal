@@ -43,9 +43,9 @@
         </ng-container>
 
         <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>{{ 'pageRender.dynamicList.grid.actionsColumn' | translate }}</mat-header-cell>
             <mat-cell *matCellDef="let data">
-                <span class="handset-label">Actions</span>
+                <span class="handset-label">{{ 'pageRender.dynamicList.grid.actionsColumn' | translate }}</span>
                 <span class="handset-action">
                     <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu">
                         <mat-icon>add_box</mat-icon>
@@ -59,7 +59,7 @@
                     </mat-menu>
                 </span>
                 <span class="desktop-action">
-                    <button mat-icon-button matTooltip="More data..." (click)="openDialogDataForButton(data)"
+                    <button mat-icon-button matTooltip="{{ 'pageRender.dynamicList.filters.moreData.tooltip' | translate }}" (click)="openDialogDataForButton(data)"
                         *ngIf="hasDetailCols">
                         <mat-icon>more_horiz</mat-icon>
                     </button>
@@ -76,14 +76,14 @@
         <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
     </mat-table>
 </div>
-<div class="align-center" *ngIf="readyToRender && totalItems == 0 && !isAlreadyFetchedTotal">No records found</div>
+<div class="align-center" *ngIf="readyToRender && totalItems == 0 && !isAlreadyFetchedTotal">{{ 'pageRender.dynamicList.grid.norecord' | translate }}</div>
 <!-- Message for empty data  -->
 
 <div>
     <mat-spinner [diameter]="20" *ngIf="loading$ | async"></mat-spinner>
     <mat-paginator [pageSize]="listOptions.defaultPageSize" [pageSizeOptions]="listOptions.sizeOptions"
         [length]="totalItems" [hidePageSize]="false" [showFirstLastButtons]="false"
-        *ngIf="listOptions.enablePagination"></mat-paginator>
+        *ngIf="listOptions.enablePagination" itemsPerPageLabel="{{ 'common.itemsPerPage' | translate }}"></mat-paginator>
 </div>
 
 <ng-template #loading>

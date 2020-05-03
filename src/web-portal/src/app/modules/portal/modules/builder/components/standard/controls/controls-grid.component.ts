@@ -23,6 +23,7 @@ import { AsyncValidatorDialogComponent } from './control-async-validator.dialog.
 import { EventsProvider } from 'app/core/events/event.provider';
 import { MatTable } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-controls-grid',
@@ -63,6 +64,7 @@ export class ControlsGridComponent implements OnInit {
     isEditControl = false
     isHandset = false
     constructor(
+        private translate: TranslateService,
         private eventsProvider: EventsProvider,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
@@ -338,7 +340,7 @@ export class ControlsGridComponent implements OnInit {
         this.controls = _.filter(this.controls, (elem) => {
             return elem.id !== control.id
         })
-        this.shortcutUtil.toastMessage('Delete control successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
         this.refreshControlTable()
     }
 

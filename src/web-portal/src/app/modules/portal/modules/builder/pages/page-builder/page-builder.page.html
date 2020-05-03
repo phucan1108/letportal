@@ -2,13 +2,13 @@
     <mat-card>
         <mat-card-header>
             <mat-card-title>
-                Page Builder
+                {{ 'pageBuilder.page.pageBuilder.header' | translate }}
                 <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="saveChanges()">Save</button>
-                    <button mat-menu-item (click)="cancel()">Cancel</button>
+                    <button mat-menu-item (click)="saveChanges()">{{ 'common.saveButton' | translate }}</button>
+                    <button mat-menu-item (click)="cancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
@@ -20,19 +20,21 @@
                 <mat-step label="Page Options" [stepControl]="pageInfoFormGroup" errorMessage="Page info is required">
                     <div class="row">
                         <div class="col-lg-12">
-                            <button matStepperNext mat-raised-button color="primary" [disabled]="pageInfoFormGroup.invalid">Next</button>
+                            <button matStepperNext mat-raised-button color="primary" [disabled]="pageInfoFormGroup.invalid">
+                                {{ 'common.nextText' | translate }}
+                            </button>
                         </div>
                     </div>
                     <let-page-info [(pageInfoFormGroup)]="pageInfoFormGroup" [heading]="heading" [isEditMode]="isEditMode"></let-page-info>
                     <div class="separator-dashed"></div>
                     <div class="row row-heading">
-                        <h3>Options:</h3>
+                        <h3>{{ 'common.options' | translate}}:</h3>
                     </div>
                     <let-shell-option [shellOptions$]="shellOptions$" (changed)="onChangingOptions($event)">
                     </let-shell-option>
                     <div class="separator-dashed"></div>
                     <div class="row row-heading">
-                        <h3>Claims:</h3>
+                        <h3>{{ 'common.claims' | translate }}:</h3>
                     </div>
                     <let-claim-table [(claims)]="claims" style="width: 100%;"></let-claim-table>
                 </mat-step>
@@ -40,9 +42,9 @@
                 <mat-step label="Sections">
                     <div class="row">
                         <div class="col-md-12 button-wrapper">
-                            <button matStepperPrevious mat-raised-button>Previous</button>
+                            <button matStepperPrevious mat-raised-button>{{ 'common.previous' | translate }}</button>
                             <button matStepperNext mat-raised-button color="primary"
-                                (click)="nextToDatasource()">Next</button>
+                                (click)="nextToDatasource()">{{ 'common.nextText' | translate }}</button>
                         </div>
                         <div class="col-md-12">
 
@@ -61,9 +63,9 @@
                 <mat-step label="Datasources">
                     <div class="row">
                         <div class="col-md-12 button-wrapper">
-                            <button matStepperPrevious mat-raised-button>Previous</button>
+                            <button matStepperPrevious mat-raised-button>{{ 'common.previous' | translate }}</button>
                             <button matStepperNext mat-raised-button color="primary"
-                                (click)="nextToWorkflow()">Next</button>
+                                (click)="nextToWorkflow()">{{ 'common.nextText' | translate }}</button>
                         </div>
                         <div class="col-md-12">
                         </div>
@@ -76,7 +78,9 @@
                 <mat-step label="Events">
                     <div class="row">
                         <div class="col-md-12 button-wrapper">
-                            <button matStepperPrevious mat-raised-button>Previous</button>
+                            <button matStepperPrevious mat-raised-button>
+                                {{ 'common.previous' | translate }}
+                            </button>
                         </div>
                         <div class="col-md-12">
                         </div>

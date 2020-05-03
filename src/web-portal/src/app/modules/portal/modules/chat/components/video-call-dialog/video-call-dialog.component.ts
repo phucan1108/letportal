@@ -16,6 +16,7 @@ import { heartBeatAnimation } from 'angular-animations';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'let-video-call-dialog',
     templateUrl: './video-call-dialog.component.html',
@@ -59,7 +60,8 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
         private store: Store,
         private logger: NGXLogger,
         private shortcutUtil: ShortcutUtil,
-        private breakpointObserver: BreakpointObserver
+        private breakpointObserver: BreakpointObserver,        
+        private translate: TranslateService
     ) {
         this.breakpointObserver.observe([
             Breakpoints.Handset,
@@ -93,7 +95,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                     this.maximumDialingTime--
                 }
                 else if (this.maximumDialingTime === 0) {
-                    this.shortcutUtil.toastMessage('User is unreachable', ToastType.Warning)
+                    this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.userUnreachable'), ToastType.Warning)
                     clearInterval(this.animationInterval)
                 }
             }, 1000)
@@ -144,7 +146,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                 () => {
                     clearInterval(this.animationInterval)
                     if (this.allowDisplayToastError) {
-                        this.shortcutUtil.toastMessage('User rejected a call', ToastType.Warning)
+                        this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.rejectedCall'), ToastType.Warning)
                     }
                     this.store.dispatch(new DroppedCall())
                     this.dialogRef.close()
@@ -179,7 +181,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                 () => {
                     // Caller is cancelled a call when he is dialing
                     // So we drop the call as well  
-                    this.shortcutUtil.toastMessage('User ended a call', ToastType.Warning)
+                    this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.userEndCall'), ToastType.Warning)
                     this.store.dispatch(new DroppedCall())
                     this.dialogRef.close()
                 }

@@ -3,25 +3,27 @@
     <div class="col-lg-12">
         <div class="row">
             <div class="col-lg-12">
-                <button mat-raised-button color="primary" (click)="addShell()">Add Option</button>
+                <button mat-raised-button color="primary" (click)="addShell()">
+                    {{ 'shared.shelloptions.buttons.add' | translate }}
+                </button>
             </div>
             <div class="col-lg-12 pt-3">
                 <m-table [(value)]="shellOptions" #mtable [selectable]="false" [selectionHandler]="false"
                     (onEditComplete)="editComplete($event)">
-                    <m-column field="description" header="Hint">
+                    <m-column field="description" header="{{ 'common.hintText' | translate }}">
                         <ng-template let-col let-row="row" mTemplate="body">
                             <mat-icon *ngIf="!!row.description" [matTooltip]="row.description"
                                 matTooltipPosition="right" color="primary" style="cursor: pointer;">help_outline
                             </mat-icon>
                         </ng-template>
                     </m-column>
-                    <m-column field="key" header="Key">
+                    <m-column field="key" header="{{ 'common.keyText' | translate }}">
                     </m-column>
-                    <m-column field="value" header="Value" editable="true">
+                    <m-column field="value" header="{{ 'common.valueText' | translate }}" editable="true">
                     </m-column>
-                    <m-column field="value" header="Actions">
+                    <m-column field="value" header="{{ 'common.actionsText' | translate }}">
                         <ng-template let-col let-row="row" mTemplate="body">
-                            <button mat-icon-button color="warn" type="button" matTooltip="Delete Shell"
+                            <button mat-icon-button color="warn" type="button" matTooltip="{{ 'shared.shelloptions.buttons.delete.tooltip' | translate }}"
                                 (click)="deleteShell(row)" *ngIf="allowDeleteShell(row)">
                                 <mat-icon>delete</mat-icon>
                             </button>
@@ -29,7 +31,7 @@
                     </m-column>
                     <ng-template mTemplate="emptyTable">
                         <div class="align-center">
-                            No records
+                            {{ 'common.noRecordsText' | translate}}
                         </div>
                     </ng-template>
                 </m-table>

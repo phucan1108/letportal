@@ -6,6 +6,7 @@ import { DatabaseConnection, DatabasesClient, DatabaseOptions } from 'services/p
 import { ClipboardService } from 'ngx-clipboard';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-databaseoptions',
@@ -33,6 +34,7 @@ export class DatabaseOptionsComponent implements OnInit {
     isHintClicked = false
 
     constructor(
+        private translate: TranslateService,
         private fb: FormBuilder,
         private databaseClient: DatabasesClient,
         private clipboardService: ClipboardService,
@@ -134,7 +136,7 @@ export class DatabaseOptionsComponent implements OnInit {
     }
 
     copy(){
-        this.shortcutUtil.toastMessage('Copied content', ToastType.Info)
+        this.shortcutUtil.toastMessage(this.translate.instant('common.copiedContent'), ToastType.Info)
         this.clipboardService.copyFromContent(this.hintText)
     }
 

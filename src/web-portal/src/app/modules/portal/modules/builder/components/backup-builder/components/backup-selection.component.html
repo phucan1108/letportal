@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-12 pl-4 pr-4">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Search..."
+                    <input matInput placeholder="{{ 'pageBuilder.backup.searchBox.placeholder' | translate }}"
                         (input)="filter($event.target.value)">
                     <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>
@@ -40,7 +40,7 @@
     </div>
     <div class="col-lg-6">
         <mat-list role="list">
-            <h3 mat-subheader>Selected {{name}}</h3>
+            <h3 mat-subheader>{{ 'pageBuilder.backup.selectedText' | translate }} {{name}}</h3>
             <mat-list-item role="listitem" *ngFor="let entity of selectedEntities$ | async">
                 <mat-icon mat-list-icon>{{icon}}</mat-icon>
                 {{entity.displayName}}

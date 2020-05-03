@@ -161,13 +161,13 @@ namespace LetPortal.Core.Persistences
         {
             if (expression != null)
             {
-                var entities = _context.Set<T>().Where(expression);
+                var entities = _context.Set<T>().AsNoTracking().Where(expression);
                 return Task.FromResult(entities.AsEnumerable());
             }
             else
             {
                 var entities = _context.Set<T>();
-                return Task.FromResult(entities.AsEnumerable());
+                return Task.FromResult(entities.AsNoTracking().AsEnumerable());
             }
         }
 
@@ -193,7 +193,7 @@ namespace LetPortal.Core.Persistences
             return _context.Set<T>().AsNoTracking();
         }
 
-        public Task<T> GetOneAsync(string id)
+        public virtual Task<T> GetOneAsync(string id)
         {
             return Task.FromResult(_context.Set<T>().First(a => a.Id == id));
         }

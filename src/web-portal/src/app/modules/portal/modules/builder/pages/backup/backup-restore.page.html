@@ -7,52 +7,52 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="onRestore()">Restore</button>
-                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                    <button mat-menu-item (click)="onRestore()">{{ 'common.restore' | translate }}</button>
+                    <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
             <div class="row row-heading">
-                <h3>Backup Info</h3>
+                <h3>{{ 'pageBuilder.page.backupRestore.backupInfo' | translate }}</h3>
             </div>
             <div class="row">
-                <label class="col-lg-2 col-form-label font-weight-bold">Name</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.nameText' | translate }}</label>
                 <p class="float-left col-form-label">{{backup.name}}</p>
             </div>
             <div class="row">
-                <label class="col-lg-2 col-form-label font-weight-bold">Description</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.description' | translate }}</label>
                 <p class="float-left col-form-label">{{backup.description}}</p>
             </div>
             <div class="row">
-                <label class="col-lg-2 col-form-label font-weight-bold">Creator</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.creator' | translate }}</label>
                 <p class="float-left col-form-label">{{backup.creator}}</p>
             </div>
             <div class="row">
-                <label class="col-lg-2 col-form-label font-weight-bold">Created Date</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.createdDate' | translate }}</label>
                 <p class="float-left col-form-label">{{getCreatedDate()}}</p>
             </div>
             <div class="separator-dashed"></div>
             <div class="row row-heading">
-                <h3>Preview list</h3>
+                <h3>{{ 'pageBuilder.page.backupRestore.previewList' | translate }}</h3>
             </div>
             <div class="row row-heading">
                 <mat-bar-button (btnClick)="onPreview()" [options]="btnOption"></mat-bar-button>
             </div>
             <div class="row" *ngIf="isPreviewed">
-                <label class="col-lg-2 col-form-label font-weight-bold">Total Objects</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalObjects' | translate }}</label>
                 <p class="float-left col-form-label">{{preview.totalObjects}}</p>
             </div>
             <div class="row" *ngIf="isPreviewed">
-                <label class="col-lg-2 col-form-label font-weight-bold">Total New Objects</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalNewObjects' | translate }}</label>
                 <p class="float-left col-form-label">{{preview.totalNewObjects}}</p>
             </div>
             <div class="row" *ngIf="isPreviewed">
-                <label class="col-lg-2 col-form-label font-weight-bold">Total Unchanged Objects</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalUnchangedObjects' | translate }}</label>
                 <p class="float-left col-form-label">{{preview.totalUnchangedObjects}}</p>
             </div>
             <div class="row" *ngIf="isPreviewed">
-                <label class="col-lg-2 col-form-label font-weight-bold">Total Changed Objects</label>
+                <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalChangedObjects' | translate }}</label>
                 <p class="float-left col-form-label">{{preview.totalChangedObjects}}</p>
             </div>
             <div class="row row-heading" *ngIf="isPreviewed">
@@ -61,18 +61,18 @@
                         <mat-expansion-panel *ngIf="preview.apps">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    Apps
+                                    {{ 'common.apps' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="row">
                                 <div class="col-lg-2 border-right">
-                                    <h5>Property Name</h5>
+                                    <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Source</h5>
+                                    <h5>{{ 'common.source' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Target</h5>
+                                    <h5>{{ 'common.target' | translate }}</h5>
                                 </div>
                             </div>
                             <div class="row" *ngFor="let app of preview.apps">
@@ -97,18 +97,18 @@
                         <mat-expansion-panel *ngIf="preview.databases">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    Databases
+                                    {{ 'common.databases' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="row">
                                 <div class="col-lg-2 border-right">
-                                    <h5>Property Name</h5>
+                                    <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Source</h5>
+                                    <h5>{{ 'common.source' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Target</h5>
+                                    <h5>{{ 'common.target' | translate }}</h5>
                                 </div>
                             </div>
                             <div class="row" *ngFor="let database of preview.databases">
@@ -133,18 +133,18 @@
                         <mat-expansion-panel *ngIf="preview.standards">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    Standards
+                                    {{ 'common.standards' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="row">
                                 <div class="col-lg-2 border-right">
-                                    <h5>Property Name</h5>
+                                    <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Source</h5>
+                                    <h5>{{ 'common.source' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Target</h5>
+                                    <h5>{{ 'common.target' | translate }}</h5>
                                 </div>
                             </div>
                             <div class="row" *ngFor="let standard of preview.standards">
@@ -169,18 +169,18 @@
                         <mat-expansion-panel *ngIf="preview.dynamicLists">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    Dynamic List
+                                    {{ 'common.dynamicList' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="row">
                                 <div class="col-lg-2 border-right">
-                                    <h5>Property Name</h5>
+                                    <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Source</h5>
+                                    <h5>{{ 'common.source' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Target</h5>
+                                    <h5>{{ 'common.target' | translate }}</h5>
                                 </div>
                             </div>
                             <div class="row" *ngFor="let dynamicList of preview.dynamicLists">
@@ -205,18 +205,18 @@
                         <mat-expansion-panel *ngIf="preview.charts">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    Charts
+                                    {{ 'common.charts' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="row">
                                 <div class="col-lg-2 border-right">
-                                    <h5>Property Name</h5>
+                                    <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Source</h5>
+                                    <h5>{{ 'common.source' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Target</h5>
+                                    <h5>{{ 'common.target' | translate }}</h5>
                                 </div>
                             </div>
                             <div class="row" *ngFor="let chart of preview.charts">
@@ -241,18 +241,18 @@
                         <mat-expansion-panel *ngIf="preview.pages">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    Pages
+                                    {{ 'common.pages' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="row">
                                 <div class="col-lg-2 border-right">
-                                    <h5>Property Name</h5>
+                                    <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Source</h5>
+                                    <h5>{{ 'common.source' | translate }}</h5>
                                 </div>
                                 <div class="col-lg-5">
-                                    <h5>Target</h5>
+                                    <h5>{{ 'common.target' | translate }}</h5>
                                 </div>
                             </div>
                             <div class="row" *ngFor="let page of preview.pages">

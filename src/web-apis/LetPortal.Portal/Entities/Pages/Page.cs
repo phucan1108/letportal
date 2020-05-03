@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Core.Security;
+using LetPortal.Portal.Entities.Localizations;
 
 namespace LetPortal.Portal.Entities.Pages
 {

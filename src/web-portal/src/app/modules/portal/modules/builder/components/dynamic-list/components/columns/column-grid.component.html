@@ -1,5 +1,5 @@
 <div class="row row-heading">
-    <h3>Columns Definition:</h3>
+    <h3>{{ 'pageBuilder.dynamicList.columnsGrid.header' | translate }}:</h3>
 </div>
 <div *ngIf="!isSmallDevice">
     <div cdkDropList (cdkDropListDropped)="onListDrop($event)" [cdkDropListData]="columnDefs">
@@ -8,16 +8,16 @@
             <div class="form-group row pt-2" cdkDrag [cdkDragData]="columnDef">
                 <div class="col-lg-3">
                     <mat-form-field class="field-full-width">
-                        <input [(ngModel)]="columnDef.displayName" matInput placeholder="Display Name for Column">
+                        <input [(ngModel)]="columnDef.displayName" matInput placeholder="{{ 'pageBuilder.dynamicList.columnsGrid.displayNameColumn.placeholder' | translate }}">
                     </mat-form-field>
 
                     <mat-checkbox [(ngModel)]="columnDef.isHidden" name="isHidden" (change)="onHiddenColumn(columnDef)"
                         matTooltip="">
-                        Hidden</mat-checkbox>
+                        {{ 'common.isHidden' | translate }}</mat-checkbox>
                 </div>
                 <div class="col-lg-3">
                     <mat-form-field class="field-full-width">
-                        <input matInput placeholder="Display Format" aria-label="Display Format"
+                        <input matInput placeholder="{{ 'pageBuilder.dynamicList.columnsGrid.format.placeholder' | translate }}" aria-label="{{ 'pageBuilder.dynamicList.columnsGrid.format.placeholder' | translate }}"
                             [matAutocomplete]="auto" [(ngModel)]="columnDef.displayFormat">
                         <mat-autocomplete #auto="matAutocomplete">
                             <mat-optgroup *ngFor="let group of _patternGroups" [label]="group.name">
@@ -28,7 +28,7 @@
                         </mat-autocomplete>
                     </mat-form-field>
                     <mat-form-field class="field-full-width">
-                        <mat-select placeholder="Pick one field type"
+                        <mat-select placeholder="{{ 'pageBuilder.dynamicList.columnsGrid.fieldType.placeholder' | translate }}"
                             [(ngModel)]="columnDef.searchOptions.fieldValueType"
                             (selectionChange)="onFieldTypeSelectChange(columnDef)">
                             <mat-option *ngFor="let fieldType of _fieldTypes" [value]="fieldType.value">
@@ -41,38 +41,40 @@
                     <div class="row">
                         <div class="col-lg-4 d-flex flex-column">
                             <mat-checkbox [(ngModel)]="columnDef.allowSort" name="allowSort"
-                                matTooltip="Allow user can click in sort icon">Allow Sort
+                                matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.allowSort.tooltip' | translate }}">
+                                {{ 'pageBuilder.dynamicList.columnsGrid.allowSort' | translate }}
                             </mat-checkbox>
                             <mat-checkbox [(ngModel)]="columnDef.displayFormatAsHtml" name="displayFormatAsHtml"
-                                matTooltip="Allow change display as HTML">Display
-                                Html</mat-checkbox>
+                                matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.displayHtml.tooltip' | translate }}">
+                                {{ 'pageBuilder.dynamicList.columnsGrid.displayHtml' | translate }}
+                            </mat-checkbox>
                         </div>
                         <div class="col-lg-4 d-flex flex-column">
                             <mat-checkbox [(ngModel)]="columnDef.searchOptions.allowTextSearch" name="allowTextSearch"
-                                matTooltip="Allow user search via keyword">
-                                Search Text</mat-checkbox>
+                                matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.searchText.tooltip' | translate }}">
+                                {{ 'pageBuilder.dynamicList.columnsGrid.searchText' | translate }}</mat-checkbox>
                             <mat-checkbox [(ngModel)]="columnDef.searchOptions.allowInAdvancedMode"
-                                name="allowInAdvancedMode" matTooltip="Allow user search in Advanced mode">Search
-                                Advanced
+                                name="allowInAdvancedMode" matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.searchAdvanced.tooltip' | translate }}">
+                                {{ 'pageBuilder.dynamicList.columnsGrid.searchAdvanced' | translate }}
                             </mat-checkbox>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-1">
-                    <button mat-icon-button color="primary" matTooltip="Actions" class="more-button"
+                    <button mat-icon-button color="primary" matTooltip="{{ 'common.actionsText' | translate }}" class="more-button"
                         [matMenuTriggerFor]="action" aria-label="Toggle menu">
                         <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #action="matMenu" xPosition="after">
                         <button mat-menu-item color="warn" (click)="deleteColumn(columnDef)">
                             <mat-icon color="warn">delete</mat-icon>
-                            Delete
+                            {{ 'common.deleteText' | translate }}
                         </button>
                         <button mat-menu-item color="accent"
                             *ngIf="columnDef.searchOptions.fieldValueType == fieldValueType.Select"
                             (click)="openDatasourceDialogForColumn(columnDef)">
                             <mat-icon color="accent">library_books</mat-icon>
-                            Datasource
+                            {{ 'common.datasourceText' | translate }}
                         </button>
                     </mat-menu>
                 </div>
@@ -95,12 +97,12 @@
         <div class="form-group row">
             <div class="col-lg-2">
                 <mat-form-field class="field-full-width">
-                    <input [(ngModel)]="columnDef.displayName" matInput placeholder="Display Name for Column">
+                    <input [(ngModel)]="columnDef.displayName" matInput placeholder="{{ 'pageBuilder.dynamicList.columnsGrid.displayNameColumn.placeholder' | translate }}">
                 </mat-form-field>
             </div>
             <div class="col-lg-2">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Display Format" aria-label="Display Format" [matAutocomplete]="auto"
+                    <input matInput placeholder="{{ 'pageBuilder.dynamicList.columnsGrid.format.placeholder' | translate }}" [matAutocomplete]="auto"
                         [(ngModel)]="columnDef.displayFormat">
                     <mat-autocomplete #auto="matAutocomplete">
                         <mat-optgroup *ngFor="let group of _patternGroups" [label]="group.name">
@@ -113,7 +115,7 @@
             </div>
             <div class="col-lg-2">
                 <mat-form-field class="field-full-width">
-                    <mat-select placeholder="Pick one field type" [(ngModel)]="columnDef.searchOptions.fieldValueType"
+                    <mat-select placeholder="{{ 'pageBuilder.dynamicList.columnsGrid.fieldType.placeholder' | translate }}" [(ngModel)]="columnDef.searchOptions.fieldValueType"
                         (selectionChange)="onFieldTypeSelectChange(columnDef)">
                         <mat-option *ngFor="let fieldType of _fieldTypes" [value]="fieldType.value">
                             {{ fieldType.name }}
@@ -123,42 +125,45 @@
             </div>
             <div class="col-lg-2">
                 <mat-checkbox [(ngModel)]="columnDef.allowSort" name="allowSort"
-                    matTooltip="Allow user can click in sort icon">Allow Sort
+                    matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.allowSort.tooltip' | translate }}">
+                    {{ 'pageBuilder.dynamicList.columnsGrid.allowSort' | translate }}
                 </mat-checkbox>
             </div>
             <div class="col-lg-2">
                 <mat-checkbox [(ngModel)]="columnDef.displayFormatAsHtml" name="displayFormatAsHtml"
-                    matTooltip="Allow change display as HTML">Display
-                    Html</mat-checkbox>
+                    matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.displayHtml.tooltip' | translate }}">
+                    {{ 'pageBuilder.dynamicList.columnsGrid.displayHtml' | translate }}
+                </mat-checkbox>
             </div>
             <div class="col-lg-2">
                 <mat-checkbox [(ngModel)]="columnDef.searchOptions.allowTextSearch" name="allowTextSearch"
-                    matTooltip="Allow user search via keyword">
-                    Search Text</mat-checkbox>
+                    matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.searchText.tooltip' | translate }}">
+                    {{ 'pageBuilder.dynamicList.columnsGrid.searchText' | translate }}</mat-checkbox>
             </div>
             <div class="col-lg-2">
                 <mat-checkbox [(ngModel)]="columnDef.searchOptions.allowInAdvancedMode" name="allowInAdvancedMode"
-                    matTooltip="Allow user search in Advanced mode">Search Advanced
+                    matTooltip="{{ 'pageBuilder.dynamicList.columnsGrid.searchAdvanced.tooltip' | translate }}">
+                    {{ 'pageBuilder.dynamicList.columnsGrid.searchAdvanced' | translate }}
                 </mat-checkbox>
             </div>
             <div class="col-lg-2">
                 <mat-checkbox [(ngModel)]="columnDef.isHidden" name="isHidden" (change)="onHiddenColumn(columnDef)">
-                    Hidden</mat-checkbox>
+                    {{ 'common.isHidden' | translate }}</mat-checkbox>
             </div>
             <div class="col-lg-2 d-flex justify-content-center">
                 <button mat-button color="primary" matTooltip="Actions" [matMenuTriggerFor]="action"
                     aria-label="Toggle menu">
-                    Actions
+                    {{ 'common.actionsText' | translate }}
                 </button>
                 <mat-menu #action="matMenu" xPosition="after">
                     <button mat-menu-item color="warn" (click)="deleteColumn(columnDef)">
                         <mat-icon color="warn">delete</mat-icon>
-                        Delete
+                        {{ 'common.deleteText' | translate }}
                     </button>
                     <button mat-menu-item *ngIf="columnDef.searchOptions.fieldValueType == fieldValueType.Select"
                         (click)="openDatasourceDialogForColumn(columnDef)">
                         <mat-icon color="accent">library_books</mat-icon>
-                        Datasource
+                        {{ 'common.datasourceText' | translate }}
                     </button>
                 </mat-menu>
             </div>

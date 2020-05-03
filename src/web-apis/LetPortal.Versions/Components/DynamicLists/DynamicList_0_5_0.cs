@@ -19,7 +19,7 @@ namespace LetPortal.Versions.Components.DynamicLists
             var backupsList = new DynamicList
             {
                 Id = "5e1aa91e3c107562acf358b2",
-                Name = "backupslist",
+                Name = "backupsList",
                 DisplayName = "Backups List",
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource

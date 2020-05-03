@@ -6,18 +6,20 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="addNewControl()">New Control</button>
+                    <button mat-menu-item (click)="addNewControl()">
+                        {{ 'common.newControl' | translate }}
+                    </button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content class="align-center">
             <div class="row" [hidden]="selection.selected.length == 0">
                 <div class="col-xl-12 selector-box">
-                    <label>Selected records count:
+                    <label>{{ 'common.selectedRecordsCount' | translate }}:
                         {{ selection.selected.length }}</label>
                     <button mat-raised-button color="primary" (click)="deleteSelectedControls()"
-                        matTooltip="Delete selected actions">
-                        <mat-icon>delete</mat-icon> Delete All
+                        matTooltip="{{ 'common.deleteSelected' | translate }}">
+                        <mat-icon>delete</mat-icon> {{ 'common.deleteAll' | translate }}
                     </button>
                 </div>
             </div>
@@ -39,18 +41,21 @@
                 </ng-container>
 
                 <ng-container matColumnDef="label">
-                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Name
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'common.nameText' | translate }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let control" class="mat-column-vinCode">{{control.name}}</mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="controlType">
-                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Control Type
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'common.controlType' | translate }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let control" class="mat-column-vinCode">
                         {{translateControlType(control.type)}}</mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="bindname">
-                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">Bind name
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'common.bindName' | translate }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let control" class="mat-column-vinCode">{{getBindName(control.options)}}
                     </mat-cell>
@@ -58,26 +63,26 @@
 
                 <ng-container matColumnDef="actions">
                     <mat-header-cell *matHeaderCellDef>
-                        Actions
+                        {{ 'common.actionsText' | translate }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let control">
-                        <button mat-icon-button color="primary" matTooltip="Edit Control"
+                        <button mat-icon-button color="primary" matTooltip="{{ 'common.editControl' | translate }}"
                             (click)="editControl(control)">
                             <mat-icon>create</mat-icon>
                         </button>&nbsp;
-                        <button mat-icon-button color="warn" type="button" matTooltip="Delete Control"
+                        <button mat-icon-button color="warn" type="button" matTooltip="{{ 'common.deleteControl' | translate }}"
                             (click)="deleteControl(control)">
                             <mat-icon>delete</mat-icon>
                         </button>&nbsp;
-                        <button mat-icon-button color="accent" type="button" matTooltip="Edit Events"
+                        <button mat-icon-button color="accent" type="button" matTooltip="{{ 'common.editEvent' | translate }}"
                             (click)="editEvents(control)" *ngIf="ifHasEvents(control)">
                             <mat-icon>notifications_none</mat-icon>
                         </button>&nbsp;
-                        <button mat-icon-button color="primary" type="button" matTooltip="Edit Async Validators"
+                        <button mat-icon-button color="primary" type="button" matTooltip="{{ 'common.editAsyncValidator' | translate }}"
                             (click)="editAsyncValidators(control)">
                             <mat-icon>rotate_90_degrees_ccw</mat-icon>
                         </button>&nbsp;
-                        <button mat-icon-button color="warn" type="button" matTooltip="Edit datasource"
+                        <button mat-icon-button color="warn" type="button" matTooltip="{{ 'common.editDatasourceText' | translate }}"
                             *ngIf="allowEditDatasource(control)" (click)="editControlDatasource(control)">
                             <mat-icon>library_books</mat-icon>
                         </button>
@@ -89,14 +94,18 @@
                 </mat-row>
             </mat-table>
 
-            <div class="align-center" *ngIf="controls.length == 0">No records found</div>
+            <div class="align-center" *ngIf="controls.length == 0">
+                {{ 'common.noRecordsText' | translate }}
+            </div>
         </mat-card-content>
     </mat-card>
 </div>
 <ng-container *ngIf="isHandset">
     <div class="row">
         <div class="col-lg-12">
-            <button mat-raised-button color="primary" (click)="addNewControl()">New Control</button>
+            <button mat-raised-button color="primary" (click)="addNewControl()">
+                {{ 'common.newControl' | translate }}
+            </button>
         </div>
     </div>
     <div class="row">
@@ -111,43 +120,49 @@
                         </mat-panel-title>
                     </mat-expansion-panel-header>
                     <div class="form-group row">
-                        <label class="col-lg-2 col-form-label font-weight-bold">Control Name</label>
+                        <label class="col-lg-2 col-form-label font-weight-bold">
+                            {{ 'common.controlName' | translate }}
+                        </label>
                         <label class="col-lg-2 text-left">
                             {{control.name}}
                         </label>
-                        <label class="col-lg-2 col-form-label font-weight-bold">Control Type</label>
+                        <label class="col-lg-2 col-form-label font-weight-bold">
+                            {{ 'common.controlType' | translate }}
+                        </label>
                         <label class="col-lg-2 text-left">
                             {{translateControlType(control.type)}}
                         </label>
-                        <label class="col-lg-2 col-form-label font-weight-bold">Bind name</label>
+                        <label class="col-lg-2 col-form-label font-weight-bold">
+                            {{ 'common.bindName' | translate }}
+                        </label>
                         <label class="col-lg-2 text-left">
                             {{getBindName(control.options)}}
                         </label>
                         <div class="col-lg-2 d-flex justify-content-center">
                             <button mat-button color="primary" matTooltip="Actions" [matMenuTriggerFor]="action"
                                 aria-label="Toggle menu">
-                                Actions
+                                {{ 'common.actionsText' | translate }}
                             </button>
                             <mat-menu #action="matMenu" xPosition="after">
-                                <button mat-menu-item color="primary" matTooltip="Edit Control"
+                                <button mat-menu-item color="primary" matTooltip="{{ 'common.editControl' | translate }}"
                                     (click)="editControl(control)">
                                     <mat-icon>create</mat-icon>
-                                    Edit Control
+                                    {{ 'common.editControl' | translate }}
                                 </button>&nbsp;
-                                <button mat-menu-item color="warn" type="button" matTooltip="Delete Control"
+                                <button mat-menu-item color="warn" type="button" matTooltip="{{ 'common.deleteControl' | translate }}"
                                     (click)="deleteControl(control)">
                                     <mat-icon>delete</mat-icon>
-                                    Delete Control
+                                    {{ 'common.deleteControl' | translate }}
                                 </button>&nbsp;
-                                <button mat-menu-item color="accent" type="button" matTooltip="Edit Events"
+                                <button mat-menu-item color="accent" type="button" matTooltip="{{ 'common.editEvent' | translate }}"
                                     (click)="editEvents(control)">
                                     <mat-icon>notifications_none</mat-icon>
-                                    Edit Events
+                                    {{ 'common.editEvent' | translate }}
                                 </button>&nbsp;
-                                <button mat-menu-item color="warn" type="button" matTooltip="Edit datasource"
+                                <button mat-menu-item color="warn" type="button" matTooltip="{{ 'common.editDatasourceText' | translate }}"
                                     *ngIf="allowEditDatasource(control)" (click)="editControlDatasource(control)">
                                     <mat-icon>library_books</mat-icon>
-                                    Datasource
+                                    {{ 'common.datasourceText' | translate }}
                                 </button>
                             </mat-menu>
                         </div>

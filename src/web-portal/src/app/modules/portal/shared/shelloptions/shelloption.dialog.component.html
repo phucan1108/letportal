@@ -1,25 +1,31 @@
-<h3 mat-dialog-title>Option</h3>
+<h3 mat-dialog-title>
+    {{ 'common.option' | translate }}
+</h3>
 <mat-dialog-content>
     <form [formGroup]="shellOptForm">
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Key</label>
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.keyText' | translate }}
+            </label>
             <div class="col-lg-10">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Enter key name" formControlName="key" #keyInput maxlength="100" />
+                    <input matInput placeholder="{{ 'shared.shelloptions.dialog.key.placeholder' | translate }}" formControlName="key" #keyInput maxlength="100" />
                     <mat-hint align="end">
                         {{keyInput.value?.length || 0}}/100
                     </mat-hint>
                     <mat-error *ngIf="shellOptForm.get('key').hasError('isExist')">
-                        Key is already used
+                        {{ 'shared.shelloptions.dialog.key.existedError' | translate }}
                     </mat-error>
                 </mat-form-field>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-lg-2 col-form-label">Value</label>
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.valueText' | translate }}
+            </label>
             <div class="col-lg-10">
                 <mat-form-field class="field-full-width">
-                    <input matInput placeholder="Enter value" formControlName="value" #valueInput maxlength="250" />
+                    <input matInput placeholder="{{ 'shared.shelloptions.dialog.value.placeholder' | translate }}" formControlName="value" #valueInput maxlength="250" />
                     <mat-hint align="end">
                         {{valueInput.value?.length || 0}}/250
                     </mat-hint>
@@ -29,6 +35,6 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
-    <button mat-button (click)="save()" color="primary">Save</button>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="save()" color="primary">{{ 'common.saveButton' | translate }}</button>
 </mat-dialog-actions>

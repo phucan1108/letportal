@@ -2,48 +2,48 @@
     <mat-card>
         <mat-card-header>
             <mat-card-title>
-                Backup Builder
+                {{ 'pageBuilder.page.backup.header' | translate }}
                 <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="onSubmit()" *ngIf="!isSubmitted">Create</button>
-                    <button mat-menu-item (click)="onCancel()">Cancel</button>
+                    <button mat-menu-item (click)="onSubmit()" *ngIf="!isSubmitted">{{ 'common.create' | translate }}</button>
+                    <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
             <div *ngIf="!isSubmitted">
                 <div class="row row-heading">
-                    <h3>Backup Info:</h3>
+                    <h3>{{ 'pageBuilder.page.backup.backupInfo' | translate }}:</h3>
                 </div>
                 <form [formGroup]="backupFormGroup">
                     <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Name:</label>
+                        <label class="col-lg-2 col-form-label">{{ 'common.nameText' | translate }}:</label>
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
-                                <input formControlName="name" matInput #formNameInput placeholder="Backup Name"
+                                <input formControlName="name" matInput #formNameInput placeholder="{{ 'pageBuilder.page.backup.backupName.placeholder' | translate }}"
                                     maxlength="250">
                                 <mat-hint align="end">
                                     {{formNameInput.value?.length || 0}}/250
                                 </mat-hint>
                                 <mat-error *ngIf="backupFormGroup.get('name').hasError('required')">
-                                    Please enter a backup name
+                                    {{ 'pageBuilder.page.backup.backupName.errors.required' | translate }}
                                 </mat-error>
                             </mat-form-field>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-lg-2 col-form-label">Description:</label>
+                        <label class="col-lg-2 col-form-label">{{ 'common.description' | translate }}:</label>
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
-                                <mat-label>Leave a Description</mat-label>
-                                <textarea #formDesInput matInput placeholder="Ex. Backup for version 1.0.0" formControlName="description" maxlength="500"></textarea>                               
+                                <mat-label>{{ 'pageBuilder.page.backup.leaveDescription' | translate }}</mat-label>
+                                <textarea #formDesInput matInput placeholder="{{ 'pageBuilder.page.backup.leaveDescription.placeholder' | translate }}" formControlName="description" maxlength="500"></textarea>                               
                                 <mat-hint align="end">
                                     {{formDesInput.value?.length || 0}}/500
                                 </mat-hint>
                                 <mat-error *ngIf="backupFormGroup.get('description').hasError('required')">
-                                    Please enter a description
+                                    {{ 'pageBuilder.page.backup.leaveDescription.errors.required' | translate }}
                                 </mat-error>
                             </mat-form-field>
                         </div>
@@ -51,7 +51,7 @@
                 </form>
                 <div class="separator-dashed"></div>
                 <div class="row row-heading">
-                    <h3>Selection:</h3>
+                    <h3>{{ 'pageBuilder.page.backup.selection' | translate }}:</h3>
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
@@ -59,7 +59,7 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Apps
+                                        {{ 'pageBuilder.page.backup.apps' | translate }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Apps'" [icon]="'camera_enhance'" [data]="apps$"
@@ -69,7 +69,7 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Databases
+                                        {{ 'common.databases' | translate }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Databases'" [icon]="'ballot'" [data]="databases$"
@@ -79,7 +79,7 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Standards
+                                        {{ 'common.standards' | translate }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Standards'" [icon]="'category'" [data]="standards$"
@@ -89,7 +89,7 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Dynamic Lists
+                                        {{ 'common.dynamicLists' | translate }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Dynamic Lists'" [icon]="'view_module'"
@@ -100,7 +100,7 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Charts
+                                        {{ 'common.charts' | translate }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Charts'" [icon]="'bar_chart'" [data]="charts$"
@@ -110,7 +110,7 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
-                                        Pages
+                                        {{ 'common.pages' | translate }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Pages'" [icon]="'receipt'" [data]="pages$"
@@ -125,12 +125,12 @@
                 <div class="row row-heading" *ngIf="isCreated else loading">
                     <div class="col-lg-12 pl-0">
                         <p>
-                            Backup completely! Please click on this <b><a (click)="download()" style="cursor: pointer;">
-                                    link </a></b> to download
+                            {{ 'pageBuilder.page.backup.text0' | translate}} <b><a (click)="download()" style="cursor: pointer;">
+                                    {{ 'common.link' | translate}} </a></b> {{ 'pageBuilder.page.backup.text1' | translate }}
                         </p>
                         <p>
-                            Or pressing <b><a (click)="refresh()" style="cursor: pointer;">this</a></b> to create new
-                            backup
+                            {{ 'pageBuilder.page.backup.text2' | translate}} <b><a (click)="refresh()" style="cursor: pointer;">
+                            {{ 'pageBuilder.page.backup.text3' | translate }}</a></b> {{ 'pageBuilder.page.backup.text4' | translate}}
                         </p>
                     </div>
                 </div>

@@ -4,14 +4,14 @@
 <form [formGroup]="databaseOptionForm">
     <div class="form-group row">
         <label class="col-lg-2 col-form-label">
-            Connections:
+            {{ 'common.connections' | translate }}:
             <button mat-icon-button matTooltip="Refresh Entities" (click)="refreshEntities()">
                 <mat-icon>cached</mat-icon>
             </button>
         </label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <mat-select placeholder="Pick one connection" formControlName="databaseId">
+                <mat-select placeholder="{{ 'common.connectionPlaceholder' | translate }}" formControlName="databaseId">
                     <mat-option *ngFor="let database of databaseConnections$ | async" [value]="database.id">
                         {{ database.displayName }}
                     </mat-option>
@@ -21,11 +21,11 @@
     </div>
     <div class="form-group row">
         <label class="col-lg-2 col-form-label">
-            Choose Entity:
+            {{ 'shared.databaseOpt.chooseEntity.label' | translate }}:
         </label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
-                <mat-select placeholder="Pick one entity" formControlName="entityName">
+                <mat-select placeholder="{{ 'shared.databaseOpt.chooseEntity.placeholder' | translate }}" formControlName="entityName">
                     <mat-option *ngFor="let entity of entities | async" [value]="entity.name">
                         {{ entity.displayName }}
                     </mat-option>
@@ -34,7 +34,7 @@
         </div>
     </div>
     <div class="form-group row" [hidden]="(!ismongodb && isReadyToRender) || selectedDatabaseConnection == null">
-        <label class="col-lg-2 col-form-label">Query:</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.query' | translate }}:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <json-editor [options]="jsonOptions" [data]="queryJsonData" #jsonEditorQuery>
@@ -45,7 +45,7 @@
         </div>
     </div>
     <div class="form-group row" [hidden]="(ismongodb && isReadyToRender) || selectedDatabaseConnection == null">
-        <label class="col-lg-2 col-form-label">Query:</label>
+        <label class="col-lg-2 col-form-label">{{ 'common.query' | translate }}:</label>
         <div class="col-lg-6">
             <mat-form-field class="field-full-width">
                 <textarea formControlName="query" matInput rows="10"></textarea>
@@ -55,7 +55,9 @@
     </div>
     <div class="form-group row">
         <div class="col-lg-2 offset-lg-2">
-            <button mat-raised-button color="primary" type="button" (click)="onPopulatingQueryBody()" [disabled]="!isEnablePopulate">Populate</button>
+            <button mat-raised-button color="primary" type="button" (click)="onPopulatingQueryBody()" [disabled]="!isEnablePopulate">
+                {{ 'common.populate' | translate }}
+            </button>
         </div>
     </div>
 </form>

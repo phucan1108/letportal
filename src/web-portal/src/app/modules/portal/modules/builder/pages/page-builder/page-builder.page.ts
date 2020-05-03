@@ -25,6 +25,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { StateReset } from 'ngxs-reset-plugin';
 import { MatTable } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'let-page-builder',
     templateUrl: './page-builder.page.html',
@@ -70,7 +71,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
         private pageService: PageService,
         private fb: FormBuilder,
         private databaseClient: DatabasesClient,
-        private entityClient: EntitySchemasClient,
+        private translate: TranslateService,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
         private shortcutUtil: ShortcutUtil,
@@ -254,14 +255,14 @@ export class PageBuilderPage implements OnInit, OnDestroy {
                     if (this.isEditMode) {
                         this.store.dispatch(new EditPageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.toastMessage('Update Page Successfully', ToastType.Success)
+                                this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
                             }
                         );
                     }
                     else {
                         this.store.dispatch(new CreatePageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.toastMessage('Create Page Successfully', ToastType.Success)
+                                this.shortcutUtil.toastMessage(this.translate.instant('common.createSuccessfully'), ToastType.Success)
                                 this.router.navigateByUrl('portal/page/pages-management')
                             }
                         );
