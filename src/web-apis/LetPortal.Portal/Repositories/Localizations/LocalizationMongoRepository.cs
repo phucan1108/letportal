@@ -18,6 +18,12 @@ namespace LetPortal.Portal.Repositories.Localizations
             return await Collection.AsQueryable().AnyAsync(a => a.LocaleId == localeId);
         }
 
+        public async Task DeleteByLocaleId(string localeId)
+        {
+            var existedLocale = await Collection.AsQueryable().FirstAsync(a => a.LocaleId == localeId);
+            await DeleteAsync(existedLocale.Id);
+        }
+
         public async Task<Localization> GetByLocaleId(string localeId)
         {
             return await Collection.AsQueryable().FirstAsync(a => a.LocaleId == localeId);

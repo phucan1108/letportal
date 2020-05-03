@@ -14,6 +14,7 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 import { FormUtil } from 'app/core/utils/form-util';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { ExportService } from 'services/export.service';
 
 @Component({
     selector: 'let-localization-page',
@@ -32,8 +33,9 @@ export class LocalizationPage implements OnInit {
     localeId: string
     isEditMode = false
     localization: Localization
+
     constructor(
-        private pagesClient: PagesClient,
+        private exportService: ExportService,
         private localizationClient: LocalizationClient,
         private fb: FormBuilder,
         private router: Router,
@@ -45,24 +47,24 @@ export class LocalizationPage implements OnInit {
     ngOnInit(): void {
 
         this.localization = this.activedRoute.snapshot.data.localization
-        if(!ObjectUtils.isNotNull(this.localization)){
+        if (!ObjectUtils.isNotNull(this.localization)) {
             this.activedRoute.queryParamMap.subscribe(
                 queryParam => {
                     // this.pagesClient.generateLanguages(this.pageId).subscribe(keys => {
                     //     this.languageKeys = keys
                     // })
-                    
+
                     this.formGroup = this.fb.group({
                         language: ['', [Validators.required], [PortalValidators.localeUniqueName(this.localizationClient)]]
                     })
                 }
             )
         }
-        else{
+        else {
             this.isEditMode = true
             this.localeId = this.localization.localeId
             this.formGroup = this.fb.group({
-                language: [{value: this.localeId, disabled: true }, Validators.required]
+                language: [{ value: this.localeId, disabled: true }, Validators.required]
             })
 
             this.languageKeys = this.localization.localizationContents.map(a => <LanguageKey>{
@@ -80,8 +82,8 @@ export class LocalizationPage implements OnInit {
     editComplete($event) {
 
     }
-    saveChanges(){
-        if(this.formGroup.valid || this.isEditMode){
+    saveChanges() {
+        if (this.formGroup.valid || this.isEditMode) {
             const combineLocalization: Localization = {
                 id: '',
                 localeId: this.formGroup.get('language').value,
@@ -91,7 +93,7 @@ export class LocalizationPage implements OnInit {
                 })
             }
 
-            if(this.isEditMode){
+            if (this.isEditMode) {
                 this.localizationClient.delete(this.localization.id).subscribe(
                     res => {
                         this.localizationClient.create(combineLocalization).subscribe(
@@ -104,7 +106,7 @@ export class LocalizationPage implements OnInit {
                 )
 
             }
-            else{
+            else {
                 this.localizationClient.create(combineLocalization).subscribe(
                     res => {
                         this.shortcutUtil.toastMessage(`Create ${combineLocalization.localeId} language successfully`, ToastType.Success)
@@ -119,14 +121,14 @@ export class LocalizationPage implements OnInit {
         const sub = this.localizationClient.collectAll().pipe(
             tap(
                 allKeys => {
-                    if(this.isEditMode){
+                    if (this.isEditMode) {
                         allKeys.forEach(text => {
-                            if(!this.languageKeys.some(a => a.key === text.key)){
+                            if (!this.languageKeys.some(a => a.key === text.key)) {
                                 this.languageKeys.push(text)
                             }
                         })
                     }
-                    else{
+                    else {
                         this.languageKeys = allKeys
                     }
                     sub.unsubscribe()
@@ -134,9 +136,44 @@ export class LocalizationPage implements OnInit {
             )
         ).subscribe()
     }
-    cancel(){
+    cancel() {
         this.router.navigateByUrl('portal/page/localization-management')
     }
+
+    onBackup() {
+        if (this.isEditMode) {
+            const jsonString = JSON.stringify(this.localization)
+            this.exportService.exportJsonFile(jsonString, this.localization.localeId + '.json')
+        }
+    }
+
+    onFileChange($event) {
+        const latestFile: File = $event.target.files[$event.target.files.length - 1]
+        if(ObjectUtils.isNotNull(latestFile)){
+            if (latestFile.name.indexOf('.json') < 0) {
+                window.alert('Please upload json file')
+            }
+            else {
+                var reader = new FileReader()
+                reader.onload = (e) => {
+                    try {
+                        this.localization = JSON.parse(<string>reader.result)
+                        this.formGroup.get('language').setValue(this.localization.localeId)
+                        FormUtil.triggerFormValidators(this.formGroup)
+                        this.languageKeys = this.localization.localizationContents.map(a => <LanguageKey>{
+                            key: a.key,
+                            value: a.text
+                        })
+                    }
+                    catch (ex) {
+                        window.alert('Something went wrong: ' + ex.message)
+                    }
+                }
+                reader.readAsText(latestFile)
+            }
+        }       
+    }
+
     private _filterTag(choosingTagValue: string): Array<any> {
         return this.localeTags.filter(op => op.name.toLowerCase().includes(choosingTagValue))
     }

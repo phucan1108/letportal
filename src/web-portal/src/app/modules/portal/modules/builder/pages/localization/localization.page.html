@@ -34,9 +34,17 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-12 button-wrapper pb-3">
                     <button mat-raised-button color="primary" (click)="onCollect()">
                         {{ 'common.collect' | translate }}
+                    </button>
+                    <button mat-raised-button color="primary" (click)="onBackup()" *ngIf="isEditMode">
+                        {{ 'common.backup' | translate }}
+                    </button>
+                    <button mat-raised-button color="primary" *ngIf="!isEditMode">
+                        {{ 'common.restore' | translate }}
+                        <input class="file-input" type="file" #fileInput (change)="onFileChange($event)"
+                        [disabled]="disabled">
                     </button>
                 </div>
             </div>

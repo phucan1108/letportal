@@ -46,4 +46,9 @@ export class ExportService {
 
         FileSaver.saveAs(fileData, excelFileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
     }
+
+    public exportJsonFile(jsonString: string, fileName: string){
+        var blob = new Blob([jsonString], {type: "application/json"});
+        FileSaver.saveAs(blob, fileName)
+    }
 }

@@ -9,5 +9,7 @@ namespace LetPortal.Portal.Repositories.Localizations
         Task<Localization> GetByLocaleId(string localeId);
 
         Task<bool> CheckLocaleExisted(string localeId);
+
+        Task DeleteByLocaleId(string localeId);
     }
 }

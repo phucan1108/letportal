@@ -36,5 +36,11 @@ namespace LetPortal.Portal.Repositories.Localizations
         {
             return await _context.Localizations.AnyAsync(a => a.LocaleId == localeId);
         }
+
+        public async Task DeleteByLocaleId(string localeId)
+        {
+            var existedLocale = await _context.Localizations.AsNoTracking().FirstAsync(a => a.LocaleId == localeId);
+            await DeleteAsync(existedLocale.Id);
+        }
     }
 }

@@ -407,5 +407,6 @@
     "common.pageName": "Page Name",
     "common.urlPath": "Url Path",
     "common.collect": "Collect",
-    "common.itemsPerPage": "Items per page"
+    "common.itemsPerPage": "Items per page",
+    "common.backup": "Backup"
 }
