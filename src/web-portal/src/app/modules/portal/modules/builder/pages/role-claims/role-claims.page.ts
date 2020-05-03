@@ -16,6 +16,7 @@ import { PageService } from 'services/page.service';
 import { SelectablePortalClaim, ClaimNode } from 'portal/modules/models/role-claims.model';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTree, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-role-claims',
@@ -30,8 +31,7 @@ export class RoleClaimsPage implements OnInit {
         public dialog: MatDialog,
         private shortcutUtil: ShortcutUtil,
         private activatedRoute: ActivatedRoute,
-        private session: SessionService,
-        private routerExtService: RouterExtService,
+        private translate: TranslateService,
         private router: Router,
         private pagesClient: PagesClient,
         private security: SecurityService,
@@ -234,7 +234,7 @@ export class RoleClaimsPage implements OnInit {
     saveChange() {
         this.roleClient.addPortalClaims(this.selectedRole, this.mapToPortalClaimModel()).subscribe(
             result => {
-                this.shortcutUtil.toastMessage('Update successfully', ToastType.Success)
+                this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
             },
             err => {
             })

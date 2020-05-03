@@ -17,6 +17,7 @@ import { SessionService } from 'services/session.service';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTree, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-menu',
@@ -32,7 +33,8 @@ export class MenuPage implements OnInit, AfterViewInit {
         private appClient: AppsClient,
         private shortcutUtil: ShortcutUtil,
         private router: Router,
-        private routerExtService: RouterExtService
+        private routerExtService: RouterExtService,
+        private translate: TranslateService
     ) {
     }
 
@@ -80,7 +82,7 @@ export class MenuPage implements OnInit, AfterViewInit {
     saveMenu(){
         this.appClient.updateMenu(this.app.id, this.menus).subscribe(
             result => {
-                this.shortcutUtil.toastMessage('Update menu successfully!', ToastType.Success)
+                this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
             }
         )
     }

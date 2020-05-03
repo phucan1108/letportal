@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { ActionNotificationComponent } from './components/shortcuts/action-natification/action-notification.component';
 import { EventDialogComponent } from './components/shortcuts/event-dialog/event-dialog.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -22,7 +23,8 @@ import { EventDialogComponent } from './components/shortcuts/event-dialog/event-
         MatSnackBarModule,
         MatDialogModule,
         MatButtonModule,
-        MatIconModule
+        MatIconModule,
+        TranslateModule
     ],
     entryComponents: [
         ConfirmationDialogComponent,

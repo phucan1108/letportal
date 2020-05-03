@@ -33,7 +33,7 @@ namespace LetPortal.Portal.Repositories.Components
 
         public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
         {
-            var allStandards = await GetAllAsync();
+            var allStandards = await GetAllAsync(isRequiredDiscriminator: true);
 
             var languages = new List<LanguageKey>();
 

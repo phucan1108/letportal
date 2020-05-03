@@ -11,6 +11,7 @@ import { PageEvent, EventActionType } from 'services/portal.service';
 import { PageBuilderState, PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
 import { MatTable } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-page-event-grid',
@@ -30,6 +31,7 @@ export class PageEventGridComponent implements OnInit {
         { name: 'Web Service', value: EventActionType.WebService }
     ]
     constructor(
+        private translate: TranslateService,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
@@ -143,7 +145,7 @@ export class PageEventGridComponent implements OnInit {
         this.currentEvents = _.filter(this.currentEvents, (elem) => {
             return elem.eventName !== event.eventName
         })
-        this.shortcutUtil.toastMessage('Delete event successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
 
         this.table.renderRows()
     }

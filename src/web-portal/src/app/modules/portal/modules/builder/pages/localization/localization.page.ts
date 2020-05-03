@@ -15,6 +15,7 @@ import { FormUtil } from 'app/core/utils/form-util';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ExportService } from 'services/export.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-localization-page',
@@ -35,6 +36,7 @@ export class LocalizationPage implements OnInit {
     localization: Localization
 
     constructor(
+        private translate: TranslateService,
         private exportService: ExportService,
         private localizationClient: LocalizationClient,
         private fb: FormBuilder,
@@ -98,7 +100,7 @@ export class LocalizationPage implements OnInit {
                     res => {
                         this.localizationClient.create(combineLocalization).subscribe(
                             res => {
-                                this.shortcutUtil.toastMessage(`Update ${combineLocalization.localeId} language successfully`, ToastType.Success)
+                                this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
                                 this.router.navigateByUrl('portal/page/localization-management')
                             }
                         )
@@ -109,7 +111,7 @@ export class LocalizationPage implements OnInit {
             else {
                 this.localizationClient.create(combineLocalization).subscribe(
                     res => {
-                        this.shortcutUtil.toastMessage(`Create ${combineLocalization.localeId} language successfully`, ToastType.Success)
+                        this.shortcutUtil.toastMessage(this.translate.instant('common.createSuccessfully'), ToastType.Success)
                         this.router.navigateByUrl('portal/page/localization-management')
                     }
                 )
@@ -127,6 +129,16 @@ export class LocalizationPage implements OnInit {
                                 this.languageKeys.push(text)
                             }
                         })
+
+                        // Remove all non-existed
+                        let removedItems: LanguageKey[] = []
+                        this.languageKeys.forEach(lang => {
+                            if(!allKeys.some(a => a.key === lang.key)){
+                                removedItems.push(lang)
+                            }
+                        })
+
+                        this.languageKeys = this.languageKeys.filter(a => !removedItems.includes(a))
                     }
                     else {
                         this.languageKeys = allKeys

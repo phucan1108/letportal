@@ -23,6 +23,7 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-general-control',
@@ -83,6 +84,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
         private markdownService: MarkdownService,
         private shortcutUtil: ShortcutUtil,
         private logger: NGXLogger,
+        private translate: TranslateService,
         private cd: ChangeDetectorRef
     ) {
     }
@@ -256,7 +258,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                                                 this.notifyChangedByActionEvent(event.eventDatabaseOptions.boundData, res)
                                             },
                                             err => {
-                                                this.shortcutUtil.toastMessage('Oops! Something went wrong, please try again.', ToastType.Error)
+                                                this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                                             }
                                         )
                                     ).subscribe()
@@ -269,7 +271,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                                                 this.notifyChangedByActionEvent(event.eventHttpServiceOptions.boundData, res)
                                             },
                                             err => {
-                                                this.shortcutUtil.toastMessage('Oops! Something went wrong, please try again.', ToastType.Error)
+                                                this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                                             }
                                         )
                                     )

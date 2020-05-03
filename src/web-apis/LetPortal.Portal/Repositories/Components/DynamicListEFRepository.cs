@@ -31,7 +31,7 @@ namespace LetPortal.Portal.Repositories.Components
 
         public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
         {
-            var allDynamicLists = await GetAllAsync();
+            var allDynamicLists = await GetAllAsync(isRequiredDiscriminator: true);
 
             var languages = new List<LanguageKey>();
 

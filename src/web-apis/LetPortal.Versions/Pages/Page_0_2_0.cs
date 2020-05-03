@@ -177,7 +177,7 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a842",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",
@@ -364,7 +364,7 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a843",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",

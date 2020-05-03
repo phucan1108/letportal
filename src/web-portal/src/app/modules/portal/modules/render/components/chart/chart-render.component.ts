@@ -17,6 +17,7 @@ import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-u
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { LocalizationService } from 'services/localization.service';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'let-chart-render',
     templateUrl: './chart-render.component.html',
@@ -63,6 +64,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
 
     selectedTab = 0
     constructor(
+        private translate: TranslateService,
         private pageService: PageService,
         private localizationService: LocalizationService,
         private logger: NGXLogger,
@@ -254,7 +256,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                 }
                 else{
                     if(!isInterval){
-                        this.shortcutUtil.toastMessage('No data found, please try again', ToastType.Warning)
+                        this.shortcutUtil.toastMessage(this.translate.instant('chartRender.messages.noDataFound'), ToastType.Warning)
                     }
                 }
                 if (!this.isDoneDefer) {
@@ -268,7 +270,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                     clearInterval(this.interval)
                 }
 
-                this.shortcutUtil.toastMessage('Oops! Something went wrong, please check data or refresh F5 again', ToastType.Error)
+                this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
             }
         )
     }

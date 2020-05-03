@@ -20,7 +20,7 @@ namespace LetPortal.Versions.Components
             var userFormStandard = new StandardComponent
             {
                 Id = "5d615e501773a96ee8eb5ed3",
-                Name = "userFform",
+                Name = "userform",
                 DisplayName = "User Form",
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>

@@ -11,6 +11,7 @@ import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnec
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-database-opt',
@@ -19,6 +20,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
     constructor(
+        private translate: TranslateService,
         private dynamicListClient: DynamicListClient,
         private databaseClient: DatabasesClient,
         private entityClient: EntitySchemasClient,
@@ -262,7 +264,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
                                     this.afterSelectingEntity.emit(result)
                                 },
                                 err => {
-                                    this.shortcutUtil.toastMessage('Oops, we cannot populate a query, please check syntax again.', ToastType.Error)
+                                    this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                                 }
                             )
                         }

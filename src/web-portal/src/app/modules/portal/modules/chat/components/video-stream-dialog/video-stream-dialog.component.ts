@@ -10,6 +10,7 @@ import { CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { bounceInLeftOnEnterAnimation, bounceOutRightOnLeaveAnimation, bounceInRightOnEnterAnimation, slideInRightOnEnterAnimation, slideOutRightOnLeaveAnimation, slideOutLeftOnLeaveAnimation } from 'angular-animations';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-video-stream',
@@ -73,7 +74,8 @@ export class VideoStreamDialogComponent implements OnInit {
         private logger: NGXLogger,
         private breakpointObserver: BreakpointObserver,
         private actions$: Actions,
-        private shortcutUtil: ShortcutUtil
+        private shortcutUtil: ShortcutUtil,
+        private translate: TranslateService
     ) {
         this.breakpointObserver.observe([
             Breakpoints.Web
@@ -169,7 +171,7 @@ export class VideoStreamDialogComponent implements OnInit {
                 ofActionCompleted(UserDroppedCall)
             ).subscribe(
                 () => {
-                    this.shortcutUtil.toastMessage('User ended a call', ToastType.Warning)
+                    this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.userEndCall'), ToastType.Warning)
                     this.dropAll()
                 }
             )
@@ -324,16 +326,16 @@ export class VideoStreamDialogComponent implements OnInit {
     private handleStreamingError(err: any) {
         switch (err.name) {
             case 'NotFoundError':
-                this.shortcutUtil.toastMessage('We cannot detect the camera', ToastType.Error)                
+                this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.cannotDetectCamera'), ToastType.Error)                
                 this.dropped()
                 break
             case 'SecurityError':
             case 'PermissionDeniedError':
-                this.shortcutUtil.toastMessage('We cannot use the camera', ToastType.Error)                
+                this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.cannotUseCamera'), ToastType.Error)                
                 this.dropped()
                 break
             default:
-                this.shortcutUtil.toastMessage('Something went wrong with the camera', ToastType.Error)                
+                this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.cameraError'), ToastType.Error)                
                 this.dropped()
                 break
         }

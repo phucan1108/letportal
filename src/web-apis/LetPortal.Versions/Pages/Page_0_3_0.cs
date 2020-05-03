@@ -186,7 +186,7 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a844",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",
@@ -232,7 +232,7 @@ namespace LetPortal.Versions.Pages
                     {
                         new PageSection
                         {
-                            Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                            Id = "5eaebdb89533066fa085a845",
                             ComponentId = "5d6222ec3aae6a79ecf035e9",
                             ConstructionType = SectionContructionType.Standard,
                             DisplayName = "Add User",
@@ -249,11 +249,11 @@ namespace LetPortal.Versions.Pages
                 {
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a846",
                         Name = "Save",
                         Color = "primary",
                         Icon = "save",
-                        PlaceSectionId = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        PlaceSectionId = "5eaebdb89533066fa085a845",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -297,12 +297,12 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a852",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",
                         AllowHidden = "false",
-                        PlaceSectionId = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        PlaceSectionId = "5eaebdb89533066fa085a845",
                         ButtonOptions = new ButtonOptions
                         {                                
                             ActionCommandOptions = new ActionCommandOptions
@@ -446,7 +446,7 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a847",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",

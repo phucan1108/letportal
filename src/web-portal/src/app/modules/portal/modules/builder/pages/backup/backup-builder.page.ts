@@ -14,6 +14,7 @@ import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-u
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { Router } from '@angular/router';
 import { PageService } from 'services/page.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-backup-builder',
@@ -62,6 +63,7 @@ export class BackupBuilderPage implements OnInit {
         private security: SecurityService,
         private pageService: PageService,
         private shortcutUtil: ShortcutUtil,
+        private translate: TranslateService,
         private router: Router,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef
@@ -282,7 +284,7 @@ export class BackupBuilderPage implements OnInit {
                     this.downloadableUrl = res.downloadableUrl
                 },
                 err => {
-                    this.shortcutUtil.toastMessage('Oops! Something went wrong, please try again', ToastType.Error)
+                    this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                 }
             )
         }

@@ -13,6 +13,7 @@ import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/d
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { MatTable } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-page-datasource-grid',
@@ -25,6 +26,7 @@ export class PageDatasourceGridComponent implements OnInit {
     currentDatasources: Array<PageDatasource> = []
 
     constructor(
+        private translate: TranslateService,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
@@ -91,7 +93,7 @@ export class PageDatasourceGridComponent implements OnInit {
         this.currentDatasources = _.filter(this.currentDatasources, (elem) => {
             return elem.id !== datasource.id
         })
-        this.shortcutUtil.toastMessage('Delete datasource successfully!', ToastType.Success)
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success)
     }
 
     editDatasourceOption(datasource: PageDatasource) {

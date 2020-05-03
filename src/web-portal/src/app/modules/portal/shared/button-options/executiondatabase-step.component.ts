@@ -7,6 +7,7 @@ import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-u
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { NGXLogger } from 'ngx-logger';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-executiondatabase-step',
@@ -37,6 +38,7 @@ export class ExecutionDatabaseStepComponent implements OnInit {
     code = ''
 
     constructor(
+        private translate: TranslateService,
         private fb: FormBuilder,
         private clipboardService: ClipboardService,
         private shortcutUtil: ShortcutUtil,
@@ -134,7 +136,7 @@ export class ExecutionDatabaseStepComponent implements OnInit {
     }
 
     copy(){
-        this.shortcutUtil.toastMessage('Copied content', ToastType.Info)
+        this.shortcutUtil.toastMessage(this.translate.instant('common.copiedContent'), ToastType.Info)
         this.clipboardService.copyFromContent(this.hintText)
     }
 
