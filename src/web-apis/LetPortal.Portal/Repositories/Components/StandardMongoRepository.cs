@@ -118,6 +118,14 @@ namespace LetPortal.Portal.Repositories.Components
         {
             var languages = new List<LanguageKey>();
 
+            var standardName = new LanguageKey
+            {
+                 Key = $"standardComponents.{standard.Name}.options.displayName",
+                 Value = standard.DisplayName
+            };
+
+            languages.Add(standardName);
+
             if (standard.Controls != null && standard.Controls.Count > 0)
             {
                 foreach (var control in standard.Controls)

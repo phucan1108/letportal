@@ -16,6 +16,7 @@ import * as moment from 'moment'
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { LocalizationService } from 'services/localization.service';
 @Component({
     selector: 'let-chart-render',
     templateUrl: './chart-render.component.html',
@@ -63,6 +64,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     selectedTab = 0
     constructor(
         private pageService: PageService,
+        private localizationService: LocalizationService,
         private logger: NGXLogger,
         private chartsClient: ChartsClient,
         private shortcutUtil: ShortcutUtil,
@@ -71,6 +73,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     ) { }
 
     ngOnInit(): void {
+        this.localization()
         this.pageState$ = this.store.select<PageStateModel>(state => state.page)
         this.subscription = this.pageState$.pipe(
             filter(state => state.filterState
@@ -295,6 +298,24 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         }
         else{
             return result
+        }
+    }
+
+    private localization(){
+        if(this.localizationService.allowTranslate){
+            const chartName = this.localizationService.getText(`charts.${this.chart.name}.options.displayName`)
+            if(ObjectUtils.isNotNull(chartName)){
+                this.chart.displayName = chartName
+            }
+
+            if(ObjectUtils.isNotNull(this.chart.chartFilters)){
+                this.chart.chartFilters.forEach(filter => {
+                    const filterName = this.localizationService.getText(`charts.${this.chart.name}.filters.${filter.name}.name`)
+                    if(ObjectUtils.isNotNull(filterName)){
+                        filter.displayName = filterName
+                    }
+                })
+            }
         }
     }
 }
