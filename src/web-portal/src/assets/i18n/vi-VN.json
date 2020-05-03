@@ -406,5 +406,6 @@
     "common.body": "Body",
     "common.pageName": "Tên trang",
     "common.urlPath": "Đường dẫn Url",
-    "common.collect": "Thu nhập"
+    "common.collect": "Thu nhập",
+    "common.itemsPerPage": "Số lượng mỗi trang"
 }

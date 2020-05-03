@@ -83,7 +83,7 @@
     <mat-spinner [diameter]="20" *ngIf="loading$ | async"></mat-spinner>
     <mat-paginator [pageSize]="listOptions.defaultPageSize" [pageSizeOptions]="listOptions.sizeOptions"
         [length]="totalItems" [hidePageSize]="false" [showFirstLastButtons]="false"
-        *ngIf="listOptions.enablePagination"></mat-paginator>
+        *ngIf="listOptions.enablePagination" itemsPerPageLabel="{{ 'common.itemsPerPage' | translate }}"></mat-paginator>
 </div>
 
 <ng-template #loading>

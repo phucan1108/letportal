@@ -22,7 +22,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { HttpExceptionInterceptor } from './core/https/httpException.interceptor';
 import { ClipboardModule } from 'ngx-clipboard';
 import { MatProgressButtonsModule } from 'mat-progress-buttons';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 import pgsql from 'highlight.js/lib/languages/pgsql'
 import sql from 'highlight.js/lib/languages/sql'
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
@@ -32,6 +32,8 @@ import { EmojiPickerModule } from 'emoji-picker'
 import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader'
 import { LocalizationService } from 'services/localization.service';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginatorIntlCustom } from './core/custom-materials/matPaginatorIntlCustom';
 
 export function hlJSLang() {
   return [
@@ -131,6 +133,15 @@ function HttpLoaderFactory(http: HttpClient) {
       useValue: {
         languages: hlJSLang
       }
+    },
+    {
+      provide: MatPaginatorIntl,
+      useFactory: (translate: TranslateService) => {
+        const service = new MatPaginatorIntlCustom();
+        service.addTranslateService(translate);
+        return service;
+      },
+      deps: [TranslateService]
     },
     ConfigurationProvider
   ],

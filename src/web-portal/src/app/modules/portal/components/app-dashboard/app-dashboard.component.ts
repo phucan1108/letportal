@@ -34,6 +34,7 @@ export class AppDashboardComponent implements OnInit {
         private router: Router,
         private store: Store,
         private translate: TranslateService,
+        private localizationService: LocalizationService,
         private logger: NGXLogger
     ) { }
 
@@ -54,6 +55,7 @@ export class AppDashboardComponent implements OnInit {
                                 apps => {
                                     const loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
                                     _.forEach(apps, app => {
+                                        this.localization(app)
                                         loadingApps.push({
                                             app,
                                             loading: false,
@@ -101,5 +103,34 @@ export class AppDashboardComponent implements OnInit {
             }
         });
         return ids
+    }
+
+    private localization(app: App) {
+        if (this.localizationService.allowTranslate) {
+            const appDisplayName = this.localizationService.getText(`apps.${app.name}.displayName`)
+            if(ObjectUtils.isNotNull(appDisplayName)){
+                app.displayName = appDisplayName
+            }
+
+            if(ObjectUtils.isNotNull(app.menus)){
+                app.menus.forEach((menu,index) => {
+                    const menuName = this.localizationService.getText(`apps.${app.name}.menus[${index.toString()}].displayName`)
+                    if(ObjectUtils.isNotNull(menuName)){
+                        menu.displayName = menuName
+                    }
+                    
+                    if(ObjectUtils.isNotNull(menu.subMenus)){
+                        menu.subMenus.forEach((subMenu, subIndex) => {
+                            const subMenuName = this.localizationService.getText(`apps.${app.name}.menus[${index.toString()}][${subIndex.toString()}].displayName`)
+                            if(ObjectUtils.isNotNull(subMenuName)){
+                                subMenu.displayName = subMenuName
+                            }
+                        })
+                    }
+                })
+            }
+        }
+
+        return app
     }
 }
