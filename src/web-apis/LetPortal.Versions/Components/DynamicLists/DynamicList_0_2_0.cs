@@ -22,6 +22,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Id = "5d4d8adfae5f5b68b811ec1d",
                 Name = "dynamicsList",
                 DisplayName = "Dynamic Lists List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -186,6 +187,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Id = "5d4d8adfae5f5b68b811ec1e",
                 Name = "standardsList",
                 DisplayName = "Standards List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {

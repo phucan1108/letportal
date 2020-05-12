@@ -71,11 +71,11 @@ export class PortalValidators {
         };
     }
 
-    public static localeUniqueName(localizationClient: LocalizationClient): AsyncValidatorFn {
+    public static localeUniqueName(localizationClient: LocalizationClient, appId: string): AsyncValidatorFn {
         return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
             return timer(500).pipe(
                 switchMap(() => {
-                    return localizationClient.checkExist(control.value).pipe(
+                    return localizationClient.checkExist(appId, control.value).pipe(
                         map(
                             exist => {
                                 return exist ? { uniqueName: true } : null;

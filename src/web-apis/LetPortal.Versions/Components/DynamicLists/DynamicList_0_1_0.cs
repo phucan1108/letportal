@@ -25,6 +25,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Id = "5d0f09de62c8371c183c8c6f",
                 Name = "databasesList",
                 DisplayName = "Databases List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -254,6 +255,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Id = "5d0f2dca6ba2fd4ca49e3741",
                 Name = "appsList",
                 DisplayName = "Apps List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -380,6 +382,23 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             AllowRefreshList = true,
                             Order = 4
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "localization",
+                            DisplayName = "Localization",
+                            Icon = "translate",
+                            Color = "warn",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType  = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                    IsSameDomain = true,
+                                    RedirectUrl = "portal/page/localization-management?appId={{data.id}}"
+                                }
+                            },
+                            Order = 5
                         }
                     }
                 },
@@ -486,6 +505,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Id = "5d0f2dca6ba2fd4ca49e3742",
                 Name = "pagesList",
                 DisplayName = "Pages List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -663,6 +683,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Id = "5d0f2dca6ba2fd4ca49e3743",
                 Name = "usersList",
                 DisplayName = "Users List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -805,6 +826,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Id = "5d0f2dca6ba2fd4ca49e3746",
                 Name = "rolesList",
                 DisplayName = "Roles List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {

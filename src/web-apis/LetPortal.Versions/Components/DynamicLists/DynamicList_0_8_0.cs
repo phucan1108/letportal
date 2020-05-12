@@ -23,6 +23,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Id = "5ea80612bf1ac062f89f6f54",
                 Name = "localizationsList",
                 DisplayName = "Localization List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -30,7 +31,8 @@ namespace LetPortal.Versions.Components.DynamicLists
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB
-                       ? "{\r\n  \"$query\": {\r\n    \"localizations\":[]\r\n  }\r\n}" : "SELECT * FROM localizations"
+                       ? "{\r\n  \"$query\": {\r\n    \"localizations\":[\r\n      {\r\n        \"$match\": {\r\n          \"appId\": \"{{queryparams.appId}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}" :
+                       versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "SELECT * FROM `localizations` Where appId={{queryparams.appId}}" : "SELECT * FROM localizations Where appId={{queryparams.appId}}"
                     },
                     SourceType = DynamicListSourceType.Database
                 },
@@ -53,6 +55,31 @@ namespace LetPortal.Versions.Components.DynamicLists
                         },
                         new ColumndDef
                         {
+                            Name = "appId",
+                            DisplayName = "App",
+                            AllowSort = false,
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = false,
+                                AllowTextSearch = false,
+                                FieldValueType = FieldValueType.Select
+                            },
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                              Type = DatasourceControlType.Database,
+                              OutputMapProjection = "name=displayName;value=id",
+                              DatabaseOptions = new DatabaseOptions
+                              {
+                                  DatabaseConnectionId = Constants.PortalDatabaseId,
+                                  Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
+                                    "{ \"$query\": { \"apps\": [ ] } }"
+                                    : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL ? "Select * from `apps`" : "Select * from apps")}
+                            },
+                            Order = 2
+                        },
+                        new ColumndDef
+                        {
                             Name = "localeId",
                             DisplayName = "Locale Id",
                             AllowSort = false,
@@ -62,7 +89,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 AllowInAdvancedMode = true,
                                 AllowTextSearch = true
                             },
-                            Order = 2
+                            Order = 3
                         }
                     }
                 },
@@ -84,7 +111,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 RedirectOptions = new RedirectOptions
                                 {
                                    IsSameDomain = true,
-                                   RedirectUrl = "portal/builder/localization"
+                                   RedirectUrl = "portal/builder/localization/{{queryparams.appId}}"
                                 }
                             }
                         },
@@ -102,7 +129,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 RedirectOptions = new RedirectOptions
                                 {
                                    IsSameDomain = true,
-                                   RedirectUrl = "portal/builder/localization/{{data.id}}"
+                                   RedirectUrl = "portal/builder/localization/{{data.appId}}/{{data.localeId}}"
                                 }
                             }
                         },

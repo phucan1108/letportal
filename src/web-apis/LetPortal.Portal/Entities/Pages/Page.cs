@@ -15,6 +15,9 @@ namespace LetPortal.Portal.Entities.Pages
         [StringLength(250)]
         public string UrlPath { get; set; }
 
+        [StringLength(50)]
+        public string AppId { get; set; }
+
         public List<ShellOption> ShellOptions { get; set; }
 
         public List<PortalClaim> Claims { get; set; }

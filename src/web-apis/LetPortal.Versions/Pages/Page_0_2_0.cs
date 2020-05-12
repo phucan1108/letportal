@@ -25,6 +25,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d2607a9e88d28422061cfd0",
                 Name = "database-form",
                 DisplayName = "Database Form",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/database-form",
                 Claims = new List<PortalClaim>
                     {
@@ -212,6 +213,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d35ce3515066059bc5dfd01",
                 Name = "app-form",
                 DisplayName = "App Form",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/app-form",
                 Claims = new List<PortalClaim>
                     {
@@ -402,6 +404,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d4d8adfae5f5b68b811ec20",
                 Name = "dynamic-list-management",
                 DisplayName = "Dynamic Lists Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/dynamic-list-management",
                 Claims = new List<PortalClaim>
                     {
@@ -429,6 +432,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d4d8adfae5f5b68b811ec21",
                 Name = "standard-list-management",
                 DisplayName = "Standards Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/standard-list-management",
                 Claims = new List<PortalClaim>
                     {

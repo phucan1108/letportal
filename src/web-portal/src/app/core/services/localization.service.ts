@@ -8,9 +8,10 @@ import { environment } from 'environments/environment';
 export class LocalizationService{
     languageKeys: LocalizationContent[] = []
     allowTranslate = environment.localization.allowSwitchLanguage
-
+    isLoaded = false
     setKeys(languages: LocalizationContent[]){
         this.languageKeys = languages
+        this.isLoaded = true
     }
 
     setAllowTranslate(allow: boolean){

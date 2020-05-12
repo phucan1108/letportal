@@ -426,5 +426,6 @@
     "common.updateSuccessfully": "Cập nhật thành công!",
     "common.restoreSuccessfully": "Khôi phục thành công!",
     "common.saveSuccessfully": "Lưu thành công!",
-    "common.copiedContent": "Đã sao chép"    
+    "common.copiedContent": "Đã sao chép",
+    "common.pickOneApp": "Chọn một Ứng dụng"     
 }

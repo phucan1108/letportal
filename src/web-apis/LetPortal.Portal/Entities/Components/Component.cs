@@ -14,6 +14,9 @@ namespace LetPortal.Portal.Entities.SectionParts
         [StringLength(250)]
         public string DatasourceName { get; set; }
 
+        [StringLength(50)]
+        public string AppId { get; set; }
+
         public List<ShellOption> Options { get; set; }
 
         public PageSectionLayoutType LayoutType { get; set; } = PageSectionLayoutType.OneColumn;

@@ -21,6 +21,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Id = "5dabf30467cb8d0bd02643f8",
                 Name = "chartsList",
                 DisplayName = "Charts List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {

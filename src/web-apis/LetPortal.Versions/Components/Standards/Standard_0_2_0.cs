@@ -22,6 +22,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d615e501773a96ee8eb5ed3",
                 Name = "userform",
                 DisplayName = "User Form",
+                AppId = Constants.CoreAppId,
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
@@ -332,6 +333,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d6222ec3aae6a79ecf035e9",
                 Name = "registerForm",
                 DisplayName = "Register Form",
+                AppId = Constants.CoreAppId,
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
@@ -608,6 +610,7 @@ namespace LetPortal.Versions.Components
                 Id = "5d63423dbaac7d4790b7d300",
                 Name = "roleForm",
                 DisplayName = "Role Form",
+                AppId = Constants.CoreAppId,
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {

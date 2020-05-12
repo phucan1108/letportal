@@ -14,6 +14,7 @@ namespace LetPortal.Versions.Pages
         public void Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Page>("5ea80612bf1ac062f89f6f55");
+            versionContext.DeleteData<Page>("5eb815a1db8e096080a93f70");
         }
 
         public void Upgrade(IVersionContext versionContext)
@@ -23,6 +24,7 @@ namespace LetPortal.Versions.Pages
                Id = "5ea80612bf1ac062f89f6f55",
                 Name = "localization-management",
                 DisplayName = "Localization",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/localization-management",
                 Claims = new List<PortalClaim>
                     {
@@ -49,7 +51,22 @@ namespace LetPortal.Versions.Pages
                 }
             };
 
-            versionContext.InsertData(localizationListPage);            
+            var localizationBuilder = new Page
+            {
+                Id = "5eb815a1db8e096080a93f70",
+                Name = "localization-builder",
+                DisplayName = "Localizationage Builder",
+                AppId = Constants.CoreAppId,
+                UrlPath = "portal/builder/localization",
+                ShellOptions = new List<ShellOption>(),
+                Claims = new List<PortalClaim>
+                {
+                    PortalClaimStandards.AllowAccess
+                }
+            };
+
+            versionContext.InsertData(localizationListPage);
+            versionContext.InsertData(localizationBuilder);
         }
     }
 }

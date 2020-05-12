@@ -21,7 +21,7 @@ namespace LetPortal.Portal.Repositories.Apps
             _context = context;
         }
 
-        public async Task CloneAsync(string cloneId, string cloneName)
+        public async Task<string> CloneAsync(string cloneId, string cloneName)
         {
             var cloneApp = await _context.Apps.AsNoTracking().FirstAsync(a => a.Id == cloneId);
 
@@ -29,17 +29,16 @@ namespace LetPortal.Portal.Repositories.Apps
             cloneApp.Name = cloneName;
             cloneApp.DisplayName += " Clone";
             await AddAsync(cloneApp);
+
+            return cloneApp.Id;
         }
 
-        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages(string appId)
         {
-            var allApps = await GetAllAsync();
+            var app = await GetOneAsync(appId);
             var languages = new List<LanguageKey>();
 
-            foreach (var app in allApps)
-            {
-                languages.AddRange(GetLanguageKeys(app));
-            }
+            languages.AddRange(GetLanguageKeys(app));
 
             return languages;
         }

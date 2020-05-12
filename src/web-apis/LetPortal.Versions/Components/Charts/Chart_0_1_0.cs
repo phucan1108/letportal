@@ -24,6 +24,7 @@ namespace LetPortal.Versions.Components.Charts
                 Id = "5dc786a40f4b6b13e0a909f3",
                 Name = "httpcounters",
                 DisplayName = "HTTP Counters",
+                AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
                 DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                 {

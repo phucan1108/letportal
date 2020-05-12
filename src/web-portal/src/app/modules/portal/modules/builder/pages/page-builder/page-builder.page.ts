@@ -17,7 +17,7 @@ import { NGXLogger } from 'ngx-logger';
 import { PortalStandardClaims } from 'app/core/security/portalClaims';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { SecurityService } from 'app/core/security/security.service';
-import { PortalClaim, DatabaseConnection, EntitySchema, DatabasesClient, EntitySchemasClient, Page, PagesClient, ControlType, PageEvent, SectionContructionType } from 'services/portal.service';
+import { PortalClaim, DatabaseConnection, EntitySchema, DatabasesClient, EntitySchemasClient, Page, PagesClient, ControlType, PageEvent, SectionContructionType, App, AppsClient } from 'services/portal.service';
 import { NextToWorkflowAction, NextToRouteAction, UpdateShellOptions, InitCreatePageBuilderAction, NextToPageBuilderAction, GeneratePageActionCommandsAction, GeneratePageBuilderInfoAction, GeneratePageEventsAction, InitEditPageBuilderAction, UpdatePageInfoAction, UpdatePageClaims, EditPageAction, CreatePageAction, NextToDatasourceAction, GatherAllChanges } from 'stores/pages/pagebuilder.actions';
 import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
@@ -58,14 +58,13 @@ export class PageBuilderPage implements OnInit, OnDestroy {
 
     isEditMode = false
     editId = ''
-
     //#region Constants
     _formTypes = [
         { name: 'Entity', value: 0 },
         { name: 'Workflow', value: 1 }
     ]
 
-    //#endregion
+    //#endregion   
 
     constructor(
         private pageService: PageService,
@@ -147,7 +146,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             this.pageInfoFormGroup = this.fb.group({
                 name: ['', [Validators.required, Validators.maxLength(250)], [PortalValidators.pageUniqueName(this.pagesClient)]],
                 displayName: ['', [Validators.required, Validators.maxLength(250)]],
-                urlPath: ['', Validators.required]
+                urlPath: ['', Validators.required],
+                app: ['', Validators.required]
             })
 
             // Init some must have dynamic form part
@@ -157,7 +157,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             this.pageInfoFormGroup = this.fb.group({
                 name: new FormControl({ value: this.page.name, disabled: true}),
                 displayName: [this.page.displayName, [Validators.required, Validators.maxLength(250)]],
-                urlPath: [this.page.urlPath, Validators.required]
+                urlPath: [this.page.urlPath, Validators.required],
+                app: [this.page.appId, Validators.required]
             })
 
             _.forEach(this.page.shellOptions, shellOpt => {

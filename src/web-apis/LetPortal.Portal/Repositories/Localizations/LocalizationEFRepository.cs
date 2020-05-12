@@ -1,7 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Localizations;
+using LetPortal.Portal.Entities.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using LetPortal.Core.Utils;
 
 namespace LetPortal.Portal.Repositories.Localizations
 {
@@ -23,24 +27,65 @@ namespace LetPortal.Portal.Repositories.Localizations
                         .FirstAsync(a => a.Id == id);
         }
 
-        public async Task<Localization> GetByLocaleId(string localeId)
+        public async Task<Localization> GetByLocaleId(string localeId, string appId)
         {
             return await _context
                 .Localizations
                 .AsNoTracking()
                 .Include(a => a.LocalizationContents)
-                .FirstAsync(b => b.LocaleId == localeId);
+                .FirstAsync(b => b.LocaleId == localeId && b.AppId == appId);
         }
 
-        public async Task<bool> CheckLocaleExisted(string localeId)
+        public async Task<bool> CheckLocaleExisted(string localeId, string appId)
         {
-            return await _context.Localizations.AnyAsync(a => a.LocaleId == localeId);
+            return await _context.Localizations.AnyAsync(a => a.LocaleId == localeId && a.AppId == appId);
         }
 
         public async Task DeleteByLocaleId(string localeId)
         {
             var existedLocale = await _context.Localizations.AsNoTracking().FirstAsync(a => a.LocaleId == localeId);
             await DeleteAsync(existedLocale.Id);
+        }
+
+        public async Task<IEnumerable<LanguageKey>> GetAppLangues(string appId, string localeId)
+        {
+            var keys = await _context
+                                    .Localizations
+                                    .Include(a =>
+                                        a.LocalizationContents
+                                            .Where(b => b.Key.StartsWith("apps")))
+                                    .AsNoTracking()
+                                    .AsQueryable()
+                                    .Where(a => a.AppId == appId)
+                                    .SelectMany(a => a.LocalizationContents)
+                                    .Select(b => new LanguageKey { Key = b.Key, Value = b.Text })
+                                    .ToListAsync();
+            if(keys != null)
+            {
+                return keys;
+            }
+            else
+            {
+                return Enumerable.Empty<LanguageKey>();
+            }
+        }
+
+        public async Task CloneLocalization(string appId, string cloningAppId)
+        {
+            var allLocales = await _context.Localizations.Include(a => a.LocalizationContents)
+                                    .AsNoTracking()
+                                    .AsQueryable()
+                                    .Where(a => a.AppId == appId)
+                                    .ToListAsync();
+            if (allLocales != null)
+            {
+                foreach (var locale in allLocales)
+                {
+                    locale.Id = DataUtil.GenerateUniqueId();
+                    locale.AppId = cloningAppId;
+                    await AddAsync(locale);
+                }
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace LetPortal.Portal.Repositories.Apps
 {
     public interface IAppRepository : IGenericRepository<App>
     {
-        Task CloneAsync(string cloneId, string cloneName);
+        Task<string> CloneAsync(string cloneId, string cloneName);
 
         Task UpdateMenuAsync(string appId, List<Menu> menus);
 
@@ -20,6 +20,6 @@ namespace LetPortal.Portal.Repositories.Apps
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeys(string appId);
 
-        Task<IEnumerable<LanguageKey>> CollectAllLanguages();
+        Task<IEnumerable<LanguageKey>> CollectAllLanguages(string appId);
     }
 }

@@ -16,6 +16,7 @@ import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ExportService } from 'services/export.service';
 import { TranslateService } from '@ngx-translate/core';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'let-localization-page',
@@ -34,7 +35,9 @@ export class LocalizationPage implements OnInit {
     localeId: string
     isEditMode = false
     localization: Localization
+    appId: string
 
+    hasRestored = false
     constructor(
         private translate: TranslateService,
         private exportService: ExportService,
@@ -43,21 +46,22 @@ export class LocalizationPage implements OnInit {
         private router: Router,
         private shortcutUtil: ShortcutUtil,
         private logger: NGXLogger,
-        private activedRoute: ActivatedRoute
+        private activedRoute: ActivatedRoute,
+        private pageService: PageService
     ) { }
 
     ngOnInit(): void {
-
+        this.pageService.init('localization-management').subscribe()
         this.localization = this.activedRoute.snapshot.data.localization
         if (!ObjectUtils.isNotNull(this.localization)) {
-            this.activedRoute.queryParamMap.subscribe(
-                queryParam => {
-                    // this.pagesClient.generateLanguages(this.pageId).subscribe(keys => {
-                    //     this.languageKeys = keys
-                    // })
+            this.activedRoute.paramMap.subscribe(
+                param => {
+                    if (param.get('appId')) {
+                        this.appId = param.get('appId')
+                    }
 
                     this.formGroup = this.fb.group({
-                        language: ['', [Validators.required], [PortalValidators.localeUniqueName(this.localizationClient)]]
+                        language: ['', [Validators.required], [PortalValidators.localeUniqueName(this.localizationClient, this.appId)]]
                     })
                 }
             )
@@ -65,6 +69,7 @@ export class LocalizationPage implements OnInit {
         else {
             this.isEditMode = true
             this.localeId = this.localization.localeId
+            this.appId = this.localization.appId
             this.formGroup = this.fb.group({
                 language: [{ value: this.localeId, disabled: true }, Validators.required]
             })
@@ -89,6 +94,7 @@ export class LocalizationPage implements OnInit {
             const combineLocalization: Localization = {
                 id: '',
                 localeId: this.formGroup.get('language').value,
+                appId: this.appId,
                 localizationContents: this.languageKeys.map(a => <LocalizationContent>{
                     key: a.key,
                     text: a.value
@@ -101,7 +107,7 @@ export class LocalizationPage implements OnInit {
                         this.localizationClient.create(combineLocalization).subscribe(
                             res => {
                                 this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
-                                this.router.navigateByUrl('portal/page/localization-management')
+                                this.router.navigateByUrl('portal/page/localization-management?appId=' + this.appId)
                             }
                         )
                     }
@@ -112,7 +118,7 @@ export class LocalizationPage implements OnInit {
                 this.localizationClient.create(combineLocalization).subscribe(
                     res => {
                         this.shortcutUtil.toastMessage(this.translate.instant('common.createSuccessfully'), ToastType.Success)
-                        this.router.navigateByUrl('portal/page/localization-management')
+                        this.router.navigateByUrl('portal/page/localization-management?appId=' + this.appId)
                     }
                 )
             }
@@ -120,7 +126,7 @@ export class LocalizationPage implements OnInit {
     }
 
     onCollect() {
-        const sub = this.localizationClient.collectAll().pipe(
+        const sub = this.localizationClient.collectAll(this.appId).pipe(
             tap(
                 allKeys => {
                     if (this.isEditMode) {
@@ -133,14 +139,23 @@ export class LocalizationPage implements OnInit {
                         // Remove all non-existed
                         let removedItems: LanguageKey[] = []
                         this.languageKeys.forEach(lang => {
-                            if(!allKeys.some(a => a.key === lang.key)){
+                            if (!allKeys.some(a => a.key === lang.key)) {
                                 removedItems.push(lang)
                             }
                         })
 
                         this.languageKeys = this.languageKeys.filter(a => !removedItems.includes(a))
+
                     }
                     else {
+                        allKeys.forEach(text => {
+                            if (this.hasRestored){
+                                const found = this.languageKeys.find(a => a.key === text.key)
+                                if(found){
+                                    text.value = found.value
+                                }
+                            }
+                        })
                         this.languageKeys = allKeys
                     }
                     sub.unsubscribe()
@@ -149,7 +164,7 @@ export class LocalizationPage implements OnInit {
         ).subscribe()
     }
     cancel() {
-        this.router.navigateByUrl('portal/page/localization-management')
+        this.router.navigateByUrl('portal/page/localization-management?appId=' + this.appId)
     }
 
     onBackup() {
@@ -161,7 +176,7 @@ export class LocalizationPage implements OnInit {
 
     onFileChange($event) {
         const latestFile: File = $event.target.files[$event.target.files.length - 1]
-        if(ObjectUtils.isNotNull(latestFile)){
+        if (ObjectUtils.isNotNull(latestFile)) {
             if (latestFile.name.indexOf('.json') < 0) {
                 window.alert('Please upload json file')
             }
@@ -176,6 +191,7 @@ export class LocalizationPage implements OnInit {
                             key: a.key,
                             value: a.text
                         })
+                        this.hasRestored = true
                     }
                     catch (ex) {
                         window.alert('Something went wrong: ' + ex.message)
@@ -183,7 +199,7 @@ export class LocalizationPage implements OnInit {
                 }
                 reader.readAsText(latestFile)
             }
-        }       
+        }
     }
 
     private _filterTag(choosingTagValue: string): Array<any> {

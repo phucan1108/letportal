@@ -30,9 +30,9 @@ namespace LetPortal.Portal.Repositories.Pages
             await AddAsync(clonePage);
         }
 
-        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages(string appId)
         {
-            var allPages = await GetAllAsync();
+            var allPages = await GetAllAsync(a => a.AppId == appId);
 
             var languages = new List<LanguageKey>();
 

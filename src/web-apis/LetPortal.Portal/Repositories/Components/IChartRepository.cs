@@ -15,6 +15,6 @@ namespace LetPortal.Portal.Repositories.Components
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string chartId);
 
-        Task<IEnumerable<LanguageKey>> CollectAllLanguages();
+        Task<IEnumerable<LanguageKey>> CollectAllLanguages(string appId);
     }
 }

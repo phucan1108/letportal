@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppsClient, App, LocalizationClient } from 'services/portal.service';
+import { AppsClient, App, LocalizationClient, LanguageKey } from 'services/portal.service';
 import { Observable, of } from 'rxjs';
 import { SessionService } from 'services/session.service';
 import { Router } from '@angular/router';
@@ -34,6 +34,7 @@ export class AppDashboardComponent implements OnInit {
         private router: Router,
         private store: Store,
         private translate: TranslateService,
+        private localizationClient: LocalizationClient,
         private localizationService: LocalizationService,
         private logger: NGXLogger
     ) { }
@@ -49,13 +50,12 @@ export class AppDashboardComponent implements OnInit {
                 res => {
                     if (res) {
                         this.loadingApps$ = this.appsClient.getMany(
-                            this.getAvailableAppIds(this.security.getAuthUser())
+                            this.translate.currentLang, this.getAvailableAppIds(this.security.getAuthUser())
                         ).pipe(
                             mergeMap(
                                 apps => {
                                     const loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
                                     _.forEach(apps, app => {
-                                        this.localization(app)
                                         loadingApps.push({
                                             app,
                                             loading: false,
@@ -84,10 +84,20 @@ export class AppDashboardComponent implements OnInit {
     }
 
     onSelectingApp(app: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }) {
-        app.btnOption.active = true
-        this.sessionService.setCurrentApp(app.app);
-        this.store.dispatch(new UserSelectAppAction(app.app))
-        this.router.navigateByUrl(app.app.defaultUrl);
+        this.localizationClient.getOne(app.app.id, this.translate.currentLang).pipe(
+            tap(
+                keys => {
+                    if(ObjectUtils.isNotNull(keys)){
+                        this.localizationService.setKeys(keys.localizationContents)
+                    }
+                    app.btnOption.active = true
+                    this.sessionService.setCurrentApp(app.app);
+                    this.store.dispatch(new UserSelectAppAction(app.app))        
+                    this.router.navigateByUrl(app.app.defaultUrl);
+                }
+            )
+        ).subscribe()
+        
     }
 
     private getAvailableAppIds(user: AuthUser) {
@@ -103,34 +113,5 @@ export class AppDashboardComponent implements OnInit {
             }
         });
         return ids
-    }
-
-    private localization(app: App) {
-        if (this.localizationService.allowTranslate) {
-            const appDisplayName = this.localizationService.getText(`apps.${app.name}.displayName`)
-            if(ObjectUtils.isNotNull(appDisplayName)){
-                app.displayName = appDisplayName
-            }
-
-            if(ObjectUtils.isNotNull(app.menus)){
-                app.menus.forEach((menu,index) => {
-                    const menuName = this.localizationService.getText(`apps.${app.name}.menus[${index.toString()}].displayName`)
-                    if(ObjectUtils.isNotNull(menuName)){
-                        menu.displayName = menuName
-                    }
-                    
-                    if(ObjectUtils.isNotNull(menu.subMenus)){
-                        menu.subMenus.forEach((subMenu, subIndex) => {
-                            const subMenuName = this.localizationService.getText(`apps.${app.name}.menus[${index.toString()}][${subIndex.toString()}].displayName`)
-                            if(ObjectUtils.isNotNull(subMenuName)){
-                                subMenu.displayName = subMenuName
-                            }
-                        })
-                    }
-                })
-            }
-        }
-
-        return app
     }
 }

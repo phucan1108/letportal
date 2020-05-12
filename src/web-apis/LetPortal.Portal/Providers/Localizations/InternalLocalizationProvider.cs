@@ -35,15 +35,15 @@ namespace LetPortal.Portal.Providers.Localizations
             _appRepository = appRepository;
         }
 
-        public async Task<IEnumerable<LanguageKey>> CollectAlls()
+        public async Task<IEnumerable<LanguageKey>> CollectAlls(string appId)
         {
             var languages = new List<LanguageKey>();
 
-            languages.AddRange(await _appRepository.CollectAllLanguages());
-            languages.AddRange(await _standardRepository.CollectAllLanguages());
-            languages.AddRange(await _dynamicListRepository.CollectAllLanguages());
-            languages.AddRange(await _chartRepository.CollectAllLanguages());
-            languages.AddRange(await _pageRepository.CollectAllLanguages());
+            languages.AddRange(await _appRepository.CollectAllLanguages(appId));
+            languages.AddRange(await _standardRepository.CollectAllLanguages(appId));
+            languages.AddRange(await _dynamicListRepository.CollectAllLanguages(appId));
+            languages.AddRange(await _chartRepository.CollectAllLanguages(appId));
+            languages.AddRange(await _pageRepository.CollectAllLanguages(appId));
 
             return languages;
         }

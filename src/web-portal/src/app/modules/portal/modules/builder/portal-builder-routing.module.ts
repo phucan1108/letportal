@@ -108,11 +108,11 @@ const routes: Routes = [
 				}
 			},
 			{
-				path: 'localization',
+				path: 'localization/:appId',
 				component: LocalizationPage
 			},
 			{
-				path: 'localization/:localeId',
+				path: 'localization/:appId/:localeId',
 				component: LocalizationPage,
 				resolve: {
 					localization: LocaleResolve

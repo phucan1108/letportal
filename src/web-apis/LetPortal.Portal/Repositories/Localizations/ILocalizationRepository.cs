@@ -1,15 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Localizations;
+using LetPortal.Portal.Entities.Shared;
 
 namespace LetPortal.Portal.Repositories.Localizations
 {
     public interface ILocalizationRepository : IGenericRepository<Localization>
     {
-        Task<Localization> GetByLocaleId(string localeId);
+        Task<IEnumerable<LanguageKey>> GetAppLangues(string appId, string localeId);
 
-        Task<bool> CheckLocaleExisted(string localeId);
+        Task<Localization> GetByLocaleId(string localeId, string appId);
+
+        Task<bool> CheckLocaleExisted(string localeId, string appId);
 
         Task DeleteByLocaleId(string localeId);
+
+        Task CloneLocalization(string appId, string cloningAppId);
     }
 }

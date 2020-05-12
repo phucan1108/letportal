@@ -6,6 +6,6 @@ namespace LetPortal.Portal.Providers.Localizations
 {
     public interface ILocalizationProvider
     {
-        Task<IEnumerable<LanguageKey>> CollectAlls();
+        Task<IEnumerable<LanguageKey>> CollectAlls(string appId);
     }
 }

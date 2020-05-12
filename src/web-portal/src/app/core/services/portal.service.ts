@@ -868,10 +868,9 @@ export class ChartsClient implements IChartsClient {
 }
 
 export interface ILocalizationClient {
-    getOneBuilder(localeId: string | null): Observable<Localization>;
-    getOne(localeId: string | null): Observable<Localization>;
-    checkExist(localeId: string | null): Observable<Localization>;
-    collectAll(): Observable<LanguageKey[]>;
+    getOne(appId: string | null, localeId: string | null): Observable<Localization>;
+    checkExist(appId: string | null, localeId: string | null): Observable<Localization>;
+    collectAll(appId: string | null): Observable<LanguageKey[]>;
     create(localization: Localization): Observable<FileResponse>;
     delete(id: string | null): Observable<FileResponse>;
 }
@@ -887,58 +886,11 @@ export class LocalizationClient implements ILocalizationClient {
         this.baseUrl = baseUrl ? baseUrl : "http://localhost:53508";
     }
 
-    getOneBuilder(localeId: string | null): Observable<Localization> {
-        let url_ = this.baseUrl + "/api/localizations/{localeId}";
-        if (localeId === undefined || localeId === null)
-            throw new Error("The parameter 'localeId' must be defined.");
-        url_ = url_.replace("{localeId}", encodeURIComponent("" + localeId)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",			
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetOneBuilder(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetOneBuilder(<any>response_);
-                } catch (e) {
-                    return <Observable<Localization>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<Localization>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetOneBuilder(response: HttpResponseBase): Observable<Localization> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : <Localization>JSON.parse(_responseText, this.jsonParseReviver);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<Localization>(<any>null);
-    }
-
-    getOne(localeId: string | null): Observable<Localization> {
-        let url_ = this.baseUrl + "/api/localizations/locale/{localeId}";
+    getOne(appId: string | null, localeId: string | null): Observable<Localization> {
+        let url_ = this.baseUrl + "/api/localizations/{appId}/{localeId}";
+        if (appId === undefined || appId === null)
+            throw new Error("The parameter 'appId' must be defined.");
+        url_ = url_.replace("{appId}", encodeURIComponent("" + appId)); 
         if (localeId === undefined || localeId === null)
             throw new Error("The parameter 'localeId' must be defined.");
         url_ = url_.replace("{localeId}", encodeURIComponent("" + localeId)); 
@@ -987,8 +939,11 @@ export class LocalizationClient implements ILocalizationClient {
         return _observableOf<Localization>(<any>null);
     }
 
-    checkExist(localeId: string | null): Observable<Localization> {
-        let url_ = this.baseUrl + "/api/localizations/exist/{localeId}";
+    checkExist(appId: string | null, localeId: string | null): Observable<Localization> {
+        let url_ = this.baseUrl + "/api/localizations/exist/{appId}/{localeId}";
+        if (appId === undefined || appId === null)
+            throw new Error("The parameter 'appId' must be defined.");
+        url_ = url_.replace("{appId}", encodeURIComponent("" + appId)); 
         if (localeId === undefined || localeId === null)
             throw new Error("The parameter 'localeId' must be defined.");
         url_ = url_.replace("{localeId}", encodeURIComponent("" + localeId)); 
@@ -1037,8 +992,11 @@ export class LocalizationClient implements ILocalizationClient {
         return _observableOf<Localization>(<any>null);
     }
 
-    collectAll(): Observable<LanguageKey[]> {
-        let url_ = this.baseUrl + "/api/localizations/collectAll";
+    collectAll(appId: string | null): Observable<LanguageKey[]> {
+        let url_ = this.baseUrl + "/api/localizations/collectAll/{appId}";
+        if (appId === undefined || appId === null)
+            throw new Error("The parameter 'appId' must be defined.");
+        url_ = url_.replace("{appId}", encodeURIComponent("" + appId)); 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1185,14 +1143,15 @@ export class LocalizationClient implements ILocalizationClient {
 }
 
 export interface IAppsClient {
-    getOne(id: string | null): Observable<App>;
-    update(id: string | null, app: App): Observable<FileResponse>;
-    delete(id: string | null): Observable<FileResponse>;
-    getMany(ids: string | null | undefined): Observable<App[]>;
+    getOne(id: string | null, localeId: string | null): Observable<App>;
+    getAll(): Observable<App[]>;
+    getMany(localeId: string | null, ids: string | null | undefined): Observable<App[]>;
     getShortApps(keyWord: string | null | undefined): Observable<ShortEntityModel[]>;
     getAvailableUrls(id: string | null): Observable<AvailableUrl[]>;
     create(app: App): Observable<App>;
-    getAllApps(): Observable<App[]>;
+    getAllApps(localeId: string | null | undefined): Observable<App[]>;
+    update(id: string | null, app: App): Observable<FileResponse>;
+    delete(id: string | null): Observable<FileResponse>;
     updateMenu(id: string | null, menus: Menu[]): Observable<FileResponse>;
     asssignRolesToMenu(id: string | null, menuProfile: MenuProfile): Observable<FileResponse>;
     clone(model: CloneModel): Observable<FileResponse>;
@@ -1209,11 +1168,14 @@ export class AppsClient implements IAppsClient {
         this.baseUrl = baseUrl ? baseUrl : "http://localhost:53508";
     }
 
-    getOne(id: string | null): Observable<App> {
-        let url_ = this.baseUrl + "/api/apps/{id}";
+    getOne(id: string | null, localeId: string | null): Observable<App> {
+        let url_ = this.baseUrl + "/api/apps/{id}/{localeId}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        if (localeId === undefined || localeId === null)
+            throw new Error("The parameter 'localeId' must be defined.");
+        url_ = url_.replace("{localeId}", encodeURIComponent("" + localeId)); 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1259,110 +1221,58 @@ export class AppsClient implements IAppsClient {
         return _observableOf<App>(<any>null);
     }
 
-    update(id: string | null, app: App): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/apps/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(app);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",			
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdate(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse>(<any>null);
-    }
-
-    delete(id: string | null): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/apps/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+    getAll(): Observable<App[]> {
+        let url_ = this.baseUrl + "/api/apps/all-apps";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
             observe: "response",
             responseType: "blob",			
             headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processDelete(<any>response_);
+                    return this.processGetAll(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
+                    return <Observable<App[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
+                return <Observable<App[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
+    protected processGetAll(response: HttpResponseBase): Observable<App[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <App[]>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse>(<any>null);
+        return _observableOf<App[]>(<any>null);
     }
 
-    getMany(ids: string | null | undefined): Observable<App[]> {
-        let url_ = this.baseUrl + "/api/apps/all?";
+    getMany(localeId: string | null, ids: string | null | undefined): Observable<App[]> {
+        let url_ = this.baseUrl + "/api/apps/all/{localeId}?";
+        if (localeId === undefined || localeId === null)
+            throw new Error("The parameter 'localeId' must be defined.");
+        url_ = url_.replace("{localeId}", encodeURIComponent("" + localeId)); 
         if (ids !== undefined)
             url_ += "ids=" + encodeURIComponent("" + ids) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1560,8 +1470,10 @@ export class AppsClient implements IAppsClient {
         return _observableOf<App>(<any>null);
     }
 
-    getAllApps(): Observable<App[]> {
-        let url_ = this.baseUrl + "/api/apps";
+    getAllApps(localeId: string | null | undefined): Observable<App[]> {
+        let url_ = this.baseUrl + "/api/apps?";
+        if (localeId !== undefined)
+            url_ += "localeId=" + encodeURIComponent("" + localeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1605,6 +1517,108 @@ export class AppsClient implements IAppsClient {
             }));
         }
         return _observableOf<App[]>(<any>null);
+    }
+
+    update(id: string | null, app: App): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/apps/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(app);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
+    }
+
+    delete(id: string | null): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/apps/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
     }
 
     updateMenu(id: string | null, menus: Menu[]): Observable<FileResponse> {
@@ -4949,6 +4963,7 @@ export interface BackupableEntity extends Entity {
 
 export interface Component extends BackupableEntity {
     datasourceName?: string | undefined;
+    appId?: string | undefined;
     options?: ShellOption[] | undefined;
     layoutType?: PageSectionLayoutType;
     allowOverrideOptions?: boolean;
@@ -5104,6 +5119,7 @@ export interface CloneModel {
 export interface Localization extends Entity {
     localizationContents?: LocalizationContent[] | undefined;
     localeId?: string | undefined;
+    appId?: string | undefined;
 }
 
 export interface LocalizationContent extends Entity {
@@ -5496,6 +5512,7 @@ export enum ClaimValueType {
 
 export interface Page extends BackupableEntity {
     urlPath?: string | undefined;
+    appId?: string | undefined;
     shellOptions?: ShellOption[] | undefined;
     claims?: PortalClaim[] | undefined;
     builder?: PageBuilder | undefined;

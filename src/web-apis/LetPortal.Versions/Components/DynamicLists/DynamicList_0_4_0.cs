@@ -22,6 +22,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Id = "5dc786a40f4b6b13e0a909f4",
                 Name = "servicesMonitorList",
                 DisplayName = "Services Monitor List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -203,6 +204,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Id = "5dcac739be0b4e533408344f",
                 Name = "serviceLogsList",
                 DisplayName = "Service Logs List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {

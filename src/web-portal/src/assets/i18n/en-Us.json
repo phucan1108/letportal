@@ -426,5 +426,6 @@
     "common.updateSuccessfully": "Update successfully!",
     "common.restoreSuccessfully": "Restore successfully!",
     "common.saveSuccessfully": "Save successfully!",
-    "common.copiedContent": "Copied content"     
+    "common.copiedContent": "Copied content",
+    "common.pickOneApp": "Pick one app"  
 }

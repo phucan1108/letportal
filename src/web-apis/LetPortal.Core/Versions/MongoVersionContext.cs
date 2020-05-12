@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using LetPortal.Core.Persistences;
@@ -48,6 +49,11 @@ namespace LetPortal.Core.Versions
         {
             var entityCollection = GetMongoCollection<T>();
             entityCollection.DeleteOne(a => a.Id == id);
+        }
+
+        public IQueryable<T> GetQueryable<T>() where T : Entity
+        {
+            return GetMongoCollection<T>().AsQueryable();
         }
 
         public void DropAll<T>() where T : Entity

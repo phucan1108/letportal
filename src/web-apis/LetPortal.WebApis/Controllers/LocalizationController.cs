@@ -32,40 +32,30 @@ namespace LetPortal.PortalApis.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{localeId}")]
+        [HttpGet("{appId}/{localeId}")]
         [ProducesResponseType(typeof(Localization), 200)]
         [Authorize]
-        public async Task<IActionResult> GetOneBuilder(string localeId)
+        public async Task<IActionResult> GetOne(string appId ,string localeId)
         {
-            var result = await _localizationRepository.GetOneAsync(localeId);
+            var result = await _localizationRepository.GetByLocaleId(localeId, appId);
             _logger.Info("Found localization: {@result}", result);
             return Ok(result);
         }
 
-        [HttpGet("locale/{localeId}")]
-        [ProducesResponseType(typeof(Localization), 200)]
-        [Authorize]
-        public async Task<IActionResult> GetOne(string localeId)
-        {
-            var result = await _localizationRepository.GetByLocaleId(localeId);
-            _logger.Info("Found localization: {@result}", result);
-            return Ok(result);
-        }
-
-        [HttpGet("exist/{localeId}")]
+        [HttpGet("exist/{appId}/{localeId}")]
         [ProducesResponseType(typeof(Localization), 200)]
         [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
-        public async Task<IActionResult> CheckExist(string localeId)
+        public async Task<IActionResult> CheckExist(string appId, string localeId)
         {
-            return Ok(await _localizationRepository.CheckLocaleExisted(localeId));
+            return Ok(await _localizationRepository.CheckLocaleExisted(localeId, appId));
         }
 
-        [HttpGet("collectAll")]
+        [HttpGet("collectAll/{appId}")]
         [ProducesResponseType(typeof(IEnumerable<LanguageKey>), 200)]
         [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
-        public async Task<IActionResult> CollectAll()
+        public async Task<IActionResult> CollectAll(string appId)
         {
-            return Ok(await _localizationProvider.CollectAlls());
+            return Ok(await _localizationProvider.CollectAlls(appId));
         }
 
         [HttpPost("")]

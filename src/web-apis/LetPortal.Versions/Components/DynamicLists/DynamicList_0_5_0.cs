@@ -21,6 +21,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Id = "5e1aa91e3c107562acf358b2",
                 Name = "backupsList",
                 DisplayName = "Backups List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
