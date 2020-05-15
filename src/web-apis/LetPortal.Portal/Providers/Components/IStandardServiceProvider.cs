@@ -12,5 +12,7 @@ namespace LetPortal.Portal.Providers.Components
         Task<IEnumerable<ComparisonResult>> CompareStandardComponent(IEnumerable<StandardComponent> standardComponents);
 
         Task ForceUpdateStandards(IEnumerable<StandardComponent> standards);
+
+        Task<IEnumerable<StandardComponent>> GetByAppId(string appId);
     }
 }

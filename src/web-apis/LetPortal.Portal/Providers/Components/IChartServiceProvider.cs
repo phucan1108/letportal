@@ -12,5 +12,7 @@ namespace LetPortal.Portal.Providers.Components
         Task<IEnumerable<ComparisonResult>> CompareCharts(IEnumerable<Chart> charts);
 
         Task ForceUpdateCharts(IEnumerable<Chart> charts);
+
+        Task<IEnumerable<Chart>> GetByAppId(string appId);
     }
 }

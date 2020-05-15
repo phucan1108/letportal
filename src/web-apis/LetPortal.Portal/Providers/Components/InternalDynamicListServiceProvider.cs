@@ -39,6 +39,11 @@ namespace LetPortal.Portal.Providers.Components
             return await _dynamicListRepository.GetAllByIdsAsync(ids);
         }
 
+        public async Task<IEnumerable<DynamicList>> GetByAppId(string appId)
+        {
+            return await _dynamicListRepository.GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
+        }
+
         #region IDisposable Support
         private bool disposedValue = false;
 

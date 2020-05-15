@@ -16,6 +16,8 @@ namespace LetPortal.Portal.Repositories.Localizations
 
         Task DeleteByLocaleId(string localeId);
 
+        Task DeleteAll(string appId);
+
         Task CloneLocalization(string appId, string cloningAppId);
     }
 }

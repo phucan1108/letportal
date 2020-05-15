@@ -193,6 +193,7 @@ namespace LetPortal.WebApis.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             await _appRepository.DeleteAsync(id);
+            await _localizationRepository.DeleteAll(id);
             return Ok();
         }
 

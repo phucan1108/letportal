@@ -87,5 +87,18 @@ namespace LetPortal.Portal.Repositories.Localizations
                 }
             }
         }
+
+        public async Task DeleteAll(string appId)
+        {
+            var allLocales = await _context.Localizations.AsNoTracking().Where(a => a.AppId == appId).Select(b => b.Id).ToListAsync();
+
+            if(allLocales != null && allLocales.Count > 0)
+            {
+                foreach(var locale in allLocales)
+                {
+                    await DeleteAsync(locale);
+                }
+            }
+        }
     }
 }

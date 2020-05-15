@@ -39,6 +39,11 @@ namespace LetPortal.Portal.Providers.Components
             return await _chartRepository.GetAllByIdsAsync(ids);
         }
 
+        public async Task<IEnumerable<Chart>> GetByAppId(string appId)
+        {
+            return await _chartRepository.GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
+        }
+
         #region IDisposable Support
         private bool disposedValue = false;
 

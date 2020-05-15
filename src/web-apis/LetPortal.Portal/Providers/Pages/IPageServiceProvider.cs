@@ -18,5 +18,7 @@ namespace LetPortal.Portal.Providers.Pages
         Task ForceUpdatePages(IEnumerable<Page> pages);
 
         Task<IEnumerable<LanguageKey>> GetPageLanguages(string pageId);
+
+        Task<IEnumerable<Page>> GetByAppId(string appId);
     }
 }

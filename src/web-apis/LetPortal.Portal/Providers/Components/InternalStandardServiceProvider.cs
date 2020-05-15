@@ -37,6 +37,11 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<StandardComponent>> GetStandardComponentsByIds(IEnumerable<string> ids)
         {
             return await _standardRepository.GetAllByIdsAsync(ids);
+        }    
+
+        public async Task<IEnumerable<StandardComponent>> GetByAppId(string appId)
+        {
+            return await _standardRepository.GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
         }
 
         #region IDisposable Support

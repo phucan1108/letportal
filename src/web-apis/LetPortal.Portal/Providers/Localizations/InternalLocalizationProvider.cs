@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using LetPortal.Portal.Entities.Localizations;
 using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Repositories.Apps;
 using LetPortal.Portal.Repositories.Components;
+using LetPortal.Portal.Repositories.Localizations;
 using LetPortal.Portal.Repositories.Pages;
 
 namespace LetPortal.Portal.Providers.Localizations
@@ -21,18 +23,22 @@ namespace LetPortal.Portal.Providers.Localizations
 
         private readonly IAppRepository _appRepository;
 
+        private readonly ILocalizationRepository _localizationRepository;
+
         public InternalLocalizationProvider(
             IPageRepository pageRepository,
             IStandardRepository standardRepository,
             IChartRepository chartRepository,
             IDynamicListRepository dynamicListRepository,
-            IAppRepository appRepository)
+            IAppRepository appRepository,
+            ILocalizationRepository localizationRepository)
         {
             _pageRepository = pageRepository;
             _standardRepository = standardRepository;
             _chartRepository = chartRepository;
             _dynamicListRepository = dynamicListRepository;
             _appRepository = appRepository;
+            _localizationRepository = localizationRepository;
         }
 
         public async Task<IEnumerable<LanguageKey>> CollectAlls(string appId)
@@ -46,6 +52,19 @@ namespace LetPortal.Portal.Providers.Localizations
             languages.AddRange(await _pageRepository.CollectAllLanguages(appId));
 
             return languages;
+        }
+
+        public async Task ForceUpdateLocalizations(IEnumerable<Localization> localizations)
+        {
+            foreach(var localization in localizations)
+            {
+                await _localizationRepository.ForceUpdateAsync(localization.Id, localization);
+            }
+        }
+
+        public async Task<IEnumerable<Localization>> GetByAppId(string appId)
+        {
+            return await _localizationRepository.GetAllAsync(a => a.AppId == appId);
         }
     }
 }
