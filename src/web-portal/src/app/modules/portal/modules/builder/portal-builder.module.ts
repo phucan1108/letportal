@@ -111,6 +111,9 @@ import { MatTreeModule } from '@angular/material/tree';
 import { LocalizationPage } from './pages/localization/localization.page';
 import { LocaleResolve } from './resolve/locale.resolve';
 import { TranslateModule } from '@ngx-translate/core';
+import { AppPackagePage } from './pages/app-package/app-package.page';
+import { AppPackageResolve } from './resolve/app-package.resolve';
+import { AppInstallationPage } from './pages/app-installation/app-installation.page';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -169,7 +172,9 @@ import { TranslateModule } from '@ngx-translate/core';
 		BackupRestorePage,
 		ExecutionDatabaseStepComponent,
 		IconPickerSharedComponent,
-		LocalizationPage
+		LocalizationPage,
+		AppPackagePage,
+		AppInstallationPage
 	],
 	imports: [
 		CoreModule.forChild(),
@@ -280,6 +285,7 @@ import { TranslateModule } from '@ngx-translate/core';
 		ChartBuilderResolve,
 		BackupResolve,
 		LocaleResolve,
+		AppPackageResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
 	],

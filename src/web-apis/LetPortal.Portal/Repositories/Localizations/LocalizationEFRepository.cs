@@ -33,7 +33,7 @@ namespace LetPortal.Portal.Repositories.Localizations
                 .Localizations
                 .AsNoTracking()
                 .Include(a => a.LocalizationContents)
-                .FirstAsync(b => b.LocaleId == localeId && b.AppId == appId);
+                .FirstOrDefaultAsync(b => b.LocaleId == localeId && b.AppId == appId);
         }
 
         public async Task<bool> CheckLocaleExisted(string localeId, string appId)

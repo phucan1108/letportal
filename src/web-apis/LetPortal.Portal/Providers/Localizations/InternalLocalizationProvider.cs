@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Portal.Entities.Localizations;
@@ -52,6 +53,19 @@ namespace LetPortal.Portal.Providers.Localizations
             languages.AddRange(await _pageRepository.CollectAllLanguages(appId));
 
             return languages;
+        }
+
+        public async Task DeleteByAppIdAsync(string appId)
+        {
+            var allLocalizations = await _localizationRepository.GetAllAsync(a => a.AppId == appId);
+
+            if(allLocalizations != null && allLocalizations.Any())
+            {
+                foreach(var locale in allLocalizations)
+                {
+                    await _localizationRepository.DeleteAsync(locale.Id);
+                }
+            }
         }
 
         public async Task ForceUpdateLocalizations(IEnumerable<Localization> localizations)

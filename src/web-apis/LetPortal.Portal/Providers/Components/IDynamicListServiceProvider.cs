@@ -14,5 +14,7 @@ namespace LetPortal.Portal.Providers.Components
         Task ForceUpdateDynamicLists(IEnumerable<DynamicList> dynamicLists);
 
         Task<IEnumerable<DynamicList>> GetByAppId(string appId);
+
+        Task DeleteByAppIdAsync(string appId);
     }
 }

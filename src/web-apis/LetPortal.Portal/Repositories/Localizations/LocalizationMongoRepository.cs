@@ -68,7 +68,7 @@ namespace LetPortal.Portal.Repositories.Localizations
         {
             return await Collection
                     .AsQueryable()
-                    .FirstAsync(a => a.LocaleId == localeId && a.AppId == appId);
+                    .FirstOrDefaultAsync(a => a.LocaleId == localeId && a.AppId == appId);
         }
     }
 }

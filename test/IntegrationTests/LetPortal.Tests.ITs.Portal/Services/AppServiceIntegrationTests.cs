@@ -1,4 +1,5 @@
 ﻿using LetPortal.Core.Utils;
+using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Localizations;
 using LetPortal.Portal.Entities.Pages;
@@ -15,6 +16,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -91,7 +93,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
         }
 
         [Fact]
-        public async Task Install_App_Package_Mongo()
+        public async Task Install_App_Package_With_Merge_Mongo()
         {
             // Arrange 
             if(!_context.AllowMongoDB)
@@ -116,14 +118,47 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var appService = GetMockAppService();
 
             // Act
-            await appService.Install("123", true).ConfigureAwait(false);
+            await appService.Install("123", InstallWay.Merge).ConfigureAwait(false);
             memoryStream.Close();
             memoryStream.Dispose();
             // Assert
             Assert.True(true);
         }
 
-        private IAppService GetMockAppService()
+        [Fact]
+        public async Task Install_App_Package_With_Wipe_Mongo()
+        {
+            // Arrange 
+            if(!_context.AllowMongoDB)
+            {
+                Assert.True(true);
+                return;
+            }
+            Mock<IFormFile> mockFile = new Mock<IFormFile>();
+            FileStream sourceZip = System.IO.File.OpenRead(@"Artifacts\" + zipFileName);
+            MemoryStream memoryStream = new MemoryStream();
+            await sourceZip.CopyToAsync(memoryStream).ConfigureAwait(false);
+            sourceZip.Close();
+            memoryStream.Position = 0;
+            string fileName = zipFileName;
+            mockFile.Setup(f => f.Length).Returns(memoryStream.Length).Verifiable();
+            mockFile.Setup(f => f.FileName).Returns(fileName).Verifiable();
+            mockFile.Setup(f => f.OpenReadStream()).Returns(memoryStream).Verifiable();
+            mockFile
+                .Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .Returns((Stream stream, CancellationToken token) => memoryStream.CopyToAsync(stream))
+                .Verifiable();
+            var appService = GetMockAppService(true);
+
+            // Act
+            await appService.Install("123", InstallWay.Wipe).ConfigureAwait(false);
+            memoryStream.Close();
+            memoryStream.Dispose();
+            // Assert
+            Assert.True(true);
+        }
+
+        private IAppService GetMockAppService(bool allowExist = false)
         {
 
             Mock<IStandardServiceProvider> mockStandardProvider = new Mock<IStandardServiceProvider>();
@@ -189,21 +224,36 @@ namespace LetPortal.Tests.ITs.Portal.Services
             mockStandardProvider
                 .Setup(a => a.ForceUpdateStandards(It.IsAny<IEnumerable<StandardComponent>>()))
                 .Returns(Task.CompletedTask);
+            mockStandardProvider
+                .Setup(a => a.DeleteAllByAppIdAsync(It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
                         
             mockChartProvider
                 .Setup(a => a.ForceUpdateCharts(It.IsAny<IEnumerable<Chart>>()))
+                .Returns(Task.CompletedTask);
+            mockChartProvider
+                .Setup(a => a.DeleteByAppIdAsync(It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
                         
             mockDynamicListProvider
                 .Setup(a => a.ForceUpdateDynamicLists(It.IsAny<IEnumerable<DynamicList>>()))
                 .Returns(Task.CompletedTask);
+            mockDynamicListProvider
+                .Setup(a => a.DeleteByAppIdAsync(It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
                         
             mockPageProvider
                 .Setup(a => a.ForceUpdatePages(It.IsAny<IEnumerable<Page>>()))
                 .Returns(Task.CompletedTask);
+            mockPageProvider
+                .Setup(a => a.DeleteByAppIdAsync(It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
 
             mockLocalizationProvider
                 .Setup(a => a.ForceUpdateLocalizations(It.IsAny<IEnumerable<Localization>>()))
+                .Returns(Task.CompletedTask);
+            mockLocalizationProvider
+                .Setup(a => a.DeleteByAppIdAsync(It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             Mock<IFileSeviceProvider> mockFileProvider = new Mock<IFileSeviceProvider>();
@@ -223,6 +273,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     Name = "CoreApp",
                     CurrentVersionNumber = "0.0.1"
                 }));
+            mockAppRepository
+                .Setup(a => a.IsExistAsync(It.IsAny<Expression<Func<App, bool>>>()))
+                .Returns(Task.FromResult(allowExist));
+
             mockFileProvider
                 .Setup(a => a.DownloadFileAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResponseDownloadFile

@@ -14,5 +14,7 @@ namespace LetPortal.Portal.Providers.Components
         Task ForceUpdateStandards(IEnumerable<StandardComponent> standards);
 
         Task<IEnumerable<StandardComponent>> GetByAppId(string appId);
+
+        Task DeleteAllByAppIdAsync(string appId);
     }
 }

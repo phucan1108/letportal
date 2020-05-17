@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.SectionParts;
@@ -42,6 +43,18 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<DynamicList>> GetByAppId(string appId)
         {
             return await _dynamicListRepository.GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
+        }  
+
+        public async Task DeleteByAppIdAsync(string appId)
+        {
+            var allLists = await _dynamicListRepository.GetAllAsync(a => a.AppId == appId);
+            if(allLists != null && allLists.Any())
+            {
+                foreach(var list in allLists)
+                {
+                    await _dynamicListRepository.DeleteAsync(list.Id);
+                }
+            }
         }
 
         #region IDisposable Support

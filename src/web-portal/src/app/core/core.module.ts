@@ -26,6 +26,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatInputModule } from '@angular/material/input'
+import { DownloadFileService } from 'services/downloadfile.service';
 @NgModule({
   declarations: [
     UnlockScreenDialogComponent,
@@ -75,7 +76,8 @@ import { MatInputModule } from '@angular/material/input'
     ChartsClient,
     BackupsClient,
     ExportService,
-    LocalizationClient
+    LocalizationClient,
+    DownloadFileService
   ],
 })
 export class CoreModule {

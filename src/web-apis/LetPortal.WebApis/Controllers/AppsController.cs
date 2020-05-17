@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Https;
 using LetPortal.Core.Logger;
+using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Apps;
@@ -13,7 +15,9 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Pages;
 using LetPortal.Portal.Repositories.Apps;
 using LetPortal.Portal.Repositories.Localizations;
+using LetPortal.Portal.Services.Apps;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetPortal.WebApis.Controllers
@@ -30,16 +34,24 @@ namespace LetPortal.WebApis.Controllers
 
         private readonly ILocalizationRepository _localizationRepository;
 
+        private readonly IAppService _appService;
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         public AppsController(
             IAppRepository appRepository,
             IPageServiceProvider pageServiceProvider,
             ILocalizationRepository localizationRepository,
+            IAppService appService,
+            IHttpContextAccessor httpContextAccessor,
             IServiceLogger<AppsController> logger
             )
         {
             _appRepository = appRepository;
             _pageServiceProvider = pageServiceProvider;
             _localizationRepository = localizationRepository;
+            _appService = appService;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
@@ -205,6 +217,42 @@ namespace LetPortal.WebApis.Controllers
             var newId = await _appRepository.CloneAsync(model.CloneId, model.CloneName);
             await _localizationRepository.CloneLocalization(model.CloneId, newId);
             return Ok();
+        }
+
+        [HttpPost("{appId}/package")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        [ProducesResponseType(typeof(PackageResponseModel), 200)]
+        public async Task<IActionResult> Package(string appId, [FromBody] PackageRequestModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            return Ok(await _appService.Package(model));
+        }
+
+        [HttpPost("unpackage")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        [ProducesResponseType(typeof(UnpackResponseModel), 200)]
+        public async Task<IActionResult> Unpack(IFormFile formFile)
+        {
+            return Ok(await _appService.UnPack(formFile, _httpContextAccessor.HttpContext.Request.GetJwtToken().GetUserName()));
+        }
+
+        [HttpPost("install")]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        public async Task<IActionResult> Install([FromBody] InstallRequestModel model)
+        {
+            await _appService.Install(model.UploadFileId, model.InstallWay);
+            return Ok();
+        }
+
+        [HttpGet("{appId}/preview")]
+        //[Authorize(Roles = RolesConstants.BACK_END_ROLES)]
+        [ProducesResponseType(typeof(PreviewPackageModel), 200)]
+        public async Task<IActionResult> Preview(string appId)
+        {
+            return Ok(await _appService.Preview(appId));
         }
 
         private static void TranslateApp(App app, IEnumerable<LanguageKey> languageKeys)

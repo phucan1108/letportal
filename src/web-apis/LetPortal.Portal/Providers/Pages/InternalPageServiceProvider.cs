@@ -103,6 +103,19 @@ namespace LetPortal.Portal.Providers.Pages
             return await _pageRepository.GetAllAsync(a => a.AppId == appId);
         }
 
+        public async Task DeleteByAppIdAsync(string appId)
+        {
+            var allPages = await _pageRepository.GetAllAsync(a => a.AppId == appId);
+
+            if(allPages != null && allPages.Any())
+            {
+                foreach(var page in allPages)
+                {
+                    await _pageRepository.DeleteAsync(page.Id);
+                }
+            }
+        }
+
         #region IDisposable Support
         private bool disposedValue = false;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.SectionParts;
@@ -42,6 +43,19 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<StandardComponent>> GetByAppId(string appId)
         {
             return await _standardRepository.GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
+        }
+
+        public async Task DeleteAllByAppIdAsync(string appId)
+        {
+            var allStandards = await _standardRepository.GetAllAsync(a => a.AppId == appId);
+
+            if(allStandards != null && allStandards.Any())
+            {
+                foreach(var standard in allStandards)
+                {
+                    await _standardRepository.DeleteAsync(standard.Id);
+                }
+            }
         }
 
         #region IDisposable Support

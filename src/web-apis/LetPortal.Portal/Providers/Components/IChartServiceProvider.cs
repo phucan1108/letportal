@@ -14,5 +14,7 @@ namespace LetPortal.Portal.Providers.Components
         Task ForceUpdateCharts(IEnumerable<Chart> charts);
 
         Task<IEnumerable<Chart>> GetByAppId(string appId);
+
+        Task DeleteByAppIdAsync(string appId);
     }
 }

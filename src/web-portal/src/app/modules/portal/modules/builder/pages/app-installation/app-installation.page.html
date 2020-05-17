@@ -1,0 +1,19 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'pageBuilder.page.appInstallation.header' | translate }}
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onCreate()"
+                        *ngIf="!isSubmitted">{{ 'common.install' | translate }}</button>
+                    <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+        </mat-card-content>
+    </mat-card>
+</div>

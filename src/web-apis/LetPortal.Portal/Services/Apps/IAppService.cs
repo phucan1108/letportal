@@ -10,6 +10,14 @@ namespace LetPortal.Portal.Services.Apps
 
         Task<UnpackResponseModel> UnPack(IFormFile uploadFile, string uploader);
 
-        Task Install(string uploadFileId, bool overRide = false);
+        Task Install(string uploadFileId, InstallWay installWay = InstallWay.Merge);
+
+        Task<PreviewPackageModel> Preview(string appId);
+    }
+
+    public enum InstallWay
+    {
+        Merge,
+        Wipe
     }
 }

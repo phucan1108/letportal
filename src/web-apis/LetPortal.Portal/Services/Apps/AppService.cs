@@ -65,7 +65,7 @@ namespace LetPortal.Portal.Services.Apps
             _localizationProvider = localizationProvider;
         }
 
-        public async Task Install(string uploadFileId, bool overRide = false)
+        public async Task Install(string uploadFileId, InstallWay installWay = InstallWay.Merge)
         {
             var zipFile = await _fileSeviceProvider.DownloadFileAsync(uploadFileId);
             var fileNameWithoutExt = FileUtil.GetFileNameWithoutExt(zipFile.FileName);
@@ -89,6 +89,25 @@ namespace LetPortal.Portal.Services.Apps
 
             var jsonAppPackageString = File.ReadAllText(jsonAppPackageFilePath);
             var appFlatternModel = ConvertUtil.DeserializeObject<AppPackageFlatternModel>(jsonAppPackageString);
+
+            var isExist = await _appRepository.IsExistAsync(a => a.Id == appFlatternModel.App.Id);
+
+            switch (installWay)
+            {
+                case InstallWay.Merge:
+                    break;
+                case InstallWay.Wipe:
+                    if (isExist)
+                    {
+                        // Wipe all data
+                        await _standardServiceProvider.DeleteAllByAppIdAsync(appFlatternModel.App.Id);
+                        await _dynamicListServiceProvider.DeleteByAppIdAsync(appFlatternModel.App.Id);
+                        await _chartServiceProvider.DeleteByAppIdAsync(appFlatternModel.App.Id);
+                        await _pageServiceProvider.DeleteByAppIdAsync(appFlatternModel.App.Id);
+                        await _localizationProvider.DeleteByAppIdAsync(appFlatternModel.App.Id);
+                    }
+                    break;
+            }
 
             foreach(var chainingFile in appFlatternModel.ChainingFiles)
             {
@@ -246,6 +265,31 @@ namespace LetPortal.Portal.Services.Apps
             return new PackageResponseModel { DownloadableUrl = uploadResponse.DownloadableUrl };
         }
 
+        public async Task<PreviewPackageModel> Preview(string appId)
+        {
+            var app = await _appRepository.GetOneAsync(appId);
+            var preview = new PreviewPackageModel
+            {
+                App = app
+            };
+            if (app != null)
+            {
+                var standards = await _standardServiceProvider.GetByAppId(appId);
+                var charts = await _chartServiceProvider.GetByAppId(appId);
+                var dynamicLists = await _dynamicListServiceProvider.GetByAppId(appId);
+                var pages = await _pageServiceProvider.GetByAppId(appId);
+                var locales = await _localizationProvider.GetByAppId(appId);
+
+                preview.Standards = standards != null ? standards.Select(a => a.DisplayName) : Enumerable.Empty<string>();
+                preview.Charts = charts != null ? charts.Select(a => a.DisplayName) : Enumerable.Empty<string>();
+                preview.DynamicLists = dynamicLists != null ? dynamicLists.Select(a => a.DisplayName) : Enumerable.Empty<string>();
+                preview.Pages = pages != null ? pages.Select(a => a.DisplayName) : Enumerable.Empty<string>();
+                preview.Locales = locales != null ? locales.Select(a => a.LocaleId) : Enumerable.Empty<string>();
+            }
+
+            return preview;
+        }
+
         public async Task<UnpackResponseModel> UnPack(IFormFile uploadFile, string uploader)
         {
             var unpackResponse = new UnpackResponseModel { };
@@ -270,6 +314,10 @@ namespace LetPortal.Portal.Services.Apps
                 var jsonFound = File.ReadAllText(jsonFilePath);
 
                 var appFlatternModel = ConvertUtil.DeserializeObject<AppPackageFlatternModel>(jsonFound);
+
+                var app = await _appRepository.GetOneAsync(appFlatternModel.App.Id);
+                unpackResponse.IsExistedId = app != null;
+                unpackResponse.IsExistedName = await _appRepository.IsExistAsync(a => a.Name == appFlatternModel.App.Name);
                 // Save zip file into file service
                 var storedFile = await _fileSeviceProvider.UploadFileAsync(tempFilePath, uploader, true);
 

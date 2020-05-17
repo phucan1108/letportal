@@ -226,6 +226,10 @@
     "pageBuilder.page.menuProfiles.selectRole": "Vui lòng chọn một quyền",
     "pageBuilder.page.pageBuilder.header": "Cấu hình Trang",
     "pageBuilder.page.localization.error.uniqueName": "Ngôn ngữ đã được khai báo",
+    "pageBuilder.page.appPackage.header": "Đóng gói Ứng dụng",
+    "pageBuilder.page.appPackage.description.placeholder": "Điền mô tả",
+    "pageBuilder.page.appPackage.description.errors.required": "Vui lòng điền mô tả",
+    "pageBuilder.page.appInstallation.header": "Cài đặt Ứng dụng",
     "pageService.messages.notAllowedAccessPage": "Rất tiếc, bạn không có quyền truy cập trang",
     "pageService.messages.completeAllRequiredFields": "Vui lòng điền thông tin các trường bắt buộc",
     "pageBuilder.builderDnd.messages.sectionBroken": "Khu vực {{sectionName}} đã lỗi!!!",
@@ -427,5 +431,7 @@
     "common.restoreSuccessfully": "Khôi phục thành công!",
     "common.saveSuccessfully": "Lưu thành công!",
     "common.copiedContent": "Đã sao chép",
-    "common.pickOneApp": "Chọn một Ứng dụng"     
+    "common.pickOneApp": "Chọn một Ứng dụng",
+    "common.version": "Phiên bản",
+    "common.install": "Cài đặt"    
 }

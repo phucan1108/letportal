@@ -20,5 +20,7 @@ namespace LetPortal.Portal.Providers.Pages
         Task<IEnumerable<LanguageKey>> GetPageLanguages(string pageId);
 
         Task<IEnumerable<Page>> GetByAppId(string appId);
+
+        Task DeleteByAppIdAsync(string appId);
     }
 }

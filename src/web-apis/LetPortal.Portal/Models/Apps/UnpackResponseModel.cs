@@ -14,5 +14,9 @@ namespace LetPortal.Portal.Models.Apps
         public DateTime PackagedDate { get; set; }
 
         public App App { get; set; }
+
+        public bool IsExistedId { get; set; }
+
+        public bool IsExistedName { get; set; }
     }
 }

@@ -11,6 +11,8 @@ namespace LetPortal.Portal.Providers.Localizations
 
         Task<IEnumerable<Localization>> GetByAppId(string appId);
 
-        Task ForceUpdateLocalizations(IEnumerable<Localization> localizations); 
+        Task ForceUpdateLocalizations(IEnumerable<Localization> localizations);
+
+        Task DeleteByAppIdAsync(string appId);
     }
 }

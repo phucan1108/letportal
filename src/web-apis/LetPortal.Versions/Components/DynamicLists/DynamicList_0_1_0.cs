@@ -399,6 +399,41 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                                 }
                             },
                             Order = 5
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "package",
+                            DisplayName = "Package",
+                            Icon = "archive",
+                            Color = "accent",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType  = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                    IsSameDomain = true,
+                                    RedirectUrl = "portal/builder/app-package/{{data.id}}"
+                                }
+                            },
+                            Order = 6
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "install",
+                            DisplayName = "Install",
+                            Icon = "get_app",
+                            Color = "accent",
+                            CommandPositionType = CommandPositionType.OutList,
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType  = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                    IsSameDomain = true,
+                                    RedirectUrl = "portal/builder/app-installation"
+                                }
+                            },
+                            Order = 7
                         }
                     }
                 },
