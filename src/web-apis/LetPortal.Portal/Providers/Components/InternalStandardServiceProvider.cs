@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.SectionParts;
@@ -56,6 +57,11 @@ namespace LetPortal.Portal.Providers.Components
                     await _standardRepository.DeleteAsync(standard.Id);
                 }
             }
+        }
+
+        public async Task<bool> CheckStandardExist(Expression<Func<StandardComponent, bool>> expression)
+        {
+            return await _standardRepository.IsExistAsync(expression);
         }
 
         #region IDisposable Support

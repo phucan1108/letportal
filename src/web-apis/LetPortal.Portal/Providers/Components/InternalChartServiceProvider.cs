@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Components;
@@ -56,6 +57,11 @@ namespace LetPortal.Portal.Providers.Components
                     await _chartRepository.DeleteAsync(chart.Id);
                 }
             }
+        }
+
+        public async Task<bool> CheckChartExist(Expression<Func<Chart, bool>> expression)
+        {
+            return await _chartRepository.IsExistAsync(expression);
         }
 
         #region IDisposable Support

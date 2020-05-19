@@ -114,6 +114,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppPackagePage } from './pages/app-package/app-package.page';
 import { AppPackageResolve } from './resolve/app-package.resolve';
 import { AppInstallationPage } from './pages/app-installation/app-installation.page';
+import { AppInstallationDialog } from './components/app-installation/app-installation.dialog';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -174,7 +175,8 @@ import { AppInstallationPage } from './pages/app-installation/app-installation.p
 		IconPickerSharedComponent,
 		LocalizationPage,
 		AppPackagePage,
-		AppInstallationPage
+		AppInstallationPage,
+		AppInstallationDialog
 	],
 	imports: [
 		CoreModule.forChild(),
@@ -271,7 +273,8 @@ import { AppInstallationPage } from './pages/app-installation/app-installation.p
 		ChartDatasourceComponent,
 		ChartFilterGridComponent,
 		ChartFilterDialogComponent,
-		BackupSelectionComponent
+		BackupSelectionComponent,
+		AppInstallationDialog
 	],
 	exports: [RouterModule],
 	providers: [

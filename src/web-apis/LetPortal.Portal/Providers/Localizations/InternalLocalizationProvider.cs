@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Portal.Entities.Localizations;
@@ -40,6 +41,11 @@ namespace LetPortal.Portal.Providers.Localizations
             _dynamicListRepository = dynamicListRepository;
             _appRepository = appRepository;
             _localizationRepository = localizationRepository;
+        }
+
+        public async Task<bool> CheckLocaleExist(Expression<Func<Localization, bool>> expression)
+        {
+            return await _localizationRepository.IsExistAsync(expression);
         }
 
         public async Task<IEnumerable<LanguageKey>> CollectAlls(string appId)

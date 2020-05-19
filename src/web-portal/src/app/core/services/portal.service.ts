@@ -5391,10 +5391,26 @@ export interface PackageRequestModel {
 export interface UnpackResponseModel {
     uploadFileId?: string | undefined;
     description?: string | undefined;
+    creator?: string | undefined;
     packagedDate?: Date;
     app?: App | undefined;
+    standards?: ComponentInstallState[] | undefined;
+    dynamicLists?: ComponentInstallState[] | undefined;
+    charts?: ComponentInstallState[] | undefined;
+    pages?: ComponentInstallState[] | undefined;
+    locales?: ComponentInstallState[] | undefined;
+    totalStandards?: number;
+    totalCharts?: number;
+    totalDynamicLists?: number;
+    totalPages?: number;
+    totalLocales?: number;
     isExistedId?: boolean;
     isExistedName?: boolean;
+}
+
+export interface ComponentInstallState {
+    name?: string | undefined;
+    isExisted?: boolean;
 }
 
 export interface InstallRequestModel {

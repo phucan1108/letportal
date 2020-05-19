@@ -8,7 +8,7 @@ namespace LetPortal.Portal.Services.Apps
     {
         Task<PackageResponseModel> Package(PackageRequestModel package);
 
-        Task<UnpackResponseModel> UnPack(IFormFile uploadFile, string uploader);
+        Task<UnpackResponseModel> Unpack(IFormFile uploadFile, string uploader);
 
         Task Install(string uploadFileId, InstallWay installWay = InstallWay.Merge);
 

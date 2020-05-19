@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.SectionParts;
@@ -55,6 +56,11 @@ namespace LetPortal.Portal.Providers.Components
                     await _dynamicListRepository.DeleteAsync(list.Id);
                 }
             }
+        }
+
+        public async Task<bool> CheckDynamicListExist(Expression<Func<DynamicList, bool>> expression)
+        {
+            return await _dynamicListRepository.IsExistAsync(expression);
         }
 
         #region IDisposable Support

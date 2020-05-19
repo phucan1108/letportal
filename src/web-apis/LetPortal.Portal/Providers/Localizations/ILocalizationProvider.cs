@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LetPortal.Portal.Entities.Localizations;
 using LetPortal.Portal.Entities.Shared;
@@ -14,5 +16,7 @@ namespace LetPortal.Portal.Providers.Localizations
         Task ForceUpdateLocalizations(IEnumerable<Localization> localizations);
 
         Task DeleteByAppIdAsync(string appId);
+
+        Task<bool> CheckLocaleExist(Expression<Func<Localization, bool>> expression);
     }
 }

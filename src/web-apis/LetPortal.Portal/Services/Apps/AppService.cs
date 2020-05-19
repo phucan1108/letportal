@@ -168,6 +168,7 @@ namespace LetPortal.Portal.Services.Apps
                 App = app,
                 Description = package.Description,
                 PackagedDate = DateTime.UtcNow,
+                Creator = package.Creator,
                 TotalCharts = collectCharts.Result?.Count(),
                 TotalDynamicLists = collectDynamicLists.Result?.Count(),
                 TotalStandards = collectStandards.Result?.Count(),
@@ -290,7 +291,7 @@ namespace LetPortal.Portal.Services.Apps
             return preview;
         }
 
-        public async Task<UnpackResponseModel> UnPack(IFormFile uploadFile, string uploader)
+        public async Task<UnpackResponseModel> Unpack(IFormFile uploadFile, string uploader)
         {
             var unpackResponse = new UnpackResponseModel { };
 
@@ -325,6 +326,95 @@ namespace LetPortal.Portal.Services.Apps
                 unpackResponse.UploadFileId = storedFile.FileId;
                 unpackResponse.Description = appFlatternModel.Description;
                 unpackResponse.PackagedDate = appFlatternModel.PackagedDate;
+                unpackResponse.Creator = appFlatternModel.Creator;
+
+                unpackResponse.TotalStandards = appFlatternModel.TotalStandards.GetValueOrDefault();
+                unpackResponse.TotalDynamicLists = appFlatternModel.TotalDynamicLists.GetValueOrDefault();
+                unpackResponse.TotalCharts = appFlatternModel.TotalCharts.GetValueOrDefault();
+                unpackResponse.TotalPages = appFlatternModel.TotalPages.GetValueOrDefault();
+                unpackResponse.TotalLocales = appFlatternModel.TotalLocales.GetValueOrDefault();
+
+                foreach (var chainingFile in appFlatternModel.ChainingFiles)
+                {
+                    switch (chainingFile)
+                    {
+                        case STANDARD_FILE:
+                            var standardFilePath = Path.Combine(unzipFolderPath, STANDARD_FILE);
+                            var standardsString = File.ReadAllText(standardFilePath);
+                            var standardsList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(standardsString);                            
+                            var standardStates = new List<ComponentInstallState>();
+                            foreach (var standard in standardsList)
+                            {
+                                standardStates.Add(new ComponentInstallState
+                                {
+                                    Name = standard.DisplayName,
+                                    IsExisted = await _standardServiceProvider.CheckStandardExist(a => a.Name == standard.Name || a.Id == standard.Id)
+                                });
+                            }
+                            unpackResponse.Standards = standardStates;
+                            break;
+                        case DYNAMICLIST_FILE:
+                            var dynamicListFilePath = Path.Combine(unzipFolderPath, DYNAMICLIST_FILE);
+                            var dynamicListString = File.ReadAllText(dynamicListFilePath);
+                            var dynamicListsList = ConvertUtil.DeserializeObject<IEnumerable<DynamicList>>(dynamicListString);
+                            var dynamicListStates = new List<ComponentInstallState>();
+                            foreach (var dynamicList in dynamicListsList)
+                            {
+                                dynamicListStates.Add(new ComponentInstallState
+                                {
+                                    Name = dynamicList.DisplayName,
+                                    IsExisted = await _dynamicListServiceProvider.CheckDynamicListExist(a => a.Name == dynamicList.Name || a.Id == dynamicList.Id)
+                                });
+                            }
+                            unpackResponse.DynamicLists = dynamicListStates;
+                            break;
+                        case CHART_FILE:
+                            var chartFilePath = Path.Combine(unzipFolderPath, CHART_FILE);
+                            var chartsString = File.ReadAllText(chartFilePath);
+                            var chartsList = ConvertUtil.DeserializeObject<IEnumerable<Chart>>(chartsString);                            
+                            var chartsListStates = new List<ComponentInstallState>();
+                            foreach (var chart in chartsList)
+                            {
+                                chartsListStates.Add(new ComponentInstallState
+                                {
+                                    Name = chart.DisplayName,
+                                    IsExisted = await _chartServiceProvider.CheckChartExist(a => a.Name == chart.Name || a.Id == chart.Id)
+                                });
+                            }
+                            unpackResponse.Charts = chartsListStates;
+                            break;
+                        case PAGE_FILE:
+                            var pageFilePath = Path.Combine(unzipFolderPath, PAGE_FILE);
+                            var pagesString = File.ReadAllText(pageFilePath);
+                            var pagesList = ConvertUtil.DeserializeObject<IEnumerable<Page>>(pagesString);
+                            var pagesListStates = new List<ComponentInstallState>();
+                            foreach (var page in pagesList)
+                            {
+                                pagesListStates.Add(new ComponentInstallState
+                                {
+                                    Name = page.DisplayName,
+                                    IsExisted = await _pageServiceProvider.CheckPageExist(a => a.Name == page.Name || a.Id == page.Id)
+                                });
+                            }
+                            unpackResponse.Pages = pagesListStates;
+                            break;
+                        case LOCALE_FILE:
+                            var localeFilePath = Path.Combine(unzipFolderPath, LOCALE_FILE);
+                            var localesString = File.ReadAllText(localeFilePath);
+                            var localesList = ConvertUtil.DeserializeObject<IEnumerable<Localization>>(localesString);
+                            var localesListStates = new List<ComponentInstallState>();
+                            foreach (var locale in localesList)
+                            {
+                                localesListStates.Add(new ComponentInstallState
+                                {
+                                    Name = locale.LocaleId,
+                                    IsExisted = await _localizationProvider.CheckLocaleExist(a => a.LocaleId == locale.LocaleId && a.AppId == locale.AppId)
+                                });
+                            }
+                            unpackResponse.Locales = localesListStates;
+                            break;
+                    }
+                }
             }
 
             return unpackResponse;
@@ -346,6 +436,8 @@ namespace LetPortal.Portal.Services.Apps
     public class AppPackageFlatternModel
     {
         public string Description { get; set; }
+
+        public string Creator { get; set; }
 
         public DateTime PackagedDate { get; set; }
 

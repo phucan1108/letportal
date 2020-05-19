@@ -236,7 +236,7 @@ namespace LetPortal.WebApis.Controllers
         [ProducesResponseType(typeof(UnpackResponseModel), 200)]
         public async Task<IActionResult> Unpack(IFormFile formFile)
         {
-            return Ok(await _appService.UnPack(formFile, _httpContextAccessor.HttpContext.Request.GetJwtToken().GetUserName()));
+            return Ok(await _appService.Unpack(formFile, _httpContextAccessor.HttpContext.Request.GetJwtToken().GetUserName()));
         }
 
         [HttpPost("install")]

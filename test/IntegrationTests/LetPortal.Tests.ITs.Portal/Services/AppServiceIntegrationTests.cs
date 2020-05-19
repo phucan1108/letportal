@@ -85,7 +85,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var appService = GetMockAppService();
 
             // Act
-            var result = await appService.UnPack(mockFile.Object, "Admin").ConfigureAwait(false);
+            var result = await appService.Unpack(mockFile.Object, "Admin").ConfigureAwait(false);
             memoryStream.Close();
             memoryStream.Dispose();
             // Assert

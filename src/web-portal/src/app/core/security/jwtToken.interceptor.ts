@@ -60,7 +60,7 @@ export class JwtTokenInterceptor implements HttpInterceptor {
                                 });
                                 this.isOpenningUnlock = true
                                 dialogRef.afterClosed().subscribe(res => {
-                                    if (res) {
+                                    if (!!res) {
                                         this.router.navigateByUrl(this.routerEx.getCurrentUrl())
                                     }
                                 })

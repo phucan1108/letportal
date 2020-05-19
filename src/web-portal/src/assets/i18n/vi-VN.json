@@ -230,6 +230,9 @@
     "pageBuilder.page.appPackage.description.placeholder": "Điền mô tả",
     "pageBuilder.page.appPackage.description.errors.required": "Vui lòng điền mô tả",
     "pageBuilder.page.appInstallation.header": "Cài đặt Ứng dụng",
+    "pageBuilder.page.appInstallation.uploadFile.errors.fileType": "Vui lòng gửi tệp zip",
+    "pageBuilder.page.appInstallation.preview.header": "Thông tin Ứng dụng",
+    "pageBuilder.page.appInstallation.isExist.text": "Ứng dụng đã tồn tại, hãy đảm bảo trước khi cài đặt",
     "pageService.messages.notAllowedAccessPage": "Rất tiếc, bạn không có quyền truy cập trang",
     "pageService.messages.completeAllRequiredFields": "Vui lòng điền thông tin các trường bắt buộc",
     "pageBuilder.builderDnd.messages.sectionBroken": "Khu vực {{sectionName}} đã lỗi!!!",
@@ -433,5 +436,6 @@
     "common.copiedContent": "Đã sao chép",
     "common.pickOneApp": "Chọn một Ứng dụng",
     "common.version": "Phiên bản",
-    "common.install": "Cài đặt"    
+    "common.install": "Cài đặt",
+    "common.locale": "Ngôn ngữ"  
 }

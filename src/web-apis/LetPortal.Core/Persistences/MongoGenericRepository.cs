@@ -107,7 +107,7 @@ namespace LetPortal.Core.Persistences
 
         public async Task<T> GetOneAsync(string id)
         {
-            return await Collection.AsQueryable().FirstAsync(a => a.Id == id);
+            return await Collection.AsQueryable().FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public async Task UpdateAsync(string id, T entity)
@@ -243,15 +243,13 @@ namespace LetPortal.Core.Persistences
 
         public async Task ForceUpdateAsync(string id, T forceEntity)
         {
-            var oldOne = await Collection.FindAsync(a => a.Id == id);
+            var oldOne = await Collection.AsQueryable().FirstOrDefaultAsync(a => a.Id == id);
             if (oldOne != null)
             {
-                await Collection.FindOneAndReplaceAsync(a => a.Id == id, forceEntity);
+                await Collection.DeleteOneAsync(a => a.Id == id);
             }
-            else
-            {
-                await Collection.InsertOneAsync(forceEntity);
-            }
+
+            await Collection.InsertOneAsync(forceEntity);
         }
 
         #region IDisposable Support
