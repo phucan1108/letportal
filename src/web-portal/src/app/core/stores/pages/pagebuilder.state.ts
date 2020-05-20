@@ -29,6 +29,7 @@ export interface PageBuilderStateModel {
       id: Guid.create().toString(),
       displayName: '',
       name: '',
+      appId: '',
       shellOptions: [],
       claims: [],
       urlPath: '',
@@ -135,7 +136,8 @@ export class PageBuilderState {
         id,
         name,
         displayName,
-        urlPath
+        urlPath,
+        appId
       },
       filterState: PageActions.UpdatePageInfoAction
     })

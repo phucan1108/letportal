@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { PagesClient } from 'services/portal.service';
+import { PagesClient, App, AppsClient } from 'services/portal.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'let-page-info',
@@ -17,10 +18,14 @@ export class PageInfoComponent implements OnInit {
     @Input()
     isEditMode = false
 
+    apps$: Observable<App[]>
+
     constructor(
+        private appsClient: AppsClient,
         private pageClient: PagesClient
     ) { }
 
     ngOnInit(): void {
+        this.apps$ = this.appsClient.getAll()
     }
 }

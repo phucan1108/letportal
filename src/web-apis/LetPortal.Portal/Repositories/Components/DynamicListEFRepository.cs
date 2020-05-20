@@ -29,9 +29,9 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneList);
         }
 
-        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages(string appId)
         {
-            var allDynamicLists = await GetAllAsync(isRequiredDiscriminator: true);
+            var allDynamicLists = await GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
 
             var languages = new List<LanguageKey>();
 

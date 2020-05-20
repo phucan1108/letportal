@@ -1,13 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PageService } from 'services/page.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { DynamicListClient, ChartsClient, Chart, DatabaseOptions, ChartType, ChartFilter, PageSectionLayoutType } from 'services/portal.service';
+import { DynamicListClient, ChartsClient, Chart, DatabaseOptions, ChartType, ChartFilter, PageSectionLayoutType, App, AppsClient } from 'services/portal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { PortalValidators } from 'app/core/validators/portal.validators';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { ChartOptions } from 'portal/modules/models/chart.extended.model';
 import { StaticResources } from 'portal/resources/static-resources';
@@ -30,8 +30,10 @@ export class ChartBuilderPage implements OnInit {
     isEditMode = false
     isCanSubmit = false
     _layoutTypes = StaticResources.sectionLayoutTypes()
+    apps$: Observable<App[]>
     constructor(
         private chartsClient: ChartsClient,
+        private appsClient: AppsClient,
         private pageService: PageService,
         private fb: FormBuilder,
         private translate: TranslateService,
@@ -46,6 +48,7 @@ export class ChartBuilderPage implements OnInit {
     ngOnInit(): void {
         this.pageService.init('chart-builder').subscribe()
         this.edittingChart = this.activatedRoute.snapshot.data.chart;
+        this.apps$ = this.appsClient.getAll()
         if (this.edittingChart) {
             this.isEditMode = true
         }
@@ -54,6 +57,7 @@ export class ChartBuilderPage implements OnInit {
             this.componentInfo = this.fb.group({
                 name: new FormControl({ value: this.edittingChart.name, disabled: true }, [Validators.required, Validators.maxLength(250)], [PortalValidators.chartUniqueName(this.chartsClient)]),
                 displayName: [this.edittingChart.displayName, [Validators.required, Validators.maxLength(250)]],
+                app: [this.edittingChart.appId, [Validators.required]],
                 chartTitle: [this.edittingChart.definitions.chartTitle, [Validators.required, Validators.maxLength(250)]],
                 chartType: [this.edittingChart.definitions.chartType, Validators.required],
                 layoutType: [this.edittingChart.layoutType.toString(), Validators.required],
@@ -70,6 +74,7 @@ export class ChartBuilderPage implements OnInit {
             this.componentInfo = this.fb.group({
                 name: ['', [Validators.required, Validators.maxLength(250)], [PortalValidators.chartUniqueName(this.chartsClient)]],
                 displayName: ['', [Validators.required, Validators.maxLength(250)]],
+                app: [this.edittingChart.appId, [Validators.required]],
                 chartTitle: ['', [Validators.required, Validators.maxLength(250)]],
                 chartType: [ChartType.VerticalBarChart, Validators.required],
                 layoutType: [PageSectionLayoutType.OneColumn.toString(), Validators.required],
@@ -113,6 +118,7 @@ export class ChartBuilderPage implements OnInit {
             const combiningChart: Chart = {
                 name: formValues.name,
                 displayName: formValues.displayName,
+                appId: formValues.app,
                 definitions: {
                     chartTitle: formValues.chartTitle,
                     chartType: formValues.chartType,

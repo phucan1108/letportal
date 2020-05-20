@@ -23,6 +23,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5e79c14931a1754a2cd38cbd",
                 Name = "user-info",
                 DisplayName = "User Info",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/user-info",
                 Claims = new List<PortalClaim>
                     {

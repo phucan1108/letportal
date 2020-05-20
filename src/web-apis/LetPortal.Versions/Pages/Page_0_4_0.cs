@@ -22,6 +22,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5dcac739be0b4e533408344d",
                 Name = "services-monitor",
                 DisplayName = "Services Monitor",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/services-monitor",
                 Claims = new List<PortalClaim>
                     {
@@ -49,6 +50,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5dcac739be0b4e5334083453",
                 Name = "service-logs",
                 DisplayName = "Service Logs",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/service-logs",
                 Claims = new List<PortalClaim>
                     {

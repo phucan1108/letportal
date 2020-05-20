@@ -106,7 +106,7 @@ export class RoleClaimsPage implements OnInit {
         this.selectedRolePortalClaims = this.activatedRoute.snapshot.data.roleClaims
 
         this.logger.debug('selected claims', this.selectedRolePortalClaims)
-        combineLatest(this.pagesClient.getAllPortalClaims(), this.appClient.getAllApps(), (v1, v2) => ({ v1, v2 })).subscribe(
+        combineLatest(this.pagesClient.getAllPortalClaims(), this.appClient.getAllApps(this.translate.currentLang), (v1, v2) => ({ v1, v2 })).subscribe(
             pair => {
                 const allclaims: SelectablePortalClaim[] = []
                 const appClaim: SelectablePortalClaim = {

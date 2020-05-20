@@ -278,7 +278,7 @@ namespace LetPortal.Core
                             corsBuilder.AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowAnyOrigin()
-                               .WithExposedHeaders(Constants.TokenExpiredHeader);
+                               .WithExposedHeaders(builder.CorsOptions.ExposedHeaders.ToArray());
                         }
                         else
                         {

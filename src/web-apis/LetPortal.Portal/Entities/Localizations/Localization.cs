@@ -20,5 +20,11 @@ namespace LetPortal.Portal.Entities.Localizations
         /// </summary>
         [StringLength(20)]
         public string LocaleId { get; set; }
+                        
+        /// <summary>
+        /// Reference to App Id
+        /// </summary>
+        [StringLength(50)]
+        public string AppId { get; set; }
     }
 }

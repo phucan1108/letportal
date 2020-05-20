@@ -12,7 +12,7 @@ export class LocaleResolve implements Resolve<any> {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ) {
-        if(route.paramMap.get('localeId'))
-            return this.localeClient.getOneBuilder(route.paramMap.get('localeId'))
+        if(route.paramMap.get('localeId') && route.paramMap.get('appId'))
+            return this.localeClient.getOne(route.paramMap.get('appId'), route.paramMap.get('localeId'))
     }
 }

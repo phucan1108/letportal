@@ -32,6 +32,7 @@ using LetPortal.Portal.Repositories.Files;
 using LetPortal.Portal.Repositories.Localizations;
 using LetPortal.Portal.Repositories.Pages;
 using LetPortal.Portal.Repositories.Recoveries;
+using LetPortal.Portal.Services.Apps;
 using LetPortal.Portal.Services.Components;
 using LetPortal.Portal.Services.Databases;
 using LetPortal.Portal.Services.Datasources;
@@ -199,6 +200,7 @@ namespace LetPortal.Portal
             builder.Services.AddTransient<IChartService, ChartService>();
             builder.Services.AddTransient<IBackupService, BackupService>();
             builder.Services.AddHttpClient<IHttpService, HttpService>();
+            builder.Services.AddTransient<IAppService, AppService>();
 
             return builder;
         }

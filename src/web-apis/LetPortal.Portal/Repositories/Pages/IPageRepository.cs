@@ -24,6 +24,6 @@ namespace LetPortal.Portal.Repositories.Pages
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeys(string pageId);
 
-        Task<IEnumerable<LanguageKey>> CollectAllLanguages();
+        Task<IEnumerable<LanguageKey>> CollectAllLanguages(string appId);
     }
 }

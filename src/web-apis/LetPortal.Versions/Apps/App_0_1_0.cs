@@ -69,16 +69,6 @@ namespace LetPortal.Versions.Apps
                                 Order = 1,
                                 ParentId = "5cf616bc462b56ee3bc2c7e1",
                                 MenuPath = "~/5cf616bc462b56ee3bc2c7e1"
-                            },
-                            new Menu
-                            {
-                                Id = "5ead38afb8d17c5618046b21",
-                                DisplayName = "Localization",
-                                Icon = "translate",
-                                Url = "/portal/page/localization-management",
-                                Order = 1,
-                                ParentId = "5cf616bc462b56ee3bc2c7e1",
-                                MenuPath = "~/5cf616bc462b56ee3bc2c7e1"
                             }
                         }
                     },

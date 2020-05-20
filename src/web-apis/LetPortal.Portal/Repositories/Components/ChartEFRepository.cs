@@ -29,9 +29,9 @@ namespace LetPortal.Portal.Repositories.Components
             await AddAsync(cloneChart);
         }
 
-        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages()
+        public async Task<IEnumerable<LanguageKey>> CollectAllLanguages(string appId)
         {
-            var allCharts = await GetAllAsync(isRequiredDiscriminator: true);
+            var allCharts = await GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
 
             var languages = new List<LanguageKey>();
 

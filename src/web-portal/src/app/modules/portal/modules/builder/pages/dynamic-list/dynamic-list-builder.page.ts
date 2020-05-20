@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import * as _ from 'lodash'
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { StaticResources } from 'portal/resources/static-resources';
 import { CommandGridComponent } from '../../components/dynamic-list/components/commands/command-grid.component';
 import { SecurityService } from 'app/core/security/security.service';
 import { NGXLogger } from 'ngx-logger';
-import { PagesClient, DynamicListClient, DynamicList, ShellOption, PortalClaim, CommandButtonInList, ColumndDef, Parameter, DynamicListSourceType, DatabaseOptions } from 'services/portal.service';
+import { PagesClient, DynamicListClient, DynamicList, ShellOption, PortalClaim, CommandButtonInList, ColumndDef, Parameter, DynamicListSourceType, DatabaseOptions, App, AppsClient } from 'services/portal.service';
 import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ExtendedFilterField, ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
@@ -43,11 +43,12 @@ export class DynamicListBuilderPage implements OnInit {
     _paramSourceTypes = StaticResources.paramSourceTypes()
 
     isCanSubmit = false;
-
+    apps$: Observable<App[]>
     @ViewChild(CommandGridComponent, { static: true }) commandGrid: CommandGridComponent
 
     constructor(
         private translate: TranslateService,
+        private appsClient: AppsClient,
         private pageService: PageService,
         private fb: FormBuilder,
         private dynamicListClient: DynamicListClient,
@@ -68,6 +69,8 @@ export class DynamicListBuilderPage implements OnInit {
         this.isEditMode = this.edittingDynamicList ? true : false;
 
         this.initialBuilderForm()
+
+        this.apps$ = this.appsClient.getAll()
     }
 
     enableSubmit() {
@@ -92,7 +95,8 @@ export class DynamicListBuilderPage implements OnInit {
     initialEditBuilderForm() {
         this.componentInfo = this.fb.group({
             name: new FormControl( { value: this.edittingDynamicList.name, disabled: true }, [Validators.required, Validators.maxLength(250)], [PortalValidators.dynamicListUniqueName(this.dynamicListClient)]),
-            displayName: [this.edittingDynamicList.displayName, [Validators.required, Validators.maxLength(250)]]
+            displayName: [this.edittingDynamicList.displayName, [Validators.required, Validators.maxLength(250)]],
+            app: [this.edittingDynamicList.appId, [Validators.required]]
         })
 
 
@@ -110,7 +114,8 @@ export class DynamicListBuilderPage implements OnInit {
     createDynamicListForm() {
         this.componentInfo = this.fb.group({
             name: ['', [Validators.required, Validators.maxLength(250)], [PortalValidators.dynamicListUniqueName(this.dynamicListClient)]],
-            displayName: ['', [Validators.required, Validators.maxLength(250)]]
+            displayName: ['', [Validators.required, Validators.maxLength(250)]],
+            app: ['', [Validators.required]]
         })
         this.shellOptions = this.shellOptions.concat(ListOptions.getDefaultShellOptionsForList())
         this.shellOptions$.next(this.shellOptions)
@@ -156,6 +161,7 @@ export class DynamicListBuilderPage implements OnInit {
         return {
             name: this.isEditMode ? this.edittingDynamicList.name : pageInfoValues.name,
             displayName: pageInfoValues.displayName,
+            appId: pageInfoValues.app,
             listDatasource: {
                 sourceType: DynamicListSourceType.Database,
                 databaseConnectionOptions: this.databaseOptions

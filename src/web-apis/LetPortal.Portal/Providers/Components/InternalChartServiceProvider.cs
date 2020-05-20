@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Components;
@@ -37,6 +39,29 @@ namespace LetPortal.Portal.Providers.Components
         public async Task<IEnumerable<Chart>> GetChartsByIds(IEnumerable<string> ids)
         {
             return await _chartRepository.GetAllByIdsAsync(ids);
+        }
+
+        public async Task<IEnumerable<Chart>> GetByAppId(string appId)
+        {
+            return await _chartRepository.GetAllAsync(a => a.AppId == appId, isRequiredDiscriminator: true);
+        }
+
+        public async Task DeleteByAppIdAsync(string appId)
+        {
+            var allCharts = await _chartRepository.GetAllAsync(a => a.AppId == appId);
+
+            if(allCharts != null && allCharts.Any())
+            {
+                foreach(var chart in allCharts)
+                {
+                    await _chartRepository.DeleteAsync(chart.Id);
+                }
+            }
+        }
+
+        public async Task<bool> CheckChartExist(Expression<Func<Chart, bool>> expression)
+        {
+            return await _chartRepository.IsExistAsync(expression);
         }
 
         #region IDisposable Support

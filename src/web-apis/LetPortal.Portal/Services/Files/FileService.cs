@@ -62,7 +62,7 @@ namespace LetPortal.Portal.Services.Files
                         }
                     }
                     returnedBytes = ms.ToArray();
-                    file.Name = file.Name.Split(".")[0] + ".zip";
+                    file.Name = FileUtil.GetFileNameWithoutExt(file.Name) + ".zip";
                     file.MIMEType = "application/zip";
                     GC.SuppressFinalize(fileBytes);
                 }
@@ -228,8 +228,7 @@ namespace LetPortal.Portal.Services.Files
         private async Task<string> SaveFormFileAsync(IFormFile file)
         {
             var tempFileName = Path.GetRandomFileName();
-            var fileNameSplitted = file.FileName.Split(".");
-            tempFileName = tempFileName.Split(".")[0] + "." + fileNameSplitted[^1];
+            tempFileName = FileUtil.GetFileNameWithoutExt(tempFileName) + "." + FileUtil.GetExtension(file.FileName);
 
             using (var stream = new FileStream(tempFileName, FileMode.Create))
             {

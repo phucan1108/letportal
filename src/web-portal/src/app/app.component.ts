@@ -12,6 +12,7 @@ import * as moment from 'moment'
 import { LocalizationService } from 'services/localization.service';
 import { LocalizationClient } from 'services/portal.service';
 import { tap } from 'rxjs/operators';
+import { SessionService } from 'services/session.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit {
     private securityService: SecurityService,
     private translate: TranslateService,
     private localizationService: LocalizationService,
+    private session: SessionService,
     private localizationsClient: LocalizationClient
   ) {
   }
@@ -52,27 +54,19 @@ export class AppComponent implements OnInit {
       if(event instanceof NavigationStart){
         if(event.url.indexOf('/portal/') >= 0){
           if (this.localizationService.allowTranslate
-            && this.translate.currentLang !== environment.localization.defaultLanguage) {
+            && this.translate.currentLang !== environment.localization.defaultLanguage
+            && !this.localizationService.isLoaded) {
             const currentLang = this.translate.currentLang
-            this.localizationsClient.getOne(currentLang).pipe(
-              tap(
-                localization => {
-                  if (ObjectUtils.isNotNull(localization)) {
-                    this.localizationService.setKeys(localization.localizationContents)
+            const currentApp = this.session.getCurrentApp()
+            if(ObjectUtils.isNotNull(currentApp)){
+              this.localizationsClient.getOne(currentApp.id, currentLang).pipe(
+                tap(
+                  keys => {
+                    this.localizationService.setKeys(keys.localizationContents)
                   }
-                  else {
-                    this.localizationService.setAllowTranslate(false)
-                  }
-                },
-                err => {
-                  // Due to failed, we must turn off translation
-                  this.localizationService.setAllowTranslate(false)
-                }
-              )
-            ).subscribe()
-          }
-          else {
-            this.localizationService.setAllowTranslate(false)
+                )
+              ).subscribe()
+            }
           }
         }
       }

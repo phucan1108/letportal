@@ -25,6 +25,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d63423dbaac7d4790b7d301",
                 Name = "role-form",
                 DisplayName = "Role Form",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/role-form",
                 Claims = new List<PortalClaim>
                     {
@@ -221,6 +222,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d63423dbaac7d4790b7d302",
                 Name = "add-user-form",
                 DisplayName = "Add User",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/add-user-form",
                 Claims = new List<PortalClaim>
                     {
@@ -332,6 +334,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d64e0dc6a1a49378cef5c70",
                 Name = "user-form",
                 DisplayName = "User Form",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/user-form",
                 Claims = new List<PortalClaim>
                     {
@@ -481,6 +484,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5dabf30467cb8d0bd02643f9",
                 Name = "charts-management",
                 DisplayName = "Charts Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/charts-management",
                 Claims = new List<PortalClaim>
                     {

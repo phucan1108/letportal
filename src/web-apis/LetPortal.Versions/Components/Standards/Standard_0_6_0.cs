@@ -23,6 +23,7 @@ namespace LetPortal.Versions.Components.Standards
                 Id = "5e79c14931a1754a2cd38cbc",
                 Name = "profileForm",
                 DisplayName = "Profile Form",
+                AppId = Constants.CoreAppId,
                 LayoutType = PageSectionLayoutType.TwoColumns,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
@@ -138,6 +139,7 @@ namespace LetPortal.Versions.Components.Standards
                 Id = "5e79c14931a1754a2cd38cc3",
                 Name = "changePasswordForm",
                 DisplayName = "Change Password Form",
+                AppId = Constants.CoreAppId,
                 LayoutType = PageSectionLayoutType.TwoColumns,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {

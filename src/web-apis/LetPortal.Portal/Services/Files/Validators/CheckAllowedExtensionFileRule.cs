@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Files;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Exceptions.Files;
 using LetPortal.Portal.Options.Files;
 using Microsoft.AspNetCore.Http;
@@ -33,8 +34,7 @@ namespace LetPortal.Portal.Services.Files.Validators
         private void CheckAllowedFileExtensions(string fileName)
         {
             var allowFiles = _fileValidatorOptions.CurrentValue.WhiteLists.Split(";");
-            var fileSplitted = fileName.Split(".");
-            if (!allowFiles.Any(a => a == fileSplitted[^1].ToLower()))
+            if (!allowFiles.Any(a => a == FileUtil.GetExtension(fileName).ToLower()))
             {
                 throw new FileException(FileErrorCodes.NotAllowedFileExtension);
             }

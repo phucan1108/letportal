@@ -230,6 +230,16 @@
     "pageService.messages.completeAllRequiredFields": "Please complete all required fields",
     "pageBuilder.builderDnd.messages.sectionBroken": "Section {{sectionName}} has been broken!!!",
     "pageBuilder.menuprofiles.selectOneRole": "Please select one role",
+    "pageBuilder.page.appPackage.header": "App Package",
+    "pageBuilder.page.appPackage.description.placeholder": "Leave a description",
+    "pageBuilder.page.appPackage.description.errors.required": "Please enter a description",
+    "pageBuilder.page.appInstallation.header": "Install App",
+    "pageBuilder.page.appInstallation.uploadFile.errors.fileType": "Please upload zip file",
+    "pageBuilder.page.appInstallation.preview.header": "Preview package",
+    "pageBuilder.page.appInstallation.isExist.text": "This app is already existed, please make sure before you try to install",
+    "pageBuilder.page.appInstallationDialog.selectText": "Select one installation type",
+    "pageBuilder.page.appInstallationDialog.wipe": "Wipe: all existing related components (by app) will be deleted, then all packaged components will be installed.",
+    "pageBuilder.page.appInstallationDialog.merge": "Merge: all matched components (by id and app) will be replaced by package, nonmatching components will be kept.",
     "chats.videoCall.messages.userUnreachable": "User is unreachable",
     "chats.videoCall.messages.rejectedCall": "User rejected a call",
     "chats.videoCall.messages.userEndCall": "User ended a call",
@@ -426,5 +436,10 @@
     "common.updateSuccessfully": "Update successfully!",
     "common.restoreSuccessfully": "Restore successfully!",
     "common.saveSuccessfully": "Save successfully!",
-    "common.copiedContent": "Copied content"     
+    "common.copiedContent": "Copied content",
+    "common.pickOneApp": "Pick one app",
+    "common.version": "Version",
+    "common.install": "Install",
+    "common.locale": "Locale",
+    "common.confirmation": "Confirmation"
 }

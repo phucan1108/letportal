@@ -24,6 +24,7 @@ namespace LetPortal.Versions.Components.Charts
                 Id = "5dc786a40f4b6b13e0a909f3",
                 Name = "httpcounters",
                 DisplayName = "HTTP Counters",
+                AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
                 DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                 {
@@ -60,6 +61,7 @@ namespace LetPortal.Versions.Components.Charts
                 Id = "5dd02c6d1558c56c40d795e7",
                 Name = "hardwarecounters",
                 DisplayName = "Hardware Counters",
+                AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
                 DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                 {
@@ -96,6 +98,7 @@ namespace LetPortal.Versions.Components.Charts
                 Id = "5dd2a66d5aa5f917603f05c5",
                 Name = "hardwarecpurealtime",
                 DisplayName = "CPU Monitor",
+                AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
                 DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                 {
@@ -125,6 +128,7 @@ namespace LetPortal.Versions.Components.Charts
                 Id = "5dd2a66d5aa5f917603f05c8",
                 Name = "hardwarememoryrealtime",
                 DisplayName = "Memory Monitor",
+                AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
                 DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                 {
@@ -153,6 +157,7 @@ namespace LetPortal.Versions.Components.Charts
                 Id = "5dd2a66d5aa5f917603f05c6",
                 Name = "httprealtime",
                 DisplayName = "HTTP Real Time Monitor",
+                AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.OneColumn,
                 DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
                 {

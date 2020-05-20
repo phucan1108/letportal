@@ -226,6 +226,16 @@
     "pageBuilder.page.menuProfiles.selectRole": "Vui lòng chọn một quyền",
     "pageBuilder.page.pageBuilder.header": "Cấu hình Trang",
     "pageBuilder.page.localization.error.uniqueName": "Ngôn ngữ đã được khai báo",
+    "pageBuilder.page.appPackage.header": "Đóng gói Ứng dụng",
+    "pageBuilder.page.appPackage.description.placeholder": "Điền mô tả",
+    "pageBuilder.page.appPackage.description.errors.required": "Vui lòng điền mô tả",
+    "pageBuilder.page.appInstallation.header": "Cài đặt Ứng dụng",
+    "pageBuilder.page.appInstallation.uploadFile.errors.fileType": "Vui lòng gửi tệp zip",
+    "pageBuilder.page.appInstallation.preview.header": "Thông tin Ứng dụng",
+    "pageBuilder.page.appInstallation.isExist.text": "Ứng dụng đã tồn tại, hãy đảm bảo trước khi cài đặt",
+    "pageBuilder.page.appInstallationDialog.selectText": "Chọn loại cài đặt",
+    "pageBuilder.page.appInstallationDialog.wipe": "Xóa: tất cả thành phần liên quan đang có sẽ bị xóa, sau đó tất cả thành phần mới sẽ được cài đặt.",
+    "pageBuilder.page.appInstallationDialog.merge": "Hợp: tất cả thành phần trùng (bởi id và ứng dụng) sẽ được thay thế, những thành phần không trùng sẽ được giữ lại.",
     "pageService.messages.notAllowedAccessPage": "Rất tiếc, bạn không có quyền truy cập trang",
     "pageService.messages.completeAllRequiredFields": "Vui lòng điền thông tin các trường bắt buộc",
     "pageBuilder.builderDnd.messages.sectionBroken": "Khu vực {{sectionName}} đã lỗi!!!",
@@ -426,5 +436,10 @@
     "common.updateSuccessfully": "Cập nhật thành công!",
     "common.restoreSuccessfully": "Khôi phục thành công!",
     "common.saveSuccessfully": "Lưu thành công!",
-    "common.copiedContent": "Đã sao chép"    
+    "common.copiedContent": "Đã sao chép",
+    "common.pickOneApp": "Chọn một Ứng dụng",
+    "common.version": "Phiên bản",
+    "common.install": "Cài đặt",
+    "common.locale": "Ngôn ngữ",
+    "common.confirmation": "Xác nhận"  
 }

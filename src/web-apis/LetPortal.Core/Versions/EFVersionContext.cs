@@ -46,6 +46,11 @@ namespace LetPortal.Core.Versions
             _context.SaveChanges();
         }
 
+        public IQueryable<T> GetQueryable<T>() where T : Entity
+        {
+            return _context.Set<T>().AsNoTracking().AsQueryable();
+        }
+
         #region IDisposable Support
         private bool disposedValue = false;
 

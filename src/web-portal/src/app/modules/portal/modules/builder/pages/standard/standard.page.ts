@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { StandardComponentClient, StandardComponent, PageSectionLayoutType } from 'services/portal.service';
+import { StandardComponentClient, StandardComponent, PageSectionLayoutType, App, AppsClient } from 'services/portal.service';
 import { ExtendedPageControl } from 'app/core/models/extended.models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Guid } from 'guid-typescript';
@@ -10,7 +10,7 @@ import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-u
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { StaticResources } from 'portal/resources/static-resources';
 import { PortalValidators } from 'app/core/validators/portal.validators';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { StandardOptions } from 'portal/modules/models/standard.extended.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
@@ -33,8 +33,10 @@ export class StandardPagePage implements OnInit {
     isEditMode = false
 
     _layoutTypes = StaticResources.sectionLayoutTypes()
+    apps$: Observable<App[]>
     constructor(
         private translate: TranslateService,
+        private appsClient: AppsClient,
         private fb: FormBuilder,
         private activatedRoute: ActivatedRoute,
         private router: Router,
@@ -44,12 +46,14 @@ export class StandardPagePage implements OnInit {
     ) {
         this.standardComponent = this.activatedRoute.snapshot.data.standard
         this.isEditMode = !!this.standardComponent
+        this.apps$ = this.appsClient.getAll()
         if (!this.isEditMode) {
             this.standardComponent = {
                 id: Guid.create().toString(),
                 controls: [],
                 name: '',
                 displayName: '',
+                appId: '',
                 layoutType: PageSectionLayoutType.OneColumn
             }
         }
@@ -75,6 +79,7 @@ export class StandardPagePage implements OnInit {
             this.standardFormGroup = this.fb.group({
                 name: new FormControl({ value:this.standardComponent.name, disabled: true }, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]),
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
+                app: [this.standardComponent.appId, [Validators.required]],
                 allowArrayData: [this.standardComponent.allowArrayData],
                 layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
@@ -95,6 +100,7 @@ export class StandardPagePage implements OnInit {
             this.standardFormGroup = this.fb.group({
                 name: [this.standardComponent.name, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]],
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
+                app: [this.standardComponent.appId, [Validators.required]],
                 allowArrayData: [this.standardComponent.allowArrayData],
                 layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
@@ -122,6 +128,7 @@ export class StandardPagePage implements OnInit {
         this.standardComponent.controls = this.controls
         this.standardComponent.layoutType = parseInt(formValues.layoutType)
         this.standardComponent.options = this.shellOptions
+        this.standardComponent.appId = formValues.app
     }
 
     onPopulatedControls($event: ExtendedPageControl[]) {

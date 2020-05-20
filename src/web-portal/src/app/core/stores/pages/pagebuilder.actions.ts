@@ -32,7 +32,13 @@ export class EditPageAction implements PageBuilderAction {
 
 export class UpdatePageInfoAction implements PageBuilderAction {
   public static readonly type = `${PAGE_BUILDER_PAGE} Update Page Info`
-  constructor(public id: string, public name: string, public appId: string, public displayName: string, public urlPath: string, public canSave: boolean) { }
+  constructor(
+    public id: string, 
+    public name: string, 
+    public appId: string, 
+    public displayName: string, 
+    public urlPath: string, 
+    public canSave: boolean) { }
 }
 
 export class UpdatePageOptionsAction implements PageBuilderAction {

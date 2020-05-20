@@ -37,6 +37,9 @@
     <None Update="Artifacts\connect-iot-to-internet.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Artifacts\CoreApp_0.0.1_637251308120576119.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Artifacts\settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

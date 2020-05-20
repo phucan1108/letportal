@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
-using LetPortal.Core.Utils;
-using LetPortal.Portal.Entities.Components;
 using LetPortal.Portal.Entities.Pages;
-using LetPortal.Portal.Entities.SectionParts;
-using LetPortal.Portal.Entities.SectionParts.Controls;
 using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models.Pages;
 using LetPortal.Portal.Repositories.Components;
@@ -72,7 +69,7 @@ namespace LetPortal.Portal.Providers.Pages
 
             var pageLanguages = await _pageRepository.GetLanguageKeys(pageId);
             languages.AddRange(pageLanguages);
-            if(page.Builder != null && page.Builder.Sections != null)
+            if (page.Builder != null && page.Builder.Sections != null)
             {
 
                 foreach (var section in page.Builder.Sections)
@@ -100,6 +97,29 @@ namespace LetPortal.Portal.Providers.Pages
 
             }
             return languages;
+        }
+
+        public async Task<IEnumerable<Page>> GetByAppId(string appId)
+        {
+            return await _pageRepository.GetAllAsync(a => a.AppId == appId);
+        }
+
+        public async Task DeleteByAppIdAsync(string appId)
+        {
+            var allPages = await _pageRepository.GetAllAsync(a => a.AppId == appId);
+
+            if(allPages != null && allPages.Any())
+            {
+                foreach(var page in allPages)
+                {
+                    await _pageRepository.DeleteAsync(page.Id);
+                }
+            }
+        }
+
+        public async Task<bool> CheckPageExist(Expression<Func<Page, bool>> expression)
+        {
+            return await _pageRepository.IsExistAsync(expression);
         }
 
         #region IDisposable Support

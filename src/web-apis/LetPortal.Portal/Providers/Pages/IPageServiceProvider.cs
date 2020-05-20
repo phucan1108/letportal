@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Pages;
@@ -18,5 +20,11 @@ namespace LetPortal.Portal.Providers.Pages
         Task ForceUpdatePages(IEnumerable<Page> pages);
 
         Task<IEnumerable<LanguageKey>> GetPageLanguages(string pageId);
+
+        Task<IEnumerable<Page>> GetByAppId(string appId);
+
+        Task DeleteByAppIdAsync(string appId);
+
+        Task<bool> CheckPageExist(Expression<Func<Page, bool>> expression);
     }
 }
