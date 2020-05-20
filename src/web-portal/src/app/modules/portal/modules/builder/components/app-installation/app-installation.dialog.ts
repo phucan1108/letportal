@@ -16,7 +16,6 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 })
 export class AppInstallationDialog implements OnInit {
     installWayFormGroup: FormGroup
-    installWay = InstallWay
 
     unpackModel: UnpackResponseModel
     constructor(
@@ -39,7 +38,7 @@ export class AppInstallationDialog implements OnInit {
 
     onSubmit(){
         this.appsClient.install({
-            installWay: this.installWayFormGroup.value.installWay,
+            installWay: this.installWayFormGroup.controls.installWay.value,
             uploadFileId: this.unpackModel.uploadFileId
         }).pipe(
             tap(

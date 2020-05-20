@@ -1,14 +1,18 @@
-<h3 mat-dialog-title>Confirmation</h3>
+<h3 mat-dialog-title>{{ 'common.confirmation' | translate }}</h3>
 <mat-dialog-content>
     <div class="row">
-        Select one installation type:
+        {{ 'pageBuilder.page.appInstallationDialog.selectText' | translate }}:
     </div>
     <div class="row">
         <div class="col-lg-12">
             <form [formGroup]="installWayFormGroup">       
                 <mat-radio-group aria-label="Select install way" class="radio-group" formControlName="installWay">                    
-                    <mat-radio-button value="installWay.Wipe" [checked]="true">Wipe: all existing related components (by app) will be deleted, then all packaged components will be installed.</mat-radio-button>
-                    <mat-radio-button value="installWay.Merge">Merge: all matched components (by id and app) will be replaced by package, nonmatching components will be kept.</mat-radio-button>
+                    <mat-radio-button value="1" [checked]="true">
+                        {{ 'pageBuilder.page.appInstallationDialog.wipe' | translate }}
+                    </mat-radio-button>
+                    <mat-radio-button value="0">
+                        {{ 'pageBuilder.page.appInstallationDialog.merge' | translate }}
+                    </mat-radio-button>
                 </mat-radio-group>
             </form>
         </div>

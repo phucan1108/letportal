@@ -65,7 +65,7 @@ export class AppPackagePage implements OnInit {
         let tree: Array<any> = []
         if(ObjectUtils.isNotNull(this.previewApp.standards)){
             const treeNode = new Object()
-            treeNode['name'] = 'Standards'
+            treeNode['name'] = this.translate.instant('common.standards')
             treeNode['sub'] = []
             this.previewApp.standards.forEach(a => {
                 const subName = new Object()
@@ -77,7 +77,7 @@ export class AppPackagePage implements OnInit {
 
         if(ObjectUtils.isNotNull(this.previewApp.dynamicLists)){
             const treeNode = new Object()
-            treeNode['name'] = 'Dynamic Lists'
+            treeNode['name'] = this.translate.instant('common.dynamicLists')
             treeNode['sub'] = []
             this.previewApp.dynamicLists.forEach(a => {
                 const subName = new Object()
@@ -89,7 +89,7 @@ export class AppPackagePage implements OnInit {
 
         if(ObjectUtils.isNotNull(this.previewApp.charts)){
             const treeNode = new Object()
-            treeNode['name'] = 'Charts'
+            treeNode['name'] = this.translate.instant('common.charts')
             treeNode['sub'] = []
             this.previewApp.charts.forEach(a => {
                 const subName = new Object()
@@ -101,7 +101,7 @@ export class AppPackagePage implements OnInit {
 
         if(ObjectUtils.isNotNull(this.previewApp.pages)){
             const treeNode = new Object()
-            treeNode['name'] = 'Pages'
+            treeNode['name'] = this.translate.instant('common.pages')
             treeNode['sub'] = []
             this.previewApp.pages.forEach(a => {
                 const subName = new Object()
@@ -113,7 +113,7 @@ export class AppPackagePage implements OnInit {
 
         if(ObjectUtils.isNotNull(this.previewApp.locales)){
             const treeNode = new Object()
-            treeNode['name'] = 'Locales'
+            treeNode['name'] = this.translate.instant('common.locale')
             treeNode['sub'] = []
             this.previewApp.locales.forEach(a => {
                 const subName = new Object()
