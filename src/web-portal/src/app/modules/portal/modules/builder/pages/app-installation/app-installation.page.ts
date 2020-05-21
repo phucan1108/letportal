@@ -172,6 +172,10 @@ export class AppInstallationPage implements OnInit {
 
         this.dataSource.data = tree
     }
+
+    onCancel(){
+        this.router.navigateByUrl('portal/page/apps-management')
+    }
 }
 
 

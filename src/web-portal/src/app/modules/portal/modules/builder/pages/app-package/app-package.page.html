@@ -7,8 +7,7 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="onCreate()"
-                        *ngIf="!isSubmitted">{{ 'common.create' | translate }}</button>
+                    <button mat-menu-item (click)="onCreate()">{{ 'common.create' | translate }}</button>
                     <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
