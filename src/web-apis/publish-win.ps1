@@ -22,3 +22,4 @@ dotnet build ./LetPortal.Gateway/LetPortal.Gateway.csproj -c Release -o $publish
 dotnet build ./LetPortal.IdentityApis/LetPortal.IdentityApis.csproj -c Release -o $publishFolder"/LetPortal.IdentityApis" -r win10-x64
 dotnet build ./LetPortal.WebApis/LetPortal.PortalApis.csproj -c Release -o $publishFolder"/LetPortal.PortalApis" -r win10-x64
 dotnet build ./LetPortal.ServiceManagementApis/LetPortal.ServiceManagementApis.csproj -c Release -o $publishFolder"/LetPortal.ServiceManagementApis" -r win10-x64
+dotnet build ./LetPortal.ChatApis/LetPortal.ChatApis.csproj -c Release -o $publishFolder"/LetPortal.ChatApis" -r win10-x64

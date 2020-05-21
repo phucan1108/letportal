@@ -14,6 +14,8 @@ dotnet build ./LetPortal.IdentityApis/LetPortal.IdentityApis.csproj -c Release -
 chmod 755 $publishFolder"/LetPortal.IdentityApis/LetPortal.IdentityApis.dll"
 dotnet build ./LetPortal.WebApis/LetPortal.PortalApis.csproj -c Release -o $publishFolder"/LetPortal.PortalApis"
 chmod 755 $publishFolder"/LetPortal.PortalApis/LetPortal.PortalApis.dll"
+dotnet build ./LetPortal.ChatApis/LetPortal.ChatApis.csproj -c Release -o $publishFolder"/LetPortal.ChatApis"
+chmod 755 $publishFolder"/LetPortal.ChatApis/LetPortal.ChatApis.dll"
 dotnet build ./LetPortal.ServiceManagementApis/LetPortal.ServiceManagementApis.csproj -c Release -o $publishFolder"/LetPortal.ServiceManagementApis"
 chmod 755 $publishFolder"/LetPortal.ServiceManagementApis/LetPortal.ServiceManagementApis.dll"
 echo ">>> Publish sucessfully! Go to execute run-lnx.sh to run all services"
