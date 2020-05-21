@@ -6,7 +6,7 @@ services:
     ports:
       - "27117:27017"
   lp.servicemangement:
-    image: lp-servicemangement:0.7.0
+    image: lp-servicemangement:0.8.0
     environment:
       - ASPNETCORE_ENVIRONMENT=DockerLocal
     depends_on:
@@ -17,7 +17,7 @@ services:
     ports:
       - "5141:80"
   lp.gateway:
-    image: lp-gateway:0.7.0
+    image: lp-gateway:0.8.0
     environment:
       - ASPNETCORE_ENVIRONMENT=DockerLocal
     depends_on:
@@ -29,7 +29,7 @@ services:
     ports:
       - "5142:80"
   lp.identityapi:
-    image: lp-identityapi:0.7.0
+    image: lp-identityapi:0.8.0
     environment:
       - ASPNETCORE_ENVIRONMENT=DockerLocal
     depends_on:
@@ -41,7 +41,7 @@ services:
     ports:
       - "5143:80"
   lp.portalapi:
-    image: lp-portalapi:0.7.0
+    image: lp-portalapi:0.8.0
     environment:
       - ASPNETCORE_ENVIRONMENT=DockerLocal
     depends_on:
@@ -53,7 +53,7 @@ services:
     ports:
       - "5144:80"
   lp.chatapi:
-    image: lp-chatapi:0.7.0
+    image: lp-chatapi:0.8.0
     environment:
       - ASPNETCORE_ENVIRONMENT=DockerLocal
     depends_on:
