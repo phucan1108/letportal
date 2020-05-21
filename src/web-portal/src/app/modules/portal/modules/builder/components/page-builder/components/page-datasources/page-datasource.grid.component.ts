@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { MatDialog, MatTable } from '@angular/material';
 import { Store } from '@ngxs/store';
 import { PageDatasource, DatasourceControlType } from 'services/portal.service';
 import { filter, tap } from 'rxjs/operators';
@@ -12,6 +11,9 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 import { NGXLogger } from 'ngx-logger';
 import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-page-datasource-grid',
@@ -24,6 +26,7 @@ export class PageDatasourceGridComponent implements OnInit {
     currentDatasources: Array<PageDatasource> = []
 
     constructor(
+        private translate: TranslateService,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
@@ -90,7 +93,7 @@ export class PageDatasourceGridComponent implements OnInit {
         this.currentDatasources = _.filter(this.currentDatasources, (elem) => {
             return elem.id !== datasource.id
         })
-        this.shortcutUtil.toastMessage('Delete datasource successfully!', ToastType.Success)
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success)
     }
 
     editDatasourceOption(datasource: PageDatasource) {

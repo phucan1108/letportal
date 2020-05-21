@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { Guid } from 'guid-typescript';
 import { StaticResources } from 'portal/resources/static-resources';
-import { MatDialog, MatTable } from '@angular/material';
 import { ControlDialogComponent } from './control-dialog.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ArrayUtils } from 'app/core/utils/array-util';
@@ -22,6 +21,9 @@ import { tap } from 'rxjs/operators';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { AsyncValidatorDialogComponent } from './control-async-validator.dialog.component';
 import { EventsProvider } from 'app/core/events/event.provider';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-controls-grid',
@@ -62,6 +64,7 @@ export class ControlsGridComponent implements OnInit {
     isEditControl = false
     isHandset = false
     constructor(
+        private translate: TranslateService,
         private eventsProvider: EventsProvider,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
@@ -337,7 +340,7 @@ export class ControlsGridComponent implements OnInit {
         this.controls = _.filter(this.controls, (elem) => {
             return elem.id !== control.id
         })
-        this.shortcutUtil.toastMessage('Delete control successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
         this.refreshControlTable()
     }
 

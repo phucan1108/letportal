@@ -8,7 +8,7 @@ import { Store, Select, Actions, ofActionSuccessful, ofActionDispatched, ofActio
 import {  CHAT_STATE_TOKEN, ChatStateModel } from 'stores/chats/chats.state';
 import { tap, filter } from 'rxjs/operators';
 import { GotHubChatProblem, ActiveDoubleChatRoom, NotifyIncomingVideoCall } from 'stores/chats/chats.actions';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 
 @Component({

@@ -1,0 +1,62 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'pageBuilder.page.appPackage.header' | translate }}
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onCreate()">{{ 'common.create' | translate }}</button>
+                    <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="packageFormGroup">
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">{{ 'common.description' | translate }}:</label>
+                    <div class="col-lg-6">
+                        <mat-form-field class="field-full-width">
+                            <textarea formControlName="description" matInput #formNameInput
+                                placeholder="{{ 'pageBuilder.page.appPackage.description.placeholder' | translate }}"
+                                maxlength="500" rows="5">
+                                </textarea>
+                            <mat-hint align="end">
+                                {{formNameInput.value?.length || 0}}/500
+                            </mat-hint>
+                            <mat-error *ngIf="packageFormGroup.get('description').hasError('required')">
+                                {{ 'pageBuilder.page.appPackage.description.errors.required' | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+            <div class="row row-heading">
+                <h3 class="col-lg-12">{{ 'common.app' | translate }}: {{previewApp.app.displayName}}</h3>
+                <h3 class="col-lg-12">{{ 'common.version' | translate }}: {{previewApp.app.currentVersionNumber}}</h3>
+            </div>            
+            <div class="row">
+                <div class="col-lg-12">
+                    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+                        <!-- This is the tree node template for leaf nodes -->
+                        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="30"
+                            #tree>
+                            {{node.name}}
+                        </mat-tree-node>
+                        <!-- This is the tree node template for expandable nodes -->
+                        <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
+                            matTreeNodePaddingIndent="30">
+                            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                <mat-icon class="mat-icon-rtl-mirror">
+                                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                </mat-icon>
+                            </button>
+                            {{node.name}} <b style="padding-left: 10px;">Total</b>: {{node.numberChildren}}
+                        </mat-tree-node>
+                    </mat-tree>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

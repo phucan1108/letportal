@@ -15,8 +15,8 @@
         </div>
         <div class="w-50 text-left">
             <h6 style="margin-bottom: 0px;">{{roomName}}</h6>
-            <span *ngIf="isUserOnline" class="online-text">Online</span>
-            <span *ngIf="!isUserOnline" class="online-text">Offline</span>
+            <span *ngIf="isUserOnline" class="online-text">{{ 'chat.chatBoxContent.online' | translate }}</span>
+            <span *ngIf="!isUserOnline" class="online-text">{{ 'chat.chatBoxContent.offline' | translate }}</span>
         </div>
         <div class="w-25 text-right">
             <button [disabled]="!isUserOnline" mat-icon-button color="primary" (click)="popupVideoCall()">
@@ -90,20 +90,20 @@
                     (keydown.enter)="onKeydown($event)" class="text-area-chat">
                 </textarea>
                 <mat-error *ngIf="formGroup.controls.text.hasError('maximum-file-size')">
-                    Attachment file must be less than 16 Mb
+                    {{ 'chat.chatBoxContent.attachment.errors.maxFileSize' | translate }}                    
                 </mat-error>
                 <mat-error *ngIf="formGroup.controls.text.hasError('invalid-file-type')">
-                    Attachment file type isn't allowed to be sent
+                    {{ 'chat.chatBoxContent.attachment.errors.invalidFileType' | translate }}
                 </mat-error>
             </mat-form-field>
         </div>
         <div class="col-lg-12">
             <div class="float-left">
-                <button mat-icon-button color="primary" matTooltip="Attachment" [matTooltipPosition]="'above'">
+                <button mat-icon-button color="primary" matTooltip="{{ 'chat.chatBoxContent.attachment.tooltip' | translate }}" [matTooltipPosition]="'above'">
                     <mat-icon>attach_file</mat-icon>
                     <input class="file-input-overlay" type="file" #fileInput (change)="onFileChange($event)">
                 </button>
-                <button mat-icon-button color="primary" matTooltip="Icon" [matTooltipPosition]="'above'">
+                <button mat-icon-button color="primary" matTooltip="{{ 'chat.chatBoxContent.icon.tooltip' | translate }}" [matTooltipPosition]="'above'">
                     <mat-icon style="cursor: pointer;">mood</mat-icon>
                     <div (click)="toggled = !toggled" [(emojiPickerIf)]="toggled" [emojiPickerDirection]="'top'"
                         (emojiPickerSelect)="emotionPicked($event)" class="field-full-width overlay-emotion">
@@ -111,13 +111,13 @@
                 </button>
             </div>
             <div class="float-right pt-1">
-                <button mat-button color="primary" (click)="send()">Send</button>
+                <button mat-button color="primary" (click)="send()">{{ 'chat.chatBoxContent.buttons.send' | translate }}</button>
             </div>
         </div>
     </div>
 </form>
 <ng-template #reconnecting>
     <div class="row d-flex justify-content-center">
-        <p>Chat isn't available, reconnecting...</p>
+        <p>{{ 'chat.chatBoxContent.chatUnavailable' | translate }}</p>
     </div>
 </ng-template>

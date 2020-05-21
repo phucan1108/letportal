@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { MatDialog, MatTable } from '@angular/material';
 import { ActivatedRoute, Router, Route } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
@@ -18,12 +17,15 @@ import { NGXLogger } from 'ngx-logger';
 import { PortalStandardClaims } from 'app/core/security/portalClaims';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { SecurityService } from 'app/core/security/security.service';
-import { PortalClaim, DatabaseConnection, EntitySchema, DatabasesClient, EntitySchemasClient, Page, PagesClient, ControlType, PageEvent, SectionContructionType } from 'services/portal.service';
+import { PortalClaim, DatabaseConnection, EntitySchema, DatabasesClient, EntitySchemasClient, Page, PagesClient, ControlType, PageEvent, SectionContructionType, App, AppsClient } from 'services/portal.service';
 import { NextToWorkflowAction, NextToRouteAction, UpdateShellOptions, InitCreatePageBuilderAction, NextToPageBuilderAction, GeneratePageActionCommandsAction, GeneratePageBuilderInfoAction, GeneratePageEventsAction, InitEditPageBuilderAction, UpdatePageInfoAction, UpdatePageClaims, EditPageAction, CreatePageAction, NextToDatasourceAction, GatherAllChanges } from 'stores/pages/pagebuilder.actions';
 import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { StateReset } from 'ngxs-reset-plugin';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'let-page-builder',
     templateUrl: './page-builder.page.html',
@@ -56,20 +58,19 @@ export class PageBuilderPage implements OnInit, OnDestroy {
 
     isEditMode = false
     editId = ''
-
     //#region Constants
     _formTypes = [
         { name: 'Entity', value: 0 },
         { name: 'Workflow', value: 1 }
     ]
 
-    //#endregion
+    //#endregion   
 
     constructor(
         private pageService: PageService,
         private fb: FormBuilder,
         private databaseClient: DatabasesClient,
-        private entityClient: EntitySchemasClient,
+        private translate: TranslateService,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
         private shortcutUtil: ShortcutUtil,
@@ -145,7 +146,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             this.pageInfoFormGroup = this.fb.group({
                 name: ['', [Validators.required, Validators.maxLength(250)], [PortalValidators.pageUniqueName(this.pagesClient)]],
                 displayName: ['', [Validators.required, Validators.maxLength(250)]],
-                urlPath: ['', Validators.required]
+                urlPath: ['', Validators.required],
+                app: ['', Validators.required]
             })
 
             // Init some must have dynamic form part
@@ -155,7 +157,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             this.pageInfoFormGroup = this.fb.group({
                 name: new FormControl({ value: this.page.name, disabled: true}),
                 displayName: [this.page.displayName, [Validators.required, Validators.maxLength(250)]],
-                urlPath: [this.page.urlPath, Validators.required]
+                urlPath: [this.page.urlPath, Validators.required],
+                app: [this.page.appId, Validators.required]
             })
 
             _.forEach(this.page.shellOptions, shellOpt => {
@@ -253,14 +256,14 @@ export class PageBuilderPage implements OnInit, OnDestroy {
                     if (this.isEditMode) {
                         this.store.dispatch(new EditPageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.toastMessage('Update Page Successfully', ToastType.Success)
+                                this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
                             }
                         );
                     }
                     else {
                         this.store.dispatch(new CreatePageAction()).subscribe(
                             result => {
-                                this.shortcutUtil.toastMessage('Create Page Successfully', ToastType.Success)
+                                this.shortcutUtil.toastMessage(this.translate.instant('common.createSuccessfully'), ToastType.Success)
                                 this.router.navigateByUrl('portal/page/pages-management')
                             }
                         );

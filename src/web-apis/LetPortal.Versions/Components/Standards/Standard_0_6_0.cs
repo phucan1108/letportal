@@ -21,9 +21,10 @@ namespace LetPortal.Versions.Components.Standards
             var profileStandard = new StandardComponent
             {
                 Id = "5e79c14931a1754a2cd38cbc",
-                Name = "profile-form",
+                Name = "profileForm",
                 DisplayName = "Profile Form",
-                LayoutType = PageSectionLayoutType.OneColumn,
+                AppId = Constants.CoreAppId,
+                LayoutType = PageSectionLayoutType.TwoColumns,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
@@ -136,9 +137,10 @@ namespace LetPortal.Versions.Components.Standards
             var changePasswordStandard = new StandardComponent
             {
                 Id = "5e79c14931a1754a2cd38cc3",
-                Name = "change-password-form",
+                Name = "changePasswordForm",
                 DisplayName = "Change Password Form",
-                LayoutType = PageSectionLayoutType.OneColumn,
+                AppId = Constants.CoreAppId,
+                LayoutType = PageSectionLayoutType.TwoColumns,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
                     new Portal.Entities.SectionParts.Controls.PageControl
@@ -326,6 +328,8 @@ namespace LetPortal.Versions.Components.Standards
                 }
             };
 
+            VersionUtils.GenerateStandardOptions(profileStandard);
+            VersionUtils.GenerateStandardOptions(changePasswordStandard);
             versionContext.InsertData(profileStandard);
             versionContext.InsertData(changePasswordStandard);
         }

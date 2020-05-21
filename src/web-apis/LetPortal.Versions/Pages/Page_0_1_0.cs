@@ -30,6 +30,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5cf62f41617a831f7878ba65",
                 Name = "page-builder",
                 DisplayName = "Page Builder",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/builder",
                 ShellOptions = new List<ShellOption>(),
                 Claims = new List<PortalClaim>
@@ -43,6 +44,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5cf63188617a831f7878ba66",
                 Name = "menus",
                 DisplayName = "Menus",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/menus",
                 ShellOptions = new List<ShellOption>(),
                 Claims = new List<PortalClaim>
@@ -56,6 +58,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5cf8999e8466f54ae8743180",
                 Name = "role-claims",
                 DisplayName = "Role Claims",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/roles/:roleName/claims",
                 ShellOptions = new List<ShellOption>(),
                 Claims = new List<PortalClaim>
@@ -69,6 +72,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5cf8999e8466f54ae8743181",
                 Name = "dynamic-list-builder",
                 DisplayName = "Dynamic List Builder",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/dynamic-list/builder",
                 ShellOptions = new List<ShellOption>(),
                 Claims = new List<PortalClaim>
@@ -91,6 +95,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5cc7c8b2dbfdcd4b70964c1a",
                 Name = "databases-management",
                 DisplayName = "Databases Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/databases-management",
                 Claims = new List<PortalClaim>
                     {
@@ -105,7 +110,7 @@ namespace LetPortal.Versions.Pages
                             Id = "5d0c7da473e71f3330054791",
                             ConstructionType = SectionContructionType.DynamicList,
                             ComponentId = "5d0f09de62c8371c183c8c6f",
-                            Name = "databaselist",
+                            Name = "databasesList",
                             DisplayName = "Databases List",
                             Order = 0
                         }
@@ -118,6 +123,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5c06a1854cc9a850bca4448c",
                 Name = "apps-management",
                 DisplayName = "Apps Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/apps-management",
                 Claims = new List<PortalClaim>
                     {
@@ -130,7 +136,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "5d0c7da473e71f3330054792",
-                            Name = "appslist",
+                            Name = "appsList",
                             DisplayName = "Apps List",
                             ComponentId = "5d0f2dca6ba2fd4ca49e3741",
                             ConstructionType = SectionContructionType.DynamicList,
@@ -145,6 +151,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5cf6190b854f4dbc7921cca7",
                 Name = "pages-management",
                 DisplayName = "Pages Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/pages-management",
                 Claims = new List<PortalClaim>
                     {
@@ -157,7 +164,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "5d0c7da473e71f3330054793",
-                            Name = "pageslist",
+                            Name = "pagesList",
                             ConstructionType = SectionContructionType.DynamicList,
                             DisplayName = "Pages List",
                             ComponentId = "5d0f2dca6ba2fd4ca49e3742",
@@ -172,6 +179,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d0f2dca6ba2fd4ca49e3749",
                 Name = "users-management",
                 DisplayName = "Users Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/users-management",
                 Claims = new List<PortalClaim>
                     {
@@ -184,7 +192,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "5d0c7da473e71f3330054796",
-                            Name = "userslist",
+                            Name = "usersList",
                             DisplayName = "Users List",
                             ConstructionType = SectionContructionType.DynamicList,
                             ComponentId = "5d0f2dca6ba2fd4ca49e3743",
@@ -199,6 +207,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d0f2dca6ba2fd4ca49e3748",
                 Name = "roles-management",
                 DisplayName = "Roles Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/roles-management",
                 Claims = new List<PortalClaim>
                     {
@@ -211,7 +220,7 @@ namespace LetPortal.Versions.Pages
                         new PageSection
                         {
                             Id = "5d0c7da473e71f3330054792",
-                            Name = "roleslist",
+                            Name = "rolesList",
                             DisplayName = "Roles List",
                             ConstructionType = SectionContructionType.DynamicList,
                             ComponentId = "5d0f2dca6ba2fd4ca49e3746",

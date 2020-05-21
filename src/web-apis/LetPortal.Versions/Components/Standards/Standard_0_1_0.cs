@@ -19,8 +19,9 @@ namespace LetPortal.Versions.Components.Standards
             var databaseStandard = new StandardComponent
             {
                 Id = "5d25f6abe88d28422061cfaf",
-                Name = "database-form",
+                Name = "databaseForm",
                 DisplayName = "Database Form",
+                AppId = Constants.CoreAppId,
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {
@@ -290,8 +291,9 @@ namespace LetPortal.Versions.Components.Standards
             var appStandard = new StandardComponent
             {
                 Id = "5d3836194d8fa90874135d68",
-                Name = "app-form",
+                Name = "appForm",
                 DisplayName = "App Form",
+                AppId = Constants.CoreAppId,
                 LayoutType = PageSectionLayoutType.OneColumn,
                 Controls = new List<Portal.Entities.SectionParts.Controls.PageControl>
                 {

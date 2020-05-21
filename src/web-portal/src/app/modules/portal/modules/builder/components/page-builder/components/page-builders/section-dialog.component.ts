@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BuilderDnDComponent } from './builder-dnd.component';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { StaticResources } from 'portal/resources/static-resources';

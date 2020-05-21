@@ -19,7 +19,13 @@ screen -S letportal-id -X stuff 'export ASPNETCORE_ENVIRONMENT='$environment'\n'
 screen -S letportal-id -X stuff 'cd '$publishFolder'/LetPortal.IdentityApis\n'
 screen -S letportal-id -X stuff 'dotnet LetPortal.IdentityApis.dll\n'
 
-# 4. Start Gateway APIs
+# 4. Start Chat APIs
+screen -dmS letportal-id
+screen -S letportal-id -X stuff 'export ASPNETCORE_ENVIRONMENT='$environment'\n'
+screen -S letportal-id -X stuff 'cd '$publishFolder'/LetPortal.ChatApis\n'
+screen -S letportal-id -X stuff 'dotnet LetPortal.ChatApis.dll\n'
+
+# 5. Start Gateway APIs
 screen -dmS letportal-gw
 screen -S letportal-gw -X stuff 'export ASPNETCORE_ENVIRONMENT='$environment'\n'
 screen -S letportal-gw -X stuff 'cd '$publishFolder'/LetPortal.Gateway\n'

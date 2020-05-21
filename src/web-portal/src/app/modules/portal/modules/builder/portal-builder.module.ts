@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule, MatFormFieldModule, MatDatepickerModule, MatAutocompleteModule, MatListModule, MatSliderModule, MatCardModule, MatSelectModule, MatButtonModule, MatIconModule, MatNativeDateModule, MatSlideToggleModule, MatCheckboxModule, MatMenuModule, MatTabsModule, MatTooltipModule, MatSidenavModule, MatProgressBarModule, MatProgressSpinnerModule, MatSnackBarModule, MatTableModule, MatGridListModule, MatToolbarModule, MatExpansionModule, MatDividerModule, MatSortModule, MatStepperModule, MatChipsModule, MatPaginatorModule, MatDialogModule, MatRadioModule, MatTreeModule, MatIconRegistry, MAT_DIALOG_DATA } from '@angular/material';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MomentumTableModule } from 'momentum-table';
-import { ScrollDispatchModule } from '@angular/cdk/scrolling';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { QuillModule } from 'ngx-quill';
 import { CommandModalComponent } from './components/dynamic-list/components/commands/command-dialog.component';
@@ -77,6 +76,45 @@ import { BackupRestorePage } from './pages/backup/backup-restore.page';
 import { ExecutionDatabaseStepComponent } from 'portal/shared/button-options/executiondatabase-step.component';
 import { IconPickerSharedComponent } from 'portal/shared/icon-picker/icon-picker.component';
 import { CoreModule } from 'app/core/core.module';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatListModule } from '@angular/material/list';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTreeModule } from '@angular/material/tree';
+import { LocalizationPage } from './pages/localization/localization.page';
+import { LocaleResolve } from './resolve/locale.resolve';
+import { TranslateModule } from '@ngx-translate/core';
+import { AppPackagePage } from './pages/app-package/app-package.page';
+import { AppPackageResolve } from './resolve/app-package.resolve';
+import { AppInstallationPage } from './pages/app-installation/app-installation.page';
+import { AppInstallationDialog } from './components/app-installation/app-installation.dialog';
 @NgModule({
 	declarations: [
 		PortalBuilderPageComponent,
@@ -134,7 +172,11 @@ import { CoreModule } from 'app/core/core.module';
 		BackupUploadpage,
 		BackupRestorePage,
 		ExecutionDatabaseStepComponent,
-		IconPickerSharedComponent
+		IconPickerSharedComponent,
+		LocalizationPage,
+		AppPackagePage,
+		AppInstallationPage,
+		AppInstallationDialog
 	],
 	imports: [
 		CoreModule.forChild(),
@@ -177,9 +219,10 @@ import { CoreModule } from 'app/core/core.module';
 		NgJsonEditorModule,
 		DragDropModule,
 		MomentumTableModule,
-		ScrollDispatchModule,
+		ScrollingModule,
 		MatMomentDateModule,
 		MatProgressButtonsModule,
+		TranslateModule,
 		QuillModule.forRoot({
 			modules: {
 				syntax: true,
@@ -230,7 +273,8 @@ import { CoreModule } from 'app/core/core.module';
 		ChartDatasourceComponent,
 		ChartFilterGridComponent,
 		ChartFilterDialogComponent,
-		BackupSelectionComponent
+		BackupSelectionComponent,
+		AppInstallationDialog
 	],
 	exports: [RouterModule],
 	providers: [
@@ -243,6 +287,8 @@ import { CoreModule } from 'app/core/core.module';
 		StandardResolve,
 		ChartBuilderResolve,
 		BackupResolve,
+		LocaleResolve,
+		AppPackageResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
 	],

@@ -4,6 +4,7 @@ import { ExtendedPageControl } from 'app/core/models/extended.models';
 import { Guid } from 'guid-typescript';
 import * as _ from 'lodash';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-standard-population',
@@ -23,9 +24,17 @@ export class StandardPopulationComponent implements OnInit {
 
     controls: ExtendedPageControl[] = []
 
-    constructor() { }
+    constructor(
+        private translate: TranslateService
+    ) { }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+        this.translate.get('pageBuilder.standard.population.heading').subscribe(
+            text => {
+                this.heading = text
+            }
+        )
+     }
 
     onSelectingEntity($event: ExtractingSchemaQueryModel) {
         this.populatingControls($event)

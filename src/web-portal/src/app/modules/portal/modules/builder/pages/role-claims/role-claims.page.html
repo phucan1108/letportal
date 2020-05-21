@@ -1,14 +1,18 @@
 <div class="grid-container">
     <div class="row">
         <div class="col-lg-12 pb-2">
-            <h4>Role {{selectedRole}}</h4>
+            <h4>{{ 'common.role' | translate }} {{selectedRole}}</h4>
             <button mat-icon-button class="more-button revert-button" [matMenuTriggerFor]="menu"
                 aria-label="Toggle menu">
                 <mat-icon>more_horiz</mat-icon>
             </button>
             <mat-menu #menu="matMenu" xPosition="before">
-                <button mat-menu-item (click)="saveChange()">Save</button>
-                <button mat-menu-item (click)="cancel()">Cancel</button>
+                <button mat-menu-item (click)="saveChange()">
+                    {{ 'common.saveButton' | translate }}
+                </button>
+                <button mat-menu-item (click)="cancel()">
+                    {{ 'common.cancelButton' | translate }}
+                </button>
             </mat-menu>
         </div>
     </div>
@@ -17,14 +21,14 @@
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>
-                        Claims
+                        {{ 'common.claims' | translate }}
                     </mat-card-title>
                 </mat-card-header>
                 <mat-card-content class="align-center">
                     <div class="row">
                         <div class="col-lg-12 pl-4 pr-4">
                             <mat-form-field class="field-full-width">
-                                <input matInput placeholder="Search the claims..."
+                                <input matInput placeholder="{{ 'common.searchClaims' | translate }}"
                                     (input)="filter($event.target.value)">
                                 <mat-icon matSuffix>search</mat-icon>
                             </mat-form-field>
@@ -62,7 +66,7 @@
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>
-                        Selected Claims
+                        {{ 'common.selectedClaims' | translate }}
                     </mat-card-title>
                 </mat-card-header>
                 <mat-card-content class="align-center">

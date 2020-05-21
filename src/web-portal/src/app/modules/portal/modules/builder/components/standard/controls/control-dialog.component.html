@@ -1,33 +1,35 @@
-<h3 mat-dialog-title>Control</h3>
+<h3 mat-dialog-title>
+    {{ 'common.control' | translate }}
+</h3>
 <mat-dialog-content>
     <form class="m-form dialog-width" [formGroup]="controlForm">
         <div class="row row-heading">
-            <h3>Control Settings:</h3>
+            <h3>{{ 'pageBuilder.standard.controlDialog.controlSettings' | translate }}:</h3>
         </div>
         <div class="form-group row">
             <label class="col-lg-2 col-form-label">
-                Control Name
+                {{ 'common.controlName' | translate }}
             </label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
                     <input matInput placeholder="Control Name" #controlNameInput formControlName="name" maxlength="100" />
                     <mat-hint align="end"> {{controlNameInput.value?.length || 0}}/100</mat-hint>
                     <mat-error *ngIf="controlForm.get('name').hasError('isExist')">
-                        Name is already used
+                        {{ 'common.errors.nameAlreadyUsed' | translate }}
                     </mat-error>
                     <mat-error *ngIf="controlForm.get('name').hasError('pattern')">
-                        Accept only alpha characters
+                        {{ 'common.erros.alphaChars' | translate }}
                     </mat-error>
                 </mat-form-field>
             </div>
         </div>
         <div class="form-group row">
             <label class="col-lg-2 col-form-label">
-                Control Type
+                {{ 'common.controlType' | translate }}
             </label>
             <div class="col-lg-6">
                 <mat-form-field class="field-full-width">
-                    <mat-select placeholder="Pick one control type" formControlName="controlType">
+                    <mat-select placeholder="{{ 'common.pickOneControlType' | translate }}" formControlName="controlType">
                         <mat-option *ngFor="let type of _controlTypes" [value]="type.value">
                             {{ type.name }}
                         </mat-option>
@@ -37,11 +39,11 @@
         </div>
     </form>
     <div class="row row-heading" *ngIf="currentControlType !== controlType.LineBreaker">
-        <h3>Control Options:</h3>
+        <h3>{{ 'pageBuilder.standard.controlDialog.controlOptions' | translate }}:</h3>
     </div>
     <let-shell-option *ngIf="currentControlType !== controlType.LineBreaker" [shellOptions$]="shellOptions$" (changed)="onChangingOptions($event)"></let-shell-option>
     <div class="row row-heading" *ngIf="currentControlType !== controlType.LineBreaker">
-        <h3>Validation Options</h3>
+        <h3>{{ 'pageBuilder.standard.controlDialog.validationOptions' | translate }}</h3>
     </div>
     <div *ngIf="!isHandset && currentControlType !== controlType.LineBreaker">
         <ng-container *ngFor="let validator of validators$ | async">
@@ -53,7 +55,7 @@
                 </div>
                 <div class="col-lg-4">
                     <mat-form-field class="field-full-width">
-                        <input [(ngModel)]="validator.validatorMessage" placeholder="Input the error message" matInput>
+                        <input [(ngModel)]="validator.validatorMessage" placeholder="{{ 'pageBuilder.standard.controlDialog.errorMessage.placeholder' | translate }}" matInput>
                     </mat-form-field>
                 </div>
                 <div class="col-lg-4">
@@ -75,20 +77,22 @@
             <div class="form-group row">
                 <div class="col-lg-2">
                     <mat-checkbox [(ngModel)]="validator.isActive" (change)="picked($event)">
-                        Active
+                        {{ 'common.active' | translate }}
                     </mat-checkbox>
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Error message</label>
+                <label class="col-lg-2 col-form-label">{{ 'common.errorMessage' | translate }}</label>
                 <div class="col-lg-2">
                     <mat-form-field class="field-full-width">
-                        <input [(ngModel)]="validator.validatorMessage" placeholder="Input the error message" matInput>
+                        <input [(ngModel)]="validator.validatorMessage" placeholder="{{ 'pageBuilder.standard.controlDialog.errorMessage.placeholder' | translate }}" matInput>
                     </mat-form-field>
                 </div>
             </div>
             <div class="form-group row" *ngIf="!validator.hideOption">
-                <label class="col-lg-2 col-form-label">Option</label>
+                <label class="col-lg-2 col-form-label">
+                    {{ 'common.option' | translate }}
+                </label>
                 <div class="col-lg-2">
                     <mat-form-field class="field-full-width">
                         <input [(ngModel)]="validator.validatorOption"
@@ -101,6 +105,10 @@
 
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button [mat-dialog-close]="">Cancel</button>&nbsp;
-    <button mat-button (click)="onSubmittingControl()" color="primary">Save</button>
+    <button mat-button [mat-dialog-close]="">
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="onSubmittingControl()" color="primary">
+        {{ 'common.saveButton' | translate }}
+    </button>
 </mat-dialog-actions>

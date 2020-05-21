@@ -23,8 +23,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
             var databaseListSectionPart = new DynamicList
             {
                 Id = "5d0f09de62c8371c183c8c6f",
-                Name = "database-list-section-part",
+                Name = "databasesList",
                 DisplayName = "Databases List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -252,8 +253,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
             var appListSectionPart = new DynamicList
             {
                 Id = "5d0f2dca6ba2fd4ca49e3741",
-                Name = "app-list-section-part",
+                Name = "appsList",
                 DisplayName = "Apps List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -380,6 +382,58 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             AllowRefreshList = true,
                             Order = 4
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "localization",
+                            DisplayName = "Localization",
+                            Icon = "translate",
+                            Color = "warn",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType  = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                    IsSameDomain = true,
+                                    RedirectUrl = "portal/page/localization-management?appId={{data.id}}"
+                                }
+                            },
+                            Order = 5
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "package",
+                            DisplayName = "Package",
+                            Icon = "archive",
+                            Color = "accent",
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType  = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                    IsSameDomain = true,
+                                    RedirectUrl = "portal/builder/app-package/{{data.id}}"
+                                }
+                            },
+                            Order = 6
+                        },
+                        new CommandButtonInList
+                        {
+                            Name = "install",
+                            DisplayName = "Install",
+                            Icon = "get_app",
+                            Color = "accent",
+                            CommandPositionType = CommandPositionType.OutList,
+                            ActionCommandOptions = new ActionCommandOptions
+                            {
+                                ActionType  = ActionType.Redirect,
+                                RedirectOptions = new RedirectOptions
+                                {
+                                    IsSameDomain = true,
+                                    RedirectUrl = "portal/builder/app-installation"
+                                }
+                            },
+                            Order = 7
                         }
                     }
                 },
@@ -484,8 +538,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
             var pageListSectionPart = new DynamicList
             {
                 Id = "5d0f2dca6ba2fd4ca49e3742",
-                Name = "page-list-section-part",
+                Name = "pagesList",
                 DisplayName = "Pages List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -578,7 +633,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 0
                         },
-                        new CommandButtonInList
+                         new CommandButtonInList
                         {
                             Name = "edit",
                             DisplayName = "Edit",
@@ -661,8 +716,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
             var userListSectionPart = new DynamicList
             {
                 Id = "5d0f2dca6ba2fd4ca49e3743",
-                Name = "user-list-section-part",
+                Name = "usersList",
                 DisplayName = "Users List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
@@ -803,8 +859,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
             var roleListSectionPart = new DynamicList
             {
                 Id = "5d0f2dca6ba2fd4ca49e3746",
-                Name = "roles-list-section-part",
+                Name = "rolesList",
                 DisplayName = "Roles List",
+                AppId = Constants.CoreAppId,
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {

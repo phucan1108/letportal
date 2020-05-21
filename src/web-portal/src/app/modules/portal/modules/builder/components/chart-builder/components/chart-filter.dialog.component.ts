@@ -1,11 +1,13 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ChartFilter, FilterType } from 'services/portal.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { NGXLogger } from 'ngx-logger';
 import { ChartFilterGridComponent } from './chart-filter.grid.component';
 import { StaticResources } from 'portal/resources/static-resources';
+import { BehaviorSubject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-chart-filter-dialog',
@@ -15,8 +17,8 @@ export class ChartFilterDialogComponent implements OnInit {
     chartFilterFormGroup: FormGroup
     selectedChartFilter: ChartFilter
 
-    _filterTypes = StaticResources.chartFilterTypes()
-
+    _filterTypes: any[] = [] 
+    _filterTypes$: BehaviorSubject<any[]> = new BehaviorSubject([])
     isEditMode = false
     isSmallDevice = false
     constructor(
@@ -25,6 +27,7 @@ export class ChartFilterDialogComponent implements OnInit {
         private fb: FormBuilder,
         private cd: ChangeDetectorRef,
         private breakpointObserver: BreakpointObserver,
+        private translate: TranslateService,
         private logger: NGXLogger
     ) {
         this.breakpointObserver.observe([
@@ -47,6 +50,14 @@ export class ChartFilterDialogComponent implements OnInit {
         this.logger.debug('Sent data chart filter', this.selectedChartFilter)
         this.isEditMode = this.selectedChartFilter.name ? true : false;
 
+        StaticResources.chartFilterTypes().forEach(filter => {
+            this._filterTypes.push({
+                name: this.translate.instant(filter.name),
+                value: filter.value
+            })
+        })
+
+        this._filterTypes$.next(this._filterTypes)
         this.createChartFilterForm()
     }
 

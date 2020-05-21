@@ -28,20 +28,20 @@
       </ng-container>
       <mat-menu #menu="matMenu" xPosition="before">
         <p mat-menu-item disabled>
-          Hi, {{authUser.fullName}}
+          {{ 'navigation.hiText' | translate }}, {{authUser.fullName}}
         </p>
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="profile()">
           <mat-icon>account_box</mat-icon>
-          Profile
+          {{ 'navigation.profileText' | translate }}
         </button>
         <button mat-menu-item (click)="appDashboard()">
           <mat-icon>dashboard</mat-icon>
-          Apps
+          {{ 'navigation.appsText' | translate }}
         </button>
         <button mat-menu-item (click)="logout()">
           <mat-icon>power_settings_new</mat-icon>
-          Logout
+          {{ 'navigation.logoutText' | translate }}
         </button>
       </mat-menu>
     </mat-toolbar-row>

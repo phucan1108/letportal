@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageButtonGridComponent } from './page-button-grid.component';
 import { FormBuilder } from '@angular/forms';
 import { ButtonOptions } from 'services/portal.service';

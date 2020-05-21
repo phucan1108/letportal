@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild, Input } from '@angular/core';
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatTable } from '@angular/material';
 import { PageButtonGridComponent } from './page-button-grid.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageButton } from 'services/portal.service';
@@ -10,6 +9,7 @@ import { CommandOptionsComponent } from 'portal/shared/button-options/commandopt
 import { startWith, map } from 'rxjs/operators';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { NGXLogger } from 'ngx-logger';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'let-page-button-dialog',

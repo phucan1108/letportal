@@ -1,4 +1,4 @@
-<div class="chat-head d-flex align-items-center justify-content-center" matTooltip="Open Chat"
+<div class="chat-head d-flex align-items-center justify-content-center" matTooltip="{{ 'chat.chatHead.tooltip' | translate }}"
     [matTooltipPosition]="'left'" (click)="showSearchBox()">
     <mat-icon [@headShake]="hasNewIncomeMessage" matBadge="0" [matBadgeHidden]="!showChatBadge" matBadgeColor="warn">sms</mat-icon>
     <div class="overlay-notified-status" *ngIf="hasNewIncomeMessage" matBadgePosition="above after"

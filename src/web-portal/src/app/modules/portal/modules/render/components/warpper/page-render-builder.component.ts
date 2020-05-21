@@ -1,6 +1,6 @@
 import { Component, OnInit, ContentChildren, ViewChildren, QueryList, Input, AfterViewInit, AfterContentInit, ChangeDetectorRef, AfterViewChecked, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { PageRenderSectionWrapperComponent } from './page-render-section-wrapper.component';
-import { Page, PageButton, PageSection } from 'services/portal.service';
+import { Page, PageButton, PageSection, LocalizationClient } from 'services/portal.service';
 import { Store } from '@ngxs/store';
 import { Observable, of, Subscription } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
@@ -13,6 +13,7 @@ import { ExtendedPageButton } from 'app/core/models/extended.models';
 import { PageService } from 'services/page.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { LocalizationService } from 'services/localization.service';
 
 @Component({
     selector: 'let-builder',
@@ -39,6 +40,8 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     actionCommands: PageButton[] = []
     isSmallDevice = false
     constructor(
+        private localizationService: LocalizationService,
+        private localizationClient: LocalizationClient,
         private store: Store,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef,
@@ -65,6 +68,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     readyToRenderAllSections = false
     ngOnInit(): void {
         this.logger.debug('Init render builder')
+        this.localization()
         _.forEach(this.page.builder.sections, sec =>{
             this.sectionClasses.push('col-lg-12')
         })
@@ -172,6 +176,53 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
         }
         else{
             return 'hidden'
+        }
+    }
+
+    private localization(){
+        if(this.localizationService.allowTranslate){
+            const pageName = this.localizationService.getText(`pages.${this.page.name}.options.displayName`)
+            if(ObjectUtils.isNotNull(pageName)){
+                this.page.displayName = pageName
+            }
+
+            if(ObjectUtils.isNotNull(this.page.builder)
+                && ObjectUtils.isNotNull(this.page.builder.sections)){
+                    this.page.builder.sections.forEach(section => {
+                        const sectionName = this.localizationService.getText(`pages.${this.page.name}.sections.${section.name}.options.displayName`)
+                        if(ObjectUtils.isNotNull(sectionName)){
+                            section.displayName = sectionName
+                        }
+                    })
+                }
+            if(ObjectUtils.isNotNull(this.page.commands)){
+                this.page.commands.forEach(command => {
+                    const commandName = this.localizationService.getText(`pages.${this.page.name}.commands.${command.name}.options.name`)
+                    if(ObjectUtils.isNotNull(commandName)){
+                        command.name = commandName
+                    }
+
+                    if(ObjectUtils.isNotNull(command.buttonOptions.actionCommandOptions.confirmationOptions)){
+                        const confirmation = this.localizationService.getText(`pages.${this.page.name}.commands.${command.name}.options.confirmation`)
+                        if(ObjectUtils.isNotNull(confirmation)){
+                            command.buttonOptions.actionCommandOptions.confirmationOptions.confirmationText = confirmation
+                        }
+                    }
+
+                    if(ObjectUtils.isNotNull(command.buttonOptions.actionCommandOptions.notificationOptions)){
+                        const complete = this.localizationService.getText(`pages.${this.page.name}.commands.${command.name}.options.success`)
+                        const failed = this.localizationService.getText(`pages.${this.page.name}.commands.${command.name}.options.failed`)
+
+                        if(ObjectUtils.isNotNull(complete)){
+                            command.buttonOptions.actionCommandOptions.notificationOptions.completeMessage = complete
+                        }
+
+                        if(ObjectUtils.isNotNull(failed)){
+                            command.buttonOptions.actionCommandOptions.notificationOptions.failedMessage = failed
+                        }
+                    }
+                })
+            }
         }
     }
 }

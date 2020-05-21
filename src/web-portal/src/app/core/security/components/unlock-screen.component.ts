@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NGXLogger } from 'ngx-logger';
 import { SecurityService } from '../security.service';
@@ -7,6 +7,8 @@ import { AccountsClient } from 'services/identity.service';
 import { environment } from 'environments/environment';
 import { AuthToken } from '../auth.model';
 import { SessionService } from 'services/session.service';
+import { Router, NavigationEnd } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'let-unlock-screen',
@@ -26,7 +28,9 @@ export class UnlockScreenDialogComponent implements OnInit {
         private session: SessionService,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef,
-        private logger: NGXLogger
+        private logger: NGXLogger,
+        private router: Router,
+        private location: Location
     ) { }
 
     ngOnInit(): void {
@@ -40,6 +44,15 @@ export class UnlockScreenDialogComponent implements OnInit {
         else{
             this.dialogRef.close()
         }
+
+        this.router.events.subscribe(event => {
+            if (event instanceof NavigationEnd) {
+                // if user redirects to home page, close this dialog
+                if(this.location.path() === ''){
+                    this.dialogRef.close()
+                }
+            }
+        })
     }
 
     onUnlock() {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar, MatDialog, MatSnackBarRef } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { ActionNotificationComponent } from './action-natification/action-notification.component';
 import { MessageType, ToastType, EventDialogType } from './shortcut.models';
 import { ConfirmationDialogComponent } from './custom-action-dialog/custom-action-dialog.component';

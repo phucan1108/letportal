@@ -2,12 +2,14 @@
     <mat-card class="mat-card-block">
         <mat-card-header>
             <mat-card-title>
-                Commands List
+                {{ 'pageBuilder.dynamicList.commandGrid.header' | translate }}
                 <button mat-icon-button class="more-button" [matMenuTriggerFor]="menuCommand" aria-label="Toggle menu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menuCommand="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="addNewCommand()">Add Command</button>
+                    <button mat-menu-item (click)="addNewCommand()">
+                        {{ 'pageBuilder.dynamicList.commandGrid.addCommand' | translate }}
+                    </button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
@@ -15,50 +17,51 @@
             <div class="row align-items-center collapse m-form__group-actions m--margin-top-20 m--margin-bottom-20"
                 [ngClass]="{'show' : selection.selected.length > 0}">
                 <div class="col-xl-12 selector-box">
-                    <label>Selected records count:
+                    <label>{{ 'pageBuilder.dynamicList.commandGrid.selectedRowCount' | translate }}:
                         {{ selection.selected.length }}</label>
                     <button mat-raised-button color="primary" (click)="deleteSelectedCommands()"
-                        matTooltip="Delete selected commands">
-                        <mat-icon>delete</mat-icon> Delete All
+                        matTooltip="{{ 'pageBuilder.dynamicList.commandGrid.deleteSelectedCommands' | translate }}">
+                        <mat-icon>delete</mat-icon> 
+                        {{ 'pageBuilder.dynamicList.commandGrid.deleteAll' | translate }}
                     </button>
                 </div>
             </div>
 
             <m-table [(value)]="commandsInList" #mtable [selectable]="false" [selectionHandler]="false">
-                <m-column field="displayName" header="Name">
+                <m-column field="displayName" header="{{ 'common.nameText' | translate }}">
                 </m-column>
-                <m-column field="commandPositionType" header="Position">
+                <m-column field="commandPositionType" header="{{ 'common.positionText' | translate }}">
                     <ng-template let-col let-row="row" mTemplate="body">
                         {{translateCommadnPositionType(row.commandPositionType)}}
                     </ng-template>
                 </m-column>
-                <m-column field="icon" header="Icon">
+                <m-column field="icon" header="{{ 'common.icon' | translate }}">
                     <ng-template let-col let-row="row" mTemplate="body">
                         <mat-icon>{{ row.icon }}</mat-icon>
                     </ng-template>
                 </m-column>
-                <m-column field="value" header="Actions">
+                <m-column field="value" header="{{ 'common.actionsText' | translate }}">
                     <ng-template let-col let-row="row" mTemplate="body">
-                        <button *ngIf="isSmallDevice" mat-icon-button color="primary" matTooltip="Actions" [matMenuTriggerFor]="action"
+                        <button *ngIf="isSmallDevice" mat-icon-button color="primary" matTooltip="{{ 'common.actionsText' | translate }}" [matMenuTriggerFor]="action"
                             aria-label="Toggle menu">
                             <mat-icon>more_vert</mat-icon>
                         </button>
                         <mat-menu #action="matMenu" xPosition="after">
-                            <button mat-menu-item color="primary" matTooltip="Edit Command"
+                            <button mat-menu-item color="primary" matTooltip="{{ 'common.editCommand' | translate }}"
                                 (click)="editCommand(row)">
                                 <mat-icon color="warn">create</mat-icon>
-                                Edit
+                                {{ 'common.editText' | translate }}
                             </button>&nbsp;
-                            <button mat-menu-item color="warn" type="button" matTooltip="Delete Command"
+                            <button mat-menu-item color="warn" type="button" matTooltip="{{ 'common.deleteCommand' | translate }}"
                                 (click)="deleteCommand(row)">
                                 <mat-icon color="accent">delete</mat-icon>
-                                Delete
+                                {{ 'common.deleteText' | translate }}
                             </button>                            
                         </mat-menu>
-                        <button *ngIf="!isSmallDevice" mat-icon-button color="primary" matTooltip="Edit Command" (click)="editCommand(row)">
+                        <button *ngIf="!isSmallDevice" mat-icon-button color="primary" matTooltip="{{ 'common.editCommand' | translate }}" (click)="editCommand(row)">
                             <mat-icon>create</mat-icon>
                         </button>&nbsp;
-                        <button *ngIf="!isSmallDevice" mat-icon-button color="warn" type="button" matTooltip="Delete Command"
+                        <button *ngIf="!isSmallDevice" mat-icon-button color="warn" type="button" matTooltip="{{ 'common.deleteCommand' | translate }}"
                             (click)="deleteCommand(row)">
                             <mat-icon>delete</mat-icon>
                         </button>
@@ -66,7 +69,7 @@
                 </m-column>
                 <ng-template mTemplate="emptyTable">
                     <div class="align-center">
-                        No records
+                       {{ 'common.noRecordsText' | translate }}
                     </div>
                 </ng-template>
             </m-table>

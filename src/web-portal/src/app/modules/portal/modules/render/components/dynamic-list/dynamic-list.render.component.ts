@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy, Input, Output, AfterContentChecked, EventEmitter, AfterViewChecked } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DynamicList, CommandButtonInList, CommandPositionType, EntitySchemasClient, DatabasesClient, ActionType, PageSection } from 'services/portal.service';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Dictionary } from 'lodash';
@@ -25,6 +25,7 @@ import { TriggeredControlEvent } from 'app/core/models/page.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
 import { ExportService } from 'services/export.service';
+import { LocalizationService } from 'services/localization.service';
 
 @Component({
     selector: 'let-dynamic-list-render',
@@ -67,11 +68,13 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
         private logger: NGXLogger,
         private translatePipe: Translator,
         private pageService: PageService,
+        private localizationService: LocalizationService,
         private httpClient: HttpClient
     ) {
     }
 
     ngOnInit(): void {
+        this.localization()
         this.listOptions = ListOptions.getListOptions(this.dynamicList.options)
         this.gatherAllButtonFullNames()
         this.gatherListName()
@@ -261,5 +264,63 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
 
     private refreshList() {
         this.dynamicListGrid.submitGrid();
+    }
+
+    private localization(){
+        if(this.localizationService.allowTranslate){
+            const displayName = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.options.displayName`)
+            if(ObjectUtils.isNotNull(displayName)){
+                this.dynamicList.displayName = displayName
+            }
+
+            if(ObjectUtils.isNotNull(this.dynamicList.columnsList) && 
+                ObjectUtils.isNotNull(this.dynamicList.columnsList.columndDefs)){
+                this.dynamicList.columnsList.columndDefs.forEach(col => {
+                    if(!col.isHidden){
+                        const colName = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.cols.${col.name}.displayName`)
+                        if(ObjectUtils.isNotNull(colName)){
+                            col.displayName = colName
+                        }
+                    }
+                })
+            }
+
+            if(ObjectUtils.isNotNull(this.dynamicList.commandsList) 
+                && ObjectUtils.isNotNull(this.dynamicList.commandsList.commandButtonsInList)){
+                    this.dynamicList.commandsList.commandButtonsInList.forEach(command => {
+                        const commandName = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.commands.${command.name}.displayName`)
+                        if(ObjectUtils.isNotNull(commandName)){
+                            command.displayName = commandName
+                        }
+
+                        switch(command.actionCommandOptions.actionType){
+                            case ActionType.Redirect:
+                                break
+                            case ActionType.ExecuteDatabase:
+                            case ActionType.CallHttpService:
+                            default:
+                                if(ObjectUtils.isNotNull(command.actionCommandOptions.confirmationOptions)){
+                                    const confirmationText = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.commands.${command.name}.confirmation.text`)
+                                    if(ObjectUtils.isNotNull(confirmationText)){
+                                        command.actionCommandOptions.confirmationOptions.confirmationText = confirmationText
+                                    }
+                                }  
+                                
+                                if(ObjectUtils.isNotNull(command.actionCommandOptions.notificationOptions)){
+                                    const successText = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.commands.${command.name}.notification.success`)
+                                    const failedText = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.commands.${command.name}.notification.failed`)
+
+                                    if(ObjectUtils.isNotNull(successText)){
+                                        command.actionCommandOptions.notificationOptions.completeMessage = successText
+                                    }
+                                    if(ObjectUtils.isNotNull(failedText)){
+                                        command.actionCommandOptions.notificationOptions.failedMessage = failedText
+                                    }
+                                }
+                                break
+                        }
+                    })
+                }
+        }
     }
 }

@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, OnInit, Input, ElementRef, ViewChild, AfterContentChecked, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { FormGroup, NgForm } from '@angular/forms';
 import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 import { ExtendedControlValidator } from 'app/core/models/extended.models';
 import * as _ from 'lodash';
@@ -13,9 +13,8 @@ import { forkJoin } from 'rxjs';
     templateUrl: './file-uploader.component.html',
     styleUrls: ['./file-uploader.component.scss']
 })
-export class FileUploaderComponent implements OnInit {
+export class FileUploaderComponent implements OnInit, AfterContentChecked {
     @ViewChild('fileInput', { static: true }) fileInput: ElementRef
-
     @Input()
     form: FormGroup
 
@@ -46,8 +45,25 @@ export class FileUploaderComponent implements OnInit {
     progress;
     uploaded = false
     constructor(
+        private cd: ChangeDetectorRef,
         private uploadFileService: UploadFileService,
         private logger: NGXLogger) { }
+    ngAfterContentChecked(): void {
+        setTimeout(() => {            
+            if(this.isMaximumSize || this.isInvalidFileExtension){
+                if (this.isMaximumSize) {
+                    this.form.get(this.formControlKey).setErrors({ maximumsize: true })
+                }
+                
+                if (this.isInvalidFileExtension) {
+                    this.form.get(this.formControlKey).setErrors({ fileextensions: true })                
+                }                
+            }
+        },500)
+    }
+    ngAfterViewInit(): void {
+       
+    }
 
     ngOnInit(
     ): void {
@@ -77,14 +93,7 @@ export class FileUploaderComponent implements OnInit {
                 this.selectedFiles = new Set()
                 this.selectedFiles.add($event.target.files[0])
             }
-        }
-        else {
-            if (this.isMaximumSize) {
-                this.form.get(this.formControlKey).setErrors({ maximumsize: true })
-            }
-            else if (this.isInvalidFileExtension) {
-                this.form.get(this.formControlKey).setErrors({ fileextensions: true })
-            }
+            this.form.get(this.formControlKey).setErrors(null)
         }
         this.form.get(this.formControlKey).markAsTouched()
         this.fileInput.nativeElement.value = ''

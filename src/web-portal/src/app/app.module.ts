@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { SharedModule } from './modules/shared/shortcut.module';
 import { NgxsStoreModule } from 'app/core/store.module';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
@@ -13,21 +13,28 @@ import { ConfigurationProvider } from './core/configs/configProvider';
 import { environment } from 'environments/environment';
 import { PORTAL_BASE_URL } from 'services/portal.service';
 import { ErrorComponent } from './modules/error/error.component';
-import { MatCardModule, MatButtonModule, MatIconModule } from '@angular/material';
+import { MatCardModule } from '@angular/material/card'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
 import { IDENTITY_BASE_URL } from 'services/identity.service';
 import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
 import { ToastrModule } from 'ngx-toastr';
 import { HttpExceptionInterceptor } from './core/https/httpException.interceptor';
 import { ClipboardModule } from 'ngx-clipboard';
 import { MatProgressButtonsModule } from 'mat-progress-buttons';
-
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
 import pgsql from 'highlight.js/lib/languages/pgsql'
 import sql from 'highlight.js/lib/languages/sql'
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ChatModule } from 'portal/modules/chat/chat.module';
-import { NgxEmojiPickerModule } from 'ngx-emoji-picker';
+import { EmojiPickerModule } from 'emoji-picker'
 import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader'
+import { LocalizationService } from 'services/localization.service';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginatorIntlCustom } from './core/custom-materials/matPaginatorIntlCustom';
+
 export function hlJSLang() {
   return [
     { name: 'sql', func: sql }
@@ -41,6 +48,10 @@ const chatBaseUrl = (configProvider: ConfigurationProvider) => {
 }
 const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().identityBaseEndpoint
+}
+// required for AOT compilation
+function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/','.json');
 }
 @NgModule({
   declarations: [
@@ -70,11 +81,22 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
     // Portal Module Sections
     CoreModule.forRoot(),
 
-    NgxEmojiPickerModule.forRoot()
+    EmojiPickerModule.forRoot(),
+    TranslateModule.forRoot(
+      {
+        defaultLanguage: environment.localization.defaultLanguage,
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        }
+      }
+    )
   ],
   providers: [
     ChatService,
     VideoCallService,
+    LocalizationService,
     ConfigurationService,
     {
       provide: PORTAL_BASE_URL,
@@ -111,6 +133,15 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
       useValue: {
         languages: hlJSLang
       }
+    },
+    {
+      provide: MatPaginatorIntl,
+      useFactory: (translate: TranslateService) => {
+        const service = new MatPaginatorIntlCustom();
+        service.addTranslateService(translate);
+        return service;
+      },
+      deps: [TranslateService]
     },
     ConfigurationProvider
   ],

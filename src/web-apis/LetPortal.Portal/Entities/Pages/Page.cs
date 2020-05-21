@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Core.Security;
+using LetPortal.Portal.Entities.Localizations;
 
 namespace LetPortal.Portal.Entities.Pages
 {
@@ -13,6 +14,9 @@ namespace LetPortal.Portal.Entities.Pages
     {
         [StringLength(250)]
         public string UrlPath { get; set; }
+
+        [StringLength(50)]
+        public string AppId { get; set; }
 
         public List<ShellOption> ShellOptions { get; set; }
 

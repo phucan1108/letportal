@@ -1,4 +1,4 @@
-<h3 mat-dialog-title>Data Source</h3>
+<h3 mat-dialog-title>{{ 'common.datasourceText' | translate }}</h3>
 <mat-dialog-content>
     <form class="m-form" [formGroup]="dataSourceForm" (ngSubmit)="onSubmittingDataSource()">
         <div class="form-group row">
@@ -13,6 +13,6 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Cancel</button>&nbsp;
-    <button mat-button (click)="onSubmittingDataSource()" color="primary">Save</button>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmittingDataSource()" color="primary">{{ 'common.saveButton' | translate }}</button>
 </mat-dialog-actions>

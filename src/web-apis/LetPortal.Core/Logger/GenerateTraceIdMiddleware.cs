@@ -19,7 +19,7 @@ namespace LetPortal.Core.Logger
             var traceId = httpContext.Request.Headers[Constants.TraceIdHeader].ToString();
             if (string.IsNullOrEmpty(traceId))
             {
-                httpContext.Request.Headers.Add(Constants.TraceIdHeader, StringUtil.EncodeBase64FromUTF8(DataUtil.GenerateUniqueId()));
+                httpContext.Request.Headers.Add(Constants.TraceIdHeader, StringUtil.EncodeBase64FromUTF8(StringUtil.GenerateUniqueNumber()));
             }
 
             await _next.Invoke(httpContext);

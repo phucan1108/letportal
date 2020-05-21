@@ -8,6 +8,7 @@ import { ShellConfigProvider } from 'app/core/shell/shellconfig.provider';
 import { Page, PagesClient, StandardComponent } from 'services/portal.service';
 import { patch, append } from '@ngxs/store/operators';
 import { state } from '@angular/animations';
+import { Injectable } from '@angular/core';
 
 export interface PageBuilderStateModel {
   processPage: Page,
@@ -28,6 +29,7 @@ export interface PageBuilderStateModel {
       id: Guid.create().toString(),
       displayName: '',
       name: '',
+      appId: '',
       shellOptions: [],
       claims: [],
       urlPath: '',
@@ -48,6 +50,7 @@ export interface PageBuilderStateModel {
     isFormBuilderValid: false
   }
 })
+@Injectable()
 export class PageBuilderState {
 
   constructor(
@@ -133,7 +136,8 @@ export class PageBuilderState {
         id,
         name,
         displayName,
-        urlPath
+        urlPath,
+        appId
       },
       filterState: PageActions.UpdatePageInfoAction
     })

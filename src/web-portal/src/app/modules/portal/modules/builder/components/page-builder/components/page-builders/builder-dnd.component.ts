@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } fro
 import { ExtendedPageSection, ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { FormGroup } from '@angular/forms';
 import * as _ from 'lodash';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { SectionDialogComponent } from './section-dialog.component';
 import { Guid } from 'guid-typescript';
 import { Store } from '@ngxs/store';
@@ -16,6 +16,7 @@ import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-builder-dnd',
@@ -30,6 +31,7 @@ export class BuilderDnDComponent implements OnInit {
     onSectionsChanged: EventEmitter<any> = new EventEmitter<any>()
 
     constructor(
+        private translate: TranslateService,
         private standardsClient: StandardComponentClient,
         private shortcutUtil: ShortcutUtil,
         private dynamicListsClient: DynamicListClient,
@@ -75,7 +77,7 @@ export class BuilderDnDComponent implements OnInit {
                                                         section.relatedStandard = standard
                                                     },
                                                     err => {
-                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        this.shortcutUtil.toastMessage(this.translate.instant('pageBuilder.builderDnd.messages.sectionBroken', { sectionName: section.displayName }), ToastType.Error)
                                                         section.isBroken = true
                                                     }
                                                 )
@@ -88,7 +90,7 @@ export class BuilderDnDComponent implements OnInit {
                                                         section.relatedArrayStandard = standard
                                                     },
                                                     err => {
-                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        this.shortcutUtil.toastMessage(this.translate.instant('pageBuilder.builderDnd.messages.sectionBroken', { sectionName: section.displayName }), ToastType.Error)
                                                         section.isBroken = true
                                                     }
                                                 )
@@ -101,7 +103,7 @@ export class BuilderDnDComponent implements OnInit {
                                                         section.relatedDynamicList = dynamicList
                                                     },
                                                     err => {
-                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        this.shortcutUtil.toastMessage(this.translate.instant('pageBuilder.builderDnd.messages.sectionBroken', { sectionName: section.displayName }), ToastType.Error)
                                                         section.isBroken = true
                                                     }
                                                 )
@@ -114,7 +116,7 @@ export class BuilderDnDComponent implements OnInit {
                                                         section.relatedChart = chart
                                                     },
                                                     err => {
-                                                        this.shortcutUtil.toastMessage('Section ' + section.displayName + ' has been broken!!!', ToastType.Error)
+                                                        this.shortcutUtil.toastMessage(this.translate.instant('pageBuilder.builderDnd.messages.sectionBroken', { sectionName: section.displayName }), ToastType.Error)
                                                         section.isBroken = true
                                                     }
                                                 )

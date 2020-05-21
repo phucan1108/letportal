@@ -16,6 +16,8 @@ using LetPortal.Tools.Features;
 using LetPortal.Versions;
 using McMaster.Extensions.CommandLineUtils;
 using MongoDB.Driver;
+using Microsoft.Extensions.DependencyInjection;
+using LetPortal.Portal;
 
 namespace LET.Tools.Installation
 {
@@ -28,44 +30,84 @@ namespace LET.Tools.Installation
         [Option("-db|--db-type", Description = "Database type, support specific parameter: mongodb | sqlserver")]
         public string DatabseType { get; set; } = "mongodb";
 
-        [Option("-f|--file", Description = "File config path. Ex: C:\\tools.json. Default: a config file of installed tools")]
+        [Option("-f|--file", Description = "File path, support for unpack. Ex: C:\\coreapp.zip")]
         public string FilePath { get; set; }
+
+        [Option("-cf|--config-file", Description = "File config path. Ex: C:\\tools.json. Default: a config file of installed tools")]
+        public string ConfigFilePath { get; set; }
 
         [Option("-p|--patch", Description = "Patches folder path. Ex: C:\\Patches. Available only for portal app")]
         public string PatchesFolder { get; set; }
 
+        [Option("-n|--name", Description = "App name, used to generate zip package. Ex: coreapp")]
+        public string Name { get; set; }
+
+        [Option("-m|--mode", Description = "Unpack mode. Supports: wipe | merge")]
+        public string UnpackMode { get; set; }
+
+        [Option("-o|--output", Description = "Folder path for saving file")]
+        public string Output { get; set; }
+
         [Argument(0, Name = "app", Description = "Supports: portal | identity")]
         public string App { get; set; }
 
-        [Argument(1, Name = "mode", Description = "Supports: info | install | uninstall | up | down")]
-        public string Mode { get; set; }
+        [Argument(1, Name = "command", Description = "Supports: info | install | uninstall | up | down | pack | unpack | patch")]
+        public string Command { get; set; }
 
-        [Argument(2, Name = "version", Description = "Version number is needed to run with mode. Ex: 0.0.1")]
+        [Argument(2, Name = "version", Description = "Version number is mandatory to run with some commands. Ex: 0.0.1")]
         public string VersionNumber { get; set; }
 
         public static async Task<int> Main(string[] args)
         {
             try
             {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("****************************************************************");
+                Console.WriteLine("                             *****                              ");
+                Console.WriteLine("                         **** * * ****                          ");
+                Console.WriteLine("                     ****     * *     ****                      ");
+                Console.WriteLine("                 ****         * *         ****                  ");
+                Console.WriteLine("             ****             * *             ****              ");
+                Console.WriteLine("         ****           ****  * *  * * * * * *    ****          ");
+                Console.WriteLine("     ****               *  *  * *  *           *      ****      ");
+                Console.WriteLine(" ****                   *  *  * *  *  * * * *   *         ****  ");
+                Console.WriteLine("  ****                  *  *  * *  *  * * * *   *        ****   ");
+                Console.WriteLine("   ****                 *  *  * *  *           *        ****    ");
+                Console.WriteLine("    ****                *  *  * *  *  *  * * *         ****     ");
+                Console.WriteLine("     ****               *  *  * *  *  *               ****      ");
+                Console.WriteLine("      ****              *  *  * *  *  *              ****       ");
+                Console.WriteLine("       ****             *  *  * *  *  *             ****        ");
+                Console.WriteLine("        ****     * * *  *  *  * *  *  *            ****         ");
+                Console.WriteLine("         ****    * * * * * *  * *  ****           ****          ");
+                Console.WriteLine("          ****                * *                ****           ");
+                Console.WriteLine("             ****             * *             ****              ");
+                Console.WriteLine("                ****          * *          ****                 ");
+                Console.WriteLine("                   ****       * *       ****                    ");
+                Console.WriteLine("                      ****    * *    ****                       ");
+                Console.WriteLine("                         ****     ****                          ");
+                Console.WriteLine("                             *****                              ");
+                Console.WriteLine("****************************************************************");
+                Console.WriteLine("");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("--------------------++++LETPORTAL CLI++++-----------------------");
                 Console.WriteLine($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
                 Console.WriteLine("");
                 await CommandLineApplication.ExecuteAsync<Program>(args);
-                Console.ReadLine();
                 return 0;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Oops, something went wrong. Exception stack: " + ex.ToString());
-                Console.ReadLine();
                 return 0;
             }
 
         }
 
         private async Task OnExecuteAsync()
-        {
-            var toolsOption = GetToolsOptions(FilePath);
+        {                  
+            var services = new ServiceCollection();
+            var toolsOption = GetToolsOptions(ConfigFilePath);
             ConventionPackDefault.Register();
             MongoDbRegistry.RegisterEntities();
             var dbType = DatabseType.ToEnum<ConnectionType>(true);
@@ -76,7 +118,7 @@ namespace LET.Tools.Installation
                 ConnectionType = dbType
             };
 
-            var runningCommand = GetAvailableCommands().FirstOrDefault(a => a.CommandName.ToLower() == Mode.ToLower());
+            var runningCommand = GetAvailableCommands().FirstOrDefault(a => a.CommandName.ToLower() == Command.ToLower());
 
             if (runningCommand != null)
             {
@@ -98,6 +140,7 @@ namespace LET.Tools.Installation
                         if (IsPortal())
                         {
                             allVersions = Scanner.GetAllPortalVersions();
+                            RegisterServicesForPortal(services, databaseOption);
                         }
                         else if (IsIdentity())
                         {
@@ -112,7 +155,9 @@ namespace LET.Tools.Installation
                             Versions = allVersions,
                             VersionRepository = versionMongoRepository,
                             PatchesFolder = PatchesFolder,
-                            AllowPatch = !string.IsNullOrEmpty(PatchesFolder)
+                            AllowPatch = !string.IsNullOrEmpty(PatchesFolder),
+                            Services = services.BuildServiceProvider(),
+                            Arguments = CombineArguments()
                         };
                         break;
                     case ConnectionType.PostgreSQL:
@@ -140,6 +185,7 @@ namespace LET.Tools.Installation
                             sqlEFVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
 
                             IEnumerable<IVersion> allSQLVersions = Scanner.GetAllPortalVersions();
+                            RegisterServicesForPortal(services, databaseOption);
                             toolsContext = new ToolsContext
                             {
                                 LatestVersion = latestVersionEF,
@@ -147,7 +193,9 @@ namespace LET.Tools.Installation
                                 VersionNumber = VersionNumber,
                                 Versions = allSQLVersions,
                                 VersionRepository = portalVersionRepository,
-                                AllowPatch = !string.IsNullOrEmpty(PatchesFolder)
+                                Services = services.BuildServiceProvider(),
+                                AllowPatch = !string.IsNullOrEmpty(PatchesFolder),
+                                Arguments = CombineArguments()
                             };
                         }
                         else if (IsIdentity())
@@ -188,6 +236,7 @@ namespace LET.Tools.Installation
 
                 if (toolsContext != null)
                 {
+                    Console.WriteLine("");
                     await runningCommand.RunAsync(toolsContext);
                     toolsContext.Dispose();
                 }
@@ -200,6 +249,35 @@ namespace LET.Tools.Installation
             }
 
             Console.ReadLine();
+        }
+
+        private void RegisterServicesForPortal(IServiceCollection services, DatabaseOptions databaseOptions)
+        {
+            if(databaseOptions.ConnectionType == ConnectionType.MongoDB)
+            {
+                services.AddTransient(a => new MongoConnection(databaseOptions));
+            }
+
+            PortalExtensions.RegisterRepos(services, databaseOptions, true);
+            PortalExtensions.RegisterProviders(services);
+            PortalExtensions.RegisterServices(services);
+        }
+
+        private RootArgument CombineArguments()
+        {
+            return new RootArgument
+            {
+                App = App,
+                Command = Command,
+                Connection = Connection,
+                DatabseType = DatabseType,
+                FilePath = FilePath,
+                Name = Name,
+                PatchesFolder = PatchesFolder,
+                UnpackMode = UnpackMode,
+                VersionNumber = VersionNumber,
+                Output = Output
+            };
         }
 
         private bool IsPortal()

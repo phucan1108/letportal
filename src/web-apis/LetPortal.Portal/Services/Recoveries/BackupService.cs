@@ -277,7 +277,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var zipFile = await _fileSeviceProvider.DownloadFileAsync(backup.FileId);
 
-            var fileNameWithoutExt = zipFile.FileName.Split(".")[0];
+            var fileNameWithoutExt = FileUtil.GetFileNameWithoutExt(zipFile.FileName);
             var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
             using (var fileStream = File.Create(restoreFilePath))
             {
@@ -382,7 +382,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var zipFile = await _fileSeviceProvider.DownloadFileAsync(backup.FileId);
 
-            var fileNameWithoutExt = zipFile.FileName.Split(".")[0];
+            var fileNameWithoutExt = FileUtil.GetFileNameWithoutExt(zipFile.FileName);
             var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
             using (var fileStream = File.Create(restoreFilePath))
             {

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType,  DynamicListClient, FieldValueType, DynamicListFetchDataModel } from 'services/portal.service';
-import { MatDialog, MatTable, MatPaginator, MatSort } from '@angular/material';
+import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType, DynamicListClient, FieldValueType, DynamicListFetchDataModel, DynamicListSourceType, FilledParameter } from 'services/portal.service';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, of, merge, Observable, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { tap, catchError, finalize, debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators';
@@ -14,6 +14,10 @@ import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
 import { ListOptions, ExtendedFilterField } from 'portal/modules/models/dynamiclist.extended.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTable } from '@angular/material/table';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'dynamic-list-grid',
@@ -71,6 +75,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         private datasoureOptsService: DatasourceOptionsService,
         private breakpointObserver: BreakpointObserver,
         private dynamicClient: DynamicListClient,
+        private pageService: PageService,
         private logger: NGXLogger,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
@@ -130,6 +135,9 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                     .executeDatasourceOptions(colDef.datasourceOptions, null)
                     .subscribe(
                         res => {
+                            if (ObjectUtils.isNotNull(colDef.datasourceOptions.outputMapProjection)) {
+                                res = ObjectUtils.projection(colDef.datasourceOptions.outputMapProjection, ObjectUtils.isArray(res) ? res : [res])
+                            }
                             const datasource = {
                                 data: ObjectUtils.isArray(res) ? res : [res],
                                 datasourceId: Guid.create().toString()
@@ -179,11 +187,11 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         const foundSort = _.find(this.headers, (element: ColumndDef) => {
             return element.allowSort;
         });
-        if(foundSort){
+        if (foundSort) {
             this.defaultSortColumn = foundSort.name
         }
 
-        if(this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0){
+        if (this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0) {
             this.commandsInList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
                 return element.commandPositionType === CommandPositionType.InList
             })
@@ -198,7 +206,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
             this.displayedColumns.push('actions')
         }
 
-        if(!needToWaitDatasource){
+        if (!needToWaitDatasource) {
             this.initFetchData()
         }
 
@@ -230,13 +238,12 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     onSubmittingSearch($event) {
         const fetchQuery = $event as DynamicListFetchDataModel
         this.fetchDataQuery = this.getFetchDataQuery();
-        this.fetchDataQuery.filledParameterOptions = fetchQuery.filledParameterOptions;
         this.fetchDataQuery.filterGroupOptions = fetchQuery.filterGroupOptions;
         this.fetchDataQuery.textSearch = fetchQuery.textSearch;
         this.fetchData();
     }
 
-    private initFetchData(){
+    private initFetchData() {
         // Trigger loading data form sortChange and page event
         if (this.listOptions.enablePagination) {
             this.cd.detectChanges()
@@ -272,19 +279,33 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
             pageSize: this.listOptions.enablePagination ? this.paginator.pageSize : this.listOptions.defaultPageSize,
             needTotalItems: !this.isAlreadyFetchedTotal
         }
-        if(this.sort.active){
+        if (this.sort.active) {
             this.fetchDataQuery.sortOptions = {
                 sortableFields: [
                     { fieldName: this.sort.active, sortType: this.sort.direction === 'asc' ? SortType.Asc : SortType.Desc }
                 ]
             }
         }
-        else{
+        else {
             this.fetchDataQuery.sortOptions = {
-                sortableFields: [ ]
+                sortableFields: []
             }
         }
 
+        this.fetchDataQuery.filledParameterOptions = {
+            filledParameters: []
+        }
+        if (this.dynamicList.listDatasource.sourceType === DynamicListSourceType.Database) {
+            const params = this.pageService.retrieveParameters(this.dynamicList.listDatasource.databaseConnectionOptions.query)
+            if (ObjectUtils.isNotNull(params)) {
+                this.fetchDataQuery.filledParameterOptions = {
+                    filledParameters: params.map(a => <FilledParameter>{
+                        name: a.name,
+                        value: a.replaceValue
+                    })
+                }
+            }
+        }
 
         return this.fetchDataQuery
     }
@@ -343,7 +364,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-            if(ObjectUtils.isNotNull(datasource)){
+            if (ObjectUtils.isNotNull(datasource)) {
                 const found = _.find(datasource.data, elem => elem ? elem.value.toString() === displayData : false)
                 return found ? found.name : displayData
             }
@@ -424,8 +445,8 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
             const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-            if(ObjectUtils.isNotNull(datasource)){
-                const found = _.find(datasource.data, elem => elem ? elem.value.toString()  === displayData : false)
+            if (ObjectUtils.isNotNull(datasource)) {
+                const found = _.find(datasource.data, elem => elem ? elem.value.toString() === displayData : false)
                 return found ? found.name : displayData
             }
         }

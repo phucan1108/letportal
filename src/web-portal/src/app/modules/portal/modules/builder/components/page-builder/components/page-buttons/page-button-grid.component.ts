@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, Input } from '@angular/core';
 import { PageButton, ActionType, Route, PageSection } from 'services/portal.service';
-import { MatTable, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import * as _ from 'lodash';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -19,6 +18,9 @@ import { NGXLogger } from 'ngx-logger';
 import { PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
 import { BehaviorSubject } from 'rxjs';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-page-button-grid',
@@ -35,6 +37,7 @@ export class PageButtonGridComponent implements OnInit {
     displayedListColumns = ['name', 'confirmation', 'action', 'actions'];
 
     constructor(
+        private translate: TranslateService,
         private shortcutUtil: ShortcutUtil,
         private cd: ChangeDetectorRef,
         public dialog: MatDialog,
@@ -175,7 +178,7 @@ export class PageButtonGridComponent implements OnInit {
         this.currentActionCommands = _.filter(this.currentActionCommands, (elem) => {
             return elem.id !== command.id
         })
-        this.shortcutUtil.toastMessage('Delete command successfully!', ToastType.Success);
+        this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
 
         this.refreshControlTable()
     }

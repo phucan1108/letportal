@@ -9,7 +9,7 @@ namespace LetPortal.Portal.Exceptions
         public PortalException(ErrorCode errorCode)
             : base(errorCode)
         {
-
+                           
         }
     }
 }

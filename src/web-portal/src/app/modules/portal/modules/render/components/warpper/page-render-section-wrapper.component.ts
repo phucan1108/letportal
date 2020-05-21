@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType, Page, PageControl, PageButton } from 'services/portal.service';
+import { SectionContructionType, StandardComponentClient, DynamicListClient, ChartsClient, PageSectionLayoutType, Page, PageControl, PageButton, StandardComponent, ValidatorType } from 'services/portal.service';
 import { ExtendedPageSection, ExtendedPageButton } from 'app/core/models/extended.models';
 import { NGXLogger } from 'ngx-logger';
 import { tap } from 'rxjs/operators';
@@ -10,6 +10,8 @@ import { Observable, Subscription } from 'rxjs';
 import { PageStateModel } from 'stores/pages/page.state';
 import { PageService } from 'services/page.service';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { LocalizationService } from 'services/localization.service';
+import { EnumUtils } from 'app/core/utils/enum-util';
 
 @Component({
     selector: 'let-section-wrapper',
@@ -22,6 +24,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
         private standardClient: StandardComponentClient,
         private dynamicsClient: DynamicListClient,
         private pageService: PageService,
+        private localizationService: LocalizationService,
         private logger: NGXLogger
     ) {
     }
@@ -56,6 +59,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                     // delay(5000),
                     tap(
                         standard => {
+                            standard = this.standardLocalization(standard)
                             this.sectionClass = this.getSectionClass(standard.layoutType)
                             this.pageSection.relatedStandard = standard
                             this.pageSection.relatedButtons = []
@@ -80,6 +84,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                     // delay(5000),
                     tap(
                         standard => {
+                            standard = this.standardLocalization(standard)
                             this.sectionClass = this.getSectionClass(standard.layoutType)
                             this.pageSection.relatedArrayStandard = standard
                             this.pageSection.isLoaded = true
@@ -98,7 +103,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                 ).subscribe()
                 break
             case SectionContructionType.DynamicList:
-                this.dynamicsClient.getOne(this.pageSection.componentId).pipe(
+                this.dynamicsClient.getOneForRender(this.pageSection.componentId).pipe(
                     // delay(5000),
                     tap(
                         dynamicList => {
@@ -174,5 +179,57 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
         })
 
         return relatedButtons
+    }
+
+    private standardLocalization(standard: StandardComponent){
+        if(this.localizationService.allowTranslate){
+
+            const standardName = this.localizationService.getText(`standardComponents.${standard.name}.options.displayName`)
+            if(ObjectUtils.isNotNull(standardName)){
+                standard.displayName = standardName
+            }
+
+            if(ObjectUtils.isNotNull(standard.controls)){
+                standard.controls.forEach(control => {
+                    const hidden = control.options.find(a => a.key === 'hidden')
+                    if(hidden !== 'true'){
+                        const labelName = this.localizationService.getText(`standardComponents.${standard.name}.${control.name}.options.label`)
+                        if(ObjectUtils.isNotNull(labelName)){
+                            let label = control.options.find(a => a.key === 'label')
+                            label.value = labelName
+                        }
+
+                        const placeholderName = this.localizationService.getText(`standardComponents.${standard.name}.${control.name}.options.label`)
+                        if(ObjectUtils.isNotNull(placeholderName)){
+                            let placeholder = control.options.find(a => a.key === 'placeholder')
+                            placeholder.value = placeholderName
+                        }
+
+                        if(ObjectUtils.isNotNull(control.validators)){
+                            control.validators.forEach(validator => {
+                                if(validator.isActive){
+                                    const validatorMessage = this.localizationService.getText(`standardComponents.${standard.name}.${control.name}.validators.${EnumUtils.getEnumKeyByValue(ValidatorType, validator.validatorType)}`)
+                                    if(ObjectUtils.isNotNull(validatorMessage)){
+                                        validator.validatorMessage = validatorMessage
+                                    }
+                                }
+                            })
+                        }
+
+                        if(ObjectUtils.isNotNull(control.asyncValidators)){
+                            control.asyncValidators.forEach(validator => {
+                                if(validator.isActive){
+                                    const validatorMessage = this.localizationService.getText(`standardComponents.${standard.name}.${control.name}.asyncValidators.${validator.validatorName}`)
+                                    if(ObjectUtils.isNotNull(validatorMessage)){
+                                        validator.validatorMessage = validatorMessage
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        }
+        return standard
     }
 }

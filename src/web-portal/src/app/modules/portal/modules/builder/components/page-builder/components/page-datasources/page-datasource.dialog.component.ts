@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageDatasourceGridComponent } from './page-datasource.grid.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageDatasource } from 'services/portal.service';

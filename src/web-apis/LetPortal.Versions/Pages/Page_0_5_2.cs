@@ -26,6 +26,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5e6b645a29ae8d569813fd4b",
                 Name = "chart-builder",
                 DisplayName = "Chart Builder",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/chart/:chartid",
                 Claims = new List<PortalClaim>
                     {
@@ -38,6 +39,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5e6b645a29ae8d569813fd4c",
                 Name = "backup-builder",
                 DisplayName = "Backup Builder",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/backup",
                 ShellOptions = new List<ShellOption>(),
                 Claims = new List<PortalClaim>
@@ -51,6 +53,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5e6b645a29ae8d569813fd4d",
                 Name = "backup-upload",
                 DisplayName = "Backup Upload Page",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/backup/upload",
                 ShellOptions = new List<ShellOption>(),
                 Claims = new List<PortalClaim>
@@ -64,6 +67,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5e6b645a29ae8d569813fd4e",
                 Name = "backup-restore",
                 DisplayName = "Backup Restore Page",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/backup/restore",
                 ShellOptions = new List<ShellOption>(),
                 Claims = new List<PortalClaim>

@@ -30,6 +30,15 @@ jobs:
     - name: Install npm packages
       run: npm install
       working-directory: ./src/web-portal
+    - name: Install Angular CLI
+      run: npm install -g @angular/cli
+      working-directory: ./src/web-portal
+    - name: Build emoji-picker
+      run: ng build emoji-picker
+      working-directory: ./src/web-portal
+    - name: Build momentum-table
+      run: ng build momentum-table
+      working-directory: ./src/web-portal
     - name: Build npm packages
       run: npm run prodlocal
       working-directory: ./src/web-portal

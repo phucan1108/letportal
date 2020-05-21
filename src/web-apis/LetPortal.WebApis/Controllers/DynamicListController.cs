@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Utils;
@@ -50,11 +51,44 @@ namespace LetPortal.WebApis.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(DynamicList), 200)]
-        [Authorize]
+        [Authorize(Roles = RolesConstants.BACK_END_ROLES)]
         public async Task<IActionResult> GetOne(string id)
         {
             var result = await _dynamicListRepository.GetOneAsync(id);
             _logger.Info("Found dynamic list: {@result}", result);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet("{id}/render")]
+        [ProducesResponseType(typeof(DynamicList), 200)]
+        [Authorize]
+        public async Task<IActionResult> GetOneForRender(string id)
+        {
+            var result = await _dynamicListRepository.GetOneAsync(id);
+            _logger.Info("Found dynamic list: {@result}", result);
+
+            // Remove some security aspects
+            if(result.ListDatasource.DatabaseConnectionOptions != null)
+            {
+                result.ListDatasource.DatabaseConnectionOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(result.ListDatasource.DatabaseConnectionOptions.Query, true));
+            }
+
+            if(result.CommandsList.CommandButtonsInList != null)
+            {
+                foreach(var command in result.CommandsList.CommandButtonsInList.Where(a => a.ActionCommandOptions.ActionType == Portal.Entities.Shared.ActionType.ExecuteDatabase))
+                {
+                    foreach(var step in command.ActionCommandOptions.DbExecutionChains.Steps)
+                    {
+                        step.ExecuteCommand = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(step.ExecuteCommand, true));
+                    }
+                }
+            }
+
             if (result != null)
             {
                 return Ok(result);

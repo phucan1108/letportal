@@ -60,7 +60,9 @@ namespace LetPortal.Versions.Identity
                      "backup-builder",
                      "backup-upload",
                      "backup-restore",
-                     "user-info"
+                     "user-info",
+                     "localization-builder",
+                     "localization-management"
                 }));
 
             var developerRole = new Role
@@ -88,7 +90,9 @@ namespace LetPortal.Versions.Identity
                      "service-logs",
                      "service-dashboard",
                      "chart-builder",
-                     "user-info"
+                     "user-info",
+                     "localization-builder",
+                     "localization-management"
                 }));
 
             var userRole = new Role

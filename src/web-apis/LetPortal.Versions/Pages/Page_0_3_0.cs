@@ -25,6 +25,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d63423dbaac7d4790b7d301",
                 Name = "role-form",
                 DisplayName = "Role Form",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/role-form",
                 Claims = new List<PortalClaim>
                     {
@@ -47,7 +48,7 @@ namespace LetPortal.Versions.Pages
                            Id = "5d63423dbaac7d4790b7d306",
                            ComponentId ="5d63423dbaac7d4790b7d300",
                            ConstructionType = SectionContructionType.Standard,
-                           Name = "roleform",
+                           Name = "roleForm",
                            DisplayName = "Role Form",
                            SectionDatasource = new SectionDatasource
                            {
@@ -186,7 +187,7 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a844",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",
@@ -221,6 +222,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d63423dbaac7d4790b7d302",
                 Name = "add-user-form",
                 DisplayName = "Add User",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/add-user-form",
                 Claims = new List<PortalClaim>
                     {
@@ -232,11 +234,11 @@ namespace LetPortal.Versions.Pages
                     {
                         new PageSection
                         {
-                            Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                            Id = "5eaebdb89533066fa085a845",
                             ComponentId = "5d6222ec3aae6a79ecf035e9",
                             ConstructionType = SectionContructionType.Standard,
                             DisplayName = "Add User",
-                            Name = "adduser",
+                            Name = "addUser",
                             SectionDatasource = new SectionDatasource
                             {
                                 DatasourceBindName = "data"
@@ -249,11 +251,11 @@ namespace LetPortal.Versions.Pages
                 {
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a846",
                         Name = "Save",
                         Color = "primary",
                         Icon = "save",
-                        PlaceSectionId = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        PlaceSectionId = "5eaebdb89533066fa085a845",
                         IsRequiredValidation = true,
                         ButtonOptions = new ButtonOptions
                         {                               
@@ -297,12 +299,12 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a852",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",
                         AllowHidden = "false",
-                        PlaceSectionId = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        PlaceSectionId = "5eaebdb89533066fa085a845",
                         ButtonOptions = new ButtonOptions
                         {                                
                             ActionCommandOptions = new ActionCommandOptions
@@ -332,6 +334,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5d64e0dc6a1a49378cef5c70",
                 Name = "user-form",
                 DisplayName = "User Form",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/user-form",
                 Claims = new List<PortalClaim>
                     {
@@ -446,7 +449,7 @@ namespace LetPortal.Versions.Pages
                     },
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a847",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",
@@ -481,6 +484,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5dabf30467cb8d0bd02643f9",
                 Name = "charts-management",
                 DisplayName = "Charts Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/charts-management",
                 Claims = new List<PortalClaim>
                     {

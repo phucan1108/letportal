@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using LetPortal.Core.Persistences;
 
@@ -27,6 +28,8 @@ namespace LetPortal.Core.Versions
         void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity;
 
         void UpdateData<T>(string id, T entity) where T : Entity;
+
+        IQueryable<T> GetQueryable<T>() where T : Entity;
 
         void SaveChange();
     }

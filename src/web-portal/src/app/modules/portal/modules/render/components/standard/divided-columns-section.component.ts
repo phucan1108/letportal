@@ -19,6 +19,7 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { StandardSharedService } from './services/standard-shared.service';
 import { FormUtil } from 'app/core/utils/form-util';
+import { LocalizationService } from 'services/localization.service';
 
 @Component({
     selector: 'divided-columns',
@@ -58,7 +59,6 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
         private logger: NGXLogger,
         private fb: FormBuilder,
         private store: Store,
-        private pageService: PageService,
         private standardSharedService: StandardSharedService
     ) { }
 

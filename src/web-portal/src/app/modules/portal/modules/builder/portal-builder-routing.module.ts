@@ -19,6 +19,11 @@ import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 import { BackupUploadpage } from './pages/backup/backup-upload.page';
 import { BackupRestorePage } from './pages/backup/backup-restore.page';
 import { BackupResolve } from './resolve/backup.resolve';
+import { LocalizationPage } from './pages/localization/localization.page';
+import { LocaleResolve } from './resolve/locale.resolve';
+import { AppPackagePage } from './pages/app-package/app-package.page';
+import { AppPackageResolve } from './resolve/app-package.resolve';
+import { AppInstallationPage } from './pages/app-installation/app-installation.page';
 
 const routes: Routes = [
     {
@@ -104,6 +109,28 @@ const routes: Routes = [
 				resolve: {
 					backup: BackupResolve
 				}
+			},
+			{
+				path: 'localization/:appId',
+				component: LocalizationPage
+			},
+			{
+				path: 'localization/:appId/:localeId',
+				component: LocalizationPage,
+				resolve: {
+					localization: LocaleResolve
+				}
+			},
+			{
+				path: 'app-package/:appId',
+				component: AppPackagePage,
+				resolve: {
+					previewApp: AppPackageResolve
+				}
+			},
+			{
+				path: 'app-installation',
+				component: AppInstallationPage
 			}
         ]
     }

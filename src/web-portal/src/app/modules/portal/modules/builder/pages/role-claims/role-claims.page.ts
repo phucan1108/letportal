@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { MatTree, MatDialog, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SessionService } from 'services/session.service';
@@ -15,6 +14,9 @@ import { NGXLogger } from 'ngx-logger';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PageService } from 'services/page.service';
 import { SelectablePortalClaim, ClaimNode } from 'portal/modules/models/role-claims.model';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTree, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-role-claims',
@@ -29,8 +31,7 @@ export class RoleClaimsPage implements OnInit {
         public dialog: MatDialog,
         private shortcutUtil: ShortcutUtil,
         private activatedRoute: ActivatedRoute,
-        private session: SessionService,
-        private routerExtService: RouterExtService,
+        private translate: TranslateService,
         private router: Router,
         private pagesClient: PagesClient,
         private security: SecurityService,
@@ -105,7 +106,7 @@ export class RoleClaimsPage implements OnInit {
         this.selectedRolePortalClaims = this.activatedRoute.snapshot.data.roleClaims
 
         this.logger.debug('selected claims', this.selectedRolePortalClaims)
-        combineLatest(this.pagesClient.getAllPortalClaims(), this.appClient.getAllApps(), (v1, v2) => ({ v1, v2 })).subscribe(
+        combineLatest(this.pagesClient.getAllPortalClaims(), this.appClient.getAllApps(this.translate.currentLang), (v1, v2) => ({ v1, v2 })).subscribe(
             pair => {
                 const allclaims: SelectablePortalClaim[] = []
                 const appClaim: SelectablePortalClaim = {
@@ -233,7 +234,7 @@ export class RoleClaimsPage implements OnInit {
     saveChange() {
         this.roleClient.addPortalClaims(this.selectedRole, this.mapToPortalClaimModel()).subscribe(
             result => {
-                this.shortcutUtil.toastMessage('Update successfully', ToastType.Success)
+                this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
             },
             err => {
             })

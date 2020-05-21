@@ -23,6 +23,9 @@ Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.ServiceManagementApis.
 Set-Location ($publishFolder + "\LetPortal.PortalApis")
 Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.PortalApis.dll" -Verb RunAs
 
+Set-Location ($publishFolder + "\LetPortal.ChatApis")
+Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.ChatApis.dll" -Verb RunAs
+
 Set-Location ($publishFolder + "\LetPortal.IdentityApis")
 Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.IdentityApis.dll" -Verb RunAs
 

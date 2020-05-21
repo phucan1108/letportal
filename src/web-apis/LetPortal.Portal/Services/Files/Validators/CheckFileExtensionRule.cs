@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Files;
+using LetPortal.Core.Utils;
 using LetPortal.Portal.Exceptions.Files;
 using LetPortal.Portal.Options.Files;
 using Microsoft.AspNetCore.Http;
@@ -38,7 +39,7 @@ namespace LetPortal.Portal.Services.Files.Validators
             if (_fileValidatorOptions.CurrentValue.CheckFileExtension)
             {
                 var isValid = false;
-                var extFile = fileName.Split(".")[1].ToLower();
+                var extFile = FileUtil.GetExtension(fileName);
                 if (_fileValidatorOptions.CurrentValue.ExtensionMagicNumbers.ContainsKey(extFile))
                 {
                     // Get correct magic number by ext

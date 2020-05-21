@@ -6,7 +6,7 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { Translator } from './shell/translates/translate.pipe';
 import { ConfigurationProvider } from './configs/configProvider';
 import { ShellConfigProvider } from './shell/shellconfig.provider';
-import { DatabasesClient, EntitySchemasClient, AppsClient, StandardComponentClient, PagesClient, DynamicListClient, ChartsClient, BackupsClient } from 'services/portal.service';
+import { DatabasesClient, EntitySchemasClient, AppsClient, StandardComponentClient, PagesClient, DynamicListClient, ChartsClient, BackupsClient, LocalizationClient } from 'services/portal.service';
 import { RouterExtService } from './ext-service/routerext.service';
 import { SessionService } from 'services/session.service';
 import { AccountsClient, UserSessionClient, RolesClient } from 'services/identity.service';
@@ -16,12 +16,17 @@ import { TRANSLATOR_METHODS, CONTROL_EVENTS } from './core.config';
 import { ControlEventExecution } from './events/control/control.event';
 import { EventsProvider, EVENTS_CONFIG } from './events/event.provider';
 import { UnlockScreenDialogComponent } from './security/components/unlock-screen.component';
-import { MatFormFieldModule, MatDialogModule, MatInputModule, MatIconModule, MatButtonModule } from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
 import { AutoCompletePipe } from './pipe/autocomplete.pipe';
 import { ExportService } from 'services/export.service';
 import { SecurePipe } from './pipe/secure.pipe';
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatInputModule } from '@angular/material/input'
+import { DownloadFileService } from 'services/downloadfile.service';
 @NgModule({
   declarations: [
     UnlockScreenDialogComponent,
@@ -70,7 +75,9 @@ import { SecurePipe } from './pipe/secure.pipe';
     UploadFileService,
     ChartsClient,
     BackupsClient,
-    ExportService
+    ExportService,
+    LocalizationClient,
+    DownloadFileService
   ],
 })
 export class CoreModule {

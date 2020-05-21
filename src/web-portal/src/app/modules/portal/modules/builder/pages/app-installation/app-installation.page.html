@@ -1,0 +1,113 @@
+<div class="grid-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'pageBuilder.page.appInstallation.header' | translate }}
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="onInstall()"
+                        *ngIf="isUploaded">{{ 'common.install' | translate }}</button>
+                    <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="row" *ngIf="!isUploaded">
+                <div class="col-lg-12 button-wrapper pb-3">
+                    <button mat-raised-button color="primary">
+                        {{ 'common.uploadFile' | translate }}
+                        <input class="file-input" type="file" #fileInput (change)="onFileChange($event)"
+                            [disabled]="disabled">
+                    </button>
+                </div>
+            </div>
+            <ng-container *ngIf="isUploaded">
+                <div class="row row-heading">
+                    <h3>{{ 'pageBuilder.page.appInstallation.preview.header' | translate }}</h3>
+                </div>
+                <div class="row" *ngIf="unpackModel.isExistedId || unpackModel.isExistedName">
+                    <div class="col-lg-1 offset-1">
+                        <mat-icon color="warn" class="float-right">warning</mat-icon>
+                    </div>
+                    <div class="col-lg-10 color-warn">
+                        {{ 'pageBuilder.page.appInstallation.isExist.text' | translate }}
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-lg-2 col-form-label">
+                        <b>
+                            {{ 'common.app' | translate }}
+                        </b>
+                    </label>
+                    <div class="col-lg-6 pt-3">
+                        {{unpackModel.app.displayName}}
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-lg-2 col-form-label">
+                        <b>
+                            {{ 'common.version' | translate }}
+                        </b>
+                    </label>
+                    <div class="col-lg-6 pt-3">
+                        {{unpackModel.app.currentVersionNumber}}
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-lg-2 col-form-label">
+                        <b>
+                            {{ 'common.description' | translate }}
+                        </b>
+                    </label>
+                    <div class="col-lg-6 pt-3">
+                        {{unpackModel.description}}
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-lg-2 col-form-label">
+                        <b>
+                            {{ 'common.creator' | translate }}
+                        </b>
+                    </label>
+                    <div class="col-lg-6 pt-3">
+                        {{unpackModel.creator}}
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-lg-2 col-form-label">
+                        <b>
+                            {{ 'common.createdDate' | translate }}
+                        </b>
+                    </label>
+                    <div class="col-lg-6 pt-3">
+                        {{createdDate}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-10 offset-1">
+                        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+                            <!-- This is the tree node template for leaf nodes -->
+                            <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="30"
+                                #tree>
+                                {{node.name}} 
+                                <mat-icon *ngIf="node.isExisted" color="warn" class="float-right">warning</mat-icon>
+                            </mat-tree-node>
+                            <!-- This is the tree node template for expandable nodes -->
+                            <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
+                                matTreeNodePaddingIndent="30">
+                                <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+                                    <mat-icon class="mat-icon-rtl-mirror">
+                                        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                                    </mat-icon>
+                                </button>
+                                {{node.name}} <b style="padding-left: 10px;">Total</b>: {{node.numberChildren}}
+                            </mat-tree-node>
+                        </mat-tree>
+                    </div>
+                </div>
+            </ng-container>
+        </mat-card-content>
+    </mat-card>
+</div>

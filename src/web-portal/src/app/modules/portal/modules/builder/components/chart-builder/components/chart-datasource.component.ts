@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DatabaseOptions, ChartFilter, ColumnField, FilterType, ExtractingSchemaQueryModel, FilledParameter } from 'services/portal.service';
 import { NGXLogger } from 'ngx-logger';
 import * as _ from 'lodash';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-chart-datasource',
@@ -30,10 +31,17 @@ export class ChartDatasourceComponent implements OnInit {
     private selectedEntityname: string
 
     constructor(
+        private translate: TranslateService,
         private logger: NGXLogger
     ) { }
 
-    ngOnInit(): void { }
+    ngOnInit(): void { 
+        this.translate.get('pageBuilder.chart.datasource.heading').subscribe(
+            text => {
+                this.heading = text
+            }
+        )
+    }
 
     onPopulatingQuery($event: ExtractingSchemaQueryModel) {
         this.chartFilters = this.populateChartFilters($event.columnFields)

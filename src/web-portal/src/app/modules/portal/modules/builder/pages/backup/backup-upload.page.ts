@@ -6,6 +6,7 @@ import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-u
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { Router } from '@angular/router';
 import { PageService } from 'services/page.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'backup-upload',
@@ -44,6 +45,7 @@ export class BackupUploadpage implements OnInit {
         private pageService: PageService,
         private backupClient: BackupsClient,
         private shortcutUtil: ShortcutUtil,
+        private translate: TranslateService,
         private logger: NGXLogger,
         private router: Router,
         private fb: FormBuilder,
@@ -149,7 +151,7 @@ export class BackupUploadpage implements OnInit {
                 this.router.navigateByUrl('portal/builder/backup/restore/' + res.id)
             },
             err => {
-                this.shortcutUtil.toastMessage('Oops! Something went wrong when uploading a file, plese try again.', ToastType.Error)
+                this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                 this.btnOption.active = false
             }
         )

@@ -23,6 +23,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5dcb80b166b49d4b78923a54",
                 Name = "service-dashboard",
                 DisplayName = "Service Dashboard",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/service-dashboard",
                 Claims = new List<PortalClaim>
                     {
@@ -83,7 +84,7 @@ namespace LetPortal.Versions.Pages
                 {
                     new PageButton
                     {
-                        Id = "48a0b57a-0944-945e-e2f6-c9bcadf9a854",
+                        Id = "5eaebdb89533066fa085a848",
                         Name = "Cancel",
                         Icon = "close",
                         Color = "basic",
@@ -117,6 +118,7 @@ namespace LetPortal.Versions.Pages
                 Id = "5e1aa91e3c107562acf358b5",
                 Name = "backup-management",
                 DisplayName = "Backup Management",
+                AppId = Constants.CoreAppId,
                 UrlPath = "portal/page/backup-management",
                 Claims = new List<PortalClaim>
                     {

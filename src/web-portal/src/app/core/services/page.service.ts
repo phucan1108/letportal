@@ -24,6 +24,7 @@ import { ConfigurationProvider } from '../configs/configProvider';
 import { CustomHttpService } from './customhttp.service';
 import { ObjectUtils } from '../utils/object-util';
 import { SessionService } from './session.service';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * This class contains all base methods for interacting with Page
@@ -42,6 +43,7 @@ export class PageService {
     private sectionValidationCounter = 0
 
     constructor(
+        private translate: TranslateService,
         private customHttpService: CustomHttpService,
         private configurationProvider: ConfigurationProvider,
         private pageClients: PagesClient,
@@ -74,12 +76,12 @@ export class PageService {
             tap(
                 result => {
                     if (!result.allowAccess) {
-                        this.shortcutUtil.toastMessage(`Sorry, you aren't allowed to access ${result.page.displayName} page !`, ToastType.Warning)
+                        this.shortcutUtil.toastMessage(this.translate.instant('pageService.messages.notAllowedAccessPage'), ToastType.Warning)
                         this.router.navigateByUrl(this.session.getDefaultAppPage())
                     }
                 },
                 err => {
-                    this.shortcutUtil.toastMessage('Oops, Something went wrong, please try again!', ToastType.Error)
+                    this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
                     this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
             )
@@ -98,7 +100,7 @@ export class PageService {
             claims => {
                 this.claims = claims
                 if (!this.isAllowAccess(this.security.getAuthUser(), page)) {
-                    this.shortcutUtil.toastMessage(`Sorry, you aren't allowed to access ${page.displayName} page !`, ToastType.Warning)
+                    this.shortcutUtil.toastMessage(this.translate.instant('pageService.messages.notAllowedAccessPage'), ToastType.Warning)
                     this.router.navigateByUrl(this.session.getDefaultAppPage())
                 }
             }
@@ -169,7 +171,7 @@ export class PageService {
                                         })
                                 }
                                 else {
-                                    this.shortcutUtil.toastMessage('Please complete all required fields', ToastType.Warning)
+                                    this.shortcutUtil.toastMessage(this.translate.instant('pageService.messages.completeAllRequiredFields'), ToastType.Warning)
                                 }
                                 break
                         }

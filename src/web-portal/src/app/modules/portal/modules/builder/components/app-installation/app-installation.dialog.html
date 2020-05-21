@@ -1,0 +1,24 @@
+<h3 mat-dialog-title>{{ 'common.confirmation' | translate }}</h3>
+<mat-dialog-content>
+    <div class="row">
+        {{ 'pageBuilder.page.appInstallationDialog.selectText' | translate }}:
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <form [formGroup]="installWayFormGroup">       
+                <mat-radio-group aria-label="Select install way" class="radio-group" formControlName="installWay">                    
+                    <mat-radio-button value="1" [checked]="true">
+                        {{ 'pageBuilder.page.appInstallationDialog.wipe' | translate }}
+                    </mat-radio-button>
+                    <mat-radio-button value="0">
+                        {{ 'pageBuilder.page.appInstallationDialog.merge' | translate }}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </form>
+        </div>
+    </div>    
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmit()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>

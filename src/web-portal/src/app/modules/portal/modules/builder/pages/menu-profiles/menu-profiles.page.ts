@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTree, MatTreeFlattener, MatTreeFlatDataSource, MatDialog } from '@angular/material';
 import { App, AppsClient, MenuProfile } from 'services/portal.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +10,9 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 import { RouterExtService } from 'app/core/ext-service/routerext.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ExtendedMenu, MenuNode } from 'portal/modules/models/menu.model';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTree, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-menu-profiles',
@@ -25,7 +27,8 @@ export class MenuProfilesPage implements OnInit {
         private roleClient: RolesClient,
         private shortcutUtil: ShortcutUtil,
         private router: Router,
-        private routerService: RouterExtService
+        private routerService: RouterExtService,
+        private translate: TranslateService
     ) {
         this.app = this.activetedRouter.snapshot.data.app
         this.menus = this.app.menus as ExtendedMenu[]
@@ -106,13 +109,13 @@ export class MenuProfilesPage implements OnInit {
         if (this.menuProfile && this.selectedRole) {
             this.appClient.asssignRolesToMenu( this.app.id, this.menuProfile).subscribe(
                 result => {
-                    this.shortcutUtil.toastMessage('Update successfully', ToastType.Success)
+                    this.shortcutUtil.toastMessage(this.translate.instant('common.updateSuccessfully'), ToastType.Success)
                 },
                 err => {
                 })
         }
         else {
-            this.shortcutUtil.toastMessage('Please select one role', ToastType.Warning)
+            this.shortcutUtil.toastMessage(this.translate.instant('pageBuilder.menuprofiles.selectOneRole'), ToastType.Warning)
         }
     }
 
