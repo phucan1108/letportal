@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
@@ -9,12 +10,13 @@ namespace LetPortal.Versions.Components.DynamicLists
     {
         public string VersionNumber => "0.5.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<DynamicList>("5e1aa91e3c107562acf358b2");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var backupsList = new DynamicList
             {
@@ -201,6 +203,8 @@ namespace LetPortal.Versions.Components.DynamicLists
             };
 
             versionContext.InsertData(backupsList);
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Pages;
@@ -10,13 +11,14 @@ namespace LetPortal.Versions.Pages
     {
         public string VersionNumber => "0.5.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Page>("5dcb80b166b49d4b78923a54");
             versionContext.DeleteData<Page>("5e1aa91e3c107562acf358b5");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var serviceDashboardPage = new Page
             {
@@ -143,6 +145,7 @@ namespace LetPortal.Versions.Pages
 
             versionContext.InsertData(serviceDashboardPage);
             versionContext.InsertData(backupManagementPage);
+            return Task.CompletedTask;
         }
     }
 }

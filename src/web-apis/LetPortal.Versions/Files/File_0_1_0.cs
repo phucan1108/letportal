@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Versions;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Versions;
 
 namespace LetPortal.Versions.Files
 {
@@ -6,7 +7,7 @@ namespace LetPortal.Versions.Files
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             if (versionContext.ConnectionType == Core.Persistences.ConnectionType.SQLServer)
             {
@@ -20,9 +21,11 @@ namespace LetPortal.Versions.Files
             {
                 versionContext.ExecuteRaw("Drop table if exists `uploadFiles`");
             }
+
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             if (versionContext.ConnectionType == Core.Persistences.ConnectionType.SQLServer)
             {
@@ -36,6 +39,8 @@ namespace LetPortal.Versions.Files
             {
                 versionContext.ExecuteRaw("Create table `uploadFiles`(`id` varchar(255) NOT NULL,  `file` mediumblob NULL, PRIMARY KEY(`id`)) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci");
             }
+
+            return Task.CompletedTask;
         }
     }
 }

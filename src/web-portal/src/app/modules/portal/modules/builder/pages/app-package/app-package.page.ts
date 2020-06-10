@@ -12,6 +12,7 @@ import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-u
 import { TranslateService } from '@ngx-translate/core';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { FormUtil } from 'app/core/utils/form-util';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'let-app-package',
@@ -52,12 +53,14 @@ export class AppPackagePage implements OnInit {
         private downloadFileService: DownloadFileService,
         private fb: FormBuilder,
         private translate: TranslateService,
-        private shortcut: ShortcutUtil
+        private shortcut: ShortcutUtil,
+        private pageService: PageService
     ) { 
 
     }
 
     ngOnInit(): void { 
+        this.pageService.init('app-package').subscribe()
         this.previewApp = this.activatedRoute.snapshot.data.previewApp
         this.packageFormGroup = this.fb.group({
             description: ['', [Validators.required, Validators.maxLength(500)]]

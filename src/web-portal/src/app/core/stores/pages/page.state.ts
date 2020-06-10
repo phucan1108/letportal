@@ -265,7 +265,7 @@ export class PageState {
 
     @Action(PageActions.ChangeControlValueEvent)
     public changeControlValue(ctx: StateContext<PageStateModel>, { event }: PageActions.ChangeControlValueEvent) {
-
+        const allowChainingEvents = event.allowChainingEvents
         const state = ctx.getState()
         // Important change: we need to check isOpenStandardArray is true for detecting StandardArrayDialog
         if (state.isOpenStandardArray) {

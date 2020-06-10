@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Pages;
@@ -11,15 +12,16 @@ namespace LetPortal.Versions.Pages
     {
         public string VersionNumber => "0.5.2";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4b");
             versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4c");
             versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4d");
             versionContext.DeleteData<Page>("5e6b645a29ae8d569813fd4e");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var chartBuilderPage = new Page
             {
@@ -80,6 +82,7 @@ namespace LetPortal.Versions.Pages
             versionContext.InsertData(backupBuilder);
             versionContext.InsertData(backupUploadBuilder);
             versionContext.InsertData(backupRestoreBuilder);
+            return Task.CompletedTask;
         }
     }
 }

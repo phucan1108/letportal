@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Components;
 
@@ -8,16 +9,18 @@ namespace LetPortal.Versions.Components.Charts
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Chart>("5dc786a40f4b6b13e0a909f3");
             versionContext.DeleteData<Chart>("5dd02c6d1558c56c40d795e7");
             versionContext.DeleteData<Chart>("5dd2a66d5aa5f917603f05c5");
             versionContext.DeleteData<Chart>("5dd2a66d5aa5f917603f05c6");
             versionContext.DeleteData<Chart>("5dd2a66d5aa5f917603f05ca");
+
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var httpCounterChart = new Chart
             {
@@ -187,6 +190,8 @@ namespace LetPortal.Versions.Components.Charts
             versionContext.InsertData(hardwareCPURealTimeChart);
             versionContext.InsertData(hardwareMemoryRealTimeChart);
             versionContext.InsertData(httpRealTimeChart);
+
+            return Task.CompletedTask;
         }
     }
 }

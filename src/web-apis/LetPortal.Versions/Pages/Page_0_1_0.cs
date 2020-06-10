@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Pages;
@@ -9,7 +10,7 @@ namespace LetPortal.Versions.Pages
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Page>("5cf62f41617a831f7878ba65");
             versionContext.DeleteData<Page>("5cf63188617a831f7878ba66");
@@ -20,9 +21,10 @@ namespace LetPortal.Versions.Pages
             versionContext.DeleteData<Page>("5d0f2dca6ba2fd4ca49e3749");
             versionContext.DeleteData<Page>("5d0f2dca6ba2fd4ca49e3748");
             versionContext.DeleteData<Page>("5cf8999e8466f54ae8743181");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             #region Page
             var pageBuilder = new Page
@@ -236,6 +238,8 @@ namespace LetPortal.Versions.Pages
             versionContext.InsertData(roleManagementList);
             versionContext.InsertData(pageManagementList);
             #endregion
+
+            return Task.CompletedTask;
         }
     }
 }

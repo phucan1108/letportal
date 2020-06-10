@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 
@@ -8,13 +9,14 @@ namespace LetPortal.Versions.Components.Standards
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<StandardComponent>("5d25f6abe88d28422061cfaf");
             versionContext.DeleteData<StandardComponent>("5d3836194d8fa90874135d68");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var databaseStandard = new StandardComponent
             {
@@ -610,6 +612,8 @@ namespace LetPortal.Versions.Components.Standards
             VersionUtils.GenerateStandardOptions(appStandard);
             versionContext.InsertData(databaseStandard);
             versionContext.InsertData(appStandard);
+
+            return Task.CompletedTask;
         }
     }
 }

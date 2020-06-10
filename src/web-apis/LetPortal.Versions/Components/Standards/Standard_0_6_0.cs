@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 
@@ -10,13 +11,14 @@ namespace LetPortal.Versions.Components.Standards
     {
         public string VersionNumber => "0.6.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<StandardComponent>("5e79c14931a1754a2cd38cbc");
             versionContext.DeleteData<StandardComponent>("5e79c14931a1754a2cd38cc3");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var profileStandard = new StandardComponent
             {
@@ -332,6 +334,8 @@ namespace LetPortal.Versions.Components.Standards
             VersionUtils.GenerateStandardOptions(changePasswordStandard);
             versionContext.InsertData(profileStandard);
             versionContext.InsertData(changePasswordStandard);
+
+            return Task.CompletedTask;
         }
     }
 }

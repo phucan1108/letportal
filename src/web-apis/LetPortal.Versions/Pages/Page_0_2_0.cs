@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Pages;
@@ -10,15 +11,17 @@ namespace LetPortal.Versions.Pages
     {
         public string VersionNumber => "0.2.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Page>("5d2607a9e88d28422061cfd0");
             versionContext.DeleteData<Page>("5d35ce3515066059bc5dfd01");
             versionContext.DeleteData<Page>("5d4d8adfae5f5b68b811ec20");
             versionContext.DeleteData<Page>("5d4d8adfae5f5b68b811ec21");
+
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var databaseFormPage = new Page
             {
@@ -457,6 +460,8 @@ namespace LetPortal.Versions.Pages
 
             versionContext.InsertData(dynamicListsPage);
             versionContext.InsertData(standardListsPage);
+
+            return Task.CompletedTask;
         }
     }
 }

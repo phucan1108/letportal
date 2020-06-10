@@ -27,7 +27,7 @@ namespace LetPortal.Tools.Features
                     Console.WriteLine("UPGRADE VERSION: " + matchingVersions.Last().VersionNumber);
                     Console.WriteLine("-----------------------++++++++++++++++-------------------------");
 
-                    var portalVersions = UpgradingVersion(matchingVersions, context);
+                    var portalVersions = await UpgradingVersion(matchingVersions, context);
                     foreach (var portalVersion in portalVersions)
                     {
                         await context.VersionRepository.AddAsync(portalVersion);
@@ -44,7 +44,7 @@ namespace LetPortal.Tools.Features
             }
         }
 
-        private List<Version> UpgradingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
+        private async Task<List<Version>> UpgradingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
         {
             var effectivePortalVersions = new List<Version>();
             var dicVersions = new Dictionary<string, List<string>>();
@@ -59,7 +59,7 @@ namespace LetPortal.Tools.Features
                 var executingVersions = new List<string>();
                 foreach (var version in matchingVersions)
                 {
-                    version.Upgrade(toolsContext.VersionContext);
+                    await version.Upgrade(toolsContext.VersionContext);
                     executingVersions.Add(version.GetType().GetTypeInfo().Name);
                     Console.WriteLine(string.Format("Upgrading {0} Version {1} Completely!", version.GetType().GetTypeInfo().Name, version.VersionNumber));
                 }
