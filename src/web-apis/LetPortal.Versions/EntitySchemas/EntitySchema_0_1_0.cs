@@ -1,4 +1,5 @@
-﻿using LetPortal.Core.Versions;
+﻿using System.Threading.Tasks;
+using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.EntitySchemas;
 
 namespace LetPortal.Versions.EntitySchemas
@@ -7,12 +8,13 @@ namespace LetPortal.Versions.EntitySchemas
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<EntitySchema>("5cbf39888dd09406f03785de");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var databaseConnectionES = new EntitySchema
             {
@@ -56,6 +58,7 @@ namespace LetPortal.Versions.EntitySchemas
             };
 
             versionContext.InsertData(databaseConnectionES);
+            return Task.CompletedTask;
         }
     }
 }

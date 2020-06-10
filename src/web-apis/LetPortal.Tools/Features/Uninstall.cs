@@ -20,7 +20,7 @@ namespace LetPortal.Tools.Features
                 Console.WriteLine("----------------------UNINSTALL PROGRESS------------------------");
                 Console.WriteLine("UNINSTALLING VERSION: " + matchingVersions.Last().VersionNumber);
                 Console.WriteLine("-----------------------++++++++++++++++-------------------------");
-                UninstallingVersion(matchingVersions, context);
+                await UninstallingVersion(matchingVersions, context);
                 var foundVersions = await context.VersionRepository.GetAllAsync(isRequiredDiscriminator: false);
                 foreach (var version in foundVersions)
                 {
@@ -32,7 +32,7 @@ namespace LetPortal.Tools.Features
                 Console.WriteLine("Oops we don't find any installation in the database.");
             }
         }
-        private void UninstallingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
+        private async Task UninstallingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
         {
 
             var availableGroupVersions = versions.Select(a => a.VersionNumber).Distinct();
@@ -45,7 +45,7 @@ namespace LetPortal.Tools.Features
                 var executingVersions = new List<string>();
                 foreach (var version in matchingVersions)
                 {
-                    version.Downgrade(toolsContext.VersionContext);
+                    await version.Downgrade(toolsContext.VersionContext);
                     Console.WriteLine(string.Format("Uninstalling {0} Version {1} Completely!", version.GetType().GetTypeInfo().Name, version.VersionNumber));
                 }
             }

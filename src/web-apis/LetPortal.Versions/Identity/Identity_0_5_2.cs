@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Identity.Entities;
 using LetPortal.Portal.Constants;
@@ -11,14 +12,15 @@ namespace LetPortal.Versions.Identity
     {
         public string VersionNumber => "0.5.2";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Role>("5e6b506e52605e513cd02265");
             versionContext.DeleteData<Role>("5e6b506e52605e513cd02266");
             versionContext.DeleteData<Role>("5e6b506e52605e513cd02267");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var adminRole = new Role
             {
@@ -115,6 +117,7 @@ namespace LetPortal.Versions.Identity
             versionContext.InsertData(adminRole);
             versionContext.InsertData(developerRole);
             versionContext.InsertData(userRole);
+            return Task.CompletedTask;
         }
     }
 }

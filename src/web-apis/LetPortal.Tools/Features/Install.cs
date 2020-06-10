@@ -26,7 +26,7 @@ namespace LetPortal.Tools.Features
                     Console.WriteLine("-----------------------INSTALL PROGRESS-------------------------");
                     Console.WriteLine("INSTALLING VERSION: " + matchingVersions.Last().VersionNumber);
                     Console.WriteLine("-----------------------++++++++++++++++-------------------------");
-                    var portalVersions = InstallingVersion(matchingVersions, context);
+                    var portalVersions = await InstallingVersion(matchingVersions, context);
                     foreach (var portalVersion in portalVersions)
                     {
                         await context.VersionRepository.AddAsync(portalVersion);
@@ -36,7 +36,7 @@ namespace LetPortal.Tools.Features
                 {
                     var requestVersionNumber = context.VersionNumber.ToVersionNumber();
                     matchingVersions = matchingVersions.Where(a => a.VersionNumber.ToVersionNumber() <= requestVersionNumber).OrderBy(b => b.GetNumber());
-                    var portalVersions = InstallingVersion(matchingVersions, context);
+                    var portalVersions = await InstallingVersion(matchingVersions, context);
                     foreach (var portalVersion in portalVersions)
                     {
                         await context.VersionRepository.AddAsync(portalVersion);
@@ -49,7 +49,7 @@ namespace LetPortal.Tools.Features
             }
         }
 
-        private List<Version> InstallingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
+        private async Task<List<Version>> InstallingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
         {
             var effectivePortalVersions = new List<Version>();
             var dicVersions = new Dictionary<string, List<string>>();
@@ -69,14 +69,14 @@ namespace LetPortal.Tools.Features
                 foreach (var version in matchingVersions)
                 {
                     var executionName = version.GetType().GetTypeInfo().Name;
-                    version.Upgrade(toolsContext.VersionContext);
+                    await version.Upgrade(toolsContext.VersionContext);
                     executingVersions.Add(executionName);
                     Console.WriteLine(string.Format("Installing {0} Version {1} Completely!", executionName, version.VersionNumber));
                 }
 
                 if (toolsContext.AllowPatch)
                 {
-                    var result = patchProcessor.Proceed(Path.Combine(toolsContext.PatchesFolder, groupVersion), toolsContext.VersionContext.DatabaseOptions as DatabaseOptions).Result;
+                    var result = await patchProcessor.Proceed(Path.Combine(toolsContext.PatchesFolder, groupVersion), toolsContext.VersionContext.DatabaseOptions as DatabaseOptions);
                     if (result.Any())
                     {
                         foreach (var file in result)

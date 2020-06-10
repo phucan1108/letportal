@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Pages;
@@ -11,13 +12,14 @@ namespace LetPortal.Versions.Pages
     {
         public string VersionNumber => "0.8.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<Page>("5ea80612bf1ac062f89f6f55");
             versionContext.DeleteData<Page>("5eb815a1db8e096080a93f70");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var localizationListPage = new Page
             {
@@ -67,6 +69,7 @@ namespace LetPortal.Versions.Pages
 
             versionContext.InsertData(localizationListPage);
             versionContext.InsertData(localizationBuilder);
+            return Task.CompletedTask;
         }
     }
 }

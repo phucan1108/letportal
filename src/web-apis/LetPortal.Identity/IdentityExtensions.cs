@@ -28,31 +28,8 @@ namespace LetPortal.Identity
         {               
             builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
 
-            if (builder.ConnectionType == ConnectionType.MongoDB)
-            {
-                MongoDbRegistry.RegisterEntities();
-                builder.Services.AddSingleton<IUserRepository, UserMongoRepository>();
-                builder.Services.AddSingleton<IRoleRepository, RoleMongoRepository>();
-                builder.Services.AddSingleton<IIssuedTokenRepository, IssuedTokenMongoRepository>();
-                builder.Services.AddSingleton<IUserSessionRepository, UserSessionMongoRepository>();
-                builder.Services.AddSingleton<IVersionRepository, VersionMongoRepository>();
-            }
-
-            if (builder.ConnectionType == ConnectionType.PostgreSQL
-                || builder.ConnectionType == ConnectionType.MySQL
-                || builder.ConnectionType == ConnectionType.SQLServer)
-            {
-                builder.Services.AddTransient<IdentityDbContext>();
-                builder.Services.AddTransient<DbContext>((serviceProvider) =>
-                {
-                    return serviceProvider.GetService<IdentityDbContext>();
-                });
-                builder.Services.AddTransient<IUserRepository, UserEFRepository>();
-                builder.Services.AddTransient<IRoleRepository, RoleEFRepository>();
-                builder.Services.AddTransient<IIssuedTokenRepository, IssuedTokenEFRepository>();
-                builder.Services.AddTransient<IUserSessionRepository, UserSessionEFRepository>();
-                builder.Services.AddTransient<IVersionRepository, VersionEFRepository>();
-            }
+            var databaseOptions = builder.Configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
+            RegisterRepos(builder.Services, databaseOptions);
 
             builder.Services.AddTransient<IIdentityServiceProvider, InternalIdentityServiceProvider>();
             builder.Services.AddSingleton<IEmailServiceProvider, EmailServiceProvider>();
@@ -74,6 +51,35 @@ namespace LetPortal.Identity
             });
 
             return builder;
+        }
+
+        public static void RegisterRepos(IServiceCollection services, DatabaseOptions databaseOptions, bool skipMongoRegister = false)
+        {
+            if (databaseOptions.ConnectionType == ConnectionType.MongoDB)
+            {
+                MongoDbRegistry.RegisterEntities();
+                services.AddSingleton<IUserRepository, UserMongoRepository>();
+                services.AddSingleton<IRoleRepository, RoleMongoRepository>();
+                services.AddSingleton<IIssuedTokenRepository, IssuedTokenMongoRepository>();
+                services.AddSingleton<IUserSessionRepository, UserSessionMongoRepository>();
+                services.AddSingleton<IVersionRepository, VersionMongoRepository>();
+            }
+
+            if (databaseOptions.ConnectionType == ConnectionType.PostgreSQL
+                || databaseOptions.ConnectionType == ConnectionType.MySQL
+                || databaseOptions.ConnectionType == ConnectionType.SQLServer)
+            {
+                services.AddTransient<IdentityDbContext>();
+                services.AddTransient<DbContext>((serviceProvider) =>
+                {
+                    return serviceProvider.GetService<IdentityDbContext>();
+                });
+                services.AddTransient<IUserRepository, UserEFRepository>();
+                services.AddTransient<IRoleRepository, RoleEFRepository>();
+                services.AddTransient<IIssuedTokenRepository, IssuedTokenEFRepository>();
+                services.AddTransient<IUserSessionRepository, UserSessionEFRepository>();
+                services.AddTransient<IVersionRepository, VersionEFRepository>();
+            }
         }
 
         public static BaseClaim ToBaseClaim(this Claim claim)

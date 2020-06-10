@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
@@ -11,12 +12,13 @@ namespace LetPortal.Versions.Components.DynamicLists
     {
         public string VersionNumber => "0.8.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<DynamicList>("5ea80612bf1ac062f89f6f54");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var localizationList = new DynamicList
             {
@@ -167,6 +169,8 @@ namespace LetPortal.Versions.Components.DynamicLists
             };
 
             versionContext.InsertData(localizationList);
+
+            return Task.CompletedTask;
         }
     }
 }

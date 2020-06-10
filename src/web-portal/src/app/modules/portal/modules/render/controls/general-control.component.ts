@@ -162,11 +162,11 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
                     )
                 ).subscribe()
 
-                this.optionsList$
+            this.optionsList$
                 .pipe(
                     tap(
                         res => {
-                            if(!ObjectUtils.isNotNull(res) || res.length === 0){
+                            if (!ObjectUtils.isNotNull(res) || res.length === 0) {
                                 return
                             }
                             if (this.control.type === ControlType.AutoComplete) {
@@ -227,57 +227,61 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
             tap(
                 newValue => {
                     this.hasAsyncInvalid = this.isInvalidAsync()
+                    let allowChainingEvents = true
                     if (this.control.type == ControlType.Checkbox
                         || this.control.type == ControlType.Slide) {
                         if (this.control.defaultOptions.allowZero) {
-                            this.pageService.changeControlValue(this.controlFullName, newValue ? 1 : 0)
+                            allowChainingEvents = this.pageService.changeControlValue(this.controlFullName, newValue ? 1 : 0)
                         }
                         else if (this.control.defaultOptions.allowYesNo) {
-                            this.pageService.changeControlValue(this.controlFullName, newValue ? 'Y' : 'N')
+                            allowChainingEvents = this.pageService.changeControlValue(this.controlFullName, newValue ? 'Y' : 'N')
                         }
                         else {
-                            this.pageService.changeControlValue(this.controlFullName, newValue)
+                            allowChainingEvents = this.pageService.changeControlValue(this.controlFullName, newValue)
                         }
                     }
                     else {
-                        this.pageService.changeControlValue(this.controlFullName, newValue)
+                        allowChainingEvents = this.pageService.changeControlValue(this.controlFullName, newValue)
                     }
-                    // Check with chaining events must be notified
-                    _.forEach(this.control.pageControlEvents, event => {
-                        switch (event.eventActionType) {
-                            case EventActionType.TriggerEvent:
-                                _.forEach(event.triggerEventOptions.eventsList, eventOpt => {
-                                    this.pageService.notifyTriggeringEvent(this.section.name + '_' + eventOpt)
-                                })
-                                break
-                            case EventActionType.QueryDatabase:
-                                this.pageService.executeActionEventOnDatabase(event, this.section.name, this.control.name)
-                                    .pipe(
-                                        tap(
-                                            res => {
-                                                this.notifyChangedByActionEvent(event.eventDatabaseOptions.boundData, res)
-                                            },
-                                            err => {
-                                                this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
-                                            }
+                    this.logger.debug('allow chaining events', allowChainingEvents)
+                    if (allowChainingEvents) {
+                        // Check with chaining events must be notified
+                        _.forEach(this.control.pageControlEvents, event => {
+                            switch (event.eventActionType) {
+                                case EventActionType.TriggerEvent:
+                                    _.forEach(event.triggerEventOptions.eventsList, eventOpt => {
+                                        this.pageService.notifyTriggeringEvent(this.section.name + '_' + eventOpt)
+                                    })
+                                    break
+                                case EventActionType.QueryDatabase:
+                                    this.pageService.executeActionEventOnDatabase(event, this.section.name, this.control.name)
+                                        .pipe(
+                                            tap(
+                                                res => {
+                                                    this.notifyChangedByActionEvent(event.eventDatabaseOptions.boundData, res)
+                                                },
+                                                err => {
+                                                    this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
+                                                }
+                                            )
+                                        ).subscribe()
+                                    break
+                                case EventActionType.WebService:
+                                    this.pageService.executeActionEventOnWebService(event)
+                                        .pipe(
+                                            tap(
+                                                res => {
+                                                    this.notifyChangedByActionEvent(event.eventHttpServiceOptions.boundData, res)
+                                                },
+                                                err => {
+                                                    this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
+                                                }
+                                            )
                                         )
-                                    ).subscribe()
-                                break
-                            case EventActionType.WebService:
-                                this.pageService.executeActionEventOnWebService(event)
-                                    .pipe(
-                                        tap(
-                                            res => {
-                                                this.notifyChangedByActionEvent(event.eventHttpServiceOptions.boundData, res)
-                                            },
-                                            err => {
-                                                this.shortcutUtil.toastMessage(this.translate.instant('common.somethingWentWrong'), ToastType.Error)
-                                            }
-                                        )
-                                    )
-                                break
-                        }
-                    })
+                                    break
+                            }
+                        })
+                    }
                 }
             )
         ).subscribe()
@@ -343,7 +347,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     getErrorMessage(validatorName: string) {
-        const errorMessage = _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage        
+        const errorMessage = _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
         return errorMessage
     }
 

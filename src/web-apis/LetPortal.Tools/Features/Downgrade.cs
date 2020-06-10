@@ -28,7 +28,7 @@ namespace LetPortal.Tools.Features
                     Console.WriteLine("DOWNGRADE VERSION: " + matchingVersions.Last().VersionNumber);
                     Console.WriteLine("-----------------------++++++++++++++++-------------------------");
 
-                    var portalVersions = DowngradingVersion(matchingVersions, context);
+                    var portalVersions = await DowngradingVersion(matchingVersions, context);
                     foreach (var portalVersion in portalVersions)
                     {
                         var storedVersion = context.VersionRepository.GetAsQueryable().Where(a => a.VersionNumber == portalVersion.VersionNumber).FirstOrDefault();
@@ -50,7 +50,7 @@ namespace LetPortal.Tools.Features
             }
         }
 
-        private List<Version> DowngradingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
+        private async Task<List<Version>> DowngradingVersion(IEnumerable<IVersion> versions, ToolsContext toolsContext)
         {
             var effectivePortalVersions = new List<Version>();
             var dicVersions = new Dictionary<string, List<string>>();
@@ -65,7 +65,7 @@ namespace LetPortal.Tools.Features
                 var executingVersions = new List<string>();
                 foreach (var version in matchingVersions)
                 {
-                    version.Downgrade(toolsContext.VersionContext);
+                    await version.Downgrade(toolsContext.VersionContext);
                     executingVersions.Add(version.GetType().GetTypeInfo().Name);
                     Console.WriteLine(string.Format("Downgrading {0} Version {1} Completely!", version.GetType().GetTypeInfo().Name, version.VersionNumber));
                 }

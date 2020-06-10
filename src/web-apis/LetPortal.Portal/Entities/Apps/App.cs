@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Persistences.Attributes;
 using LetPortal.Portal.Entities.Menus;
@@ -31,6 +32,12 @@ namespace LetPortal.Portal.Entities.Apps
         public List<Menu> Menus { get; set; } = new List<Menu>();
 
         public List<MenuProfile> MenuProfiles { get; set; } = new List<MenuProfile>();
+
+        public void AddSubMenu(string parentMenu, Menu subMenu)
+        {
+            var menu = Menus.First(a => a.Id == parentMenu);
+            menu.SubMenus.Add(subMenu);
+        }
     }
 
     public class MenuProfile

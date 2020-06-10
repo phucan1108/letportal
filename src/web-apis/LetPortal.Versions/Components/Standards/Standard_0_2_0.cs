@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 
@@ -8,14 +9,15 @@ namespace LetPortal.Versions.Components
     {
         public string VersionNumber => "0.2.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<StandardComponent>("5d615e501773a96ee8eb5ed3");
             versionContext.DeleteData<StandardComponent>("5d6222ec3aae6a79ecf035e9");
             versionContext.DeleteData<StandardComponent>("5d63423dbaac7d4790b7d300");
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var userFormStandard = new StandardComponent
             {
@@ -788,6 +790,8 @@ namespace LetPortal.Versions.Components
             versionContext.InsertData(userFormStandard);
             versionContext.InsertData(registerNewUserFormStandard);
             versionContext.InsertData(roleStandard);
+
+            return Task.CompletedTask;
         }
     }
 }

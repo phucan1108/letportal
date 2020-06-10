@@ -12,6 +12,7 @@ import { AppInstallationDialog } from '../../components/app-installation/app-ins
 import { Router } from '@angular/router';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlattener, MatTree, MatTreeFlatDataSource } from '@angular/material/tree';
+import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'let-app-installation',
@@ -49,10 +50,13 @@ export class AppInstallationPage implements OnInit {
         private dialog: MatDialog,
         private translate: TranslateService,
         private router: Router,
-        private shortcut: ShortcutUtil
+        private shortcut: ShortcutUtil,
+        private pageService: PageService
     ) { }
 
-    ngOnInit(): void { }
+    ngOnInit(): void { 
+        this.pageService.init('app-installation').subscribe()
+    }
 
     onFileChange($event){
         const latestFile: File = $event.target.files[$event.target.files.length - 1]
