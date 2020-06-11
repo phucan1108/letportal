@@ -1,23 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using LetPortal.Core.Utils;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LetPortal.Versions
 {
     public class Scanner
     {
-        public static IEnumerable<IPortalVersion> GetAllPortalVersions()
+        public static IEnumerable<IPortalVersion> GetAllPortalVersions(IServiceProvider serviceProvider)
         {
             var currentAssembly = Assembly.GetExecutingAssembly();
 
-            return ReflectionUtil.GetAllInstances<IPortalVersion>(currentAssembly);
+            return ReflectionUtil.GetAllInstances<IPortalVersion>(currentAssembly, serviceProvider);
         }
 
-        public static IEnumerable<IIdentityVersion> GetAllIdentityVersions()
+        public static IEnumerable<IIdentityVersion> GetAllIdentityVersions(IServiceProvider serviceProvider)
         {
             var currentAssembly = Assembly.GetExecutingAssembly();
 
-            return ReflectionUtil.GetAllInstances<IIdentityVersion>(currentAssembly);
+            return ReflectionUtil.GetAllInstances<IIdentityVersion>(currentAssembly, serviceProvider);
         }
     }
 }

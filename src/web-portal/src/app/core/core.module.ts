@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders, Provider } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateConfigs } from './shell/translates/translate.configs'
 import { DatasourceOptionsService } from 'services/datasourceopts.service';
@@ -27,6 +27,8 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatInputModule } from '@angular/material/input'
 import { DownloadFileService } from 'services/downloadfile.service';
+import { PAGE_INTERCEPTORS, InterceptorsProvider } from './interceptors/interceptor.provider';
+import { Interceptor } from './interceptors/interceptor';
 @NgModule({
   declarations: [
     UnlockScreenDialogComponent,
@@ -105,8 +107,9 @@ export class CoreModule {
     };
   }
   static forChild(
-    builtInMethods: any[] = null,
-    controlEvents: ControlEventExecution[] = null): ModuleWithProviders {
+    builtInMethods: any[] = [],
+    controlEvents: ControlEventExecution[] = [],
+    ): ModuleWithProviders<CoreModule> {  
     return {
       ngModule: CoreModule,
       providers: [

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
@@ -9,16 +10,18 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<DynamicList>("5d0f09de62c8371c183c8c6f");
             versionContext.DeleteData<DynamicList>("5d0f2dca6ba2fd4ca49e3741");
             versionContext.DeleteData<DynamicList>("5d0f2dca6ba2fd4ca49e3742");
             versionContext.DeleteData<DynamicList>("5d0f2dca6ba2fd4ca49e3743");
             versionContext.DeleteData<DynamicList>("5d0f2dca6ba2fd4ca49e3746");
+
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var databaseListSectionPart = new DynamicList
             {
@@ -971,6 +974,8 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
             versionContext.InsertData(pageListSectionPart);
             versionContext.InsertData(userListSectionPart);
             versionContext.InsertData(roleListSectionPart);
+
+            return Task.CompletedTask;
         }
     }
 }

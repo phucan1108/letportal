@@ -1,0 +1,4 @@
+/**
+ * PUT ALLL YOUR INTERCEPTORS HERE
+ */
+export const ALL_INTERCEPTORS = [];

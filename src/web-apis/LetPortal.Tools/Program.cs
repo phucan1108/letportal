@@ -18,6 +18,7 @@ using McMaster.Extensions.CommandLineUtils;
 using MongoDB.Driver;
 using Microsoft.Extensions.DependencyInjection;
 using LetPortal.Portal;
+using LetPortal.Identity;
 
 namespace LET.Tools.Installation
 {
@@ -137,14 +138,18 @@ namespace LET.Tools.Installation
                         var latestVersion = versionMongoRepository.GetAsQueryable().ToList().LastOrDefault();
 
                         var allVersions = Enumerable.Empty<IVersion>();
+                        IServiceProvider serviceProvider = null;
                         if (IsPortal())
                         {
-                            allVersions = Scanner.GetAllPortalVersions();
                             RegisterServicesForPortal(services, databaseOption);
+                            serviceProvider = services.BuildServiceProvider();
+                            allVersions = Scanner.GetAllPortalVersions(serviceProvider);                                          
                         }
                         else if (IsIdentity())
                         {
-                            allVersions = Scanner.GetAllIdentityVersions();
+                            RegisterServicesForIdentity(services, databaseOption);
+                            serviceProvider = services.BuildServiceProvider();
+                            allVersions = Scanner.GetAllIdentityVersions(serviceProvider);
                         }
 
                         toolsContext = new ToolsContext
@@ -156,7 +161,7 @@ namespace LET.Tools.Installation
                             VersionRepository = versionMongoRepository,
                             PatchesFolder = PatchesFolder,
                             AllowPatch = !string.IsNullOrEmpty(PatchesFolder),
-                            Services = services.BuildServiceProvider(),
+                            Services = serviceProvider,
                             Arguments = CombineArguments()
                         };
                         break;
@@ -184,8 +189,9 @@ namespace LET.Tools.Installation
                             sqlEFVersionContext.ServiceManagementOptions = storingConnections.ServiceManagementConnection;
                             sqlEFVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
 
-                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllPortalVersions();
                             RegisterServicesForPortal(services, databaseOption);
+                            var sqlServiceProvider = services.BuildServiceProvider();
+                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllPortalVersions(sqlServiceProvider);                            
                             toolsContext = new ToolsContext
                             {
                                 LatestVersion = latestVersionEF,
@@ -193,7 +199,7 @@ namespace LET.Tools.Installation
                                 VersionNumber = VersionNumber,
                                 Versions = allSQLVersions,
                                 VersionRepository = portalVersionRepository,
-                                Services = services.BuildServiceProvider(),
+                                Services = sqlServiceProvider,
                                 AllowPatch = !string.IsNullOrEmpty(PatchesFolder),
                                 Arguments = CombineArguments()
                             };
@@ -218,7 +224,9 @@ namespace LET.Tools.Installation
                             sqlEFVersionContext.ServiceManagementOptions = storingConnections.ServiceManagementConnection;
                             sqlEFVersionContext.IdentityDbOptions = storingConnections.IdentityConnection;
 
-                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions();
+                            RegisterServicesForIdentity(services, databaseOption);
+                            var sqlServiceProvider = services.BuildServiceProvider();
+                            IEnumerable<IVersion> allSQLVersions = Scanner.GetAllIdentityVersions(sqlServiceProvider);
 
                             toolsContext = new ToolsContext
                             {
@@ -227,7 +235,8 @@ namespace LET.Tools.Installation
                                 VersionNumber = VersionNumber,
                                 Versions = allSQLVersions,
                                 VersionRepository = portalVersionRepository,
-                                AllowPatch = !string.IsNullOrEmpty(PatchesFolder)
+                                AllowPatch = !string.IsNullOrEmpty(PatchesFolder) ,
+                                Services = sqlServiceProvider
                             };
                         }
 
@@ -261,6 +270,16 @@ namespace LET.Tools.Installation
             PortalExtensions.RegisterRepos(services, databaseOptions, true);
             PortalExtensions.RegisterProviders(services);
             PortalExtensions.RegisterServices(services);
+        }
+
+        private void RegisterServicesForIdentity(IServiceCollection services, DatabaseOptions databaseOptions)
+        {
+            if(databaseOptions.ConnectionType == ConnectionType.MongoDB)
+            {
+                services.AddTransient(a => new MongoConnection(databaseOptions));
+            }
+
+            IdentityExtensions.RegisterRepos(services, databaseOptions, true);
         }
 
         private RootArgument CombineArguments()

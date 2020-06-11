@@ -34,6 +34,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader'
 import { LocalizationService } from 'services/localization.service';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MatPaginatorIntlCustom } from './core/custom-materials/matPaginatorIntlCustom';
+import { ALL_INTERCEPTORS } from './modules/customs/custom.config';
 
 export function hlJSLang() {
   return [

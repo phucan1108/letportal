@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Databases;
@@ -9,12 +10,13 @@ namespace LetPortal.Versions.Databases
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<DatabaseConnection>(Constants.PortalDatabaseId);
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var databaseOptions = versionContext.DatabaseOptions as DatabaseOptions;
             var databaseManagement = new DatabaseConnection
@@ -28,6 +30,8 @@ namespace LetPortal.Versions.Databases
             };
 
             versionContext.InsertData(databaseManagement);
+
+            return Task.CompletedTask;
         }
     }
 

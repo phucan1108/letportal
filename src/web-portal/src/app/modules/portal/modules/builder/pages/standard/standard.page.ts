@@ -124,11 +124,11 @@ export class StandardPagePage implements OnInit {
         const formValues = this.standardFormGroup.value
         this.standardComponent.name = this.isEditMode ? this.standardComponent.name :  formValues.name
         this.standardComponent.displayName = formValues.displayName
-        this.standardComponent.allowArrayData = formValues.allowArrayData
+        this.standardComponent.allowArrayData = ObjectUtils.isNotNull(formValues.allowArrayData) ? formValues.allowArrayData : false
         this.standardComponent.controls = this.controls
         this.standardComponent.layoutType = parseInt(formValues.layoutType)
         this.standardComponent.options = this.shellOptions
-        this.standardComponent.appId = formValues.app
+        this.standardComponent.appId = formValues.app        
     }
 
     onPopulatedControls($event: ExtendedPageControl[]) {

@@ -25,6 +25,8 @@ import { CustomHttpService } from './customhttp.service';
 import { ObjectUtils } from '../utils/object-util';
 import { SessionService } from './session.service';
 import { TranslateService } from '@ngx-translate/core';
+import { InterceptorsProvider } from '../interceptors/interceptor.provider';
+import { Interceptor } from '../interceptors/interceptor';
 
 /**
  * This class contains all base methods for interacting with Page
@@ -41,7 +43,7 @@ export class PageService {
     private eventSub: Subscription
     private configs: any
     private sectionValidationCounter = 0
-
+    private interceptor: Interceptor
     constructor(
         private translate: TranslateService,
         private customHttpService: CustomHttpService,
@@ -55,9 +57,10 @@ export class PageService {
         private shortcutUtil: ShortcutUtil,
         public databasesClient: DatabasesClient,
         private logger: NGXLogger,
-        private store: Store
+        private store: Store,
+        private interceptorProvider: InterceptorsProvider
     ) {
-        this.configs = this.configurationProvider.getCurrentConfigs()
+        this.configs = this.configurationProvider.getCurrentConfigs()        
     }
 
 
@@ -95,6 +98,7 @@ export class PageService {
      * @returns Observable PageStateModel
      */
     initRender(page: Page, activatedRoute: ActivatedRoute): Observable<PageStateModel> {
+        this.interceptor = this.interceptorProvider.getPageInterceptor(page.name)
         const claims$ = this.initPageClaims(page.name)
         claims$.subscribe(
             claims => {
@@ -279,16 +283,23 @@ export class PageService {
      * Changes control value
      * @param controlFullName Pattern: {sectionName}_{controlName}, Sensistive name Ex: databaseinfo_connectionString
      * @param data
+     * @returns if returns false, means skip chaning events, otherwise continuing chaning events
      */
-    changeControlValue(controlFullName: string, data: any) {
+    changeControlValue(controlFullName: string, data: any): boolean {
         const splitted = controlFullName.split('_')
+        const section = splitted[0]
+        const control = splitted[1]
+        const checked = this.checkInterceptorEvent(section, control, 'change')
         this.store.dispatch(new ChangeControlValueEvent({
             name: controlFullName + '_change',
-            controlName: splitted[1],
-            sectionName: splitted[0],
+            controlName: control,
+            sectionName: section,
             data,
-            triggeredByEvent: ''
-        }))
+            triggeredByEvent: '',
+            allowChainingEvents: checked
+        }))   
+        
+        return checked
     }
 
     executeCommandByName(commandName: string) {
@@ -751,8 +762,13 @@ export class PageService {
                 name: (command.name + '_click').toLowerCase(),
                 sectionName: '',
                 triggeredByEvent: '',
-                data: null
+                data: null,
+                allowChainingEvents: true
             }))
         }
+    }
+
+    private checkInterceptorEvent(section: string, control: string, event: string): boolean{
+        return this.interceptor.executeControlEvent(section, control, event, { pageService: this })
     }
 }

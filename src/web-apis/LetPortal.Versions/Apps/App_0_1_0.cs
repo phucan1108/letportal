@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Menus;
@@ -10,12 +11,14 @@ namespace LetPortal.Versions.Apps
     {
         public string VersionNumber => "0.1.0";
 
-        public void Downgrade(IVersionContext versionContext)
+        public Task Downgrade(IVersionContext versionContext)
         {
             versionContext.DeleteData<App>(Constants.CoreAppId);
+
+            return Task.CompletedTask;
         }
 
-        public void Upgrade(IVersionContext versionContext)
+        public Task Upgrade(IVersionContext versionContext)
         {
             var coreApp = new App
             {
@@ -192,6 +195,7 @@ namespace LetPortal.Versions.Apps
             };
 
             versionContext.InsertData(coreApp);
+            return Task.CompletedTask;
         }
     }
 }

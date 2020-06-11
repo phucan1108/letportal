@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Provider, INJECTOR } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PagesRoutingModule } from './portal-pages-routing.module';
 import { PagesWrapperComponent } from './portal-wrapper.component';
@@ -26,7 +26,17 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { ChatModule } from './modules/chat/chat.module';
 import { CoreModule } from 'app/core/core.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { ALL_INTERCEPTORS } from '../customs/custom.config';
+import { PAGE_INTERCEPTORS, InterceptorsProvider } from 'app/core/interceptors/interceptor.provider';
+import { SharedModule } from '../shared/shortcut.module';
 
+const mapToProvider = (interceptor: any): Provider => {
+    return {
+        provide: PAGE_INTERCEPTORS,
+        useClass: interceptor,
+        multi: true
+    }
+}
 @NgModule({
     declarations: [
         PagesWrapperComponent,
@@ -59,6 +69,11 @@ import { TranslateModule } from '@ngx-translate/core';
     ],
     exports: [],
     providers: [
+        ...ALL_INTERCEPTORS,
+        ...ALL_INTERCEPTORS.map(mapToProvider),
+        {
+            provide: InterceptorsProvider, useClass: InterceptorsProvider
+        }
     ],
 })
-export class PortalPagesModule {}
+export class PortalPagesModule { }

@@ -1,11 +1,13 @@
-﻿namespace LetPortal.Core.Versions
+﻿using System.Threading.Tasks;
+
+namespace LetPortal.Core.Versions
 {
     public interface IVersion
     {
         string VersionNumber { get; }
 
-        void Upgrade(IVersionContext versionContext);
+        Task Upgrade(IVersionContext versionContext);
 
-        void Downgrade(IVersionContext versionContext);
+        Task Downgrade(IVersionContext versionContext);
     }
 }

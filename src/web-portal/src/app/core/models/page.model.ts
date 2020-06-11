@@ -37,6 +37,7 @@ export interface PageControlActionEvent {
     controlName: string
     triggeredByEvent: string
     data: any
+    allowChainingEvents: boolean
 }
 
 export interface PageLoadedDatasource {
