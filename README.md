@@ -20,6 +20,16 @@ You can reach this [Home page](https://letportal.app) to keep up-to-date feature
 
 You can read here [Documentation](https://docs.letportal.app) for full documentation
 
+# Important note
+
+Since 0.8.0, I have migrated from Angular 8 to 9. So LET Portal was stucked by two external libraries: emoji-picker and momentum-table. Please check carefully page https://docs.letportal.app/getting-started/let-start/ before running SPA website.
+
+``` 
+ng build emoji-picker
+
+ng build momentum-table
+```
+
 # Code Quality
 
 ![Result](https://codescene.io/projects/7362/status.svg)
