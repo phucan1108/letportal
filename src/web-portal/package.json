@@ -54,7 +54,7 @@
     "jquery": "^3.5.0",
     "jsoneditor": "^5.19.0",
     "jwt-decode": "2.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "mat-progress-buttons": "^9.1.1",
     "minimist": "^1.2.5",
     "moment": "^2.24.0",
