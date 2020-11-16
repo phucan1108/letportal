@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using LetPortal.Core.Tools;
 using LetPortal.Core.Versions;
 
 namespace LetPortal.Tools.Features
@@ -11,20 +12,21 @@ namespace LetPortal.Tools.Features
     {
         public string CommandName => "uninstall";
 
-        public async Task RunAsync(ToolsContext context)
+        public async Task RunAsync(object context)
         {
-            if (context.LatestVersion != null)
+            var toolsContext = context as ToolsContext;
+            if (toolsContext.LatestVersion != null)
             {
-                var requestingVersionNumber = context.LatestVersion.GetNumber();
-                var matchingVersions = context.Versions.Where(a => a.GetNumber() <= requestingVersionNumber);
+                var requestingVersionNumber = toolsContext.LatestVersion.GetNumber();
+                var matchingVersions = toolsContext.Versions.Where(a => a.GetNumber() <= requestingVersionNumber);
                 Console.WriteLine("----------------------UNINSTALL PROGRESS------------------------");
                 Console.WriteLine("UNINSTALLING VERSION: " + matchingVersions.Last().VersionNumber);
                 Console.WriteLine("-----------------------++++++++++++++++-------------------------");
-                await UninstallingVersion(matchingVersions, context);
-                var foundVersions = await context.VersionRepository.GetAllAsync(isRequiredDiscriminator: false);
+                await UninstallingVersion(matchingVersions, toolsContext);
+                var foundVersions = await toolsContext.VersionRepository.GetAllAsync(isRequiredDiscriminator: false);
                 foreach (var version in foundVersions)
                 {
-                    await context.VersionRepository.DeleteAsync(version.Id);
+                    await toolsContext.VersionRepository.DeleteAsync(version.Id);
                 }
             }
             else

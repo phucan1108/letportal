@@ -1,17 +1,17 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTable } from '@angular/material/table'
-import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { NGXLogger } from 'ngx-logger';
-import { Guid } from 'guid-typescript';
-import * as _ from 'lodash';
-import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { ExtendedShellOption } from './extened.shell.model';
-import { Observable } from 'rxjs';
-import { DataTable } from 'momentum-table';
-import { ShellOptionDialogComponent } from './shelloption.dialog.component';
-import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
+import { MatTable } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { DataTable } from 'app/modules/thirdparties/momentum-table/datatable/datatable';
+import { Guid } from 'guid-typescript';
+import { NGXLogger } from 'ngx-logger';
+import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
+import { Observable } from 'rxjs';
+import { ExtendedShellOption } from './extened.shell.model';
+import { ShellOptionDialogComponent } from './shelloption.dialog.component';
+ 
 
 @Component({
     selector: 'let-shell-option',
@@ -46,7 +46,7 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.shellOptions$.subscribe(options => {
             this.logger.debug('Passing options', options)
-            _.forEach(options, shell => {
+            options?.forEach(shell => {
                 shell.id = Guid.create().toString()
             })
             this.shellOptions = options
@@ -70,7 +70,7 @@ export class ShellOptionComponent implements OnInit, AfterViewInit {
     }
 
     deleteShell(shell: ExtendedShellOption) {
-        this.shellOptions = _.filter(this.shellOptions, (elem) => {
+        this.shellOptions = this.shellOptions.filter((elem) => {
             return elem.id !== shell.id
         })
         this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);

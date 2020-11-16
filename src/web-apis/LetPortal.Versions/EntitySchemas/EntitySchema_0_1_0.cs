@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.EntitySchemas;
 
 namespace LetPortal.Versions.EntitySchemas

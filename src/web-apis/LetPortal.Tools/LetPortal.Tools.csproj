@@ -25,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LetPortal.Portal\LetPortal.Portal.csproj" />
+    <ProjectReference Include="..\LetPortal.CMS.Tools\LetPortal.CMS.Tools.csproj" />
     <ProjectReference Include="..\LetPortal.Versions\LetPortal.Versions.csproj" />
+    <ProjectReference Include="..\PersonalBlog.Tools\PersonalBlog.Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

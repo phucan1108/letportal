@@ -5,6 +5,7 @@ using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Databases;
 using LetPortal.Portal.Models.Shared;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -15,6 +16,13 @@ namespace LetPortal.Portal.Executions.Mongo
     public class MongoExtractionDatabase : IExtractionDatabase
     {
         public ConnectionType ConnectionType => ConnectionType.MongoDB;
+
+        private readonly IOptionsMonitor<MongoOptions> _mongoOptions;
+
+        public MongoExtractionDatabase(IOptionsMonitor<MongoOptions> options)
+        {
+            _mongoOptions = options;
+        }
 
         public async Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
         {
@@ -40,57 +48,49 @@ namespace LetPortal.Portal.Executions.Mongo
 
                 }
             }
+
+            formattedString = _mongoOptions.CurrentValue.EliminateDoubleQuotes(formattedString);
             var result = new ExtractingSchemaQueryModel();
 
-            var parsingObject = JObject.Parse(formattedString);
+            var parsingBson = BsonSerializer.Deserialize<BsonDocument>(formattedString);
 
-            var mongoClient = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
+            var mongoDatabase = new MongoClient(database.ConnectionString).GetDatabase(database.DataSource);
 
-            var executionGroupTypes = parsingObject.Children().Select(a => (a as JProperty).Name);
+            var executionGroupType = parsingBson.First().Name;
 
-            foreach (var executionGroupType in executionGroupTypes)
+            switch (executionGroupType)
             {
-                switch (executionGroupType)
-                {
-                    case Constants.QUERY_KEY:
-                        var collectionNames = parsingObject[Constants.QUERY_KEY].Children().Select(a => (a as JProperty).Name);
-                        foreach (var collectionName in collectionNames)
+                case Constants.QUERY_KEY:
+                    var mongoCollection = GetCollection(mongoDatabase, parsingBson, Constants.QUERY_KEY);
+                    var aggregatePipes = parsingBson[Constants.QUERY_KEY][0].AsBsonArray.Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+                    var aggregateFluent = mongoCollection.Aggregate();
+                    foreach (var pipe in aggregatePipes)
+                    {
+                        aggregateFluent = aggregateFluent.AppendStage(pipe);
+                    }
+                    using (var executingCursor = await aggregateFluent.ToCursorAsync())
+                    {
+                        while (executingCursor.MoveNext())
                         {
-                            var mongoCollection = mongoClient.GetCollection<BsonDocument>(collectionName);
-                            var collectionQuery = parsingObject[Constants.QUERY_KEY][collectionName].ToString(Newtonsoft.Json.Formatting.Indented);
-                            var aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
+                            // Important note: this query must have one row result for extracting params and filters
+                            var currentDocument = executingCursor.Current.First();
 
-                            var aggregateFluent = mongoCollection.Aggregate();
-                            foreach (var pipe in aggregatePipes)
+                            foreach (var element in currentDocument.Elements)
                             {
-                                aggregateFluent = aggregateFluent.AppendStage(pipe);
-                            }
-
-                            using (var executingCursor = await aggregateFluent.ToCursorAsync())
-                            {
-                                while (executingCursor.MoveNext())
+                                var columnField = new ColumnField
                                 {
-                                    // Important note: this query must have one row result for extracting params and filters
-                                    var currentDocument = executingCursor.Current.First();
+                                    Name = element.Name,
+                                    DisplayName = element.Name,
+                                    FieldType = GetTypeByBsonDocument(element.Value)
+                                };
 
-                                    foreach (var element in currentDocument.Elements)
-                                    {
-                                        var columnField = new ColumnField
-                                        {
-                                            Name = element.Name,
-                                            DisplayName = element.Name,
-                                            FieldType = GetTypeByBsonDocument(element.Value)
-                                        };
-
-                                        result.ColumnFields.Add(columnField);
-                                    }
-                                }
+                                result.ColumnFields.Add(columnField);
                             }
                         }
-                        break;
-                    default:
-                        break;
-                }
+                    }
+                    break;
+                default:
+                    break;
             }
 
             return result;
@@ -123,6 +123,12 @@ namespace LetPortal.Portal.Executions.Mongo
                 return "document";
             }
             return "string";
+        }
+
+        private static IMongoCollection<BsonDocument> GetCollection(IMongoDatabase mongoDatabase, BsonDocument parsingBson, string operatorName)
+        {
+            var collectionName = parsingBson[operatorName].AsBsonDocument.First().Name;
+            return mongoDatabase.GetCollection<BsonDocument>(collectionName);
         }
     }
 }

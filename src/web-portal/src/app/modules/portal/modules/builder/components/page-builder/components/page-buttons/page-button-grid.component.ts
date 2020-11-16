@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, Input } from '@angular/core';
 import { PageButton, ActionType, Route, PageSection } from 'services/portal.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import * as _ from 'lodash';
+ 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { Guid } from 'guid-typescript';
@@ -59,7 +59,7 @@ export class PageButtonGridComponent implements OnInit {
                         case InitEditPageBuilderAction:
                             this.currentActionCommands = []
                             const commandsTempEdit = result.processPage.commands as Array<PageButton>
-                            _.forEach(commandsTempEdit, action => {
+                            commandsTempEdit?.forEach(action => {
                                 this.currentActionCommands.push(ObjectUtils.clone(action))
                             })
                             if(ObjectUtils.isNotNull(result.processPage.builder.sections)){
@@ -70,7 +70,7 @@ export class PageButtonGridComponent implements OnInit {
                         case GeneratePageActionCommandsAction:
                             this.currentActionCommands = []
                             const commandsTemp = result.processPage.commands as Array<PageButton>
-                            _.forEach(commandsTemp, action => {
+                            commandsTemp?.forEach(action => {
                                 this.currentActionCommands.push(ObjectUtils.clone(action))
                             })
                             break
@@ -175,7 +175,7 @@ export class PageButtonGridComponent implements OnInit {
     }
 
     deleteCommand(command: PageButton) {
-        this.currentActionCommands = _.filter(this.currentActionCommands, (elem) => {
+        this.currentActionCommands = this.currentActionCommands.filter((elem) => {
             return elem.id !== command.id
         })
         this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
@@ -232,7 +232,7 @@ export class PageButtonGridComponent implements OnInit {
         if (this.selection.selected.length === this.currentActionCommands.length) {
             this.selection.clear();
         } else {
-            this.currentActionCommands.forEach(row => this.selection.select(row));
+            this.currentActionCommands?.forEach(row => this.selection.select(row));
         }
     }
 
@@ -247,8 +247,8 @@ export class PageButtonGridComponent implements OnInit {
             }
 
             for (let i = 0; i < this.selection.selected.length; i++) {
-                this.currentActionCommands = _.remove(this.currentActionCommands, (elem) => {
-                    return elem.id === this.selection.selected[i].id
+                this.currentActionCommands = this.currentActionCommands.filter((elem) => {
+                    return elem.id !== this.selection.selected[i].id
                 })
             }
             this.refreshControlTable();
@@ -270,7 +270,7 @@ export class PageButtonGridComponent implements OnInit {
     generateAvailableEvents(): Array<string> {
         const events: Array<string> = []
 
-        _.forEach(this.currentActionCommands, (actionCommand: PageButton) => {
+        this.currentActionCommands?.forEach((actionCommand: PageButton) => {
             events.push(`${actionCommand.name}_click`.toLowerCase())
         })
 

@@ -64,11 +64,16 @@
                 </div>
                 <div class="form-group row">
                     <label class="col-lg-2 col-form-label">
-                        {{ 'common.standardArray' | translate }}
-                    </label>
+                        {{ 'pageBuilder.standard.type.label' | translate }}:</label>
                     <div class="col-lg-6">
-                        <mat-slide-toggle formControlName="allowArrayData" name="allowArrayData" class="pt-2">
-                        </mat-slide-toggle>
+                        <mat-form-field class="field-full-width">
+                            <mat-select placeholder="{{ 'pageBuilder.standard.type.placeholder' | translate }}"
+                                formControlName="type">
+                                <mat-option *ngFor="let type of _standardTypes" [value]="type.value">
+                                    {{ type.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="form-group row">

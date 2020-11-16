@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { filter, tap } from 'rxjs/operators';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import * as _ from 'lodash';
+ 
 import { UpdateAvailableEvents, NextToWorkflowAction, NextToRouteAction, GeneratePageEventsAction, UpdatePageEventsAction, InitEditPageBuilderAction, GatherAllChanges, UpdateAvailableBoundDatas } from 'stores/pages/pagebuilder.actions';
 import { PageEvent, EventActionType } from 'services/portal.service';
 import { PageBuilderState, PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
@@ -56,7 +56,7 @@ export class PageEventGridComponent implements OnInit {
                     switch (state.filterState) {
                         case NextToWorkflowAction:
                             this.currentEvents = []
-                            _.forEach(state.processPage.events, event => {
+                            state.processPage.events?.forEach(event => {
                                 this.currentEvents.push({
                                     ...event
                                 })
@@ -66,7 +66,7 @@ export class PageEventGridComponent implements OnInit {
                             break
                         case GeneratePageEventsAction:
                             this.currentEvents = []
-                            _.forEach(state.processPage.events, event => {
+                            state.processPage.events?.forEach(event => {
                                 this.currentEvents.push({
                                     ...event
                                 })
@@ -119,7 +119,7 @@ export class PageEventGridComponent implements OnInit {
     }
 
     translateEventActionType(event: PageEvent) {
-        return _.find(this._eventActionTypes, e => e.value === event.eventActionType).name
+        return this._eventActionTypes.find(e => e.value === event.eventActionType).name
     }
 
     editEvent(event: PageEvent) {
@@ -142,7 +142,7 @@ export class PageEventGridComponent implements OnInit {
     }
 
     deleteEvent(event: PageEvent) {
-        this.currentEvents = _.filter(this.currentEvents, (elem) => {
+        this.currentEvents = this.currentEvents.filter((elem) => {
             return elem.eventName !== event.eventName
         })
         this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);

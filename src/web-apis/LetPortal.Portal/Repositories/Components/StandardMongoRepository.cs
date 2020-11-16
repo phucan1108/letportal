@@ -94,7 +94,7 @@ namespace LetPortal.Portal.Repositories.Components
             {
                 var regexFilter = Builders<StandardComponent>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
-                var arrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.AllowArrayData, true);
+                var arrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Array);
                 var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, regexFilter, arrayFilter);
                 return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
             }
@@ -107,8 +107,21 @@ namespace LetPortal.Portal.Repositories.Components
             {
                 var regexFilter = Builders<StandardComponent>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
-                var nonArrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.AllowArrayData, false);
+                var nonArrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Standard);
                 var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, regexFilter, nonArrayFilter);
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            }
+            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+        }
+
+        public Task<IEnumerable<ShortEntityModel>> GetShortTreeStandards(string keyWord = null)
+        {
+            if (!string.IsNullOrEmpty(keyWord))
+            {
+                var regexFilter = Builders<StandardComponent>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
+                var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
+                var treeFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Tree);
+                var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, regexFilter, treeFilter);
                 return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
             }
             return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());

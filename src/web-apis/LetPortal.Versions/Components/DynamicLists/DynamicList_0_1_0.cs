@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
@@ -32,7 +33,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "databases",
@@ -172,9 +173,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -187,7 +188,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -200,7 +201,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "databaseConnectionType",
                             DisplayName = "Connection Type",
@@ -223,7 +224,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "connectionString",
                             DisplayName = "Connection String",
@@ -236,7 +237,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "dataSource",
                             DisplayName = "Datasource",
@@ -262,7 +263,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "apps",
@@ -442,9 +443,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -457,7 +458,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -470,7 +471,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "displayName",
                             DisplayName = "Name",
@@ -483,7 +484,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "currentVersionNumber",
                             DisplayName = "Version",
@@ -496,7 +497,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "defaultUrl",
                             DisplayName = "Default Url",
@@ -508,7 +509,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "createdDate",
                             DisplayName = "Created Date",
@@ -521,7 +522,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 4
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "modifiedDate",
                             DisplayName = "Modified Date",
@@ -547,7 +548,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "apps",
@@ -559,9 +560,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -574,7 +575,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "displayName",
                             DisplayName = "Name",
@@ -587,7 +588,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "urlPath",
                             DisplayName = "Url",
@@ -600,7 +601,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -725,7 +726,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.IdentityDatabaseId,
                         EntityName = "users",
@@ -737,9 +738,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -752,7 +753,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "username",
                             DisplayName = "Username",
@@ -765,7 +766,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "email",
                             DisplayName = "Email",
@@ -778,7 +779,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "roles",
                             DisplayName = "Roles",
@@ -792,7 +793,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             DatasourceOptions = new DynamicListDatasourceOptions
                             {
                                 Type = DatasourceControlType.Database,
-                                DatabaseOptions = new DatabaseOptions
+                                DatabaseOptions = new SharedDatabaseOptions
                                 {
                                     DatabaseConnectionId = Constants.IdentityDatabaseId,
                                     EntityName = "roles",
@@ -803,7 +804,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "isLockoutEnabled",
                             DisplayName = "Lock",
@@ -868,7 +869,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.IdentityDatabaseId,
                         EntityName = "roles",
@@ -880,9 +881,9 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -895,7 +896,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Role",

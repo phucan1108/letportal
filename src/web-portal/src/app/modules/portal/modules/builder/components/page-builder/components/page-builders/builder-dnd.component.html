@@ -15,7 +15,7 @@
         </mat-card-header>
         <mat-card-content class="align-center">
             <mat-accordion cdkDropList (cdkDropListDropped)="dropSection($event)">
-                <mat-expansion-panel *ngFor="let pageSection of pageSections" cdkDrag>
+                <mat-expansion-panel *ngFor="let pageSection of pageSections" cdkDrag [disabled]="!pageSection.relatedStandard && !pageSection.relatedArrayStandard && !pageSection.relatedTreeStandard">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <span style="padding-top: calc(.375rem + 5px);" [ngStyle]="{ 'text-decoration': pageSection.isBroken ? 'line-through' : 'initial' }">
@@ -31,7 +31,7 @@
                             </button>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <div class="row" *ngIf="!!pageSection.relatedStandard || !!pageSection.relatedArrayStandard">
+                    <div class="row" *ngIf="!!pageSection.relatedStandard || !!pageSection.relatedArrayStandard || !!pageSection.relatedTreeStandard">
                         <label class="col-lg-2 col-form-label">{{ 'pageBuilder.builderDnd.datasourceBindText' | translate }}:</label>
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
@@ -40,6 +40,19 @@
                                     autocomplete="off">
                                 <mat-hint align="end">
                                     {{displayNameInput.value?.length || 0}}/255
+                                </mat-hint>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="!!pageSection.relatedStandard || !!pageSection.relatedArrayStandard || !!pageSection.relatedTreeStandard">
+                        <label class="col-lg-2 col-form-label">{{ 'pageBuilder.builderDnd.dataStoreNameText' | translate }}:</label>
+                        <div class="col-lg-6">
+                            <mat-form-field class="field-full-width">
+                                <input [(ngModel)]="pageSection.sectionDatasource.dataStoreName" matInput
+                                    #dataStoreNameInput placeholder="{{ 'pageBuilder.builderDnd.dataStoreName.placeholder' | translate }}"
+                                    autocomplete="off">
+                                <mat-hint align="end">
+                                    {{dataStoreNameInput.value?.length || 0}}/255
                                 </mat-hint>
                             </mat-form-field>
                         </div>

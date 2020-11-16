@@ -71,10 +71,10 @@ namespace LetPortal.Portal.Repositories.Components
 
             langauges.Add(dynamicListName);
 
-            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumndDefs != null && dynamicList.ColumnsList.ColumndDefs.Count > 0)
+            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumnDefs != null && dynamicList.ColumnsList.ColumnDefs.Count > 0)
             {
 
-                foreach (var column in dynamicList.ColumnsList.ColumndDefs)
+                foreach (var column in dynamicList.ColumnsList.ColumnDefs)
                 {
                     if (!column.IsHidden)
                     {

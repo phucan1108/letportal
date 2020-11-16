@@ -70,7 +70,7 @@ export class AppPackagePage implements OnInit {
             const treeNode = new Object()
             treeNode['name'] = this.translate.instant('common.standards')
             treeNode['sub'] = []
-            this.previewApp.standards.forEach(a => {
+            this.previewApp.standards?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a
                 treeNode['sub'].push(subName)
@@ -82,7 +82,7 @@ export class AppPackagePage implements OnInit {
             const treeNode = new Object()
             treeNode['name'] = this.translate.instant('common.dynamicLists')
             treeNode['sub'] = []
-            this.previewApp.dynamicLists.forEach(a => {
+            this.previewApp.dynamicLists?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a
                 treeNode['sub'].push(subName)
@@ -94,7 +94,7 @@ export class AppPackagePage implements OnInit {
             const treeNode = new Object()
             treeNode['name'] = this.translate.instant('common.charts')
             treeNode['sub'] = []
-            this.previewApp.charts.forEach(a => {
+            this.previewApp.charts?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a
                 treeNode['sub'].push(subName)
@@ -106,7 +106,7 @@ export class AppPackagePage implements OnInit {
             const treeNode = new Object()
             treeNode['name'] = this.translate.instant('common.pages')
             treeNode['sub'] = []
-            this.previewApp.pages.forEach(a => {
+            this.previewApp.pages?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a
                 treeNode['sub'].push(subName)
@@ -118,7 +118,7 @@ export class AppPackagePage implements OnInit {
             const treeNode = new Object()
             treeNode['name'] = this.translate.instant('common.locale')
             treeNode['sub'] = []
-            this.previewApp.locales.forEach(a => {
+            this.previewApp.locales?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a
                 treeNode['sub'].push(subName)

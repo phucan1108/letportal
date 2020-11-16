@@ -63,10 +63,8 @@ namespace LetPortal.Portal
             builder.Services.Configure<MongoOptions>(builder.Configuration.GetSection("MongoOptions"));
             builder.Services.Configure<MapperOptions>(builder.Configuration.GetSection("MapperOptions"));
             builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("BackupOptions"));
-            var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();
-            var databaseOptions = builder.Configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
+            var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();            
             builder.Services.AddSingleton(mapperOptions);
-            RegisterRepos(builder.Services, databaseOptions);
             if (portalOptions.EnableFileServer)
             {
                 builder.Services.Configure<FilePublishOptions>(builder.Configuration.GetSection("FilePublishOptions"));
@@ -97,14 +95,21 @@ namespace LetPortal.Portal
             return builder;
         }
 
-        public static void RegisterRepos(IServiceCollection services, DatabaseOptions databaseOptions, bool skipMongoRegister = false)
+        public static IDatabaseOptionsBuilder RegisterPortalRepos(this IDatabaseOptionsBuilder builder, bool skipMongoRegister = false)
+        {
+            builder.Services.RegisterRepos(builder.DatabaseOptions, skipMongoRegister);
+
+            return builder;
+        }
+
+        public static void RegisterRepos(this IServiceCollection services, DatabaseOptions databaseOptions, bool skipMongoRegister = false)
         {
             if (databaseOptions.ConnectionType == ConnectionType.MongoDB)
             {
                 if (!skipMongoRegister)
                 {
                     MongoDbRegistry.RegisterEntities();
-                }                                                      
+                }
 
                 // Register all mongo repositories
                 services.AddSingleton<IDatabaseRepository, DatabaseMongoRepository>();

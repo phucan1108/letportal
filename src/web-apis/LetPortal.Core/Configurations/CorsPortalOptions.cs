@@ -18,6 +18,8 @@ namespace LetPortal.Core.Configurations
 
         public bool AllowAnyMethod { get; set; } = true;
 
+        public bool AllowCredentials { get; set; } = false;
+
         public bool AllowAny { get; set; } = true; // Turn all into AllowAny
 
     }

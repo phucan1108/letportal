@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AuthToken, AuthUser } from './auth.model';
+import { Observable, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { AccountsClient, PortalClaimModel, RolesClient } from 'services/identity.service';
 import { SessionService } from 'services/session.service';
-import { RolesClient, PortalClaimModel, UserSessionClient, AccountsClient } from 'services/identity.service';
-import { Observable, of, timer } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { AuthToken, AuthUser } from './auth.model';
 
 /**
  * This security service is helping to retrieve jwt token, user logged info
@@ -86,5 +86,9 @@ export class SecurityService {
         this.authUser = null
         this.authToken = null
         this.session.setUserSession(null)
+    }
+
+    hasCalledClaims(){
+        return this.calledClaims
     }
 }

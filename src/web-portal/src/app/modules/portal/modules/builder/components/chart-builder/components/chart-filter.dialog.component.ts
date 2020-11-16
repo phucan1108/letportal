@@ -1,13 +1,13 @@
-import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ChartFilter, FilterType } from 'services/portal.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { ChartFilterGridComponent } from './chart-filter.grid.component';
 import { StaticResources } from 'portal/resources/static-resources';
 import { BehaviorSubject } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { ChartFilter, FilterType } from 'services/portal.service';
+import { ChartFilterGridComponent } from './chart-filter.grid.component';
 
 @Component({
     selector: 'let-chart-filter-dialog',
@@ -36,11 +36,11 @@ export class ChartFilterDialogComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches) {
                 this.isSmallDevice = true
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on chart filter dialog', this.isSmallDevice)
             }
             else {
                 this.isSmallDevice = false
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on chart filter dialog', this.isSmallDevice)
             }
         });
     }
@@ -50,7 +50,7 @@ export class ChartFilterDialogComponent implements OnInit {
         this.logger.debug('Sent data chart filter', this.selectedChartFilter)
         this.isEditMode = this.selectedChartFilter.name ? true : false;
 
-        StaticResources.chartFilterTypes().forEach(filter => {
+        StaticResources.chartFilterTypes()?.forEach(filter => {
             this._filterTypes.push({
                 name: this.translate.instant(filter.name),
                 value: filter.value

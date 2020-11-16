@@ -1,13 +1,12 @@
 import { Injectable, Optional } from '@angular/core';
-import { ShellConfigProvider } from '../shellconfig.provider';
-import { ShellConfig, ShellConfigType } from '../shell.model';
-import { ObjectUtils } from 'app/core/utils/object-util';
-import * as _ from 'lodash';
-import { TranslateConfigs } from './translate.configs';
 import { PageShellData } from 'app/core/models/page.model';
-import { PageParameterModel } from 'services/portal.service';
-import { ArrayUtils } from 'app/core/utils/array-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
+import { PageParameterModel } from 'services/portal.service';
+import { ShellConfig, ShellConfigType } from '../shell.model';
+import { ShellConfigProvider } from '../shellconfig.provider';
+import { TranslateConfigs } from './translate.configs';
+ 
 
 let shellConfigs: Array<ShellConfig> = []
 @Injectable({
@@ -34,10 +33,12 @@ export class Translator {
     retrieveParameters(text: string, pageShellData: PageShellData) {
         let foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
         if(foundReplacingConfigs){
-            foundReplacingConfigs = _.uniq(foundReplacingConfigs)
+            foundReplacingConfigs = foundReplacingConfigs.filter((val, index, selfArray) =>{
+                return selfArray.indexOf(val) === index
+            })
         }
         const foundReplacedConfigs: Array<ShellConfig> = [];
-        _.forEach(foundReplacingConfigs, config => {
+        foundReplacingConfigs?.forEach(config => {
             // New changes: we add one pipe for defining parameter type such as "data.ticks|long"
             // We need to detect this parameter has type
             const splitted = config.split('|')
@@ -69,13 +70,13 @@ export class Translator {
                     }
                 }
                 else {
-                    foundReplacedConfigs.push(_.find(shellConfigs, (shell: ShellConfig) => shell.key.indexOf(config) === 0))
+                    foundReplacedConfigs.push(shellConfigs.find((shell: ShellConfig) => shell.key.indexOf(config) === 0))
                 }
             }
         })
 
         const params: PageParameterModel[] = []
-        _.forEach(foundReplacedConfigs, config => {
+        foundReplacedConfigs?.forEach(config => {
             this.logger.debug('Replace config', config)
             params.push({
                 name: config.key,
@@ -90,7 +91,7 @@ export class Translator {
     translateDataWithShell(text: string, pageShellData: PageShellData) {
         const foundReplacingConfigs = ObjectUtils.getContentByDCurlyBrackets(text)
         const foundReplacedConfigs: Array<ShellConfig> = [];
-        _.forEach(foundReplacingConfigs, config => {
+        foundReplacingConfigs?.forEach(config => {
             // New changes: we add one pipe for defining parameter type such as "data.ticks|long"
             // We need to detect this parameter has type
             const splitted = config.split('|')
@@ -122,12 +123,12 @@ export class Translator {
                     }
                 }
                 else {
-                    foundReplacedConfigs.push(_.find(shellConfigs, (shell: ShellConfig) => shell.key.indexOf(config) === 0))
+                    foundReplacedConfigs.push(shellConfigs.find((shell: ShellConfig) => shell.key.indexOf(config) === 0))
                 }
             }
         })
 
-        _.forEach(foundReplacedConfigs, config => {
+        foundReplacedConfigs?.forEach(config => {
             switch (config.type) {
                 case ShellConfigType.Constant:
                     if (config.replaceDQuote) {
@@ -215,7 +216,7 @@ export class Translator {
                 foundValue = ObjectUtils.clone(foundValue)
                 if(foundValue[0]){
                     if(foundValue[0]['uniq_id']){
-                        foundValue.forEach(a => {
+                        foundValue?.forEach(a => {
                             delete a['uniq_id']
                         })
                     }                    
@@ -241,12 +242,17 @@ export class Translator {
 
     private isBuiltInMethod(text: string) {
         let builtInMethod: any = null;
-        _.forEach(this.methods, methodType => {
-            builtInMethod = new methodType();
-            if (text.indexOf(builtInMethod.methodTranslatorName) >= 0) {
-                return false
+        let isFound = false
+        this.methods?.forEach(methodType => {
+            if(!isFound){
+                builtInMethod = new methodType();
+                if (text.indexOf(builtInMethod.methodTranslatorName) >= 0) {
+                    isFound = true
+                }
+                else{
+                    builtInMethod = null
+                }
             }
-            builtInMethod = null
         })
 
         return builtInMethod

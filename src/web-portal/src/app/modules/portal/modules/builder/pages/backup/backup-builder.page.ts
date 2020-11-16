@@ -1,20 +1,19 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ShortEntityModel, AppsClient, DatabasesClient, StandardComponentClient, DynamicListClient, ChartsClient, PagesClient, BackupsClient, BackupRequestModel } from 'services/portal.service';
-import { BackupNode, SelectableBackupNode } from 'portal/modules/models/backup.extended.model';
-import * as _ from 'lodash';
-import { SelectionModel } from '@angular/cdk/collections';
-import { FlatTreeControl } from '@angular/cdk/tree';
-import { debounceTime, tap, distinctUntilChanged } from 'rxjs/operators';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { ArrayUtils } from 'app/core/utils/array-util';
-import { ObjectUtils } from 'app/core/utils/object-util';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { SecurityService } from 'app/core/security/security.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { Router } from '@angular/router';
+import * as FileSaver from 'file-saver';
+import { NGXLogger } from 'ngx-logger';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { PageService } from 'services/page.service';
-import { TranslateService } from '@ngx-translate/core';
+import { AppsClient, BackupRequestModel, BackupsClient, ChartsClient, DatabasesClient, DynamicListClient, PagesClient, ShortEntityModel, StandardComponentClient } from 'services/portal.service';
+import { GenerateCodeDialog } from '../../components/backup-builder/generatecode.dialog';
+
 
 @Component({
     selector: 'let-backup-builder',
@@ -35,6 +34,14 @@ export class BackupBuilderPage implements OnInit {
     selectedStandards: ShortEntityModel[]
     standards$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchStandardDebouncer: Subject<string> = new Subject<string>()
+
+    selectedTree: ShortEntityModel[]
+    tree$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
+    searchTreeDebouncer: Subject<string> = new Subject<string>()
+
+    selectedArray: ShortEntityModel[]
+    array$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
+    searchArrayDebouncer: Subject<string> = new Subject<string>()
 
     selectedDynamicLists: ShortEntityModel[]
     dynamicLists$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
@@ -65,6 +72,8 @@ export class BackupBuilderPage implements OnInit {
         private shortcutUtil: ShortcutUtil,
         private translate: TranslateService,
         private router: Router,
+        private dialog: MatDialog,
+        private logger: NGXLogger,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef
     ) { }
@@ -128,6 +137,43 @@ export class BackupBuilderPage implements OnInit {
                     }
                 )
             ).subscribe()
+
+        this.searchTreeDebouncer
+            .pipe(
+                debounceTime(500),
+                distinctUntilChanged(),
+                tap(
+                    res => {
+                        this.standardClient.getSortTreeStandards(res).subscribe(
+                            res => {
+                                this.tree$.next(res)
+                            },
+                            err => {
+
+                            }
+                        )
+                    }
+                )
+            ).subscribe()
+
+        this.searchArrayDebouncer
+            .pipe(
+                debounceTime(500),
+                distinctUntilChanged(),
+                tap(
+                    res => {
+                        this.standardClient.getSortArrayStandards(res).subscribe(
+                            res => {
+                                this.array$.next(res)
+                            },
+                            err => {
+
+                            }
+                        )
+                    }
+                )
+            ).subscribe()
+
 
         this.searchDynamicListDebouncer
             .pipe(
@@ -223,6 +269,32 @@ export class BackupBuilderPage implements OnInit {
         this.selectedStandards = $event
     }
 
+    onSeachTreeChanged($event) {
+        if ($event) {
+            this.searchTreeDebouncer.next($event)
+        }
+        else {
+            this.tree$.next([])
+        }
+    }
+
+    onSelectTreeChanged($event) {
+        this.selectedTree = $event
+    }
+
+    onSeachArrayChanged($event) {
+        if ($event) {
+            this.searchArrayDebouncer.next($event)
+        }
+        else {
+            this.array$.next([])
+        }
+    }
+
+    onSelectArrayChanged($event) {
+        this.selectedArray = $event
+    }
+
     onSeachDynamicListChanged($event) {
         if ($event) {
             this.searchDynamicListDebouncer.next($event)
@@ -269,9 +341,11 @@ export class BackupBuilderPage implements OnInit {
                 name: formValues.name,
                 description: formValues.description,
                 apps: this.selectedApps ? this.selectedApps.map(app => app.id) : [],
-                databases: this.selectedDatabases ? this.selectedDatabases.map(db => db.id): [],
-                charts: this.selectedCharts ? this.selectedCharts.map(chart => chart.id): [],
+                databases: this.selectedDatabases ? this.selectedDatabases.map(db => db.id) : [],
+                charts: this.selectedCharts ? this.selectedCharts.map(chart => chart.id) : [],
                 standards: this.selectedStandards ? this.selectedStandards.map(standard => standard.id) : [],
+                tree: this.selectedTree ? this.selectedTree.map(tree => tree.id) : [],
+                array: this.selectedArray ? this.selectedArray.map(array => array.id) : [],
                 dynamicLists: this.selectedDynamicLists ? this.selectedDynamicLists.map(dynamicList => dynamicList.id) : [],
                 pages: this.selectedPages ? this.selectedPages.map(page => page.id) : [],
                 creator: this.security.getAuthUser().username
@@ -290,15 +364,39 @@ export class BackupBuilderPage implements OnInit {
         }
     }
 
-    download(){
+    onGenerate() {
+        const dialogRef = this.dialog.open(GenerateCodeDialog)
+        dialogRef.afterClosed().subscribe(
+            res => {
+                if (!!res) {
+                    this.backupClient.generateCode({
+                        fileName: res.fileName,
+                        versionNumber: res.versionNumber,
+                        apps: this.selectedApps ? this.selectedApps.map(app => app.id) : [],
+                        databases: this.selectedDatabases ? this.selectedDatabases.map(db => db.id) : [],
+                        charts: this.selectedCharts ? this.selectedCharts.map(chart => chart.id) : [],
+                        standards: this.selectedStandards ? this.selectedStandards.map(standard => standard.id) : [],
+                        dynamicLists: this.selectedDynamicLists ? this.selectedDynamicLists.map(dynamicList => dynamicList.id) : [],
+                        pages: this.selectedPages ? this.selectedPages.map(page => page.id) : []
+                    }).pipe(
+                        tap(res => {
+                            FileSaver.saveAs(res.data, res.fileName)
+                        })
+                    ).subscribe()
+                }
+            }
+        )
+    }
+
+    download() {
         window.location.href = this.downloadableUrl
     }
 
-    refresh(){
+    refresh() {
         this.router.navigateByUrl('portal/builder/backup')
     }
 
-    onCancel(){
+    onCancel() {
         this.router.navigateByUrl('portal/page/backup-management')
     }
 }

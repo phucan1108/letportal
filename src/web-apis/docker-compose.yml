@@ -2,66 +2,45 @@ version: '3.7'
 
 services:
   mongodb:
-    image: mongo:latest    
+    image: mongo:4.2
     ports:
       - "27117:27017"
-  lp.servicemangement:
-    image: lp-servicemangement:0.8.0
+    volumes:
+      - C:/mongodb/data/db:/data/db
+  lp.saturn:
+    image: lp-saturn:0.9.0
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal.pfx
     depends_on:
       - mongodb
     build:
       context: .
-      dockerfile: LetPortal.ServiceManagementApis/Dockerfile
+      dockerfile: LetPortal.Saturn/Dockerfile
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets
+      - ${USERPROFILE}/.aspnet/https:/https/
     ports:
-      - "5141:80"
-  lp.gateway:
-    image: lp-gateway:0.8.0
+      - "5101:80"
+      - "5102:443"
+  cms:
+    image: cms:1.0.0
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+     - ASPNETCORE_ENVIRONMENT=Docker
+     - ASPNETCORE_URLS=https://+:443;http://+:80
+     - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
+     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal-cms.pfx
     depends_on:
-      - mongodb
-      - lp.servicemangement
+     - mongodb
+     - lp.saturn
     build:
       context: .
-      dockerfile: LetPortal.Gateway/Dockerfile
+      dockerfile: LetPortal.Websites.CMS/Dockerfile
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets
+      - ${USERPROFILE}/.aspnet/https:/https/
     ports:
-      - "5142:80"
-  lp.identityapi:
-    image: lp-identityapi:0.8.0
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-    depends_on:
-      - mongodb
-      - lp.servicemangement
-    build:
-      context: .
-      dockerfile: LetPortal.IdentityApis/Dockerfile
-    ports:
-      - "5143:80"
-  lp.portalapi:
-    image: lp-portalapi:0.8.0
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-    depends_on:
-      - mongodb
-      - lp.servicemangement
-    build:
-      context: .
-      dockerfile: LetPortal.WebApis/Dockerfile
-    ports:
-      - "5144:80"
-  lp.chatapi:
-    image: lp-chatapi:0.8.0
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-    depends_on:
-      - mongodb
-      - lp.servicemangement
-    build:
-      context: .
-      dockerfile: LetPortal.ChatApis/Dockerfile
-    ports:
-      - "5145:80"
-
+      - "5103:80"
+      - "5104:443"

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
@@ -29,7 +30,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB
@@ -40,9 +41,9 @@ namespace LetPortal.Versions.Components.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -55,7 +56,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "appId",
                             DisplayName = "App",
@@ -71,7 +72,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             {
                               Type = DatasourceControlType.Database,
                               OutputMapProjection = "name=displayName;value=id",
-                              DatabaseOptions = new DatabaseOptions
+                              DatabaseOptions = new SharedDatabaseOptions
                               {
                                   DatabaseConnectionId = Constants.PortalDatabaseId,
                                   Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
@@ -80,7 +81,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "localeId",
                             DisplayName = "Locale Id",

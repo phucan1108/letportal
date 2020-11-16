@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.SectionParts;
 
 namespace LetPortal.Versions.Components.Standards
@@ -127,7 +128,7 @@ namespace LetPortal.Versions.Components.Standards
                                 AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
                                 {
                                     EvaluatedExpression = "response.result == null",
-                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                                     {
                                       DatabaseConnectionId = Constants.PortalDatabaseId,
                                       Query = "{\r\n  \"$query\": {\r\n    \"databases\": [\r\n      {\r\n        \"$match\": {\r\n          \"name\": \"{{data.name}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
@@ -399,7 +400,7 @@ namespace LetPortal.Versions.Components.Standards
                                 AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
                                 {
                                     EvaluatedExpression = "response.result == null",
-                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                                     {
                                       DatabaseConnectionId = Constants.PortalDatabaseId,
                                       Query = "{\r\n  \"$query\": {\r\n    \"apps\": [\r\n      {\r\n        \"$match\": {\r\n          \"name\": \"{{data.name}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"

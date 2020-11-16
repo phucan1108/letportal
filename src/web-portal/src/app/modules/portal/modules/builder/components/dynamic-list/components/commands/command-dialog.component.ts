@@ -1,15 +1,14 @@
-import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
-import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { NGXLogger } from 'ngx-logger';
 import { StaticResources } from 'portal/resources/static-resources';
-import { CommandButtonInList, ActionType, CommandPositionType, ActionCommandOptions } from 'services/portal.service';
 import { ActionCommandRenderOptions } from 'portal/shared/button-options/actioncommandrenderoptions';
 import { CommandOptionsComponent } from 'portal/shared/button-options/commandoptions.component';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { NGXLogger } from 'ngx-logger';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { ActionCommandOptions, ActionType, CommandButtonInList, CommandPositionType } from 'services/portal.service';
 
 @Component({
     selector: 'let-command-dialog',
@@ -59,11 +58,11 @@ export class CommandModalComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches) {
                 this.isSmallDevice = true
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on command dialog', this.isSmallDevice)
             }
             else{
                 this.isSmallDevice = false
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on command dialog', this.isSmallDevice)
             }
         });
     }
@@ -76,7 +75,7 @@ export class CommandModalComponent implements OnInit {
             this.enableEditMode();
         }
         else{
-            this.isInList = false;
+            this.isInList = this.commandButton.commandPositionType === CommandPositionType.InList;
             this.actionCommandOptions = {
                 actionType: ActionType.Redirect,
                 redirectOptions: {

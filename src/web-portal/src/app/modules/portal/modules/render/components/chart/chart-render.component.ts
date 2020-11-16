@@ -1,23 +1,22 @@
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewChecked, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { Chart, ChartsClient, ChartType, ExecuteParamModel, ChartParameterValue, PageSectionLayoutType, ChartFilterValue } from 'services/portal.service';
-import { ExtendedPageSection } from 'app/core/models/extended.models';
-import { PageService } from 'services/page.service';
-import { NGXLogger } from 'ngx-logger';
+import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { Observable, Subscription, BehaviorSubject } from 'rxjs';
-import { PageStateModel } from 'stores/pages/page.state';
-import { filter, tap, toArray } from 'rxjs/operators';
-import { BeginBuildingBoundData, GatherSectionValidations, AddSectionBoundData, SectionValidationStateAction } from 'stores/pages/page.actions';
-import { ChartOptions } from 'portal/modules/models/chart.extended.model';
+import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { DateUtils } from 'app/core/utils/date-util';
-import * as _ from 'lodash';
-import { ArrayUtils } from 'app/core/utils/array-util';
-import * as moment from 'moment'
+import { ObjectUtils } from 'app/core/utils/object-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { ObjectUtils } from 'app/core/utils/object-util';
+import * as moment from 'moment';
+import { NGXLogger } from 'ngx-logger';
+import { ChartOptions } from 'portal/modules/models/chart.extended.model';
+import { Observable, Subscription } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
 import { LocalizationService } from 'services/localization.service';
-import { TranslateService } from '@ngx-translate/core';
+import { PageService } from 'services/page.service';
+import { Chart, ChartFilterValue, ChartParameterValue, ChartsClient, ChartType, PageSectionLayoutType } from 'services/portal.service';
+import { AddSectionBoundData, BeginBuildingBoundData, GatherSectionValidations, SectionValidationStateAction } from 'stores/pages/page.actions';
+import { PageStateModel } from 'stores/pages/page.state';
+ 
 @Component({
     selector: 'let-chart-render',
     templateUrl: './chart-render.component.html',
@@ -86,8 +85,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                     switch (state.filterState) {
                         case BeginBuildingBoundData:
                             this.store.dispatch(new AddSectionBoundData({
-                                name: this.section.name,
-                                isKeptDataName: true,
+                                storeName: this.section.name,
                                 data: null
                             }, []))
                             break
@@ -166,7 +164,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     private setupDataRange(dataRange: string) {
         if (dataRange) {
             const splitted = dataRange.split(';')
-            _.forEach(splitted, s => {
+            splitted?.forEach(s => {
                 const subSplitted = s.split('=')
                 if (subSplitted[0] === 'x') {
                     const minMaxRange = JSON.parse(subSplitted[1])
@@ -222,16 +220,16 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                 if (this.chartData) {
                     if (res.isSuccess && res.result.length > 0 && this.chartOptions.allowrealtime && this.chartOptions.comparerealtimefield) {
                         if (!this.isMultiData) {
-                            _.forEach(res.result, a => {
+                            res.result?.forEach(a => {
                                 this.chartData.push(a)
                             })
                             this.chartData = [...this.chartData]
                         }
                         else {
-                            _.forEach(res.result, a => {
-                                const found = _.find(this.chartData, b => b.name === a.name)
+                            res.result?.forEach(a => {
+                                const found = this.chartData.find(b => b.name === a.name)
                                 if (found) {
-                                    _.forEach(a.series, b => {
+                                    a.series?.forEach(b => {
                                         found.series.push(b)
                                     })
                                 }
@@ -278,10 +276,10 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
     private convertResNameToDate(result: any, isMultiData: boolean, xFormatDate: string){
         if(!!xFormatDate){
             if(isMultiData){
-                _.forEach(result, r => {
+                result?.forEach(r => {
                     const isDate = moment(r.series[0].name).isValid()
                     if(isDate){
-                        _.forEach(r.series, e => {
+                        r.series?.forEach(e => {
                             e.name = moment(e.name).format(xFormatDate)
                         })
                     }
@@ -290,7 +288,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
             else{
                 const isDate = moment(result[0].name).isValid()
                 if(isDate){
-                    _.forEach(result, e => {
+                    result?.forEach(e => {
                         e.name = moment(e.name).format(xFormatDate)
                     })
                 }
@@ -311,7 +309,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
             }
 
             if(ObjectUtils.isNotNull(this.chart.chartFilters)){
-                this.chart.chartFilters.forEach(filter => {
+                this.chart.chartFilters?.forEach(filter => {
                     const filterName = this.localizationService.getText(`charts.${this.chart.name}.filters.${filter.name}.name`)
                     if(ObjectUtils.isNotNull(filterName)){
                         filter.displayName = filterName

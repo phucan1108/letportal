@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { DatabaseOptions, ExtractingSchemaQueryModel, ControlType, ValidatorType, DatasourceControlType, PageControlEvent, PageControl, EventActionType } from 'services/portal.service';
+import { SharedDatabaseOptions, ExtractingSchemaQueryModel, ControlType, ValidatorType, DatasourceControlType, PageControlEvent, PageControl, EventActionType } from 'services/portal.service';
 import { ExtendedPageControl } from 'app/core/models/extended.models';
 import { Guid } from 'guid-typescript';
-import * as _ from 'lodash';
+ 
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class StandardPopulationComponent implements OnInit {
     heading = 'Controls Population'
 
-    databaseOptions: DatabaseOptions = {
+    databaseOptions: SharedDatabaseOptions = {
         databaseConnectionId: '',
         entityName: '',
         query: ''
@@ -53,10 +53,10 @@ export class StandardPopulationComponent implements OnInit {
         this.controls = []
 
         let controlCounter = 0;
-        _.forEach(schema.columnFields, (field) => {
+        schema.columnFields?.forEach((field) => {
             const pageControl: ExtendedPageControl = {
                 id: Guid.create().toString(),
-                name: field.name,
+                name: field.name === '_id' ? 'id' : field.name,
                 type: ControlType.Textbox,
                 order: controlCounter,
                 datasourceOptions: {
@@ -129,13 +129,27 @@ export class StandardPopulationComponent implements OnInit {
                     key: 'bindname',
                     value: pageControl.name,
                     allowDelete: false
+                },
+                {
+                    id: '',
+                    description: 'Default value when no value is set',
+                    key: 'defaultvalue',
+                    value: '',
+                    allowDelete: false
+                },
+                {
+                    id: '',
+                    description: 'Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true',
+                    key: 'rendered',
+                    value: 'true',
+                    allowDelete: false
                 }
             ]
 
             pageControl.options = defaultOptions
 
             if (field.name.indexOf('_') === 0) {
-                pageControl.name = pageControl.name.substring(1);
+                pageControl.name = pageControl.name.substring(0);
                 pageControl.isActive = false
             }
 
@@ -235,6 +249,8 @@ export class StandardPopulationComponent implements OnInit {
     }
 
     private getBeautifulName(controlName: string){
+        if(controlName === '_id')
+            return 'id'
         const firstLetter = controlName[0].toUpperCase()
         const subStr = controlName.substr(1)
         const combine = firstLetter + subStr

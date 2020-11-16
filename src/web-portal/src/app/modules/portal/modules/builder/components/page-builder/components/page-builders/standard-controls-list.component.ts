@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PageControl, ControlType } from 'services/portal.service';
 import { StaticResources } from 'portal/resources/static-resources';
-import * as _ from 'lodash';
+ 
 
 @Component({
     selector: 'let-standardcontrols-list',
@@ -25,7 +25,7 @@ export class StandardControlsListComponent implements OnInit {
 
     translateControlType(controlType: ControlType) {
         let controlText = ''
-        _.forEach(this._controlTypes, control => {
+        this._controlTypes?.forEach(control => {
             if (control.value === controlType) {
                 controlText = control.name
                 return false;

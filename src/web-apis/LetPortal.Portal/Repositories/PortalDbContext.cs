@@ -129,18 +129,13 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.DeserializeObject<List<PageControl>>(v));
             standardBuilder.Property(a => a.Controls).HasConversion(jsonControlsConverter);
 
-            if (_options.ConnectionType == ConnectionType.MySQL)
-            {
-                standardBuilder.Property(a => a.AllowArrayData).HasColumnType("BIT");
-            }
-
             // Chart
             var chartBuilder = modelBuilder.Entity<Chart>();
             chartBuilder.HasBaseType<Component>();
 
-            var jsonChartDatabaseOptions = new ValueConverter<Entities.Shared.DatabaseOptions, string>(
+            var jsonChartDatabaseOptions = new ValueConverter<Entities.Shared.SharedDatabaseOptions, string>(
                 v => ConvertUtil.SerializeObject(v, true),
-                v => ConvertUtil.DeserializeObject<Entities.Shared.DatabaseOptions>(v));
+                v => ConvertUtil.DeserializeObject<Entities.Shared.SharedDatabaseOptions>(v));
             chartBuilder.Property(a => a.DatabaseOptions).HasConversion(jsonChartDatabaseOptions);
 
             var jsonChartDefinitions = new ValueConverter<ChartDefinitions, string>(

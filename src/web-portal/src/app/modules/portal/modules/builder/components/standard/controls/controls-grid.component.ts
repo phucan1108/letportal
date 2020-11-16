@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, Output, EventEm
 import { ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Observable } from 'rxjs';
-import * as _ from 'lodash';
+ 
 import { Guid } from 'guid-typescript';
 import { StaticResources } from 'portal/resources/static-resources';
 import { ControlDialogComponent } from './control-dialog.component';
@@ -149,7 +149,7 @@ export class ControlsGridComponent implements OnInit {
         if (this.selection.selected.length === this.controls.length) {
             this.selection.clear();
         } else {
-            this.controls.forEach(row => this.selection.select(row));
+            this.controls?.forEach(row => this.selection.select(row));
         }
     }
 
@@ -164,8 +164,8 @@ export class ControlsGridComponent implements OnInit {
             }
 
             for (let i = 0; i < this.selection.selected.length; i++) {
-                this.controls = _.remove(this.controls, (elem: ExtendedPageControl) => {
-                    return elem.id === this.selection.selected[i].id
+                this.controls = this.controls.filter((elem: ExtendedPageControl) => {
+                    return elem.id !== this.selection.selected[i].id
                 })
             }
             this.refreshControlTable();
@@ -175,7 +175,7 @@ export class ControlsGridComponent implements OnInit {
     /** Table */
     translateControlType(controlType: ControlType) {
         let controlText = ''
-        _.forEach(this._controlTypes, control => {
+        this._controlTypes?.forEach(control => {
             if (control.value === controlType) {
                 controlText = control.name
                 return false;
@@ -186,7 +186,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     getBindName(options: ShellOption[]) {
-        const found = _.find(options, opt => opt.key === 'bindname')
+        const found = options.find(opt => opt.key === 'bindname')
         if (!!found)
             return found.value
         return ''
@@ -260,7 +260,7 @@ export class ControlsGridComponent implements OnInit {
     generateFunctionEventsList(controls: PageControl[]): string[] {
         const events: string[] = []
 
-        _.forEach(controls, control => {
+        controls?.forEach(control => {
             switch (control.type) {
                 case ControlType.Radio:
                 case ControlType.Slide:
@@ -276,7 +276,7 @@ export class ControlsGridComponent implements OnInit {
                     events.push(`${control.name}_resetdatasource`)
                 default:
                     const availableEvents = this.eventsProvider.getAvailableEventsForControlType(control.type, control.name)
-                    availableEvents.forEach(a => {
+                    availableEvents?.forEach(a => {
                         events.push(a)
                     })
                     break
@@ -288,8 +288,8 @@ export class ControlsGridComponent implements OnInit {
 
     getAvailableEvents(): string[] {
         const availableEvents: string[] = []
-        _.forEach(this.controls, control => {
-            _.forEach(control.pageControlEvents, event => {
+        this.controls?.forEach(control => {
+            control.pageControlEvents?.forEach(event => {
                 availableEvents.push(event.eventName)
             })
         })
@@ -299,7 +299,7 @@ export class ControlsGridComponent implements OnInit {
 
     getAvailableBoundData(): string[] {
         const availableBoundDatas: string[] = []
-        _.forEach(this.controls, control => {
+        this.controls?.forEach(control => {
             availableBoundDatas.push(`${control.name}`)
         })
 
@@ -337,7 +337,7 @@ export class ControlsGridComponent implements OnInit {
     }
 
     deleteControl(control: ExtendedPageControl) {
-        this.controls = _.filter(this.controls, (elem) => {
+        this.controls = this.controls.filter((elem) => {
             return elem.id !== control.id
         })
         this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
@@ -358,7 +358,7 @@ export class ControlsGridComponent implements OnInit {
 
     getAllAvailableControlNames(): string[] {
         const names: string[] = []
-        _.forEach(this.controls, control => {
+        this.controls?.forEach(control => {
             names.push(control.name)
         })
         return names

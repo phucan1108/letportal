@@ -6,7 +6,7 @@ import { filter, tap } from 'rxjs/operators';
 import { NextToWorkflowAction, NextToRouteAction, UpdatePageDatasources, NextToDatasourceAction, GatherAllChanges, InitEditPageBuilderAction } from 'stores/pages/pagebuilder.actions';
 import { PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
 import { Guid } from 'guid-typescript';
-import * as _ from 'lodash';
+ 
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { NGXLogger } from 'ngx-logger';
 import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
@@ -44,7 +44,7 @@ export class PageDatasourceGridComponent implements OnInit {
                 tap((state: PageBuilderStateModel) => {
                     switch (state.filterState) {
                         case InitEditPageBuilderAction:
-                            _.forEach(state.processPage.pageDatasources, ds => {
+                            state.processPage.pageDatasources?.forEach(ds => {
                                 this.currentDatasources.push({
                                     ...ds
                                 })
@@ -90,7 +90,7 @@ export class PageDatasourceGridComponent implements OnInit {
     }
 
     deleteDatasource(datasource: PageDatasource) {
-        this.currentDatasources = _.filter(this.currentDatasources, (elem) => {
+        this.currentDatasources = this.currentDatasources.filter((elem) => {
             return elem.id !== datasource.id
         })
         this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success)

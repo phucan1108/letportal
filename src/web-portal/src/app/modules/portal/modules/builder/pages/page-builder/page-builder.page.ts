@@ -9,7 +9,7 @@ import { Store } from '@ngxs/store';
 import { filter, tap, map } from 'rxjs/operators';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { PageBuilderStateModel, PageBuilderState } from 'stores/pages/pagebuilder.state';
-import * as _ from 'lodash';
+ 
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { Constants } from 'portal/resources/constants';
 import { SessionService } from 'services/session.service';
@@ -161,7 +161,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
                 app: [this.page.appId, Validators.required]
             })
 
-            _.forEach(this.page.shellOptions, shellOpt => {
+            this.page.shellOptions?.forEach(shellOpt => {
                 this.shellOptions.push({
                     id: Guid.create().toString(),
                     key: shellOpt.key,
@@ -200,7 +200,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     }
 
     isInHiddenListField(fieldName: string): boolean {
-        return _.indexOf(['_id'], fieldName) >= 0
+        return ['_id'].indexOf(fieldName) >= 0
     }
     //#endregion
 

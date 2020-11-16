@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.Components;
 
 namespace LetPortal.Versions.Components.Charts
@@ -29,7 +30,7 @@ namespace LetPortal.Versions.Components.Charts
                 DisplayName = "HTTP Counters",
                 AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
-                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
                     Query =
@@ -66,7 +67,7 @@ namespace LetPortal.Versions.Components.Charts
                 DisplayName = "Hardware Counters",
                 AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
-                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
                     Query =
@@ -103,7 +104,7 @@ namespace LetPortal.Versions.Components.Charts
                 DisplayName = "CPU Monitor",
                 AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
-                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
                     Query =
@@ -133,7 +134,7 @@ namespace LetPortal.Versions.Components.Charts
                 DisplayName = "Memory Monitor",
                 AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.TwoColumns,
-                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
                     Query =
@@ -162,7 +163,7 @@ namespace LetPortal.Versions.Components.Charts
                 DisplayName = "HTTP Real Time Monitor",
                 AppId = Constants.CoreAppId,
                 LayoutType = Portal.Entities.SectionParts.PageSectionLayoutType.OneColumn,
-                DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
                     Query =

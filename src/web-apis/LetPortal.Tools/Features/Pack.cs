@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LetPortal.Core.Tools;
 using LetPortal.Portal.Services.Apps;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,12 +10,13 @@ namespace LetPortal.Tools.Features
     {
         public string CommandName => "pack";
 
-        public async Task RunAsync(ToolsContext context)
+        public async Task RunAsync(object context)
         {
+            var toolsContext = context as ToolsContext;
             Console.WriteLine("---------------------PACKAGE APP PROGRESS-----------------------");
-            Console.WriteLine($"App Name: {context.Arguments.Name}, Ouput: {context.Arguments.Output}");
-            var appService = context.Services.GetService<IAppService>();
-            var savePath = await appService.Package(context.Arguments.Name, context.Arguments.Output);
+            Console.WriteLine($"App Name: {toolsContext.Arguments.Name}, Ouput: {toolsContext.Arguments.Output}");
+            var appService = toolsContext.Services.GetService<IAppService>();
+            var savePath = await appService.Package(toolsContext.Arguments.Name, toolsContext.Arguments.Output);
             Console.WriteLine($"Package successfully: {savePath}");
             Console.WriteLine("-----------------------++++++++++++++++-------------------------");
         }

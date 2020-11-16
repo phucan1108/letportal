@@ -11,6 +11,8 @@ namespace LetPortal.Core.Versions
 
         object DatabaseOptions { get; set; }
 
+        object PortalDatabaseOptions { get; set; }
+
         object ServiceManagementOptions { get; set; }
 
         object IdentityDbOptions { get; set; }

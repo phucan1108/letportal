@@ -110,6 +110,16 @@
                         </mat-form-field>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">{{ 'common.outputProjection' | translate }}:</label>
+                    <div class="col-lg-10">
+                        <mat-form-field class="field-full-width">
+                            <input formControlName="httpOutputProjection" matInput #httpOutputProjectionInput
+                                placeholder="{{ 'shared.httpOptions.outputProjection.placeholder' | translate }}">
+                            <mat-hint align="end">{{httpOutputProjectionInput.value?.length || 0}}/255</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
             </div>
         </div>
     </form>

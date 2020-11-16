@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "LetPortal.Microservices.LogCollector";
+
+service LogCollectorService {
+    rpc Push (stream LogCollectorRequest) returns (LogCollectorResponse);
+}
+
+message LogCollectorRequest {
+    string service_id = 1;
+    string service_name = 2;
+    string user_session_id = 3;
+    string trace_id = 4;
+    string http_request_url = 5;
+    string http_headers = 6;
+    string http_request_body = 7;
+    string response_body = 8;
+    int32 response_status_code = 9;
+    double cpu_usage = 10;
+    double memory_used = 11;
+    google.protobuf.Timestamp begin_request = 12;
+    google.protobuf.Timestamp end_request = 13;
+    int64 elapsed_time = 14;
+    repeated string stack_traces = 15;
+}
+
+message LogCollectorResponse {
+    bool succeed = 1;
+}

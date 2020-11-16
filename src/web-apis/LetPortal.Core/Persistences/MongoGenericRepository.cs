@@ -252,6 +252,11 @@ namespace LetPortal.Core.Persistences
             await Collection.InsertOneAsync(forceEntity);
         }
 
+        public Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        {
+            return Collection.AsQueryable().FirstAsync(expression);
+        }
+
         #region IDisposable Support
         private bool disposedValue = false;
 

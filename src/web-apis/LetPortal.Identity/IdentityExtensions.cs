@@ -28,9 +28,6 @@ namespace LetPortal.Identity
         {               
             builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
 
-            var databaseOptions = builder.Configuration.GetSection("DatabaseOptions").Get<DatabaseOptions>();
-            RegisterRepos(builder.Services, databaseOptions);
-
             builder.Services.AddTransient<IIdentityServiceProvider, InternalIdentityServiceProvider>();
             builder.Services.AddSingleton<IEmailServiceProvider, EmailServiceProvider>();
             builder.Services.AddIdentity<User, Role>()
@@ -53,7 +50,16 @@ namespace LetPortal.Identity
             return builder;
         }
 
-        public static void RegisterRepos(IServiceCollection services, DatabaseOptions databaseOptions, bool skipMongoRegister = false)
+        public static IDatabaseOptionsBuilder RegisterIdentityRepos(this IDatabaseOptionsBuilder builder)
+        {
+            builder.Services.RegisterRepos(builder.DatabaseOptions);
+
+            return builder;
+        }
+
+        public static void RegisterRepos(
+            this IServiceCollection services,
+            DatabaseOptions databaseOptions)
         {
             if (databaseOptions.ConnectionType == ConnectionType.MongoDB)
             {

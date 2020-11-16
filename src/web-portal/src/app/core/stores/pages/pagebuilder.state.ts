@@ -3,7 +3,7 @@ import { State, Action, Selector, StateContext } from '@ngxs/store';
 import * as PageActions from './pagebuilder.actions'
 import { Guid } from 'guid-typescript';
 import { tap } from 'rxjs/operators';
-import * as _ from 'lodash';
+import * as _ from 'lodash'
 import { ShellConfigProvider } from 'app/core/shell/shellconfig.provider';
 import { Page, PagesClient, StandardComponent } from 'services/portal.service';
 import { patch, append } from '@ngxs/store/operators';
@@ -272,7 +272,10 @@ export class PageBuilderState {
   @Action(PageActions.UpdateAvailableEvents)
   public updateAvailableEvents(ctx: StateContext<PageBuilderStateModel>, { availableEvents }: PageActions.UpdateAvailableEvents) {
     const state = ctx.getState()
-    const distinctEvents = _.uniq(_.concat(state.availableEvents, availableEvents))
+    const distinctEvents = 
+    state.availableEvents.concat(availableEvents).filter((val, index, selfArray) => {
+      return selfArray.indexOf(val) === index
+    })
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableEvents,
@@ -283,7 +286,10 @@ export class PageBuilderState {
   @Action(PageActions.UpdateAvailableTriggerEventsList)
   public updateAvailableTriggerEventsList(ctx: StateContext<PageBuilderStateModel>, { availableTriggerEventsList }: PageActions.UpdateAvailableTriggerEventsList) {
     const state = ctx.getState()
-    const distinctEvents = _.uniq(_.concat(state.availableTriggerEventsList, availableTriggerEventsList))
+    const distinctEvents = 
+    state.availableTriggerEventsList.concat(availableTriggerEventsList).filter((val,index,selfArray) => {
+      return selfArray.indexOf(val) === index
+    })
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableTriggerEventsList,
@@ -294,7 +300,10 @@ export class PageBuilderState {
   @Action(PageActions.UpdateAvailableBoundDatas)
   public updateAvailableBoundDatas(ctx: StateContext<PageBuilderStateModel>, { availableBoundDatas }: PageActions.UpdateAvailableBoundDatas) {
     const state = ctx.getState()
-    const distinctEvents = _.uniq(_.concat(state.availableBoundDatas, availableBoundDatas))
+    const distinctEvents = 
+    state.availableBoundDatas.concat(availableBoundDatas).filter((val, index, selfArray) =>{
+      return selfArray.indexOf(val) === index
+    })
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableBoundDatas,
@@ -305,7 +314,12 @@ export class PageBuilderState {
   @Action(PageActions.UpdateAvailableShells)
   public updateAvailableShells(ctx: StateContext<PageBuilderStateModel>, { availableShells }: PageActions.UpdateAvailableShells) {
     const state = ctx.getState()
-    const distinctShells = _.uniq(_.concat(state.availableShells, availableShells, this.shellConfig.getAllAvailableShells()))
+    const distinctShells = 
+    state.availableShells
+      .concat(availableShells, this.shellConfig.getAllAvailableShells())
+      .filter((val,index, selfArray) => {
+        return selfArray.indexOf(val) === index
+      })    
     ctx.setState({
       ...state,
       filterState: PageActions.UpdateAvailableShells,

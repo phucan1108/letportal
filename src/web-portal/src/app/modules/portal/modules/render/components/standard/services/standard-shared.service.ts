@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl, ValidatorFn, Validators, AsyncValidatorFn } from '@angular/forms';
-import { PageLoadedDatasource, MapDataControl, PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
-import { StandardComponent, ControlType, PageControlValidator, ValidatorType, PageControlAsyncValidator, PageControl } from 'services/portal.service';
-import { ObjectUtils } from 'app/core/utils/object-util';
-import * as _ from 'lodash';
-import { CustomValidators } from 'ngx-custom-validators';
-import { PortalValidators } from 'app/core/validators/portal.validators';
-import { PageService } from 'services/page.service';
-import { CustomHttpService } from 'services/customhttp.service';
-import PageUtils from 'app/core/utils/page-util';
+import { AsyncValidatorFn, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { BoundControl, SelectBoundControl, SimpleBoundControl } from 'app/core/context/bound-control';
+import { BoundSection, StandardBoundSection } from 'app/core/context/bound-section';
 import { GroupControls } from 'app/core/models/extended.models';
-import { StandardOptions } from 'portal/modules/models/standard.extended.model';
+import { DefaultControlOptions, MapDataControl, PageLoadedDatasource, PageRenderedControl } from 'app/core/models/page.model';
+import { ObjectUtils } from 'app/core/utils/object-util';
+import PageUtils from 'app/core/utils/page-util';
+import { PortalValidators } from 'app/core/validators/portal.validators';
 import { Guid } from 'guid-typescript';
+import { CustomValidators } from 'ngx-custom-validators';
+import { ArrayStandardOptions, TreeStandardOptions } from 'portal/modules/models/standard.extended.model';
+import { CustomHttpService } from 'services/customhttp.service';
+import { PageService } from 'services/page.service';
+import { ControlType, PageControlAsyncValidator, PageControlValidator, StandardComponent, ValidatorType } from 'services/portal.service';
 import { ExtendedFormControlValidators } from '../models/standard.models';
+ 
 
 /**
  * This service is used to share common logic between Standard and Array Standard
@@ -40,7 +42,7 @@ export class StandardSharedService {
         }
 
         let counterControls = 0
-        _.forEach(filteredControls, (control: PageRenderedControl<DefaultControlOptions>) => {
+        filteredControls?.forEach((control: PageRenderedControl<DefaultControlOptions>) => {
             // These controls must be separated group
             if (control.type === ControlType.LineBreaker) {
                 counterFlag = 0;
@@ -110,11 +112,23 @@ export class StandardSharedService {
         return controlGroups
     }
 
-    public buildControlOptions(controls: PageRenderedControl<DefaultControlOptions>[]): PageRenderedControl<DefaultControlOptions>[] {
-        controls.forEach(control => {
+    public buildControlOptions(
+        controls: PageRenderedControl<DefaultControlOptions>[], 
+        initData: any = null): PageRenderedControl<DefaultControlOptions>[] {
+        controls?.forEach(control => {
             control.defaultOptions = PageUtils.getControlOptions<DefaultControlOptions>(control.options)
-            control.defaultOptions.checkedHidden = this.pageService.evaluatedExpression(control.defaultOptions.hidden)
-            control.defaultOptions.checkDisabled = this.pageService.evaluatedExpression(control.defaultOptions.disabled)
+            control.defaultOptions.checkedHidden = this.pageService.evaluatedExpression(control.defaultOptions.hidden, initData)
+            control.defaultOptions.checkDisabled = this.pageService.evaluatedExpression(control.defaultOptions.disabled, initData)
+            if (ObjectUtils.isNotNull(control.defaultOptions.rendered)) {
+                control.defaultOptions.checkRendered = this.pageService.evaluatedExpression(control.defaultOptions.rendered, initData)
+            }
+            else {
+                // Default rendered is true
+                control.defaultOptions.checkRendered = true
+            }
+            if (ObjectUtils.isNotNull(control.defaultOptions.defaultvalue)) {
+                control.defaultOptions.defaultvalue = this.pageService.translateData(control.defaultOptions.defaultvalue)
+            }
             control.customErrorMessages = []
         })
         return controls
@@ -123,33 +137,53 @@ export class StandardSharedService {
     public buildSectionBoundData(
         datasourceName: string,
         datasources: PageLoadedDatasource[]
-    ): any{
+    ): any {
         return this.getSectionBoundData(datasourceName, datasources)
     }
 
-    public buildFormGroups(
+    /**
+     * Uses this method for constructing StandardBoundSection by passing StandardComponent
+     * All types must call this method to build StandardBoundSection which is used in form or dialog
+     * @param sectionName Section name
+     * @param storeName Store name is inputted while constructing Page Builder, it can be null 
+     * @param standard StandardComponent instance
+     * @param boundData BoundData can be gotten from Datasource, use to set initial value and construct section data     
+     * @param [extendedValidators] Passing some custom validators, inputted in Standard Builder page
+     * @param onComplete Callback method to retrieve sectionData, sectionMap
+     * @returns bound section Always returned StandardBoundSection
+     */
+    public buildBoundSection(
         sectionName: string,
+        storeName: string,
         standard: StandardComponent,
         boundData: any,
-        isKeepDataSection: boolean,
         extendedValidators: ExtendedFormControlValidators[] = null,
-        onComplete: (builtData: any, keptDataSection: boolean, sectionMap: MapDataControl[]) => void
-    ): FormGroup {
+        onComplete: (builtData: any, sectionMap: MapDataControl[]) => void
+    ): BoundSection {
         const formControls: any = []
         const tempSectionData = new Object()
-        // When a 'data' is bind name, so we need to keep a default structure of data. Ex: data.id, data.name
-        // If bind name isn't 'data', we need to add sectioname to binding data.Ex: data.section1.id
+        // Changed from 0.9.0: introduces 'storeName' to indicate where data is stored
+        // If 'storeName' != null, so we will store its in second level of 'data'.
+        // Ex: 'storeName' = 'info', so data will be stored in 'data.info'
+        // Else -> we will store in root level same with section name
+        // Also, if dataBindName === 'data', mean all fields will stayed in root level
+        // Ex: 'dataBindName' === 'data', => 'data.username', 'data.password' instead of 'data.info.username'
+        // So in this case we will use 'storeName' = 'data' to apdapt this scenario
+        // IMPORTANT NOTE: storeName is available for Standard, Array or Tree
+        // However, we should pass storeName = null when calling this method on Array or Tree
+        // Because Array/Tree doesn't update the data frequently
         const sectionsMap: MapDataControl[] = []
         let sectionBoundData = boundData
-
-        if (!isKeepDataSection) {
-            tempSectionData[sectionName] = new Object()
+        let boundControls: BoundControl[] =[] 
+        const isStoredInRootLevel = storeName === 'data'
+        if (!isStoredInRootLevel) {
+            tempSectionData[storeName] = new Object()
         }
-        (standard.controls as PageRenderedControl<DefaultControlOptions>[]).forEach(control => {
+        (standard.controls as PageRenderedControl<DefaultControlOptions>[])?.forEach(control => {
             const controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control)
 
             let mapDataControl: MapDataControl
-            if (isKeepDataSection) {
+            if (isStoredInRootLevel) {
                 mapDataControl = {
                     controlFullName: sectionName + '_' + control.name,
                     sectionMapName: null,
@@ -159,10 +193,10 @@ export class StandardSharedService {
                 tempSectionData[control.name] = controlData
             }
             else {
-                tempSectionData[sectionName][control.name] = controlData
+                tempSectionData[storeName][control.name] = controlData
                 mapDataControl = {
                     controlFullName: sectionName + '_' + control.name,
-                    sectionMapName: sectionName,
+                    sectionMapName: storeName,
                     bindName: control.defaultOptions.bindname
                 }
                 sectionsMap.push(mapDataControl)
@@ -178,33 +212,74 @@ export class StandardSharedService {
                 controlData,
                 formControls)
 
-            if(ObjectUtils.isNotNull(extendedValidators)){
-                extendedValidators.forEach(c => {
-                    if(c.controlName === control.name){
-                        c.validators.forEach(v => {
+            if (ObjectUtils.isNotNull(extendedValidators)) {
+                extendedValidators?.forEach(c => {
+                    if (c.controlName === control.name) {
+                        c.validators?.forEach(v => {
                             validators.push(v)
                         })
-                        c.customErrorMessages.forEach(a => {
+                        c.customErrorMessages?.forEach(a => {
                             control.customErrorMessages.push(a)
-                        })                        
+                        })
 
                         return false
                     }
                 })
             }
 
-            formControls[control.name] = new FormControl({
-                value: this.getFormValue(control, controlData),
-                disabled: control.defaultOptions.checkDisabled
-            },
-                validators,
-                asyncValidators               
-            )
+            let formValue = this.getFormValue(control, controlData)
+            if (control.defaultOptions.checkDisabled && control.type === ControlType.Select) {
+                formControls[control.name] = new FormControl(formValue,
+                    validators,
+                    asyncValidators
+                )
+            }
+            else {
+                formControls[control.name] = new FormControl({
+                    value: formValue,
+                    disabled: control.defaultOptions.checkDisabled
+                },
+                    validators,
+                    asyncValidators
+                )
+            }
+
+            switch(control.type){
+                case ControlType.Select:
+                case ControlType.AutoComplete:
+                    boundControls.push(new SelectBoundControl(control.name, control.type,formControls[control.name]))
+                    break
+                case ControlType.Checkbox:
+                case ControlType.Slide:
+                    boundControls.push(
+                        new SimpleBoundControl(
+                            control.name, 
+                            control.type, 
+                            formControls[control.name], 
+                            formValue,
+                            control.defaultOptions.allowYesNo,
+                            control.defaultOptions.allowZero))
+                    break
+                default:
+                    boundControls.push(
+                        new SimpleBoundControl(
+                            control.name, 
+                            control.type, 
+                            formControls[control.name], 
+                            formValue))
+                    break
+            }
         })
         if (onComplete) {
-            onComplete(tempSectionData, isKeepDataSection, sectionsMap)
+            onComplete(tempSectionData, sectionsMap)
         }
-        return new FormGroup(formControls)
+
+        // Changed from 0.9.0: This method will return BoundSection which is very suitable for Event-Based
+        // Whatever call this, it always returns a StandardBoundSection
+        return new StandardBoundSection(
+                    sectionName, 
+                    boundControls,
+                    new FormGroup(formControls))
     }
 
     public buildDataArray(
@@ -225,7 +300,7 @@ export class StandardSharedService {
     public buildDataArrayForTable(
         arrayData: any[],
         standard: StandardComponent,
-        options: StandardOptions,
+        options: ArrayStandardOptions,
         onComplete: (idField: string, ids: any[], cloneData: any) => void
     ): any[] {
         let arrayTableData = []
@@ -233,10 +308,10 @@ export class StandardSharedService {
         let ids: any[] = []
         let cloneData: any = new Object()
         if (arrayData.length > 0) {
-            arrayData.forEach(element => {
+            arrayData?.forEach(element => {
                 let tempElementObject = new Object();
                 (standard.controls as PageRenderedControl<DefaultControlOptions>[])
-                    .forEach(control => {
+                    ?.forEach(control => {
                         const foundKey = Object.keys(element).find(a => a === control.defaultOptions.bindname)
                         if (ObjectUtils.isNotNull(foundKey)) {
                             tempElementObject[control.defaultOptions.bindname] = element[foundKey]
@@ -249,7 +324,7 @@ export class StandardSharedService {
 
                 // If identityfield is empty, we should create an identity field
                 // Identity Field is control name, we need to find a relate control
-                if (!ObjectUtils.isNotNull(options.identityfield)) {                    
+                if (!ObjectUtils.isNotNull(options.identityfield)) {
                     tempElementObject['uniq_id'] = Guid.create().toString()
                     ids.push(tempElementObject['uniq_id'])
                     idKey = 'uniq_id'
@@ -264,14 +339,14 @@ export class StandardSharedService {
             })
 
             cloneData = ObjectUtils.clone(arrayTableData[0])
-            Object.keys(cloneData).forEach(e => {
+            Object.keys(cloneData)?.forEach(e => {
                 cloneData[e] = null
             })
         }
         else {
             // If there are no data, we need to create clone object for inserting
             (standard.controls as PageRenderedControl<DefaultControlOptions>[])
-                .forEach(control => {
+                ?.forEach(control => {
                     cloneData[control.defaultOptions.bindname] = null
                 })
 
@@ -291,6 +366,21 @@ export class StandardSharedService {
         }
 
         return arrayTableData
+    }
+
+    public buildTreeData(
+        dataSourceName: string,
+        datasources: PageLoadedDatasource[],
+        treeOptions: TreeStandardOptions): any[] {
+
+        // Cause an exception if the data isn't array, but let it be
+        let data: any[] = this.getSectionBoundData(dataSourceName, datasources) as any[]
+
+        // TODO: We need to transform data from flat -> nest because Tree 
+        if (treeOptions.indatastructure === 'flat'){
+            return data
+        }
+        return data
     }
 
     private getSectionBoundData(datasourceName: string, datasources: PageLoadedDatasource[]) {
@@ -332,6 +422,9 @@ export class StandardSharedService {
         data: any,
         controlBindName: string,
         control: PageRenderedControl<DefaultControlOptions>): any {
+        if(!ObjectUtils.isNotNull(data)){
+            return null
+        }
         let controlData = null
         if (controlBindName === 'id' || controlBindName === '_id') {
             const boundData = data._id
@@ -346,6 +439,11 @@ export class StandardSharedService {
             controlData = data[controlBindName]
         }
 
+        // Set default value if it is happened
+        if (!ObjectUtils.isNotNull(controlData) && ObjectUtils.isNotNull(control.defaultOptions.defaultvalue)) {
+            controlData = control.defaultOptions.defaultvalue
+        }
+
         // Depends on control type, we need to doublecheck data and set default value if data is null
         if ((control.type == ControlType.AutoComplete
             || control.type == ControlType.Select)
@@ -357,7 +455,7 @@ export class StandardSharedService {
                         const temp = JSON.parse(controlData)
                         controlData = temp
                     }
-                    catch{
+                    catch {
                         controlData = [controlData]
                     }
                 }
@@ -366,17 +464,17 @@ export class StandardSharedService {
                 controlData = []
             }
         }
-        else if ((control.type == ControlType.Checkbox || control.type == ControlType.Slide) && controlData) {
-            if (controlData.toString() == '0' || controlData.toString() == '1') {
-                control.defaultOptions.allowZero = true
-            }
-            else if (controlData == 'Y' || controlData == 'N') {
-                control.defaultOptions.allowYesNo = true
+        else if (control.type == ControlType.Checkbox || control.type == ControlType.Slide) {
+            if (ObjectUtils.isNotNull(controlData)) {
+                if (controlData.toString() == '0' || controlData.toString() == '1') {
+                    control.defaultOptions.allowZero = true
+                }
+                else if (controlData == 'Y' || controlData == 'N') {
+                    control.defaultOptions.allowYesNo = true
+                }
             }
             else {
-                // Checkbox or slide must be true/false, there shouldn't be null
-                controlData = ObjectUtils.isNotNull(controlData)
-                return controlData
+                controlData = false
             }
         }
 
@@ -401,7 +499,7 @@ export class StandardSharedService {
         validators: Array<PageControlValidator>,
         availableControls: any): ValidatorFn[] {
         const formValidators: Array<ValidatorFn> = []
-        _.forEach(validators, (validator: PageControlValidator) => {
+        validators?.forEach((validator: PageControlValidator) => {
             if (validator.isActive) {
                 switch (validator.validatorType) {
                     case ValidatorType.Required:
@@ -463,7 +561,7 @@ export class StandardSharedService {
         const asyncValidatorFns: AsyncValidatorFn[] = []
 
 
-        _.forEach(validators, validator => {
+        validators?.forEach(validator => {
             asyncValidatorFns.push(PortalValidators
                 .addAsyncValidator(
                     validator,

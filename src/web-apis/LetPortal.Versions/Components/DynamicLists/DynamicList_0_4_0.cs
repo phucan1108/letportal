@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
@@ -28,7 +29,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
                         Query =
@@ -42,9 +43,9 @@ namespace LetPortal.Versions.Components.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -57,7 +58,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -70,7 +71,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "instanceNo",
                             DisplayName = "Instance No.",
@@ -84,7 +85,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "runningVersion",
                             DisplayName = "Version",
@@ -97,7 +98,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "lastCheckedDate",
                             DisplayName = "Last Checked Date",
@@ -111,7 +112,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 4
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "totalRunningTime",
                             DisplayName = "Total Running Time",
@@ -124,7 +125,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 5
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "serviceState",
                             DisplayName = "State",
@@ -147,7 +148,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 6
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "ipAddress",
                             DisplayName = "IP Address",
@@ -160,7 +161,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 7
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = versionContext.ConnectionType != Core.Persistences.ConnectionType.MongoDB ? "os" : "serviceHardwareInfo.os",
                             DisplayName = "OS",
@@ -210,7 +211,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.ServiceManagementDatabaseId,
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ? "{ \"$query\": { \"logevents\": [ ] } }" : "SELECT * FROM logevents"
@@ -219,9 +220,9 @@ namespace LetPortal.Versions.Components.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -234,7 +235,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "traceId",
                             DisplayName = "Trace Id",
@@ -247,7 +248,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "source",
                             DisplayName = "Service Name",
@@ -260,7 +261,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "sourceId",
                             DisplayName = "Service Id",
@@ -273,7 +274,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "httpRequestUrl",
                             DisplayName = "Request Url",
@@ -286,7 +287,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 4
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "httpResponseStatusCode",
                             DisplayName = "Response Code",
@@ -299,7 +300,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 5
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "beginRequest",
                             DisplayName = "Begin Request",
@@ -313,7 +314,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 6
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "stackTrace",
                             DisplayName = "stackTrace",

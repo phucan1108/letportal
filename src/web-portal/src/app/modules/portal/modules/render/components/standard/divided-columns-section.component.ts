@@ -1,25 +1,20 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import * as _ from 'lodash';
-import { ExtendedPageSection, GroupControls } from 'app/core/models/extended.models';
-import { FormGroup, FormControl, ValidatorFn, Validators, FormBuilder, AsyncValidatorFn } from '@angular/forms';
-import { JsonEditorOptions } from 'ang-jsoneditor';
-import { ControlType, PageSectionLayoutType, PageControl, PageControlValidator, ValidatorType, PageControlAsyncValidator, DatabasesClient } from 'services/portal.service';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Store } from '@ngxs/store';
-import { PageStateModel } from 'stores/pages/page.state';
+import { JsonEditorOptions } from 'ang-jsoneditor';
+import { SimpleBoundControl } from 'app/core/context/bound-control';
+import { StandardBoundSection } from 'app/core/context/bound-section';
+import { ExtendedPageSection, GroupControls } from 'app/core/models/extended.models';
+import { DefaultControlOptions, PageLoadedDatasource, PageRenderedControl } from 'app/core/models/page.model';
+import { FormUtil } from 'app/core/utils/form-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
+import { NGXLogger } from 'ngx-logger';
 import { Observable, Subscription } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
-import { EndRenderingPageSectionsAction, AddSectionBoundData, GatherSectionValidations, SectionValidationStateAction } from 'stores/pages/page.actions';
-import { DefaultControlOptions, PageRenderedControl, PageLoadedDatasource, MapDataControl } from 'app/core/models/page.model';
-import PageUtils from 'app/core/utils/page-util';
-import { CustomValidators } from 'ngx-custom-validators';
-import { NGXLogger } from 'ngx-logger';
-import { PageService } from 'services/page.service';
-import { PortalValidators } from 'app/core/validators/portal.validators';
-import { CustomHttpService } from 'services/customhttp.service';
-import { ObjectUtils } from 'app/core/utils/object-util';
+import { ControlType, PageSectionLayoutType } from 'services/portal.service';
+import { AddSectionBoundData, BeginBuildingBoundData, EndRenderingPageSectionsAction, GatherSectionValidations, SectionValidationStateAction } from 'stores/pages/page.actions';
+import { PageStateModel } from 'stores/pages/page.state';
 import { StandardSharedService } from './services/standard-shared.service';
-import { FormUtil } from 'app/core/utils/form-util';
-import { LocalizationService } from 'services/localization.service';
 
 @Component({
     selector: 'divided-columns',
@@ -30,31 +25,28 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     @Input()
     section: ExtendedPageSection
 
+    @Input()
+    boundSection: StandardBoundSection
+
+    standardBoundSection: StandardBoundSection
     builderFormGroup: FormGroup
-
     queryparams: any
-
     options: any
-
     data: any
-
     controlsGroups: Array<GroupControls>
     controls: Array<PageRenderedControl<DefaultControlOptions>>
-
     datasources: PageLoadedDatasource[]
-
     controlType = ControlType
-
     _numberOfColumns = 2;
     _labelClass = 'col-lg-2 col-form-label'
     _boundedClass = 'col-lg-4'
-
     jsonOptions = new JsonEditorOptions();
     queryJsonData: any = '';
-
     pageState$: Observable<PageStateModel>
     subscription: Subscription
     readyToRender = false
+
+    storeName: string
     constructor(
         private logger: NGXLogger,
         private fb: FormBuilder,
@@ -65,9 +57,14 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.logger.debug('Init divided columns')
         this.pageState$ = this.store.select<PageStateModel>(state => state.page)
+        this.storeName =
+            ObjectUtils.isNotNull(this.section.sectionDatasource.dataStoreName) 
+                ? this.section.sectionDatasource.dataStoreName
+                    : (this.section.sectionDatasource.datasourceBindName === 'data' ? 'data' : this.section.name)
         this.subscription = this.pageState$.pipe(
             filter(state => state.filterState
                 && (state.filterState === EndRenderingPageSectionsAction
+                    || state.filterState === BeginBuildingBoundData
                     || state.filterState === GatherSectionValidations)),
             tap(
                 state => {
@@ -77,9 +74,15 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
                             this.options = state.options
                             this.queryparams = state.queryparams
                             this.datasources = state.datasources
+                            this.data = this.standardSharedService
+                                        .buildSectionBoundData(
+                                            this.section.sectionDatasource.datasourceBindName,
+                                            this.datasources)
                             this.prepareRender()
                             this.dividedControls()
-                            this.buildFormControls()
+                            break
+                        case BeginBuildingBoundData:
+                            this.buildFormControls()                                                        
                             this.readyToRender = true
                             break
                         case GatherSectionValidations:
@@ -104,6 +107,7 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.subscription.unsubscribe()
     }
+    getBoundControl = (control: PageRenderedControl<DefaultControlOptions>) => this.standardBoundSection.get(control.name)
 
     prepareRender() {
         // By default, OneColumn must be separated two columns for all controls
@@ -124,37 +128,60 @@ export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
 
     dividedControls() {
         const filteredControls = this.standardSharedService
-            .buildControlOptions(this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[])
+            .buildControlOptions(
+                this.section.relatedStandard.controls as PageRenderedControl<DefaultControlOptions>[],
+                this.data)
             .filter(control => {
-                return !control.defaultOptions.checkedHidden
+                return control.defaultOptions.checkRendered
             })
-        this.controlsGroups = this.standardSharedService.buildControlsGroup(filteredControls, this._numberOfColumns)
+
+        this.section.relatedStandard.controls = filteredControls
+        this.controls = filteredControls
+        this.controlsGroups = this.standardSharedService
+                .buildControlsGroup(
+                    filteredControls, this._numberOfColumns)
     }
 
     buildFormControls() {
-        const sectionBoundData = this.standardSharedService
-            .buildSectionBoundData(
-                this.section.sectionDatasource.datasourceBindName,
-                this.datasources)
-        this.builderFormGroup = this.standardSharedService.buildFormGroups(
+        const sectionBoundData = this.data        
+        this.standardBoundSection = this.standardSharedService.buildBoundSection(
             this.section.name,
+            this.storeName,
             this.section.relatedStandard,
             sectionBoundData,
-            this.section.sectionDatasource.datasourceBindName === 'data',
             null,
-            (data, keptDataSection, sectionsMap) => {
+            (data, sectionsMap) => {
                 this.store.dispatch(new AddSectionBoundData({
-                    name: this.section.name,
-                    isKeptDataName: keptDataSection,
+                    storeName: this.storeName,
                     data: data
                 }, sectionsMap))
             }
-        )
+        ) as StandardBoundSection
+
+        this.boundSection.load(this.standardBoundSection.getAll())
+        this.boundSection.loadFormGroup(this.standardBoundSection.getFormGroup())
+
+        // Change 0.9.0: We need to set boundcontrol into PageControl
+        if(ObjectUtils.isNotNull(this.controls)){
+            this.controls.forEach(control => {
+                let foundBoundControl = this.standardBoundSection.get(control.name)
+                if(ObjectUtils.isNotNull(foundBoundControl)){
+                    control.boundControl = foundBoundControl
+                    control.boundControl.hide = control.defaultOptions.checkedHidden
+                }
+                else{
+                    control.boundControl = new SimpleBoundControl(control.name, control.type, null)
+                    control.boundControl.hide = control.defaultOptions.checkedHidden
+                }            
+            })
+        }
+        
+        this.builderFormGroup = this.standardBoundSection.getFormGroup()
     }
 
     private collectAllControlsState(controls: any) {
         const controlStates = new Object()
-        Object.keys(controls).forEach(key => {
+        Object.keys(controls)?.forEach(key => {
             const control = controls[key] as FormControl
             controlStates[key] = {
                 valid: control.valid,

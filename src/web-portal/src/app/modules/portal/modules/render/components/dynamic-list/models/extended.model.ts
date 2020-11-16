@@ -1,4 +1,4 @@
-import { FilterOption, FilterField, ColumndDef } from 'services/portal.service';
+import { FilterOption, FilterField, ColumnDef } from 'services/portal.service';
 
 
 export interface ExtendedFilterOption extends FilterOption {
@@ -11,7 +11,7 @@ export interface ExtendedRenderFilterField extends FilterField {
     datasourceId: string
 }
 
-export interface ExtendedColDef extends ColumndDef{
+export interface ExtendedColDef extends ColumnDef{
     datasourceId: string
     inDetailMode: boolean
 }

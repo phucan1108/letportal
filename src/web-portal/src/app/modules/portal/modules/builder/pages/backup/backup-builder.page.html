@@ -7,7 +7,10 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="onSubmit()" *ngIf="!isSubmitted">{{ 'common.create' | translate }}</button>
+                    <button mat-menu-item (click)="onSubmit()"
+                        *ngIf="!isSubmitted">{{ 'common.create' | translate }}</button>
+                    <button mat-menu-item (click)="onGenerate()"
+                        *ngIf="!isSubmitted">{{ 'common.generate' | translate }}</button>
                     <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
@@ -22,7 +25,8 @@
                         <label class="col-lg-2 col-form-label">{{ 'common.nameText' | translate }}:</label>
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
-                                <input formControlName="name" matInput #formNameInput placeholder="{{ 'pageBuilder.page.backup.backupName.placeholder' | translate }}"
+                                <input formControlName="name" matInput #formNameInput
+                                    placeholder="{{ 'pageBuilder.page.backup.backupName.placeholder' | translate }}"
                                     maxlength="250">
                                 <mat-hint align="end">
                                     {{formNameInput.value?.length || 0}}/250
@@ -38,7 +42,9 @@
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
                                 <mat-label>{{ 'pageBuilder.page.backup.leaveDescription' | translate }}</mat-label>
-                                <textarea #formDesInput matInput placeholder="{{ 'pageBuilder.page.backup.leaveDescription.placeholder' | translate }}" formControlName="description" maxlength="500"></textarea>                               
+                                <textarea #formDesInput matInput
+                                    placeholder="{{ 'pageBuilder.page.backup.leaveDescription.placeholder' | translate }}"
+                                    formControlName="description" maxlength="500"></textarea>
                                 <mat-hint align="end">
                                     {{formDesInput.value?.length || 0}}/500
                                 </mat-hint>
@@ -89,6 +95,26 @@
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
+                                        {{ 'common.tree' | translate }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Tree'" [icon]="'category'" [data]="tree$"
+                                    (searchChanged)="onSeachTreeChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectTreeChanged($event)"></let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ 'common.array' | translate }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Array'" [icon]="'category'" [data]="array$"
+                                    (searchChanged)="onSeachArrayChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectArrayChanged($event)"></let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
                                         {{ 'common.dynamicLists' | translate }}
                                     </mat-panel-title>
                                 </mat-expansion-panel-header>
@@ -125,12 +151,16 @@
                 <div class="row row-heading" *ngIf="isCreated else loading">
                     <div class="col-lg-12 pl-0">
                         <p>
-                            {{ 'pageBuilder.page.backup.text0' | translate}} <b><a (click)="download()" style="cursor: pointer;">
-                                    {{ 'common.link' | translate}} </a></b> {{ 'pageBuilder.page.backup.text1' | translate }}
+                            {{ 'pageBuilder.page.backup.text0' | translate}} <b><a (click)="download()"
+                                    style="cursor: pointer;">
+                                    {{ 'common.link' | translate}} </a></b>
+                            {{ 'pageBuilder.page.backup.text1' | translate }}
                         </p>
                         <p>
-                            {{ 'pageBuilder.page.backup.text2' | translate}} <b><a (click)="refresh()" style="cursor: pointer;">
-                            {{ 'pageBuilder.page.backup.text3' | translate }}</a></b> {{ 'pageBuilder.page.backup.text4' | translate}}
+                            {{ 'pageBuilder.page.backup.text2' | translate}} <b><a (click)="refresh()"
+                                    style="cursor: pointer;">
+                                    {{ 'pageBuilder.page.backup.text3' | translate }}</a></b>
+                            {{ 'pageBuilder.page.backup.text4' | translate}}
                         </p>
                     </div>
                 </div>

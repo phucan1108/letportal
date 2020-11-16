@@ -20,7 +20,10 @@ namespace LetPortal.Core.Logger
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var userSessionId = httpContext.Request.Headers[Constants.UserSessionIdHeader].ToString();
-            if (!string.IsNullOrEmpty(userSessionId) || environment == "Development")
+            var skipCheck = httpContext.Items[Constants.SkipCheckPortalHeaders] != null ? (bool)httpContext.Items[Constants.SkipCheckPortalHeaders] : false;
+            if (
+                !string.IsNullOrEmpty(userSessionId)
+                    || skipCheck)
             {
                 httpContext.Items[Constants.UserSessionIdHeader] = StringUtil.DecodeBase64ToUTF8(userSessionId);
                 await _next.Invoke(httpContext);

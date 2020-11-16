@@ -1,34 +1,34 @@
-import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { DynamicList, ColumndDef, SortType, CommandButtonInList, CommandPositionType, DynamicListClient, FieldValueType, DynamicListFetchDataModel, DynamicListSourceType, FilledParameter } from 'services/portal.service';
-import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, of, merge, Observable, Subscription } from 'rxjs';
-import * as _ from 'lodash';
-import { tap, catchError, finalize, debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators';
-import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { CommandClicked, DatasourceCache } from '../models/commandClicked';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { DynamicListDataDialogComponent } from './dynamic-list-data-dialog.component';
-import { DatasourceOptionsService } from 'services/datasourceopts.service';
-import { ExtendedColDef } from '../models/extended.model';
-import { Guid } from 'guid-typescript';
-import { NGXLogger } from 'ngx-logger';
-import { ListOptions, ExtendedFilterField } from 'portal/modules/models/dynamiclist.extended.model';
-import { ObjectUtils } from 'app/core/utils/object-util';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
+import { ObjectUtils } from 'app/core/utils/object-util';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { Guid } from 'guid-typescript';
+import { NGXLogger } from 'ngx-logger';
+import { ExtendedFilterField, ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
+import { BehaviorSubject, of, Subscription } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
+import { DatasourceOptionsService } from 'services/datasourceopts.service';
 import { PageService } from 'services/page.service';
+import { ColumnDef, CommandButtonInList, CommandPositionType, DynamicList, DynamicListClient, DynamicListFetchDataModel, DynamicListSourceType, FieldValueType, FilledParameter, SortType } from 'services/portal.service';
+import { CommandClicked, DatasourceCache } from '../models/commandClicked';
+import { ExtendedColDef } from '../models/extended.model';
+import { DynamicListDataDialogComponent } from './dynamic-list-data-dialog.component';
+
 
 @Component({
     selector: 'dynamic-list-grid',
     templateUrl: './dynamic-list.grid.component.html',
     styleUrls: ['./dynamic-list.grid.component.scss']
 })
-export class DynamicListGridComponent implements OnInit, OnDestroy {
+export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     @ViewChild('matTable', { static: false })
     private matTable: MatTable<any>;
-    @ViewChild(MatPaginator, { static: false })
+    @ViewChild(MatPaginator, { static: true })
     private paginator: MatPaginator;
     @ViewChild(MatSort, { static: true })
     private sort: MatSort;
@@ -69,8 +69,9 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     isHandset = false
     isContructedGrid = false
     hasDetailCols = false
-
+    needToWaitDatasource = false
     datasourceSub: Subscription
+    numberOfActions = 0
     constructor(
         private datasoureOptsService: DatasourceOptionsService,
         private breakpointObserver: BreakpointObserver,
@@ -92,6 +93,12 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                 })
             ).subscribe()
     }
+    ngAfterViewInit(): void {
+        if (!this.needToWaitDatasource) {
+            this.logger.debug('Hit after view init fecthing data', this.sort, this.paginator)
+            this.initFetchData()
+        }      
+    }
 
     ngOnInit(): void {
         this.datasourceSub = this.dataSource$.pipe(
@@ -111,7 +118,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     private constructGrid() {
         // Extract some parts form Dynamic List
         let counterInDetailMode = 0
-        _.forEach(this.dynamicList.columnsList.columndDefs, colDef => {
+        this.dynamicList.columnsList.columnDefs?.forEach(colDef => {
             this.headers.push({
                 ...colDef,
                 datasourceId: '',
@@ -126,11 +133,11 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         // Fetch all ready datasources and ready for filters
         const filters: ExtendedFilterField[] = []
         let counter = this.headers.length
-        let needToWaitDatasource = false
-        _.forEach(this.headers, (colDef: ExtendedColDef) => {
+        this.needToWaitDatasource = false
+        this.headers?.forEach((colDef: ExtendedColDef) => {
             // We will fetch datasource and then passing its for filter
             if (colDef.searchOptions.fieldValueType === FieldValueType.Select) {
-                needToWaitDatasource = true
+                this.needToWaitDatasource = true
                 this.datasoureOptsService
                     .executeDatasourceOptions(colDef.datasourceOptions, null)
                     .subscribe(
@@ -142,6 +149,24 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                                 data: ObjectUtils.isArray(res) ? res : [res],
                                 datasourceId: Guid.create().toString()
                             }
+                            // Very inconvient when value is number/boolean/datetime
+                            let valueType = FieldValueType.Text
+                            try {
+                                const firstValue = datasource[0].value
+                                const isNumber = ObjectUtils.isNumber(firstValue)
+                                const isBoolean = ObjectUtils.isBoolean(firstValue)
+                                if (isNumber) {
+                                    valueType = FieldValueType.Number
+                                }
+                                if (isBoolean) {
+                                    valueType = FieldValueType.Slide
+                                }
+                            }
+                            catch
+                            {
+
+                            }
+
                             this.datasourceCache.push(datasource)
                             colDef.datasourceId = datasource.datasourceId
 
@@ -160,6 +185,8 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                             if (counter == 0) {
                                 this.filters = filters
                                 this.isContructedGrid = true
+                                // Very import to call detectChanges because this data always comes ngViewInit
+                                this.cd.detectChanges()
                                 this.initFetchData()
                             }
                         }
@@ -184,7 +211,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
                 }
             }
         })
-        const foundSort = _.find(this.headers, (element: ColumndDef) => {
+        const foundSort = this.headers.find((element: ColumnDef) => {
             return element.allowSort;
         });
         if (foundSort) {
@@ -192,12 +219,12 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         }
 
         if (this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0) {
-            this.commandsInList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
+            this.commandsInList = this.dynamicList.commandsList.commandButtonsInList.filter((element: CommandButtonInList) => {
                 return element.commandPositionType === CommandPositionType.InList
             })
         }
 
-        _.forEach(this.headers, (element) => {
+        this.headers?.forEach((element) => {
             if (!element.isHidden && !element.inDetailMode)
                 this.displayedColumns.push(element.name)
         })
@@ -205,11 +232,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         if (this.commandsInList.length > 0 || this.hasDetailCols) {
             this.displayedColumns.push('actions')
         }
-
-        if (!needToWaitDatasource) {
-            this.initFetchData()
-        }
-
+        this.numberOfActions = this.commandsInList.length
     }
 
     openDialogData(data) {
@@ -240,32 +263,32 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         this.fetchDataQuery = this.getFetchDataQuery();
         this.fetchDataQuery.filterGroupOptions = fetchQuery.filterGroupOptions;
         this.fetchDataQuery.textSearch = fetchQuery.textSearch;
+        this.logger.debug('Hit submit search')
         this.fetchData();
     }
 
     private initFetchData() {
         // Trigger loading data form sortChange and page event
         if (this.listOptions.enablePagination) {
-            this.cd.detectChanges()
-            merge(this.sort.sortChange, this.paginator.page)
+            this.paginator.page
                 .pipe(
                     tap(() => {
+                        this.logger.debug('Hit paginator change')
                         this.fetchDataQuery = this.getFetchDataQuery();
                         this.fetchData();
                     })
-                )
-                .subscribe();
+                ).subscribe()
         }
-        else {
-            this.sort.sortChange
-                .pipe(
-                    tap(() => {
-                        this.fetchDataQuery = this.getFetchDataQuery();
-                        this.fetchData();
-                    })
-                )
-                .subscribe();
-        }
+        
+        this.sort.sortChange
+        .pipe(
+            tap(() => {
+                this.logger.debug('Hit sort change')
+                this.fetchDataQuery = this.getFetchDataQuery();
+                this.fetchData();
+            })
+        )
+        .subscribe()
     }
 
     private onCommandClick(commandClicked: CommandClicked) {
@@ -311,6 +334,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     }
 
     private fetchData() {
+        this.logger.debug('Hit Fetch Data')
         this.loading$.next(true)
         this.dynamicClient.executeQuery(this.dynamicList.id, this.fetchDataQuery)
             .pipe(
@@ -336,7 +360,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
     private combineJsonStringToObject(arrayJsonStrings: Array<string>) {
         const objects: Array<any> = new Array<any>()
 
-        _.forEach(arrayJsonStrings, (json) => {
+        arrayJsonStrings?.forEach((json) => {
             objects.push(JSON.parse(json))
         })
 
@@ -363,9 +387,9 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         }
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
-            const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
+            const datasource = this.datasourceCache.find((elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
             if (ObjectUtils.isNotNull(datasource)) {
-                const found = _.find(datasource.data, elem => elem ? elem.value.toString() === displayData : false)
+                const found = datasource.data.find(elem => elem ? elem.value.toString() === displayData : false)
                 return found ? found.name : displayData
             }
         }
@@ -419,8 +443,8 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
 
     getClassForChip(renderingData: any, currentColumn: ExtendedColDef) {
         const displayData = renderingData[currentColumn.name]
-        const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-        const foundIndex = _.findIndex(datasource.data, (elem: any) => elem.value.toString() === displayData)
+        const datasource = this.datasourceCache.find((elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
+        const foundIndex = datasource.data.findIndex((elem: any) => elem.value.toString() === displayData)
         return 'mat-chip-' + (foundIndex % 4)
     }
 
@@ -444,9 +468,9 @@ export class DynamicListGridComponent implements OnInit, OnDestroy {
         }
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
-            const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
+            const datasource = this.datasourceCache.find((elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
             if (ObjectUtils.isNotNull(datasource)) {
-                const found = _.find(datasource.data, elem => elem ? elem.value.toString() === displayData : false)
+                const found = datasource.data.find(elem => elem ? elem.value.toString() === displayData : false)
                 return found ? found.name : displayData
             }
         }

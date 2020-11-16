@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.SectionParts;
 
 namespace LetPortal.Versions.Components
@@ -307,7 +308,7 @@ namespace LetPortal.Versions.Components
                         DatasourceOptions = new Portal.Entities.Shared.DatasourceOptions
                         {
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
-                            DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                            DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                             {
                                 DatabaseConnectionId = Constants.IdentityDatabaseId,
                                 EntityName = "roles",
@@ -405,7 +406,7 @@ namespace LetPortal.Versions.Components
                                 AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
                                 {
                                     EvaluatedExpression = "response.result == null",
-                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                                     {
                                       DatabaseConnectionId = Constants.IdentityDatabaseId,
                                       Query = "{\r\n  \"$query\": {\r\n    \"users\": [\r\n      {\r\n        \"$match\": {\r\n          \"username\": \"{{data.username}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
@@ -594,7 +595,7 @@ namespace LetPortal.Versions.Components
                                 AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
                                 {
                                     EvaluatedExpression = "response.result == null",
-                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                                     {
                                       DatabaseConnectionId = Constants.IdentityDatabaseId,
                                       Query = "{\r\n  \"$query\": {\r\n    \"users\": [\r\n      {\r\n        \"$match\": {\r\n          \"email\": \"{{data.emaill}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
@@ -716,7 +717,7 @@ namespace LetPortal.Versions.Components
                                 AsyncValidatorOptions = new Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
                                 {
                                     EvaluatedExpression = "response.result == null",
-                                    DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                                    DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                                     {
                                       DatabaseConnectionId = Constants.IdentityDatabaseId,
                                       Query = "{\r\n  \"$query\": {\r\n    \"roles\": [\r\n      {\r\n        \"$match\": {\r\n          \"name\": \"{{data.name}}\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"

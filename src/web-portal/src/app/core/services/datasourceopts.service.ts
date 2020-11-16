@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { DatabasesClient, DatasourceOptions, DatabaseOptions, DatasourceStaticOptions, HttpServiceOptions, DatasourceControlType } from './portal.service';
+import { DatabasesClient, DatasourceOptions, SharedDatabaseOptions, DatasourceStaticOptions, HttpServiceOptions, DatasourceControlType } from './portal.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NGXLogger } from 'ngx-logger';
 import { Translator } from '../shell/translates/translate.pipe';
 import { PageShellData } from '../models/page.model';
 import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-import * as _ from 'lodash';
+ 
 
 @Injectable({
     providedIn: 'root'
@@ -34,7 +34,7 @@ export class DatasourceOptionsService {
     outputProjection(outputProjection: string, data: any) {
         const splitted = outputProjection.split(';')
         const fieldMaps: FieldMap[] = []
-        _.forEach(splitted, field => {
+        splitted?.forEach(field => {
             if (field.indexOf('=') > 0) {
                 const fieldSplitted = field.split('=')
                 fieldMaps.push({
@@ -51,9 +51,9 @@ export class DatasourceOptionsService {
         })
         if (data instanceof Array) {
             const resData = new Array()
-            _.forEach(data, dt => {
+            data?.forEach(dt => {
                 const obj = new Object()
-                _.forEach(fieldMaps, map => {
+                fieldMaps?.forEach(map => {
                     const evaluted = Function('data', 'return data.' + map.map)
                     obj[map.key] = evaluted(dt)
                 })
@@ -65,7 +65,7 @@ export class DatasourceOptionsService {
         }
         else {
             const obj = new Object()
-            _.forEach(fieldMaps, map => {
+            fieldMaps?.forEach(map => {
                 const evaluted = Function('data', 'return data.' + map.map)
                 obj[map.key] = evaluted(data)
             })
@@ -73,7 +73,7 @@ export class DatasourceOptionsService {
         }
     }
 
-    private executeDatabase(databaseConfigs: DatabaseOptions, pageShellData: PageShellData) {
+    private executeDatabase(databaseConfigs: SharedDatabaseOptions, pageShellData: PageShellData) {
         const command = this.translator.translateDataWithShell(databaseConfigs.query, pageShellData)
         this.logger.debug('Prepared command to execute database', command)
         return this.databaseClient

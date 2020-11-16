@@ -15,7 +15,7 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
         public DatasourceOptions DatasourceOptions { get; set; } = new DatasourceOptions
         {
             Type = DatasourceControlType.StaticResource,
-            DatabaseOptions = new DatabaseOptions
+            DatabaseOptions = new SharedDatabaseOptions
             {
                 DatabaseConnectionId = "",
                 EntityName = "",

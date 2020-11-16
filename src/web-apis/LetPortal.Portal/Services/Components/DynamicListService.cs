@@ -25,6 +25,10 @@ namespace LetPortal.Portal.Services.Components
 
         public async Task<DynamicListResponseDataModel> FetchData(DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
+            if (!string.IsNullOrEmpty(fetchDataModel.TextSearch))
+            {
+                fetchDataModel.TextSearch = fetchDataModel.TextSearch.Trim();
+            }                                                                            
             var databaseConnection = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(dynamicList.ListDatasource.DatabaseConnectionOptions.DatabaseConnectionId);
             var foundDynamicListQuery = _dynamicListQueryDatabases.First(a => a.ConnectionType == databaseConnection.GetConnectionType());
 

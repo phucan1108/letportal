@@ -8,7 +8,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { ClipboardService } from 'ngx-clipboard';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import * as _ from 'lodash';
+ 
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
@@ -104,8 +104,9 @@ export class CommandOptionsComponent implements OnInit {
             this.confirmationOptions = this.actionCommandOptions.confirmationOptions
         }
         else {
+            
             this.actionCommandOptions.confirmationOptions = {
-                isEnable: true,
+                isEnable: false,
                 confirmationText: 'Are you sure to proceed it?'
             }
             this.confirmationOptions = this.actionCommandOptions.confirmationOptions
@@ -316,7 +317,7 @@ export class CommandOptionsComponent implements OnInit {
 
     private isDbChainsValid(): boolean{
         let isValid = true
-        this.actionCommandOptions.dbExecutionChains.steps.forEach(step => {
+        this.actionCommandOptions.dbExecutionChains.steps?.forEach(step => {
             if(!ObjectUtils.isNotNull(step.databaseConnectionId) || !ObjectUtils.isNotNull(step.executeCommand)){
                 isValid = false
                 return false

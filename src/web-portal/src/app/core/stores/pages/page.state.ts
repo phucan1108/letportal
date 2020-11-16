@@ -1,12 +1,11 @@
-import { Page, PageButton } from 'services/portal.service';
-import * as PageActions from './page.actions'
-import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl } from 'app/core/models/page.model';
-import { State, Selector, Action, StateContext } from '@ngxs/store';
-import { patch, append, updateItem } from '@ngxs/store/operators';
-import { ObjectUtils } from 'app/core/utils/object-util';
-import * as _ from 'lodash';
-import { ArrayUtils } from 'app/core/utils/array-util';
 import { Injectable } from '@angular/core';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { MapDataControl, PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState } from 'app/core/models/page.model';
+import { ArrayUtils } from 'app/core/utils/array-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
+import { Page, PageButton } from 'services/portal.service';
+import * as PageActions from './page.actions';
+
 
 export interface SectionValidation {
     section: string
@@ -114,17 +113,18 @@ export class PageState {
     @Action(PageActions.AddSectionBoundData)
     public addSectionData(ctx: StateContext<PageStateModel>, { pageSectionBoundData, sectionsMap }: PageActions.AddSectionBoundData) {
         const state = ctx.getState()
-        let tempData = state.data ? ObjectUtils.clone(state.data) : new Object()
+        let tempData = ObjectUtils.isNotNull(state.data) ? ObjectUtils.clone(state.data) : new Object()
 
         if (pageSectionBoundData.data) {
-            if (pageSectionBoundData.isKeptDataName) {
-                _.forEach(Object.keys(pageSectionBoundData.data), key => {
+            // If storeName === 'data', keep all fields in the root level
+            if (pageSectionBoundData.storeName === 'data') {
+                Object.keys(pageSectionBoundData.data)?.forEach(key => {
                     tempData[key] = pageSectionBoundData.data[key]
                 })
             }
             else {
-                // Keep a mapping data with section name. Ex: data.appinfo.id
-                tempData = pageSectionBoundData.data
+                // Keep a mapping data with 'storeName'. Ex: data.appinfo.id
+                tempData[pageSectionBoundData.storeName] = pageSectionBoundData.data[pageSectionBoundData.storeName]
             }
         }
         if (sectionsMap && sectionsMap.length > 0) {
@@ -152,7 +152,7 @@ export class PageState {
         let tempData = state.data ? ObjectUtils.clone(state.data) : new Object()
 
         if (event.allowUpdateParts) {
-            tempData[event.name] = {
+            tempData[event.storeName] = {
                 fresh: event.data,
                 inserts: [],
                 removes: [],
@@ -161,7 +161,7 @@ export class PageState {
         }
         else {
             // Create two inserts and removes array
-            tempData[event.name] = {
+            tempData[event.storeName] = {
                 fresh: [],
                 inserts: event.data,
                 removes: event.data
@@ -208,7 +208,7 @@ export class PageState {
     public renderingPageSection(ctx: StateContext<PageStateModel>, { renderingSection }: PageActions.RenderingPageSectionAction) {
         const state = ctx.getState()
         const cloneRenderingSections: RenderingPageSectionState[] = ObjectUtils.clone(state.renderingSections)
-        _.forEach(cloneRenderingSections, s => {
+        cloneRenderingSections?.forEach(s => {
             if (s.sectionName === renderingSection.sectionName) {
                 s.state = renderingSection.state
             }
@@ -224,7 +224,7 @@ export class PageState {
     public renderedPageSection(ctx: StateContext<PageStateModel>, { renderedSection }: PageActions.RenderedPageSectionAction) {
         const state = ctx.getState()
         const cloneRenderingSections: RenderingPageSectionState[] = ObjectUtils.clone(state.renderingSections)
-        _.forEach(cloneRenderingSections, s => {
+        cloneRenderingSections?.forEach(s => {
             if (s.sectionName === renderedSection.sectionName) {
                 s.state = renderedSection.state
                 s.sectionClass = renderedSection.sectionClass
@@ -271,7 +271,7 @@ export class PageState {
         if (state.isOpenStandardArray) {
             let lastStandardArrayItem: StandardArrayItemState = ObjectUtils.clone(state.lastStandardArrayItem)
             const sectionMap = lastStandardArrayItem.sectionsMap
-            const foundMap = _.find(sectionMap, map => map.controlFullName === (event.sectionName + '_' + event.controlName))
+            const foundMap = sectionMap.find(map => map.controlFullName === (event.sectionName + '_' + event.controlName))
             if (foundMap && foundMap.bindName) {
                 const data = lastStandardArrayItem.data
                 data[foundMap.bindName] = event.data
@@ -298,7 +298,7 @@ export class PageState {
         }
         else {
             // Keep as usual for Standard Section
-            const foundMap = _.find(state.sectionsMap, map => map.controlFullName === (event.sectionName + '_' + event.controlName))
+            const foundMap = state.sectionsMap.find(map => map.controlFullName === (event.sectionName + '_' + event.controlName))
             if (foundMap && foundMap.bindName) {
                 const data = ObjectUtils.clone(state.data)
                 if (foundMap.sectionMapName) {
@@ -367,7 +367,7 @@ export class PageState {
     public sectionValidationState(ctx: StateContext<PageStateModel>, { section, isValid }: PageActions.SectionValidationStateAction) {
         const state = ctx.getState()
         const clone = ObjectUtils.clone(state.sectionValidations)
-        _.forEach(clone, val => {
+        clone?.forEach(val => {
             if (val.section === section) {
                 val.isValid = isValid
             }
@@ -383,7 +383,7 @@ export class PageState {
     public completeSectionValidationState(ctx: StateContext<PageStateModel>, { }: PageActions.CompleteGatherSectionValidations) {
         const state = ctx.getState()
 
-        if(ObjectUtils.isNotNull(state.specificValidatingSection)){            
+        if (ObjectUtils.isNotNull(state.specificValidatingSection)) {
             const foundSection = state.sectionValidations.find(a => a.section === state.specificValidatingSection)
             ctx.setState({
                 ...state,
@@ -392,22 +392,22 @@ export class PageState {
                 filterState: PageActions.CompleteGatherSectionValidations
             })
         }
-        else{
+        else {
             let isValid = true
-            _.forEach(state.sectionValidations, val => {
+            state.sectionValidations?.forEach(val => {
                 if (!val.isValid) {
                     isValid = false
                     return false
                 }
             })
-    
+
             ctx.setState({
                 ...state,
                 wholePageValid: isValid,
                 specificValidatingSection: null,
                 filterState: PageActions.CompleteGatherSectionValidations
             })
-        }        
+        }
     }
 
     @Action(PageActions.OpenInsertDialogForStandardArray)
@@ -444,7 +444,7 @@ export class PageState {
         const state = ctx.getState()
         const data = ObjectUtils.clone(state.data)
         // Always get lastStandardArrayItem
-        data[event.sectionName].inserts.push(state.lastStandardArrayItem.data)
+        data[event.storeName].inserts.push(state.lastStandardArrayItem.data)
         ctx.setState({
             ...state,
             data: data,
@@ -457,15 +457,15 @@ export class PageState {
         const state = ctx.getState()
         const data = ObjectUtils.clone(state.data)
         // Check is in inserts list
-        const foundInsert = data[event.sectionName].inserts.find(a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])
+        const foundInsert = data[event.storeName].inserts.find(a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])
         if (ObjectUtils.isNotNull(foundInsert)) {
-            const index = data[event.sectionName].inserts.indexOf(foundInsert)
-            ArrayUtils.updateOneItemByIndex(data[event.sectionName].inserts, state.lastStandardArrayItem.data, index)
+            const index = data[event.storeName].inserts.indexOf(foundInsert)
+            ArrayUtils.updateOneItemByIndex(data[event.storeName].inserts, state.lastStandardArrayItem.data, index)
         }
         else if (event.allowUpdateParts) {
-            data[event.sectionName].updates.push(state.lastStandardArrayItem.data)
+            data[event.storeName].updates.push(state.lastStandardArrayItem.data)
             // Move away from fresh
-            ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])
+            ArrayUtils.removeOneItem(data[event.storeName].fresh, a => a[event.identityKey] === state.lastStandardArrayItem.data[event.identityKey])
         }
 
         ctx.setState({
@@ -481,27 +481,58 @@ export class PageState {
         const data = ObjectUtils.clone(state.data)
 
         // Check is in inserts/updates list
-        const foundInsert = data[event.sectionName].inserts.find(a => a[event.identityKey] === event.removeItemKey)
+        const foundInsert = data[event.storeName].inserts.find(a => a[event.identityKey] === event.removeItemKey)
         if (ObjectUtils.isNotNull(foundInsert)) {
-            ArrayUtils.removeOneItem(data[event.sectionName].inserts, a => a[event.identityKey] === event.removeItemKey)
+            ArrayUtils.removeOneItem(data[event.storeName].inserts, a => a[event.identityKey] === event.removeItemKey)
         }
-        else {            
-            const foundUpdate = data[event.sectionName].updates.find(a => a[event.identityKey] === event.removeItemKey)
+        else {
+            const foundUpdate = data[event.storeName].updates.find(a => a[event.identityKey] === event.removeItemKey)
             if (ObjectUtils.isNotNull(foundUpdate)) {
-                ArrayUtils.removeOneItem(data[event.sectionName].updates, a => a[event.identityKey] === event.removeItemKey)
+                ArrayUtils.removeOneItem(data[event.storeName].updates, a => a[event.identityKey] === event.removeItemKey)
             }
             else {
-                const foundRemove = data[event.sectionName].fresh.find(a => a[event.identityKey] === event.removeItemKey)
-                data[event.sectionName].removes.push(foundRemove)
+                const foundRemove = data[event.storeName].fresh.find(a => a[event.identityKey] === event.removeItemKey)
+                data[event.storeName].removes.push(foundRemove)
                 // Move away from fresh
-                ArrayUtils.removeOneItem(data[event.sectionName].fresh, a => a[event.identityKey] === foundRemove[event.identityKey])
+                ArrayUtils.removeOneItem(data[event.storeName].fresh, a => a[event.identityKey] === foundRemove[event.identityKey])
             }
         }
 
         ctx.setState({
             ...state,
             data: data,
+            lastStandardArrayItem: {
+                data: event.removedItem,
+                allowUpdateParts: null,
+                identityKey: null,
+                sectionName: event.sectionName,
+                sectionsMap: null
+            },
             filterState: PageActions.RemoveOneItemForStandardArray
+        })
+    }
+
+    @Action(PageActions.AddSectionBoundDataForTree)
+    public addSectionBoundDataTree(ctx: StateContext<PageStateModel>, { event }: PageActions.AddSectionBoundDataForTree) {
+        const state = ctx.getState()
+        let tempData = state.data ? ObjectUtils.clone(state.data) : new Object()
+        tempData[event.name] = event.data
+        ctx.setState({
+            ...state,
+            data: tempData,
+            filterState: PageActions.AddSectionBoundDataForTree
+        })
+    }
+
+    @Action(PageActions.UpdateTreeData)
+    public updateTreeData(ctx: StateContext<PageStateModel>, { event }: PageActions.UpdateTreeData) {
+        const state = ctx.getState()
+        const data = ObjectUtils.clone(state.data)
+        data[event.storeName] = event.treeData
+        ctx.setState({
+            ...state,
+            data: data,
+            filterState: PageActions.UpdateOneItemForStandardArray
         })
     }
 }

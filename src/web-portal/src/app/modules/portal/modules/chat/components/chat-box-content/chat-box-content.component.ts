@@ -1,26 +1,26 @@
-import { Component, OnInit, Output, EventEmitter, Input, ViewChild, HostListener, ViewChildren, QueryList, ElementRef, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
-import { DoubleChatRoom, ChatRoom, RoomType, ExtendedMessage, ChatOnlineUser, ChatSession } from '../../../../../../core/models/chat.model';
-import { FormBuilder, FormGroup, Validators, FormControl, NgForm, FormGroupDirective } from '@angular/forms';
-import { ChatService } from 'services/chat.service';
-import { Observable, BehaviorSubject, Subscription, forkJoin, throwError } from 'rxjs';
-import { FormUtil } from 'app/core/utils/form-util';
-import { MatDialog } from '@angular/material/dialog';
-import { DateUtils } from 'app/core/utils/date-util';
-import { ObjectUtils } from 'app/core/utils/object-util';
-import { EmojiEvent } from 'emoji-picker';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { debounceTime, distinctUntilChanged, tap, filter, map, catchError } from 'rxjs/operators';
-import { Store, Select, Actions, ofActionSuccessful } from '@ngxs/store';
-import { SentMessage, ReceivedMessage, LoadingMoreSession, AddedNewSession, ReceivedMessageFromAnotherDevice, ToggleOpenChatRoom } from 'stores/chats/chats.actions';
-import { CHAT_STATE_TOKEN, ChatStateModel } from 'stores/chats/chats.state';
-import { NGXLogger } from 'ngx-logger';
-import StringUtils from 'app/core/utils/string-util';
-import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
-import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile.service';
-import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { environment } from 'environments/environment';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
+import { DateUtils } from 'app/core/utils/date-util';
+import { FormUtil } from 'app/core/utils/form-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
+import StringUtils from 'app/core/utils/string-util';
+import { EmojiEvent } from 'app/modules/thirdparties/emoji-picker/misc/emoji-event';
+import { environment } from 'environments/environment';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
+import { ChatService } from 'services/chat.service';
+import { DownloadableResponseFile, UploadFileService } from 'services/uploadfile.service';
+import { AddedNewSession, LoadingMoreSession, SentMessage, ToggleOpenChatRoom } from 'stores/chats/chats.actions';
+import { CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
+import { ChatOnlineUser, ChatSession, DoubleChatRoom, ExtendedMessage } from '../../../../../../core/models/chat.model';
+import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
+import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
         return control && control.invalid && control.touched;
@@ -389,7 +389,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     private translateEmotionShortcuts(message: string) {
-        EMOTION_SHORTCUTS.forEach(key => {
+        EMOTION_SHORTCUTS?.forEach(key => {
             message = message.replace(key.key, key.unicode)
         })
 

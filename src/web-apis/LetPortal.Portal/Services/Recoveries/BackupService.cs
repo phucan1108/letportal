@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
@@ -31,6 +33,8 @@ namespace LetPortal.Portal.Services.Recoveries
         public const string CHART_FILE = "charts.json";
         public const string DATABASE_FILE = "databases.json";
         public const string STANDARD_FILE = "standards.json";
+        public const string TREE_FILE = "tree.json";
+        public const string ARRAY_FILE = "array.json";
         public const string DYNAMICLIST_FILE = "dynamiclists.json";
         public const string PAGE_FILE = "pages.json";
 
@@ -81,12 +85,22 @@ namespace LetPortal.Portal.Services.Recoveries
             // Ensure a total number of objects less than MaximumObjects
             var appCount = model.Apps != null ? model.Apps.Count() : 0;
             var standardCount = model.Standards != null ? model.Standards.Count() : 0;
+            var treeCount = model.Tree != null ? model.Tree.Count() : 0;
+            var arrayCount = model.Array != null ? model.Array.Count() : 0;
             var chartCount = model.Charts != null ? model.Charts.Count() : 0;
             var dynamicCount = model.DynamicLists != null ? model.DynamicLists.Count() : 0;
             var databaseCount = model.Databases != null ? model.Databases.Count() : 0;
             var pageCount = model.Pages != null ? model.Pages.Count() : 0;
 
-            var totalBackupCount = appCount + standardCount + chartCount + dynamicCount + databaseCount + pageCount;
+            var totalBackupCount =
+                appCount
+                + standardCount
+                + treeCount
+                + arrayCount
+                + chartCount
+                + dynamicCount
+                + databaseCount
+                + pageCount;
 
             if (totalBackupCount > _backupOptions.CurrentValue.MaximumObjects)
             {
@@ -94,12 +108,22 @@ namespace LetPortal.Portal.Services.Recoveries
             }
             var collectApp = _appServiceProvider.GetAppsByIds(model.Apps);
             var collectStandards = _standardServiceProvider.GetStandardComponentsByIds(model.Standards);
+            var collectTree = _standardServiceProvider.GetStandardComponentsByIds(model.Tree);
+            var collectArray = _standardServiceProvider.GetStandardComponentsByIds(model.Array);
             var collectCharts = _chartServiceProvider.GetChartsByIds(model.Charts);
             var collectDynamicLists = _dynamicListServiceProvider.GetDynamicListsByIds(model.DynamicLists);
             var collectDatabases = _databaseServiceProvider.GetDatabaseConnectionsByIds(model.Databases);
             var collectPages = _pageServiceProvider.GetPagesByIds(model.Pages);
 
-            await Task.WhenAll(collectApp, collectStandards, collectCharts, collectDatabases, collectDynamicLists, collectPages);
+            await Task.WhenAll(
+                collectApp,
+                collectStandards,
+                collectTree,
+                collectArray,
+                collectCharts,
+                collectDatabases,
+                collectDynamicLists,
+                collectPages);
 
             var backupFileModel = new BackupFlatternFileModel
             {
@@ -121,7 +145,9 @@ namespace LetPortal.Portal.Services.Recoveries
                     Databases = model.Databases,
                     DynamicLists = model.DynamicLists,
                     Pages = model.Pages,
-                    Standards = model.Standards
+                    Standards = model.Standards,
+                    Array = model.Array,
+                    Tree = model.Tree
                 }
             };
             backupFileModel.Backup = backup;
@@ -154,6 +180,28 @@ namespace LetPortal.Portal.Services.Recoveries
                     sw.Write(jsonStandards);
                 }
                 backupFileModel.ChainingFiles.Add(STANDARD_FILE);
+            }
+
+            if (collectTree.Result != null)
+            {
+                var jsonTree = ConvertUtil.SerializeObject(collectTree.Result, true);
+                using (var sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, TREE_FILE)))
+                {
+                    sw.Write(jsonTree);
+                }
+                backupFileModel.ChainingFiles.Add(TREE_FILE);
+            }
+
+            if (collectArray.Result != null)
+            {
+                var jsonArray = ConvertUtil.SerializeObject(collectArray.Result, true);
+                using (var sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, ARRAY_FILE)))
+                {
+                    sw.Write(jsonArray);
+                }
+                backupFileModel.ChainingFiles.Add(ARRAY_FILE);
             }
 
             if (collectDynamicLists.Result != null)
@@ -279,6 +327,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var fileNameWithoutExt = FileUtil.GetFileNameWithoutExt(zipFile.FileName);
             var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
+            Directory.CreateDirectory(_backupOptions.CurrentValue.RestoreFolderPath);
             using (var fileStream = File.Create(restoreFilePath))
             {
                 fileStream.Write(zipFile.FileBytes, 0, zipFile.FileBytes.Length);
@@ -313,6 +362,18 @@ namespace LetPortal.Portal.Services.Recoveries
                         var standardsString = File.ReadAllText(standardFilePath);
                         var standarsList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(standardsString);
                         previewModel.Standards = await _standardServiceProvider.CompareStandardComponent(standarsList);
+                        break;
+                    case TREE_FILE:
+                        var treeFilePath = Path.Combine(folderExtractingPath, TREE_FILE);
+                        var treeString = File.ReadAllText(treeFilePath);
+                        var treeList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(treeString);
+                        previewModel.Tree = await _standardServiceProvider.CompareStandardComponent(treeList);
+                        break;
+                    case ARRAY_FILE:
+                        var arrayFilePath = Path.Combine(folderExtractingPath, ARRAY_FILE);
+                        var arrayString = File.ReadAllText(arrayFilePath);
+                        var arrayList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(arrayString);
+                        previewModel.Array = await _standardServiceProvider.CompareStandardComponent(arrayList);
                         break;
                     case CHART_FILE:
                         var chartFilePath = Path.Combine(folderExtractingPath, CHART_FILE);
@@ -384,6 +445,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
             var fileNameWithoutExt = FileUtil.GetFileNameWithoutExt(zipFile.FileName);
             var restoreFilePath = Path.Combine(_backupOptions.CurrentValue.RestoreFolderPath, zipFile.FileName);
+            Directory.CreateDirectory(_backupOptions.CurrentValue.RestoreFolderPath);
             using (var fileStream = File.Create(restoreFilePath))
             {
                 fileStream.Write(zipFile.FileBytes, 0, zipFile.FileBytes.Length);
@@ -418,6 +480,18 @@ namespace LetPortal.Portal.Services.Recoveries
                         var standardsString = File.ReadAllText(standardFilePath);
                         var standardsList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(standardsString);
                         await _standardServiceProvider.ForceUpdateStandards(standardsList);
+                        break;
+                    case TREE_FILE:
+                        var treeFilePath = Path.Combine(folderExtractingPath, TREE_FILE);
+                        var treeString = File.ReadAllText(treeFilePath);
+                        var treeList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(treeString);
+                        await _standardServiceProvider.ForceUpdateStandards(treeList);
+                        break;
+                    case ARRAY_FILE:
+                        var arrayFilePath = Path.Combine(folderExtractingPath, ARRAY_FILE);
+                        var arrayString = File.ReadAllText(arrayFilePath);
+                        var arrayList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(arrayString);
+                        await _standardServiceProvider.ForceUpdateStandards(arrayList);
                         break;
                     case CHART_FILE:
                         var chartFilePath = Path.Combine(folderExtractingPath, CHART_FILE);
@@ -462,6 +536,195 @@ namespace LetPortal.Portal.Services.Recoveries
             }
 
             return fullTempFilePath;
+        }
+
+        public async Task<GenerateCodeResponseModel> CreateCode(GenerateCodeRequestModel model)
+        {
+            var collectApp = _appServiceProvider.GetAppsByIds(model.Apps);
+            var collectStandards = _standardServiceProvider.GetStandardComponentsByIds(model.Standards);
+            var collectTree = _standardServiceProvider.GetStandardComponentsByIds(model.Tree);
+            var collectArray = _standardServiceProvider.GetStandardComponentsByIds(model.Array);
+            var collectCharts = _chartServiceProvider.GetChartsByIds(model.Charts);
+            var collectDynamicLists = _dynamicListServiceProvider.GetDynamicListsByIds(model.DynamicLists);
+            var collectDatabases = _databaseServiceProvider.GetDatabaseConnectionsByIds(model.Databases);
+            var collectPages = _pageServiceProvider.GetPagesByIds(model.Pages);
+
+            await Task.WhenAll(collectApp, collectStandards, collectCharts, collectDatabases, collectDynamicLists, collectPages);
+
+            var appCodes = new List<CodeGenerableResult>();
+            if (collectApp.Result != null && collectApp.Result.Any())
+            {
+                foreach (var app in collectApp.Result)
+                {
+                    appCodes.Add(app.GenerateCode());
+                }
+            }
+
+            var standardCodes = new List<CodeGenerableResult>();
+            if (collectStandards.Result != null && collectStandards.Result.Any())
+            {
+                foreach (var standard in collectStandards.Result)
+                {
+                    standardCodes.Add(standard.GenerateCode());
+                }
+            }
+
+            var treeCodes = new List<CodeGenerableResult>();
+            if (collectTree.Result != null && collectTree.Result.Any())
+            {
+                foreach (var tree in collectTree.Result)
+                {
+                    treeCodes.Add(tree.GenerateCode());
+                }
+            }
+
+            var arrayCodes = new List<CodeGenerableResult>();
+            if (collectArray.Result != null && collectArray.Result.Any())
+            {
+                foreach (var array in collectArray.Result)
+                {
+                    arrayCodes.Add(array.GenerateCode());
+                }
+            }
+
+            var databaseCodes = new List<CodeGenerableResult>();
+            if (collectDatabases.Result != null && collectDatabases.Result.Any())
+            {
+                foreach (var database in collectDatabases.Result)
+                {
+                    databaseCodes.Add(database.GenerateCode());
+                }
+            }
+
+            var chartCodes = new List<CodeGenerableResult>();
+            if (collectCharts.Result != null && collectCharts.Result.Any())
+            {
+                foreach (var chart in collectCharts.Result)
+                {
+                    chartCodes.Add(chart.GenerateCode());
+                }
+            }
+
+            var pageCodes = new List<CodeGenerableResult>();
+            if (collectPages.Result != null && collectPages.Result.Any())
+            {
+                foreach (var page in collectPages.Result)
+                {
+                    pageCodes.Add(page.GenerateCode());
+                }
+            }
+
+            var dynamicListCodes = new List<CodeGenerableResult>();
+            if (collectDynamicLists.Result != null && collectDynamicLists.Result.Any())
+            {
+                foreach (var dynamicList in collectDynamicLists.Result)
+                {
+                    dynamicListCodes.Add(dynamicList.GenerateCode());
+                }
+            }
+
+            var response = new GenerateCodeResponseModel();
+
+            var stringBuilder = new StringBuilder();
+            _ = stringBuilder.AppendLine("using System;");
+            _ = stringBuilder.AppendLine("using System.Threading.Tasks;");
+            _ = stringBuilder.AppendLine("using System.Collections.Generic;");
+            _ = stringBuilder.AppendLine("namespace CustomVersion");
+            _ = stringBuilder.AppendLine("{");
+            _ = stringBuilder.AppendLine($"    public class {model.FileName} : LetPortal.Portal.IPortalVersion");
+            _ = stringBuilder.AppendLine($"    {{");
+            _ = stringBuilder.AppendLine($"        public string VersionNumber => \"{model.VersionNumber}\";");
+            _ = stringBuilder.AppendLine($"        public Task Downgrade(LetPortal.Core.Versions.IVersionContext versionContext)");
+            _ = stringBuilder.AppendLine($"        {{");
+            foreach (var appCode in appCodes)
+            {
+                _ = stringBuilder.AppendLine(appCode.DeletingCode);
+            }
+
+            foreach (var databaseCode in databaseCodes)
+            {
+                _ = stringBuilder.AppendLine(databaseCode.DeletingCode);
+            }
+
+            foreach (var standardCode in standardCodes)
+            {
+                _ = stringBuilder.AppendLine(standardCode.DeletingCode);
+            }
+
+            foreach (var treeCode in treeCodes)
+            {
+                _ = stringBuilder.AppendLine(treeCode.DeletingCode);
+            }
+
+            foreach (var arrayCode in arrayCodes)
+            {
+                _ = stringBuilder.AppendLine(arrayCode.DeletingCode);
+            }
+
+            foreach (var dynamicListCode in dynamicListCodes)
+            {
+                _ = stringBuilder.AppendLine(dynamicListCode.DeletingCode);
+            }
+
+            foreach (var chartCode in chartCodes)
+            {
+                _ = stringBuilder.AppendLine(chartCode.DeletingCode);
+            }
+
+            foreach (var pageCode in pageCodes)
+            {
+                _ = stringBuilder.AppendLine(pageCode.DeletingCode);
+            }
+            _ = stringBuilder.AppendLine($"            return System.Threading.Tasks.Task.CompletedTask;");
+            _ = stringBuilder.AppendLine($"        }}");
+            _ = stringBuilder.AppendLine($"        public Task Upgrade(LetPortal.Core.Versions.IVersionContext versionContext)");
+            _ = stringBuilder.AppendLine($"        {{");
+            foreach (var appCode in appCodes)
+            {
+                _ = stringBuilder.AppendLine(appCode.InsertingCode);
+            }
+
+            foreach (var databaseCode in databaseCodes)
+            {
+                _ = stringBuilder.AppendLine(databaseCode.InsertingCode);
+            }
+
+            foreach (var standardCode in standardCodes)
+            {
+                _ = stringBuilder.AppendLine(standardCode.InsertingCode);
+            }
+
+            foreach (var treeCode in treeCodes)
+            {
+                _ = stringBuilder.AppendLine(treeCode.InsertingCode);
+            }
+
+            foreach (var arrayCode in arrayCodes)
+            {
+                _ = stringBuilder.AppendLine(arrayCode.InsertingCode);
+            }
+
+            foreach (var dynamicListCode in dynamicListCodes)
+            {
+                _ = stringBuilder.AppendLine(dynamicListCode.InsertingCode);
+            }
+
+            foreach (var chartCode in chartCodes)
+            {
+                _ = stringBuilder.AppendLine(chartCode.InsertingCode);
+            }
+
+            foreach (var pageCode in pageCodes)
+            {
+                _ = stringBuilder.AppendLine(pageCode.InsertingCode);
+            }
+            _ = stringBuilder.AppendLine($"            return System.Threading.Tasks.Task.CompletedTask;");
+            _ = stringBuilder.AppendLine($"        }}");
+            _ = stringBuilder.AppendLine($"    }}");
+            _ = stringBuilder.AppendLine("}");
+            response.Content = stringBuilder.ToString();
+            response.FileName = model.FileName + ".cs";
+            return response;
         }
     }
 

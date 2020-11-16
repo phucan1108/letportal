@@ -47,7 +47,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                         .Init(
                             dynamicList.ListDatasource.DatabaseConnectionOptions.Query,
                             fetchDataModel.FilledParameterOptions.FilledParameters)
-                        .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumndDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
+                        .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumnDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
                         .AddFilter(fetchDataModel.FilterGroupOptions.FilterGroups)
                         .AddSort(fetchDataModel.SortOptions.SortableFields)
                         .AddPagination(fetchDataModel.PaginationOptions.PageNumber, fetchDataModel.PaginationOptions.PageSize)
@@ -88,7 +88,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
                             if (dt.Rows.Count > 0)
                             {
                                 hasRows = true;
-                                response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
+                                response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumnDefs)));
                             }
                         }
                     }
@@ -132,7 +132,7 @@ namespace LetPortal.Portal.Executions.PostgreSql
             return Task.FromResult(response);
         }
 
-        private List<FieldFormatCompare> GetFormatFields(List<ColumndDef> columndDefs)
+        private List<FieldFormatCompare> GetFormatFields(List<ColumnDef> columndDefs)
         {
             return columndDefs.Where(a => !string.IsNullOrEmpty(a.DisplayFormat)).Select(b => new FieldFormatCompare { FieldFormat = b.DisplayFormat, FieldName = b.Name }).ToList();
         }

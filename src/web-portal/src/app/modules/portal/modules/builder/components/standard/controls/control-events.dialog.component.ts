@@ -4,9 +4,9 @@ import { ControlsGridComponent } from './controls-grid.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NGXLogger } from 'ngx-logger';
 import { ExtendedPageControl, ExtendedPageControlEvent } from 'app/core/models/extended.models';
-import { EventActionType, PageControlEvent, HttpServiceOptions, PageControl, ControlType, DatabaseOptions } from 'services/portal.service';
+import { EventActionType, PageControlEvent, HttpServiceOptions, PageControl, ControlType, SharedDatabaseOptions } from 'services/portal.service';
 import { Guid } from 'guid-typescript';
-import * as _ from 'lodash';
+ 
 import { BehaviorSubject } from 'rxjs';
 import { JsonEditorOptions } from 'ang-jsoneditor';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -40,7 +40,7 @@ export class ControlEventsDialogComponent implements OnInit {
     isHttpOptionsValid = false
     httpOptions: HttpServiceOptions
 
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
     dbOptions: DatabaseFormOptions = {
         allowHints: ['query']
     }
@@ -113,7 +113,7 @@ export class ControlEventsDialogComponent implements OnInit {
 
     prepareEventsList(control: PageControl): ExtendedPageControlEvent[] {
         const events: ExtendedPageControlEvent[] = []
-        _.forEach(control.pageControlEvents, event => {
+        control.pageControlEvents?.forEach(event => {
             events.push({
                 ...event,
                 id: Guid.create().toString()
@@ -124,7 +124,7 @@ export class ControlEventsDialogComponent implements OnInit {
     }
 
     translateEventActionType(event: ExtendedPageControlEvent) {
-        return _.find(this._eventActionTypes, e => e.value === event.eventActionType).name
+        return this._eventActionTypes.find(e => e.value === event.eventActionType).name
     }
 
     loadEventFormBySelectedEvent() {
@@ -180,7 +180,7 @@ export class ControlEventsDialogComponent implements OnInit {
         }
 
         if(formValid){
-            _.forEach(this.events, event => {
+            this.events?.forEach(event => {
                 if(event.id === this.selectedEvent.id){
                     event.eventActionType = this.selectedEvent.eventActionType
                     event.triggerEventOptions = this.selectedEvent.triggerEventOptions

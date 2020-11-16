@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ElementRef, ViewChild, AfterContentChecked, C
 import { FormGroup, NgForm } from '@angular/forms';
 import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 import { ExtendedControlValidator } from 'app/core/models/extended.models';
-import * as _ from 'lodash';
+ 
 import { NGXLogger } from 'ngx-logger';
 import { FilesClient, ValidatorType, ResponseUploadFile } from 'services/portal.service';
 import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile.service';
@@ -173,7 +173,7 @@ export class FileUploaderComponent implements OnInit, AfterContentChecked {
     }
 
     getErrorMessage(validatorName: string) {
-        return _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
+        return this.validators.find(validator => validator.validatorName === validatorName).validatorErrorMessage
     }
 }
 

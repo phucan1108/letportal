@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
-import * as _ from 'lodash';
+ 
 import { ExtendedControlValidator } from 'app/core/models/extended.models';
 import { StaticResources } from 'portal/resources/static-resources';
 import { ObjectUtils } from 'app/core/utils/object-util';
@@ -55,7 +55,7 @@ export class IconPickerComponent implements OnInit {
 
     getErrorMessage(validatorName: string) {
         if(ObjectUtils.isNotNull(this.validators)){
-            return _.find(this.validators, validator => validator.validatorName === validatorName).validatorErrorMessage
+            return this.validators.find(validator => validator.validatorName === validatorName).validatorErrorMessage
         }
         else{
             return ''

@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import { StaticResources } from 'portal/resources/static-resources';
 import { BehaviorSubject } from 'rxjs';
 import { ControlsGridComponent } from './controls-grid.component';
-import * as _ from 'lodash';
+ 
 import { NGXLogger } from 'ngx-logger';
 import { ValidatorType, ControlType, ShellOption, PageControl, PageControlEvent, EventActionType } from 'services/portal.service';
 import { Constants } from 'portal/resources/constants';
@@ -80,11 +80,11 @@ export class ControlDialogComponent implements OnInit {
     private convertValidatorTypeToFormValidator(type: ControlType) {
         const formValidators: Array<ExtendedFormValidator> = []
         const allowedValidatorTypes = this.getValidatorsByControlType(type)
-        _.forEach(this.validatorTypes, validator => {
+        this.validatorTypes?.forEach(validator => {
             if (allowedValidatorTypes.indexOf(validator.value) > -1) {
                 let validatorForm;
                 if (this.isEditMode) {
-                    const foundValidatorForm = _.find(this.currentExtendedFormControl.validators, validatorTemp => validatorTemp.validatorType === validator.value)
+                    const foundValidatorForm = this.currentExtendedFormControl.validators.find(validatorTemp => validatorTemp.validatorType === validator.value)
                     validatorForm = {
                         validatorType: foundValidatorForm ? foundValidatorForm.validatorType : validator.value,
                         displayName: validator.name,
@@ -195,7 +195,14 @@ export class ControlDialogComponent implements OnInit {
     initialControlForm() {
         this.controlForm = this.fb.group({
             key: [this.currentExtendedFormControl.name],
-            name: [this.currentExtendedFormControl.name, [Validators.pattern('^[a-zA-Z]+'), Validators.required, Validators.maxLength(100), FormUtil.isExist(this.names, this.currentExtendedFormControl.name)]],
+            name: [
+                this.currentExtendedFormControl.name, 
+                [
+                    Validators.pattern('^[a-zA-Z]+'), 
+                    Validators.required, 
+                    Validators.maxLength(100), 
+                    //FormUtil.isExist(this.names, this.currentExtendedFormControl.name)
+                ]],
             controlType: [this.currentExtendedFormControl.type]
         })
     }
@@ -325,8 +332,8 @@ export class ControlDialogComponent implements OnInit {
                 break
         }
         if (!!control.options && isOnLoad) {
-            _.forEach(defaultOptions, opt => {
-                const found = _.find(control.options, controlOpt => controlOpt.key === opt.key)
+            defaultOptions?.forEach(opt => {
+                const found = control.options.find(controlOpt => controlOpt.key === opt.key)
                 if (!!found)
                     opt.value = found.value
             })

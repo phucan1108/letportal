@@ -1,12 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { ChartFilter, FilterType, DatasourceControlType } from 'services/portal.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { NGXLogger } from 'ngx-logger';
-import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
-import { ChartFilterDialogComponent } from './chart-filter.dialog.component';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
-import { MatDialog } from '@angular/material/dialog';
+import { NGXLogger } from 'ngx-logger';
+import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
+import { ChartFilter, DatasourceControlType, FilterType } from 'services/portal.service';
+import { ChartFilterDialogComponent } from './chart-filter.dialog.component';
 
 @Component({
     selector: 'let-chart-filter-grid',
@@ -35,11 +35,11 @@ export class ChartFilterGridComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches) {
                 this.isSmallDevice = true
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on chart filter', this.isSmallDevice)
             }
             else {
                 this.isSmallDevice = false
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on chart filter', this.isSmallDevice)
             }
         });
     }
