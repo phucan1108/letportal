@@ -1,0 +1,64 @@
+﻿@model Themes.PersonalBlog.Areas.PersonalBlog.Models.Blogs.BlogCategoryModel
+
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+        <h1 class="display-4 font-weight-normal">@Model.Blog.Title</h1>
+        <p class="lead font-weight-normal">@Model.Blog.Description</p>
+    </div>
+</div>
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-8 blog-main">
+            <h3 class="pb-3 mb-4 font-italic border-bottom">
+                News
+            </h3>
+            @foreach(var post in Model.Posts.Data)
+            {
+                var postUrl = $"/posts/{post.UrlPath}";
+                <div class="blog-post">
+                    <h2 class="blog-post-title">@post.Title</h2>
+                    <p class="blog-post-meta">@post.CreatedDate.ToString("dd") by <a href="#">@post.Author</a></p>
+
+                    <p>
+                        @post.Description
+                    </p>
+                    <a class="btn btn-outline-secondary" href="@postUrl">Read more</a>
+                </div><!-- /.blog-post -->
+            }
+
+            @if(Model.Posts.CanPaginate)
+            {
+                var currentPath = Context.Request.Path.Value;
+                <nav class="blog-pagination">
+                    @foreach(var index in Model.Posts.DisplayedPages)
+                    {
+                        var isActive = index == Model.Posts.CurrentPage;
+                        <a class="btn btn-outline-@( isActive ? "primary" : "secondary")" href="@(currentPath + $"?page={index}&size={Model.Posts.NumberPerPage}")">@index</a>
+                    }
+                </nav>
+            }
+
+        </div><!-- /.blog-main -->
+
+        <aside class="col-md-4 blog-sidebar">
+            <div class="p-3 mb-3 bg-light rounded">
+                <h4 class="font-italic">About</h4>
+                <p class="mb-0">
+                    Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur
+                    purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.
+                </p>
+            </div>
+
+            <div class="p-3">
+                <h4 class="font-italic">Tags</h4>
+                <ol class="list-unstyled">
+                    <li><a href="#">.NET Core</a></li>
+                    <li><a href="#">Angular</a></li>
+                    <li><a href="#">Docker</a></li>
+                </ol>
+            </div>
+        </aside><!-- /.blog-sidebar -->
+
+    </div><!-- /.row -->
+</div>

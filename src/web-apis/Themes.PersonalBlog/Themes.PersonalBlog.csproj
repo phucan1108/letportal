@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LetPortal.CMS.Core\LetPortal.CMS.Core.csproj" />
+    <ProjectReference Include="..\LetPortal.CMS.Features.Blogs\LetPortal.CMS.Features.Blogs.csproj" />
     <ProjectReference Include="..\LetPortal.CMS.Features.Menus\LetPortal.CMS.Features.Menus.csproj" />
   </ItemGroup>
   <ItemGroup>

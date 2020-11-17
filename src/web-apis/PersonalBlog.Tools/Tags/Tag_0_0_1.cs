@@ -27,7 +27,7 @@ namespace PersonalBlog.Tools.Tags
             var sqlTag = new BlogTag
             {
                 Id = "5f1ef6fce9ce36726865ebc6",
-                Tag = "sql"
+                Tag = "angular"
             };
 
             versionContext.InsertData(dotnetTag);

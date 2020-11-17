@@ -40,12 +40,12 @@ namespace LetPortal.Microservices.Client.Workers
             {
                 try
                 {
-                    while (await _channel.GetChannel().Reader.WaitToReadAsync(stoppingToken))
+                    while (await _channel.GetChannel().Reader.WaitToReadAsync())
                     {
-                        using var call = _client.Push(cancellationToken: stoppingToken);
-                        await foreach (var healthCheck in _channel.GetChannel().Reader.ReadAllAsync(stoppingToken))
+                        using var call = _client.Push();
+                        if(_channel.GetChannel().Reader.TryRead(out HealthCheckRequest healthCheckRequest))
                         {
-                            await call.RequestStream.WriteAsync(healthCheck);
+                            await call.RequestStream.WriteAsync(healthCheckRequest);
                         }
                         await call.RequestStream.CompleteAsync();
                         var serverResponse = await call.ResponseAsync;

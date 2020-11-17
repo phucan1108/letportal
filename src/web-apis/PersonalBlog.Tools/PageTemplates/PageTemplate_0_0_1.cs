@@ -138,13 +138,17 @@ namespace PersonalBlog.Tools.PageTemplates
                 {
                     new TemplateSection
                     {
-                        Name = "Blogs Carousel",
-                        ThemePartRef = "BlogsCarousel"
+                        Key = "5fb398bd8dbe2c62e0a674cd",
+                        Name = "Blog Categories Header",
+                        ThemePartRef = "BlogCategoriesHeader",
+                        BindingType = LetPortal.CMS.Core.Abstractions.BindingType.None
                     },
                     new TemplateSection
                     {
+                        Key = "5fb36abbf40cc36c8c865a42",
                         Name = "Blog Categories",
-                        ThemePartRef = "BlogCategories"
+                        ThemePartRef = "BlogCategories",
+                        BindingType = LetPortal.CMS.Core.Abstractions.BindingType.None
                     }
                 }
             };
@@ -157,8 +161,10 @@ namespace PersonalBlog.Tools.PageTemplates
                 {
                     new TemplateSection
                     {
+                        Key = "5fb398bd8dbe2c62e0a674cf",
                         Name = "Blog Category",
-                        ThemePartRef = "BlogCategory"
+                        ThemePartRef = "BlogCategory",
+                        BindingType = LetPortal.CMS.Core.Abstractions.BindingType.None
                     }
                 }
             };
@@ -171,8 +177,10 @@ namespace PersonalBlog.Tools.PageTemplates
                 {
                    new TemplateSection
                    {
+                       Key = "5fb398bd8dbe2c62e0a674d8",
                        Name = "Blog Post",
-                       ThemePartRef = "BlogPost"
+                       ThemePartRef = "BlogPost",
+                       BindingType = LetPortal.CMS.Core.Abstractions.BindingType.None
                    }
                 }
             };

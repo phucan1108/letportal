@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LetPortal.CMS.Core.Abstractions;
 using LetPortal.CMS.Core.Models;
+using LetPortal.Core.Logger;
 using Microsoft.AspNetCore.Http;
 
 namespace LetPortal.CMS.Core.Middlewares
@@ -13,9 +14,14 @@ namespace LetPortal.CMS.Core.Middlewares
     {
         private readonly ISiteRequestAccessor _siteRequest;
 
-        public CombiningPageRequestMiddleware(ISiteRequestAccessor siteRequest)
+        private readonly IServiceLogger<CombiningPageRequestMiddleware> _logger;
+
+        public CombiningPageRequestMiddleware(
+            ISiteRequestAccessor siteRequest,
+            IServiceLogger<CombiningPageRequestMiddleware> logger)
         {
             _siteRequest = siteRequest;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -26,17 +32,21 @@ namespace LetPortal.CMS.Core.Middlewares
                 GoogleMetadata = _siteRequest.Current.Page.GoogleMetadata
             };
 
+            _logger.Info("The current flexible page {@flexiblePage}", flexiblePage);
             var pageVersion = _siteRequest.Current.PageVersion;
 
-            if(flexiblePage.Sections != null)
+            if(flexiblePage.Sections != null && flexiblePage.Sections.Any())
             {
                 foreach(var section in flexiblePage.Sections)
                 {
-                    var foundPartVersion = pageVersion.Manifests.FirstOrDefault(a => a.TemplateKey == section.TemplateKey);
-                    if(foundPartVersion != null)
+                    if(section.BindingType == BindingType.Datasource)
                     {
-                        section.DatasourceName = foundPartVersion.DatasourceKey;
-                    }
+                        var foundPartVersion = pageVersion.Manifests.FirstOrDefault(a => a.TemplateKey == section.TemplateKey);
+                        if (foundPartVersion != null)
+                        {
+                            section.DatasourceName = foundPartVersion.DatasourceKey;
+                        }
+                    }                       
                 }
             }
 

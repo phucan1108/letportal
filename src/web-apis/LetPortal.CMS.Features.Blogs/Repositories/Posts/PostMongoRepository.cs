@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.CMS.Core.Shared;
 using LetPortal.CMS.Features.Blogs.Entities;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Persistences;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -11,13 +12,18 @@ namespace LetPortal.CMS.Features.Blogs.Repositories.Posts
 {
     public class PostMongoRepository : MongoGenericRepository<Post>, IPostRepository
     {
-        public PostMongoRepository(MongoConnection mongoConnection)
+        private readonly IServiceLogger<PostMongoRepository> _logger;
+        public PostMongoRepository(
+            MongoConnection mongoConnection,
+            IServiceLogger<PostMongoRepository> logger)
         {
             Connection = mongoConnection;
+            _logger = logger;
         }
 
         public async Task<Post> GetByUrlPathAsync(string urlPath)
         {
+            _logger.Info("Get post by url path " + urlPath);
             return await Collection.AsQueryable().FirstAsync(a => a.UrlPath == urlPath);
         }
 

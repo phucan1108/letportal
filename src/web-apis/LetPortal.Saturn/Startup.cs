@@ -85,7 +85,12 @@ namespace LetPortal.Saturn
             services.AddSignalR();
 
             // Enable Grpc for Microservices
-            services.AddGrpc();
+            services.AddGrpc(options =>
+            {
+                options.EnableDetailedErrors = true;
+                options.MaxReceiveMessageSize = 1 * 1024 * 1024 * 5; // 5 MB
+                options.MaxSendMessageSize = 1 * 1024 * 1024 * 5; // 5 MB
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

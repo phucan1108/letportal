@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Themes.PersonalBlog\Themes.PersonalBlog.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

@@ -36,7 +36,12 @@ namespace LetPortal.Saturn
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureKestrel(options =>
+                    {
+                        // Important note: If Saturn is consuming Log Stream via HTTP2, the line size should be adjusted
+                        options.Limits.MaxRequestLineSize = 256 * 1024; // 256Kb
+                        options.Limits.Http2.
+                    }).UseStartup<Startup>();
                 });
         }
     }
