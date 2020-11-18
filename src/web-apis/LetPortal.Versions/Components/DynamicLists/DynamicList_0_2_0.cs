@@ -246,6 +246,46 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 AllowTextSearch = true
                             },
                             Order = 1
+                        },
+                        new ColumnDef
+                        {
+                            Name = "layoutType",
+                            DisplayName = "Layout Type",
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                FieldValueType = FieldValueType.Select
+                            },
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                                Type = DatasourceControlType.StaticResource,
+                                DatasourceStaticOptions = new DatasourceStaticOptions
+                                {
+                                    JsonResource = "[{\"name\":\"One Column\",\"value\":0},{\"name\":\"Two Columns\",\"value\":1},{\"name\":\"Three Columns\",\"value\":2},{\"name\":\"Four Columns\",\"value\":3},{\"name\":\"Six Columns\",\"value\":4}]"
+                                }
+                            },
+                            Order = 1
+                        },
+                        new ColumnDef
+                        {
+                            Name = "type",
+                            DisplayName = "Type",
+                            DisplayFormat = "{0}",
+                            SearchOptions = new SearchOptions
+                            {
+                                AllowInAdvancedMode = true,
+                                FieldValueType = FieldValueType.Select
+                            },
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                                Type = DatasourceControlType.StaticResource,
+                                DatasourceStaticOptions = new DatasourceStaticOptions
+                                {
+                                    JsonResource = "[{\"name\":\"Standard\",\"value\":0},{\"name\":\"Array\",\"value\":1},{\"name\":\"Tree\",\"value\":2}]"
+                                }
+                            },
+                            Order = 1
                         }
                     }
                 },

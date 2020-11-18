@@ -139,6 +139,7 @@ export class TreeRenderComponent implements OnInit, OnDestroy {
     hasChild = (_: number, _nodeData: TreeFlatNode) => _nodeData.expandable
 
     hasNoContent = (_: number, _nodeData: TreeFlatNode) => {
+        this.logger.debug('current node data', _nodeData)
         return !ObjectUtils.isNotNull(_nodeData.name)
     }
     private initialTree() {

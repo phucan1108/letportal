@@ -352,7 +352,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                                 RedirectOptions = new RedirectOptions
                                 {
                                     IsSameDomain = true,
-                                    RedirectUrl = "portal/builder/menus/{{data.id}}"
+                                    RedirectUrl = "portal/page/app-menu-builder?appId={{data.id}}"
                                 }
                             },
                             Order = 2
