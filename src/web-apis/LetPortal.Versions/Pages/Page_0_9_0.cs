@@ -122,7 +122,11 @@ namespace LetPortal.Versions.Pages
                         {
                             ActionCommandOptions = new Portal.Entities.Shared.ActionCommandOptions
                             {
-                                ActionType = Portal.Entities.Shared.ActionType.Redirect
+                                ActionType = Portal.Entities.Shared.ActionType.Redirect,
+                                IsEnable = false,
+                                ConfirmationOptions = new Portal.Entities.Shared.ConfirmationOptions
+                                {
+                                }
                             },
                             RouteOptions = new Portal.Entities.Shared.RouteOptions
                             {

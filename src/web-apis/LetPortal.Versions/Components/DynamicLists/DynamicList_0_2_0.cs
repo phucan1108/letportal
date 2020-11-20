@@ -81,6 +81,27 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 AllowTextSearch = true
                             },
                             Order = 1
+                        },
+                        new ColumnDef
+                        {
+                            Name = "appId",
+                            DisplayName = "App",
+                            DisplayFormat = "{0}",
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                                Type = DatasourceControlType.Database,
+                                DatabaseOptions = new SharedDatabaseOptions
+                                {
+                                    DatabaseConnectionId = Constants.PortalDatabaseId,
+                                    Query = "{\"$query\":{\"apps\":[{\"$project\":{\"name\":\"$displayName\",\"value\":\"$_id\"}}]}}"
+                                }
+                            },
+                            SearchOptions = new SearchOptions
+                            {
+                                FieldValueType = FieldValueType.Select,
+                                AllowInAdvancedMode = true
+                            },
+                            Order = 3
                         }
                     }
                 },
@@ -286,6 +307,27 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 }
                             },
                             Order = 1
+                        },
+                        new ColumnDef
+                        {
+                            Name = "appId",
+                            DisplayName = "App",
+                            DisplayFormat = "{0}",
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                                Type = DatasourceControlType.Database,
+                                DatabaseOptions = new SharedDatabaseOptions
+                                {
+                                    DatabaseConnectionId = Constants.PortalDatabaseId,
+                                    Query = "{\"$query\":{\"apps\":[{\"$project\":{\"name\":\"$displayName\",\"value\":\"$_id\"}}]}}"
+                                }
+                            },
+                            SearchOptions = new SearchOptions
+                            {
+                                FieldValueType = FieldValueType.Select,
+                                AllowInAdvancedMode = true
+                            },
+                            Order = 3
                         }
                     }
                 },

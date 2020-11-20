@@ -95,12 +95,12 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Array).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Array).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return standards?.AsEnumerable();
             }
             else
             {
-                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Array).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Array).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }
 
@@ -108,12 +108,12 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Standard).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Standard).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return standards?.AsEnumerable();
             }
             else
             {
-                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Standard).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Standard).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }
 
@@ -121,12 +121,12 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Tree).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Tree).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return standards?.AsEnumerable();
             }
             else
             {
-                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Tree).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Tree).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }
 

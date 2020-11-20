@@ -486,8 +486,12 @@ export class TreeRenderComponent implements OnInit, OnDestroy {
     remove(node: TreeFlatNode) {
         // Removed node is top
         if (node.level === 0) {
-            const removedDataNode = this.flatMapNode.get(node)
-            const removedIndex = this.treeLocalData.indexOf(removedDataNode)
+            const removedDataNode = this.flatMapNode.get(node)          
+            const removedIndex = this.treeLocalData.indexOf(removedDataNode)              
+            const boundDataNode = this.dataMapNode.get(removedDataNode)
+            const boundDataIndex = this.boundData.indexOf(boundDataNode)
+            // Remove on boundata
+            this.boundData.splice(boundDataIndex, 1)
             this.treeLocalData.splice(removedIndex, 1)
         }
         else {
@@ -495,6 +499,10 @@ export class TreeRenderComponent implements OnInit, OnDestroy {
             const removedDataNode = this.flatMapNode.get(node)
             const parentDataNode = this.flatMapNode.get(parentNode)
             const removedIndex = parentDataNode.children.indexOf(removedDataNode)
+            const parentBoundData = this.dataMapNode.get(parentDataNode)
+            const removedBoundData = this.dataMapNode.get(removedDataNode)
+            const removedBoundDataIndex = parentBoundData[this.treeOptions.inchildren].indexOf(removedBoundData)
+            parentBoundData[this.treeOptions.inchildren].splice(removedBoundDataIndex, 1)
             parentDataNode.children.splice(removedIndex, 1)
         }
         this.dataSource.data = this.treeLocalData

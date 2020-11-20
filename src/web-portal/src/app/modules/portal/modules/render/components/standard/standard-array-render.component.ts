@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { Store } from '@ngxs/store';
+import { SelectBoundControl } from 'app/core/context/bound-control';
 import { ArrayBoundSection, StandardBoundSection } from 'app/core/context/bound-section';
 import { ExtendedPageSection, GroupControls } from 'app/core/models/extended.models';
 import { DefaultControlOptions, MapDataControl, PageLoadedDatasource, PageRenderedControl } from 'app/core/models/page.model';
@@ -11,10 +12,10 @@ import { FormUtil } from 'app/core/utils/form-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
 import { ArrayStandardOptions } from 'portal/modules/models/standard.extended.model';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { PageService } from 'services/page.service';
-import { StandardComponent } from 'services/portal.service';
+import { ControlType, DatasourceControlType, StandardComponent } from 'services/portal.service';
 import { AddSectionBoundDataForStandardArray, BeginBuildingBoundData, CloseDialogForStandardArray, EndRenderingPageSectionsAction, GatherSectionValidations, InsertOneItemForStandardArray, OpenInsertDialogForStandardArray, RemoveOneItemForStandardArray, SectionValidationStateAction, UpdateOneItemForStandardArray } from 'stores/pages/page.actions';
 import { PageStateModel } from 'stores/pages/page.state';
 import { StandardArrayTableHeader } from './models/standard-array.models';
@@ -73,11 +74,10 @@ export class StandardArrayRenderComponent implements OnInit {
             .filter(control => {
                 return control.defaultOptions.checkRendered
             })
-
         this.section.relatedArrayStandard.controls = this.controls
-        this.storeName = 
-            ObjectUtils.isNotNull(this.section.sectionDatasource.dataStoreName) ? 
-                this.section.sectionDatasource.dataStoreName 
+        this.storeName =
+            ObjectUtils.isNotNull(this.section.sectionDatasource.dataStoreName) ?
+                this.section.sectionDatasource.dataStoreName
                 : this.section.name
         this.pageState$ = this.store.select<PageStateModel>(state => state.page)
         this.subscription = this.pageState$.pipe(
@@ -107,7 +107,7 @@ export class StandardArrayRenderComponent implements OnInit {
                                         this.cloneOneItem = cloneData
                                     })
                             this.buildArrayTableHeaders()
-                            this.boundSection.setOpenedSection(this.standardSharedService
+                            const openedSection = this.standardSharedService
                                 .buildBoundSection(
                                     this.section.name,
                                     // We should use data mode because storeName can't be applied
@@ -117,19 +117,34 @@ export class StandardArrayRenderComponent implements OnInit {
                                     null,
                                     (builtData, sectionMap) => {
                                         this.sectionMap = sectionMap
-                                    }) as StandardBoundSection)
+                                    }) as StandardBoundSection
+
+                            this.boundSection.setOpenedSection(openedSection)
+                            
+                            openedSection.getAll().forEach(control => {
+                                if (control.type === ControlType.Select || control.type === ControlType.AutoComplete || control.type === ControlType.Radio) {
+                                    let foundControl = this.controls.find(a => a.name === control.name)
+                                    this.generateOptions(foundControl, this.section.name).pipe(
+                                        tap(res => {
+                                            const boundControl = (control as SelectBoundControl)
+                                            boundControl.bound(res)
+                                            foundControl.boundControl = boundControl
+                                        })
+                                    ).subscribe()
+                                }
+                            })
                             this.formGroup = this.boundSection.getOpenedSection().getFormGroup()
                             this.controlsGroups = this.standardSharedService
                                 .buildControlsGroup(
                                     this.controls,
-                                    2)                            
+                                    2)
                             break
                         case BeginBuildingBoundData:
                             this.store.dispatch(new AddSectionBoundDataForStandardArray({
-                                storeName: this.storeName, 
+                                storeName: this.storeName,
                                 data: this.tableData,
                                 allowUpdateParts: this.standardArrayOptions.allowupdateparts
-                            }))                            
+                            }))
                             this.readyToRender = true
                             break
                         case GatherSectionValidations:
@@ -167,6 +182,19 @@ export class StandardArrayRenderComponent implements OnInit {
         ).subscribe()
     }
 
+    generateOptions(control: PageRenderedControl<DefaultControlOptions>, sectionName: string): Observable<any> {
+        switch (control.datasourceOptions.type) {
+            case DatasourceControlType.StaticResource:
+                return of(JSON.parse(control.datasourceOptions.datasourceStaticOptions.jsonResource))
+            case DatasourceControlType.Database:
+                const parameters = this.pageService.retrieveParameters(control.datasourceOptions.databaseOptions.query)
+                return this.pageService
+                    .fetchControlSelectionDatasource(sectionName, control.name, parameters)
+            case DatasourceControlType.WebService:
+                return this.pageService.executeHttpWithBoundData(control.datasourceOptions.httpServiceOptions)
+        }
+    }
+
     buildArrayTableHeaders() {
         if (ObjectUtils.isNotNull(this.standardArrayOptions.namefield)) {
             const arrayColumns = this.standardArrayOptions.namefield.split(';')
@@ -189,6 +217,15 @@ export class StandardArrayRenderComponent implements OnInit {
                 this.displayedColumns.push('actions')
             }
         }
+    }
+
+    translateData(data: any, headerName: string) {
+        const control = this.controls.find(a => a.defaultOptions.bindname === headerName)
+        if (!!control && control.type === (ControlType.Select || ControlType.AutoComplete || ControlType.Radio)) {
+            const boundControl = (control.boundControl as SelectBoundControl)
+            return boundControl.getDs().find(a => a.value === data).name
+        }
+        return data
     }
 
     add() {
@@ -230,7 +267,7 @@ export class StandardArrayRenderComponent implements OnInit {
                     this.section.name,
                     null,
                     this.standard,
-                    this.cloneOneItem,                    
+                    this.cloneOneItem,
                     null,
                     null) as StandardBoundSection)
             this.formGroup = this.boundSection.getOpenedSection().getFormGroup()

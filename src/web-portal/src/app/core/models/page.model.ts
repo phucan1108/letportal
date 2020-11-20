@@ -44,7 +44,8 @@ export interface PageControlActionEvent {
 
 export interface PageLoadedDatasource {
     name: string,
-    data: any
+    data: any,
+    key: string
 }
 
 export interface PageSectionBoundData{

@@ -5264,6 +5264,7 @@ export interface MenuProfile {
 export interface ShortEntityModel {
     id?: string | undefined;
     displayName?: string | undefined;
+    appId?: string | undefined;
 }
 
 export interface AvailableUrl {

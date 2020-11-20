@@ -70,7 +70,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Apps'" [icon]="'camera_enhance'" [data]="apps$"
                                     (searchChanged)="onSeachAppChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectAppChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectAppChanged($event)"
+                                    [notifier]="notifiedApps"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -80,7 +81,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Databases'" [icon]="'ballot'" [data]="databases$"
                                     (searchChanged)="onSeachDatabaseChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectDatabaseChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectDatabaseChanged($event)"
+                                    [notifier]="notifiedDatabases"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -90,7 +92,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Standards'" [icon]="'category'" [data]="standards$"
                                     (searchChanged)="onSeachStandardChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectStandardChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectStandardChanged($event)"
+                                    [notifier]="notifiedStandards"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -100,7 +103,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Tree'" [icon]="'category'" [data]="tree$"
                                     (searchChanged)="onSeachTreeChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectTreeChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectTreeChanged($event)"
+                                    [notifier]="notifiedTree"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -110,7 +114,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Array'" [icon]="'category'" [data]="array$"
                                     (searchChanged)="onSeachArrayChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectArrayChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectArrayChanged($event)"
+                                    [notifier]="notifiedArray"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -120,7 +125,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Dynamic Lists'" [icon]="'view_module'"
                                     [data]="dynamicLists$" (searchChanged)="onSeachDynamicListChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectDynamicListChanged($event)">
+                                    (selectionEntitiesChanged)="onSelectDynamicListChanged($event)"
+                                    [notifier]="notifiedDynamicLists">
                                 </let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
@@ -131,7 +137,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Charts'" [icon]="'bar_chart'" [data]="charts$"
                                     (searchChanged)="onSeachChartChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectChartChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectChartChanged($event)"
+                                    [notifier]="notifiedCharts"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -141,7 +148,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Pages'" [icon]="'receipt'" [data]="pages$"
                                     (searchChanged)="onSeachPageChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectPageChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectPageChanged($event)"
+                                    [notifier]="notifiedPages"></let-backup-selection>
                             </mat-expansion-panel>
                         </mat-accordion>
                     </div>

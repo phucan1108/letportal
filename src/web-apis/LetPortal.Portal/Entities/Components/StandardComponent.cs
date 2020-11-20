@@ -63,7 +63,7 @@ namespace LetPortal.Portal.Entities.SectionParts
                     _ = stringBuilder.AppendLine($"            }},");
 
                     // Control Datasource
-                    if(control.DatasourceOptions != null)
+                    if(control.DatasourceOptions != null && (control.Type == ControlType.Select || control.Type == ControlType.Radio || control.Type == ControlType.AutoComplete))
                     {
                         _ = stringBuilder.AppendLine(control.DatasourceOptions.GenerateCode().InsertingCode, 4);
                     }
@@ -117,7 +117,7 @@ namespace LetPortal.Portal.Entities.SectionParts
                     // Control Event
                     if(control.PageControlEvents != null && control.PageControlEvents.Any())
                     {
-                        _ = stringBuilder.AppendLine($"            PageControlEvents = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlEvents>");
+                        _ = stringBuilder.AppendLine($"            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>");
                         _ = stringBuilder.AppendLine($"            {{");
                         foreach(var controlEvent in control.PageControlEvents)
                         {

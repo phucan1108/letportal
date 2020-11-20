@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { ExtractingSchemaQueryModel, ColumnField, ColumnDef, CommandButtonInList, ActionType, CommandPositionType, FilledParameter, Parameter, SharedDatabaseOptions, FieldValueType, DatasourceControlType } from 'services/portal.service';
- 
-import { Constants } from 'portal/resources/constants';
-import { NGXLogger } from 'ngx-logger';
-import { Guid } from 'guid-typescript';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Guid } from 'guid-typescript';
+import { NGXLogger } from 'ngx-logger';
+import { Constants } from 'portal/resources/constants';
+import { ActionType, ColumnDef, ColumnField, CommandButtonInList, CommandPositionType, DatasourceControlType, ExtractingSchemaQueryModel, FieldValueType, FilledParameter, Parameter, SharedDatabaseOptions } from 'services/portal.service';
+ 
 
 @Component({
     selector: 'let-list-datasource',
@@ -104,9 +104,9 @@ export class ListDatasourceComponent implements OnInit {
         columnFields?.forEach((element) => {
             // By default, we need to remove all fields that contain id or special char
             const fieldName = element.name.toLowerCase()
-            if (fieldName.indexOf('id') < 2
-                && !this.format.test(fieldName)
-                && !this.ignoreBsonFieldTypes(element.fieldType)) {
+            if (//fieldName.indexOf('id') < 2
+                //&& !this.format.test(fieldName)
+                !this.ignoreBsonFieldTypes(element.fieldType)) {
                 // Ignore some special fields
                 const columnDef: ColumnDef = {
                     name: (element.name === '_id' || element.name === 'id') ? 'id' : element.name,

@@ -26,6 +26,7 @@ namespace PersonalBlog.Tools.PageTemplates
                 Id = "5f0aa3731558bf76447b18cb",
                 Name = "Home Page",
                 ThemeId = "5f02cb57e63b2b3634d51371",
+                SiteId = Constants.MAIN_SITE_ID,
                 Sections = new List<TemplateSection>
                 {
                     new TemplateSection
@@ -134,6 +135,8 @@ namespace PersonalBlog.Tools.PageTemplates
             {
                 Id = "5f0aa3731558bf76447b18cc",
                 Name = "Blogs",
+                ThemeId = "5f02cb57e63b2b3634d51371",
+                SiteId = Constants.MAIN_SITE_ID,
                 Sections = new List<TemplateSection>
                 {
                     new TemplateSection
@@ -157,6 +160,8 @@ namespace PersonalBlog.Tools.PageTemplates
             {
                 Id = "5f0aa3731558bf76447b18cd",
                 Name = "Blog Category",
+                ThemeId = "5f02cb57e63b2b3634d51371",
+                SiteId = Constants.MAIN_SITE_ID,
                 Sections = new List<TemplateSection>
                 {
                     new TemplateSection
@@ -173,6 +178,8 @@ namespace PersonalBlog.Tools.PageTemplates
             {
                 Id = "5f0aa3731558bf76447b18ce",
                 Name = "Blog Post",
+                ThemeId = "5f02cb57e63b2b3634d51371",
+                SiteId = Constants.MAIN_SITE_ID,
                 Sections = new List<TemplateSection>
                 {
                    new TemplateSection
@@ -189,6 +196,8 @@ namespace PersonalBlog.Tools.PageTemplates
             {
                 Id = "5f1ef6fce9ce36726865ebc0",
                 Name = "Blog Tags",
+                ThemeId = "5f02cb57e63b2b3634d51371",
+                SiteId = Constants.MAIN_SITE_ID,
                 Sections = new List<TemplateSection>
                 {
                     new TemplateSection

@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
@@ -56,6 +57,8 @@ namespace LetPortal.Portal.Services.Recoveries
 
         private readonly IOptionsMonitor<BackupOptions> _backupOptions;
 
+        private IServiceLogger<BackupService> _logger;
+
         public BackupService(
             IAppServiceProvider appServiceProvider,
             IStandardServiceProvider standardServiceProvider,
@@ -65,7 +68,8 @@ namespace LetPortal.Portal.Services.Recoveries
             IPageServiceProvider pageServiceProvider,
             IFileSeviceProvider fileSeviceProvider,
             IBackupRepository backupRepository,
-            IOptionsMonitor<BackupOptions> backupOptions
+            IOptionsMonitor<BackupOptions> backupOptions,
+            IServiceLogger<BackupService> logger
             )
         {
             _appServiceProvider = appServiceProvider;
@@ -77,6 +81,7 @@ namespace LetPortal.Portal.Services.Recoveries
             _pageServiceProvider = pageServiceProvider;
             _backupRepository = backupRepository;
             _backupOptions = backupOptions;
+            _logger = logger;
         }
 
         public async Task<BackupResponseModel> CreateBackupFile(BackupRequestModel model)
@@ -556,7 +561,14 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var app in collectApp.Result)
                 {
-                    appCodes.Add(app.GenerateCode());
+                    try
+                    {
+                        appCodes.Add(app.GenerateCode());
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for app {app.Name}");
+                    }
                 }
             }
 
@@ -565,7 +577,14 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var standard in collectStandards.Result)
                 {
-                    standardCodes.Add(standard.GenerateCode());
+                    try
+                    {
+                        standardCodes.Add(standard.GenerateCode());
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for standard component {standard.Name}");
+                    }
                 }
             }
 
@@ -574,7 +593,14 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var tree in collectTree.Result)
                 {
-                    treeCodes.Add(tree.GenerateCode());
+                    try
+                    {
+                        treeCodes.Add(tree.GenerateCode());
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for tree {tree.Name}");
+                    }                     
                 }
             }
 
@@ -583,7 +609,14 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var array in collectArray.Result)
                 {
-                    arrayCodes.Add(array.GenerateCode());
+                    try
+                    {
+                        arrayCodes.Add(array.GenerateCode());
+                    }                                        
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for array standard {array.Name}");
+                    }
                 }
             }
 
@@ -592,7 +625,14 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var database in collectDatabases.Result)
                 {
-                    databaseCodes.Add(database.GenerateCode());
+                    try
+                    {
+                        databaseCodes.Add(database.GenerateCode());
+                    }                                              
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for database {database.Name}");
+                    }
                 }
             }
 
@@ -601,7 +641,14 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var chart in collectCharts.Result)
                 {
-                    chartCodes.Add(chart.GenerateCode());
+                    try
+                    {
+                        chartCodes.Add(chart.GenerateCode());
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for chart {chart.Name}");
+                    }
                 }
             }
 
@@ -610,7 +657,14 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var page in collectPages.Result)
                 {
-                    pageCodes.Add(page.GenerateCode());
+                    try
+                    {
+                        pageCodes.Add(page.GenerateCode());
+                    }                                      
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for page {page.Name}");
+                    }
                 }
             }
 
@@ -619,7 +673,15 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 foreach (var dynamicList in collectDynamicLists.Result)
                 {
-                    dynamicListCodes.Add(dynamicList.GenerateCode());
+                    try
+                    {
+                        dynamicListCodes.Add(dynamicList.GenerateCode());
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for page {dynamicList.Name}");
+                    }
+                    
                 }
             }
 

@@ -107,12 +107,12 @@ namespace LetPortal.Portal.Repositories.Pages
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var pages = await _context.Pages.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var pages = await _context.Pages.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return pages?.AsEnumerable();
             }
             else
             {
-                return (await _context.Pages.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.Pages.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }
 

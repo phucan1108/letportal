@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { PagesClient, App, AppsClient } from 'services/portal.service';
 import { Observable } from 'rxjs';
+import { App, AppsClient, PagesClient } from 'services/portal.service';
 
 @Component({
     selector: 'let-page-info',
@@ -24,7 +24,7 @@ export class PageInfoComponent implements OnInit {
         private appsClient: AppsClient,
         private pageClient: PagesClient
     ) { }
-
+    
     ngOnInit(): void {
         this.apps$ = this.appsClient.getAll()
     }

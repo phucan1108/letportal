@@ -26,34 +26,42 @@ export class BackupBuilderPage implements OnInit {
     selectedApps: ShortEntityModel[]
     apps$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     seachAppDebouncer: Subject<string> = new Subject<string>()
+    notifiedApps: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     selectedDatabases: ShortEntityModel[]
     databases$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchDatabaseDebouncer: Subject<string> = new Subject<string>()
+    notifiedDatabases: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     selectedStandards: ShortEntityModel[]
     standards$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchStandardDebouncer: Subject<string> = new Subject<string>()
+    notifiedStandards: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     selectedTree: ShortEntityModel[]
     tree$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchTreeDebouncer: Subject<string> = new Subject<string>()
+    notifiedTree: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     selectedArray: ShortEntityModel[]
     array$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchArrayDebouncer: Subject<string> = new Subject<string>()
+    notifiedArray: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     selectedDynamicLists: ShortEntityModel[]
     dynamicLists$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchDynamicListDebouncer: Subject<string> = new Subject<string>()
+    notifiedDynamicLists: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     selectedCharts: ShortEntityModel[]
     charts$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchChartDebouncer: Subject<string> = new Subject<string>()
+    notifiedCharts: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     selectedPages: ShortEntityModel[]
     pages$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
     searchPageDebouncer: Subject<string> = new Subject<string>()
+    notifiedPages: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
     isCanSubmit = false
     isSubmitted = false
@@ -241,6 +249,27 @@ export class BackupBuilderPage implements OnInit {
 
     onSelectAppChanged($event) {
         this.selectedApps = $event
+        // 0.9.0: We will scan all components that are related to
+        this.selectedApps.forEach(app => {            
+            this.standardClient.getSortStandards('').subscribe(res => {
+                this.notifiedStandards.next(res.filter(a => a.appId === app.id))
+            })
+            this.standardClient.getSortArrayStandards('').subscribe(res => {
+                this.notifiedArray.next(res.filter(a => a.appId === app.id))
+            })
+            this.standardClient.getSortTreeStandards('').subscribe(res => {
+                this.notifiedTree.next(res.filter(a => a.appId === app.id))
+            })
+            this.chartClient.getShortCharts('').subscribe(res => {
+                this.notifiedCharts.next(res.filter(a => a.appId === app.id))
+            })
+            this.pageClient.getShortPages('').subscribe(res => {
+                this.notifiedPages.next(res.filter(a => a.appId === app.id))
+            })
+            this.dynamicListClient.getShortDynamicLists('').subscribe(res => {
+                this.notifiedDynamicLists.next(res.filter(a => a.appId === app.id))
+            })
+        })        
     }
 
     onSeachDatabaseChanged($event) {
@@ -377,7 +406,9 @@ export class BackupBuilderPage implements OnInit {
                         charts: this.selectedCharts ? this.selectedCharts.map(chart => chart.id) : [],
                         standards: this.selectedStandards ? this.selectedStandards.map(standard => standard.id) : [],
                         dynamicLists: this.selectedDynamicLists ? this.selectedDynamicLists.map(dynamicList => dynamicList.id) : [],
-                        pages: this.selectedPages ? this.selectedPages.map(page => page.id) : []
+                        pages: this.selectedPages ? this.selectedPages.map(page => page.id) : [],
+                        array: this.selectedArray ? this.selectedArray.map(array => array.id) : [],
+                        tree: this.selectedTree ? this.selectedTree.map(tree => tree.id) : []
                     }).pipe(
                         tap(res => {
                             FileSaver.saveAs(res.data, res.fileName)

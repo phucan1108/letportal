@@ -12,6 +12,8 @@ namespace LetPortal.CMS.Core.Entities
 
         public string ThemeId { get; set; }
 
+        public string SiteId { get; set; }
+
         public List<TemplateSection> Sections { get; set; }
     }
 

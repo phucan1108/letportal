@@ -4,9 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { EventDialogType, MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
 import { StateReset } from 'ngxs-reset-plugin';
-import { forkJoin, Observable, of, Subscription, throwError } from 'rxjs';
+import { forkJoin, Observable, of, Subscription } from 'rxjs';
 import { filter, map, mergeMap, tap } from 'rxjs/operators';
 import { BeginRenderingPageSectionsAction, ChangeControlValueEvent, ClickControlEvent, CompleteGatherSectionValidations, EndBuildingBoundDataComplete, GatherSectionValidations, InitPageInfo, InsertOneItemForStandardArray, LoadDatasource, LoadDatasourceComplete, PageReadyAction, RemoveOneItemForStandardArray, RenderedPageSectionAction, SectionValidationStateAction, UpdateOneItemForStandardArray, UserClicksOnButtonAction } from 'stores/pages/page.actions';
 import { PageState, PageStateModel } from 'stores/pages/page.state';
@@ -27,6 +28,7 @@ import { ShellConfigProvider } from '../shell/shellconfig.provider';
 import { Translator } from '../shell/translates/translate.pipe';
 import { ObjectUtils } from '../utils/object-util';
 import { CustomHttpService } from './customhttp.service';
+import { DatasourceOptionsService } from './datasourceopts.service';
 import { ActionCommandOptions, ActionType, ConfirmationOptions, DatabasesClient, DatasourceControlType, DatasourceOptions, EventActionType, ExecuteDynamicResultModel, HttpServiceOptions, LoopDataModel, Page, PageAsyncValidatorModel, PageButton, PageControlEvent, PageDatasource, PageParameterModel, PagesClient, SectionContructionType } from './portal.service';
 import { SessionService } from './session.service';
 
@@ -61,6 +63,7 @@ export class PageService {
         private shellConfigProvider: ShellConfigProvider,
         private shortcutUtil: ShortcutUtil,
         private databasesClient: DatabasesClient,
+        private datasourceOptsService: DatasourceOptionsService,
         private logger: NGXLogger,
         private store: Store,
         private interceptorProvider: InterceptorsProvider
@@ -345,7 +348,7 @@ export class PageService {
 
         return checked
     }
-
+    
     executeCommandByName(commandName: string) {
         const found = this.page.commands.find(command => command.name === commandName)
         if (found) {
@@ -369,36 +372,7 @@ export class PageService {
     }
 
     fetchDatasourceOptions(datasourceOpts: DatasourceOptions): Observable<any> {
-        switch (datasourceOpts.type) {
-            case DatasourceControlType.StaticResource:
-                return of(JSON.parse(datasourceOpts.datasourceStaticOptions.jsonResource))
-            case DatasourceControlType.Database:
-                return this.fetchDatasource(datasourceOpts.databaseOptions.databaseConnectionId, datasourceOpts.databaseOptions.query)
-            case DatasourceControlType.WebService:
-                return of(null)
-        }
-    }
-
-    fetchDatasource(databaseId: string, query: string): Observable<any> {
-        const combineQuery = this.translator.translateDataWithShell(query, this.getPageShellData())
-
-        return this.databasesClient.executeQueryDatasource(databaseId, combineQuery).pipe(
-            mergeMap(result => {
-                if (result.isSuccess) {
-                    let array = []
-                    if (ObjectUtils.isObject(result.result)) {
-                        array.push(result.result)
-                    }
-                    else {
-                        array = result.result
-                    }
-                    return of(array)
-                }
-                else {
-                    return throwError(result.error)
-                }
-            })
-        )
+        return this.datasourceOptsService.executeDatasourceOptions(datasourceOpts, this.getPageShellData())
     }
 
     fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
@@ -704,7 +678,8 @@ export class PageService {
                                 const translatedDs = this.translateData(ds.options.datasourceStaticOptions.jsonResource, this.getPageShellData(), false)
                                 datasources$.push(of<PageLoadedDatasource>({
                                     data: JSON.parse(translatedDs),
-                                    name: ds.name
+                                    name: ds.name,
+                                    key: Guid.create().toString()
                                 }))
                                 break
                             case DatasourceControlType.WebService:
@@ -736,9 +711,9 @@ export class PageService {
                                             map<ExecuteDynamicResultModel, PageLoadedDatasource>((res: ExecuteDynamicResultModel) => {
                                                 // Ensure if result is array, take 1st elem for data
                                                 if (ObjectUtils.isArray(res.result)) {
-                                                    return { name: dsName, data: res.result[0] }
+                                                    return { name: dsName, data: res.result[0], key: Guid.create().toString() }
                                                 }
-                                                return { name: dsName, data: res.result }
+                                                return { name: dsName, data: res.result, key: Guid.create().toString() }
                                             })
                                         ))
                                 break

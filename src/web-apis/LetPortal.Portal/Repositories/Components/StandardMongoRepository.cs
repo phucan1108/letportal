@@ -96,9 +96,15 @@ namespace LetPortal.Portal.Repositories.Components
                 var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
                 var arrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Array);
                 var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, regexFilter, arrayFilter);
-                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
             }
-            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            else
+            {                
+                var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
+                var arrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Array);
+                var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, arrayFilter);
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
+            }            
         }
 
         public Task<IEnumerable<ShortEntityModel>> GetShortStandards(string keyWord = null)
@@ -109,9 +115,15 @@ namespace LetPortal.Portal.Repositories.Components
                 var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
                 var nonArrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Standard);
                 var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, regexFilter, nonArrayFilter);
-                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
             }
-            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            else
+            {                   
+                var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
+                var nonArrayFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Standard);
+                var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, nonArrayFilter);
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
+            }            
         }
 
         public Task<IEnumerable<ShortEntityModel>> GetShortTreeStandards(string keyWord = null)
@@ -122,9 +134,15 @@ namespace LetPortal.Portal.Repositories.Components
                 var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
                 var treeFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Tree);
                 var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, regexFilter, treeFilter);
-                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
             }
-            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            else
+            {
+                var discriminatorFilter = Builders<StandardComponent>.Filter.Eq("_t", typeof(StandardComponent).Name);
+                var treeFilter = Builders<StandardComponent>.Filter.Eq(a => a.Type, StandardType.Tree);
+                var combineFilter = Builders<StandardComponent>.Filter.And(discriminatorFilter, treeFilter);
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
+            }            
         }
 
         private List<LanguageKey> GetStandardLanguages(StandardComponent standard)

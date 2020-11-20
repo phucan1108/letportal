@@ -311,7 +311,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 mockPageProvider.Object,
                 mockFileProvider.Object,
                 backupRepository,
-                backupOptionsMock);
+                backupOptionsMock,
+                new FakeServiceLogger<BackupService>());
 
             return backupService;
         }
@@ -379,7 +380,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 mockPageProvider.Object,
                 mockFileProvider.Object,
                 backupRepository,
-                backupOptionsMock);
+                backupOptionsMock,
+                new FakeServiceLogger<BackupService>());
 
             databaserProvider.Dispose();
 
