@@ -1,29 +1,29 @@
-import { Component, OnInit, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter, Optional, SkipSelf } from '@angular/core';
-import { ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Observable } from 'rxjs';
- 
-import { Guid } from 'guid-typescript';
-import { StaticResources } from 'portal/resources/static-resources';
-import { ControlDialogComponent } from './control-dialog.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table';
+import { TranslateService } from '@ngx-translate/core';
+import { slideInLeftOnEnterAnimation, slideInRightOnEnterAnimation, slideOutLeftOnLeaveAnimation, slideOutRightOnLeaveAnimation } from 'angular-animations';
+import { EventsProvider } from 'app/core/events/event.provider';
+import { ExtendedPageControl } from 'app/core/models/extended.models';
 import { ArrayUtils } from 'app/core/utils/array-util';
+import { ObjectUtils } from 'app/core/utils/object-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
-import { ControlType, PageControl, StandardComponent, ShellOption, DatasourceControlType } from 'services/portal.service';
-import { slideInRightOnEnterAnimation, slideOutRightOnLeaveAnimation, slideInLeftOnEnterAnimation, slideOutLeftOnLeaveAnimation } from 'angular-animations';
-import { trigger, transition, state, style, animate } from '@angular/animations';
+import { StaticResources } from 'portal/resources/static-resources';
 import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
-import { ControlEventsDialogComponent } from './control-events.dialog.component';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ObjectUtils } from 'app/core/utils/object-util';
+import { ControlType, DatasourceControlType, PageControl, ShellOption } from 'services/portal.service';
 import { AsyncValidatorDialogComponent } from './control-async-validator.dialog.component';
-import { EventsProvider } from 'app/core/events/event.provider';
-import { MatTable } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { ControlDialogComponent } from './control-dialog.component';
+import { ControlEventsDialogComponent } from './control-events.dialog.component';
+ 
 
 @Component({
     selector: 'let-controls-grid',
@@ -216,6 +216,7 @@ export class ControlsGridComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                this.logger.debug('datasource of control has been changed', result)
                 control.datasourceOptions = result
                 this.logger.debug('after changed datasource', this.controls)
             }

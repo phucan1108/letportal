@@ -1,26 +1,26 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef, Input } from '@angular/core';
-import { PageButton, ActionType, Route, PageSection } from 'services/portal.service';
 import { SelectionModel } from '@angular/cdk/collections';
- 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table';
+import { TranslateService } from '@ngx-translate/core';
+import { Store } from '@ngxs/store';
+import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { ArrayUtils } from 'app/core/utils/array-util';
-import { Guid } from 'guid-typescript';
-import { PageButtonDialogComponent } from './page-button-dialog.component';
-import { Store, Actions } from '@ngxs/store';
-import { filter, tap } from 'rxjs/operators';
+import { ObjectUtils } from 'app/core/utils/object-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { InitEditPageBuilderAction, GeneratePageActionCommandsAction, NextToWorkflowAction, UpdatePageActionCommandsAction, UpdateAvailableEvents, GatherAllChanges, NextToDatasourceAction } from 'stores/pages/pagebuilder.actions';
-import { ObjectUtils } from 'app/core/utils/object-util';
-import { PageButtonRouteDialogComponent } from './page-button-route.component';
-import { PageButtonOptionsDialogComponent } from './page-button-options.component';
+import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
-import { PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
 import { BehaviorSubject } from 'rxjs';
-import { ExtendedPageSection } from 'app/core/models/extended.models';
-import { MatTable } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { filter, tap } from 'rxjs/operators';
+import { ActionType, PageButton } from 'services/portal.service';
+import { GatherAllChanges, GeneratePageActionCommandsAction, InitEditPageBuilderAction, NextToDatasourceAction, NextToWorkflowAction, UpdateAvailableEvents, UpdatePageActionCommandsAction } from 'stores/pages/pagebuilder.actions';
+import { PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
+import { PageButtonDialogComponent } from './page-button-dialog.component';
+import { PageButtonOptionsDialogComponent } from './page-button-options.component';
+import { PageButtonRouteDialogComponent } from './page-button-route.component';
+ 
 
 @Component({
     selector: 'let-page-button-grid',
@@ -193,9 +193,16 @@ export class PageButtonGridComponent implements OnInit {
             if (!result) {
                 return;
             }
-
-            command.buttonOptions.routeOptions.routes = result.routes
-            command.buttonOptions.routeOptions.isEnable = result.isEnable
+            if(!ObjectUtils.isNotNull(command.buttonOptions.routeOptions)){
+                command.buttonOptions.routeOptions = {
+                    isEnable: result.isEnable,
+                    routes: result.routes
+                }
+            }
+            else{
+                command.buttonOptions.routeOptions.routes = result.routes
+                command.buttonOptions.routeOptions.isEnable = result.isEnable
+            }
 
             this.currentActionCommands = ArrayUtils.updateOneItem(this.currentActionCommands, command, (button: PageButton) => { return button.id === command.id })
             this.refreshControlTable()

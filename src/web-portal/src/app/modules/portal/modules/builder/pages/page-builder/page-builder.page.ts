@@ -96,8 +96,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             this.store.dispatch(new InitCreatePageBuilderAction())
         }
         this.tempBuilderForm = this.fb.group([])
-        this.initialDynamicForm()
-        this.initialInputDynamicForm()
+        this.initPageBuilder()
+        this.initPageInfoForm()
         this.onValueChanges()
         this.databaseConnections = this.databaseClient.getAll()
     }
@@ -124,7 +124,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     }
 
     //#region Angular Form methods
-    initialDynamicForm() {
+    initPageBuilder() {
         this.store
             .select(state => state.pagebuilder)
             .pipe(
@@ -141,7 +141,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             ).subscribe()
     }
 
-    initialInputDynamicForm() {
+    initPageInfoForm() {
         if (!this.isEditMode) {
             this.pageInfoFormGroup = this.fb.group({
                 name: ['', [Validators.required, Validators.maxLength(250)], [PortalValidators.pageUniqueName(this.pagesClient)]],

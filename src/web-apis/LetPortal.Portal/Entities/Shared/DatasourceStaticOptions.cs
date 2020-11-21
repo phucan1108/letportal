@@ -18,7 +18,7 @@ namespace LetPortal.Portal.Entities.Shared
             _ = stringBuilder.AppendLine($"{{", space);
             _ = stringBuilder.AppendLine($"    JsonResource = {StringUtil.ToLiteral(JsonResource)}", space);
             _ = stringBuilder.AppendLine($"}},", space);
-
+            codeResult.InsertingCode = stringBuilder.ToString();
             return codeResult;
         }
     }

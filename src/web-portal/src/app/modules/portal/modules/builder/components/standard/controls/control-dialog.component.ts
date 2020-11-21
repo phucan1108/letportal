@@ -1,20 +1,18 @@
-import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ExtendedPageControl, ExtendedFormValidator } from 'app/core/models/extended.models';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ExtendedFormValidator, ExtendedPageControl } from 'app/core/models/extended.models';
+import { ControlOptions } from 'app/core/models/page.model';
+import { DateUtils } from 'app/core/utils/date-util';
+import { NGXLogger } from 'ngx-logger';
 import { StaticResources } from 'portal/resources/static-resources';
+import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { ControlType, EventActionType, PageControl, PageControlEvent, ValidatorType } from 'services/portal.service';
 import { ControlsGridComponent } from './controls-grid.component';
  
-import { NGXLogger } from 'ngx-logger';
-import { ValidatorType, ControlType, ShellOption, PageControl, PageControlEvent, EventActionType } from 'services/portal.service';
-import { Constants } from 'portal/resources/constants';
-import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import { DateUtils } from 'app/core/utils/date-util';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { tap } from 'rxjs/operators';
-import { ControlOptions } from 'app/core/models/page.model';
-import { FormUtil } from 'app/core/utils/form-util';
 
 @Component({
     selector: 'let-control-dialog',
@@ -201,6 +199,7 @@ export class ControlDialogComponent implements OnInit {
                     Validators.pattern('^[a-zA-Z]+'), 
                     Validators.required, 
                     Validators.maxLength(100), 
+                    // 0.9.0: Because we allow 'rendered' mode so that we accept the case is duplicate name
                     //FormUtil.isExist(this.names, this.currentExtendedFormControl.name)
                 ]],
             controlType: [this.currentExtendedFormControl.type]

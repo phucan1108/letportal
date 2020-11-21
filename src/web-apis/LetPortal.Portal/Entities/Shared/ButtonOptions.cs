@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LetPortal.Core.Extensions;
 using LetPortal.Core.Persistences;
+using LetPortal.Core.Utils;
 
 namespace LetPortal.Portal.Entities.Shared
 {
@@ -14,6 +16,7 @@ namespace LetPortal.Portal.Entities.Shared
 
         public CodeGenerableResult GenerateCode(string varName = null, int space = 0)
         {
+            Console.WriteLine("Current button options " + ConvertUtil.SerializeObject(this));
             var codeResult = new CodeGenerableResult();
             varName ??= "ButtonOptions";
             var stringBuilder = new StringBuilder();
@@ -25,6 +28,7 @@ namespace LetPortal.Portal.Entities.Shared
             }
             if(RouteOptions != null)
             {
+                Console.WriteLine("Current route options " + ConvertUtil.SerializeObject(RouteOptions));
                 _ = stringBuilder.AppendLine(RouteOptions.GenerateCode("RouteOptions", space: 4).InsertingCode);
             }
             _ = stringBuilder.AppendLine($"}},", space);
@@ -50,6 +54,7 @@ namespace LetPortal.Portal.Entities.Shared
         {
             var codeResult = new CodeGenerableResult();
             varName ??= "RouteOptions";
+            Console.WriteLine("Current route options generator" + ConvertUtil.SerializeObject(this));
             var stringBuilder = new StringBuilder();
             _ = stringBuilder.AppendLine($"{varName} = new LetPortal.Portal.Entities.Shared.RouteOptions", space);
             _ = stringBuilder.AppendLine($"{{", space);
@@ -70,6 +75,7 @@ namespace LetPortal.Portal.Entities.Shared
                 _ = stringBuilder.AppendLine($"    }},", space);
             }
             _ = stringBuilder.AppendLine($"}},", space);
+            codeResult.InsertingCode = stringBuilder.ToString();
             return codeResult;
         }
     }

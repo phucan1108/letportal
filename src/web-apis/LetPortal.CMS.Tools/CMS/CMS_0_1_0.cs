@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-namespace LetPortal.CMS.Tools.CMS
+namespace LetPortal.CMS.Tools
 {
     public class CMS_0_1_0 : LetPortal.Portal.IPortalVersion
     {
@@ -15,6 +15,8 @@ namespace LetPortal.CMS.Tools.CMS
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.StandardComponent>("5f527543775f3a5ee4b2ede7");
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.StandardComponent>("5f527a1f775f3a5ee4b2ef01");
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.StandardComponent>("5fb69456ea2c730001a775ad");
+            versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.StandardComponent>("5fb8a918978a6b0001a0254c");
+            versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.StandardComponent>("5fb8ee954f013c00017fdaae");
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.StandardComponent>("5fb6b4104f46d90001e67e8b");
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.StandardComponent>("5fb761050383a10001ba17c2");
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.DynamicList>("5f469621c0a5165a80016f71");
@@ -23,6 +25,8 @@ namespace LetPortal.CMS.Tools.CMS
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.DynamicList>("5f4e745afc4f674a9c1aa50a");
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.DynamicList>("5f4f310ec9957252a4103950");
             versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.DynamicList>("5fb639108e67fa00011797dd");
+            versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.DynamicList>("5fb8a530978a6b0001a024b9");
+            versionContext.DeleteData<LetPortal.Portal.Entities.SectionParts.DynamicList>("5fb8e9574f013c00017fd9f6");
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5f47e21e09012d61101e31bb");
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5f47e27609012d61101e31d8");
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5f47e56d09012d61101e3272");
@@ -33,6 +37,10 @@ namespace LetPortal.CMS.Tools.CMS
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb60b698e67fa00011791a7");
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb6392a8e67fa00011797e0");
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb69663ea2c730001a775f6");
+            versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb8a61f978a6b0001a024da");
+            versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb8aad7978a6b0001a0258b");
+            versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb8e9ed4f013c00017fda0d");
+            versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb8f0114f013c00017fdae4");
             return System.Threading.Tasks.Task.CompletedTask;
         }
         public Task Upgrade(LetPortal.Core.Versions.IVersionContext versionContext)
@@ -116,6 +124,27 @@ namespace LetPortal.CMS.Tools.CMS
                 Url = "/portal/page/cms-themes",
                 MenuPath = "~/5f258a65807fec5a88e22c2e",
                 Order = 1,
+             },
+            }
+        },
+        new LetPortal.Portal.Entities.Menus.Menu
+        {
+            Id = "",
+            DisplayName = "Features",
+            Icon = "star",
+            Url = "#",
+            MenuPath = "",
+            Order = 0,
+            SubMenus = new List<LetPortal.Portal.Entities.Menus.Menu>
+            {
+            new LetPortal.Portal.Entities.Menus.Menu
+            {
+                Id = "",
+                DisplayName = "Blogs",
+                Icon = "description",
+                Url = "portal/page/cms-blogs",
+                MenuPath = "",
+                Order = 0,
              },
             }
         },
@@ -2428,7 +2457,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                 new LetPortal.Portal.Entities.Pages.ShellOption
                 {
                     Key = "disabled",
-                    Value = "false",
+                    Value = "!!queryparams.pageTemplateId",
                     Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
                 },
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2624,6 +2653,1825 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             };
             versionContext.InsertData(cmspagetemplateinfoStandard);
 
+            var cmsblogformStandard = new LetPortal.Portal.Entities.SectionParts.StandardComponent
+            {
+                Id = "5fb8a918978a6b0001a0254c",
+                Name = "cmsblogform",
+                DisplayName = "CMS Blog Form",
+                AppId = "5f23f7d6b8f393672ce21029",
+                LayoutType = LetPortal.Portal.Entities.SectionParts.PageSectionLayoutType.OneColumn,
+                Type = LetPortal.Portal.Entities.SectionParts.StandardType.Standard,
+                Controls = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControl>
+    {
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "id",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 3,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "id",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "true",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "true",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "id",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = false,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = false,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = false,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "urlPath",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 1,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Url Path",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Url Path",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "urlPath",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "5",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "250",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "urlPath_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "title",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 2,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Title",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Title",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "title",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "10",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "500",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "title_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "description",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 3,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Description",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Description",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "description",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "10",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "2000",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "description_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        }
+    },
+            };
+            versionContext.InsertData(cmsblogformStandard);
+
+            var cmspostformStandard = new LetPortal.Portal.Entities.SectionParts.StandardComponent
+            {
+                Id = "5fb8ee954f013c00017fdaae",
+                Name = "cmspostform",
+                DisplayName = "CMS Post Form",
+                AppId = "5f23f7d6b8f393672ce21029",
+                LayoutType = LetPortal.Portal.Entities.SectionParts.PageSectionLayoutType.OneColumn,
+                Type = LetPortal.Portal.Entities.SectionParts.StandardType.Standard,
+                Controls = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControl>
+    {
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "id",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 0,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Id",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Id",
+                    Description = "Tooltip will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "true",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as page.queryparams, page.options, section. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "id",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "id_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "urlPath",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 1,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Url Path",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Url Path",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "urlPath",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "5",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "250",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+            AsyncValidators = new List<LetPortal.Portal.Entities.Components.Controls.PageControlAsyncValidator>
+            {
+                new LetPortal.Portal.Entities.Components.Controls.PageControlAsyncValidator
+                {
+                    ValidatorName = "uniquepath",
+                    IsActive = true,
+                    ValidatorMessage = "This url has been used by another post",
+                    AsyncValidatorOptions = new LetPortal.Portal.Entities.Components.Controls.ControlAsyncValidatorOptions
+                    {
+                        EvaluatedExpression = "response.result === null",
+                        DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+                        {
+                            DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                            Query = "{\"$query\":{\"posts\":[{\"$match\":{\"urlPath\":\"{{data.urlPath}}\"}}]}}",
+                        },
+
+                        ValidatorType = LetPortal.Portal.Entities.Components.Controls.AsyncValidatorType.DatabaseValidator,
+                    }
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "urlPath_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "screenshotUrl",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Uploader,
+            Order = 2,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Screenshot",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "screenshotUrl",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "allowfileurl",
+                    Value = "true",
+                    Description = "Allow an uploader set downloadable url back to a field after saving instead of file id. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "saveonchange",
+                    Value = "true",
+                    Description = "Allow an uploader upload a file after user changes. Default: false",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = false,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.FileMaximumSize,
+                    IsActive = true,
+                    ValidatorMessage = "File must have size less than {{option}} Mb",
+                    ValidatorOption = "1",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.FileExtensions,
+                    IsActive = true,
+                    ValidatorMessage = "File must have an extension in {{option}}",
+                    ValidatorOption = "jpg;jpeg;png;gif",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "screenshotUrl_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "title",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 3,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Title",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Title",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "title",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "10",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "250",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "title_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "description",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textarea,
+            Order = 4,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Description",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Enter a description",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "description",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "textarearows",
+                    Value = "6",
+                    Description = "Rows attribute of textarea. Default: 6",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "10",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = false,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "2000",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "description_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "content",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.RichTextEditor,
+            Order = 5,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Content",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Enter Content",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "content",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "content_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "showComment",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
+            Order = 8,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Show Comment",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Show Comment",
+                    Description = "Tooltip will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as page.queryparams, page.options, section. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "showComment",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "showComment_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "allowUserComment",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
+            Order = 9,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Allow User Comment",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Allow User Comment",
+                    Description = "Tooltip will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as page.queryparams, page.options, section. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "allowUserComment",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "allowUserComment_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "maximumCommentPerDay",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Number,
+            Order = 10,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Maximum Comment Per Day",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Maximum Comment Per Day",
+                    Description = "Tooltip will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as page.queryparams, page.options, section. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "maximumCommentPerDay",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "maximumCommentPerDay_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "readDuration",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Number,
+            Order = 11,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Read Duration",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Please enter Read Duration",
+                    Description = "Tooltip will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as page.queryparams, page.options, section. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "readDuration",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "readDuration_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "blogId",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
+            Order = 13,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Blog",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Choose a blog",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "!!queryparams.postId",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "blogId",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "multiple",
+                    Value = "false",
+                    Description = "Multiple options can be selected. Default: false",
+                },
+            },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DatasourceOptions
+{
+    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.Database,
+    DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+    {
+        DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+        Query = "{\"$query\":{\"blogs\":[{\"$project\":{\"name\":\"$title\",\"value\":\"$_id\"}}]}}",
+    },
+
+},
+
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "blogId_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "tags",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
+            Order = 11,
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Tags",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Choose tag",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "tags",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "multiple",
+                    Value = "true",
+                    Description = "Multiple options can be selected. Default: false",
+                },
+            },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DatasourceOptions
+{
+    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.Database,
+    DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+    {
+        DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+        Query = "{\"$query\":{\"blogtags\":[{\"$project\":{\"name\":\"$tag\",\"value\":\"$_id\"}}]}}",
+    },
+
+},
+
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please select one option",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        }
+    },
+            };
+            versionContext.InsertData(cmspostformStandard);
+
             var cmssitemenuStandard = new LetPortal.Portal.Entities.SectionParts.StandardComponent
             {
                 Id = "5fb6b4104f46d90001e67e8b",
@@ -2632,6 +4480,57 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                 AppId = "5f23f7d6b8f393672ce21029",
                 LayoutType = LetPortal.Portal.Entities.SectionParts.PageSectionLayoutType.OneColumn,
                 Type = LetPortal.Portal.Entities.SectionParts.StandardType.Tree,
+                Options = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.ShellOption>
+    {
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "indatastructure",
+            Value = "nest",
+            Description = "Tree - Defines the input structure as flat|nest. Flat is array data and nest is subset data. Default: nest"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "outdatastructure",
+            Value = "nest",
+            Description = "Tree - Defines the output structure as flat|nested. Flat is array data and nest is subset data. Default: nest"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "displayname",
+            Value = "name",
+            Description = "Tree - Defines a display name field which is used to be node name. Default: name"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "allowgenerateid",
+            Value = "true",
+            Description = "Tree - Allow to generate GUID for NodeId and NodeParentId. Default: false"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "inchildren",
+            Value = "sub",
+            Description = "Tree - Property name of children in the nested input data. Default: children"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "outchildren",
+            Value = "sub",
+            Description = "Tree - Property name of children in the nested output data. Default: children"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "nodeidfield",
+            Value = "id",
+            Description = "Tree - Property name of node which indicates distinct node. Default: id"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "nodeparentfield",
+            Value = "parentId",
+            Description = "Tree - Property name of node which indicates parent field. Default: parentId"
+        },
+    },
                 Controls = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControl>
     {
         new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
@@ -2826,6 +4725,33 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                 AppId = "5f23f7d6b8f393672ce21029",
                 LayoutType = LetPortal.Portal.Entities.SectionParts.PageSectionLayoutType.OneColumn,
                 Type = LetPortal.Portal.Entities.SectionParts.StandardType.Array,
+                Options = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.ShellOption>
+    {
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "identityfield",
+            Value = "key",
+            Description = "Array - Identity field must be used to indicate one element. Default: id"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "namefield",
+            Value = "name;bindingType;themePartRef",
+            Description = "Array - Names field must be used to display one element, can be multiple by ;. Default: name"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "allowadjustment",
+            Value = "true",
+            Description = "Array - Allow user to add or remove on element. Default: false"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "allowupdateparts",
+            Value = "true",
+            Description = "Array - Allow to update one changed element instead of removing all and then adding all. Default: false"
+        },
+    },
                 Controls = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControl>
     {
         new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
@@ -3109,6 +5035,11 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                 DatasourceOptions = new LetPortal.Portal.Entities.Shared.DatasourceOptions
 {
     Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+    DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+    {
+        JsonResource = "[{\"name\":\"None\",\"value\":0},{\"name\":\"Object\",\"value\":1},{\"name\":\"Array\",\"value\":2}" +
+    ",{\"name\":\"Datasource\",\"value\":3}]"
+    },
 
 },
 
@@ -4664,6 +6595,598 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             };
             versionContext.InsertData(cmspagetemplatesList);
 
+            var cmsblogslistList = new LetPortal.Portal.Entities.SectionParts.DynamicList
+            {
+                Id = "5fb8a530978a6b0001a024b9",
+                Name = "cmsblogslist",
+                AppId = "5f23f7d6b8f393672ce21029",
+                DisplayName = "CMS Blogs List",
+                Options = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.ShellOption>
+    {
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "sizeoptions",
+            Value = "[ 5, 10, 20, 50 ]",
+            Description = "Number of items will be displayed. Default: 5,10,20,50"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "defaultpagesize",
+            Value = "10",
+            Description = "The default number of items. Default: 10"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "fetchfirsttime",
+            Value = "true",
+            Description = "Allow calling the data when list is appeared in page. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "maximumcolumns",
+            Value = "6",
+            Description = "When a number of columns is over this value, Details button will be displayed. Default: 6"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enablesearch",
+            Value = "true",
+            Description = "If it is false, so a search textbox will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enableadvancedsearch",
+            Value = "true",
+            Description = "If it is false, so an advanced search will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enablepagination",
+            Value = "true",
+            Description = "If it is false, so a pagination will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enableexportexcel",
+            Value = "true",
+            Description = "If it is false, so an export button will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "maximumclientexport",
+            Value = "200",
+            Description = "Maximum records of exporting excel on client side. If a total is over this number, we will use server-side. Default: 100"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "allowexporthiddenfields",
+            Value = "false",
+            Description = "If it is true, user can export hidden fields. Default: false"
+        }
+    },
+                ListDatasource = new LetPortal.Portal.Entities.SectionParts.DynamicListDatasource
+                {
+                    DatabaseConnectionOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+                    {
+                        DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                        Query = "{ \"$query\": { \"blogs\": [ ] } }",
+                    },
+
+                    SourceType = LetPortal.Portal.Entities.SectionParts.DynamicListSourceType.Database
+                },
+                ColumnsList = new LetPortal.Portal.Entities.SectionParts.ColumnsList
+                {
+                    ColumnDefs = new System.Collections.Generic.List<LetPortal.Portal.Entities.SectionParts.ColumnDef>
+        {
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "id",
+                DisplayName = "_id",
+                IsHidden = true,
+                DisplayFormat = "{0}",
+                AllowSort = false,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = false,
+                    AllowTextSearch = false,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "urlPath",
+                DisplayName = "Url Path",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = true,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = true,
+                    AllowTextSearch = true,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "title",
+                DisplayName = "Title",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = true,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = true,
+                    AllowTextSearch = true,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "creator",
+                DisplayName = "Creator",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = true,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = true,
+                    AllowTextSearch = true,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "modifiedDate",
+                DisplayName = "Modified Date",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = true,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = false,
+                    AllowTextSearch = false,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.DatePicker
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            }
+        }
+                },
+                CommandsList = new LetPortal.Portal.Entities.SectionParts.CommandsList
+                {
+                    CommandButtonsInList = new System.Collections.Generic.List<LetPortal.Portal.Entities.SectionParts.CommandButtonInList>
+        {
+            new LetPortal.Portal.Entities.SectionParts.CommandButtonInList
+            {
+                Name = "create",
+                DisplayName = "Create",
+                Color = "primary",
+                Icon = "create",
+                AllowRefreshList = false,
+                CommandPositionType = LetPortal.Portal.Entities.SectionParts.CommandPositionType.OutList,
+                Order = 0,
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.Redirect,
+                    IsEnable = true,
+                    RedirectOptions = new LetPortal.Portal.Entities.Shared.RedirectOptions
+                    {
+                        IsSameDomain = true,
+                        RedirectUrl = "portal/page/cms-blog-form"
+                    },
+                },
+
+            },
+            new LetPortal.Portal.Entities.SectionParts.CommandButtonInList
+            {
+                Name = "edit",
+                DisplayName = "Edit",
+                Color = "primary",
+                Icon = "edit",
+                AllowRefreshList = false,
+                CommandPositionType = LetPortal.Portal.Entities.SectionParts.CommandPositionType.InList,
+                Order = 1,
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.Redirect,
+                    IsEnable = true,
+                    RedirectOptions = new LetPortal.Portal.Entities.Shared.RedirectOptions
+                    {
+                        IsSameDomain = true,
+                        RedirectUrl = "portal/page/cms-blog-form?blogId={{data.id}}"
+                    },
+                },
+
+            },
+            new LetPortal.Portal.Entities.SectionParts.CommandButtonInList
+            {
+                Name = "posts",
+                DisplayName = "Posts",
+                Color = "warn",
+                Icon = "picture_as_pdf",
+                AllowRefreshList = false,
+                CommandPositionType = LetPortal.Portal.Entities.SectionParts.CommandPositionType.InList,
+                Order = 2,
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.Redirect,
+                    IsEnable = true,
+                    RedirectOptions = new LetPortal.Portal.Entities.Shared.RedirectOptions
+                    {
+                        IsSameDomain = true,
+                        RedirectUrl = "portal/page/cms-posts?blogId={{data.id}}"
+                    },
+                },
+
+            }
+        }
+                },
+            };
+            versionContext.InsertData(cmsblogslistList);
+
+            var cmspostslistList = new LetPortal.Portal.Entities.SectionParts.DynamicList
+            {
+                Id = "5fb8e9574f013c00017fd9f6",
+                Name = "cmspostslist",
+                AppId = "5f23f7d6b8f393672ce21029",
+                DisplayName = "CMS Posts List",
+                Options = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.ShellOption>
+    {
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "sizeoptions",
+            Value = "[ 5, 10, 20, 50 ]",
+            Description = "Number of items will be displayed. Default: 5,10,20,50"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "defaultpagesize",
+            Value = "10",
+            Description = "The default number of items. Default: 10"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "fetchfirsttime",
+            Value = "true",
+            Description = "Allow calling the data when list is appeared in page. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "maximumcolumns",
+            Value = "6",
+            Description = "When a number of columns is over this value, Details button will be displayed. Default: 6"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enablesearch",
+            Value = "true",
+            Description = "If it is false, so a search textbox will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enableadvancedsearch",
+            Value = "true",
+            Description = "If it is false, so an advanced search will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enablepagination",
+            Value = "true",
+            Description = "If it is false, so a pagination will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "enableexportexcel",
+            Value = "true",
+            Description = "If it is false, so an export button will be disappeared. Default: true"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "maximumclientexport",
+            Value = "200",
+            Description = "Maximum records of exporting excel on client side. If a total is over this number, we will use server-side. Default: 100"
+        },
+        new LetPortal.Portal.Entities.Pages.ShellOption
+        {
+            Key = "allowexporthiddenfields",
+            Value = "false",
+            Description = "If it is true, user can export hidden fields. Default: false"
+        }
+    },
+                ListDatasource = new LetPortal.Portal.Entities.SectionParts.DynamicListDatasource
+                {
+                    DatabaseConnectionOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+                    {
+                        DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                        Query = "{\"$query\":{\"posts\":[{\"$match\":{\"blogId\":\"{{queryparams.blogId}}\"}}]}}",
+                    },
+
+                    SourceType = LetPortal.Portal.Entities.SectionParts.DynamicListSourceType.Database
+                },
+                ColumnsList = new LetPortal.Portal.Entities.SectionParts.ColumnsList
+                {
+                    ColumnDefs = new System.Collections.Generic.List<LetPortal.Portal.Entities.SectionParts.ColumnDef>
+        {
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "id",
+                DisplayName = "_id",
+                IsHidden = true,
+                DisplayFormat = "{0}",
+                AllowSort = false,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = false,
+                    AllowTextSearch = false,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "urlPath",
+                DisplayName = "Url Path",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = true,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = true,
+                    AllowTextSearch = true,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "title",
+                DisplayName = "Title",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = true,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = true,
+                    AllowTextSearch = true,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "author",
+                DisplayName = "Author",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = false,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = false,
+                    AllowTextSearch = false,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Text
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "createdDate",
+                DisplayName = "Created Date",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = true,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = false,
+                    AllowTextSearch = false,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.DatePicker
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                   DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+                   {
+                        JsonResource = ""
+                   },
+                },
+            },
+            new LetPortal.Portal.Entities.SectionParts.ColumnDef
+            {
+                Name = "blogId",
+                DisplayName = "Blog",
+                IsHidden = false,
+                DisplayFormat = "{0}",
+                AllowSort = false,
+                HtmlFunction = "",
+                DisplayFormatAsHtml = false,
+                Order = 0,
+                SearchOptions = new LetPortal.Portal.Entities.SectionParts.SearchOptions
+                {
+                    AllowInAdvancedMode = true,
+                    AllowTextSearch = true,
+                    FieldValueType = LetPortal.Portal.Entities.SectionParts.FieldValueType.Select
+                },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DynamicListDatasourceOptions
+                {
+                    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.Database,
+                    TriggeredEvents = "",
+                    OutputMapProjection = "",
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+                {
+                    DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                    Query = "{\"$query\":{\"blogs\":[{\"$project\":{\"name\":\"$title\",\"value\":\"$_id\"}}]}}",
+                },
+
+                },
+            }
+        }
+                },
+                CommandsList = new LetPortal.Portal.Entities.SectionParts.CommandsList
+                {
+                    CommandButtonsInList = new System.Collections.Generic.List<LetPortal.Portal.Entities.SectionParts.CommandButtonInList>
+        {
+            new LetPortal.Portal.Entities.SectionParts.CommandButtonInList
+            {
+                Name = "create",
+                DisplayName = "Create",
+                Color = "primary",
+                Icon = "create",
+                AllowRefreshList = false,
+                CommandPositionType = LetPortal.Portal.Entities.SectionParts.CommandPositionType.OutList,
+                Order = 0,
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.Redirect,
+                    IsEnable = true,
+                    RedirectOptions = new LetPortal.Portal.Entities.Shared.RedirectOptions
+                    {
+                        IsSameDomain = true,
+                        RedirectUrl = "portal/page/cms-post-form"
+                    },
+                },
+
+            },
+            new LetPortal.Portal.Entities.SectionParts.CommandButtonInList
+            {
+                Name = "edit",
+                DisplayName = "Edit",
+                Color = "primary",
+                Icon = "edit",
+                AllowRefreshList = false,
+                CommandPositionType = LetPortal.Portal.Entities.SectionParts.CommandPositionType.InList,
+                Order = 1,
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.Redirect,
+                    IsEnable = true,
+                    RedirectOptions = new LetPortal.Portal.Entities.Shared.RedirectOptions
+                    {
+                        IsSameDomain = true,
+                        RedirectUrl = "portal/page/cms-post-form?postId={{data.id}}"
+                    },
+                },
+
+            }
+        }
+                },
+            };
+            versionContext.InsertData(cmspostslistList);
+
             var cmssitesPage = new LetPortal.Portal.Entities.Pages.Page
             {
                 Id = "5f47e21e09012d61101e31bb",
@@ -4965,6 +7488,11 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                     },
                 },
 
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = false,
+                },
+
             },
 
         },
@@ -5008,6 +7536,11 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                     },
                 },
 
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = false,
+                },
+
             },
 
         },
@@ -5026,6 +7559,20 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                 {
                     ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
                     IsEnable = false,
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = true,
+                    Routes = new System.Collections.Generic.List<LetPortal.Portal.Entities.Shared.Route>
+                    {
+                        new LetPortal.Portal.Entities.Shared.Route
+                        {
+                            RedirectUrl = "portal/page/cms-sites",
+                            Condition = "true",
+                            IsSameDomain = true,
+                         },
+                    },
                 },
 
             },
@@ -5269,6 +7816,20 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                     IsEnable = false,
                 },
 
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = true,
+                    Routes = new System.Collections.Generic.List<LetPortal.Portal.Entities.Shared.Route>
+                    {
+                        new LetPortal.Portal.Entities.Shared.Route
+                        {
+                            RedirectUrl = "portal/page/cms-pages",
+                            Condition = "true",
+                            IsSameDomain = true,
+                         },
+                    },
+                },
+
             },
 
         },
@@ -5376,6 +7937,10 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                     },
                 },
 
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = false,
+                },
 
             },
 
@@ -5395,6 +7960,20 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
                 {
                     ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
                     IsEnable = false,
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = true,
+                    Routes = new System.Collections.Generic.List<LetPortal.Portal.Entities.Shared.Route>
+                    {
+                        new LetPortal.Portal.Entities.Shared.Route
+                        {
+                            RedirectUrl = "portal/page/cms-sites",
+                            Condition = "true",
+                            IsSameDomain = true,
+                         },
+                    },
                 },
 
             },
@@ -5519,6 +8098,475 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
     },
             };
             versionContext.InsertData(cmspagetemplatePage);
+
+            var cmsblogsPage = new LetPortal.Portal.Entities.Pages.Page
+            {
+                Id = "5fb8a61f978a6b0001a024da",
+                Name = "cms-blogs",
+                DisplayName = "CMS Blogs",
+                AppId = "5f23f7d6b8f393672ce21029",
+                UrlPath = "portal/page/cms-blogs",
+                Claims = new System.Collections.Generic.List<LetPortal.Core.Security.PortalClaim>
+    {
+        new LetPortal.Core.Security.PortalClaim
+        {
+            Name = "allowaccess",
+            DisplayName = "Allow Page Access",
+            ClaimValueType = LetPortal.Core.Security.ClaimValueType.Boolean
+        },
+    },
+                Builder = new LetPortal.Portal.Entities.Pages.PageBuilder
+                {
+                    Sections = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageSection>
+        {
+            new LetPortal.Portal.Entities.Pages.PageSection
+            {
+                Id = "56bbd73f-0c2d-ac39-d438-118adbdc541f",
+                ComponentId = "5fb8a530978a6b0001a024b9",
+                Name = "cmsblogslist",
+                DisplayName = "CMS Blogs List",
+                ConstructionType = LetPortal.Portal.Entities.Pages.SectionContructionType.DynamicList,
+                Hidden = "false",
+                SectionDatasource = new LetPortal.Portal.Entities.Pages.SectionDatasource
+                {
+                    DatasourceBindName = "data",
+                    DataStoreName = ""
+                },
+            }
+        }
+                },
+
+            };
+            versionContext.InsertData(cmsblogsPage);
+
+            var cmsblogformPage = new LetPortal.Portal.Entities.Pages.Page
+            {
+                Id = "5fb8aad7978a6b0001a0258b",
+                Name = "cms-blog-form",
+                DisplayName = "CMS Blog Form",
+                AppId = "5f23f7d6b8f393672ce21029",
+                UrlPath = "portal/page/cms-blog-form",
+                Claims = new System.Collections.Generic.List<LetPortal.Core.Security.PortalClaim>
+    {
+        new LetPortal.Core.Security.PortalClaim
+        {
+            Name = "allowaccess",
+            DisplayName = "Allow Page Access",
+            ClaimValueType = LetPortal.Core.Security.ClaimValueType.Boolean
+        },
+    },
+                Builder = new LetPortal.Portal.Entities.Pages.PageBuilder
+                {
+                    Sections = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageSection>
+        {
+            new LetPortal.Portal.Entities.Pages.PageSection
+            {
+                Id = "f222120d-123a-abce-878c-1806b3122732",
+                ComponentId = "5fb8a918978a6b0001a0254c",
+                Name = "cmsblogform",
+                DisplayName = "CMS Blog Form",
+                ConstructionType = LetPortal.Portal.Entities.Pages.SectionContructionType.Standard,
+                Hidden = "false",
+                SectionDatasource = new LetPortal.Portal.Entities.Pages.SectionDatasource
+                {
+                    DatasourceBindName = "data",
+                    DataStoreName = ""
+                },
+            }
+        }
+                },
+
+                PageDatasources = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageDatasource>
+    {
+        new LetPortal.Portal.Entities.Pages.PageDatasource
+        {
+           Id = "349741ea-e6b4-ab5c-3865-c4b0b0813600",
+           Name = "data",
+           TriggerCondition = "!!queryparams.blogId",
+           IsActive = true,
+        Options = new LetPortal.Portal.Entities.Shared.DatasourceOptions
+        {
+            Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.Database,
+            DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+            {
+                DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                Query = "{\"$query\":{\"blogs\":[{\"$match\":{\"_id\":\"ObjectId(\'{{queryparams.blogId}}\')\"}}]}}",
+            },
+
+        },
+
+        },
+    },
+                Commands = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageButton>
+    {
+        new LetPortal.Portal.Entities.Pages.PageButton
+        {
+            Id = "9b1862de-b208-4578-b89d-d837a22c20e4",
+            Name = "Create",
+            Icon = "edit",
+            Color = "primary",
+            AllowHidden = "!!queryparams.blogId",
+            PlaceSectionId = "f222120d-123a-abce-878c-1806b3122732",
+            IsRequiredValidation = true,
+            ButtonOptions = new LetPortal.Portal.Entities.Shared.ButtonOptions
+            {
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
+                    IsEnable = true,
+                    ConfirmationOptions = new LetPortal.Portal.Entities.Shared.ConfirmationOptions
+                    {
+                        IsEnable = true,
+                        ConfirmationText = "Are you sure to proceed it?",
+                    },
+                    NotificationOptions = new LetPortal.Portal.Entities.Shared.NotificationOptions
+                    {
+                        CompleteMessage = "Completed!",
+                        FailedMessage = "Oops! Something went wrong, please try again!",
+                    },
+                    DbExecutionChains = new LetPortal.Portal.Entities.Shared.DatabaseExecutionChains
+                    {
+                        Steps = new List<LetPortal.Portal.Entities.Shared.DatabaseExecutionStep>
+                        {
+                            new LetPortal.Portal.Entities.Shared.DatabaseExecutionStep
+                            {
+                                DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                                ExecuteCommand = "{\"$insert\":{\"blogs\":{\"$data\":\"{{data}}\",\"creator\":\"{{user.username}}\",\"createdDat" +
+    "e\":\"ISODate(\'{{currentISODate()}}\')\",\"updatedDate\":\"ISODate(\'{{currentISODate()}" +
+    "}\')\"}}}",
+                                DataLoopKey = "",
+                            }
+                       }
+                    },
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = false,
+                },
+
+            },
+
+        },
+        new LetPortal.Portal.Entities.Pages.PageButton
+        {
+            Id = "8a2e64bb-3032-a930-6cf8-3321d4a9c85e",
+            Name = "Update",
+            Icon = "edit",
+            Color = "primary",
+            AllowHidden = "!queryparams.blogId",
+            PlaceSectionId = "f222120d-123a-abce-878c-1806b3122732",
+            IsRequiredValidation = true,
+            ButtonOptions = new LetPortal.Portal.Entities.Shared.ButtonOptions
+            {
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
+                    IsEnable = true,
+                    ConfirmationOptions = new LetPortal.Portal.Entities.Shared.ConfirmationOptions
+                    {
+                        IsEnable = true,
+                        ConfirmationText = "Are you sure to proceed it?",
+                    },
+                    NotificationOptions = new LetPortal.Portal.Entities.Shared.NotificationOptions
+                    {
+                        CompleteMessage = "Completed!",
+                        FailedMessage = "Oops! Something went wrong, please try again!",
+                    },
+                    DbExecutionChains = new LetPortal.Portal.Entities.Shared.DatabaseExecutionChains
+                    {
+                        Steps = new List<LetPortal.Portal.Entities.Shared.DatabaseExecutionStep>
+                        {
+                            new LetPortal.Portal.Entities.Shared.DatabaseExecutionStep
+                            {
+                                DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                                ExecuteCommand = "{\"$update\":{\"blogs\":{\"$data\":\"{{data}}\",\"modifiedDate\":\"ISODate(\'{{currentISODate" +
+    "()}}\')\",\"$where\":{\"_id\":\"ObjectId(\'{{data.id}}\')\"}}}}",
+                                DataLoopKey = "",
+                            }
+                       }
+                    },
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = false,
+                },
+
+            },
+
+        },
+        new LetPortal.Portal.Entities.Pages.PageButton
+        {
+            Id = "ea986631-c87f-f4d8-5aa1-23964e58894c",
+            Name = "Cancel",
+            Icon = "cancel",
+            Color = "basic",
+            AllowHidden = "false",
+            PlaceSectionId = "f222120d-123a-abce-878c-1806b3122732",
+            IsRequiredValidation = false,
+            ButtonOptions = new LetPortal.Portal.Entities.Shared.ButtonOptions
+            {
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
+                    IsEnable = false,
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = true,
+                    Routes = new System.Collections.Generic.List<LetPortal.Portal.Entities.Shared.Route>
+                    {
+                        new LetPortal.Portal.Entities.Shared.Route
+                        {
+                            RedirectUrl = "portal/page/cms-blogs",
+                            Condition = "true",
+                            IsSameDomain = true,
+                         },
+                    },
+                },
+
+            },
+
+        },
+    },
+            };
+            versionContext.InsertData(cmsblogformPage);
+
+            var cmspostsPage = new LetPortal.Portal.Entities.Pages.Page
+            {
+                Id = "5fb8e9ed4f013c00017fda0d",
+                Name = "cms-posts",
+                DisplayName = "CMS Posts",
+                AppId = "5f23f7d6b8f393672ce21029",
+                UrlPath = "portal/page/cms-posts",
+                Claims = new System.Collections.Generic.List<LetPortal.Core.Security.PortalClaim>
+    {
+        new LetPortal.Core.Security.PortalClaim
+        {
+            Name = "allowaccess",
+            DisplayName = "Allow Page Access",
+            ClaimValueType = LetPortal.Core.Security.ClaimValueType.Boolean
+        },
+    },
+                Builder = new LetPortal.Portal.Entities.Pages.PageBuilder
+                {
+                    Sections = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageSection>
+        {
+            new LetPortal.Portal.Entities.Pages.PageSection
+            {
+                Id = "a2a5ff92-3aaf-e0f0-c768-e2cd28a08cfd",
+                ComponentId = "5fb8e9574f013c00017fd9f6",
+                Name = "cmspostslist",
+                DisplayName = "CMS Posts List",
+                ConstructionType = LetPortal.Portal.Entities.Pages.SectionContructionType.DynamicList,
+                Hidden = "false",
+                SectionDatasource = new LetPortal.Portal.Entities.Pages.SectionDatasource
+                {
+                    DatasourceBindName = "data",
+                    DataStoreName = ""
+                },
+            }
+        }
+                },
+
+            };
+            versionContext.InsertData(cmspostsPage);
+
+            var cmspostformPage = new LetPortal.Portal.Entities.Pages.Page
+            {
+                Id = "5fb8f0114f013c00017fdae4",
+                Name = "cms-post-form",
+                DisplayName = "CMS Post Form",
+                AppId = "5f23f7d6b8f393672ce21029",
+                UrlPath = "portal/page/cms-post-form",
+                Claims = new System.Collections.Generic.List<LetPortal.Core.Security.PortalClaim>
+    {
+        new LetPortal.Core.Security.PortalClaim
+        {
+            Name = "allowaccess",
+            DisplayName = "Allow Page Access",
+            ClaimValueType = LetPortal.Core.Security.ClaimValueType.Boolean
+        },
+    },
+                Builder = new LetPortal.Portal.Entities.Pages.PageBuilder
+                {
+                    Sections = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageSection>
+        {
+            new LetPortal.Portal.Entities.Pages.PageSection
+            {
+                Id = "687424e5-dca4-26db-3656-207ce459dd8a",
+                ComponentId = "5fb8ee954f013c00017fdaae",
+                Name = "cmspostform",
+                DisplayName = "CMS Post Form",
+                ConstructionType = LetPortal.Portal.Entities.Pages.SectionContructionType.Standard,
+                Hidden = "false",
+                SectionDatasource = new LetPortal.Portal.Entities.Pages.SectionDatasource
+                {
+                    DatasourceBindName = "data",
+                    DataStoreName = ""
+                },
+            }
+        }
+                },
+
+                PageDatasources = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageDatasource>
+    {
+        new LetPortal.Portal.Entities.Pages.PageDatasource
+        {
+           Id = "9d92a1c8-cf7b-043f-467e-f38c79d5f015",
+           Name = "data",
+           TriggerCondition = "!!queryparams.postId",
+           IsActive = true,
+        Options = new LetPortal.Portal.Entities.Shared.DatasourceOptions
+        {
+            Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.Database,
+            DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
+            {
+                DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                Query = "{\"$query\":{\"posts\":[{\"$match\":{\"_id\":\"ObjectId(\'{{queryparams.postId}}\')\"}}]}}",
+            },
+
+        },
+
+        },
+    },
+                Commands = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.PageButton>
+    {
+        new LetPortal.Portal.Entities.Pages.PageButton
+        {
+            Id = "36bc101d-00ce-0baf-8f37-186949ff51ef",
+            Name = "Create",
+            Icon = "edit",
+            Color = "primary",
+            AllowHidden = "!!queryparams.postId",
+            PlaceSectionId = "687424e5-dca4-26db-3656-207ce459dd8a",
+            IsRequiredValidation = true,
+            ButtonOptions = new LetPortal.Portal.Entities.Shared.ButtonOptions
+            {
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
+                    IsEnable = true,
+                    ConfirmationOptions = new LetPortal.Portal.Entities.Shared.ConfirmationOptions
+                    {
+                        IsEnable = true,
+                        ConfirmationText = "Are you sure to proceed it?",
+                    },
+                    NotificationOptions = new LetPortal.Portal.Entities.Shared.NotificationOptions
+                    {
+                        CompleteMessage = "Completed!",
+                        FailedMessage = "Oops! Something went wrong, please try again!",
+                    },
+                    DbExecutionChains = new LetPortal.Portal.Entities.Shared.DatabaseExecutionChains
+                    {
+                        Steps = new List<LetPortal.Portal.Entities.Shared.DatabaseExecutionStep>
+                        {
+                            new LetPortal.Portal.Entities.Shared.DatabaseExecutionStep
+                            {
+                                DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                                ExecuteCommand = "{\"$insert\":{\"posts\":{\"$data\":\"{{data}}\",\"author\":\"{{user.username}}\",\"createdDate" +
+    "\":\"ISODate(\'{{currentISODate()}}\')\"}}}",
+                                DataLoopKey = "",
+                            }
+                       }
+                    },
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = false,
+                },
+
+            },
+
+        },
+        new LetPortal.Portal.Entities.Pages.PageButton
+        {
+            Id = "eee2fd2c-578b-b131-8f02-9ae1a914fb5c",
+            Name = "Update",
+            Icon = "edit",
+            Color = "primary",
+            AllowHidden = "!queryparams.postId",
+            PlaceSectionId = "687424e5-dca4-26db-3656-207ce459dd8a",
+            IsRequiredValidation = true,
+            ButtonOptions = new LetPortal.Portal.Entities.Shared.ButtonOptions
+            {
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
+                    IsEnable = true,
+                    ConfirmationOptions = new LetPortal.Portal.Entities.Shared.ConfirmationOptions
+                    {
+                        IsEnable = true,
+                        ConfirmationText = "Are you sure to proceed it?",
+                    },
+                    NotificationOptions = new LetPortal.Portal.Entities.Shared.NotificationOptions
+                    {
+                        CompleteMessage = "Completed!",
+                        FailedMessage = "Oops! Something went wrong, please try again!",
+                    },
+                    DbExecutionChains = new LetPortal.Portal.Entities.Shared.DatabaseExecutionChains
+                    {
+                        Steps = new List<LetPortal.Portal.Entities.Shared.DatabaseExecutionStep>
+                        {
+                            new LetPortal.Portal.Entities.Shared.DatabaseExecutionStep
+                            {
+                                DatabaseConnectionId = "5f33c1ddedf7b3de91e106d8",
+                                ExecuteCommand = "{\"$update\":{\"posts\":{\"$data\":\"{{data}}\",\"$where\":{\"_id\":\"ObjectId(\'{{data.id}}\')\"" +
+    "}}}}",
+                                DataLoopKey = "",
+                            }
+                       }
+                    },
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = false,
+                },
+
+            },
+
+        },
+        new LetPortal.Portal.Entities.Pages.PageButton
+        {
+            Id = "2553b36e-cdfc-33a4-a8ac-94f805571a1e",
+            Name = "Cancel",
+            Icon = "cancel",
+            Color = "basic",
+            AllowHidden = "false",
+            PlaceSectionId = "687424e5-dca4-26db-3656-207ce459dd8a",
+            IsRequiredValidation = false,
+            ButtonOptions = new LetPortal.Portal.Entities.Shared.ButtonOptions
+            {
+                ActionCommandOptions = new LetPortal.Portal.Entities.Shared.ActionCommandOptions
+                {
+                    ActionType = LetPortal.Portal.Entities.Shared.ActionType.ExecuteDatabase,
+                    IsEnable = false,
+                },
+
+                RouteOptions = new LetPortal.Portal.Entities.Shared.RouteOptions
+                {
+                    IsEnable = true,
+                    Routes = new System.Collections.Generic.List<LetPortal.Portal.Entities.Shared.Route>
+                    {
+                        new LetPortal.Portal.Entities.Shared.Route
+                        {
+                            RedirectUrl = "portal/page/cms-blogs",
+                            Condition = "true",
+                            IsSameDomain = true,
+                         },
+                    },
+                },
+
+            },
+
+        },
+    },
+            };
+            versionContext.InsertData(cmspostformPage);
 
             return System.Threading.Tasks.Task.CompletedTask;
         }

@@ -86,6 +86,8 @@ namespace LetPortal.Portal.Executions.Mongo
 
                                 result.ColumnFields.Add(columnField);
                             }
+
+                            break;
                         }
                     }
                     break;

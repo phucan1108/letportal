@@ -35,6 +35,21 @@ namespace LetPortal.Portal.Entities.SectionParts
             _ = stringBuilder.AppendLine($"    LayoutType = {layoutType},");
             var standardType = "LetPortal.Portal.Entities.SectionParts.StandardType." + Enum.GetName(typeof(StandardType), Type);
             _ = stringBuilder.AppendLine($"    Type = {standardType},");
+            if (Options != null && Options.Any())
+            {
+                _ = stringBuilder.AppendLine($"    Options = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.ShellOption>");
+                _ = stringBuilder.AppendLine($"    {{");
+                foreach (var option in Options)
+                {
+                    _ = stringBuilder.AppendLine($"        new LetPortal.Portal.Entities.Pages.ShellOption");
+                    _ = stringBuilder.AppendLine($"        {{");
+                    _ = stringBuilder.AppendLine($"            Key = \"{option.Key}\",");
+                    _ = stringBuilder.AppendLine($"            Value = \"{option.Value}\",");
+                    _ = stringBuilder.AppendLine($"            Description = \"{option.Description}\"");
+                    _ = stringBuilder.AppendLine($"        }},");
+                }
+                _ = stringBuilder.AppendLine($"    }},");
+            }
             if (Controls != null && Controls.Any())
             {
                 _ = stringBuilder.AppendLine($"    Controls = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControl>");

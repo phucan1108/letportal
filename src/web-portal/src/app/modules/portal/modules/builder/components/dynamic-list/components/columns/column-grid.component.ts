@@ -47,11 +47,11 @@ export class ColumnGridComponent implements OnInit {
             name: 'Datetime',
             patterns: [
                 { name: 'Day first', format: '{0:dd/MM/yyyy}' },
-                { name: 'Month first', format: '{0:MM/dd/yyyy' },
+                { name: 'Month first', format: '{0:MM/dd/yyyy}' },
                 { name: 'Long date', format: '{0:D}'},
                 { name: 'Month year', format: '{0:Y}'},
-                { name: 'Day first time', format: '{0:dd/MM/yyyy HH:mm'},
-                { name: 'Month first time', format: '{0:MM/dd/yyyy HH:mm'}
+                { name: 'Day first time', format: '{0:dd/MM/yyyy HH:mm}'},
+                { name: 'Month first time', format: '{0:MM/dd/yyyy HH:mm}'}
             ]
         }
     ]
