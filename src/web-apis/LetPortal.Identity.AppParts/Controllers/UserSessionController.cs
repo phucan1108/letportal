@@ -7,11 +7,13 @@ using LetPortal.Identity.Models;
 using LetPortal.Identity.Repositories.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.Annotations;
 
 namespace LetPortal.Identity.AppParts.Controllers
 {
     [Route("api/usersessions")]
     [ApiController]
+    [OpenApiIgnore]
     public class UserSessionController : ControllerBase
     {
         private readonly IUserSessionRepository _userSessionRepository;

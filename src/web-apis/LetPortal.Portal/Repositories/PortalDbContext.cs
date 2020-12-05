@@ -5,6 +5,7 @@ using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Entities.EntitySchemas;
@@ -50,6 +51,8 @@ namespace LetPortal.Portal.Repositories
         public DbSet<LetPortal.Core.Versions.Version> Versions { get; set; }
 
         public DbSet<Backup> Backups { get; set; }
+
+        public DbSet<CompositeControl> CompositeControls { get; set; }
 
         private readonly DatabaseOptions _options;
 
@@ -225,6 +228,10 @@ namespace LetPortal.Portal.Repositories
 
             var localizationContentBuilder = modelBuilder.Entity<LocalizationContent>();
             localizationContentBuilder.HasKey(a => a.Id);
+
+            // Composite control
+            var compositeControlBuilder = modelBuilder.Entity<CompositeControl>();
+            compositeControlBuilder.HasKey(a => a.Id);
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {

@@ -7,6 +7,7 @@ using LetPortal.Identity.Entities;
 using LetPortal.Microservices.Server.Entities;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Entities.EntitySchemas;
@@ -79,6 +80,8 @@ namespace LetPortal.Versions
         public DbSet<Backup> Backups { get; set; }
 
         public DbSet<PatchVersion> PatchVersions { get; set; }
+
+        public DbSet<CompositeControl> CompositeControls { get; set; }
 
         private readonly DatabaseOptions _options;
 
@@ -297,6 +300,10 @@ namespace LetPortal.Versions
 
             var localizationContentBuilder = modelBuilder.Entity<LocalizationContent>();
             localizationContentBuilder.HasKey(a => a.Id);
+
+            // Composite control
+            var compositeControlBuilder = modelBuilder.Entity<CompositeControl>();
+            compositeControlBuilder.HasKey(a => a.Id);
 
             var userBuilder = modelBuilder.Entity<User>();
             userBuilder.HasKey(a => a.Id);

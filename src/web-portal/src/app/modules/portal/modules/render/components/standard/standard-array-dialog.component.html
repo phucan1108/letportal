@@ -7,8 +7,8 @@
                     <ng-container *ngIf="control.type !== controlType.RichTextEditor
                         && control.type !== controlType.MarkdownEditor
                         && control.type !== controlType.Label">
-                        <label [ngClass]="_labelClass"
-                            class="font-weight-bold" [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
+                        <label [ngClass]="_labelClass" class="font-weight-bold"
+                            [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
                         <div [ngClass]="_boundedClass" [formGroup]="builderFormGroup"
                             *ngIf="control.type !== controlType.RichTextEditor" [hidden]="control.boundControl.hide">
                             <let-general-control [boundSection]="boundSection" [boundControl]="getBoundControl(control)"
@@ -17,8 +17,8 @@
                         </div>
                     </ng-container>
                     <ng-container *ngIf="control.type === controlType.RichTextEditor">
-                        <label
-                            class="col-lg-2 col-form-label font-weight-bold" [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
+                        <label class="col-lg-2 col-form-label font-weight-bold"
+                            [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
                         <div class="col-lg-10" [hidden]="control.boundControl.hide">
                             <let-general-control [boundSection]="boundSection" [boundControl]="getBoundControl(control)"
                                 [section]="section" [formGroup]="builderFormGroup" [control]="control">
@@ -26,8 +26,8 @@
                         </div>
                     </ng-container>
                     <ng-container *ngIf="control.type === controlType.MarkdownEditor">
-                        <label
-                            class="col-lg-2 col-form-label font-weight-bold" [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
+                        <label class="col-lg-2 col-form-label font-weight-bold"
+                            [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
                         <div class="col-lg-10" [hidden]="control.boundControl.hide">
                             <let-general-control [boundSection]="boundSection" [boundControl]="getBoundControl(control)"
                                 [section]="section" [formGroup]="builderFormGroup" [control]="control">
@@ -35,8 +35,8 @@
                         </div>
                     </ng-container>
                     <ng-container *ngIf="control.type === controlType.Label">
-                        <label [ngClass]="_labelClass"
-                            class="font-weight-bold" [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
+                        <label [ngClass]="_labelClass" class="font-weight-bold"
+                            [hidden]="control.boundControl.hide">{{ control.defaultOptions.label }}</label>
                         <div [ngClass]="_boundedClass" [hidden]="control.boundControl.hide">
                             <p class="float-left col-form-label">
                                 {{builderFormGroup.get(control.name).value}}
@@ -46,6 +46,9 @@
                 </ng-container>
             </div>
             <div class="separator-dashed pb-3" *ngIf="groupControl.isLineBreaker"></div>
+            <div class="form-group row" *ngIf="groupControl.isCompositeGroup">
+
+            </div>
         </ng-container>
     </div>
 </mat-dialog-content>

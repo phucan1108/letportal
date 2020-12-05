@@ -1,11 +1,14 @@
-import { PageControl, PageSection, PageButton, PageControlValidator, StandardComponent, DynamicList, PageControlEvent, Chart } from 'services/portal.service';
-import { PageRenderedControl, DefaultControlOptions } from './page.model';
+import { Chart, DynamicList, PageButton, PageControl, PageControlEvent, PageControlValidator, PageSection, StandardComponent } from 'services/portal.service';
+import { DefaultControlOptions, PageRenderedControl } from './page.model';
 
 
 export interface GroupControls {
     controlsList: Array<PageRenderedControl<DefaultControlOptions>>,
     numberOfColumns: number
     isLineBreaker: boolean
+    isCompositeGroup: boolean
+    compositeGroupRef: string
+    compositeGroupLabel?: string | undefined
 }
 
 export interface ExtendedPageControl extends PageControl {

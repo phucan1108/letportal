@@ -21,6 +21,8 @@ namespace LetPortal.Portal.Models.Recoveries
 
         public IEnumerable<ComparisonResult> Pages { get; set; }
 
+        public IEnumerable<ComparisonResult> CompositeControls { get; set; }
+
         public int TotalObjects { get; set; }
 
         public int TotalChangedObjects { get; set; }

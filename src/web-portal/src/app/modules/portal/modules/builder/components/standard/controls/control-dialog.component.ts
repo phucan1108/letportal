@@ -8,9 +8,9 @@ import { DateUtils } from 'app/core/utils/date-util';
 import { NGXLogger } from 'ngx-logger';
 import { StaticResources } from 'portal/resources/static-resources';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ControlType, EventActionType, PageControl, PageControlEvent, ValidatorType } from 'services/portal.service';
+import { CompositeControl, CompositeControlsClient, ControlType, EventActionType, PageControl, PageControlEvent, ValidatorType } from 'services/portal.service';
 import { ControlsGridComponent } from './controls-grid.component';
  
 
@@ -32,6 +32,8 @@ export class ControlDialogComponent implements OnInit {
     validators$: BehaviorSubject<Array<ExtendedFormValidator>> = new BehaviorSubject([])
     validators: Array<ExtendedFormValidator> = []
 
+    compositeControls$: Observable<CompositeControl[]>
+
     validatorTypes = StaticResources.formValidatorTypes();
 
     shellOptions: ExtendedShellOption[] = []
@@ -45,7 +47,8 @@ export class ControlDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef,
-        private logger: NGXLogger
+        private logger: NGXLogger,
+        private compositeControlsClient: CompositeControlsClient
     ) {
         this.breakpointObserver.observe(Breakpoints.Handset)
             .pipe(
@@ -70,6 +73,7 @@ export class ControlDialogComponent implements OnInit {
         this.shellOptions = this.generateShellOptions(this.currentExtendedFormControl, true)
         this.shellOptions$.next(this.shellOptions)
         this.currentControlType = this.currentExtendedFormControl.type
+        this.compositeControls$ = this.compositeControlsClient.getAll('')
         this.initialControlForm()
         this.populatedFormValues()
         this.convertValidatorTypeToFormValidator(this.currentExtendedFormControl.type)
@@ -202,7 +206,8 @@ export class ControlDialogComponent implements OnInit {
                     // 0.9.0: Because we allow 'rendered' mode so that we accept the case is duplicate name
                     //FormUtil.isExist(this.names, this.currentExtendedFormControl.name)
                 ]],
-            controlType: [this.currentExtendedFormControl.type]
+            controlType: [this.currentExtendedFormControl.type],
+            compositeControl: [this.currentExtendedFormControl.compositeControlId]
         })
     }
 
@@ -243,7 +248,8 @@ export class ControlDialogComponent implements OnInit {
             value: '',
             isActive: this.currentExtendedFormControl.isActive,
             datasourceOptions: this.currentExtendedFormControl.datasourceOptions,
-            pageControlEvents: this.currentExtendedFormControl.pageControlEvents
+            pageControlEvents: this.currentExtendedFormControl.pageControlEvents,
+            compositeControlId: formValues.controlType === ControlType.Composite ? formValues.compositeControl : null
         }
         return combiningControl
     }
@@ -259,10 +265,15 @@ export class ControlDialogComponent implements OnInit {
         this.logger.debug('current control options', this.shellOptions)
     }
 
+    isCompositeControl(){
+        return this.controlForm.get('controlType').value === ControlType.Composite
+    }
+
     private generateEventsList(control: PageControl): PageControlEvent[] {
         switch (control.type) {
             case ControlType.Label:
             case ControlType.LineBreaker:
+            case ControlType.Composite:
                 return []
             case ControlType.AutoComplete:
                 return [
@@ -359,6 +370,8 @@ export class ControlDialogComponent implements OnInit {
         switch (type) {
             case ControlType.Label:
             case ControlType.LineBreaker:
+                return []
+            case ControlType.Composite:
                 return []
             case ControlType.Textbox:
             case ControlType.Textarea:

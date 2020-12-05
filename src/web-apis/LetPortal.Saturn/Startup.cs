@@ -91,6 +91,8 @@ namespace LetPortal.Saturn
                 options.MaxReceiveMessageSize = 1 * 1024 * 1024 * 5; // 5 MB
                 options.MaxSendMessageSize = 1 * 1024 * 1024 * 5; // 5 MB
             });
+
+            services.AddOpenApiDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,6 +124,11 @@ namespace LetPortal.Saturn
                         "api/accounts/forgot-password",
                         "api/accounts/recovery-password"};
             });
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
+            app.UseReDoc();
+
             app.UseRouting();
 
             app.UseAuthentication();

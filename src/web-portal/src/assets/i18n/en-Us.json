@@ -455,5 +455,7 @@
     "common.confirmation": "Confirmation",
     "common.generate": "Generate",
     "common.tree": "Tree",
-    "common.array": "Array"
+    "common.array": "Array",
+    "common.compositeControl": "Composite Control",
+    "common.compositeControlInfo": "Composite Control Info"
 }

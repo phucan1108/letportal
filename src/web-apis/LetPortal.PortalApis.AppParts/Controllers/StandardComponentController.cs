@@ -6,6 +6,7 @@ using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.SectionParts;
+using LetPortal.Portal.Extensions;
 using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Repositories.Components;
 using Microsoft.AspNetCore.Authorization;
@@ -19,13 +20,17 @@ namespace LetPortal.Portal.AppParts.Controllers
     {
         private readonly IStandardRepository _standardRepository;
 
+        private readonly ICompositeControlRepository _compositeControlRepository;
+
         private readonly IServiceLogger<StandardComponentController> _logger;
 
         public StandardComponentController(
             IStandardRepository standardRepository,
+            ICompositeControlRepository compositeControlRepository,
             IServiceLogger<StandardComponentController> logger)
         {
             _standardRepository = standardRepository;
+            _compositeControlRepository = compositeControlRepository;
             _logger = logger;
         }
 
@@ -45,6 +50,24 @@ namespace LetPortal.Portal.AppParts.Controllers
         public async Task<IActionResult> GetOneForRender(string id)
         {
             var result = await _standardRepository.GetOneForRenderAsync(id);
+
+            // Enhancement 0.9.0: We need to append more controls which are related to Composite Control
+            if (result.Controls != null && result.Controls.Any())
+            {
+                var compositeControls = result.Controls.Where(a => a.Type == Entities.SectionParts.Controls.ControlType.Composite).ToList();
+                foreach (var control in compositeControls)
+                {
+                    var compositeControl = await _compositeControlRepository.GetOneAsync(control.CompositeControlId);
+                    foreach(var childControl in compositeControl.Controls)
+                    {
+                        childControl.HideSensitive();
+                        childControl.CompositeControlId = control.Name;
+                        childControl.Name = control.Name + "_" + childControl.Name;
+                    }
+                    result.Controls.AddRange(compositeControl.Controls);
+                }
+            }
+
             _logger.Info("Found standard component: {@result}", result);
             return Ok(result);
         }

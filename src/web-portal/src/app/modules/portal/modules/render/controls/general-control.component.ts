@@ -93,8 +93,9 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     ngOnInit(): void {
+        const isChildCompositeControl = this.control.type !== ControlType.Composite && !!this.control.compositeControlName
         this.asyncValidators = this.control.asyncValidators ? this.control.asyncValidators : []
-        this.controlFullName = this.section.name + '_' + this.control.name
+        this.controlFullName = isChildCompositeControl ? this.section.name + '_' + this.control.compositeControlName + '.' + this.control.name : this.section.name + '_' + this.control.name
         this.sectionName = this.section.name
         this.controlEventSubscription = this.pageService.listenTriggeringControlEvent$().pipe(
             filter(state => state && (state.controlFullName === this.controlFullName)),
@@ -258,7 +259,12 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
             case DatasourceControlType.Database:
                 const parameters = this.pageService.retrieveParameters(this.control.datasourceOptions.databaseOptions.query)
                 return this.pageService
-                    .fetchControlSelectionDatasource(this.sectionName, this.control.name, parameters)
+                    .fetchControlSelectionDatasource(
+                        this.sectionName,
+                        this.control.name,
+                        this.control.compositeControlRefId,
+                        ObjectUtils.isNotNull(this.control.compositeControlId),
+                        parameters)
             case DatasourceControlType.WebService:
                 return this.pageService.executeHttpWithBoundData(this.control.datasourceOptions.httpServiceOptions)
         }
@@ -354,7 +360,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
             // Detach data by bind name
             const keyValue = control.options.find(a => a.key == 'bindname')
             const evaluted = Function('data', 'return data.' + keyValue.value)
-            this.pageService.notifyTriggeringEvent(this.section.name + '_' + control.name + '_change', evaluted(data))
+            this.pageService.notifyTriggeringEvent(this.controlFullName + '_change', evaluted(data))
         })
     }
 

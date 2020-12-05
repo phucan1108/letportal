@@ -37,6 +37,20 @@
                 </mat-form-field>
             </div>
         </div>
+        <div class="form-group row" *ngIf="isCompositeControl()">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.compositeControl' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'common.compositeControl' | translate }}" formControlName="compositeControl">
+                        <mat-option *ngFor="let compositeControl of compositeControls$ | async" [value]="compositeControl.id">
+                            {{ compositeControl.displayName }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
     </form>
     <div class="row row-heading" *ngIf="currentControlType !== controlType.LineBreaker">
         <h3>{{ 'pageBuilder.standard.controlDialog.controlOptions' | translate }}:</h3>

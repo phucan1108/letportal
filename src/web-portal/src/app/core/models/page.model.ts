@@ -26,6 +26,12 @@ export interface PageRenderedControl<T> extends PageControl{
     defaultOptions: T
     customErrorMessages: CustomValidatorMessage[]
     boundControl: BoundControl
+    // Composite control id
+    compositeControlRefId: string
+    // Composite parent bind name
+    compositeControlBindName: string
+    // Composite parent name
+    compositeControlName: string
 }
 
 export interface CustomValidatorMessage {
@@ -37,6 +43,7 @@ export interface PageControlActionEvent {
     name: string
     sectionName: string
     controlName: string
+    controlFullName: string
     triggeredByEvent: string
     data: any
     allowChainingEvents: boolean
@@ -140,6 +147,8 @@ export interface MapDataControl{
     controlFullName: string,
     sectionMapName: string,
     bindName: string
+    isCompositeControl: boolean,
+    compositeBindName: string
 }
 
 export interface PageShellData{

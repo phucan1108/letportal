@@ -22,6 +22,8 @@ namespace LetPortal.Portal.Models.Recoveries
 
         public IEnumerable<string> Pages { get; set; }
 
+        public IEnumerable<string> CompositeControls { get; set; }
+
         public string FileName { get; set; }
 
         public string VersionNumber { get; set; }

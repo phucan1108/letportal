@@ -41,6 +41,8 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
 
         public ControlType Type { get; set; }
 
+        public string CompositeControlId { get; set; }
+
         public List<PageControlValidator> Validators { get; set; } = new List<PageControlValidator>();
 
         public List<PageControlAsyncValidator> AsyncValidators { get; set; } = new List<PageControlAsyncValidator>();
@@ -69,6 +71,7 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
         Uploader,
         MultiUploader,
         IconPicker,
-        MarkdownEditor
+        MarkdownEditor,
+        Composite
     }
 }

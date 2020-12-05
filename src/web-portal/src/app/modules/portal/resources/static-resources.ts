@@ -1,4 +1,4 @@
-import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType, StandardType } from 'services/portal.service'
+import { ActionType, AsyncValidatorType, ChartType, ClaimValueType, ControlType, DatasourceControlType, FieldValueType, FilterType, PageSectionLayoutType, SectionContructionType, StandardType, ValidatorType } from 'services/portal.service'
 
 export class StaticResources {
 
@@ -85,7 +85,8 @@ export class StaticResources {
             { name: 'Uploader', value: ControlType.Uploader },
             { name: 'MultiUploader', value: ControlType.MultiUploader },
             { name: 'Icon Picker', value: ControlType.IconPicker },
-            { name: 'Markdown Editor', value: ControlType.MarkdownEditor }
+            { name: 'Markdown Editor', value: ControlType.MarkdownEditor },
+            { name: 'Composite Control', value: ControlType.Composite }
         ];
     }
 

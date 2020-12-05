@@ -10,6 +10,7 @@ using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Recoveries;
@@ -19,9 +20,11 @@ using LetPortal.Portal.Models.Recoveries;
 using LetPortal.Portal.Options.Recoveries;
 using LetPortal.Portal.Providers.Apps;
 using LetPortal.Portal.Providers.Components;
+using LetPortal.Portal.Providers.CompositeControls;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.Files;
 using LetPortal.Portal.Providers.Pages;
+using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Repositories.Recoveries;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -30,14 +33,15 @@ namespace LetPortal.Portal.Services.Recoveries
 {
     public class BackupService : IBackupService
     {
-        public const string APP_FILE = "apps.json";
-        public const string CHART_FILE = "charts.json";
-        public const string DATABASE_FILE = "databases.json";
-        public const string STANDARD_FILE = "standards.json";
-        public const string TREE_FILE = "tree.json";
-        public const string ARRAY_FILE = "array.json";
-        public const string DYNAMICLIST_FILE = "dynamiclists.json";
-        public const string PAGE_FILE = "pages.json";
+        const string APP_FILE = "apps.json";
+        const string CHART_FILE = "charts.json";
+        const string DATABASE_FILE = "databases.json";
+        const string STANDARD_FILE = "standards.json";
+        const string TREE_FILE = "tree.json";
+        const string ARRAY_FILE = "array.json";
+        const string DYNAMICLIST_FILE = "dynamiclists.json";
+        const string PAGE_FILE = "pages.json";
+        const string COMPOSITE_CONTROL_FILE = "compositecontrols.json";
 
         private readonly IAppServiceProvider _appServiceProvider;
 
@@ -55,6 +59,8 @@ namespace LetPortal.Portal.Services.Recoveries
 
         private readonly IBackupRepository _backupRepository;
 
+        private readonly ICompositeControlServiceProvider _compositeControlServiceProvider;
+
         private readonly IOptionsMonitor<BackupOptions> _backupOptions;
 
         private IServiceLogger<BackupService> _logger;
@@ -68,6 +74,7 @@ namespace LetPortal.Portal.Services.Recoveries
             IPageServiceProvider pageServiceProvider,
             IFileSeviceProvider fileSeviceProvider,
             IBackupRepository backupRepository,
+            ICompositeControlServiceProvider compositeControlServiceProvider,
             IOptionsMonitor<BackupOptions> backupOptions,
             IServiceLogger<BackupService> logger
             )
@@ -80,6 +87,7 @@ namespace LetPortal.Portal.Services.Recoveries
             _fileSeviceProvider = fileSeviceProvider;
             _pageServiceProvider = pageServiceProvider;
             _backupRepository = backupRepository;
+            _compositeControlServiceProvider = compositeControlServiceProvider;
             _backupOptions = backupOptions;
             _logger = logger;
         }
@@ -96,6 +104,7 @@ namespace LetPortal.Portal.Services.Recoveries
             var dynamicCount = model.DynamicLists != null ? model.DynamicLists.Count() : 0;
             var databaseCount = model.Databases != null ? model.Databases.Count() : 0;
             var pageCount = model.Pages != null ? model.Pages.Count() : 0;
+            var compositeControlCount = model.CompositeControls != null ? model.CompositeControls.Count() : 0;
 
             var totalBackupCount =
                 appCount
@@ -105,7 +114,8 @@ namespace LetPortal.Portal.Services.Recoveries
                 + chartCount
                 + dynamicCount
                 + databaseCount
-                + pageCount;
+                + pageCount
+                + compositeControlCount;
 
             if (totalBackupCount > _backupOptions.CurrentValue.MaximumObjects)
             {
@@ -119,6 +129,7 @@ namespace LetPortal.Portal.Services.Recoveries
             var collectDynamicLists = _dynamicListServiceProvider.GetDynamicListsByIds(model.DynamicLists);
             var collectDatabases = _databaseServiceProvider.GetDatabaseConnectionsByIds(model.Databases);
             var collectPages = _pageServiceProvider.GetPagesByIds(model.Pages);
+            var collectCompositeControls = _compositeControlServiceProvider.GetByIds(model.CompositeControls);
 
             await Task.WhenAll(
                 collectApp,
@@ -128,7 +139,8 @@ namespace LetPortal.Portal.Services.Recoveries
                 collectCharts,
                 collectDatabases,
                 collectDynamicLists,
-                collectPages);
+                collectPages,
+                collectCompositeControls);
 
             var backupFileModel = new BackupFlatternFileModel
             {
@@ -152,7 +164,8 @@ namespace LetPortal.Portal.Services.Recoveries
                     Pages = model.Pages,
                     Standards = model.Standards,
                     Array = model.Array,
-                    Tree = model.Tree
+                    Tree = model.Tree,
+                    CompositeControls = model.CompositeControls
                 }
             };
             backupFileModel.Backup = backup;
@@ -251,6 +264,17 @@ namespace LetPortal.Portal.Services.Recoveries
                     sw.Write(jsonPages);
                 }
                 backupFileModel.ChainingFiles.Add(PAGE_FILE);
+            }
+
+            if (collectCompositeControls.Result != null)
+            {
+                var jsonPages = ConvertUtil.SerializeObject(collectCompositeControls.Result, true);
+                using (var sw = new StreamWriter(
+                    Path.Combine(jsonFilePath, COMPOSITE_CONTROL_FILE)))
+                {
+                    sw.Write(jsonPages);
+                }
+                backupFileModel.ChainingFiles.Add(COMPOSITE_CONTROL_FILE);
             }
 
             var jsonFlattern = ConvertUtil.SerializeObject(backupFileModel, true);
@@ -404,6 +428,12 @@ namespace LetPortal.Portal.Services.Recoveries
                         var dynamicListsList = ConvertUtil.DeserializeObject<IEnumerable<DynamicList>>(dynamicListString);
                         previewModel.DynamicLists = await _dynamicListServiceProvider.CompareDynamicLists(dynamicListsList);
                         break;
+                    case COMPOSITE_CONTROL_FILE:
+                        var compositeFilePath = Path.Combine(folderExtractingPath, COMPOSITE_CONTROL_FILE);
+                        var compositeString = File.ReadAllText(compositeFilePath);
+                        var compositeControlsList = ConvertUtil.DeserializeObject<IEnumerable<CompositeControl>>(compositeString);
+                        previewModel.CompositeControls = await _compositeControlServiceProvider.Compare(compositeControlsList);
+                        break;
                     default:
                         break;
                 }
@@ -418,7 +448,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 (previewModel.Databases != null ? previewModel.Databases.Count() : 0) +
                 (previewModel.DynamicLists != null ? previewModel.DynamicLists.Count() : 0) +
                 (previewModel.Pages != null ? previewModel.Pages.Count() : 0) +
-                (previewModel.Standards != null ? previewModel.Standards.Count() : 0);
+                (previewModel.Standards != null ? previewModel.Standards.Count() : 0) +
+                (previewModel.Tree != null ? previewModel.Tree.Count() : 0) +
+                (previewModel.Array != null ? previewModel.Array.Count() : 0) +
+                (previewModel.CompositeControls != null ? previewModel.CompositeControls.Count() : 0);
 
             previewModel.TotalNewObjects =
                 (previewModel.Apps != null ? previewModel.Apps.Count(a => a.IsTotallyNew) : 0) +
@@ -426,7 +459,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 (previewModel.Databases != null ? previewModel.Databases.Count(a => a.IsTotallyNew) : 0) +
                 (previewModel.DynamicLists != null ? previewModel.DynamicLists.Count(a => a.IsTotallyNew) : 0) +
                 (previewModel.Pages != null ? previewModel.Pages.Count(a => a.IsTotallyNew) : 0) +
-                (previewModel.Standards != null ? previewModel.Standards.Count(a => a.IsTotallyNew) : 0);
+                (previewModel.Standards != null ? previewModel.Standards.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.Tree != null ? previewModel.Tree.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.Array != null ? previewModel.Array.Count(a => a.IsTotallyNew) : 0) +
+                (previewModel.CompositeControls != null ? previewModel.CompositeControls.Count(a => a.IsTotallyNew) : 0);
 
             previewModel.TotalUnchangedObjects =
                 (previewModel.Apps != null ? previewModel.Apps.Count(a => a.IsUnchanged) : 0) +
@@ -434,7 +470,10 @@ namespace LetPortal.Portal.Services.Recoveries
                 (previewModel.Databases != null ? previewModel.Databases.Count(a => a.IsUnchanged) : 0) +
                 (previewModel.DynamicLists != null ? previewModel.DynamicLists.Count(a => a.IsUnchanged) : 0) +
                 (previewModel.Pages != null ? previewModel.Pages.Count(a => a.IsUnchanged) : 0) +
-                (previewModel.Standards != null ? previewModel.Standards.Count(a => a.IsUnchanged) : 0);
+                (previewModel.Standards != null ? previewModel.Standards.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.Tree != null ? previewModel.Tree.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.Array != null ? previewModel.Array.Count(a => a.IsUnchanged) : 0) +
+                (previewModel.CompositeControls != null ? previewModel.CompositeControls.Count(a => a.IsUnchanged) : 0);
 
             previewModel.TotalChangedObjects =
                 previewModel.TotalObjects - previewModel.TotalNewObjects - previewModel.TotalUnchangedObjects;
@@ -522,6 +561,12 @@ namespace LetPortal.Portal.Services.Recoveries
                         var dynamicListsList = ConvertUtil.DeserializeObject<IEnumerable<DynamicList>>(dynamicListString);
                         await _dynamicListServiceProvider.ForceUpdateDynamicLists(dynamicListsList);
                         break;
+                    case COMPOSITE_CONTROL_FILE:
+                        var compositeFilePath = Path.Combine(folderExtractingPath, COMPOSITE_CONTROL_FILE);
+                        var compositeString = File.ReadAllText(compositeFilePath);
+                        var compositeList = ConvertUtil.DeserializeObject<IEnumerable<CompositeControl>>(compositeString);
+                        await _compositeControlServiceProvider.ForceUpdate(compositeList);
+                        break;
                     default:
                         break;
                 }
@@ -553,8 +598,16 @@ namespace LetPortal.Portal.Services.Recoveries
             var collectDynamicLists = _dynamicListServiceProvider.GetDynamicListsByIds(model.DynamicLists);
             var collectDatabases = _databaseServiceProvider.GetDatabaseConnectionsByIds(model.Databases);
             var collectPages = _pageServiceProvider.GetPagesByIds(model.Pages);
+            var collectCompositeControls = _compositeControlServiceProvider.GetByIds(model.CompositeControls);
 
-            await Task.WhenAll(collectApp, collectStandards, collectCharts, collectDatabases, collectDynamicLists, collectPages);
+            await Task.WhenAll(
+                collectApp, 
+                collectStandards, 
+                collectCharts, 
+                collectDatabases, 
+                collectDynamicLists, 
+                collectPages, 
+                collectCompositeControls);
 
             var appCodes = new List<CodeGenerableResult>();
             if (collectApp.Result != null && collectApp.Result.Any())
@@ -565,7 +618,7 @@ namespace LetPortal.Portal.Services.Recoveries
                     {
                         appCodes.Add(app.GenerateCode());
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for app {app.Name}");
                     }
@@ -581,7 +634,7 @@ namespace LetPortal.Portal.Services.Recoveries
                     {
                         standardCodes.Add(standard.GenerateCode());
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for standard component {standard.Name}");
                     }
@@ -597,10 +650,10 @@ namespace LetPortal.Portal.Services.Recoveries
                     {
                         treeCodes.Add(tree.GenerateCode());
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for tree {tree.Name}");
-                    }                     
+                    }
                 }
             }
 
@@ -612,8 +665,8 @@ namespace LetPortal.Portal.Services.Recoveries
                     try
                     {
                         arrayCodes.Add(array.GenerateCode());
-                    }                                        
-                    catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for array standard {array.Name}");
                     }
@@ -628,8 +681,8 @@ namespace LetPortal.Portal.Services.Recoveries
                     try
                     {
                         databaseCodes.Add(database.GenerateCode());
-                    }                                              
-                    catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for database {database.Name}");
                     }
@@ -645,7 +698,7 @@ namespace LetPortal.Portal.Services.Recoveries
                     {
                         chartCodes.Add(chart.GenerateCode());
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for chart {chart.Name}");
                     }
@@ -660,8 +713,8 @@ namespace LetPortal.Portal.Services.Recoveries
                     try
                     {
                         pageCodes.Add(page.GenerateCode());
-                    }                                      
-                    catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for page {page.Name}");
                     }
@@ -677,11 +730,27 @@ namespace LetPortal.Portal.Services.Recoveries
                     {
                         dynamicListCodes.Add(dynamicList.GenerateCode());
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _logger.Error(ex, $"Cannot generate code for page {dynamicList.Name}");
                     }
-                    
+
+                }
+            }
+
+            var compositeControlCodes = new List<CodeGenerableResult>();
+            if (collectCompositeControls.Result != null && collectCompositeControls.Result.Any())
+            {
+                foreach (var control in collectCompositeControls.Result)
+                {
+                    try
+                    {
+                        compositeControlCodes.Add(control.GenerateCode());
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error(ex, $"Cannot generate code for composite code {control.Name}");
+                    }
                 }
             }
 
@@ -737,6 +806,12 @@ namespace LetPortal.Portal.Services.Recoveries
             {
                 _ = stringBuilder.AppendLine(pageCode.DeletingCode);
             }
+
+            foreach (var controlCode in compositeControlCodes)
+            {
+                _ = stringBuilder.AppendLine(controlCode.DeletingCode);
+            }
+
             _ = stringBuilder.AppendLine($"            return System.Threading.Tasks.Task.CompletedTask;");
             _ = stringBuilder.AppendLine($"        }}");
             _ = stringBuilder.AppendLine($"        public Task Upgrade(LetPortal.Core.Versions.IVersionContext versionContext)");
@@ -779,6 +854,11 @@ namespace LetPortal.Portal.Services.Recoveries
             foreach (var pageCode in pageCodes)
             {
                 _ = stringBuilder.AppendLine(pageCode.InsertingCode);
+            }
+
+            foreach (var controlCode in compositeControlCodes)
+            {
+                _ = stringBuilder.AppendLine(controlCode.InsertingCode);
             }
             _ = stringBuilder.AppendLine($"            return System.Threading.Tasks.Task.CompletedTask;");
             _ = stringBuilder.AppendLine($"        }}");

@@ -339,6 +339,7 @@ export class PageService {
         const checked = this.interceptor ? this.checkInterceptorEvent(section, control, 'change', sectionRef, controlRef) : true
         this.store.dispatch(new ChangeControlValueEvent({
             name: controlFullName + '_change',
+            controlFullName: controlFullName,
             controlName: control,
             sectionName: section,
             data,
@@ -375,11 +376,18 @@ export class PageService {
         return this.datasourceOptsService.executeDatasourceOptions(datasourceOpts, this.getPageShellData())
     }
 
-    fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
+    fetchControlSelectionDatasource(
+        sectionName: string, 
+        controlName: string, 
+        compositeControlId: string,
+        isChildCompositeControl: boolean,
+        parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
         return this.pageClients.fetchControlDatasource(this.page.id, {
             sectionName,
             controlName,
-            parameters
+            parameters,
+            compositeControlId,
+            isChildCompositeControl
         }).pipe(
             map(res => ObjectUtils.isArray(res.result) ? res.result : [res.result])
         )
@@ -778,6 +786,7 @@ export class PageService {
             this.store.dispatch(new ClickControlEvent({
                 controlName: command.name.toLowerCase(),
                 name: (command.name + '_click').toLowerCase(),
+                controlFullName: command.name.toLowerCase(),
                 sectionName: '',
                 triggeredByEvent: '',
                 data: null,

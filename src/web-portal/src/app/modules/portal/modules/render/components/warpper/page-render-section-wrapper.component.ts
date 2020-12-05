@@ -92,6 +92,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
                             this.pageSection.relatedArrayStandard = standard
                             this.pageSection.isLoaded = true
                             this.pageSection.relatedButtons = this.getButtons(this.pageSection.id, this.page.commands)
+
                             this.readyToRender = true
                             this.store.dispatch(new RenderedPageSectionAction({
                                 sectionClass: this.sectionClass,

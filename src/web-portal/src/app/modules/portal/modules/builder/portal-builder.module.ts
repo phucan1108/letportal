@@ -97,6 +97,7 @@ import { BackupBuilderPage } from './pages/backup/backup-builder.page';
 import { BackupRestorePage } from './pages/backup/backup-restore.page';
 import { BackupUploadpage } from './pages/backup/backup-upload.page';
 import { ChartBuilderPage } from './pages/chart/chart-builder.page';
+import { CompositeBuilderPage } from './pages/composite-builder/composite-builder.page';
 import { DynamicListBuilderPage } from './pages/dynamic-list/dynamic-list-builder.page';
 import { LocalizationPage } from './pages/localization/localization.page';
 import { MenuProfilesPage } from './pages/menu-profiles/menu-profiles.page';
@@ -109,6 +110,7 @@ import { PortalBuilderPageComponent } from './portal-builder.component';
 import { AppPackageResolve } from './resolve/app-package.resolve';
 import { BackupResolve } from './resolve/backup.resolve';
 import { ChartBuilderResolve } from './resolve/chart.builder.resolve';
+import { CompositeControlResolve } from './resolve/composite-control.resolve';
 import { DynamicListBuilderResolve } from './resolve/dynamic-list.builder.resolve';
 import { LocaleResolve } from './resolve/locale.resolve';
 import { MenuProfilesResolve } from './resolve/menu-profiles.resolve';
@@ -178,7 +180,8 @@ import { StandardResolve } from './resolve/standard.resolve';
 		LocalizationPage,
 		AppPackagePage,
 		AppInstallationPage,
-		AppInstallationDialog
+		AppInstallationDialog,
+		CompositeBuilderPage
 	],
 	imports: [
 		CoreModule.forChild(),
@@ -291,6 +294,7 @@ import { StandardResolve } from './resolve/standard.resolve';
 		BackupResolve,
 		LocaleResolve,
 		AppPackageResolve,
+		CompositeControlResolve,
 		{ provide: MAT_DIALOG_DATA, useValue: [] },
 		{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
 	],

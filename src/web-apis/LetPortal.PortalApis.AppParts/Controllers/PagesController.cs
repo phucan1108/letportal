@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
-using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Models;
@@ -14,6 +13,7 @@ using LetPortal.Portal.Models.Shared;
 using LetPortal.Portal.Providers.Components;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.Pages;
+using LetPortal.Portal.Repositories.Components;
 using LetPortal.Portal.Repositories.Pages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +32,8 @@ namespace LetPortal.Portal.AppParts.Controllers
 
         private readonly IPageRepository _pageRepository;
 
+        private readonly ICompositeControlRepository _controlRepository;
+
         private readonly IServiceLogger<PagesController> _logger;
 
         public PagesController(
@@ -39,9 +41,11 @@ namespace LetPortal.Portal.AppParts.Controllers
             IDatabaseServiceProvider databaseServiceProvider,
             IStandardServiceProvider standardServiceProvider,
             IPageServiceProvider pageServiceProvider,
+            ICompositeControlRepository controlRepository,
             IServiceLogger<PagesController> logger)
         {
             _pageRepository = pageRepository;
+            _controlRepository = controlRepository;
             _databaseServiceProvider = databaseServiceProvider;
             _standardServiceProvider = standardServiceProvider;
             _pageServiceProvider = pageServiceProvider;
@@ -170,7 +174,7 @@ namespace LetPortal.Portal.AppParts.Controllers
                                     pageSubmittedButtonModel
                                         .Parameters
                                         .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }),
-                                    pageSubmittedButtonModel.LoopDatas?.Select(a => new LoopDataParamModel 
+                                    pageSubmittedButtonModel.LoopDatas?.Select(a => new LoopDataParamModel
                                     {
                                         Name = a.Name,
                                         Parameters = a.Parameters.Select(b => b.Select(c => new ExecuteParamModel { Name = c.Name, RemoveQuotes = c.RemoveQuotes, ReplaceValue = c.ReplaceValue }).ToList()).ToList()
@@ -197,25 +201,51 @@ namespace LetPortal.Portal.AppParts.Controllers
                     // Only support Standard component
                     var sectionStandard = (await _standardServiceProvider.GetStandardComponentsByIds(new List<string> { section.ComponentId })).First();
 
-                    var control = sectionStandard.Controls.First(a => a.Name == model.ControlName);
-                    if(control.Type == Portal.Entities.SectionParts.Controls.ControlType.AutoComplete
-                        || control.Type == Portal.Entities.SectionParts.Controls.ControlType.Select)
+                    if (!model.IsChildCompositeControl)
                     {
-                        var parameters = model?
-                                           .Parameters
-                                           .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }).ToList();
-                        
-                        var result =
-                           await _databaseServiceProvider
-                                   .ExecuteDatabase(
-                                       control.DatasourceOptions.DatabaseOptions.DatabaseConnectionId,
-                                       control.DatasourceOptions.DatabaseOptions.Query,
-                                       parameters
-                                       );
+                        var control = sectionStandard.Controls.First(a => a.Name == model.ControlName);
+                        if (control.Type == Portal.Entities.SectionParts.Controls.ControlType.AutoComplete
+                            || control.Type == Portal.Entities.SectionParts.Controls.ControlType.Select)
+                        {
+                            var parameters = model?
+                                               .Parameters
+                                               .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }).ToList();
 
-                        return Ok(result);
-                    } 
-                    return BadRequest();
+                            var result =
+                               await _databaseServiceProvider
+                                       .ExecuteDatabase(
+                                           control.DatasourceOptions.DatabaseOptions.DatabaseConnectionId,
+                                           control.DatasourceOptions.DatabaseOptions.Query,
+                                           parameters
+                                           );
+
+                            return Ok(result);
+                        }
+                        return BadRequest();
+                    }
+                    else
+                    {
+                        var compositeControl = await _controlRepository.GetOneAsync(model.CompositeControlId);
+                        var control = compositeControl.Controls.First(a => a.Name == model.ControlName);
+                        if (control.Type == Portal.Entities.SectionParts.Controls.ControlType.AutoComplete
+                           || control.Type == Portal.Entities.SectionParts.Controls.ControlType.Select)
+                        {
+                            var parameters = model?
+                                               .Parameters
+                                               .Select(a => new ExecuteParamModel { Name = a.Name, RemoveQuotes = a.RemoveQuotes, ReplaceValue = a.ReplaceValue }).ToList();
+
+                            var result =
+                               await _databaseServiceProvider
+                                       .ExecuteDatabase(
+                                           control.DatasourceOptions.DatabaseOptions.DatabaseConnectionId,
+                                           control.DatasourceOptions.DatabaseOptions.Query,
+                                           parameters
+                                           );
+
+                            return Ok(result);
+                        }
+                        return BadRequest();
+                    }
                 }
                 else
                 {

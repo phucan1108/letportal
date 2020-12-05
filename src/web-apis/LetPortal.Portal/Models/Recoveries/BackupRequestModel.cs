@@ -20,6 +20,8 @@ namespace LetPortal.Portal.Models.Recoveries
 
         public IEnumerable<string> Pages { get; set; }
 
+        public IEnumerable<string> CompositeControls { get; set; }
+
         public string Name { get; set; }
 
         public string Description { get; set; }

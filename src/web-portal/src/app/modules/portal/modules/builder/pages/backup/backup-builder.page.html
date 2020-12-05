@@ -70,8 +70,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Apps'" [icon]="'camera_enhance'" [data]="apps$"
                                     (searchChanged)="onSeachAppChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectAppChanged($event)"
-                                    [notifier]="notifiedApps"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectAppChanged($event)" [notifier]="notifiedApps">
+                                </let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -103,8 +103,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Tree'" [icon]="'category'" [data]="tree$"
                                     (searchChanged)="onSeachTreeChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectTreeChanged($event)"
-                                    [notifier]="notifiedTree"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectTreeChanged($event)" [notifier]="notifiedTree">
+                                </let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -148,8 +148,20 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Pages'" [icon]="'receipt'" [data]="pages$"
                                     (searchChanged)="onSeachPageChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectPageChanged($event)"
-                                    [notifier]="notifiedPages"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectPageChanged($event)" [notifier]="notifiedPages">
+                                </let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ 'common.compositeControl' | translate }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Composite Control'" [icon]="'perm_data_setting'"
+                                    [data]="controls$" (searchChanged)="onSeachControlChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectControlChanged($event)"
+                                    [notifier]="notifiedControls">
+                                </let-backup-selection>
                             </mat-expansion-panel>
                         </mat-accordion>
                     </div>

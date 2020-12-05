@@ -50,5 +50,7 @@ namespace LetPortal.Portal.Entities.Recoveries
         public IEnumerable<string> DynamicLists { get; set; }
 
         public IEnumerable<string> Pages { get; set; }
+
+        public IEnumerable<string> CompositeControls { get; set; }
     }
 }

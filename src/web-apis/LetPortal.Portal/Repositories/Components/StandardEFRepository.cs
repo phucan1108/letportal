@@ -7,6 +7,7 @@ using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.SectionParts.Controls;
 using LetPortal.Portal.Entities.Shared;
+using LetPortal.Portal.Extensions;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,33 +60,7 @@ namespace LetPortal.Portal.Repositories.Components
             // Remove some security risks
             foreach (var control in standard.Controls)
             {
-                if (control.AsyncValidators != null && control.AsyncValidators.Count > 0)
-                {
-                    foreach (var validator in control.AsyncValidators)
-                    {
-                        if (validator.AsyncValidatorOptions.ValidatorType == Entities.Components.Controls.AsyncValidatorType.DatabaseValidator)
-                        {
-                            validator.AsyncValidatorOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(validator.AsyncValidatorOptions.DatabaseOptions.Query, true));
-                        }
-                    }
-                }
-
-                if (control.Type == Entities.SectionParts.Controls.ControlType.Select
-                    || control.Type == Entities.SectionParts.Controls.ControlType.AutoComplete)
-                {
-                    if (control.DatasourceOptions.Type == Entities.Shared.DatasourceControlType.Database)
-                    {
-                        control.DatasourceOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(control.DatasourceOptions.DatabaseOptions.Query, true));
-                    }
-                }
-
-                foreach (var controlEvent in control.PageControlEvents)
-                {
-                    if (controlEvent.EventActionType == Entities.Components.Controls.EventActionType.QueryDatabase)
-                    {
-                        controlEvent.EventDatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(controlEvent.EventDatabaseOptions.Query, true));
-                    }
-                }
+                control.HideSensitive();
             }
 
             return standard;

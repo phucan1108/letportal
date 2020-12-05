@@ -14,7 +14,7 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { PageService } from 'services/page.service';
 import { ControlType, PageControlAsyncValidator, PageControlValidator, StandardComponent, ValidatorType } from 'services/portal.service';
 import { ExtendedFormControlValidators } from '../models/standard.models';
- 
+
 
 /**
  * This service is used to share common logic between Standard and Array Standard
@@ -29,6 +29,12 @@ export class StandardSharedService {
     ) { }
 
 
+    /**
+     * This method is used to group all controls which are fitted in layout
+     * @param filteredControls all displayed controls
+     * @param numberOfColumns one col, two cols, etc...
+     * @returns controls group 
+     */
     public buildControlsGroup(
         filteredControls: PageRenderedControl<DefaultControlOptions>[],
         numberOfColumns: number
@@ -38,82 +44,141 @@ export class StandardSharedService {
         let tempGroupControls: GroupControls = {
             controlsList: [],
             numberOfColumns: numberOfColumns,
-            isLineBreaker: false
+            isLineBreaker: false,
+            isCompositeGroup: false,
+            compositeGroupRef: null
         }
+
+        // New 0.9.0: We need to prepare group of composite controls
+        let compositeControlGroups: GroupControls[] = []
+        const compositeControls = filteredControls
+            .filter(a =>
+                ObjectUtils.isNotNull(a.compositeControlId))
+
+        compositeControls.forEach(control => {
+            if (control.type === ControlType.Composite) {
+                const childControls = compositeControls.filter(a => a.compositeControlId === control.name && a.type !== ControlType.Composite)
+                childControls.forEach(child => {
+                    child.compositeControlRefId = control.compositeControlId
+                    child.compositeControlBindName = control.defaultOptions.bindname
+                    child.compositeControlName = control.name
+                    tempGroupControls.controlsList.push(child)
+                })
+                tempGroupControls.compositeGroupRef = control.name
+                tempGroupControls.isCompositeGroup = true
+                tempGroupControls.compositeGroupLabel = control.defaultOptions.label
+                compositeControlGroups.push(tempGroupControls)
+                tempGroupControls = {
+                    controlsList: [],
+                    numberOfColumns: numberOfColumns,
+                    isLineBreaker: false,
+                    isCompositeGroup: false,
+                    compositeGroupRef: null
+                }
+            }
+        })
 
         let counterControls = 0
         filteredControls?.forEach((control: PageRenderedControl<DefaultControlOptions>) => {
-            // These controls must be separated group
-            if (control.type === ControlType.LineBreaker) {
-                counterFlag = 0;
-                controlGroups.push(tempGroupControls)
-                controlGroups.push({
-                    controlsList: [],
-                    numberOfColumns: 0,
-                    isLineBreaker: true
-                })
-                tempGroupControls = {
-                    controlsList: [],
-                    numberOfColumns: numberOfColumns,
-                    isLineBreaker: false
-                }
+            if (control.type !== ControlType.Composite && ObjectUtils.isNotNull(control.compositeControlId)) {
+                // Child control of Composite, skip
+                return
             }
-            else if (control.type === ControlType.RichTextEditor) {
-                counterFlag = 0;
-                controlGroups.push(tempGroupControls)
-                const standaloneGroup: GroupControls = {
-                    controlsList: [],
-                    numberOfColumns: 1,
-                    isLineBreaker: false
-                }
-                standaloneGroup.controlsList.push(control)
-                controlGroups.push(standaloneGroup)
-                tempGroupControls = {
-                    controlsList: [],
-                    numberOfColumns: numberOfColumns,
-                    isLineBreaker: false
-                }
-            }
-            else if (control.type === ControlType.MarkdownEditor) {
-                counterFlag = 0;
-                controlGroups.push(tempGroupControls)
-                const standaloneGroup: GroupControls = {
-                    controlsList: [],
-                    numberOfColumns: 1,
-                    isLineBreaker: false
-                }
-                standaloneGroup.controlsList.push(control)
-                controlGroups.push(standaloneGroup)
-                tempGroupControls = {
-                    controlsList: [],
-                    numberOfColumns: numberOfColumns,
-                    isLineBreaker: false
-                }
-            }
-            else {
 
-                tempGroupControls.controlsList.push(control)
-                if (counterFlag === numberOfColumns - 1 || counterControls === filteredControls.length - 1) {
+            // These controls must be separated group
+            switch (control.type) {
+                case ControlType.LineBreaker:
                     counterFlag = 0;
-                    controlGroups.push(tempGroupControls)
+                    controlGroups.push({
+                        controlsList: [],
+                        numberOfColumns: 0,
+                        isLineBreaker: true,
+                        isCompositeGroup: false,
+                        compositeGroupRef: null
+                    })
                     tempGroupControls = {
                         controlsList: [],
                         numberOfColumns: numberOfColumns,
-                        isLineBreaker: false
+                        isLineBreaker: false,
+                        isCompositeGroup: false,
+                        compositeGroupRef: null
                     }
-                } else {
-                    counterFlag++;
-                }
+                    break
+                case ControlType.RichTextEditor:
+                    counterFlag = 0;
+                    const standaloneRichtextGroup: GroupControls = {
+                        controlsList: [],
+                        numberOfColumns: 1,
+                        isLineBreaker: false,
+                        isCompositeGroup: false,
+                        compositeGroupRef: null
+                    }
+                    standaloneRichtextGroup.controlsList.push(control)
+                    controlGroups.push(standaloneRichtextGroup)
+                    tempGroupControls = {
+                        controlsList: [],
+                        numberOfColumns: numberOfColumns,
+                        isLineBreaker: false,
+                        isCompositeGroup: false,
+                        compositeGroupRef: null
+                    }
+                    break
+                case ControlType.MarkdownEditor:
+                    counterFlag = 0;
+                    const standaloneGroup: GroupControls = {
+                        controlsList: [],
+                        numberOfColumns: 1,
+                        isLineBreaker: false,
+                        isCompositeGroup: false,
+                        compositeGroupRef: null
+                    }
+                    standaloneGroup.controlsList.push(control)
+                    controlGroups.push(standaloneGroup)
+                    tempGroupControls = {
+                        controlsList: [],
+                        numberOfColumns: numberOfColumns,
+                        isLineBreaker: false,
+                        isCompositeGroup: false,
+                        compositeGroupRef: ''
+                    }
+                    break
+                case ControlType.Composite:
+                    counterFlag = 0;
+                    controlGroups.push(compositeControlGroups.find(a => a.compositeGroupRef === control.name))
+                    tempGroupControls = {
+                        controlsList: [],
+                        numberOfColumns: numberOfColumns,
+                        isLineBreaker: false,
+                        isCompositeGroup: false,
+                        compositeGroupRef: null
+                    }
+                    break
+                default:
+                    tempGroupControls.controlsList.push(control)
+                    if (counterFlag === numberOfColumns - 1 || counterControls === filteredControls.length - 1) {
+                        counterFlag = 0;
+                        controlGroups.push(tempGroupControls)
+                        tempGroupControls = {
+                            controlsList: [],
+                            numberOfColumns: numberOfColumns,
+                            isLineBreaker: false,
+                            compositeGroupRef: null,
+                            isCompositeGroup: false
+                        }
+                    } else {
+                        counterFlag++;
+                    }
+                    break
             }
 
             counterControls++
         })
-
+        console.log('Controls have been grouped', controlGroups)
         return controlGroups
     }
 
     public buildControlOptions(
-        controls: PageRenderedControl<DefaultControlOptions>[], 
+        controls: PageRenderedControl<DefaultControlOptions>[],
         initData: any = null): PageRenderedControl<DefaultControlOptions>[] {
         controls?.forEach(control => {
             control.defaultOptions = PageUtils.getControlOptions<DefaultControlOptions>(control.options)
@@ -174,31 +239,60 @@ export class StandardSharedService {
         // Because Array/Tree doesn't update the data frequently
         const sectionsMap: MapDataControl[] = []
         let sectionBoundData = boundData
-        let boundControls: BoundControl[] =[] 
+        let boundControls: BoundControl[] = []
         const isStoredInRootLevel = storeName === 'data'
         if (!isStoredInRootLevel) {
             tempSectionData[storeName] = new Object()
         }
         (standard.controls as PageRenderedControl<DefaultControlOptions>[])?.forEach(control => {
-            const controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control)
+            // Skip if it is composite control
+            if(control.type === ControlType.Composite){
+                return
+            }
 
+            const controlData = this.getInitDataOfControl(sectionBoundData, control.defaultOptions.bindname, control)
             let mapDataControl: MapDataControl
             if (isStoredInRootLevel) {
+                const isChildCompositeControl = !!control.compositeControlId
                 mapDataControl = {
-                    controlFullName: sectionName + '_' + control.name,
+                    controlFullName: isChildCompositeControl ? sectionName + '_' + control.compositeControlName + '.' + control.name : sectionName + '_' + control.name,
                     sectionMapName: null,
-                    bindName: control.defaultOptions.bindname
+                    bindName: control.defaultOptions.bindname,
+                    compositeBindName: isChildCompositeControl ? control.compositeControlBindName : null,
+                    isCompositeControl: isChildCompositeControl
                 }
                 sectionsMap.push(mapDataControl)
-                tempSectionData[control.name] = controlData
+                
+                if(isChildCompositeControl){
+                    if(!ObjectUtils.isNotNull(tempSectionData[control.compositeControlBindName])){
+                        tempSectionData[control.compositeControlBindName] = new Object()
+                        
+                    }
+                    tempSectionData[control.compositeControlBindName][control.defaultOptions.bindname] = controlData 
+                }
+                else{
+                    tempSectionData[control.defaultOptions.bindname] = controlData
+                }                
             }
             else {
-                tempSectionData[storeName][control.name] = controlData
+                const isChildCompositeControl = !!control.compositeControlId
                 mapDataControl = {
-                    controlFullName: sectionName + '_' + control.name,
+                    controlFullName: isChildCompositeControl ? sectionName + '_' + control.compositeControlName + '.' + control.name : sectionName + '_' + control.name,
                     sectionMapName: storeName,
-                    bindName: control.defaultOptions.bindname
+                    bindName: control.defaultOptions.bindname,
+                    compositeBindName: isChildCompositeControl ? control.compositeControlBindName : null,
+                    isCompositeControl: isChildCompositeControl
                 }
+                if(isChildCompositeControl){
+                    if(!ObjectUtils.isNotNull(tempSectionData[storeName][control.compositeControlBindName])){
+                        tempSectionData[storeName][control.compositeControlBindName] = new Object()                        
+                    }
+                    tempSectionData[storeName][control.compositeControlBindName][control.defaultOptions.bindname] = controlData 
+                }
+                else{
+                    tempSectionData[storeName][control.defaultOptions.bindname] = controlData
+                }    
+                
                 sectionsMap.push(mapDataControl)
             }
 
@@ -244,18 +338,18 @@ export class StandardSharedService {
                 )
             }
 
-            switch(control.type){
+            switch (control.type) {
                 case ControlType.Select:
                 case ControlType.AutoComplete:
-                    boundControls.push(new SelectBoundControl(control.name, control.type,formControls[control.name]))
+                    boundControls.push(new SelectBoundControl(control.name, control.type, formControls[control.name]))
                     break
                 case ControlType.Checkbox:
                 case ControlType.Slide:
                     boundControls.push(
                         new SimpleBoundControl(
-                            control.name, 
-                            control.type, 
-                            formControls[control.name], 
+                            control.name,
+                            control.type,
+                            formControls[control.name],
                             formValue,
                             control.defaultOptions.allowYesNo,
                             control.defaultOptions.allowZero))
@@ -263,9 +357,9 @@ export class StandardSharedService {
                 default:
                     boundControls.push(
                         new SimpleBoundControl(
-                            control.name, 
-                            control.type, 
-                            formControls[control.name], 
+                            control.name,
+                            control.type,
+                            formControls[control.name],
                             formValue))
                     break
             }
@@ -277,9 +371,9 @@ export class StandardSharedService {
         // Changed from 0.9.0: This method will return BoundSection which is very suitable for Event-Based
         // Whatever call this, it always returns a StandardBoundSection
         return new StandardBoundSection(
-                    sectionName, 
-                    boundControls,
-                    new FormGroup(formControls))
+            sectionName,
+            boundControls,
+            new FormGroup(formControls))
     }
 
     public buildDataArray(
@@ -377,7 +471,7 @@ export class StandardSharedService {
         let data: any[] = this.getSectionBoundData(dataSourceName, datasources) as any[]
 
         // TODO: We need to transform data from flat -> nest because Tree 
-        if (treeOptions.indatastructure === 'flat'){
+        if (treeOptions.indatastructure === 'flat') {
             return data
         }
         return data
@@ -422,11 +516,19 @@ export class StandardSharedService {
         data: any,
         controlBindName: string,
         control: PageRenderedControl<DefaultControlOptions>): any {
-        if(!ObjectUtils.isNotNull(data)){
+        if (!ObjectUtils.isNotNull(data)) {
             return null
         }
         let controlData = null
-        if (controlBindName === 'id' || controlBindName === '_id') {
+
+        // New 0.9.0: Support Child Composite Control
+        if(ObjectUtils.isNotNull(control.compositeControlRefId) 
+            && control.type !== ControlType.Composite){
+            if(!!data[control.compositeControlBindName]){
+                controlData = data[control.compositeControlBindName][control.defaultOptions.bindname]
+            }        
+        }
+        else if (controlBindName === 'id' || controlBindName === '_id') {
             const boundData = data._id
             if (!boundData) {
                 controlData = data.id

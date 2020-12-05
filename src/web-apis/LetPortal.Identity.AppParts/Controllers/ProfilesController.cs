@@ -5,11 +5,13 @@ using LetPortal.Identity.Providers.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.Annotations;
 
 namespace LetPortal.Identity.AppParts.Controllers
 {
     [Route("api/profiles")]
     [ApiController]
+    [OpenApiIgnore]
     public class ProfilesController : ControllerBase
     {
         private readonly IIdentityServiceProvider _identityServiceProvider;

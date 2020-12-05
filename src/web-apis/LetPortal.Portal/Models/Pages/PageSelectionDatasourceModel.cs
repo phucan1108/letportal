@@ -10,6 +10,10 @@ namespace LetPortal.Portal.Models.Pages
 
         public string ControlName { get; set; }
 
+        public string CompositeControlId { get; set; }
+
+        public bool IsChildCompositeControl { get; set; }
+
         public List<PageParameterModel> Parameters { get; set; }
     }
 }

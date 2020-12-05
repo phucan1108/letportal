@@ -17,6 +17,7 @@ using LetPortal.Portal.Options.Recoveries;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Providers.Apps;
 using LetPortal.Portal.Providers.Components;
+using LetPortal.Portal.Providers.CompositeControls;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.EntitySchemas;
 using LetPortal.Portal.Providers.Files;
@@ -125,6 +126,7 @@ namespace LetPortal.Portal
                 services.AddSingleton<IBackupRepository, BackupMongoRepository>();
                 services.AddSingleton<IVersionRepository, VersionMongoRepository>();
                 services.AddSingleton<ILocalizationRepository, LocalizationMongoRepository>();
+                services.AddSingleton<ICompositeControlRepository, CompositeControlMongoRepository>();
 
                 services.AddSingleton<IExecutionChartReport, MongoExecutionChartReport>();
                 services.AddSingleton<IMongoQueryExecution, MongoQueryExecution>();
@@ -152,6 +154,7 @@ namespace LetPortal.Portal
                 services.AddTransient<IBackupRepository, BackupEFRepository>();
                 services.AddTransient<IVersionRepository, VersionEFRepository>();
                 services.AddTransient<ILocalizationRepository, LocalizationEFRepository>();
+                services.AddSingleton<ICompositeControlRepository, CompositeControlEFRepository>();
             }
 
             if (databaseOptions.ConnectionType == ConnectionType.MongoDB)
@@ -225,6 +228,7 @@ namespace LetPortal.Portal
             services.AddTransient<IDynamicListServiceProvider, InternalDynamicListServiceProvider>();
             services.AddTransient<IFileSeviceProvider, InternalFileServiceProvider>();
             services.AddTransient<ILocalizationProvider, InternalLocalizationProvider>();
+            services.AddTransient<ICompositeControlServiceProvider, InternalCompositeControlProvider>();
         }
     }
 }

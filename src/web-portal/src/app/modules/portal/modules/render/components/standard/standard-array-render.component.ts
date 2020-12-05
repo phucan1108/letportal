@@ -189,7 +189,12 @@ export class StandardArrayRenderComponent implements OnInit {
             case DatasourceControlType.Database:
                 const parameters = this.pageService.retrieveParameters(control.datasourceOptions.databaseOptions.query)
                 return this.pageService
-                    .fetchControlSelectionDatasource(sectionName, control.name, parameters)
+                    .fetchControlSelectionDatasource(
+                        sectionName, 
+                        control.name, 
+                        control.compositeControlRefId,
+                        ObjectUtils.isNotNull(control.compositeControlId),
+                        parameters)
             case DatasourceControlType.WebService:
                 return this.pageService.executeHttpWithBoundData(control.datasourceOptions.httpServiceOptions)
         }

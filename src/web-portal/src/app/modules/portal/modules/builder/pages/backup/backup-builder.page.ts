@@ -11,7 +11,7 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { PageService } from 'services/page.service';
-import { AppsClient, BackupRequestModel, BackupsClient, ChartsClient, DatabasesClient, DynamicListClient, PagesClient, ShortEntityModel, StandardComponentClient } from 'services/portal.service';
+import { AppsClient, BackupRequestModel, BackupsClient, ChartsClient, CompositeControlsClient, DatabasesClient, DynamicListClient, PagesClient, ShortEntityModel, StandardComponentClient } from 'services/portal.service';
 import { GenerateCodeDialog } from '../../components/backup-builder/generatecode.dialog';
 
 
@@ -63,6 +63,11 @@ export class BackupBuilderPage implements OnInit {
     searchPageDebouncer: Subject<string> = new Subject<string>()
     notifiedPages: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
 
+    selectedControls: ShortEntityModel[]
+    controls$: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
+    searchControlDebouncer: Subject<string> = new Subject<string>()
+    notifiedControls: BehaviorSubject<ShortEntityModel[]> = new BehaviorSubject([])
+
     isCanSubmit = false
     isSubmitted = false
     isCreated = false
@@ -72,6 +77,7 @@ export class BackupBuilderPage implements OnInit {
         private databaseClient: DatabasesClient,
         private standardClient: StandardComponentClient,
         private dynamicListClient: DynamicListClient,
+        private compositeControlClient: CompositeControlsClient,
         private chartClient: ChartsClient,
         private pageClient: PagesClient,
         private backupClient: BackupsClient,
@@ -236,6 +242,24 @@ export class BackupBuilderPage implements OnInit {
                     }
                 )
             ).subscribe()
+
+        this.searchControlDebouncer
+            .pipe(
+                debounceTime(500),
+                distinctUntilChanged(),
+                tap(
+                    res => {
+                        this.compositeControlClient.getShortControls(res).subscribe(
+                            res => {
+                                this.controls$.next(res)
+                            },
+                            err => {
+
+                            }
+                        )
+                    }
+                )
+            ).subscribe()
     }
 
     onSeachAppChanged($event) {
@@ -250,7 +274,7 @@ export class BackupBuilderPage implements OnInit {
     onSelectAppChanged($event) {
         this.selectedApps = $event
         // 0.9.0: We will scan all components that are related to
-        this.selectedApps.forEach(app => {            
+        this.selectedApps.forEach(app => {
             this.standardClient.getSortStandards('').subscribe(res => {
                 this.notifiedStandards.next(res.filter(a => a.appId === app.id))
             })
@@ -269,7 +293,10 @@ export class BackupBuilderPage implements OnInit {
             this.dynamicListClient.getShortDynamicLists('').subscribe(res => {
                 this.notifiedDynamicLists.next(res.filter(a => a.appId === app.id))
             })
-        })        
+            this.compositeControlClient.getShortControls('').subscribe(res => {
+                this.notifiedControls.next(res.filter(a => a.appId === app.id))
+            })
+        })
     }
 
     onSeachDatabaseChanged($event) {
@@ -363,6 +390,19 @@ export class BackupBuilderPage implements OnInit {
         this.selectedPages = $event
     }
 
+    onSeachControlChanged($event) {
+        if ($event) {
+            this.searchControlDebouncer.next($event)
+        }
+        else {
+            this.controls$.next([])
+        }
+    }
+
+    onSelectControlChanged($event) {
+        this.selectedControls = $event
+    }
+
     onSubmit() {
         if (this.backupFormGroup.valid) {
             const formValues = this.backupFormGroup.value
@@ -377,6 +417,7 @@ export class BackupBuilderPage implements OnInit {
                 array: this.selectedArray ? this.selectedArray.map(array => array.id) : [],
                 dynamicLists: this.selectedDynamicLists ? this.selectedDynamicLists.map(dynamicList => dynamicList.id) : [],
                 pages: this.selectedPages ? this.selectedPages.map(page => page.id) : [],
+                compositeControls: this.selectedControls ? this.selectedControls.map(control => control.id) : [],
                 creator: this.security.getAuthUser().username
             }
             this.isCreated = false
@@ -408,7 +449,8 @@ export class BackupBuilderPage implements OnInit {
                         dynamicLists: this.selectedDynamicLists ? this.selectedDynamicLists.map(dynamicList => dynamicList.id) : [],
                         pages: this.selectedPages ? this.selectedPages.map(page => page.id) : [],
                         array: this.selectedArray ? this.selectedArray.map(array => array.id) : [],
-                        tree: this.selectedTree ? this.selectedTree.map(tree => tree.id) : []
+                        tree: this.selectedTree ? this.selectedTree.map(tree => tree.id) : [],
+                        compositeControls: this.selectedControls ? this.selectedControls.map(control => control.id) : []
                     }).pipe(
                         tap(res => {
                             FileSaver.saveAs(res.data, res.fileName)

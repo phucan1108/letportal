@@ -453,5 +453,7 @@
     "common.confirmation": "Xác nhận",
     "common.generate": "Tạo mã",
     "common.tree": "Tree",
-    "common.array": "Array"
+    "common.array": "Array",
+    "common.compositeControl": "Control hỗn hợp",
+    "common.compositeControlInfo": "Thông tin Control"
 }

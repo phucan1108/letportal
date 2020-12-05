@@ -7,11 +7,13 @@ using LetPortal.Identity.Providers.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.Annotations;
 
 namespace LetPortal.Identity.AppParts.Controllers
 {
     [Route("api/accounts")]
     [ApiController]
+    [OpenApiIgnore]
     public class AccountsController : ControllerBase
     {
         private readonly IIdentityServiceProvider _identityServiceProvider;

@@ -271,10 +271,16 @@ export class PageState {
         if (state.isOpenStandardArray) {
             let lastStandardArrayItem: StandardArrayItemState = ObjectUtils.clone(state.lastStandardArrayItem)
             const sectionMap = lastStandardArrayItem.sectionsMap
-            const foundMap = sectionMap.find(map => map.controlFullName === (event.sectionName + '_' + event.controlName))
+            const foundMap = sectionMap.find(map => map.controlFullName === event.controlFullName)
             if (foundMap && foundMap.bindName) {
                 const data = lastStandardArrayItem.data
-                data[foundMap.bindName] = event.data
+                const isChildComposite = foundMap.isCompositeControl
+                if(isChildComposite){
+                    data[foundMap.compositeBindName][foundMap.bindName] = event.data
+                }
+                else{
+                    data[foundMap.bindName] = event.data
+                }               
                 const cloneEventsList = ObjectUtils.clone(state.eventsList)
                 cloneEventsList.push(event)
                 ctx.setState({
@@ -298,14 +304,25 @@ export class PageState {
         }
         else {
             // Keep as usual for Standard Section
-            const foundMap = state.sectionsMap.find(map => map.controlFullName === (event.sectionName + '_' + event.controlName))
-            if (foundMap && foundMap.bindName) {
+            const foundMap = state.sectionsMap.find(map => map.controlFullName === event.controlFullName)
+            if (foundMap && foundMap.bindName) {                
+                const isChildComposite = foundMap.isCompositeControl
                 const data = ObjectUtils.clone(state.data)
                 if (foundMap.sectionMapName) {
-                    data[foundMap.sectionMapName][foundMap.bindName] = event.data
+                    if(isChildComposite){
+                        data[foundMap.sectionMapName][foundMap.compositeBindName][foundMap.bindName] = event.data
+                    }
+                    else{
+                        data[foundMap.sectionMapName][foundMap.bindName] = event.data
+                    }                    
                 }
                 else {
-                    data[foundMap.bindName] = event.data
+                    if(isChildComposite){
+                        data[foundMap.compositeBindName][foundMap.bindName] = event.data
+                    }
+                    else{
+                        data[foundMap.bindName] = event.data
+                    }                    
                 }
                 const cloneEventsList = ObjectUtils.clone(state.eventsList)
                 cloneEventsList.push(event)
