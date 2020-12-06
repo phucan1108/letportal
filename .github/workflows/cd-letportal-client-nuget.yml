@@ -1,11 +1,12 @@
 name: Publish LetPortal.Microservices.Client Lib
 
 on:
+  workflow_dispatch:  
   push:
     branches: [ master ]
     paths:
       - 'src/web-apis/LetPortal.Microservices.Client/LetPortal.Microservices.Client.csproj'
-
+ 
 jobs:
   build:
 
