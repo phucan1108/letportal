@@ -1,0 +1,35 @@
+<h3 mat-dialog-title>{{ 'pageBuilder.page.backup.generateCode.header' | translate }}</h3>
+<mat-dialog-content>
+    <form [formGroup]="generateCodeForm">
+        <div class="row">
+            <label class="col-lg-2 col-form-label">{{ 'pageBuilder.page.backup.generateCode.fileName.text' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput
+                        placeholder="{{ 'pageBuilder.page.backup.generateCode.fileName.placeholder' | translate }}"
+                        #fileNameInput formControlName="fileName" maxlength="250" />
+                    <mat-hint align="end">
+                        {{fileNameInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-lg-2 col-form-label">{{ 'pageBuilder.page.backup.generateCode.versionNumber.text' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput
+                        placeholder="{{ 'pageBuilder.page.backup.generateCode.versionNumber.placeholder' | translate }}"
+                        #versionNumberInput formControlName="versionNumber" maxlength="250" />
+                    <mat-hint align="end">
+                        {{versionNumberInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmit()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>
