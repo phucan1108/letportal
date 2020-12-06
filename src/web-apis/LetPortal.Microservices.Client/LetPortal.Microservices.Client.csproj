@@ -16,7 +16,10 @@
     <PackageIcon>logo.png</PackageIcon>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Include="logo.png" Pack="true" PackagePath="" />
+    <None Include="LICENSE.txt" Pack="true" PackagePath="" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.9.1" />
     <PackageReference Include="Grpc.AspNetCore.Server" Version="2.23.2" />
