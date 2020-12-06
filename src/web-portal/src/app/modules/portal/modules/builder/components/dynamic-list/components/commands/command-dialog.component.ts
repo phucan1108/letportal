@@ -149,7 +149,8 @@ export class CommandModalComponent implements OnInit {
                 icon: formValues.icon,
                 color: formValues.color,
                 commandPositionType: formValues.commandPositionType,
-                allowRefreshList: formValues.allowRefreshList,
+                //allowRefreshList: formValues.allowRefreshList,
+                allowRefreshList: true, //New changes: always refresh
                 actionCommandOptions: this.actionOptions.get()
             }
         }

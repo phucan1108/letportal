@@ -8,6 +8,7 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { PageService } from 'services/page.service';
 import { App, AppsClient, CompositeControl, CompositeControlsClient } from 'services/portal.service';
 
 @Component({
@@ -30,6 +31,7 @@ export class CompositeBuilderPage implements OnInit {
         private router: Router,
         private compositeClient: CompositeControlsClient,
         private shortcutUtil: ShortcutUtil,
+        private pageService: PageService,
         private logger: NGXLogger
     ) { 
         this.compositeControl = this.activatedRoute.snapshot.data.control
@@ -57,6 +59,7 @@ export class CompositeBuilderPage implements OnInit {
     }
 
     ngOnInit(): void { 
+        this.pageService.init('composite-control-builder').subscribe()
         this.initFormGroup()
     }
 

@@ -86,7 +86,7 @@ namespace LetPortal.Microservices.Server.Repositories.Implements
                 var counter = allRequiredCounters.Count;
                 var startMinute = allRequiredCounters.First().MeansureDate.Minute;
 
-                for (var i = 0; i < allowMinutes.Count; i++)
+                for (var i = 0; i < allowMinutes.Count - 1; i++)
                 {
                     if (allowMinutes[i] <= startMinute && allowMinutes[i + 1] > startMinute)
                     {

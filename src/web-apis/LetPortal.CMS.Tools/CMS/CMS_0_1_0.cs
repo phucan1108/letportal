@@ -41,6 +41,7 @@ namespace LetPortal.CMS.Tools
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb8aad7978a6b0001a0258b");
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb8e9ed4f013c00017fda0d");
             versionContext.DeleteData<LetPortal.Portal.Entities.Pages.Page>("5fb8f0114f013c00017fdae4");
+            versionContext.DeleteData<LetPortal.Portal.Entities.Components.Controls.CompositeControl>("5fcbb5aee19fcf0001a2d90d");
             return System.Threading.Tasks.Task.CompletedTask;
         }
         public Task Upgrade(LetPortal.Core.Versions.IVersionContext versionContext)
@@ -151,7 +152,6 @@ namespace LetPortal.CMS.Tools
     },
             };
             versionContext.InsertData(cmsappApp);
-
             var cmsdbConnection = new LetPortal.Portal.Entities.Databases.DatabaseConnection
             {
                 Id = "5f33c1ddedf7b3de91e106d8",
@@ -162,7 +162,6 @@ namespace LetPortal.CMS.Tools
                 DataSource = "cms",
             };
             versionContext.InsertData(cmsdbConnection);
-
             var cmssiteformStandard = new LetPortal.Portal.Entities.SectionParts.StandardComponent
             {
                 Id = "5f47ede309012d61101e3416",
@@ -178,6 +177,7 @@ namespace LetPortal.CMS.Tools
             Name = "id",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -269,6 +269,7 @@ namespace LetPortal.CMS.Tools
             Name = "name",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -318,6 +319,7 @@ namespace LetPortal.CMS.Tools
             Name = "domains",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -409,6 +411,7 @@ namespace LetPortal.CMS.Tools
             Name = "defaultLocaleId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -500,6 +503,7 @@ namespace LetPortal.CMS.Tools
             Name = "enable",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 4,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -549,6 +553,7 @@ namespace LetPortal.CMS.Tools
             Name = "defaultPathWhenNotFound",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 5,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -598,6 +603,7 @@ namespace LetPortal.CMS.Tools
             Name = "themeId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 7,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -678,6 +684,7 @@ namespace LetPortal.CMS.Tools
             Name = "id",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -781,6 +788,7 @@ namespace LetPortal.CMS.Tools
             Name = "siteId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -859,6 +867,7 @@ namespace LetPortal.CMS.Tools
             Name = "key",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -920,6 +929,7 @@ namespace LetPortal.CMS.Tools
             Name = "configurableValue",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1023,6 +1033,7 @@ namespace LetPortal.CMS.Tools
             Name = "configurableValue",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Email,
             Order = 4,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1140,6 +1151,7 @@ namespace LetPortal.CMS.Tools
             Name = "id",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1243,6 +1255,7 @@ namespace LetPortal.CMS.Tools
             Name = "name",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1304,6 +1317,7 @@ namespace LetPortal.CMS.Tools
             Name = "isRedirected",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1365,6 +1379,7 @@ namespace LetPortal.CMS.Tools
             Name = "nextRedirectPage",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1468,6 +1483,7 @@ namespace LetPortal.CMS.Tools
             Name = "enable",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 4,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1529,6 +1545,7 @@ namespace LetPortal.CMS.Tools
             Name = "pageTemplateId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 6,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1607,6 +1624,7 @@ namespace LetPortal.CMS.Tools
             Name = "chosenPageVersionId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 7,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1685,6 +1703,7 @@ namespace LetPortal.CMS.Tools
             Name = "siteId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 8,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1777,6 +1796,7 @@ namespace LetPortal.CMS.Tools
             Name = "title",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1838,6 +1858,7 @@ namespace LetPortal.CMS.Tools
             Name = "description",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -1899,6 +1920,7 @@ namespace LetPortal.CMS.Tools
             Name = "robots",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2002,6 +2024,7 @@ namespace LetPortal.CMS.Tools
             Name = "allowSiteLinkSearch",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2063,6 +2086,7 @@ namespace LetPortal.CMS.Tools
             Name = "allowGoogleTranslate",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 4,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2124,6 +2148,7 @@ namespace LetPortal.CMS.Tools
             Name = "allowGoogleRead",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 5,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2185,6 +2210,7 @@ namespace LetPortal.CMS.Tools
             Name = "isAdultPage",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 6,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2260,6 +2286,7 @@ namespace LetPortal.CMS.Tools
             Name = "id",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2350,6 +2377,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "name",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2440,6 +2468,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "themeId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2547,6 +2576,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "siteId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2668,6 +2698,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "id",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2771,6 +2802,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "urlPath",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -2903,6 +2935,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "title",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3035,6 +3068,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "description",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3181,6 +3215,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "id",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3271,6 +3306,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "urlPath",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3423,6 +3459,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "screenshotUrl",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Uploader,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3539,6 +3576,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "title",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3671,6 +3709,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "description",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textarea,
             Order = 4,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3809,6 +3848,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "content",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.RichTextEditor,
             Order = 5,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3899,6 +3939,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "showComment",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 8,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -3989,6 +4030,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "allowUserComment",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 9,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4079,6 +4121,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "maximumCommentPerDay",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Number,
             Order = 10,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4169,6 +4212,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "readDuration",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Number,
             Order = 11,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4259,6 +4303,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "blogId",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 13,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4366,6 +4411,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "tags",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 11,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4538,6 +4584,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "name",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4628,6 +4675,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "url",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4759,6 +4807,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "key",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 0,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4891,6 +4940,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "name",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 1,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -4981,6 +5031,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "bindingType",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
             Order = 2,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -5088,6 +5139,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "hide",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Slide,
             Order = 3,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -5178,6 +5230,7 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
             Name = "themePartRef",
             Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
             Order = 4,
+            CompositeControlId = "",
             Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
             {
                 new LetPortal.Portal.Entities.Pages.ShellOption
@@ -8567,6 +8620,454 @@ TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerE
     },
             };
             versionContext.InsertData(cmspostformPage);
+
+            var cmsmediaStandard = new LetPortal.Portal.Entities.Components.Controls.CompositeControl
+            {
+                Id = "5fcbb5aee19fcf0001a2d90d",
+                Name = "cmsmedia",
+                DisplayName = "CMS Media",
+                AppId = "5f23f7d6b8f393672ce21029",
+                Controls = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControl>
+    {
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "mediaType",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
+            Order = 3,
+            CompositeControlId = "",
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Media Type",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "mediaType",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "0",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "multiple",
+                    Value = "false",
+                    Description = "Multiple options can be selected. Default: false",
+                },
+            },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DatasourceOptions
+{
+    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+    DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+    {
+        JsonResource = "[{\"name\":\"Image\",\"value\":0},{\"name\":\"Video\",\"value\":1}]"
+    },
+
+},
+
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please select one option",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "link",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Uploader,
+            Order = 0,
+            CompositeControlId = "",
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Link",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "link",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "allowfileurl",
+                    Value = "false",
+                    Description = "Allow an uploader set downloadable url back to a field after saving instead of file id. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "saveonchange",
+                    Value = "false",
+                    Description = "Allow an uploader upload a file after user changes. Default: false",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please upload one file",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.FileMaximumSize,
+                    IsActive = true,
+                    ValidatorMessage = "File must have size less than {{option}} Mb",
+                    ValidatorOption = "10",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.FileExtensions,
+                    IsActive = true,
+                    ValidatorMessage = "File must have an extension in {{option}}",
+                    ValidatorOption = "jpg;jpeg;png;gif",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "targetLink",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Select,
+            Order = 1,
+            CompositeControlId = "",
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Target Link",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "targetLink",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "multiple",
+                    Value = "false",
+                    Description = "Multiple options can be selected. Default: false",
+                },
+            },
+                DatasourceOptions = new LetPortal.Portal.Entities.Shared.DatasourceOptions
+{
+    Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.StaticResource,
+    DatasourceStaticOptions = new LetPortal.Portal.Entities.Shared.DatasourceStaticOptions
+    {
+        JsonResource = "[{\"name\":\"Blank\",\"value\":\"_blank\"},{\"name\":\"Parent\",\"value\":\"_parent\"},{\"name\":\"S" +
+    "elf\",\"value\":\"_self\"},{\"name\":\"Top\",\"value\":\"_top\"}]"
+    },
+
+},
+
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please select one option",
+                    ValidatorOption = "",
+                },
+            },
+            PageControlEvents = new List<LetPortal.Portal.Entities.Components.Controls.PageControlEvent>
+            {
+            new LetPortal.Portal.Entities.Components.Controls.PageControlEvent
+{
+    EventName = "_change",
+    EventActionType = LetPortal.Portal.Entities.Components.Controls.EventActionType.TriggerEvent,
+EventHttpServiceOptions = new LetPortal.Portal.Entities.Components.Controls.EventHttpServiceOptions
+{
+    HttpServiceUrl = "",
+    HttpMethod = "Get",
+    HttpSuccessCode = "200",
+    JsonBody = "",
+    OutputProjection = "",
+},
+
+EventDatabaseOptions = new LetPortal.Portal.Entities.Components.Controls.EventDatabaseOptions
+{
+    DatabaseConnectionId = "",
+    Query = "",
+    OutputProjection = "",
+},
+
+TriggerEventOptions = new LetPortal.Portal.Entities.Components.Controls.TriggerEventOptions
+{
+}
+
+}
+
+            },
+        },
+        new LetPortal.Portal.Entities.SectionParts.Controls.PageControl
+        {
+            Name = "alt",
+            Type = LetPortal.Portal.Entities.SectionParts.Controls.ControlType.Textbox,
+            Order = 2,
+            CompositeControlId = "",
+            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>
+            {
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "label",
+                    Value = "Alt",
+                    Description = "Label will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "placeholder",
+                    Value = "Enter alt text",
+                    Description = "Placeholder will be displayed when it isn't empty",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "disabled",
+                    Value = "false",
+                    Description = "Disabled is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "hidden",
+                    Value = "false",
+                    Description = "Hidden is an expression without double curly braces. It is two-ways binding and can access params such as queryparams, options, etc. Default: false",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "bindname",
+                    Value = "alt",
+                    Description = "Bind Name is a name which helps to map the data in or out",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "defaultvalue",
+                    Value = "",
+                    Description = "Default value when no value is set",
+                },
+                new LetPortal.Portal.Entities.Pages.ShellOption
+                {
+                    Key = "rendered",
+                    Value = "true",
+                    Description = "Rendered is an expression without double curly braces. Used to indicate the control must be rendered. Default: true",
+                },
+            },
+            Validators = new List<LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator>
+            {
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Required,
+                    IsActive = true,
+                    ValidatorMessage = "Please fill out this field",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MinLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires at least {{option}} characters",
+                    ValidatorOption = "5",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.MaxLength,
+                    IsActive = true,
+                    ValidatorMessage = "This field requires maximum {{option}} characters",
+                    ValidatorOption = "250",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Regex,
+                    IsActive = false,
+                    ValidatorMessage = "This field's format does not match",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Email,
+                    IsActive = false,
+                    ValidatorMessage = "Please input correct email",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.Equal,
+                    IsActive = false,
+                    ValidatorMessage = "This field must be equal {{option}}",
+                    ValidatorOption = "",
+                },
+                new LetPortal.Portal.Entities.SectionParts.Controls.PageControlValidator
+                {
+                    ValidatorType = LetPortal.Portal.Entities.SectionParts.Controls.ValidatorType.EqualTo,
+                    IsActive = false,
+                    ValidatorMessage = "This field doesn't match with {{option}} field",
+                    ValidatorOption = "",
+                },
+            },
+        }
+    },
+            };
+            versionContext.InsertData(cmsmediaStandard);
 
             return System.Threading.Tasks.Task.CompletedTask;
         }

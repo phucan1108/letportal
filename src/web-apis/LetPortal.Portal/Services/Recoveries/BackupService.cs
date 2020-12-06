@@ -33,15 +33,15 @@ namespace LetPortal.Portal.Services.Recoveries
 {
     public class BackupService : IBackupService
     {
-        const string APP_FILE = "apps.json";
-        const string CHART_FILE = "charts.json";
-        const string DATABASE_FILE = "databases.json";
-        const string STANDARD_FILE = "standards.json";
-        const string TREE_FILE = "tree.json";
-        const string ARRAY_FILE = "array.json";
-        const string DYNAMICLIST_FILE = "dynamiclists.json";
-        const string PAGE_FILE = "pages.json";
-        const string COMPOSITE_CONTROL_FILE = "compositecontrols.json";
+        public const string APP_FILE = "apps.json";
+        public const string CHART_FILE = "charts.json";
+        public const string DATABASE_FILE = "databases.json";
+        public const string STANDARD_FILE = "standards.json";
+        public const string TREE_FILE = "tree.json";
+        public const string ARRAY_FILE = "array.json";
+        public const string DYNAMICLIST_FILE = "dynamiclists.json";
+        public const string PAGE_FILE = "pages.json";
+        public const string COMPOSITE_CONTROL_FILE = "compositecontrols.json";
 
         private readonly IAppServiceProvider _appServiceProvider;
 
@@ -63,7 +63,7 @@ namespace LetPortal.Portal.Services.Recoveries
 
         private readonly IOptionsMonitor<BackupOptions> _backupOptions;
 
-        private IServiceLogger<BackupService> _logger;
+        private readonly IServiceLogger<BackupService> _logger;
 
         public BackupService(
             IAppServiceProvider appServiceProvider,

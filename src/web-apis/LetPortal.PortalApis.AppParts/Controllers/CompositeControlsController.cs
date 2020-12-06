@@ -82,5 +82,13 @@ namespace LetPortal.Portal.AppParts.Controllers
             }
             return BadRequest();
         }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.BackEndRoles)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _controlRepository.DeleteAsync(id);
+            return Ok();
+        }
     }
 }

@@ -62,7 +62,7 @@ namespace LetPortal.Portal.Entities.SectionParts
                     var controlType = "LetPortal.Portal.Entities.SectionParts.Controls.ControlType." + Enum.GetName(typeof(ControlType), control.Type);
                     _ = stringBuilder.AppendLine($"            Type = {controlType},");
                     _ = stringBuilder.AppendLine($"            Order = {control.Order},");
-                    _ = stringBuilder.AppendLine($"            CompositeControlId = {control.CompositeControlId},");
+                    _ = stringBuilder.AppendLine($"            CompositeControlId = \"{control.CompositeControlId}\",");
                     // Control Options
                     _ = stringBuilder.AppendLine($"            Options = new List<LetPortal.Portal.Entities.Pages.ShellOption>");
                     _ = stringBuilder.AppendLine($"            {{");
