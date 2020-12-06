@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PageButton } from 'services/portal.service';
 import { StaticResources } from 'portal/resources/static-resources';
 import { Observable, BehaviorSubject } from 'rxjs';
-import * as _ from 'lodash';
+ 
 import { CommandOptionsComponent } from 'portal/shared/button-options/commandoptions.component';
 import { startWith, map } from 'rxjs/operators';
 import { ExtendedPageSection } from 'app/core/models/extended.models';

@@ -1,8 +1,8 @@
-import { ControlEventExecution } from './control.event';
-import { ControlEvent } from '../decorators/event.decorator';
-import { FormControl, FormGroup } from '@angular/forms';
+import { BoundControl } from 'app/core/context/bound-control';
+import { DefaultControlOptions, PageRenderedControl } from 'app/core/models/page.model';
 import { PageService } from 'services/page.service';
-import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
+import { ControlEvent } from '../decorators/event.decorator';
+import { ControlEventExecution } from './control.event';
 
 @ControlEvent({
     name: 'rebound',
@@ -12,10 +12,10 @@ export class ReboundControlEvent implements ControlEventExecution {
     execute(
         control: PageRenderedControl<DefaultControlOptions>,
         pageService: PageService,
-        formControl: FormControl,
+        boundControl: BoundControl,
         defaultValue: any,
         newValue: any) {
         const foundData = pageService.getDataByBindName(control.defaultOptions.bindname)
-        formControl.setValue(foundData)
+        boundControl.getForm().setValue(foundData)
     }
 }

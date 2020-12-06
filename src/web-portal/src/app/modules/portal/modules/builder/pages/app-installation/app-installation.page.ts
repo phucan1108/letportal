@@ -109,7 +109,7 @@ export class AppInstallationPage implements OnInit {
             treeNode['name'] = this.translate.instant('common.standards')
             treeNode['isExisted'] = false
             treeNode['sub'] = []
-            this.unpackModel.standards.forEach(a => {
+            this.unpackModel.standards?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a.name
                 subName['isExisted'] = a.isExisted
@@ -123,7 +123,7 @@ export class AppInstallationPage implements OnInit {
             treeNode['name'] = this.translate.instant('common.dynamicLists')
             treeNode['isExisted'] = false
             treeNode['sub'] = []
-            this.unpackModel.dynamicLists.forEach(a => {
+            this.unpackModel.dynamicLists?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a.name
                 subName['isExisted'] = a.isExisted
@@ -137,7 +137,7 @@ export class AppInstallationPage implements OnInit {
             treeNode['name'] = this.translate.instant('common.charts')
             treeNode['isExisted'] = false
             treeNode['sub'] = []
-            this.unpackModel.charts.forEach(a => {
+            this.unpackModel.charts?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a.name
                 subName['isExisted'] = a.isExisted
@@ -151,7 +151,7 @@ export class AppInstallationPage implements OnInit {
             treeNode['name'] = this.translate.instant('common.pages')
             treeNode['isExisted'] = false
             treeNode['sub'] = []
-            this.unpackModel.pages.forEach(a => {
+            this.unpackModel.pages?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a.name
                 subName['isExisted'] = a.isExisted
@@ -165,7 +165,7 @@ export class AppInstallationPage implements OnInit {
             treeNode['name'] = this.translate.instant('common.locale')
             treeNode['isExisted'] = false
             treeNode['sub'] = []
-            this.unpackModel.locales.forEach(a => {
+            this.unpackModel.locales?.forEach(a => {
                 const subName = new Object()
                 subName['name'] = a.name
                 subName['isExisted'] = a.isExisted

@@ -6,7 +6,7 @@ import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { StaticResources } from 'portal/resources/static-resources';
 import { DynamicListClient, DynamicList, SectionContructionType, StandardComponent, StandardComponentClient, ChartsClient, Chart } from 'services/portal.service';
 import { Observable } from 'rxjs';
-import * as _ from 'lodash';
+ 
 import { FormUtil } from 'app/core/utils/form-util';
 
 @Component({
@@ -22,12 +22,14 @@ export class SectionDialogComponent implements OnInit {
     standards$: Observable<StandardComponent[]>;
     charts$: Observable<Chart[]>;
     arrayStandards$: Observable<StandardComponent[]>;
+    treeStandards$: Observable<StandardComponent[]>
     isEditMode = false;
     availableSectionNames: string[] = []
     _sectionLayouts = StaticResources.sectionLayoutTypes()
     _constructionTypes = StaticResources.constructionTypes()
     standards: StandardComponent[]
     arrayStandards: StandardComponent[]
+    treeStandards: StandardComponent[]
     dynamicLists: DynamicList[]
     charts: Chart[]
     constructionType = SectionContructionType
@@ -50,13 +52,18 @@ export class SectionDialogComponent implements OnInit {
         this.dynamicLists$ = this.dyanmicListsClient.getAll()
         this.standards$ = this.standardsClient.getManys('')
         this.charts$ = this.chartsClient.getMany()     
-        this.arrayStandards$ = this.standardsClient.getArrayManys('')
+        this.arrayStandards$ = this.standardsClient.getArrayStandards('')
+        this.treeStandards$ = this.standardsClient.getTreeStandards('')
         this.standards$.subscribe(standards => {
             this.standards = standards
         })
 
         this.arrayStandards$.subscribe(standards => {
             this.arrayStandards = standards
+        })
+
+        this.treeStandards$.subscribe(trees => {
+            this.treeStandards = trees
         })
 
         this.dynamicLists$.subscribe(dynamicLists => {
@@ -73,7 +80,9 @@ export class SectionDialogComponent implements OnInit {
             name: [this.currentExtendedFormSection.name, [Validators.required, FormUtil.isExist(this.availableSectionNames, this.currentExtendedFormSection.name)]],
             displayName: [this.currentExtendedFormSection.displayName, Validators.required],
             constructionType: [this.currentExtendedFormSection.constructionType, Validators.required],
-            componentId: [this.currentExtendedFormSection.componentId, Validators.required]
+            componentId: [this.currentExtendedFormSection.componentId, Validators.required],
+            hidden: [this.currentExtendedFormSection.hidden, Validators.required],
+            rendered: [this.currentExtendedFormSection.rendered, Validators.required]
         })
     }
 
@@ -102,6 +111,10 @@ export class SectionDialogComponent implements OnInit {
                     const selectedDynamicList = this.dynamicLists.find(a => a.id === newValue)
                     this.sectionForm.get('displayName').setValue(selectedDynamicList.displayName)
                     break
+                case SectionContructionType.Tree:
+                    const selectedTree = this.treeStandards.find(a => a.id === newValue)
+                    this.sectionForm.get('displayName').setValue(selectedTree.displayName)
+                    break
             }
         })
     }
@@ -113,30 +126,38 @@ export class SectionDialogComponent implements OnInit {
             name: formValues.name,
             displayName: formValues.displayName,
             componentId: formValues.componentId,
+            hidden: formValues.hidden,
+            rendered: formValues.rendered,
             constructionType: formValues.constructionType,
             order: this.currentExtendedFormSection.order,
             overrideOptions: this.currentExtendedFormSection.overrideOptions,
             sectionDatasource: this.currentExtendedFormSection.sectionDatasource,
             relatedDynamicList: !!formValues.componentId 
                         ? 
-                        _.find(this.dynamicLists, 
+                        this.dynamicLists.find(
                             dynamicList => dynamicList.id === formValues.componentId) 
                             : this.currentExtendedFormSection.relatedDynamicList,
             relatedStandard: !!formValues.componentId 
                         ?
-                         _.find(this.standards, 
+                        this.standards.find( 
                             standard => standard.id === formValues.componentId) 
                             : this.currentExtendedFormSection.relatedStandard,
             relatedChart: !!formValues.componentId 
                         ? 
-                        _.find(this.charts, 
+                        this.charts.find( 
                             chart => chart.id === formValues.componentId) 
                             : this.currentExtendedFormSection.relatedChart,
             relatedArrayStandard: !!formValues.componentId
                         ? 
-                        _.find(this.arrayStandards,
+                        this.arrayStandards.find(
                             standard => standard.id === formValues.componentId)
                             : this.currentExtendedFormSection.relatedArrayStandard,
+            relatedTreeStandard: !!formValues.componentId
+                        ? 
+                        this.treeStandards.find(
+                            standard => standard.id === formValues.componentId)
+                            : this.currentExtendedFormSection.relatedTreeStandard,
+                            
             relatedButtons: [],
             isLoaded: false,
             isBroken: false

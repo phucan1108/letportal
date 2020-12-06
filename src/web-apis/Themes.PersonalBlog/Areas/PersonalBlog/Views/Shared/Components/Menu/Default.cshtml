@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Themes.PersonalBlog.Areas.PersonalBlog.Models.MenuModel>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Personal Blog</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        @if(Model != null && Model.Any())
+        {
+            <ul class="navbar-nav mr-auto">
+                @{
+                    int i = 0;
+                }
+                @foreach(var menu in Model)
+                {
+
+                    @if(menu.Sub != null && menu.Sub.Any())
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="@(menu.Url)" id="dropdown@(i)"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @menu.Name
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdown@(i)">
+                                @foreach(var subMenu in menu.Sub)
+                                {
+                                    <a class="dropdown-item" href="@(subMenu.Url)">
+                                        @subMenu.Name
+                                    </a>
+                                }
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item active">
+                            <a class="nav-link" href="@(menu.Url)">
+                                @menu.Name
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        }
+    </div>
+</nav>

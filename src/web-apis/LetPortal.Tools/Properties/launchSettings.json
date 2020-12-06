@@ -2,7 +2,7 @@
   "profiles": {
     "LET.Tools.Installation": {
       "commandName": "Project",
-      "commandLineArgs": "portal install"
+      "commandLineArgs": "blog install -c mongodb://localhost:27117/cms"
     }
   }
 }

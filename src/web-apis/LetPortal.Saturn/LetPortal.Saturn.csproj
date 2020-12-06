@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>07b67c9c-57f1-402b-a5ae-636d55d7b899</UserSecretsId>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.9.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LetPortal.Chat.AppParts\LetPortal.Chat.AppParts.csproj" />
+    <ProjectReference Include="..\LetPortal.Chat\LetPortal.Chat.csproj" />
+    <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
+    <ProjectReference Include="..\LetPortal.Identity.AppParts\LetPortal.Identity.AppParts.csproj" />
+    <ProjectReference Include="..\LetPortal.Identity\LetPortal.Identity.csproj" />
+    <ProjectReference Include="..\LetPortal.Microservices.Server\LetPortal.Microservices.Server.csproj" />
+    <ProjectReference Include="..\LetPortal.PortalApis.AppParts\LetPortal.Portal.AppParts.csproj" />
+    <ProjectReference Include="..\LetPortal.Portal\LetPortal.Portal.csproj" />
+    <ProjectReference Include="..\LetPortal.ServiceManagement.AppParts\LetPortal.ServiceManagement.AppParts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Files\Shared\v1.0\appsettings.Docker.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Files\Shared\v1.0\appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+
+</Project>

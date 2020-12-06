@@ -1,19 +1,19 @@
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { CommandButtonInList, ActionType, CommandPositionType } from 'services/portal.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { ArrayUtils } from 'app/core/utils/array-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { Constants } from 'portal/resources/constants';
-import { CommandModalComponent } from './command-dialog.component';
-import * as _ from 'lodash';
-import { NGXLogger } from 'ngx-logger';
-import { StaticResources } from 'portal/resources/static-resources';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Guid } from 'guid-typescript';
-import { ArrayUtils } from 'app/core/utils/array-util';
-import { TranslateService } from '@ngx-translate/core';
+import { NGXLogger } from 'ngx-logger';
+import { Constants } from 'portal/resources/constants';
+import { StaticResources } from 'portal/resources/static-resources';
+import { BehaviorSubject } from 'rxjs';
+import { ActionType, CommandButtonInList, CommandPositionType } from 'services/portal.service';
+import { CommandModalComponent } from './command-dialog.component';
+ 
 
 @Component({
     selector: 'let-command-grid',
@@ -46,11 +46,11 @@ export class CommandGridComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches) {
                 this.isSmallDevice = true
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on command grid', this.isSmallDevice)
             }
             else{
                 this.isSmallDevice = false
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on command grid', this.isSmallDevice)
             }
         });
     }
@@ -69,7 +69,7 @@ export class CommandGridComponent implements OnInit {
         if (this.selection.selected.length === this.commandsInList.length) {
             this.selection.clear();
         } else {
-            this.commandsInList.forEach(row => this.selection.select(row));
+            this.commandsInList?.forEach(row => this.selection.select(row));
         }
     }
 
@@ -83,8 +83,8 @@ export class CommandGridComponent implements OnInit {
                 return;
             }
             for (let i = 0; i < this.selection.selected.length; i++) {
-                this.commandsInList = _.remove(this.commandsInList, (elem) => {
-                    return elem.name == this.selection.selected[i].name
+                this.commandsInList = this.commandsInList.filter((elem) => {
+                    return elem.name !== this.selection.selected[i].name
                 })
             }
             this.refreshCommandTable();
@@ -150,7 +150,7 @@ export class CommandGridComponent implements OnInit {
     }
 
     deleteCommand(deletingCommand: CommandButtonInList) {
-        this.commandsInList = _.filter(this.commandsInList, (elem) => {
+        this.commandsInList = this.commandsInList.filter((elem) => {
             return elem.name !== deletingCommand.name
         })
         this.refreshCommandTable();
@@ -177,7 +177,7 @@ export class CommandGridComponent implements OnInit {
         }
     }
     translateCommandType(commandType: ActionType) {
-        const found = _.find(this._commandTypes, c => c.value === commandType)
+        const found = this._commandTypes.find(c => c.value === commandType)
         return found ? found.name : commandType.toString()
     }
 }

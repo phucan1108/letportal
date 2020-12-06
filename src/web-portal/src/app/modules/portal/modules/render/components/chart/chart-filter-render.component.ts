@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Chart, ChartsClient, FilterType, ChartFilterValue } from 'services/portal.service';
 import { NGXLogger } from 'ngx-logger';
 import { ChartOptions, ExtendedChartFilter } from 'portal/modules/models/chart.extended.model';
-import * as _ from 'lodash';
+ 
 import { PageService } from 'services/page.service';
 import { DateUtils } from 'app/core/utils/date-util';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
@@ -40,7 +40,7 @@ export class ChartFilterRenderComponent implements OnInit {
     ngOnInit() {
         if (this.chart.chartFilters && this.chart.chartFilters.length > 0) {
             const formControls: any = []
-            _.forEach(this.chart.chartFilters, c => {
+            this.chart.chartFilters?.forEach(c => {
                 let tempName = c.name
                 // Note: in mongodb, we allow to have '.' in name, so we need to remove this
                 if(tempName.indexOf('.') > 0){
@@ -171,7 +171,7 @@ export class ChartFilterRenderComponent implements OnInit {
     submit() {
         if (this.formGroup.valid) {
             this.filterValues = []
-            _.forEach(this.chartFilters, filter => {
+            this.chartFilters?.forEach(filter => {
                 this.filterValues.push({
                     filterType: filter.type,
                     isMultiple: filter.isMultiple,

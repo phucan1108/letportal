@@ -1,7 +1,7 @@
 <# This PS file will be using for running all LetPortal services
  Author: An Quang Phuc Le
  Created Date: Feb 17 2020
- Version: 0.0.5
+ Version: 0.9.0
 #>
 
 [CmdletBinding()]
@@ -17,17 +17,5 @@ if((Test-Path $publishFolder) -eq 0){
 
 $Env:ASPNETCORE_ENVIRONMENT = $environment
 
-Set-Location ($publishFolder + "\LetPortal.ServiceManagementApis")
-Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.ServiceManagementApis.dll" -Verb RunAs
-
-Set-Location ($publishFolder + "\LetPortal.PortalApis")
-Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.PortalApis.dll" -Verb RunAs
-
-Set-Location ($publishFolder + "\LetPortal.ChatApis")
-Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.ChatApis.dll" -Verb RunAs
-
-Set-Location ($publishFolder + "\LetPortal.IdentityApis")
-Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.IdentityApis.dll" -Verb RunAs
-
-Set-Location ($publishFolder + "\LetPortal.Gateway")
-Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.Gateway.dll" -Verb RunAs
+Set-Location ($publishFolder + "\LetPortal.Saturn")
+Start-Process -FilePath "dotnet" -ArgumentList "LetPortal.Saturn.dll" -Verb RunAs

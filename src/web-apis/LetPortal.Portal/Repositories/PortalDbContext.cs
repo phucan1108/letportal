@@ -5,6 +5,7 @@ using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Entities.EntitySchemas;
@@ -50,6 +51,8 @@ namespace LetPortal.Portal.Repositories
         public DbSet<LetPortal.Core.Versions.Version> Versions { get; set; }
 
         public DbSet<Backup> Backups { get; set; }
+
+        public DbSet<CompositeControl> CompositeControls { get; set; }
 
         private readonly DatabaseOptions _options;
 
@@ -129,18 +132,13 @@ namespace LetPortal.Portal.Repositories
                 v => ConvertUtil.DeserializeObject<List<PageControl>>(v));
             standardBuilder.Property(a => a.Controls).HasConversion(jsonControlsConverter);
 
-            if (_options.ConnectionType == ConnectionType.MySQL)
-            {
-                standardBuilder.Property(a => a.AllowArrayData).HasColumnType("BIT");
-            }
-
             // Chart
             var chartBuilder = modelBuilder.Entity<Chart>();
             chartBuilder.HasBaseType<Component>();
 
-            var jsonChartDatabaseOptions = new ValueConverter<Entities.Shared.DatabaseOptions, string>(
+            var jsonChartDatabaseOptions = new ValueConverter<Entities.Shared.SharedDatabaseOptions, string>(
                 v => ConvertUtil.SerializeObject(v, true),
-                v => ConvertUtil.DeserializeObject<Entities.Shared.DatabaseOptions>(v));
+                v => ConvertUtil.DeserializeObject<Entities.Shared.SharedDatabaseOptions>(v));
             chartBuilder.Property(a => a.DatabaseOptions).HasConversion(jsonChartDatabaseOptions);
 
             var jsonChartDefinitions = new ValueConverter<ChartDefinitions, string>(
@@ -230,6 +228,10 @@ namespace LetPortal.Portal.Repositories
 
             var localizationContentBuilder = modelBuilder.Entity<LocalizationContent>();
             localizationContentBuilder.HasKey(a => a.Id);
+
+            // Composite control
+            var compositeControlBuilder = modelBuilder.Entity<CompositeControl>();
+            compositeControlBuilder.HasKey(a => a.Id);
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {

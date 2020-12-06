@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LetPortal.Core.Tools;
 
 namespace LetPortal.Tools.Features
 {
@@ -7,12 +8,13 @@ namespace LetPortal.Tools.Features
     {
         public string CommandName => "info";
 
-        public Task RunAsync(ToolsContext context)
+        public Task RunAsync(object context)
         {
-            if (context.LatestVersion != null)
+            var toolsContext = context as ToolsContext;
+            if (toolsContext.LatestVersion != null)
             {
-                Console.WriteLine($"Current Version: {context.LatestVersion.VersionNumber}");
-                Console.WriteLine($"Last Modified Date: {context.LatestVersion.CreatedDate}");
+                Console.WriteLine($"Current Version: {toolsContext.LatestVersion.VersionNumber}");
+                Console.WriteLine($"Last Modified Date: {toolsContext.LatestVersion.CreatedDate}");
             }
             else
             {

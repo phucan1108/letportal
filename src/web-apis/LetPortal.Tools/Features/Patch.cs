@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LetPortal.Core.Tools;
 
 namespace LetPortal.Tools.Features
 {
@@ -7,7 +8,7 @@ namespace LetPortal.Tools.Features
     {
         public string CommandName => "patch";
 
-        public Task RunAsync(ToolsContext context)
+        public Task RunAsync(object context)
         {
             throw new NotImplementedException();
         }

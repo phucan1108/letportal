@@ -35,7 +35,7 @@ export class UploadFileService {
             }
         } = {};
 
-        files.forEach(file => {
+        files?.forEach(file => {
             const formData: FormData = new FormData();
             formData.append('formFile', file, file.name);
             const req = new HttpRequest('POST', url_, formData, {

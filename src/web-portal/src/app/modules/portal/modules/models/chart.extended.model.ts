@@ -1,6 +1,6 @@
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { ShellOption, ChartFilter } from 'services/portal.service';
-import * as _ from 'lodash';
+ 
 import StringUtils from 'app/core/utils/string-util';
 
 export class ChartOptions {
@@ -70,16 +70,16 @@ export class ChartOptions {
     colors: string[]
 
     public static getChartOptions(options: ShellOption[]): ChartOptions {
-        const comparedField = _.find(options, opt => opt.key === 'comparerealtimefield')
-        const datarange = _.find(options, opt => opt.key === 'datarange')
-        const xformatDate = _.find(options, opt => opt.key === 'xformatdate')
+        const comparedField = options.find(opt => opt.key === 'comparerealtimefield')
+        const datarange = options.find(opt => opt.key === 'datarange')
+        const xformatDate = options.find(opt => opt.key === 'xformatdate')
         return {
-            allowrealtime: JSON.parse(_.find(options, opt => opt.key === 'allowrealtime').value),
-            timetorefresh: JSON.parse(_.find(options, opt => opt.key === 'timetorefresh').value),
+            allowrealtime: JSON.parse(options.find(opt => opt.key === 'allowrealtime').value),
+            timetorefresh: JSON.parse(options.find(opt => opt.key === 'timetorefresh').value),
             comparerealtimefield: comparedField.value ? comparedField.value : '',
             datarange: datarange ? datarange.value : '',
             xformatdate: xformatDate ? xformatDate.value : '',
-            colors: JSON.parse(StringUtils.replaceAllOccurences(_.find(options, opt => opt.key === 'colors').value, '\'', '"'))
+            colors: JSON.parse(StringUtils.replaceAllOccurences(options.find(opt => opt.key === 'colors').value, '\'', '"'))
         }
     }
 
@@ -96,7 +96,7 @@ export class ChartOptions {
 
     public static combinedDefaultShellOptions(opts: ExtendedShellOption[]) {
         const defaultOpts = this.getDefaultShellOptionsForChart()
-        opts.forEach(a => {
+        opts?.forEach(a => {
             const found = defaultOpts.find(b => b.key === a.key)
             if (found) {
                 a.description = found.description

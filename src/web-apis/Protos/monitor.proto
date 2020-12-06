@@ -1,0 +1,78 @@
+﻿syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+option csharp_namespace = "LetPortal.Microservices.Monitors";
+
+service MonitorService {
+    rpc Push (stream HealthCheckRequest) returns (HealthCheckResponse);
+    rpc Register (RegisterServiceRequest) returns (RegisterServiceResponse);
+    rpc Ready (ReadyStateRequest) returns (ReadyStateResponse);
+    rpc Stop (StopServiceRequest) returns (StopServiceResponse);
+}
+
+message HealthCheckRequest{
+    string service_id = 1;
+    string service_name = 2;
+    bool healthy = 3;
+    bool database_healthy = 4;
+    string error_stack = 5;
+    google.protobuf.Timestamp beat_date = 6;
+    HttpHealthCheck http_health_check = 7;
+    HardwareInfoHealthCheck hardware_info_health_check = 8;
+}
+
+message HealthCheckResponse{
+    bool succeed = 1;
+}
+
+message HttpHealthCheck {
+    int32 success_requests = 1;
+    int32 failed_requests = 2;
+    int32 total_requests_per_day = 3;
+    double avg_duration = 4;
+}
+
+message HardwareInfoHealthCheck {
+    double cpu_usage = 1;
+    int64 memory_used = 2;
+    bool is_cpu_bottle_neck = 3;
+    bool is_memory_threshold = 4;
+}
+
+message RegisterServiceRequest {
+    string service_name = 1;
+    string version = 2;
+    string ip_address = 3;
+    bool logger_notify_enable = 4;
+    bool health_check_notify_enable = 5;
+    ServiceHardwareInfo service_hardware_info = 6;
+}
+
+message RegisterServiceResponse {
+    bool succeed = 1;
+    string service_id = 2;
+}
+
+message ServiceHardwareInfo {
+    string os = 1;
+    int32 processor_cores = 2;
+    string machine_name = 3;
+    string directory = 4;
+    string environment = 5;
+    int64 memory_amount = 6;
+}
+
+message ReadyStateRequest {
+    string service_id = 1;
+}
+
+message ReadyStateResponse {
+    bool succeed = 1;
+}
+
+message StopServiceRequest {
+    string service_id = 1;
+}
+
+message StopServiceResponse {
+    bool succeed = 1;
+}

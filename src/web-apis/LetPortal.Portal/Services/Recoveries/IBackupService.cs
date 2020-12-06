@@ -24,5 +24,7 @@ namespace LetPortal.Portal.Services.Recoveries
         Task<PreviewRestoreModel> PreviewBackup(string backupId);
 
         Task RestoreBackupPoint(string backupId);
+
+        Task<GenerateCodeResponseModel> CreateCode(GenerateCodeRequestModel model);
     }
 }

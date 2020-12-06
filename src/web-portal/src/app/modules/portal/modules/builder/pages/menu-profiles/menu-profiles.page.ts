@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { Role, RolesClient } from 'services/identity.service';
-import * as _ from 'lodash';
+ 
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { RouterExtService } from 'app/core/ext-service/routerext.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -87,7 +87,7 @@ export class MenuProfilesPage implements OnInit {
 
     onRoleChange() {
         // Refill the claim list based on role
-        this.menuProfile = _.find(this.app.menuProfiles, profile => profile.role === this.selectedRole)
+        this.menuProfile = this.app.menuProfiles.find(profile => profile.role === this.selectedRole)
         if (this.menuProfile) {
 
         }
@@ -132,7 +132,7 @@ export class MenuProfilesPage implements OnInit {
                 : this.checklistSelection.deselect(...descendants);
 
             this.menuProfile.menuIds = []
-            _.forEach(this.checklistSelection.selected, a => {
+            this.checklistSelection.selected?.forEach(a => {
                 this.menuProfile.menuIds.push(a.extMenu.id)
             })
             this.logger.debug('Menu profile', this.menuProfile)
@@ -145,11 +145,11 @@ export class MenuProfilesPage implements OnInit {
     private findParent(menu: ExtendedMenu) {
         const menuPaths = menu.menuPath.split('/')
         let parentMenuTemp: ExtendedMenu = null;
-        _.forEach(menuPaths, path => {
+        menuPaths?.forEach(path => {
             if (path != '~') {
                 const lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
                 parentMenuTemp = {
-                    ..._.find(lookingMenus, subMenu => subMenu.id === path),
+                    ...lookingMenus.find(subMenu => subMenu.id === path),
                     level: 0
                 }
             }

@@ -26,8 +26,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\web-apis\LetPortal.Core\LetPortal.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\web-apis\LetPortal.Microservices.Server\LetPortal.Microservices.Server.csproj" />
     <ProjectReference Include="..\..\..\src\web-apis\LetPortal.Portal\LetPortal.Portal.csproj" />
-    <ProjectReference Include="..\..\..\src\web-apis\LetPortal.ServiceManagement\LetPortal.ServiceManagement.csproj" />
   </ItemGroup>
 
   <ItemGroup>

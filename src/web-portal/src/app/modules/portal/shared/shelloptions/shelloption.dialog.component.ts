@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ShellOption } from 'services/portal.service';
 import { FormUtil } from 'app/core/utils/form-util';
 import { ExtendedShellOption } from './extened.shell.model';
-import * as _ from 'lodash';
+ 
 import { Guid } from 'guid-typescript';
 
 @Component({
@@ -50,7 +50,7 @@ export class ShellOptionDialogComponent implements OnInit {
 
     private getKeys(): string[]{
         const keys: string[] = []
-        _.forEach(this.availableShellOptions, opt => {
+        this.availableShellOptions?.forEach(opt => {
             keys.push(opt.key)
         })
 

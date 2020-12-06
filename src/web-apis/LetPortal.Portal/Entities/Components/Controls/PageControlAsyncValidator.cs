@@ -19,7 +19,7 @@ namespace LetPortal.Portal.Entities.Components.Controls
 
         public string EvaluatedExpression { get; set; }
 
-        public DatabaseOptions DatabaseOptions { get; set; }
+        public SharedDatabaseOptions DatabaseOptions { get; set; }
 
         public HttpServiceOptions HttpServiceOptions { get; set; }
     }

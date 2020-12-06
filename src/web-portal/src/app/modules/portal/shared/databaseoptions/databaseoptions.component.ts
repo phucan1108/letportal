@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { Observable } from 'rxjs';
-import { DatabaseConnection, DatabasesClient, DatabaseOptions } from 'services/portal.service';
+import { DatabaseConnection, DatabasesClient, SharedDatabaseOptions } from 'services/portal.service';
 import { ClipboardService } from 'ngx-clipboard';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
@@ -14,7 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class DatabaseOptionsComponent implements OnInit {
     @Input()
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
 
     @Input()
     options: DatabaseFormOptions
@@ -140,7 +140,7 @@ export class DatabaseOptionsComponent implements OnInit {
         this.clipboardService.copyFromContent(this.hintText)
     }
 
-    get(): DatabaseOptions{
+    get(): SharedDatabaseOptions{
         if(this.databaseOptionsForm.valid){
             const formValues = this.databaseOptionsForm.value
             return {

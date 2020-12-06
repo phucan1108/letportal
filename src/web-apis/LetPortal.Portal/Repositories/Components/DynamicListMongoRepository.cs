@@ -54,9 +54,13 @@ namespace LetPortal.Portal.Repositories.Components
                 var regexFilter = Builders<DynamicList>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var discriminatorFilter = Builders<DynamicList>.Filter.Eq("_t", typeof(DynamicList).Name);
                 var combineFilter = Builders<DynamicList>.Filter.And(discriminatorFilter, regexFilter);
-                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
             }
-            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            else
+            {                   
+                var discriminatorFilter = Builders<DynamicList>.Filter.Eq("_t", typeof(DynamicList).Name);
+                return Task.FromResult(Collection.Find(discriminatorFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
+            }            
         }
 
         private IEnumerable<LanguageKey> GetDynamicListLanguages(DynamicList dynamicList)
@@ -71,10 +75,10 @@ namespace LetPortal.Portal.Repositories.Components
 
             langauges.Add(dynamicListName);
 
-            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumndDefs != null && dynamicList.ColumnsList.ColumndDefs.Count > 0)
+            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumnDefs != null && dynamicList.ColumnsList.ColumnDefs.Count > 0)
             {
 
-                foreach (var column in dynamicList.ColumnsList.ColumndDefs)
+                foreach (var column in dynamicList.ColumnsList.ColumnDefs)
                 {
                     if (!column.IsHidden)
                     {

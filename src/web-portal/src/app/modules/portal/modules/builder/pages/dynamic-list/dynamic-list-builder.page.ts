@@ -10,12 +10,13 @@ import { StaticResources } from 'portal/resources/static-resources';
 import { CommandGridComponent } from '../../components/dynamic-list/components/commands/command-grid.component';
 import { SecurityService } from 'app/core/security/security.service';
 import { NGXLogger } from 'ngx-logger';
-import { PagesClient, DynamicListClient, DynamicList, ShellOption, PortalClaim, CommandButtonInList, ColumndDef, Parameter, DynamicListSourceType, DatabaseOptions, App, AppsClient } from 'services/portal.service';
+import { PagesClient, DynamicListClient, DynamicList, ShellOption, PortalClaim, CommandButtonInList, ColumnDef, Parameter, DynamicListSourceType, SharedDatabaseOptions, App, AppsClient } from 'services/portal.service';
 import { PageService } from 'services/page.service';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ExtendedFilterField, ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
 import { TranslateService } from '@ngx-translate/core';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'dynamic-list-builder',
@@ -30,10 +31,10 @@ export class DynamicListBuilderPage implements OnInit {
     claims: Array<PortalClaim> = []
     filterOptions: Array<ExtendedFilterField> = []
     commandsInList: Array<CommandButtonInList> = [];
-    columnDefs: Array<ColumndDef> = [];
+    columnDefs: Array<ColumnDef> = [];
     heading = 'Dynamic List Builder'
     parameters: Array<Parameter> = []
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
     //#endregion
 
     isSubmitted = false
@@ -101,8 +102,8 @@ export class DynamicListBuilderPage implements OnInit {
 
 
         this.filterOptions = this.edittingDynamicList.filtersList ? this.edittingDynamicList.filtersList.filterFields as Array<ExtendedFilterField> : []
-        this.columnDefs = this.edittingDynamicList.columnsList ? this.edittingDynamicList.columnsList.columndDefs : []
-        this.commandsInList = _.cloneDeep(this.edittingDynamicList.commandsList.commandButtonsInList)
+        this.columnDefs = this.edittingDynamicList.columnsList ? this.edittingDynamicList.columnsList.columnDefs : []
+        this.commandsInList = ObjectUtils.clone(this.edittingDynamicList.commandsList.commandButtonsInList)
         this.shellOptions = this.edittingDynamicList.options as ExtendedShellOption[]
 
         ListOptions.combinedDefaultShellOptions(this.shellOptions)
@@ -167,7 +168,7 @@ export class DynamicListBuilderPage implements OnInit {
                 databaseConnectionOptions: this.databaseOptions
             },
             columnsList: {
-                columndDefs: this.columnDefs
+                columnDefs: this.columnDefs
             },
             commandsList: {
                 commandButtonsInList: this.commandsInList

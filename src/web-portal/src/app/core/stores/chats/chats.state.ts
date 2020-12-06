@@ -420,7 +420,7 @@ export class ChatState {
 
     @Action(ChatActions.LoadedAllAvailableUsers)
     public loadedAllUsers(ctx: StateContext<ChatStateModel>, { event }: ChatActions.LoadedAllAvailableUsers) {
-        event.availableUsers.forEach(u => {
+        event.availableUsers?.forEach(u => {
             u.incomingMessages = 0
         })
         return ctx.setState(

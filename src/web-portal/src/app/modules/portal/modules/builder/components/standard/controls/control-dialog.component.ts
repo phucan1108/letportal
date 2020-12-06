@@ -1,20 +1,18 @@
-import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ExtendedPageControl, ExtendedFormValidator } from 'app/core/models/extended.models';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { StaticResources } from 'portal/resources/static-resources';
-import { BehaviorSubject } from 'rxjs';
-import { ControlsGridComponent } from './controls-grid.component';
-import * as _ from 'lodash';
-import { NGXLogger } from 'ngx-logger';
-import { ValidatorType, ControlType, ShellOption, PageControl, PageControlEvent, EventActionType } from 'services/portal.service';
-import { Constants } from 'portal/resources/constants';
-import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import { DateUtils } from 'app/core/utils/date-util';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { tap } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ExtendedFormValidator, ExtendedPageControl } from 'app/core/models/extended.models';
 import { ControlOptions } from 'app/core/models/page.model';
-import { FormUtil } from 'app/core/utils/form-util';
+import { DateUtils } from 'app/core/utils/date-util';
+import { NGXLogger } from 'ngx-logger';
+import { StaticResources } from 'portal/resources/static-resources';
+import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { CompositeControl, CompositeControlsClient, ControlType, EventActionType, PageControl, PageControlEvent, ValidatorType } from 'services/portal.service';
+import { ControlsGridComponent } from './controls-grid.component';
+ 
 
 @Component({
     selector: 'let-control-dialog',
@@ -34,6 +32,8 @@ export class ControlDialogComponent implements OnInit {
     validators$: BehaviorSubject<Array<ExtendedFormValidator>> = new BehaviorSubject([])
     validators: Array<ExtendedFormValidator> = []
 
+    compositeControls$: Observable<CompositeControl[]>
+
     validatorTypes = StaticResources.formValidatorTypes();
 
     shellOptions: ExtendedShellOption[] = []
@@ -47,7 +47,8 @@ export class ControlDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef,
-        private logger: NGXLogger
+        private logger: NGXLogger,
+        private compositeControlsClient: CompositeControlsClient
     ) {
         this.breakpointObserver.observe(Breakpoints.Handset)
             .pipe(
@@ -72,6 +73,7 @@ export class ControlDialogComponent implements OnInit {
         this.shellOptions = this.generateShellOptions(this.currentExtendedFormControl, true)
         this.shellOptions$.next(this.shellOptions)
         this.currentControlType = this.currentExtendedFormControl.type
+        this.compositeControls$ = this.compositeControlsClient.getAll('')
         this.initialControlForm()
         this.populatedFormValues()
         this.convertValidatorTypeToFormValidator(this.currentExtendedFormControl.type)
@@ -80,11 +82,11 @@ export class ControlDialogComponent implements OnInit {
     private convertValidatorTypeToFormValidator(type: ControlType) {
         const formValidators: Array<ExtendedFormValidator> = []
         const allowedValidatorTypes = this.getValidatorsByControlType(type)
-        _.forEach(this.validatorTypes, validator => {
+        this.validatorTypes?.forEach(validator => {
             if (allowedValidatorTypes.indexOf(validator.value) > -1) {
                 let validatorForm;
                 if (this.isEditMode) {
-                    const foundValidatorForm = _.find(this.currentExtendedFormControl.validators, validatorTemp => validatorTemp.validatorType === validator.value)
+                    const foundValidatorForm = this.currentExtendedFormControl.validators.find(validatorTemp => validatorTemp.validatorType === validator.value)
                     validatorForm = {
                         validatorType: foundValidatorForm ? foundValidatorForm.validatorType : validator.value,
                         displayName: validator.name,
@@ -195,8 +197,17 @@ export class ControlDialogComponent implements OnInit {
     initialControlForm() {
         this.controlForm = this.fb.group({
             key: [this.currentExtendedFormControl.name],
-            name: [this.currentExtendedFormControl.name, [Validators.pattern('^[a-zA-Z]+'), Validators.required, Validators.maxLength(100), FormUtil.isExist(this.names, this.currentExtendedFormControl.name)]],
-            controlType: [this.currentExtendedFormControl.type]
+            name: [
+                this.currentExtendedFormControl.name, 
+                [
+                    Validators.pattern('^[a-zA-Z]+'), 
+                    Validators.required, 
+                    Validators.maxLength(100), 
+                    // 0.9.0: Because we allow 'rendered' mode so that we accept the case is duplicate name
+                    //FormUtil.isExist(this.names, this.currentExtendedFormControl.name)
+                ]],
+            controlType: [this.currentExtendedFormControl.type],
+            compositeControl: [this.currentExtendedFormControl.compositeControlId]
         })
     }
 
@@ -237,7 +248,8 @@ export class ControlDialogComponent implements OnInit {
             value: '',
             isActive: this.currentExtendedFormControl.isActive,
             datasourceOptions: this.currentExtendedFormControl.datasourceOptions,
-            pageControlEvents: this.currentExtendedFormControl.pageControlEvents
+            pageControlEvents: this.currentExtendedFormControl.pageControlEvents,
+            compositeControlId: formValues.controlType === ControlType.Composite ? formValues.compositeControl : null
         }
         return combiningControl
     }
@@ -253,10 +265,15 @@ export class ControlDialogComponent implements OnInit {
         this.logger.debug('current control options', this.shellOptions)
     }
 
+    isCompositeControl(){
+        return this.controlForm.get('controlType').value === ControlType.Composite
+    }
+
     private generateEventsList(control: PageControl): PageControlEvent[] {
         switch (control.type) {
             case ControlType.Label:
             case ControlType.LineBreaker:
+            case ControlType.Composite:
                 return []
             case ControlType.AutoComplete:
                 return [
@@ -325,8 +342,8 @@ export class ControlDialogComponent implements OnInit {
                 break
         }
         if (!!control.options && isOnLoad) {
-            _.forEach(defaultOptions, opt => {
-                const found = _.find(control.options, controlOpt => controlOpt.key === opt.key)
+            defaultOptions?.forEach(opt => {
+                const found = control.options.find(controlOpt => controlOpt.key === opt.key)
                 if (!!found)
                     opt.value = found.value
             })
@@ -353,6 +370,8 @@ export class ControlDialogComponent implements OnInit {
         switch (type) {
             case ControlType.Label:
             case ControlType.LineBreaker:
+                return []
+            case ControlType.Composite:
                 return []
             case ControlType.Textbox:
             case ControlType.Textarea:

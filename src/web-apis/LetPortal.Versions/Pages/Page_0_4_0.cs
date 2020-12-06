@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.Pages;
 
 namespace LetPortal.Versions.Pages

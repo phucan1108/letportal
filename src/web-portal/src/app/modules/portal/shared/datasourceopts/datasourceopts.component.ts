@@ -7,7 +7,7 @@ import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dial
 import { ControlsGridComponent } from 'portal/modules/builder/components/standard/controls/controls-grid.component';
 import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Observable, BehaviorSubject } from 'rxjs';
-import * as _ from 'lodash';
+ 
 
 @Component({
     selector: 'let-datasourceopts',
@@ -133,7 +133,8 @@ export class DatasourceOptionsDialogComponent implements OnInit {
             query: [this.datasourceOption.databaseOptions.query],
             httpServiceUrl: [this.datasourceOption.httpServiceOptions.httpServiceUrl],
             httpMethod: [this.datasourceOption.httpServiceOptions.httpMethod],
-            jsonBody: [this.datasourceOption.httpServiceOptions.jsonBody]
+            jsonBody: [this.datasourceOption.httpServiceOptions.jsonBody],
+            httpOutputProjection: [this.datasourceOption.httpServiceOptions.outputProjection]
         })
 
         if(this.datasourceOption.databaseOptions.entityName){
@@ -158,7 +159,7 @@ export class DatasourceOptionsDialogComponent implements OnInit {
         // Auto-populated the filter options
         this.datasourceForm.get('entityName').valueChanges.subscribe(newValue => {
             if (newValue) {
-                _.forEach(this.shallowedEntitySchemas, (element) => {
+                this.shallowedEntitySchemas?.forEach((element) => {
                     if (element.name === newValue) {
                         const defaultQuery = `{ "$query": { "${element.name}": [ ] } }`
                         this.datasourceForm.get('query').setValue(defaultQuery)
@@ -185,7 +186,7 @@ export class DatasourceOptionsDialogComponent implements OnInit {
                 httpMethod: formValues.httpMethod,
                 httpServiceUrl: formValues.httpServiceUrl,
                 httpSuccessCode: '200',
-                outputProjection: '{}',
+                outputProjection: formValues.httpOutputProjection,
                 jsonBody: formValues.jsonBody
             }
         }

@@ -2,12 +2,12 @@ import { Component, OnInit, ViewChild, Input, Output, EventEmitter, AfterViewIni
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Observable, BehaviorSubject } from 'rxjs';
-import * as _ from 'lodash';
+ 
 import { NGXLogger } from 'ngx-logger';
 import StringUtils from 'app/core/utils/string-util';
 import { MatDialog } from '@angular/material/dialog';
 import { ParamsDialogComponent } from './params-dialog.component';
-import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumndDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, DatabaseOptions, ExecuteParamModel } from 'services/portal.service';
+import { DynamicListClient, DatabasesClient, EntitySchemasClient, DatabaseConnection, EntitySchema, Parameter, ColumnDef, CommandButtonInList, CommandPositionType, FilledParameter, ColumnField, ActionType, SharedDatabaseOptions, ExecuteParamModel } from 'services/portal.service';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { ObjectUtils } from 'app/core/utils/object-util';
@@ -40,7 +40,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     heading: string
 
     @Input()
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
 
     databaseOptionForm: FormGroup
 
@@ -60,7 +60,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
     afterPopulatingParams = new EventEmitter<any>();
 
     @Output()
-    changed = new EventEmitter<DatabaseOptions>();
+    changed = new EventEmitter<SharedDatabaseOptions>();
 
     databaseConnections$: Observable<Array<DatabaseConnection>>;
     databaseConnections: Array<DatabaseConnection>
@@ -165,7 +165,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
         const tempDcurly = StringUtils.getContentByDCurlyBrackets(command.rawQuery)
         const callDialog = !!tempDcurly && tempDcurly.length > 0
         if (callDialog) {
-            _.forEach(tempDcurly, (param) => {
+            tempDcurly?.forEach((param) => {
                 if (this.params.findIndex(a => a.name === param) < 0 && !StringUtils.isAllUpperCase(param))
                     this.params.push({
                         name: param,
@@ -194,9 +194,6 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 
     private extractingQuery(query: string, databaseId: string, params: ExecuteParamModel[]) {
         this.logger.debug('Filled parameters', params)
-        // _.each(params, param => {
-        //     query = query.replace("{{" + param.name + "}}", param.value);
-        // })
         this.databaseClient.extractingQuery(databaseId, {
             content: query,
             parameters: params
@@ -239,7 +236,7 @@ export class DatabaseOptionComponent implements OnInit, AfterViewInit {
             this.logger.debug('Entity changed', newValue)
             if (newValue) {
                 this.afterSelectingEntityName.emit(newValue)
-                _.forEach(this.shallowedEntitySchemas, (element) => {
+                this.shallowedEntitySchemas?.forEach((element) => {
                     if (element.name === newValue) {
                         const elementName =
                             this.selectedDatabaseConnection.databaseConnectionType.toLowerCase() === 'postgresql'

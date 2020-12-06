@@ -1,18 +1,24 @@
 {
+  "RequiredPlugins": [
+    "PersonalBlog.Tools"
+  ],
+  "RequiredPatchs": [
+    "LetPortal.CMS.Tools"
+  ],
   "MongoStoringConnections": {
     "PortalConnection": {
-      "ConnectionString": "mongodb://localhost:27017/letportal",
+      "ConnectionString": "mongodb://mongodb:27017/letportal",
       "DataSource": "letportal",
       "ConnectionType": "MongoDB"
     },
     "IdentityConnection": {
-      "ConnectionString": "mongodb://localhost:27017/letportalidentity",
-      "DataSource": "letportalidentity",
+      "ConnectionString": "mongodb://mongodb:27017/letportal",
+      "DataSource": "letportal",
       "ConnectionType": "MongoDB"
     },
     "ServiceManagementConnection": {
-      "ConnectionString": "mongodb://localhost:27017",
-      "DataSource": "letportalservices",
+      "ConnectionString": "mongodb://mongodb:27017/letportal",
+      "DataSource": "letportal",
       "ConnectionType": "MongoDB"
     }
   },
@@ -23,13 +29,13 @@
       "ConnectionType": "PostgreSQL"
     },
     "IdentityConnection": {
-      "ConnectionString": "Host=localhost;Port=5432;Database=letportalidentity;Username=postgres;Password=123456",
-      "DataSource": "letportalidentity",
+      "ConnectionString": "Host=localhost;Port=5432;Database=letportal;Username=postgres;Password=123456",
+      "DataSource": "letportal",
       "ConnectionType": "PostgreSQL"
     },
     "ServiceManagementConnection": {
-      "ConnectionString": "Host=localhost;Port=5432;Database=letportalservices;Username=postgres;Password=123456",
-      "DataSource": "letportalservices",
+      "ConnectionString": "Host=localhost;Port=5432;Database=letportal;Username=postgres;Password=123456",
+      "DataSource": "letportal",
       "ConnectionType": "PostgreSQL"
     }
   },
@@ -40,13 +46,13 @@
       "ConnectionType": "SQLServer"
     },
     "IdentityConnection": {
-      "ConnectionString": "Server=.;Database=letportalidentity;User Id=sa;Password=123456;",
-      "DataSource": "letportalidentity",
+      "ConnectionString": "Server=.;Database=letportal;User Id=sa;Password=123456;",
+      "DataSource": "letportal",
       "ConnectionType": "SQLServer"
     },
     "ServiceManagementConnection": {
-      "ConnectionString": "Server=.;Database=letportalservices;User Id=sa;Password=123456;",
-      "DataSource": "letportalservices",
+      "ConnectionString": "Server=.;Database=letportal;User Id=sa;Password=123456;",
+      "DataSource": "letportal",
       "ConnectionType": "SQLServer"
     }
   },
@@ -57,14 +63,21 @@
       "ConnectionType": "MySQL"
     },
     "IdentityConnection": {
-      "ConnectionString": "server=localhost;uid=root;pwd=123456;database=letportalidentity",
-      "DataSource": "letportalidentity",
+      "ConnectionString": "server=localhost;uid=root;pwd=123456;database=letportal",
+      "DataSource": "letportal",
       "ConnectionType": "MySQL"
     },
     "ServiceManagementConnection": {
-      "ConnectionString": "server=localhost;uid=root;pwd=123456;database=letportalservices",
-      "DataSource": "letportalservices",
+      "ConnectionString": "server=localhost;uid=root;pwd=123456;database=letportal",
+      "DataSource": "letportal",
       "ConnectionType": "MySQL"
+    }
+  },
+  "CMSToolOptions": {
+    "Database": {
+      "ConnectionString": "mongodb://mongodb:27017/cms",
+      "DataSource": "cms",
+      "ConnectionType": "MongoDB"
     }
   }
 }

@@ -1,22 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NGXLogger } from 'ngx-logger';
-import { LanguageKey, PagesClient, Localization, LocalizationContent, LocalizationClient } from 'services/portal.service';
-import { DataTable } from 'momentum-table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { StaticResources } from 'portal/resources/static-resources';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { startWith, map, tap } from 'rxjs/operators';
-import { Subscription } from 'rxjs'
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { FormUtil } from 'app/core/utils/form-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { PortalValidators } from 'app/core/validators/portal.validators';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { FormUtil } from 'app/core/utils/form-util';
-import { PortalValidators } from 'app/core/validators/portal.validators';
-import { ArrayUtils } from 'app/core/utils/array-util';
+import { DataTable } from 'app/modules/thirdparties/momentum-table/datatable/datatable';
+import { NGXLogger } from 'ngx-logger';
+import { StaticResources } from 'portal/resources/static-resources';
+import { Observable } from 'rxjs';
+import { map, startWith, tap } from 'rxjs/operators';
 import { ExportService } from 'services/export.service';
-import { TranslateService } from '@ngx-translate/core';
 import { PageService } from 'services/page.service';
+import { LanguageKey, Localization, LocalizationClient, LocalizationContent } from 'services/portal.service';
 
 @Component({
     selector: 'let-localization-page',
@@ -130,7 +128,7 @@ export class LocalizationPage implements OnInit {
             tap(
                 allKeys => {
                     if (this.isEditMode) {
-                        allKeys.forEach(text => {
+                        allKeys?.forEach(text => {
                             if (!this.languageKeys.some(a => a.key === text.key)) {
                                 this.languageKeys.push(text)
                             }
@@ -138,7 +136,7 @@ export class LocalizationPage implements OnInit {
 
                         // Remove all non-existed
                         let removedItems: LanguageKey[] = []
-                        this.languageKeys.forEach(lang => {
+                        this.languageKeys?.forEach(lang => {
                             if (!allKeys.some(a => a.key === lang.key)) {
                                 removedItems.push(lang)
                             }
@@ -148,7 +146,7 @@ export class LocalizationPage implements OnInit {
 
                     }
                     else {
-                        allKeys.forEach(text => {
+                        allKeys?.forEach(text => {
                             if (this.hasRestored){
                                 const found = this.languageKeys.find(a => a.key === text.key)
                                 if(found){

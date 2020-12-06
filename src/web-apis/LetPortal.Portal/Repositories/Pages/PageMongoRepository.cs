@@ -105,9 +105,9 @@ namespace LetPortal.Portal.Repositories.Pages
             {
                 var filterBuilder = Builders<Page>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var pages = Collection.Find(filterBuilder).ToList();
-                return Task.FromResult(pages?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }));
+                return Task.FromResult(pages?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }));
             }
-            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
         }
 
         public async Task<List<ShortPortalClaimModel>> GetShortPortalClaimModelsAsync()

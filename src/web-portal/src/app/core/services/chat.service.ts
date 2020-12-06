@@ -1,16 +1,15 @@
-import { Injectable, InjectionToken, Optional, Inject } from '@angular/core';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { BehaviorSubject, Observable, of, throwError, Subject } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpResponseBase, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { mergeMap, tap, catchError } from 'rxjs/operators';
-import { ObjectUtils } from '../utils/object-util';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { Actions, ofActionCompleted, Store } from '@ngxs/store';
+import { ChatOnlineUser, ChatRoom, ChatSession, ExtendedMessage, Message } from 'app/core/models/chat.model';
 import { NGXLogger } from 'ngx-logger';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { AddedNewSession, FetchDoubleChatRoom, FetchedNewDoubleChatRoom, IncomingOfflineUser, IncomingOnlineUser, LoadedAllAvailableUsers, LoadedMoreSession, LoadingMoreSession, ReceivedMessage, ReceivedMessageFromAnotherDevice, TakeUserOnline } from 'stores/chats/chats.actions';
+import { CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
 import { SecurityService } from '../security/security.service';
-import { ChatOnlineUser, ChatSession, ChatRoom, RoomType, Message, ExtendedMessage, DoubleChatRoom } from 'app/core/models/chat.model';
-import { Store, Actions, ofActionDispatched, ofActionCompleted } from '@ngxs/store';
-import { TakeUserOnline, FetchedNewDoubleChatRoom, FetchDoubleChatRoom, ReceivedMessage, LoadingMoreSession, LoadedMoreSession, AddedNewSession, ReceivedMessageFromAnotherDevice, LoadedAllAvailableUsers, IncomingOnlineUser, IncomingOfflineUser, RemoveLastLongActiveChatRoom } from 'stores/chats/chats.actions';
-import { ChatStateModel, CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
-import { on } from 'cluster';
+import { ObjectUtils } from '../utils/object-util';
 export const CHAT_BASE_URL = new InjectionToken<string>('CHAT_BASE_URL');
 @Injectable()
 export class ChatService {
@@ -102,7 +101,7 @@ export class ChatService {
                 res => {
                     const availableUsers = allAvailableUsers
                     if (ObjectUtils.isNotNull(res)) {
-                        res.forEach(a => {
+                        res?.forEach(a => {
                             const found = availableUsers.find(b => b.userName === a.userName)
                             if (ObjectUtils.isNotNull(found)) {
                                 found.isOnline = true
@@ -227,7 +226,7 @@ export class ChatService {
                 chatSession.messages = []
             }
             if (ObjectUtils.isNotNull(previousSession)) {
-                previousSession.messages.forEach(m => {
+                previousSession.messages?.forEach(m => {
                     m.isReceived = m.userName !== this.security.getAuthUser().username
                     m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
                 })
@@ -255,7 +254,7 @@ export class ChatService {
 
     private listenLoadPrevious() {
         this.hubConnection.on('addPreviousSession', (chatSession: ChatSession) => {
-            chatSession.messages.forEach(m => {
+            chatSession.messages?.forEach(m => {
                 m.isReceived = m.userName !== this.security.getAuthUser().username
                 m.hasAttachmentFile = m.attachmentFiles && m.attachmentFiles.length > 0
             })
@@ -312,7 +311,7 @@ export class ChatService {
 
     private createHubConnection(baseUrl: string, jwtToken: string) {
         return new HubConnectionBuilder()
-            .withUrl(baseUrl + '/chathub', { accessTokenFactory: () => jwtToken })
+            .withUrl(baseUrl + '/chathub', { accessTokenFactory: () => jwtToken, transport: HttpTransportType.LongPolling | HttpTransportType.WebSockets })
             .withAutomaticReconnect()
             .build();
     }

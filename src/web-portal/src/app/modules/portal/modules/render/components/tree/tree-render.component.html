@@ -1,0 +1,67 @@
+<mat-card *ngIf="!boundSection.hide">
+    <mat-card-header>
+        <mat-card-title>
+            {{ section.displayName }}
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content *ngIf="readyToRender">
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding matTreeNodePaddingIndent="10">
+                <button mat-icon-button disabled></button>
+                {{node.name}}
+                <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" yPosition="below">
+                    <button mat-menu-item matTooltip="{{ 'common.editText' | translate }}" color="primary" (click)="edit(node)">
+                        {{ 'common.editText' | translate }}
+                    </button>
+                    <button mat-menu-item matTooltip="{{ 'common.addChild' | translate }}" color="primary" *ngIf="node.level < maximumLevel" (click)="addChild(node)">
+                        {{ 'common.addChild' | translate }}
+                    </button>
+                    <button mat-menu-item matTooltip="{{ 'common.addBelow' | translate }}" color="primary" (click)="addBelow(node)">
+                        {{ 'common.addBelow' | translate }}
+                    </button>
+                    <button mat-menu-item matTooltip="{{ 'common.remove' | translate }}" color="warn" (click)="remove(node)">
+                        {{ 'common.remove' | translate }}
+                    </button>
+                </mat-menu>
+            </mat-tree-node>
+            <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding matTreeNodePaddingIndent="10">
+                <button mat-icon-button disabled></button>
+                <mat-spinner [diameter]="20"></mat-spinner>
+            </mat-tree-node>
+            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding matTreeNodePaddingIndent="10">
+                <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.item">
+                    <mat-icon class="mat-icon-rtl-mirror">
+                        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                    </mat-icon>
+                </button>
+                {{node.name}}
+                <button mat-icon-button [matMenuTriggerFor]="menu" color="primary" aria-label="Toggle menu">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" yPosition="below">
+                    <button mat-menu-item matTooltip="{{ 'common.editText' | translate }}" color="primary" (click)="edit(node)">
+                        {{ 'common.editText' | translate }}
+                    </button>
+                    <button mat-menu-item matTooltip="{{ 'common.addChild' | translate }}" color="primary" *ngIf="node.level < maximumLevel" (click)="addChild(node)">
+                        {{ 'common.addChild' | translate }}
+                    </button>
+                    <button mat-menu-item matTooltip="{{ 'common.addBelow' | translate }}" color="primary" (click)="addBelow(node)">
+                        {{ 'common.addBelow' | translate }}
+                    </button>
+                    <button mat-menu-item matTooltip="{{ 'common.remove' | translate }}" color="warn" (click)="remove(node)">
+                        {{ 'common.remove' | translate }}
+                    </button>
+                </mat-menu>
+            </mat-tree-node>
+        </mat-tree>
+        <div class="row">
+            <div class="col-lg-6 offset-lg-2">
+                <action-commands [actionCommands]="section.relatedButtons" [isInSection]="true">
+                </action-commands>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

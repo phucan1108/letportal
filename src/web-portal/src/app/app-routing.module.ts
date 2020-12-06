@@ -9,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: 'portal',
-    loadChildren: () => import('./modules/portal/portalpages.module').then(m => m.PortalPagesModule)
+    loadChildren: () => import('./modules/portal/portalpages.module').then(m => m.PortalPagesModule)    
   },
   {
     path: '404',

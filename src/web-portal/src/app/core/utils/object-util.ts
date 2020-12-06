@@ -56,7 +56,7 @@ export class ObjectUtils {
     }
 
     public static isNotNull(value: any){
-        return typeof value !== 'undefined' && value != null && value != ''
+        return typeof value !== 'undefined' && value !== null && value !== ''
     }
 
     public static clone(source: any): any {
@@ -68,7 +68,7 @@ export class ObjectUtils {
     public static projection(outputProjection: string, data: any){
         const splitted = outputProjection.split(';')
         const fieldMaps: any = []
-        splitted.forEach(field => {
+        splitted?.forEach(field => {
             if (field.indexOf('=') > 0) {
                 const fieldSplitted = field.split('=')
                 fieldMaps.push({
@@ -85,9 +85,9 @@ export class ObjectUtils {
         })
         if (data instanceof Array) {
             const resData = new Array()
-            data.forEach(dt => {
+            data?.forEach(dt => {
                 const obj = new Object()
-                fieldMaps.forEach(map => {
+                fieldMaps?.forEach(map => {
                     const evaluted = Function('data', 'return data.' + map.map)
                     obj[map.key] = evaluted(dt)
                 })
@@ -99,7 +99,7 @@ export class ObjectUtils {
         }
         else {
             const obj = new Object()
-            fieldMaps.forEach(map => {
+            fieldMaps?.forEach(map => {
                 const evaluted = Function('data', 'return data.' + map.map)
                 obj[map.key] = evaluted(data)
             })

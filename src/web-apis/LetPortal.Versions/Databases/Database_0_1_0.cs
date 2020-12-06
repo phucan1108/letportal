@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.Databases;
 
 namespace LetPortal.Versions.Databases
@@ -18,7 +19,7 @@ namespace LetPortal.Versions.Databases
 
         public Task Upgrade(IVersionContext versionContext)
         {
-            var databaseOptions = versionContext.DatabaseOptions as DatabaseOptions;
+            var databaseOptions = versionContext.PortalDatabaseOptions as DatabaseOptions;
             var databaseManagement = new DatabaseConnection
             {
                 Id = Constants.PortalDatabaseId,

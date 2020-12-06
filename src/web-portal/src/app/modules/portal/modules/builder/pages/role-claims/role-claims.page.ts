@@ -8,7 +8,7 @@ import { PagesClient, ClaimValueType, AppsClient } from 'services/portal.service
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { SelectionModel } from '@angular/cdk/collections';
 import { RolePortalClaimModel, RolesClient, PortalClaimModel } from 'services/identity.service';
-import * as _ from 'lodash';
+ 
 import { combineLatest } from 'rxjs';
 import { NGXLogger } from 'ngx-logger';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
@@ -17,6 +17,7 @@ import { SelectablePortalClaim, ClaimNode } from 'portal/modules/models/role-cla
 import { MatDialog } from '@angular/material/dialog';
 import { MatTree, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 import { TranslateService } from '@ngx-translate/core';
+import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-role-claims',
@@ -53,7 +54,7 @@ export class RoleClaimsPage implements OnInit {
             expandable: !!node.subClaims && node.subClaims.length > 0
         }
         if (!!this.selectedRolePortalClaims && this.selectedRolePortalClaims.length > 0 && level > 0) {
-            const found = _.find(this.selectedRolePortalClaims, claim => claim.name === node.parentId)
+            const found = this.selectedRolePortalClaims.find(claim => claim.name === node.parentId)
             if (!!found) {
                 claimNode.checked = found.claims.indexOf(claimNode.id) > -1
                 if (claimNode.checked) {
@@ -117,7 +118,7 @@ export class RoleClaimsPage implements OnInit {
                     claimValueType: ClaimValueType.Array,
                     subClaims: []
                 }
-                _.forEach(pair.v2, app => {
+                pair.v2?.forEach(app => {
                     appClaim.subClaims.push({
                         name: app.id,
                         displayName: app.displayName,
@@ -128,7 +129,7 @@ export class RoleClaimsPage implements OnInit {
                     })
                 })
                 allclaims.push(appClaim)
-                _.forEach(pair.v1, page => {
+                pair.v1?.forEach(page => {
                     const pageClaim: SelectablePortalClaim = {
                         parentId: '',
                         name: page.pageName,
@@ -137,7 +138,7 @@ export class RoleClaimsPage implements OnInit {
                         subClaims: [],
                         claimValueType: ClaimValueType.Array
                     }
-                    _.forEach(page.claims, subClaim => {
+                    page.claims?.forEach(subClaim => {
                         const sub: SelectablePortalClaim = {
                             name: subClaim.name,
                             displayName: subClaim.displayName,
@@ -177,17 +178,17 @@ export class RoleClaimsPage implements OnInit {
 
     initSelectedClaims() {
         const selectedClaims: SelectablePortalClaim[] = []
-        _.forEach(this.allPortalClaims, claim => {
-            const selectedClaim: SelectablePortalClaim = _.cloneDeep(claim)
+        this.allPortalClaims?.forEach( claim => {
+            const selectedClaim: SelectablePortalClaim = ObjectUtils.clone(claim)
             selectedClaim.subClaims = []
             let canAdd = false
-            _.forEach(claim.subClaims, sub => {
-                const found = _.find(this.selectedRolePortalClaims, selected => selected.name === claim.name)
+            claim.subClaims?.forEach(sub => {
+                const found = this.selectedRolePortalClaims.find(selected => selected.name === claim.name)
                 if (found) {
-                    const foundClaim = _.find(found.claims, portalclaim => portalclaim === sub.name)
+                    const foundClaim = found.claims.find(portalclaim => portalclaim === sub.name)
                     if (foundClaim) {
                         canAdd = true
-                        selectedClaim.subClaims.push(_.cloneDeep(sub))
+                        selectedClaim.subClaims.push(ObjectUtils.clone(sub))
                     }
                 }
             })
@@ -201,15 +202,15 @@ export class RoleClaimsPage implements OnInit {
 
     filterSelectedClaims() {
         const selectedClaims: SelectablePortalClaim[] = []
-        _.forEach(this.allPortalClaims, claim => {
-            const selectedClaim: SelectablePortalClaim = _.cloneDeep(claim)
+        this.allPortalClaims?.forEach(claim => {
+            const selectedClaim: SelectablePortalClaim = ObjectUtils.clone(claim)
             selectedClaim.subClaims = []
             let canAdd = false
-            _.forEach(claim.subClaims, sub => {
-                const found = _.find(this.checklistSelection.selected, selected => selected.id === sub.name && selected.parentId === claim.name)
+            claim.subClaims?.forEach( sub => {
+                const found = this.checklistSelection.selected.find(selected => selected.id === sub.name && selected.parentId === claim.name)
                 if (found) {
                     canAdd = true
-                    selectedClaim.subClaims.push(_.cloneDeep(sub))
+                    selectedClaim.subClaims.push(ObjectUtils.clone(sub))
                 }
             })
             if (canAdd) {
@@ -223,7 +224,7 @@ export class RoleClaimsPage implements OnInit {
         let filteredClaimsData: SelectablePortalClaim[] = []
         if(filterText){
             const filtered = this.allPortalClaims.filter(claim => claim.displayName.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
-            filteredClaimsData = _.cloneDeep(filtered)
+            filteredClaimsData = ObjectUtils.clone(filtered)
             this.dataSource.data = filteredClaimsData
         }
         else{
@@ -243,8 +244,8 @@ export class RoleClaimsPage implements OnInit {
     mapToPortalClaimModel() {
         const portalClaimModels: PortalClaimModel[] = []
         this.logger.debug('Selected Claims', this.selectedClaims)
-        _.forEach(this.selectedClaims, claim => {
-            _.forEach(claim.subClaims, sub => {
+        this.selectedClaims?.forEach(claim => {
+            claim.subClaims?.forEach(sub => {
                 portalClaimModels.push({
                     name: claim.name,
                     value: sub.name

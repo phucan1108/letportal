@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import * as _ from 'lodash';
+ 
 import { NGXLogger } from 'ngx-logger';
 
 export class SuggestionHintOptions {
@@ -152,7 +152,7 @@ export class SuggestionHintComponent implements OnInit, AfterViewInit {
     }
 
     getSuggestionList(word: string) {
-        const matchedList = _.filter(this.dataSource, (elem: string) => { return elem.indexOf(word) === 0; })
+        const matchedList = this.dataSource.filter((elem: string) => { return elem.indexOf(word) === 0; })
         this.logger.debug(`Input word ${word}:`, matchedList)
         return matchedList
     }

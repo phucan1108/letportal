@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
@@ -27,7 +28,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         EntityName = "components",
@@ -39,9 +40,9 @@ namespace LetPortal.Versions.Components.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -54,7 +55,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 0
                         },
-                         new ColumndDef
+                         new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -67,7 +68,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "displayName",
                             DisplayName = "Name",
@@ -79,6 +80,27 @@ namespace LetPortal.Versions.Components.DynamicLists
                                 AllowTextSearch = true
                             },
                             Order = 1
+                        },
+                        new ColumnDef
+                        {
+                            Name = "appId",
+                            DisplayName = "App",
+                            DisplayFormat = "{0}",
+                            DatasourceOptions = new DynamicListDatasourceOptions
+                            {
+                                Type = DatasourceControlType.Database,
+                                DatabaseOptions = new SharedDatabaseOptions
+                                {
+                                    DatabaseConnectionId = Constants.PortalDatabaseId,
+                                    Query = "{\"$query\":{\"apps\":[{\"$project\":{\"name\":\"$displayName\",\"value\":\"$_id\"}}]}}"
+                                }
+                            },
+                            SearchOptions = new SearchOptions
+                            {
+                                FieldValueType = FieldValueType.Select,
+                                AllowInAdvancedMode = true
+                            },
+                            Order = 3
                         }
                     }
                 },

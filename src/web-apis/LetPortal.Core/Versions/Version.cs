@@ -14,6 +14,10 @@ namespace LetPortal.Core.Versions
         [Required]
         public string VersionNumber { get; set; }
 
+        [StringLength(100)]
+        [Required]
+        public string AppName { get; set; }
+
         public string AffectiveFiles { get; set; }
 
         public string PatchFiles { get; set; }

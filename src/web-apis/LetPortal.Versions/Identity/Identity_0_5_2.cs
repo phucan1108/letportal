@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
+using LetPortal.Identity;
 using LetPortal.Identity.Entities;
 using LetPortal.Portal.Constants;
 
@@ -25,9 +27,9 @@ namespace LetPortal.Versions.Identity
             var adminRole = new Role
             {
                 Id = "5e6b506e52605e513cd02265",
-                Name = RolesConstants.ADMIN,
-                NormalizedName = RolesConstants.ADMIN.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
-                DisplayName = RolesConstants.ADMIN,
+                Name = Roles.Admin,
+                NormalizedName = Roles.Admin.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
+                DisplayName = Roles.Admin,
                 Claims = new List<BaseClaim>
                 {
                     StandardClaims.AccessCoreApp(Constants.CoreAppId)
@@ -70,9 +72,9 @@ namespace LetPortal.Versions.Identity
             var developerRole = new Role
             {
                 Id = "5e6b506e52605e513cd02266",
-                Name = RolesConstants.DEVELOPER,
-                NormalizedName = RolesConstants.DEVELOPER.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
-                DisplayName = RolesConstants.DEVELOPER,
+                Name = Roles.Developer,
+                NormalizedName = Roles.Developer.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
+                DisplayName = Roles.Developer,
                 Claims = new List<BaseClaim>
                 {
                     StandardClaims.AccessCoreApp(Constants.CoreAppId)
@@ -100,9 +102,9 @@ namespace LetPortal.Versions.Identity
             var userRole = new Role
             {
                 Id = "5e6b506e52605e513cd02267",
-                Name = RolesConstants.USER,
-                NormalizedName = RolesConstants.USER.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
-                DisplayName = RolesConstants.USER,
+                Name = Roles.User,
+                NormalizedName = Roles.User.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
+                DisplayName = Roles.User,
                 Claims = new List<BaseClaim>
                 {
 

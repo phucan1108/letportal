@@ -54,12 +54,12 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var dynamicLists = await _context.DynamicLists.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var dynamicLists = await _context.DynamicLists.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return dynamicLists?.AsEnumerable();
             }
             else
             {
-                return (await _context.DynamicLists.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.DynamicLists.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }
 
@@ -75,10 +75,10 @@ namespace LetPortal.Portal.Repositories.Components
 
             langauges.Add(dynamicListName);
 
-            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumndDefs != null && dynamicList.ColumnsList.ColumndDefs.Count > 0)
+            if (dynamicList.ColumnsList != null && dynamicList.ColumnsList.ColumnDefs != null && dynamicList.ColumnsList.ColumnDefs.Count > 0)
             {
 
-                foreach (var column in dynamicList.ColumnsList.ColumndDefs)
+                foreach (var column in dynamicList.ColumnsList.ColumnDefs)
                 {
                     if (!column.IsHidden)
                     {

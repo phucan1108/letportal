@@ -75,7 +75,7 @@ namespace LetPortal.Portal.Models.DynamicLists
 
         public FilterOperator FilterOperator { get; set; }
 
-        public string FieldValue { get; set; }
+        public dynamic FieldValue { get; set; }
 
         public FieldValueType FilterValueType { get; set; }
 

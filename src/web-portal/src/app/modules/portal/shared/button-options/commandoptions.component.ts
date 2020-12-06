@@ -1,17 +1,16 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ActionCommandOptions, ActionType, DatabaseConnection, DatabasesClient, MapWorkflowInput, ShortPageModel, PagesClient, NotificationOptions, DatabaseExecutionStep, ConfirmationOptions } from 'services/portal.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActionCommandRenderOptions } from './actioncommandrenderoptions';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JsonEditorComponent, JsonEditorOptions } from 'ang-jsoneditor';
-import { StaticResources } from 'portal/resources/static-resources';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { ClipboardService } from 'ngx-clipboard';
-import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import * as _ from 'lodash';
 import { ArrayUtils } from 'app/core/utils/array-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { ClipboardService } from 'ngx-clipboard';
 import { NGXLogger } from 'ngx-logger';
+import { StaticResources } from 'portal/resources/static-resources';
+import { BehaviorSubject } from 'rxjs';
+import { ActionCommandOptions, ActionType, ConfirmationOptions, DatabaseConnection, DatabaseExecutionStep, DatabasesClient, MapWorkflowInput, NotificationOptions, PagesClient, ShortPageModel } from 'services/portal.service';
+import { ActionCommandRenderOptions } from './actioncommandrenderoptions';
+ 
 
 @Component({
     selector: 'let-commandoptions',
@@ -104,8 +103,9 @@ export class CommandOptionsComponent implements OnInit {
             this.confirmationOptions = this.actionCommandOptions.confirmationOptions
         }
         else {
+            
             this.actionCommandOptions.confirmationOptions = {
-                isEnable: true,
+                isEnable: false,
                 confirmationText: 'Are you sure to proceed it?'
             }
             this.confirmationOptions = this.actionCommandOptions.confirmationOptions
@@ -217,8 +217,8 @@ export class CommandOptionsComponent implements OnInit {
         this.httpOptionsForm = this.fb.group({
             httpCallUrl: [this.actionCommandOptions.httpServiceOptions.httpServiceUrl, Validators.required],
             httpCallMethod: [this.actionCommandOptions.httpServiceOptions.httpMethod, Validators.required],
-            httpJsonPayload: [this.actionCommandOptions.httpServiceOptions.jsonBody, Validators.required],
-            httpOutputProjection: [this.actionCommandOptions.httpServiceOptions.outputProjection, Validators.required],
+            httpJsonPayload: [this.actionCommandOptions.httpServiceOptions.jsonBody],
+            httpOutputProjection: [this.actionCommandOptions.httpServiceOptions.outputProjection],
             httpSuccessCode: [this.actionCommandOptions.httpServiceOptions.httpSuccessCode, Validators.required]
         })
     }
@@ -316,7 +316,7 @@ export class CommandOptionsComponent implements OnInit {
 
     private isDbChainsValid(): boolean{
         let isValid = true
-        this.actionCommandOptions.dbExecutionChains.steps.forEach(step => {
+        this.actionCommandOptions.dbExecutionChains.steps?.forEach(step => {
             if(!ObjectUtils.isNotNull(step.databaseConnectionId) || !ObjectUtils.isNotNull(step.executeCommand)){
                 isValid = false
                 return false

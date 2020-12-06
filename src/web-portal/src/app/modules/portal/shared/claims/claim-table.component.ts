@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table'
 import { ClaimDialogComponent } from './claim-dialog.component';
 import { ArrayUtils } from 'app/core/utils/array-util';
-import * as _ from 'lodash';
+ 
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { PortalStandardClaims } from 'app/core/security/portalClaims';
 import { StaticResources } from 'portal/resources/static-resources';
@@ -69,7 +69,7 @@ export class ClaimTableComponent implements OnInit {
     }
 
     deleteClaim(claim: PortalClaim){
-        this.claims = _.filter(this.claims, (elem) => {
+        this.claims = this.claims.filter((elem) => {
             return elem.name !== claim.name
         })
         this.shortcutUtil.toastMessage(this.translate.instant('common.deleteSuccessfully'), ToastType.Success);
@@ -82,7 +82,7 @@ export class ClaimTableComponent implements OnInit {
     }
 
     translateClaimValueType(claimValueType: ClaimValueType){
-        return _.find(StaticResources.claimValueTypes(), claim => claim.value === claimValueType).name
+        return StaticResources.claimValueTypes().find(claim => claim.value === claimValueType).name
     }
 
     isDefaultClaim(claim: PortalClaim){

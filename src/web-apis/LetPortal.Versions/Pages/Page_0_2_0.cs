@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.Shared;
 
@@ -72,7 +73,7 @@ namespace LetPortal.Versions.Pages
                         Options = new Portal.Entities.Shared.DatasourceOptions
                         {
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
-                            DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                            DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                             {
                                 DatabaseConnectionId = Constants.PortalDatabaseId,
                                 EntityName = "databases",
@@ -260,7 +261,7 @@ namespace LetPortal.Versions.Pages
                         Options = new Portal.Entities.Shared.DatasourceOptions
                         {
                             Type = Portal.Entities.Shared.DatasourceControlType.Database,
-                            DatabaseOptions = new Portal.Entities.Shared.DatabaseOptions
+                            DatabaseOptions = new Portal.Entities.Shared.SharedDatabaseOptions
                             {
                                 DatabaseConnectionId = Constants.PortalDatabaseId,
                                 EntityName = "databases",

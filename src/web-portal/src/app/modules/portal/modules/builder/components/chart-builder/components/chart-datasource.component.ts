@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { DatabaseOptions, ChartFilter, ColumnField, FilterType, ExtractingSchemaQueryModel, FilledParameter } from 'services/portal.service';
+import { SharedDatabaseOptions, ChartFilter, ColumnField, FilterType, ExtractingSchemaQueryModel, FilledParameter } from 'services/portal.service';
 import { NGXLogger } from 'ngx-logger';
-import * as _ from 'lodash';
+ 
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -13,7 +13,7 @@ export class ChartDatasourceComponent implements OnInit {
     format = /[ !@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?]/;
 
     @Input()
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
 
     @Input()
     isEditMode: boolean
@@ -25,7 +25,7 @@ export class ChartDatasourceComponent implements OnInit {
     afterPopulatingQuery = new EventEmitter<any>();
 
     @Output()
-    changed = new EventEmitter<DatabaseOptions>()
+    changed = new EventEmitter<SharedDatabaseOptions>()
 
     private chartFilters: ChartFilter[] = []
     private selectedEntityname: string
@@ -58,7 +58,7 @@ export class ChartDatasourceComponent implements OnInit {
         })
     }
 
-    databaseOptChanged($event: DatabaseOptions){
+    databaseOptChanged($event: SharedDatabaseOptions){
         this.changed.emit($event)
     }
 
@@ -73,7 +73,7 @@ export class ChartDatasourceComponent implements OnInit {
     populateChartFilters(columnFields: ColumnField[]): Array<ChartFilter> {
         const chartFilters = new Array<ChartFilter>();
 
-        _.forEach(columnFields, (element) => {
+        columnFields?.forEach((element) => {
             // By default, we need to remove all fields that contain id or special char
             const fieldName = element.name.toLowerCase()
             if ((fieldName === 'id' || fieldName === '_id')

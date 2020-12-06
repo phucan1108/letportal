@@ -51,8 +51,8 @@
                 <mat-form-field class="field-full-width">
                     <mat-select placeholder="{{ 'common.pickOneApp' | translate }}"
                         formControlName="app">
-                        <mat-option *ngFor="let app of apps$ | async" [value]="app.id">
-                            {{ app.displayName }}
+                        <mat-option *ngFor="let elemApp of apps$ | async" [value]="elemApp.id">
+                            {{ elemApp.displayName }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

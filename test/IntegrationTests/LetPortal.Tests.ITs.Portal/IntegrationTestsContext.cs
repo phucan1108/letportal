@@ -1,12 +1,12 @@
 ﻿using LetPortal.Core.Extensions;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
+using LetPortal.Microservices.Server.Entities;
+using LetPortal.Microservices.Server.Repositories;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Repositories;
-using LetPortal.ServiceManagement.Entities;
-using LetPortal.ServiceManagement.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
