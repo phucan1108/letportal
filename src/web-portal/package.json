@@ -45,7 +45,7 @@
     "file-saver": "^2.0.2",
     "guid-typescript": "^1.0.9",
     "hammerjs": "^2.0.8",
-    "highlight.js": "^9.15.10",
+    "highlight.js": "^10.4.1",
     "jquery": "^3.5.0",
     "jsoneditor": "^5.19.0",
     "jwt-decode": "2.2.0",
