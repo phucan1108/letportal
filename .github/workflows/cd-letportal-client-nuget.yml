@@ -18,7 +18,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Pack a LetPortal.Core
+    - name: Pack a LetPortal.Microservices.Client
       run: dotnet pack --configuration Release --output nupkgs
       working-directory: src/web-apis/LetPortal.Microservices.Client
     - name: Publish NuGet
