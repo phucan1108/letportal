@@ -25,7 +25,7 @@ jobs:
       with:
         node-version: '12.x'
     - name: Build with dotnet
-      run: dotnet build
+      run: dotnet build LetPortal.sln
       working-directory: ./src/web-apis
     - name: Install npm packages
       run: npm install
