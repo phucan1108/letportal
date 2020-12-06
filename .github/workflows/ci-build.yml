@@ -1,5 +1,6 @@
 name: LET Portal Build
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
     paths: 

@@ -1,6 +1,7 @@
 name: Publish LetPortal.Microservices.Server Lib
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
     paths:
