@@ -13,4 +13,5 @@ export interface SelectableBackupNode extends ShortEntityModel{
     allowSelected: boolean
     subShortModels: SelectableBackupNode[],
     parentId: string
+    checked: boolean
 }

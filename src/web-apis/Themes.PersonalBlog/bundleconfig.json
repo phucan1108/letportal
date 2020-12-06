@@ -1,0 +1,30 @@
+[
+  {
+    "outputFileName": "wwwroot/css/site.css",
+    "inputFiles": [
+      "wwwroot/css/bootstrap.min.css",
+      "wwwroot/css/blog.css",
+      "wwwroot/css/carousel.css",
+      "wwwroot/css/product.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "commentMode": "none"
+    },
+    "includeInProject": true
+  },
+  {
+    "outputFileName": "wwwroot/js/site.js",
+    "inputFiles": [
+      "wwwroot/js/vendor/jquery-1.12.4.min.js",
+      "wwwroot/js/vendor/popper.min.js",
+      "wwwroot/js/bootstrap.min.js",
+      "wwwroot/js/vendor/holder.min.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "commentMode": "none"
+    },
+    "includeInProject": true
+  }
+]

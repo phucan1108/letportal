@@ -43,6 +43,10 @@ namespace LetPortal.Core.Monitors
                 var totalMsPassed = (endTime - startTime).TotalMilliseconds;
                 var cpuUsageTotal = cpuUsedMs / (Environment.ProcessorCount * totalMsPassed);
                 requestMonitor.CpuUsage = cpuUsageTotal * 100;
+                if(requestMonitor.CpuUsage > 100)
+                {
+                    requestMonitor.CpuUsage = 100;
+                }
                 requestMonitor.StatusCode = httpContext.Response.StatusCode;
                 requestMonitor.MemoryUsed = Process.GetCurrentProcess().WorkingSet64 / 1024;
                 monitorHealthCheck.AddRequestMonitor(requestMonitor);

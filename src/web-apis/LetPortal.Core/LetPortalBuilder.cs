@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LetPortal.Core
 {
-    class LetPortalBuilder : ILetPortalBuilder
+    public class LetPortalBuilder : ILetPortalBuilder
     {
         public IServiceCollection Services { get; }
 
@@ -29,7 +29,6 @@ namespace LetPortal.Core
             Configuration = configuration;
             LetPortalOptions = letPortalOptions;
             CorsOptions = corsOptions;
-
         }
 
         public void SetConnectionType(ConnectionType connectionType)

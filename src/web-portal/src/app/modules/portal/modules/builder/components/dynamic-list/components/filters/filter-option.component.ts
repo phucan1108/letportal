@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FilterField, FieldValueType } from 'services/portal.service';
-import { MatDialog } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { NGXLogger } from 'ngx-logger';
 import { ExtendedFilterField } from 'portal/modules/models/dynamiclist.extended.model';
+import { FieldValueType, FilterField } from 'services/portal.service';
 
 @Component({
     selector: 'let-filter-option',
@@ -40,11 +40,11 @@ export class FilterOptionComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches) {
                 this.isSmallDevice = true
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on filter option of list', this.isSmallDevice)
             }
             else{
                 this.isSmallDevice = false
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on filter option of list', this.isSmallDevice)
             }
         });
     }

@@ -7,6 +7,7 @@ using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.SectionParts.Controls;
 using LetPortal.Portal.Entities.Shared;
+using LetPortal.Portal.Extensions;
 using LetPortal.Portal.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,33 +60,7 @@ namespace LetPortal.Portal.Repositories.Components
             // Remove some security risks
             foreach (var control in standard.Controls)
             {
-                if (control.AsyncValidators != null && control.AsyncValidators.Count > 0)
-                {
-                    foreach (var validator in control.AsyncValidators)
-                    {
-                        if (validator.AsyncValidatorOptions.ValidatorType == Entities.Components.Controls.AsyncValidatorType.DatabaseValidator)
-                        {
-                            validator.AsyncValidatorOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(validator.AsyncValidatorOptions.DatabaseOptions.Query, true));
-                        }
-                    }
-                }
-
-                if (control.Type == Entities.SectionParts.Controls.ControlType.Select
-                    || control.Type == Entities.SectionParts.Controls.ControlType.AutoComplete)
-                {
-                    if (control.DatasourceOptions.Type == Entities.Shared.DatasourceControlType.Database)
-                    {
-                        control.DatasourceOptions.DatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(control.DatasourceOptions.DatabaseOptions.Query, true));
-                    }
-                }
-
-                foreach (var controlEvent in control.PageControlEvents)
-                {
-                    if (controlEvent.EventActionType == Entities.Components.Controls.EventActionType.QueryDatabase)
-                    {
-                        controlEvent.EventDatabaseOptions.Query = string.Join(';', StringUtil.GetAllDoubleCurlyBraces(controlEvent.EventDatabaseOptions.Query, true));
-                    }
-                }
+                control.HideSensitive();
             }
 
             return standard;
@@ -95,12 +70,12 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.AllowArrayData == true).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Array).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return standards?.AsEnumerable();
             }
             else
             {
-                return (await _context.StandardComponents.Where(b => b.AllowArrayData == true).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Array).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }
 
@@ -108,12 +83,25 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.AllowArrayData == false).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Standard).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return standards?.AsEnumerable();
             }
             else
             {
-                return (await _context.StandardComponents.Where(b => b.AllowArrayData == false).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Standard).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
+            }
+        }
+
+        public async Task<IEnumerable<ShortEntityModel>> GetShortTreeStandards(string keyWord = null)
+        {
+            if (!string.IsNullOrEmpty(keyWord))
+            {
+                var standards = await _context.StandardComponents.Where(a => a.DisplayName.Contains(keyWord) && a.Type == StandardType.Tree).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
+                return standards?.AsEnumerable();
+            }
+            else
+            {
+                return (await _context.StandardComponents.Where(b => b.Type == StandardType.Tree).Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }
 

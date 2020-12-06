@@ -5,7 +5,7 @@ import { SessionService } from 'services/session.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { UserSelectAppAction } from 'stores/apps/app.action';
-import * as _ from 'lodash';
+ 
 import { mergeMap, tap } from 'rxjs/operators';
 import { MatProgressButtonOptions } from 'mat-progress-buttons';
 import { SecurityService } from 'app/core/security/security.service';
@@ -55,7 +55,7 @@ export class AppDashboardComponent implements OnInit {
                             mergeMap(
                                 apps => {
                                     const loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
-                                    _.forEach(apps, app => {
+                                    apps?.forEach(app => {
                                         loadingApps.push({
                                             app,
                                             loading: false,
@@ -104,7 +104,7 @@ export class AppDashboardComponent implements OnInit {
         let ids = ''
 
         const apps = user.claims.find(a => a.name === 'apps')
-        apps.claims.forEach(element => {
+        apps.claims?.forEach(element => {
             if (apps.claims.indexOf(element) === apps.claims.length - 1) {
                 ids += element
             }

@@ -31,6 +31,8 @@ namespace LetPortal.Core.Persistences
 
         Task<T> GetOneAsync(string id);
 
+        Task<T> FindAsync(Expression<Func<T, bool>> expression);
+
         Task AddBulkAsync(IEnumerable<T> entities);
 
         Task DeleteBulkAsync(IEnumerable<string> ids);

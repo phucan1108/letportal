@@ -1,11 +1,9 @@
-import { ListIterateeCustom } from 'lodash';
-import * as _ from 'lodash';
 import { ObjectUtils } from './object-util';
 
 
 export class ArrayUtils {
-    public static updateOneItem<T>(arrays: Array<T>, updatingItem: T, predicate?: ListIterateeCustom<T, boolean>): Array<T> {
-        const removingItemIndex = _.findIndex(arrays, predicate)
+    public static updateOneItem<T>(arrays: Array<T>, updatingItem: T, predicate?: (value: T, index: number, obj: T[]) => unknown): Array<T> {
+        const removingItemIndex = arrays.findIndex(predicate)
         arrays.splice(removingItemIndex, 1, updatingItem)
         return arrays
     }
@@ -15,15 +13,24 @@ export class ArrayUtils {
         return arrays
     }
 
-    public static removeOneItem<T>(arrays: Array<T>, predicate?: ListIterateeCustom<T, boolean>): Array<T> {
-        const removingItemIndex = _.findIndex(arrays, predicate)
+    public static insertAtIndex<T>(arrays: Array<T>, insertingItem: T, index: number){
+        if(arrays.length < index){
+            arrays.push(insertingItem)
+        }
+        else if(arrays.length >= index){
+            arrays.splice(index, 0, insertingItem)
+        }        
+    }
+
+    public static removeOneItem<T>(arrays: Array<T>, predicate?:  (value: T, index: number, obj: T[]) => unknown): Array<T> {
+        const removingItemIndex = arrays.findIndex(predicate)
         arrays.splice(removingItemIndex, 1)
         return arrays
     }
 
     public static swapTwoItems<T>(arrays: Array<T>, first: number, second: number, identifierField: string = 'id', sortField: string = 'order'): Array<T> {
         let tempIdField = '';
-        _.forEach(arrays, elem => {
+        arrays?.forEach(elem => {
             if (elem[sortField] === first) {
                 elem[sortField] = second
                 tempIdField = elem[identifierField]
@@ -34,14 +41,14 @@ export class ArrayUtils {
             }
         })
 
-        return _.sortBy<T>(arrays, [function (elem) { return elem[sortField] }])
+        return arrays.sort(elem => { return elem[sortField] })
     }
 
     public static appendItemsDistinct<T>(arrays: Array<T>, appendItems: Array<T>, identifyField: string = 'id'): Array<T> {
         const temps: Array<any> = []
-        _.forEach(appendItems, item => {
+        appendItems?.forEach(item => {
             let notDuplicate = true
-            _.forEach(arrays, element => {
+            arrays?.forEach(element => {
                 if(ObjectUtils.isObject(element)){
                     if (element[identifyField] === item[identifyField]) {
                         temps.push({
@@ -68,7 +75,7 @@ export class ArrayUtils {
             }
         })
 
-        _.forEach(temps, duplicate => {
+        temps?.forEach(duplicate => {
             arrays = this.updateOneItem(arrays, duplicate.update, elem => elem[identifyField] === duplicate.key)
         })
 
@@ -78,7 +85,7 @@ export class ArrayUtils {
     public static sliceOneProp(arrays: Array<any>, propName: string): Array<any> {
         const reducedArrays: Array<any> = []
 
-        _.forEach(arrays, elem => {
+        arrays?.forEach(elem => {
             reducedArrays.push(elem[propName])
         })
 

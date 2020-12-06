@@ -1,13 +1,11 @@
-import { Component, OnInit, Inject, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PageButtonGridComponent } from './page-button-grid.component';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PageButton, Route } from 'services/portal.service';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { Guid } from 'guid-typescript';
-import { PageRouteComponent } from './page-route.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ArrayUtils } from 'app/core/utils/array-util';
-import { ObjectUtils } from 'app/core/utils/object-util';
+import { BehaviorSubject } from 'rxjs';
+import { PageButton, Route } from 'services/portal.service';
+import { PageButtonGridComponent } from './page-button-grid.component';
+import { PageRouteComponent } from './page-route.component';
 
 @Component({
     selector: 'let-page-button-route',
@@ -37,8 +35,8 @@ export class PageButtonRouteDialogComponent implements OnInit {
 
     ngOnInit(): void {
         this.currentCommand = this.data.command
-        this.routes = this.currentCommand.buttonOptions.routeOptions.routes
-        this.isEnable = this.currentCommand.buttonOptions.routeOptions.isEnable
+        this.routes = this.currentCommand.buttonOptions.routeOptions?.routes
+        this.isEnable = this.currentCommand.buttonOptions.routeOptions?.isEnable
         if (!this.routes) {
             this.routes = []
         }

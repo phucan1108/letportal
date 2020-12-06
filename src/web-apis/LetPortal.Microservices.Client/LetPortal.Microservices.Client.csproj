@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>0.9.0</Version>
+    <Company>LetPortal</Company>
+    <Product>LetPortal</Product>
+    <Authors>An Quang Phuc Le</Authors>
+    <Description>LETPortal is a web platform to build quickly application form, grid data, data list, chart, report, users management. The project is open-source project. There are no fee charged to use or modify.</Description>
+    <Copyright>An Quang Phuc Le</Copyright>
+    <PackageProjectUrl>https://letportal.app</PackageProjectUrl>
+    <PackageTags>Web Portal; .NET Core; 3.1; LET Portal;</PackageTags>
+    <IsPackable>true</IsPackable>
+    <RepositoryUrl>https://github.com/phucan1108/letportal</RepositoryUrl>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.9.1" />
+    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.23.2" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.23.2" />
+    <PackageReference Include="Grpc.Tools" Version="2.23.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Polly" Version="7.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\Protos\configuration.proto" GrpcServices="Client">
+      <Link>Protos\configuration.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\Protos\logcollector.proto" GrpcServices="Client">
+      <Link>Protos\logcollector.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\Protos\monitor.proto" GrpcServices="Client">
+      <Link>Protos\monitor.proto</Link>
+    </Protobuf>
+  </ItemGroup>
+
+</Project>

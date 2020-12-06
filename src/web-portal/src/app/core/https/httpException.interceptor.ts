@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { SessionService } from 'services/session.service';
-import * as _ from 'lodash';
+ 
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';

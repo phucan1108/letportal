@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico in the root directory -->
+    <link href="~/logo.ico" type="img/x-icon" rel="shortcut icon">
+    <!-- All css files are included here. -->
+    <link rel="stylesheet" href="~/_content/Themes.PersonalBlog/css/site.min.css" asp-append-version="true" async />
+    <!-- Modernizr JS -->
+    <script src="~/_content/Themes.PersonalBlog/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+    <header>
+        @await Component.InvokeAsync("Menu") 
+    </header>
+    <main role="main">       
+        @RenderBody()
+
+        @await Component.InvokeAsync("Footer")
+    </main><!-- /.container -->
+    <!-- All jquery file included here -->
+    <script src="~/_content/Themes.PersonalBlog/js/site.min.js" asp-append-version="true" async></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
+using LetPortal.Portal.Entities.Components.Controls;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.SectionParts;
@@ -10,6 +11,7 @@ using LetPortal.Portal.Models.Files;
 using LetPortal.Portal.Options.Recoveries;
 using LetPortal.Portal.Providers.Apps;
 using LetPortal.Portal.Providers.Components;
+using LetPortal.Portal.Providers.CompositeControls;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.Files;
 using LetPortal.Portal.Providers.Pages;
@@ -300,6 +302,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
                     MIMEType = "application/zip"
                 }));
 
+            Mock<ICompositeControlServiceProvider> mockCompositeControlProvider = new Mock<ICompositeControlServiceProvider>();
+            mockCompositeControlProvider
+                .Setup(a => a.GetByIds(It.IsAny<IEnumerable<string>>()))
+                .Returns(Task.FromResult<IEnumerable<CompositeControl>>(null));
+
             IOptionsMonitor<BackupOptions> backupOptionsMock = Mock.Of<IOptionsMonitor<BackupOptions>>(_ => _.CurrentValue == options);
 
             BackupService backupService = new BackupService(
@@ -311,7 +318,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 mockPageProvider.Object,
                 mockFileProvider.Object,
                 backupRepository,
-                backupOptionsMock);
+                mockCompositeControlProvider.Object,
+                backupOptionsMock,
+                new FakeServiceLogger<BackupService>());
 
             return backupService;
         }
@@ -370,6 +379,11 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             IOptionsMonitor<BackupOptions> backupOptionsMock = Mock.Of<IOptionsMonitor<BackupOptions>>(_ => _.CurrentValue == options);
 
+            Mock<ICompositeControlServiceProvider> mockCompositeControlProvider = new Mock<ICompositeControlServiceProvider>();
+            mockCompositeControlProvider
+                .Setup(a => a.GetByIds(It.IsAny<IEnumerable<string>>()))
+                .Returns(Task.FromResult<IEnumerable<CompositeControl>>(null));
+
             BackupService backupService = new BackupService(
                 mockAppProvider.Object,
                 mockStandardProvider.Object,
@@ -379,7 +393,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 mockPageProvider.Object,
                 mockFileProvider.Object,
                 backupRepository,
-                backupOptionsMock);
+                mockCompositeControlProvider.Object,
+                backupOptionsMock,
+                new FakeServiceLogger<BackupService>());
 
             databaserProvider.Dispose();
 

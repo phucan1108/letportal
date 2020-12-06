@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { ExtendedPageSection, ExtendedPageControl, ExtendedStandardComponent } from 'app/core/models/extended.models';
 import { FormGroup } from '@angular/forms';
-import * as _ from 'lodash';
+ 
 import { MatDialog } from '@angular/material/dialog';
 import { SectionDialogComponent } from './section-dialog.component';
 import { Guid } from 'guid-typescript';
@@ -60,10 +60,10 @@ export class BuilderDnDComponent implements OnInit {
                                 const tempEdit = result.processPage.builder.sections as Array<ExtendedPageSection>
 
                                 this.pageSections = []
-                                _.forEach(tempEdit, (section: ExtendedPageSection) => {
+                                tempEdit?.forEach((section: ExtendedPageSection) => {
                                     this.pageSections.push(ObjectUtils.clone(section))
                                 })
-                                _.forEach(this.pageSections, (section: ExtendedPageSection) => {
+                                this.pageSections?.forEach((section: ExtendedPageSection) => {
                                     if (!section.sectionDatasource) {
                                         section.sectionDatasource = {
                                             datasourceBindName: 'data'
@@ -88,6 +88,19 @@ export class BuilderDnDComponent implements OnInit {
                                                 tap(
                                                     standard => {
                                                         section.relatedArrayStandard = standard
+                                                    },
+                                                    err => {
+                                                        this.shortcutUtil.toastMessage(this.translate.instant('pageBuilder.builderDnd.messages.sectionBroken', { sectionName: section.displayName }), ToastType.Error)
+                                                        section.isBroken = true
+                                                    }
+                                                )
+                                            ).subscribe()
+                                            break
+                                        case SectionContructionType.Tree:
+                                            this.standardsClient.getOne(section.componentId).pipe(
+                                                tap(
+                                                    standard => {
+                                                        section.relatedTreeStandard = standard
                                                     },
                                                     err => {
                                                         this.shortcutUtil.toastMessage(this.translate.instant('pageBuilder.builderDnd.messages.sectionBroken', { sectionName: section.displayName }), ToastType.Error)
@@ -132,7 +145,7 @@ export class BuilderDnDComponent implements OnInit {
                             const temp = result.processDynamicForm.formBuilder.formSections as Array<ExtendedPageSection>
 
                             this.pageSections = []
-                            _.forEach(temp, (section: ExtendedPageSection) => {
+                            temp?.forEach((section: ExtendedPageSection) => {
 
                                 this.pageSections.push({
                                     ...section
@@ -179,6 +192,8 @@ export class BuilderDnDComponent implements OnInit {
             constructionType: SectionContructionType.Standard,
             componentId: '',
             overrideOptions: [],
+            hidden: 'false',
+            rendered: 'true',
             order: this.pageSections ? this.pageSections.length : 0,
             sectionDatasource: {
                 datasourceBindName: 'data'
@@ -187,6 +202,7 @@ export class BuilderDnDComponent implements OnInit {
             relatedDynamicList: null,
             relatedChart: null,
             relatedArrayStandard: null,
+            relatedTreeStandard: null,
             relatedButtons: [],
             isLoaded: false,
             isBroken: false
@@ -220,12 +236,15 @@ export class BuilderDnDComponent implements OnInit {
                 sectionNames: availableSectionNames
             }
          });
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result:ExtendedPageSection) => {
             if (result) {
-                _.forEach(this.pageSections, (section) => {
+                this.pageSections?.forEach((section) => {
                     if (section.id === result.id) {
                         section.name = result.name
                         section.displayName = result.displayName
+                        section.hidden = result.hidden
+                        section.rendered = result.rendered
+                        section.constructionType = result.constructionType
                     }
                 })
                 this.refreshTable()
@@ -236,7 +255,7 @@ export class BuilderDnDComponent implements OnInit {
     dropSection($event) {
         let droppedSectionId = '';
 
-        _.forEach(this.pageSections, section => {
+        this.pageSections?.forEach(section => {
             if (section.order === $event.previousIndex) {
                 section.order = $event.currentIndex
                 droppedSectionId = section.id
@@ -247,9 +266,8 @@ export class BuilderDnDComponent implements OnInit {
             }
         })
         this.logger.debug('current order before', this.pageSections)
-        this.pageSections = _.sortBy(this.pageSections, [function (section: ExtendedPageSection) { return section.order }])
-        this.logger.debug('current order', this.pageSections)
-        // [this.formSections[$event.previousIndex], this.formSections[$event.currentIndex]] = [this.formSections[$event.currentIndex], this.formSections[$event.previousIndex]] ;
+        this.pageSections = this.pageSections.sort(section => section.order)
+        this.logger.debug('current order', this.pageSections)        
         this.refreshTable()
     }
 
@@ -271,11 +289,11 @@ export class BuilderDnDComponent implements OnInit {
     generateAvailableEvents(): Array<string> {
         const events: Array<string> = []
 
-        _.forEach(this.pageSections, (section: ExtendedPageSection) => {
+        this.pageSections?.forEach((section: ExtendedPageSection) => {
             switch (section.constructionType) {
                 case SectionContructionType.Standard:
-                    _.forEach(section.relatedStandard.controls, (control: PageControl) => {
-                        _.forEach(control.pageControlEvents, e => {
+                    section.relatedStandard.controls?.forEach((control: PageControl) => {
+                        control.pageControlEvents?.forEach(e => {
                             events.push(`${section.name}_${control.name}_change`)
                         })
                     })
@@ -292,11 +310,11 @@ export class BuilderDnDComponent implements OnInit {
     generateAvailableTriggerEvents(): Array<string>{
         const events: Array<string> = []
 
-        _.forEach(this.pageSections, (section: ExtendedPageSection) => {
+        this.pageSections?.forEach((section: ExtendedPageSection) => {
             switch (section.constructionType) {
                 case SectionContructionType.Standard:
-                    _.forEach(section.relatedStandard.controls, (control: PageControl) => {
-                        _.forEach(control.pageControlEvents, e => {
+                    section.relatedStandard.controls?.forEach( (control: PageControl) => {
+                        control.pageControlEvents?.forEach( e => {
                             switch(control.type){
                                 case ControlType.Select:
                                 case ControlType.AutoComplete:
@@ -323,10 +341,10 @@ export class BuilderDnDComponent implements OnInit {
 
     generateBoundDatas(): string[] {
         const boundDatas: string[] = []
-        _.forEach(this.pageSections, (section: ExtendedPageSection) => {
+        this.pageSections?.forEach((section: ExtendedPageSection) => {
             switch (section.constructionType) {
                 case SectionContructionType.Standard:
-                    _.forEach(section.relatedStandard.controls, (control: PageControl) => {
+                    section.relatedStandard.controls?.forEach((control: PageControl) => {
                         boundDatas.push(`${section.name}_${control.name}`)
                     })
                     break
@@ -338,13 +356,6 @@ export class BuilderDnDComponent implements OnInit {
 
     generateAvailableFormShells(): Array<string> {
         const shellVars: Array<string> = []
-        _.forEach(this.pageSections, (section: ExtendedPageSection) => {
-            // _.forEach(section.formControls, (control: ExtendedFormControl) => {
-            //     let shellVar = `${ShellContants.FORM_DATA}.${section.name.toLowerCase()}`
-            //     shellVar += `.${control.name.toLowerCase()}`
-            //     shellVars.push(shellVar)
-            // })
-        })
         this.logger.debug('Generating Shells', shellVars)
         return shellVars
     }

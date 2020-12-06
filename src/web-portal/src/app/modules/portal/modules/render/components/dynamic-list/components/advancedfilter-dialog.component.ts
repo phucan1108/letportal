@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/extended.model';
 import { FilterOperator, FilterChainOperator, FieldValueType } from 'services/portal.service';
-import * as _ from 'lodash';
+ 
 import { NGXLogger } from 'ngx-logger';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { TranslateService } from '@ngx-translate/core';
@@ -65,7 +65,7 @@ export class AdvancedFilterDialogComponent implements OnInit {
     }
 
     onFieldNameSelected(filterOption: ExtendedFilterOption) {
-        _.forEach(this.filters, (element) => {
+        this.filters?.forEach((element) => {
             if (element.name === filterOption.fieldName) {
                 if (element.fieldValueType === FieldValueType.Select) {
                     filterOption.filterDataSource = element.jsonData

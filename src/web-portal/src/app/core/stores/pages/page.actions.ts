@@ -1,5 +1,5 @@
+import { AddOneItemOnStandardArrayEvent, MapDataControl, OpenInsertDialogOnStandardArrayEvent, PageControlActionEvent, PageLoadedDatasource, PageSectionBoundData, PageSectionStandardArrayBoundData as PageSectionStandardArrayBoundDataEvent, RemoveOneItemOnStandardArrayEvent, RenderingPageSectionState, UpdateOneItemOnStandardArrayEvent, UpdateSectionBoundDataForTreeEvent, UpdateTreeDataEvent } from 'app/core/models/page.model';
 import { Page, PageButton } from 'services/portal.service';
-import { PageControlActionEvent, PageLoadedDatasource, RenderingPageSectionState, PageSectionBoundData, MapDataControl, PageSectionStandardArrayBoundData as PageSectionStandardArrayBoundDataEvent, AddOneItemOnStandardArrayEvent, RemoveOneItemOnStandardArrayEvent, UpdateOneItemOnStandardArrayEvent, OpenInsertDialogOnStandardArrayEvent } from 'app/core/models/page.model';
 
 const PAGE_ACTION = '[Page]'
 
@@ -123,7 +123,7 @@ export class InsertOneItemForStandardArray implements PageAction {
     constructor(public event: AddOneItemOnStandardArrayEvent) { }
 }
 
-export class RemoveOneItemForStandardArray implements PageAction{
+export class RemoveOneItemForStandardArray implements PageAction {
     public static readonly type = `${PAGE_ACTION} remove item on Standard Array`
     constructor(public event: RemoveOneItemOnStandardArrayEvent) { }
 }
@@ -131,6 +131,17 @@ export class RemoveOneItemForStandardArray implements PageAction{
 export class UpdateOneItemForStandardArray implements PageAction {
     public static readonly type = `${PAGE_ACTION} update item on Standard Array`
     constructor(public event: UpdateOneItemOnStandardArrayEvent) { }
+}
+
+//#region Tree
+export class UpdateTreeData implements PageAction {
+    public static readonly type = `${PAGE_ACTION} update tree data`
+    constructor(public event: UpdateTreeDataEvent) { }
+}
+
+export class AddSectionBoundDataForTree implements PageAction {
+    public static readonly type = `${PAGE_ACTION} Add Section Bound Data for tree`
+    constructor(public event: UpdateSectionBoundDataForTreeEvent) { }
 }
 
 export type All =

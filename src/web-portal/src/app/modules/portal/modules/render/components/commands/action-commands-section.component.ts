@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { NGXLogger } from 'ngx-logger';
-import { ShellConfigProvider } from 'app/core/shell/shellconfig.provider';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ExtendedPageButton } from 'app/core/models/extended.models';
-import * as _ from 'lodash';
-import { PageService } from 'services/page.service';
+import { ShellConfigProvider } from 'app/core/shell/shellconfig.provider';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { NGXLogger } from 'ngx-logger';
 import { Subscription } from 'rxjs';
+import { PageService } from 'services/page.service';
+ 
 
 @Component({
     selector: 'action-commands',
@@ -24,8 +24,8 @@ export class ActionCommandsSectionComponent implements OnInit, OnDestroy {
     data: any
     readyToRender = false
 
-    listenParamChanges$: Subscription
-    listenDataChanges$: Subscription
+    listenParamChanges$: Subscription = new Subscription()
+    listenDataChanges$: Subscription = new Subscription()
     constructor(
         private pageService: PageService,
         private shellConfigProvider: ShellConfigProvider,
@@ -42,20 +42,20 @@ export class ActionCommandsSectionComponent implements OnInit, OnDestroy {
             }
         )
 
-        const sub$ = this.pageService.listenDataChange$().subscribe(
+        this.listenDataChanges$.add(this.pageService.listenDataChange$().subscribe(
             data => {
                 this.data = data
-                _.forEach(this.actionCommands, (command: ExtendedPageButton) => {
+                this.actionCommands?.forEach((command: ExtendedPageButton) => {
                     command.isHidden = this.pageService.evaluatedExpression(command.allowHidden)
                 })
                 this.readyToRender = true
-                sub$.unsubscribe()
             }
-        )
+        ))
     }
     
     ngOnDestroy(): void {
         this.listenParamChanges$.unsubscribe()
+        this.listenDataChanges$.unsubscribe()
     }
 
     onCommandClick(command: ExtendedPageButton) {

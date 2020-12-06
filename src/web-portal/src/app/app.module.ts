@@ -1,40 +1,38 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NgxsStoreModule } from 'app/core/store.module';
+import { environment } from 'environments/environment';
+import sql from 'highlight.js/lib/languages/sql';
+import { MatProgressButtonsModule } from 'mat-progress-buttons';
+import { ClipboardModule } from 'ngx-clipboard';
+import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { ToastrModule } from 'ngx-toastr';
+import { ChatModule } from 'portal/modules/chat/chat.module';
+import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
+import { ConfigurationService } from 'services/configuration.service';
+import { IDENTITY_BASE_URL } from 'services/identity.service';
+import { LocalizationService } from 'services/localization.service';
+import { PORTAL_BASE_URL } from 'services/portal.service';
+import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CoreModule } from './core/core.module';
-import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
-import { SharedModule } from './modules/shared/shortcut.module';
-import { NgxsStoreModule } from 'app/core/store.module';
-import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
-import { ConfigurationService } from 'services/configuration.service';
 import { ConfigurationProvider } from './core/configs/configProvider';
-import { environment } from 'environments/environment';
-import { PORTAL_BASE_URL } from 'services/portal.service';
-import { ErrorComponent } from './modules/error/error.component';
-import { MatCardModule } from '@angular/material/card'
-import { MatButtonModule } from '@angular/material/button'
-import { MatIconModule } from '@angular/material/icon'
-import { IDENTITY_BASE_URL } from 'services/identity.service';
-import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
-import { ToastrModule } from 'ngx-toastr';
-import { HttpExceptionInterceptor } from './core/https/httpException.interceptor';
-import { ClipboardModule } from 'ngx-clipboard';
-import { MatProgressButtonsModule } from 'mat-progress-buttons';
-import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core'
-import pgsql from 'highlight.js/lib/languages/pgsql'
-import sql from 'highlight.js/lib/languages/sql'
-import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
-import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
-import { ChatModule } from 'portal/modules/chat/chat.module';
-import { EmojiPickerModule } from 'emoji-picker'
-import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader'
-import { LocalizationService } from 'services/localization.service';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import { CoreModule } from './core/core.module';
 import { MatPaginatorIntlCustom } from './core/custom-materials/matPaginatorIntlCustom';
-import { ALL_INTERCEPTORS } from './modules/customs/custom.config';
+import { HttpExceptionInterceptor } from './core/https/httpException.interceptor';
+import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
+import { ErrorComponent } from './modules/error/error.component';
+import { SharedModule } from './modules/shared/shortcut.module';
+import { EmojiPickerModule } from './modules/thirdparties/emoji-picker/emoji-picker.module';
 
 export function hlJSLang() {
   return [

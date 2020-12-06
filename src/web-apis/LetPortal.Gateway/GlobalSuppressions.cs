@@ -1,9 +1,0 @@
-﻿// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
-
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1707:Remove the underscores from member name LetPortal.Gateway.GatewayExtensions.AUTH_KEY.", Justification = "<Pending>", Scope = "member", Target = "~F:LetPortal.Gateway.GatewayExtensions.AUTH_KEY")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1062:In externally visible method 'ILetPortalBuilder GatewayExtensions.AddGateway(ILetPortalBuilder builder)', validate parameter 'builder' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.", Justification = "<Pending>", Scope = "member", Target = "~M:LetPortal.Gateway.GatewayExtensions.AddGateway(LetPortal.Core.ILetPortalBuilder)~LetPortal.Core.ILetPortalBuilder")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:Member Configure does not access instance data and can be marked as static (Shared in VisualBasic)", Justification = "<Pending>", Scope = "member", Target = "~M:LetPortal.Gateway.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.AspNetCore.Hosting.IApplicationLifetime)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1052:Type 'Program' is a static holder type but is neither static nor NotInheritable", Justification = "<Pending>", Scope = "type", Target = "~T:LetPortal.Gateway.Program")]

@@ -1,4 +1,4 @@
-import { ClaimValueType, ControlType, PageSectionLayoutType, ValidatorType, SectionContructionType, DatasourceControlType, ActionType, FieldValueType, AsyncValidatorType, ChartType, FilterType } from 'services/portal.service'
+import { ActionType, AsyncValidatorType, ChartType, ClaimValueType, ControlType, DatasourceControlType, FieldValueType, FilterType, PageSectionLayoutType, SectionContructionType, StandardType, ValidatorType } from 'services/portal.service'
 
 export class StaticResources {
 
@@ -6,6 +6,14 @@ export class StaticResources {
         return [
             { name: 'Database Validator', value: AsyncValidatorType.DatabaseValidator },
             { name: 'Http Validator', value: AsyncValidatorType.HttpValidator }
+        ]
+    }
+
+    public static standardTypes(){
+        return [
+            { name: 'Standard', value: StandardType.Standard },
+            { name: 'Array', value: StandardType.Array },
+            { name: 'Tree', value: StandardType.Tree },
         ]
     }
 
@@ -77,7 +85,8 @@ export class StaticResources {
             { name: 'Uploader', value: ControlType.Uploader },
             { name: 'MultiUploader', value: ControlType.MultiUploader },
             { name: 'Icon Picker', value: ControlType.IconPicker },
-            { name: 'Markdown Editor', value: ControlType.MarkdownEditor }
+            { name: 'Markdown Editor', value: ControlType.MarkdownEditor },
+            { name: 'Composite Control', value: ControlType.Composite }
         ];
     }
 
@@ -86,7 +95,8 @@ export class StaticResources {
             { name: 'Standard', value: SectionContructionType.Standard },            
             { name: 'Array', value: SectionContructionType.Array },
             { name: 'Dynamic List', value: SectionContructionType.DynamicList },
-            { name: 'Chart', value: SectionContructionType.Chart }
+            { name: 'Chart', value: SectionContructionType.Chart },
+            { name: 'Tree', value: SectionContructionType.Tree }
         ]
     }
 

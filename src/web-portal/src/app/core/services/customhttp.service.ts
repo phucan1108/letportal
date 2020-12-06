@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponseBase, HttpResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import * as _ from 'lodash';
+ 
 import { ObjectUtils } from '../utils/object-util';
 
 @Injectable({
@@ -15,7 +15,6 @@ export class CustomHttpService {
         const options_: any = {
             body,
             observe: 'response',
-            responseType: 'blob',
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
                 Accept: 'application/json'

@@ -1,0 +1,18 @@
+﻿@model Themes.PersonalBlog.Areas.PersonalBlog.Models.RightFeatureModel
+
+    <div class="container marketing">
+        <div class="row featurette">
+            <div class="col-md-7 order-md-2">
+                <h2 class="featurette-heading">
+                   @Model.Title
+                </h2>
+                <p class="lead">
+                    @Model.Content
+                </p>
+            </div>
+            <div class="col-md-5 order-md-1">
+                <img class="featurette-image img-fluid mx-auto" style="width: 500px; height: 500px" src="@(Model.Media.Link)"
+                     alt="@(Model.Media.Alt)">
+            </div>
+        </div>
+    </div>

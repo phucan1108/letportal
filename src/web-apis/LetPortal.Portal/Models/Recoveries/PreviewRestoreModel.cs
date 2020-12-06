@@ -9,6 +9,10 @@ namespace LetPortal.Portal.Models.Recoveries
 
         public IEnumerable<ComparisonResult> Standards { get; set; }
 
+        public IEnumerable<ComparisonResult> Tree { get; set; }
+
+        public IEnumerable<ComparisonResult> Array { get; set; }
+
         public IEnumerable<ComparisonResult> Databases { get; set; }
 
         public IEnumerable<ComparisonResult> Charts { get; set; }
@@ -16,6 +20,8 @@ namespace LetPortal.Portal.Models.Recoveries
         public IEnumerable<ComparisonResult> DynamicLists { get; set; }
 
         public IEnumerable<ComparisonResult> Pages { get; set; }
+
+        public IEnumerable<ComparisonResult> CompositeControls { get; set; }
 
         public int TotalObjects { get; set; }
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LetPortal.Core.Security;
 using LetPortal.Core.Versions;
+using LetPortal.Identity;
 using LetPortal.Identity.Entities;
 using LetPortal.Portal.Constants;
 
@@ -24,8 +26,8 @@ namespace LetPortal.Versions.Identity
             var superAdminRole = new Role
             {
                 Id = "5c06a15e4cc9a850bca44488",
-                Name = RolesConstants.SUPER_ADMIN,
-                NormalizedName = RolesConstants.SUPER_ADMIN.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
+                Name = Roles.SuperAdmin,
+                NormalizedName = Roles.SuperAdmin.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
                 DisplayName = "Super Admin",
                 Claims = new List<BaseClaim>
                 {
@@ -50,7 +52,7 @@ namespace LetPortal.Versions.Identity
                 LockoutEndDate = DateTime.UtcNow,
                 Roles = new List<string>
                 {
-                    "SuperAdmin"
+                    Roles.SuperAdmin
                 },
                 Claims = new List<BaseClaim>
                 {

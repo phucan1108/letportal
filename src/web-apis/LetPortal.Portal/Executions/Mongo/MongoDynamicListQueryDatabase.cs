@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Common;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.DynamicLists;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -18,6 +20,13 @@ namespace LetPortal.Portal.Executions.Mongo
     public class MongoDynamicListQueryDatabase : IDynamicListQueryDatabase
     {
         public ConnectionType ConnectionType => ConnectionType.MongoDB;
+
+        private readonly IOptionsMonitor<MongoOptions> _mongoOptions;
+
+        public MongoDynamicListQueryDatabase(IOptionsMonitor<MongoOptions> options)
+        {
+            _mongoOptions = options;
+        }
 
         public async Task<DynamicListResponseDataModel> Query(DatabaseConnection databaseConnection, DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
         {
@@ -54,6 +63,7 @@ namespace LetPortal.Portal.Executions.Mongo
                 collectionQuery = collectionQuery.Replace("{{" + filledParam.Name + "}}", filledParam.Value);
             }
 
+            collectionQuery = _mongoOptions.CurrentValue.EliminateDoubleQuotes(collectionQuery);
             var aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
 
             var aggregateFluent = mongoCollection.Aggregate();
@@ -78,7 +88,7 @@ namespace LetPortal.Portal.Executions.Mongo
 
             // Projection only columns
             var projectDoc = new BsonDocument();
-            foreach (var column in dynamicList.ColumnsList.ColumndDefs)
+            foreach (var column in dynamicList.ColumnsList.ColumnDefs)
             {
                 projectDoc.Add(new BsonElement(column.Name, 1));
             }
@@ -151,7 +161,7 @@ namespace LetPortal.Portal.Executions.Mongo
                                         {
                                             OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
                                         })).Select(b =>
-                                            JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)))).ToList();
+                                            JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter(GetFormatFields(dynamicList.ColumnsList.ColumnDefs)))).ToList();
                     }
                 }
             }
@@ -200,7 +210,7 @@ namespace LetPortal.Portal.Executions.Mongo
                                         {
                                             OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
                                         })).Select(b =>
-                                            JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)))).ToList();
+                                            JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter(GetFormatFields(dynamicList.ColumnsList.ColumnDefs)))).ToList();
                     }
                 }
             }
@@ -208,7 +218,7 @@ namespace LetPortal.Portal.Executions.Mongo
             return dynamicListResponseDataModel;
         }
 
-        private List<FormatBsonField> GetFormatFields(List<ColumndDef> columndDefs)
+        private List<FormatBsonField> GetFormatFields(List<ColumnDef> columndDefs)
         {
             return columndDefs.Where(a => !string.IsNullOrEmpty(a.DisplayFormat)).Select(b => new FormatBsonField { BsonFieldName = b.Name, Format = b.DisplayFormat }).ToList();
         }
@@ -222,7 +232,7 @@ namespace LetPortal.Portal.Executions.Mongo
             {
                 if (filter.AllowTextSearch)
                 {
-                    filtersDefinitionList.Add(builder.Regex(filter.Name, new BsonRegularExpression(textSearch, "i")));
+                    filtersDefinitionList.Add(builder.Regex(filter.Name, new BsonRegularExpression(Regex.Escape(textSearch), "i")));
                 }
             }
 
@@ -351,7 +361,23 @@ namespace LetPortal.Portal.Executions.Mongo
                 case FieldValueType.Slide:
                     return filterBuilderOption.Eq(filterOption.FieldName, new BsonBoolean(bool.Parse(filterOption.FieldValue)));
                 case FieldValueType.Select:
-                    return filterBuilderOption.Eq(field, filterOption.FieldValue);
+                    if (filterOption.FieldValue is bool)
+                    {
+                        return filterBuilderOption.Eq(filterOption.FieldName, new BsonBoolean(filterOption.FieldValue));
+                    }
+                    else if (filterOption.FieldValue is long)
+                    {
+                        return filterBuilderOption.Eq(filterOption.FieldName, new BsonInt64(filterOption.FieldValue));
+                    }
+                    else if (filterOption.FieldValue is decimal)
+                    {
+                        return filterBuilderOption.Eq(filterOption.FieldName, new BsonDecimal128(filterOption.FieldValue));
+                    }
+                    else
+                    {
+                        return filterBuilderOption.Eq(field, filterOption.FieldValue);
+                    }
+                    
                 case FieldValueType.DatePicker:
                     var datetime = DateTime.Parse(filterOption.FieldValue);
                     var month = datetime.Month;

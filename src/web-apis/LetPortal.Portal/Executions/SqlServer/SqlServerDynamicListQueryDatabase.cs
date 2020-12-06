@@ -54,7 +54,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                                 options.FieldFormat = "[{0}]";
                                 options.DateCompareFormat = "cast({0} as date){1}cast({2} as date)";
                             })
-                        .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumndDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
+                        .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumnDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
                         .AddFilter(fetchDataModel.FilterGroupOptions.FilterGroups)
                         .AddSort(fetchDataModel.SortOptions.SortableFields)
                         .AddPagination(fetchDataModel.PaginationOptions.PageNumber, fetchDataModel.PaginationOptions.PageSize)
@@ -94,7 +94,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                         if (dt.Rows.Count > 0)
                         {
                             hasRows = true;
-                            response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumndDefs)));
+                            response.Data = JsonConvert.DeserializeObject<dynamic>(ConvertUtil.SerializeObject(dt, true), new ArrayConverter(GetFormatFields(dynamicList.ColumnsList.ColumnDefs)));
                         }
                         dt.Dispose();
                     }
@@ -137,7 +137,7 @@ namespace LetPortal.Portal.Executions.SqlServer
             return Task.FromResult(response);
         }
 
-        private List<FieldFormatCompare> GetFormatFields(List<ColumndDef> columndDefs)
+        private List<FieldFormatCompare> GetFormatFields(List<ColumnDef> columndDefs)
         {
             return columndDefs.Where(a => !string.IsNullOrEmpty(a.DisplayFormat)).Select(b => new FieldFormatCompare { FieldFormat = b.DisplayFormat, FieldName = b.Name }).ToList();
         }

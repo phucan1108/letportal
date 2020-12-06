@@ -7,7 +7,10 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="onSubmit()" *ngIf="!isSubmitted">{{ 'common.create' | translate }}</button>
+                    <button mat-menu-item (click)="onSubmit()"
+                        *ngIf="!isSubmitted">{{ 'common.create' | translate }}</button>
+                    <button mat-menu-item (click)="onGenerate()"
+                        *ngIf="!isSubmitted">{{ 'common.generate' | translate }}</button>
                     <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
@@ -22,7 +25,8 @@
                         <label class="col-lg-2 col-form-label">{{ 'common.nameText' | translate }}:</label>
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
-                                <input formControlName="name" matInput #formNameInput placeholder="{{ 'pageBuilder.page.backup.backupName.placeholder' | translate }}"
+                                <input formControlName="name" matInput #formNameInput
+                                    placeholder="{{ 'pageBuilder.page.backup.backupName.placeholder' | translate }}"
                                     maxlength="250">
                                 <mat-hint align="end">
                                     {{formNameInput.value?.length || 0}}/250
@@ -38,7 +42,9 @@
                         <div class="col-lg-6">
                             <mat-form-field class="field-full-width">
                                 <mat-label>{{ 'pageBuilder.page.backup.leaveDescription' | translate }}</mat-label>
-                                <textarea #formDesInput matInput placeholder="{{ 'pageBuilder.page.backup.leaveDescription.placeholder' | translate }}" formControlName="description" maxlength="500"></textarea>                               
+                                <textarea #formDesInput matInput
+                                    placeholder="{{ 'pageBuilder.page.backup.leaveDescription.placeholder' | translate }}"
+                                    formControlName="description" maxlength="500"></textarea>
                                 <mat-hint align="end">
                                     {{formDesInput.value?.length || 0}}/500
                                 </mat-hint>
@@ -64,7 +70,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Apps'" [icon]="'camera_enhance'" [data]="apps$"
                                     (searchChanged)="onSeachAppChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectAppChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectAppChanged($event)" [notifier]="notifiedApps">
+                                </let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -74,7 +81,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Databases'" [icon]="'ballot'" [data]="databases$"
                                     (searchChanged)="onSeachDatabaseChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectDatabaseChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectDatabaseChanged($event)"
+                                    [notifier]="notifiedDatabases"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -84,7 +92,30 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Standards'" [icon]="'category'" [data]="standards$"
                                     (searchChanged)="onSeachStandardChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectStandardChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectStandardChanged($event)"
+                                    [notifier]="notifiedStandards"></let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ 'common.tree' | translate }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Tree'" [icon]="'category'" [data]="tree$"
+                                    (searchChanged)="onSeachTreeChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectTreeChanged($event)" [notifier]="notifiedTree">
+                                </let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ 'common.array' | translate }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Array'" [icon]="'category'" [data]="array$"
+                                    (searchChanged)="onSeachArrayChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectArrayChanged($event)"
+                                    [notifier]="notifiedArray"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -94,7 +125,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Dynamic Lists'" [icon]="'view_module'"
                                     [data]="dynamicLists$" (searchChanged)="onSeachDynamicListChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectDynamicListChanged($event)">
+                                    (selectionEntitiesChanged)="onSelectDynamicListChanged($event)"
+                                    [notifier]="notifiedDynamicLists">
                                 </let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
@@ -105,7 +137,8 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Charts'" [icon]="'bar_chart'" [data]="charts$"
                                     (searchChanged)="onSeachChartChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectChartChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectChartChanged($event)"
+                                    [notifier]="notifiedCharts"></let-backup-selection>
                             </mat-expansion-panel>
                             <mat-expansion-panel>
                                 <mat-expansion-panel-header>
@@ -115,7 +148,20 @@
                                 </mat-expansion-panel-header>
                                 <let-backup-selection [name]="'Pages'" [icon]="'receipt'" [data]="pages$"
                                     (searchChanged)="onSeachPageChanged($event)"
-                                    (selectionEntitiesChanged)="onSelectPageChanged($event)"></let-backup-selection>
+                                    (selectionEntitiesChanged)="onSelectPageChanged($event)" [notifier]="notifiedPages">
+                                </let-backup-selection>
+                            </mat-expansion-panel>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ 'common.compositeControl' | translate }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <let-backup-selection [name]="'Composite Control'" [icon]="'perm_data_setting'"
+                                    [data]="controls$" (searchChanged)="onSeachControlChanged($event)"
+                                    (selectionEntitiesChanged)="onSelectControlChanged($event)"
+                                    [notifier]="notifiedControls">
+                                </let-backup-selection>
                             </mat-expansion-panel>
                         </mat-accordion>
                     </div>
@@ -125,12 +171,16 @@
                 <div class="row row-heading" *ngIf="isCreated else loading">
                     <div class="col-lg-12 pl-0">
                         <p>
-                            {{ 'pageBuilder.page.backup.text0' | translate}} <b><a (click)="download()" style="cursor: pointer;">
-                                    {{ 'common.link' | translate}} </a></b> {{ 'pageBuilder.page.backup.text1' | translate }}
+                            {{ 'pageBuilder.page.backup.text0' | translate}} <b><a (click)="download()"
+                                    style="cursor: pointer;">
+                                    {{ 'common.link' | translate}} </a></b>
+                            {{ 'pageBuilder.page.backup.text1' | translate }}
                         </p>
                         <p>
-                            {{ 'pageBuilder.page.backup.text2' | translate}} <b><a (click)="refresh()" style="cursor: pointer;">
-                            {{ 'pageBuilder.page.backup.text3' | translate }}</a></b> {{ 'pageBuilder.page.backup.text4' | translate}}
+                            {{ 'pageBuilder.page.backup.text2' | translate}} <b><a (click)="refresh()"
+                                    style="cursor: pointer;">
+                                    {{ 'pageBuilder.page.backup.text3' | translate }}</a></b>
+                            {{ 'pageBuilder.page.backup.text4' | translate}}
                         </p>
                     </div>
                 </div>

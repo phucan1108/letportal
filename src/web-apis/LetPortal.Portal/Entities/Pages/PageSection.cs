@@ -21,12 +21,25 @@ namespace LetPortal.Portal.Entities.Pages
 
         public string ComponentId { get; set; }
 
+        public string Hidden { get; set; } = "false";
+
+        public string Rendered { get; set; } = "true";
+
         public int Order { get; set; }
     }
 
     public class SectionDatasource
     {
+        /// <summary>
+        /// Key of datasource which helps to bind the data into Section
+        /// </summary>
         public string DatasourceBindName { get; set; }
+
+        /// <summary>
+        /// Key of section data which helps to store in data state.
+        /// Note: it doesn't want to declare explicitly 'data'. Ex: 'info' -> 'data.info' will be stored
+        /// </summary>
+        public string DataStoreName { get; set; }
     }
 
     public enum SectionContructionType
@@ -34,6 +47,7 @@ namespace LetPortal.Portal.Entities.Pages
         Standard,
         Array,
         DynamicList,
-        Chart
+        Chart,
+        Tree
     }
 }
