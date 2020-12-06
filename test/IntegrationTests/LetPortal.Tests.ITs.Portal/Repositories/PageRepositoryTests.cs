@@ -155,7 +155,7 @@ namespace LetPortal.Tests.ITs.Portal.Repositories
                         Options = new LetPortal.Portal.Entities.Shared.DatasourceOptions
                         {
                             Type = LetPortal.Portal.Entities.Shared.DatasourceControlType.Database,
-                            DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                            DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                             {
                                 DatabaseConnectionId = "sfasfasf",
                                 Query = "{\"$query\":{\"databases\":[{\"$match\":{\"_id\":\"ObjectId('{{queryparams.id}}')\"}}]}}"

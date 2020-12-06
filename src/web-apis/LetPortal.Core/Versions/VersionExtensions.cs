@@ -16,5 +16,18 @@
             var number = majorNumber + minorNumber + patchNumber;
             return int.Parse(number);
         }
+
+        public static bool IsVersionNumber(this string versionNumber)
+        {
+            try
+            {
+                versionNumber.ToVersionNumber();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

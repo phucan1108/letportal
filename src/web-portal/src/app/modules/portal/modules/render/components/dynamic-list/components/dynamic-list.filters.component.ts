@@ -1,19 +1,16 @@
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, HostListener } from '@angular/core';
-import { FilterGroup, FilterOption, FilterOperator, FilterChainOperator, FilledParameter, FieldValueType, DatabasesClient, DynamicListFetchDataModel } from 'services/portal.service';
-import * as _ from 'lodash';
-import { NGXLogger } from 'ngx-logger';
-import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/extended.model';
-import { AdvancedFilterDialogComponent } from './advancedfilter-dialog.component';
-import { DatasourceOptionsService } from 'services/datasourceopts.service';
-import { DatasourceCache } from '../models/commandClicked';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
-import { PageService } from 'services/page.service';
 import { TranslateService } from '@ngx-translate/core';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject } from 'rxjs';
-
-
+import { DatasourceOptionsService } from 'services/datasourceopts.service';
+import { DynamicListFetchDataModel, FieldValueType, FilledParameter, FilterChainOperator, FilterGroup, FilterOperator } from 'services/portal.service';
+import { DatasourceCache } from '../models/commandClicked';
+import { ExtendedFilterOption, ExtendedRenderFilterField } from '../models/extended.model';
+import { AdvancedFilterDialogComponent } from './advancedfilter-dialog.component';
+ 
 @Component({
     selector: 'dynamic-list-filters',
     templateUrl: './dynamic-list.filters.component.html'
@@ -33,12 +30,12 @@ export class DynamicListFiltersComponent implements OnInit {
                 if (result.matches) {
                     this.isSmallDevice = true
                     this.cd.markForCheck()
-                    this.logger.debug('Small device', this.isSmallDevice)
+                    this.logger.debug('Small device on filter of list', this.isSmallDevice)
                 }
                 else {
                     this.isSmallDevice = false
                     this.cd.markForCheck()
-                    this.logger.debug('Small device', this.isSmallDevice)
+                    this.logger.debug('Small device on filter of list', this.isSmallDevice)
                 }
             });
         }
@@ -133,7 +130,7 @@ export class DynamicListFiltersComponent implements OnInit {
                 this.combineOperators$.next(this._combineOperators())
             }
         )
-        this.filters = _.filter(this.filters, (element: ExtendedRenderFilterField) => {
+        this.filters = this.filters.filter((element: ExtendedRenderFilterField) => {
             return element.allowInAdvancedMode;
         })
 
@@ -238,7 +235,7 @@ export class DynamicListFiltersComponent implements OnInit {
         }
         else {
             // Check the last element is AND or OR -> add new filter
-            if (_.last(this.filterOptions).filterChainOperator !== FilterChainOperator.None) {
+            if (this.filterOptions[this.filterOptions.length - 1].filterChainOperator !== FilterChainOperator.None) {
                 this.filterOptions.push({
                     fieldName: this.filters[0].name,
                     fieldValue: '',
@@ -253,7 +250,7 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     onFieldNameSelected(filterOption: ExtendedFilterOption) {
-        _.forEach(this.filters, (element) => {
+        this.filters?.forEach((element) => {
             if (element.name === filterOption.fieldName) {
                 if (element.fieldValueType === FieldValueType.Select) {
                     filterOption.filterDataSource = element.jsonData
@@ -277,7 +274,7 @@ export class DynamicListFiltersComponent implements OnInit {
             this.filterOptions[0].filterChainOperator = FilterChainOperator.None
         }
         else {
-            _.forEach(this.filterOptions, (element, index) => {
+            this.filterOptions?.forEach((element, index) => {
                 if (element.filterChainOperator === FilterChainOperator.None) {
                     lastNoneIndex = index;
                     return false;
@@ -292,20 +289,20 @@ export class DynamicListFiltersComponent implements OnInit {
     }
 
     translateOperator(operator) {
-        return _.find(this._operators(), opt => opt.value === operator).name
+        return this._operators().find(opt => opt.value === operator).name
     }
 
     translateHeader(fieldName) {
-        return _.find(this.filters, filter => filter.name === fieldName).displayName
+        return this.filters.find(filter => filter.name === fieldName).displayName
     }
 
     translateChainOperator(chainOperator) {
-        return _.find(this._combineOperators(), opt => opt.value === chainOperator).name
+        return this._combineOperators().find(opt => opt.value === chainOperator).name
     }
 
     translateFieldValue(filterOption: ExtendedFilterOption, fieldValue) {
         if (!!filterOption.filterDataSource && filterOption.filterDataSource.length > 0) {
-            const found = _.find(filterOption.filterDataSource, source => source.value === fieldValue)
+            const found = filterOption.filterDataSource.find( source => source.value === fieldValue)
             return found.name
         }
         return fieldValue

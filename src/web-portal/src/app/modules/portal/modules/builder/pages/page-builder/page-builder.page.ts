@@ -1,31 +1,31 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { ActivatedRoute, Router, Route } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { ExtendedPageSection, ExtendedPageControl } from '../../../../../../core/models/extended.models';
-import { Guid } from 'guid-typescript'
-import { Store } from '@ngxs/store';
-import { filter, tap, map } from 'rxjs/operators';
-import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { PageBuilderStateModel, PageBuilderState } from 'stores/pages/pagebuilder.state';
-import * as _ from 'lodash';
-import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { Constants } from 'portal/resources/constants';
-import { SessionService } from 'services/session.service';
-import { NGXLogger } from 'ngx-logger';
-import { PortalStandardClaims } from 'app/core/security/portalClaims';
-import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import { SecurityService } from 'app/core/security/security.service';
-import { PortalClaim, DatabaseConnection, EntitySchema, DatabasesClient, EntitySchemasClient, Page, PagesClient, ControlType, PageEvent, SectionContructionType, App, AppsClient } from 'services/portal.service';
-import { NextToWorkflowAction, NextToRouteAction, UpdateShellOptions, InitCreatePageBuilderAction, NextToPageBuilderAction, GeneratePageActionCommandsAction, GeneratePageBuilderInfoAction, GeneratePageEventsAction, InitEditPageBuilderAction, UpdatePageInfoAction, UpdatePageClaims, EditPageAction, CreatePageAction, NextToDatasourceAction, GatherAllChanges } from 'stores/pages/pagebuilder.actions';
-import { PageService } from 'services/page.service';
-import { PortalValidators } from 'app/core/validators/portal.validators';
-import { ObjectUtils } from 'app/core/utils/object-util';
-import { StateReset } from 'ngxs-reset-plugin';
-import { MatTable } from '@angular/material/table';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { Store } from '@ngxs/store';
+import { PortalStandardClaims } from 'app/core/security/portalClaims';
+import { SecurityService } from 'app/core/security/security.service';
+import { ObjectUtils } from 'app/core/utils/object-util';
+import { PortalValidators } from 'app/core/validators/portal.validators';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { Guid } from 'guid-typescript';
+import { NGXLogger } from 'ngx-logger';
+import { StateReset } from 'ngxs-reset-plugin';
+import { Constants } from 'portal/resources/constants';
+import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
+import { PageService } from 'services/page.service';
+import { DatabaseConnection, DatabasesClient, EntitySchema, Page, PagesClient, PortalClaim } from 'services/portal.service';
+import { SessionService } from 'services/session.service';
+import { CreatePageAction, EditPageAction, GatherAllChanges, GeneratePageActionCommandsAction, GeneratePageBuilderInfoAction, GeneratePageEventsAction, InitCreatePageBuilderAction, InitEditPageBuilderAction, NextToDatasourceAction, NextToPageBuilderAction, NextToRouteAction, NextToWorkflowAction, UpdatePageClaims, UpdatePageInfoAction, UpdateShellOptions } from 'stores/pages/pagebuilder.actions';
+import { PageBuilderState, PageBuilderStateModel } from 'stores/pages/pagebuilder.state';
+import { ExtendedPageSection } from '../../../../../../core/models/extended.models';
+ 
 @Component({
     selector: 'let-page-builder',
     templateUrl: './page-builder.page.html',
@@ -96,8 +96,8 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             this.store.dispatch(new InitCreatePageBuilderAction())
         }
         this.tempBuilderForm = this.fb.group([])
-        this.initialDynamicForm()
-        this.initialInputDynamicForm()
+        this.initPageBuilder()
+        this.initPageInfoForm()
         this.onValueChanges()
         this.databaseConnections = this.databaseClient.getAll()
     }
@@ -124,7 +124,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     }
 
     //#region Angular Form methods
-    initialDynamicForm() {
+    initPageBuilder() {
         this.store
             .select(state => state.pagebuilder)
             .pipe(
@@ -141,7 +141,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             ).subscribe()
     }
 
-    initialInputDynamicForm() {
+    initPageInfoForm() {
         if (!this.isEditMode) {
             this.pageInfoFormGroup = this.fb.group({
                 name: ['', [Validators.required, Validators.maxLength(250)], [PortalValidators.pageUniqueName(this.pagesClient)]],
@@ -161,7 +161,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
                 app: [this.page.appId, Validators.required]
             })
 
-            _.forEach(this.page.shellOptions, shellOpt => {
+            this.page.shellOptions?.forEach(shellOpt => {
                 this.shellOptions.push({
                     id: Guid.create().toString(),
                     key: shellOpt.key,
@@ -200,7 +200,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     }
 
     isInHiddenListField(fieldName: string): boolean {
-        return _.indexOf(['_id'], fieldName) >= 0
+        return ['_id'].indexOf(fieldName) >= 0
     }
     //#endregion
 
@@ -226,7 +226,7 @@ export class PageBuilderPage implements OnInit, OnDestroy {
             new UpdatePageInfoAction(
                 this.isEditMode ? this.page.id : Guid.create().toString(),
                 this.isEditMode ? this.page.name : formValues.name,
-                this.session.getCurrentApp().id,
+                formValues.app ? formValues.app : this.session.getCurrentApp().id,
                 formValues.displayName,
                 formValues.urlPath,
                 formValues.canSave),

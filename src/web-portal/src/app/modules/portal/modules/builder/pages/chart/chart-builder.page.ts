@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PageService } from 'services/page.service';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { DynamicListClient, ChartsClient, Chart, DatabaseOptions, ChartType, ChartFilter, PageSectionLayoutType, App, AppsClient } from 'services/portal.service';
+import { DynamicListClient, ChartsClient, Chart, SharedDatabaseOptions, ChartType, ChartFilter, PageSectionLayoutType, App, AppsClient } from 'services/portal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,7 +22,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class ChartBuilderPage implements OnInit {
     componentInfo: FormGroup
     edittingChart: Chart
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
     _chartTypes = StaticResources.chartTypes()
     shellOptions$: BehaviorSubject<Array<ExtendedShellOption>> = new BehaviorSubject([])
     shellOptions: Array<ExtendedShellOption> = []

@@ -54,12 +54,12 @@ namespace LetPortal.Portal.Repositories.Components
         {
             if (!string.IsNullOrEmpty(keyWord))
             {
-                var charts = await _context.Charts.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName }).ToListAsync();
+                var charts = await _context.Charts.Where(a => a.DisplayName.Contains(keyWord)).Select(b => new ShortEntityModel { Id = b.Id, DisplayName = b.DisplayName, AppId = b.AppId }).ToListAsync();
                 return charts?.AsEnumerable();
             }
             else
             {
-                return (await _context.Charts.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).ToListAsync())?.AsEnumerable();
+                return (await _context.Charts.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).ToListAsync())?.AsEnumerable();
             }
         }   
 

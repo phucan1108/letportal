@@ -1,31 +1,24 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy, Input, Output, AfterContentChecked, EventEmitter, AfterViewChecked } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DynamicList, CommandButtonInList, CommandPositionType, EntitySchemasClient, DatabasesClient, ActionType, PageSection } from 'services/portal.service';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { Dictionary } from 'lodash';
-import * as _ from 'lodash';
-import { BehaviorSubject, Subscription, Observable } from 'rxjs';
-import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { CommandClicked } from './models/commandClicked';
-import { NGXLogger } from 'ngx-logger';
-import { Translator } from 'app/core/shell/translates/translate.pipe';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { tap, filter, debounceTime } from 'rxjs/operators';
-import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { DynamicListGridComponent } from './components/dynamic-list.grid.component';
-import { SecurityService } from 'app/core/security/security.service';
-import { RouterExtService } from 'app/core/ext-service/routerext.service';
-import { SessionService } from 'services/session.service';
+import { NavigationExtras, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { PageStateModel } from 'stores/pages/page.state';
-import { EndRenderingPageSectionsAction, BeginBuildingBoundData, AddSectionBoundData, GatherSectionValidations, SectionValidationStateAction } from 'stores/pages/page.actions';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
-import { PageService } from 'services/page.service';
-import { TriggeredControlEvent } from 'app/core/models/page.model';
+import { Translator } from 'app/core/shell/translates/translate.pipe';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { NGXLogger } from 'ngx-logger';
 import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { debounceTime, filter, tap } from 'rxjs/operators';
 import { ExportService } from 'services/export.service';
 import { LocalizationService } from 'services/localization.service';
+import { PageService } from 'services/page.service';
+import { ActionType, CommandButtonInList, CommandPositionType, DynamicList } from 'services/portal.service';
+import { AddSectionBoundData, BeginBuildingBoundData, GatherSectionValidations, SectionValidationStateAction } from 'stores/pages/page.actions';
+import { PageStateModel } from 'stores/pages/page.state';
+import { DynamicListGridComponent } from './components/dynamic-list.grid.component';
+import { CommandClicked } from './models/commandClicked';
+ 
 
 @Component({
     selector: 'let-dynamic-list-render',
@@ -88,8 +81,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                     switch (state.filterState) {
                         case BeginBuildingBoundData:
                             this.store.dispatch(new AddSectionBoundData({
-                                name: this.section.name,
-                                isKeptDataName: true,
+                                storeName: this.section.name,
                                 data: null
                             }, []))
                             break
@@ -125,7 +117,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                 .subscribe()
 
         if (this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0) {
-            const commandOutList = _.filter(this.dynamicList.commandsList.commandButtonsInList, (element: CommandButtonInList) => {
+            const commandOutList = this.dynamicList.commandsList.commandButtonsInList.filter((element: CommandButtonInList) => {
                 return element.commandPositionType === CommandPositionType.OutList
             })
             if (commandOutList) {
@@ -218,7 +210,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
             const deletedProps: string[] = []
             const jsonParsedProps: string[] = []
             const firstElem = exportedData[0]
-            Object.keys(firstElem).forEach(prop => {
+            Object.keys(firstElem)?.forEach(prop => {
                 let inDeletedProps = false
                 if(orderedNames.indexOf(prop) < 0){
                     deletedProps.push(prop)
@@ -231,11 +223,11 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                 }
             })
 
-            exportedData.forEach(elem => {
-                jsonParsedProps.forEach(prop => {
+            exportedData?.forEach(elem => {
+                jsonParsedProps?.forEach(prop => {
                     elem[prop] = JSON.stringify(elem[prop])
                 })
-                deletedProps.forEach(prop => {
+                deletedProps?.forEach(prop => {
                     elem[prop] = null
                 })
             })
@@ -252,7 +244,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
 
     private gatherAllButtonFullNames() {
         if (this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0) {
-            _.forEach(this.dynamicList.commandsList.commandButtonsInList, command => {
+            this.dynamicList.commandsList.commandButtonsInList?.forEach(command => {
                 this.buttonFullNames.push(this.section.name + '_' + command.name)
             })
         }
@@ -274,8 +266,8 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
             }
 
             if(ObjectUtils.isNotNull(this.dynamicList.columnsList) && 
-                ObjectUtils.isNotNull(this.dynamicList.columnsList.columndDefs)){
-                this.dynamicList.columnsList.columndDefs.forEach(col => {
+                ObjectUtils.isNotNull(this.dynamicList.columnsList.columnDefs)){
+                this.dynamicList.columnsList.columnDefs?.forEach(col => {
                     if(!col.isHidden){
                         const colName = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.cols.${col.name}.displayName`)
                         if(ObjectUtils.isNotNull(colName)){
@@ -287,7 +279,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
 
             if(ObjectUtils.isNotNull(this.dynamicList.commandsList) 
                 && ObjectUtils.isNotNull(this.dynamicList.commandsList.commandButtonsInList)){
-                    this.dynamicList.commandsList.commandButtonsInList.forEach(command => {
+                    this.dynamicList.commandsList.commandButtonsInList?.forEach(command => {
                         const commandName = this.localizationService.getText(`dynamicLists.${this.dynamicList.name}.commands.${command.name}.displayName`)
                         if(ObjectUtils.isNotNull(commandName)){
                             command.displayName = commandName

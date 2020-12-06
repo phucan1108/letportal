@@ -29,6 +29,8 @@ namespace LetPortal.Core.Versions
         public object ServiceManagementOptions { get; set; }
         public object IdentityDbOptions { get; set; }
 
+        public object PortalDatabaseOptions { get; set; }
+
         public void BulkDeleteData<T>(Expression<Func<T, bool>> expression) where T : Entity
         {
             var entityCollection = GetMongoCollection<T>();

@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { StandardComponentClient, StandardComponent, PageSectionLayoutType, App, AppsClient } from 'services/portal.service';
+import { StandardComponentClient, StandardComponent, PageSectionLayoutType, App, AppsClient, StandardType } from 'services/portal.service';
 import { ExtendedPageControl } from 'app/core/models/extended.models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
-import * as _ from 'lodash';
+ 
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { StaticResources } from 'portal/resources/static-resources';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import { StandardOptions } from 'portal/modules/models/standard.extended.model';
+import { ArrayStandardOptions, TreeStandardOptions } from 'portal/modules/models/standard.extended.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -33,6 +33,7 @@ export class StandardPagePage implements OnInit {
     isEditMode = false
 
     _layoutTypes = StaticResources.sectionLayoutTypes()
+    _standardTypes = StaticResources.standardTypes()
     apps$: Observable<App[]>
     constructor(
         private translate: TranslateService,
@@ -58,7 +59,7 @@ export class StandardPagePage implements OnInit {
             }
         }
         else {
-            _.each(this.standardComponent.controls, control => {
+            this.standardComponent.controls?.forEach( control => {
                 this.controls.push({
                     ...control,
                     value: '',
@@ -80,7 +81,7 @@ export class StandardPagePage implements OnInit {
                 name: new FormControl({ value:this.standardComponent.name, disabled: true }, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]),
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
                 app: [this.standardComponent.appId, [Validators.required]],
-                allowArrayData: [this.standardComponent.allowArrayData],
+                type: [{ value: this.standardComponent.type, disabled: true}],
                 layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
             })
@@ -90,9 +91,20 @@ export class StandardPagePage implements OnInit {
                 this.shellOptions =  this.standardComponent.options as ExtendedShellOption[]
             }
             else{
-                this.shellOptions = StandardOptions.getDefaultShellOptionsForStandard()
+                switch(this.standardComponent.type){
+                    case StandardType.Standard:
+                        this.shellOptions = []
+                        break
+                    case StandardType.Array:
+                        this.shellOptions = ArrayStandardOptions.getDefaultShellOptionsForArray()
+                        break
+                    case StandardType.Tree:
+                        this.shellOptions = TreeStandardOptions.getDefaultShellOptionsForTreeStandard()
+                        break
+                }
+               
             }
-            StandardOptions.combinedDefaultShellOptions(this.shellOptions)
+            ArrayStandardOptions.combinedDefaultShellOptions(this.shellOptions)
             this.shellOptions$.next(this.shellOptions)
         }
         else {
@@ -101,12 +113,12 @@ export class StandardPagePage implements OnInit {
                 name: [this.standardComponent.name, [Validators.required, Validators.maxLength(250)], [PortalValidators.standardUniqueName(this.standardsClient)]],
                 displayName: [this.standardComponent.displayName, [Validators.required, Validators.maxLength(250)]],
                 app: [this.standardComponent.appId, [Validators.required]],
-                allowArrayData: [this.standardComponent.allowArrayData],
+                type: [this.standardComponent.type],
                 layoutType: [this.standardComponent.layoutType.toString()],
                 allowOverrideOptions: [this.standardComponent.allowOverrideOptions]
             })
 
-            this.shellOptions = this.shellOptions.concat(StandardOptions.getDefaultShellOptionsForStandard())
+            this.shellOptions = []
             this.shellOptions$.next(this.shellOptions)
         }
 
@@ -118,13 +130,30 @@ export class StandardPagePage implements OnInit {
                 this.standardFormGroup.get('name').setValue(listNameValue)
             }
         })
+
+        this.standardFormGroup.controls.type.valueChanges.subscribe((newValue : StandardType) => {
+            switch(newValue){
+                case StandardType.Standard:
+                    this.shellOptions = []
+                    this.shellOptions$.next(this.shellOptions)
+                    break
+                case StandardType.Array:
+                    this.shellOptions = ArrayStandardOptions.getDefaultShellOptionsForArray()
+                    this.shellOptions$.next(this.shellOptions)
+                    break
+                case StandardType.Tree:
+                    this.shellOptions = TreeStandardOptions.getDefaultShellOptionsForTreeStandard()
+                    this.shellOptions$.next(this.shellOptions)
+                    break
+            }
+        })
     }
 
     combineStandardInfo() {
         const formValues = this.standardFormGroup.value
         this.standardComponent.name = this.isEditMode ? this.standardComponent.name :  formValues.name
         this.standardComponent.displayName = formValues.displayName
-        this.standardComponent.allowArrayData = ObjectUtils.isNotNull(formValues.allowArrayData) ? formValues.allowArrayData : false
+        this.standardComponent.type =  this.isEditMode ? this.standardComponent.type : parseInt(formValues.type)
         this.standardComponent.controls = this.controls
         this.standardComponent.layoutType = parseInt(formValues.layoutType)
         this.standardComponent.options = this.shellOptions

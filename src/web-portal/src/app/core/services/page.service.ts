@@ -1,35 +1,39 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { Translator } from '../shell/translates/translate.pipe';
-import { ShellConfigProvider } from '../shell/shellconfig.provider';
-import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { DatabasesClient, PagesClient, Page, PageDatasource, DatasourceControlType, ExecuteDynamicResultModel, PageEvent, ActionType, PageButton, EventActionType, PageParameterModel, DatasourceOptions, PageAsyncValidatorModel, PageControlEvent, HttpServiceOptions, ActionCommandOptions, ConfirmationOptions, LoopDataModel } from './portal.service';
-import { NGXLogger } from 'ngx-logger';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { SecurityService } from '../security/security.service';
-import { Observable, of, forkJoin, Subscription, throwError } from 'rxjs';
-import { tap, map, filter, mergeMap } from 'rxjs/operators';
+import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
+import { EventDialogType, MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
+import { Guid } from 'guid-typescript';
+import { NGXLogger } from 'ngx-logger';
+import { StateReset } from 'ngxs-reset-plugin';
+import { forkJoin, Observable, of, Subscription } from 'rxjs';
+import { filter, map, mergeMap, tap } from 'rxjs/operators';
+import { BeginRenderingPageSectionsAction, ChangeControlValueEvent, ClickControlEvent, CompleteGatherSectionValidations, EndBuildingBoundDataComplete, GatherSectionValidations, InitPageInfo, InsertOneItemForStandardArray, LoadDatasource, LoadDatasourceComplete, PageReadyAction, RemoveOneItemForStandardArray, RenderedPageSectionAction, SectionValidationStateAction, UpdateOneItemForStandardArray, UserClicksOnButtonAction } from 'stores/pages/page.actions';
+import { PageState, PageStateModel } from 'stores/pages/page.state';
+import { TriggerControlChangeValueEvent } from 'stores/pages/pagecontrol.actions';
+import { ConfigurationProvider } from '../configs/configProvider';
+import { BoundControl } from '../context/bound-control';
+import { ArrayBoundSection, BoundSection, StandardBoundSection, TreeBoundSection } from '../context/bound-section';
+import { PageContext } from '../context/page-context';
+import { Interceptor } from '../interceptors/interceptor';
+import { InterceptorsProvider } from '../interceptors/interceptor.provider';
+import { ExtendedPageButton } from '../models/extended.models';
+import { PageControlActionEvent, PageLoadedDatasource, PageResponse, PageShellData, TriggeredControlEvent } from '../models/page.model';
 import { AuthUser } from '../security/auth.model';
 import { PortalStandardClaims } from '../security/portalClaims';
-import { ToastType, MessageType, EventDialogType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { PageResponse, PageLoadedDatasource, PageControlActionEvent, TriggeredControlEvent, PageShellData } from '../models/page.model';
-import { PageStateModel, PageState } from 'stores/pages/page.state';
+import { SecurityService } from '../security/security.service';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
-import * as _ from 'lodash';
-import { InitPageInfo, LoadDatasource, LoadDatasourceComplete, PageReadyAction, ChangeControlValueEvent, BeginRenderingPageSectionsAction, EndBuildingBoundDataComplete, GatherSectionValidations, SectionValidationStateAction, CompleteGatherSectionValidations, UserClicksOnButtonAction, ClickControlEvent, UpdateOneItemForStandardArray, InsertOneItemForStandardArray, RemoveOneItemForStandardArray } from 'stores/pages/page.actions';
-import { StateReset } from 'ngxs-reset-plugin';
-import { TriggerControlChangeValueEvent } from 'stores/pages/pagecontrol.actions';
-import { ExtendedPageButton } from '../models/extended.models';
-import { ConfigurationProvider } from '../configs/configProvider';
-import { CustomHttpService } from './customhttp.service';
+import { ShellConfigProvider } from '../shell/shellconfig.provider';
+import { Translator } from '../shell/translates/translate.pipe';
 import { ObjectUtils } from '../utils/object-util';
+import { CustomHttpService } from './customhttp.service';
+import { DatasourceOptionsService } from './datasourceopts.service';
+import { ActionCommandOptions, ActionType, ConfirmationOptions, DatabasesClient, DatasourceControlType, DatasourceOptions, EventActionType, ExecuteDynamicResultModel, HttpServiceOptions, LoopDataModel, Page, PageAsyncValidatorModel, PageButton, PageControlEvent, PageDatasource, PageParameterModel, PagesClient, SectionContructionType } from './portal.service';
 import { SessionService } from './session.service';
-import { TranslateService } from '@ngx-translate/core';
-import { InterceptorsProvider } from '../interceptors/interceptor.provider';
-import { Interceptor } from '../interceptors/interceptor';
 
 /**
- * This class contains all base methods for interacting with Page
+ * This class contains all base methods for interacting the Page
  */
 @Injectable()
 export class PageService {
@@ -37,13 +41,16 @@ export class PageService {
     private queryparams = new Object()
     private claims: any
     private data: any
+    private sectionCounter: number = 0
     private page: Page
     private dataSub: Subscription
     private commandSub: Subscription
     private eventSub: Subscription
+    private renderSub: Subscription
     private configs: any
     private sectionValidationCounter = 0
     private interceptor: Interceptor
+    public context: PageContext
     constructor(
         private translate: TranslateService,
         private customHttpService: CustomHttpService,
@@ -55,12 +62,13 @@ export class PageService {
         private translator: Translator,
         private shellConfigProvider: ShellConfigProvider,
         private shortcutUtil: ShortcutUtil,
-        public databasesClient: DatabasesClient,
+        private databasesClient: DatabasesClient,
+        private datasourceOptsService: DatasourceOptionsService,
         private logger: NGXLogger,
         private store: Store,
         private interceptorProvider: InterceptorsProvider
     ) {
-        this.configs = this.configurationProvider.getCurrentConfigs()        
+        this.configs = this.configurationProvider.getCurrentConfigs()
     }
 
 
@@ -109,7 +117,7 @@ export class PageService {
                 }
             }
         )
-        const pageState = this.store.select(state => state.page)
+        const pageState = this.store.select<PageStateModel>(state => state.page)
         this.store.dispatch(new InitPageInfo(page))
         this.page = page
         const prepareQueryParam$ = this.initQueryParams(activatedRoute, this.shellConfigProvider)
@@ -130,7 +138,7 @@ export class PageService {
                 )
             })
 
-        this.commandSub = this.store.select(state => state.page)
+        this.commandSub = pageState
             .pipe(
                 filter(state => state.filterState
                     && (state.filterState === UserClicksOnButtonAction
@@ -141,13 +149,13 @@ export class PageService {
                         switch (state.filterState) {
                             case UserClicksOnButtonAction:
                                 this.logger.debug('User has clicked on a button : ' + state.clickingButton.name)
-                                this.sectionValidationCounter = ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ? 
-                                                                    1 : this.page.builder.sections.length
+                                this.sectionValidationCounter = ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ?
+                                    1 : this.sectionCounter
                                 if (state.clickingButton.isRequiredValidation) {
                                     this.store.dispatch(
                                         new GatherSectionValidations(
-                                            ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ? 
-                                            this.page.builder.sections.find(a => a.id === state.clickingButton.placeSectionId).name : null))
+                                            ObjectUtils.isNotNull(state.clickingButton.placeSectionId) ?
+                                                this.page.builder.sections.find(a => a.id === state.clickingButton.placeSectionId).name : null))
                                 }
                                 else {
                                     this.executeByActionOptions(
@@ -161,6 +169,7 @@ export class PageService {
                             case SectionValidationStateAction:
                                 this.logger.debug('Hit checking section validation', state.sectionValidations)
                                 this.sectionValidationCounter--
+                                this.logger.debug('Section validation counter', this.sectionValidationCounter)
                                 if (this.sectionValidationCounter === 0) {
                                     this.store.dispatch(new CompleteGatherSectionValidations())
                                 }
@@ -189,6 +198,18 @@ export class PageService {
             }
         )
 
+        this.sectionCounter = 0
+        this.renderSub = pageState.pipe(
+            filter(state => state.filterState
+                && (state.filterState === RenderedPageSectionAction)),
+            tap(
+                res => {
+                    this.sectionCounter++
+                    this.logger.debug('Hit rendered section', this.sectionCounter)
+                }
+            )
+        ).subscribe()
+
         // Events for linking sections on one page
         this.eventSub =
             this.listenControlEvent$().pipe(
@@ -196,11 +217,11 @@ export class PageService {
                 tap(
                     event => {
                         this.logger.debug('Current event', event)
-                        _.forEach(this.page.events, evt => {
+                        this.page.events?.forEach(evt => {
                             if (evt.eventName === event.name) {
                                 switch (evt.eventActionType) {
                                     case EventActionType.TriggerEvent:
-                                        _.forEach(evt.triggerEventOptions.eventsList, triggerEvt => {
+                                        evt.triggerEventOptions.eventsList?.forEach(triggerEvt => {
                                             this.notifyTriggeringEvent(triggerEvt, null)
                                         })
                                         break
@@ -212,6 +233,23 @@ export class PageService {
                     }
                 )
             ).subscribe()
+
+        let boundSections: BoundSection[] = []
+        this.page.builder.sections?.forEach(section => {
+            switch (section.constructionType) {
+                case SectionContructionType.Array:
+                    boundSections.push(new ArrayBoundSection(section.name))
+                    break
+                case SectionContructionType.Tree:
+                    boundSections.push(new TreeBoundSection(section.name))
+                    break
+                default:
+                    boundSections.push(new StandardBoundSection(section.name, null, null))
+                    break
+            }
+        })
+
+        this.context = new PageContext(this.page, boundSections)
 
         return pageState
     }
@@ -228,6 +266,7 @@ export class PageService {
         this.commandSub.unsubscribe()
         this.dataSub.unsubscribe()
         this.eventSub.unsubscribe()
+        this.renderSub.unsubscribe()
         this.store.dispatch(new StateReset(PageState))
     }
 
@@ -282,28 +321,37 @@ export class PageService {
     /**
      * Changes control value
      * @param controlFullName Pattern: {sectionName}_{controlName}, Sensistive name Ex: databaseinfo_connectionString
-     * @param data
+     * @param data new value will be set in state
+     * @param sectionRef BoundSection of control, also it can be ArrayBoundSection or TreeBoundSection
+     * @param controlRef BoundControl
      * @returns if returns false, means skip chaning events, otherwise continuing chaning events
      */
-    changeControlValue(controlFullName: string, data: any): boolean {
+    changeControlValue(
+        controlFullName: string,
+        data: any,
+        sectionRef: BoundSection,
+        controlRef: BoundControl
+    ): boolean {
         const splitted = controlFullName.split('_')
         const section = splitted[0]
         const control = splitted[1]
-        const checked = this.checkInterceptorEvent(section, control, 'change')
+        // Note: If there are no defined interceptor, the default chaining events is true
+        const checked = this.interceptor ? this.checkInterceptorEvent(section, control, 'change', sectionRef, controlRef) : true
         this.store.dispatch(new ChangeControlValueEvent({
             name: controlFullName + '_change',
+            controlFullName: controlFullName,
             controlName: control,
             sectionName: section,
             data,
             triggeredByEvent: '',
             allowChainingEvents: checked
-        }))   
-        
+        }))
+
         return checked
     }
-
+    
     executeCommandByName(commandName: string) {
-        const found = _.find(this.page.commands, command => command.name === commandName)
+        const found = this.page.commands.find(command => command.name === commandName)
         if (found) {
             this.executeCommandClickEvent(found as ExtendedPageButton)
         }
@@ -325,43 +373,21 @@ export class PageService {
     }
 
     fetchDatasourceOptions(datasourceOpts: DatasourceOptions): Observable<any> {
-        switch (datasourceOpts.type) {
-            case DatasourceControlType.StaticResource:
-                return of(JSON.parse(datasourceOpts.datasourceStaticOptions.jsonResource))
-            case DatasourceControlType.Database:
-                return this.fetchDatasource(datasourceOpts.databaseOptions.databaseConnectionId, datasourceOpts.databaseOptions.query)
-            case DatasourceControlType.WebService:
-                return of(null)
-        }
+        return this.datasourceOptsService.executeDatasourceOptions(datasourceOpts, this.getPageShellData())
     }
 
-    fetchDatasource(databaseId: string, query: string): Observable<any> {
-        const combineQuery = this.translator.translateDataWithShell(query, this.getPageShellData())
-
-        return this.databasesClient.executeQueryDatasource(databaseId, combineQuery).pipe(
-            mergeMap(result => {
-                if (result.isSuccess) {
-                    let array = []
-                    if (ObjectUtils.isObject(result.result)) {
-                        array.push(result.result)
-                    }
-                    else {
-                        array = result.result
-                    }
-                    return of(array)
-                }
-                else {
-                    return throwError(result.error)
-                }
-            })
-        )
-    }
-
-    fetchControlSelectionDatasource(sectionName: string, controlName: string, parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
+    fetchControlSelectionDatasource(
+        sectionName: string, 
+        controlName: string, 
+        compositeControlId: string,
+        isChildCompositeControl: boolean,
+        parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
         return this.pageClients.fetchControlDatasource(this.page.id, {
             sectionName,
             controlName,
-            parameters
+            parameters,
+            compositeControlId,
+            isChildCompositeControl
         }).pipe(
             map(res => ObjectUtils.isArray(res.result) ? res.result : [res.result])
         )
@@ -369,7 +395,7 @@ export class PageService {
 
     evaluatedExpression(evaluteStr: string, data: any = null): boolean {
         const func = new Function('user', 'claims', 'configs', 'options', 'queryparams', 'data', `return ${evaluteStr} ? true : false;`);
-        return func(this.security.getAuthUser(), this.claims, this.configs, this.options, this.queryparams, !!data ? data : this.data) as boolean
+        return func(this.security.getAuthUser(), this.claims, this.configs, this.options, this.queryparams, ObjectUtils.isNotNull(data) ? data : this.data) as boolean
     }
 
     translateData(translateStr: string, data: any = null, isMergingData: boolean = false): string {
@@ -460,7 +486,7 @@ export class PageService {
                 case ActionType.ExecuteDatabase:
                     let combinedCommand = ''
                     let loopDatas: LoopDataModel[] = []
-                    actionCommandOptions.dbExecutionChains.steps.forEach((step, index) => {
+                    actionCommandOptions.dbExecutionChains.steps?.forEach((step, index) => {
                         if (ObjectUtils.isNotNull(step.dataLoopKey)) {
                             // Do data loop proccess
                             const evaluated = Function('data', 'return ' + step.dataLoopKey)
@@ -472,13 +498,13 @@ export class PageService {
 
                             this.logger.debug('All loop data', passingData)
                             if (ObjectUtils.isArray(passingData)) {
-                                passingData.forEach(p => {
+                                passingData?.forEach(p => {
                                     loopData.parameters
                                         .push(
                                             this.translator.retrieveParameters(
-                                            step.executeCommand,
-                                            this.getPageShellData(p, this.data))
-                                        );                                    
+                                                step.executeCommand,
+                                                this.getPageShellData(p, this.data))
+                                        );
                                 })
                             }
 
@@ -502,8 +528,8 @@ export class PageService {
                         }).subscribe(
                             res => {
                                 this.shortcutUtil
-                                    .eventDialog('Success', 
-                                        actionCommandOptions.notificationOptions.completeMessage, 
+                                    .eventDialog('Success',
+                                        actionCommandOptions.notificationOptions.completeMessage,
                                         EventDialogType.Success)
                                 if (onComplete) {
                                     onComplete()
@@ -511,8 +537,8 @@ export class PageService {
                             },
                             err => {
                                 this.shortcutUtil
-                                    .eventDialog('Error', 
-                                        actionCommandOptions.notificationOptions.failedMessage, 
+                                    .eventDialog('Error',
+                                        actionCommandOptions.notificationOptions.failedMessage,
                                         EventDialogType.Error)
                             })
                     break
@@ -534,8 +560,8 @@ export class PageService {
                         actionCommandOptions.httpServiceOptions.outputProjection).subscribe(
                             res => {
                                 this.shortcutUtil
-                                    .eventDialog('Success', 
-                                        actionCommandOptions.notificationOptions.completeMessage, 
+                                    .eventDialog('Success',
+                                        actionCommandOptions.notificationOptions.completeMessage,
                                         EventDialogType.Success)
                                 if (onComplete) {
                                     onComplete()
@@ -543,8 +569,8 @@ export class PageService {
                             },
                             err => {
                                 this.shortcutUtil
-                                    .eventDialog('Error', 
-                                        actionCommandOptions.notificationOptions.failedMessage, 
+                                    .eventDialog('Error',
+                                        actionCommandOptions.notificationOptions.failedMessage,
                                         EventDialogType.Error)
                             }
                         )
@@ -613,7 +639,7 @@ export class PageService {
             map<ParamMap, ShellConfig[]>(param => {
                 this.logger.debug('Hit param', this.queryparams)
                 const shellConfigs: ShellConfig[] = []
-                _.forEach(param.keys, key => {
+                param.keys?.forEach(key => {
                     this.queryparams[key] = param.get(key)
                     shellConfigs.push({ key: `queryparams.${key}`, value: param.get(key), type: ShellConfigType.Constant })
                 })
@@ -631,7 +657,7 @@ export class PageService {
     private initPageOptions(page: Page, shellConfigProvider: ShellConfigProvider): Observable<ShellConfig[]> {
         this.logger.debug('Hit options')
         const shellConfigs: ShellConfig[] = []
-        _.forEach(page.shellOptions, option => {
+        page.shellOptions?.forEach(option => {
             shellConfigs.push({ key: 'options.' + option.key, value: option.value, type: ShellConfigType.Constant })
             this.options[option.key] = option.value
         })
@@ -649,7 +675,7 @@ export class PageService {
         if (!!page.pageDatasources && page.pageDatasources.length > 0) {
             store.dispatch(new LoadDatasource())
             const datasources$: Observable<PageLoadedDatasource>[] = []
-            _.forEach(page.pageDatasources, (ds: PageDatasource) => {
+            page.pageDatasources?.forEach((ds: PageDatasource) => {
                 if (ds.isActive) {
                     this.logger.debug('Current options', this.options)
                     this.logger.debug('Current queryparams', this.queryparams)
@@ -660,7 +686,8 @@ export class PageService {
                                 const translatedDs = this.translateData(ds.options.datasourceStaticOptions.jsonResource, this.getPageShellData(), false)
                                 datasources$.push(of<PageLoadedDatasource>({
                                     data: JSON.parse(translatedDs),
-                                    name: ds.name
+                                    name: ds.name,
+                                    key: Guid.create().toString()
                                 }))
                                 break
                             case DatasourceControlType.WebService:
@@ -692,9 +719,9 @@ export class PageService {
                                             map<ExecuteDynamicResultModel, PageLoadedDatasource>((res: ExecuteDynamicResultModel) => {
                                                 // Ensure if result is array, take 1st elem for data
                                                 if (ObjectUtils.isArray(res.result)) {
-                                                    return { name: dsName, data: res.result[0] }
+                                                    return { name: dsName, data: res.result[0], key: Guid.create().toString() }
                                                 }
-                                                return { name: dsName, data: res.result }
+                                                return { name: dsName, data: res.result, key: Guid.create().toString() }
                                             })
                                         ))
                                 break
@@ -707,7 +734,6 @@ export class PageService {
                 return forkJoin(datasources$).pipe(
                     tap(
                         results => {
-                            this.logger.debug('Datasource', results)
                             store.dispatch(new LoadDatasourceComplete(results))
                         }
                     )
@@ -738,10 +764,10 @@ export class PageService {
 
     private routingCommand(command: PageButton) {
         let foundRoute = false
-        if(!ObjectUtils.isNotNull(command.buttonOptions.routeOptions)){
+        if (!ObjectUtils.isNotNull(command.buttonOptions.routeOptions)) {
             return
         }
-        _.forEach(command.buttonOptions.routeOptions.routes, route => {
+        command.buttonOptions.routeOptions.routes?.forEach(route => {
             const allowed = this.evaluatedExpression(route.condition)
             if (allowed && !foundRoute) {
                 foundRoute = true
@@ -760,6 +786,7 @@ export class PageService {
             this.store.dispatch(new ClickControlEvent({
                 controlName: command.name.toLowerCase(),
                 name: (command.name + '_click').toLowerCase(),
+                controlFullName: command.name.toLowerCase(),
                 sectionName: '',
                 triggeredByEvent: '',
                 data: null,
@@ -768,7 +795,21 @@ export class PageService {
         }
     }
 
-    private checkInterceptorEvent(section: string, control: string, event: string): boolean{
-        return this.interceptor.executeControlEvent(section, control, event, { pageService: this })
+    private checkInterceptorEvent(
+        section: string,
+        control: string,
+        event: string,
+        sectionRef: BoundSection,
+        controlRef: BoundControl): boolean {
+        return this.interceptor.executeControlEvent(
+            section,
+            control,
+            event,
+            {
+                pageService: this,
+                pageContext: this.context,
+                sectionRef: sectionRef,
+                controlRef: controlRef
+            })
     }
 }

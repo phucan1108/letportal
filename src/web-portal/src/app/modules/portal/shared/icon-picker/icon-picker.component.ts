@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import * as _ from 'lodash';
+ 
 import { StaticResources } from 'portal/resources/static-resources';
 
 @Component({

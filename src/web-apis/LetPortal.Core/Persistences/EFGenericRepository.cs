@@ -213,6 +213,11 @@ namespace LetPortal.Core.Persistences
             return Task.CompletedTask;
         }
 
+        public Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        {
+            return Task.FromResult(_context.Set<T>().First(expression));
+        }
+
         #region IDisposable Support
         private bool disposedValue = false;
 

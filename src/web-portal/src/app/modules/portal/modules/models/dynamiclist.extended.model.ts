@@ -1,6 +1,6 @@
 import { FilterField, ShellOption } from 'services/portal.service';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
-import * as _ from 'lodash';
+ 
 
 export interface ExtendedFilterField extends FilterField {
     jsonData: any
@@ -115,16 +115,16 @@ export class ListOptions {
 
     public static getListOptions(options: ShellOption[]): ListOptions {
         return {
-            sizeOptions: JSON.parse(_.find(options, opt => opt.key === 'sizeoptions').value),
-            defaultPageSize: JSON.parse(_.find(options, opt => opt.key === 'defaultpagesize').value),
-            fetchDataFirstTime: JSON.parse(_.find(options, opt => opt.key === 'fetchfirsttime').value),
-            maximumColumns: JSON.parse(_.find(options, opt => opt.key === 'maximumcolumns').value),
-            enableSearch: JSON.parse(_.find(options, opt => opt.key === 'enablesearch').value),
-            enableAdvancedSearch: JSON.parse(_.find(options, opt => opt.key === 'enableadvancedsearch').value),
-            enablePagination: JSON.parse(_.find(options, opt => opt.key === 'enablepagination').value),
-            enableExportExcel: JSON.parse(_.find(options, opt => opt.key === 'enableexportexcel').value),
-            maximumClientExport: JSON.parse(_.find(options, opt => opt.key === 'maximumclientexport').value)            ,
-            allowExportHiddenFields: JSON.parse(_.find(options, opt => opt.key === 'allowexporthiddenfields').value)
+            sizeOptions: JSON.parse(options.find(opt => opt.key === 'sizeoptions').value),
+            defaultPageSize: JSON.parse(options.find(opt => opt.key === 'defaultpagesize').value),
+            fetchDataFirstTime: JSON.parse(options.find(opt => opt.key === 'fetchfirsttime').value),
+            maximumColumns: JSON.parse(options.find(opt => opt.key === 'maximumcolumns').value),
+            enableSearch: JSON.parse(options.find(opt => opt.key === 'enablesearch').value),
+            enableAdvancedSearch: JSON.parse(options.find(opt => opt.key === 'enableadvancedsearch').value),
+            enablePagination: JSON.parse(options.find(opt => opt.key === 'enablepagination').value),
+            enableExportExcel: JSON.parse(options.find(opt => opt.key === 'enableexportexcel').value),
+            maximumClientExport: JSON.parse(options.find(opt => opt.key === 'maximumclientexport').value)            ,
+            allowExportHiddenFields: JSON.parse(options.find(opt => opt.key === 'allowexporthiddenfields').value)
         }
     }
 
@@ -158,7 +158,7 @@ export class ListOptions {
 
     public static combinedDefaultShellOptions(opts: ExtendedShellOption[]){
         const defaultOpts = this.getDefaultShellOptionsForList()
-        opts.forEach(a => {
+        opts?.forEach(a => {
             const found = defaultOpts.find(b => b.key === a.key)
             if(found){
                 a.description = found.description

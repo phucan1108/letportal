@@ -4,7 +4,7 @@ import { ControlsGridComponent } from './controls-grid.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NGXLogger } from 'ngx-logger';
-import { PageControlAsyncValidator, PageControl, AsyncValidatorType, HttpServiceOptions, DatabaseOptions } from 'services/portal.service';
+import { PageControlAsyncValidator, PageControl, AsyncValidatorType, HttpServiceOptions, SharedDatabaseOptions } from 'services/portal.service';
 import { BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ExtendedPageControl } from 'app/core/models/extended.models';
@@ -31,7 +31,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
     validatorType = AsyncValidatorType
     isHttpOptionsValid = false
     httpOptions: HttpServiceOptions
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
     dbOptions: DatabaseFormOptions = {
         allowHints: ['query']
     }
@@ -92,7 +92,7 @@ export class AsyncValidatorDialogComponent implements OnInit {
 
     getAvailableValidatorNames() {
         const names = []
-        this.validators.forEach(validator => {
+        this.validators?.forEach(validator => {
             names.push(validator.validatorName)
         })
 

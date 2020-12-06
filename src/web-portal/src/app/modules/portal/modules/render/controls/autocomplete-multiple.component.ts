@@ -129,11 +129,11 @@ export class AutocompleteMultipleComponent implements ControlValueAccessor, OnCh
 
     onCheckAllChanged() {
         if (this.isAllselected()) {
-            this.dropdownList.forEach(x => {
+            this.dropdownList?.forEach(x => {
                 x.selected = false;
             });
         } else {
-            this.dropdownList.forEach(x => {
+            this.dropdownList?.forEach(x => {
                 x.selected = true;
             });
         }

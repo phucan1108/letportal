@@ -185,14 +185,14 @@ export class VideoStreamDialogComponent implements OnInit {
 
     muted() {
         this.currentVideoConstraints.muted = !this.currentVideoConstraints.muted
-        this.mediaStream.getAudioTracks().forEach(track => {
+        this.mediaStream.getAudioTracks()?.forEach(track => {
             track.enabled = !this.currentVideoConstraints.muted
         })
     }
 
     cameraOn() {
         this.currentVideoConstraints.videoOn = !this.currentVideoConstraints.videoOn
-        this.mediaStream.getVideoTracks().forEach(track => {
+        this.mediaStream.getVideoTracks()?.forEach(track => {
             track.enabled = this.currentVideoConstraints.videoOn
         })
     }
@@ -200,7 +200,7 @@ export class VideoStreamDialogComponent implements OnInit {
     private dropAll() {
         try {
             this.currentRtcConnection.close()
-            this.mediaStream.getTracks().forEach(track => track.stop())
+            this.mediaStream.getTracks()?.forEach(track => track.stop())
             this.mediaStream = null
         }
         catch (err) {
@@ -313,7 +313,7 @@ export class VideoStreamDialogComponent implements OnInit {
         try {            
             this.mediaStream = await navigator.mediaDevices.getUserMedia(videoConstraint)
             this.localVideo.nativeElement.srcObject = this.mediaStream            
-            this.mediaStream.getTracks().forEach((track: MediaStreamTrack) => {           
+            this.mediaStream.getTracks()?.forEach((track: MediaStreamTrack) => {           
                 this.currentRtcConnection.addTransceiver(track, { streams: [this.mediaStream] })
             })
         }

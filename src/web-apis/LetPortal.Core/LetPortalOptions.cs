@@ -31,5 +31,6 @@
         /// EnableMicroservices = true
         /// </summary>
         public bool EnableSerilog { get; set; } = false;
+
     }
 }

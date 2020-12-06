@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using LetPortal.Core.Tools;
 using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
 using Version = LetPortal.Core.Versions.Version;
@@ -13,35 +14,36 @@ namespace LetPortal.Tools.Features
     {
         public string CommandName => "down";
 
-        public async Task RunAsync(ToolsContext context)
+        public async Task RunAsync(object context)
         {
-            if (context.LatestVersion != null)
+            var toolsContext = context as ToolsContext;
+            if (toolsContext.LatestVersion != null)
             {
-                var requestingVersionNumber = context.VersionNumber.ToVersionNumber();
-                if (requestingVersionNumber < context.LatestVersion.GetNumber())
+                var requestingVersionNumber = toolsContext.VersionNumber.ToVersionNumber();
+                if (requestingVersionNumber < toolsContext.LatestVersion.GetNumber())
                 {
-                    var matchingVersions = context.Versions.Where(
-                         a => a.GetNumber() <= context.LatestVersion.GetNumber()
+                    var matchingVersions = toolsContext.Versions.Where(
+                         a => a.GetNumber() <= toolsContext.LatestVersion.GetNumber()
                              && a.GetNumber() > requestingVersionNumber);
 
                     Console.WriteLine("----------------------DOWNGRADE PROGRESS------------------------");
                     Console.WriteLine("DOWNGRADE VERSION: " + matchingVersions.Last().VersionNumber);
                     Console.WriteLine("-----------------------++++++++++++++++-------------------------");
 
-                    var portalVersions = await DowngradingVersion(matchingVersions, context);
+                    var portalVersions = await DowngradingVersion(matchingVersions, toolsContext);
                     foreach (var portalVersion in portalVersions)
                     {
-                        var storedVersion = context.VersionRepository.GetAsQueryable().Where(a => a.VersionNumber == portalVersion.VersionNumber).FirstOrDefault();
+                        var storedVersion = toolsContext.VersionRepository.GetAsQueryable().Where(a => a.VersionNumber == portalVersion.VersionNumber).FirstOrDefault();
 
                         if (storedVersion != null)
                         {
-                            await context.VersionRepository.DeleteAsync(storedVersion.Id);
+                            await toolsContext.VersionRepository.DeleteAsync(storedVersion.Id);
                         }
                     }
                 }
                 else
                 {
-                    Console.WriteLine(string.Format("Oops we can't downgrade version because your request is {0} but the current is {1}", context.VersionNumber, context.LatestVersion.VersionNumber));
+                    Console.WriteLine(string.Format("Oops we can't downgrade version because your request is {0} but the current is {1}", toolsContext.VersionNumber, toolsContext.LatestVersion.VersionNumber));
                 }
             }
             else

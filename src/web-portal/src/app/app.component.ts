@@ -1,18 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd, NavigationStart } from '@angular/router';
-import { ChatService } from 'services/chat.service';
-import { SecurityService } from './core/security/security.service';
-import { VideoCallService } from 'services/videocall.service';
-import { Store, Actions, ofActionCompleted } from '@ngxs/store';
-import { UserDroppedCall, DroppedCall } from 'stores/chats/chats.actions';
+import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ObjectUtils } from './core/utils/object-util';
 import { environment } from 'environments/environment';
-import * as moment from 'moment'
+import * as moment from 'moment';
+import { tap } from 'rxjs/operators';
+import { ChatService } from 'services/chat.service';
 import { LocalizationService } from 'services/localization.service';
 import { LocalizationClient } from 'services/portal.service';
-import { tap } from 'rxjs/operators';
 import { SessionService } from 'services/session.service';
+import { VideoCallService } from 'services/videocall.service';
+import { SecurityService } from './core/security/security.service';
+import { ObjectUtils } from './core/utils/object-util';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

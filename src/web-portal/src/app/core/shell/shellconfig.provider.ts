@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as _ from 'lodash';
+ 
 import { ShellContants } from './shell.contants';
 import { ConfigurationProvider } from '../configs/configProvider';
 import { ShellConfig } from './shell.model';
@@ -45,6 +45,6 @@ export class ShellConfigProvider {
     }
 
     getAllAvailableShells() {
-        return _.concat(this.definitionVars, this.definitionFuncs, this.definitionConstants, ArrayUtils.sliceOneProp(this.shellConfigs, 'key'));
+        return this.definitionVars.concat(this.definitionFuncs, this.definitionConstants, ArrayUtils.sliceOneProp(this.shellConfigs, 'key'));
     }
 }

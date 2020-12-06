@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LetPortal.CMS.Core\LetPortal.CMS.Core.csproj" />
+    <ProjectReference Include="..\LetPortal.CMS.Features.Blogs\LetPortal.CMS.Features.Blogs.csproj" />
+    <ProjectReference Include="..\LetPortal.CMS.Features.Menus\LetPortal.CMS.Features.Menus.csproj" />
+    <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
+    <ProjectReference Include="..\LetPortal.Portal\LetPortal.Portal.csproj" />
+    <ProjectReference Include="..\Themes.PersonalBlog\Themes.PersonalBlog.csproj" />
+  </ItemGroup>
+
+</Project>

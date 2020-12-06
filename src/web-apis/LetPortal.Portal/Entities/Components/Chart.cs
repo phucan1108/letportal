@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
 namespace LetPortal.Portal.Entities.Components
 {
-    public class Chart : Component
+    public class Chart : Component, ICodeGenerable
     {
         public ChartDefinitions Definitions { get; set; }
 
-        public DatabaseOptions DatabaseOptions { get; set; }
+        public Portal.Entities.Shared.SharedDatabaseOptions DatabaseOptions { get; set; }
 
         public List<ChartFilter> ChartFilters { get; set; }
 
@@ -54,6 +58,89 @@ namespace LetPortal.Portal.Entities.Components
                     option.Value = xFormatDate;
                 }
             }
+        }
+
+        public CodeGenerableResult GenerateCode(string varName = null, int space = 0)
+        {
+            var codeResult = new CodeGenerableResult
+            {
+                DeletingCode = $"versionContext.DeleteData<LetPortal.Portal.Entities.Components.Chart>(\"{Id}\");"
+            };
+
+            varName ??= Name.Replace("-", "", System.StringComparison.OrdinalIgnoreCase) + "Chart";
+            var stringBuilder = new StringBuilder();
+            _ = stringBuilder.AppendLine($"var {varName} = new LetPortal.Portal.Entities.Components.Chart");
+            _ = stringBuilder.AppendLine($"{{");
+            _ = stringBuilder.AppendLine($"    Id = \"{Id}\",");
+            _ = stringBuilder.AppendLine($"    Name = \"{Name}\",");
+            _ = stringBuilder.AppendLine($"    AppId = \"{AppId}\",");
+            _ = stringBuilder.AppendLine($"    DisplayName = \"{DisplayName}\",");
+            var layoutType = "LetPortal.Portal.Entities.SectionParts.PageSectionLayoutType." + Enum.GetName(typeof(PageSectionLayoutType), LayoutType);
+            _ = stringBuilder.AppendLine($"    LayoutType = {layoutType},");
+            _ = stringBuilder.AppendLine(DatabaseOptions.GenerateCode(space: 1).InsertingCode);
+            _ = stringBuilder.AppendLine($"    TimeSpan = {TimeSpan},");
+            if (Definitions != null)
+            {
+                _ = stringBuilder.AppendLine($"    Definitions = new LetPortal.Portal.Entities.Components.ChartDefinitions");
+                _ = stringBuilder.AppendLine($"    {{");
+                _ = stringBuilder.AppendLine($"        ChartTitle = \"{Definitions.ChartTitle}\",");
+                var chartType = "ChartType." + Enum.GetName(typeof(ChartType), Definitions.ChartType);
+                _ = stringBuilder.AppendLine($"        ChartType = {chartType},");
+                _ = stringBuilder.AppendLine($"        MappingProjection = \"{Definitions.MappingProjection}\",");
+                _ = stringBuilder.AppendLine($"    }},");
+            }
+
+            if (Options != null && Options.Any())
+            {
+                _ = stringBuilder.AppendLine($"    Options = new System.Collections.Generic.List<LetPortal.Portal.Entities.Pages.ShellOption>");
+                _ = stringBuilder.AppendLine($"    {{");
+                foreach (var option in Options)
+                {
+                    _ = stringBuilder.AppendLine($"        new LetPortal.Portal.Entities.Pages.ShellOption");
+                    _ = stringBuilder.AppendLine($"        {{");
+                    _ = stringBuilder.AppendLine($"            Key = \"{option.Key}\",");
+                    _ = stringBuilder.AppendLine($"            Value = \"{option.Value}\",");
+                    _ = stringBuilder.AppendLine($"            Description = \"{option.Description}\"");
+                    if(option != Options.Last())
+                    {
+                        _ = stringBuilder.AppendLine($"        }},");
+                    }
+                    else
+                    {
+                        _ = stringBuilder.AppendLine($"        }}");
+                    }
+                }
+                _ = stringBuilder.AppendLine($"    }},");
+            }
+            if (ChartFilters != null && ChartFilters.Any())
+            {
+                _ = stringBuilder.AppendLine($"    ChartFilters = new System.Collections.Generic.List<LetPortal.Portal.Entities.Components.ChartFilter>");
+                _ = stringBuilder.AppendLine($"    {{");
+                foreach (var filter in ChartFilters)
+                {
+                    _ = stringBuilder.AppendLine($"        new LetPortal.Portal.Entities.Components.ChartFilter");
+                    _ = stringBuilder.AppendLine($"        {{");
+                    _ = stringBuilder.AppendLine($"            Name = \"{filter.Name}\",");
+                    _ = stringBuilder.AppendLine($"            DisplayName = \"{filter.DisplayName}\",");
+                    _ = stringBuilder.AppendLine($"            IsMultiple = {filter.IsMultiple.ToString().ToLower()},");
+                    var chartFilterType = "LetPortal.Portal.Entities.Components.FilterType." + Enum.GetName(typeof(FilterType), filter.Type);
+                    _ = stringBuilder.AppendLine($"            Type = {chartFilterType}");
+
+                    if(filter != ChartFilters.Last())
+                    {
+                        _ = stringBuilder.AppendLine($"        }},");
+                    }
+                    else
+                    {
+                        _ = stringBuilder.AppendLine($"        }}");
+                    }                       
+                }
+                _ = stringBuilder.AppendLine($"    }}");
+            }
+            _ = stringBuilder.AppendLine($"}};");
+            _ = stringBuilder.AppendLine($"versionContext.InsertData({varName});");
+            codeResult.InsertingCode = stringBuilder.ToString();
+            return codeResult;
         }
     }
 

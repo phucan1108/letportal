@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using LetPortal.Core.Versions;
+using LetPortal.Portal;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 
@@ -27,7 +28,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                 Options = Constants.DynamicListOptions(),
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = Constants.PortalDatabaseId,
                         Query = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB
@@ -37,9 +38,9 @@ namespace LetPortal.Versions.Components.DynamicLists
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -52,7 +53,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Backup Name",
@@ -65,7 +66,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "description",
                             DisplayName = "Description",
@@ -78,7 +79,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "creator",
                             DisplayName = "Creator",
@@ -91,7 +92,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "createdDate",
                             DisplayName = "Created Date",
@@ -105,7 +106,7 @@ namespace LetPortal.Versions.Components.DynamicLists
                             },
                             Order = 4
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "downloadableUrl",
                             DisplayName = "downloadableUrl",

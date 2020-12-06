@@ -1,0 +1,20 @@
+﻿@page
+@model ContentManagement.Themes.TheFace.Areas.TheFace.Pages.IndexModel
+@{
+    var renderedPage = Model.RenderPage;
+}
+
+@if(renderedPage.Sections != null)
+{
+    foreach(var section in renderedPage.Sections)
+    {
+        if(section.BindingType == LetPortal.CMS.Core.Abstractions.BindingType.Datasource)
+        {
+            @await Component.InvokeAsync(section.Name, new { datasource = section.DatasourceName })
+        }
+        else
+        {
+            @await Component.InvokeAsync(section.Name, new { templateKey = section.TemplateKey })
+        }
+    }
+}

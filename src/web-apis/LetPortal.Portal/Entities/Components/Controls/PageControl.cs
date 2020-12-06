@@ -15,7 +15,7 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
         public DatasourceOptions DatasourceOptions { get; set; } = new DatasourceOptions
         {
             Type = DatasourceControlType.StaticResource,
-            DatabaseOptions = new DatabaseOptions
+            DatabaseOptions = new SharedDatabaseOptions
             {
                 DatabaseConnectionId = "",
                 EntityName = "",
@@ -40,6 +40,8 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
         public int Order { get; set; }
 
         public ControlType Type { get; set; }
+
+        public string CompositeControlId { get; set; }
 
         public List<PageControlValidator> Validators { get; set; } = new List<PageControlValidator>();
 
@@ -69,6 +71,7 @@ namespace LetPortal.Portal.Entities.SectionParts.Controls
         Uploader,
         MultiUploader,
         IconPicker,
-        MarkdownEditor
+        MarkdownEditor,
+        Composite
     }
 }

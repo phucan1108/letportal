@@ -54,7 +54,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
-                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     Query = "{\r\n  \"$query\":{\r\n    \"apps\":[]\r\n  }\r\n}"
                 },
@@ -157,7 +157,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
-                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },
@@ -221,7 +221,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
-                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },
@@ -327,7 +327,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
-                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     Query = "SELECT name, `displayName`, `timeSpan`, `createdDate`, `modifiedDate` FROM `apps`"
                 },
@@ -391,7 +391,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
-                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     Query = "SELECT name, `displayName`, `timeSpan`, `createdDate`, `modifiedDate` FROM `apps`"
                 },
@@ -496,7 +496,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
-                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },
@@ -560,7 +560,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             // Act
             LetPortal.Portal.Models.Charts.ExecutionChartResponseModel result = await chartService.Execute(new LetPortal.Portal.Entities.Components.Chart
             {
-                DatabaseOptions = new LetPortal.Portal.Entities.Shared.DatabaseOptions
+                DatabaseOptions = new LetPortal.Portal.Entities.Shared.SharedDatabaseOptions
                 {
                     Query = "SELECT name, \"displayName\", \"timeSpan\", \"createdDate\", \"modifiedDate\" FROM \"apps\""
                 },

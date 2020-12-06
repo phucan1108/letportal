@@ -5,7 +5,7 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 import { Observable, of, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
 import { SessionService } from 'services/session.service';
-import * as _ from 'lodash';
+ 
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
@@ -31,7 +31,7 @@ export class JwtTokenInterceptor implements HttpInterceptor {
 
         const ignorePaths = environment.ignoreSendTokenEndpoints.split(';')
         let ignore = false
-        _.forEach(ignorePaths, path => {
+        ignorePaths?.forEach(path => {
             if (req.url.indexOf(path) > 0) {
                 ignore = true
                 return false

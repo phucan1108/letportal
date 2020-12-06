@@ -1,0 +1,16 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "LetPortal.Microservices.Configurations";
+
+service ServiceConfiguration {
+    rpc Pull (ServiceConfigurationRequest) returns (ServiceConfigurationResponse);
+}
+
+message ServiceConfigurationRequest {
+    string service_name = 1;
+    string version = 2;
+}
+
+message ServiceConfigurationResponse {
+    string configuration_content = 1;
+}

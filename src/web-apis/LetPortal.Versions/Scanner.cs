@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using LetPortal.Core.Utils;
-using Microsoft.Extensions.DependencyInjection;
+using LetPortal.Identity;
+using LetPortal.Portal;
 
 namespace LetPortal.Versions
 {

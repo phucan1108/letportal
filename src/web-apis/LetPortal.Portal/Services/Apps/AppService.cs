@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
@@ -13,7 +12,6 @@ using LetPortal.Portal.Entities.Pages;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Models.Apps;
 using LetPortal.Portal.Providers.Components;
-using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Providers.Files;
 using LetPortal.Portal.Providers.Localizations;
 using LetPortal.Portal.Providers.Pages;
@@ -109,7 +107,7 @@ namespace LetPortal.Portal.Services.Apps
                     break;
             }
 
-            foreach(var chainingFile in appFlatternModel.ChainingFiles)
+            foreach (var chainingFile in appFlatternModel.ChainingFiles)
             {
                 switch (chainingFile)
                 {
@@ -143,7 +141,7 @@ namespace LetPortal.Portal.Services.Apps
                         var localesList = ConvertUtil.DeserializeObject<IEnumerable<Localization>>(localesString);
                         await _localizationProvider.ForceUpdateLocalizations(localesList);
                         break;
-                }                
+                }
             }
 
             await _appRepository.ForceUpdateAsync(appFlatternModel.App.Id, appFlatternModel.App);
@@ -159,7 +157,7 @@ namespace LetPortal.Portal.Services.Apps
             var collectLocales = _localizationProvider.GetByAppId(app.Id);
             var collectStandards = _standardServiceProvider.GetByAppId(app.Id);
             var collectCharts = _chartServiceProvider.GetByAppId(app.Id);
-            var collectDynamicLists = _dynamicListServiceProvider.GetByAppId(app.Id);            
+            var collectDynamicLists = _dynamicListServiceProvider.GetByAppId(app.Id);
             var collectPages = _pageServiceProvider.GetByAppId(app.Id);
             await Task.WhenAll(collectLocales, collectStandards, collectCharts, collectDynamicLists, collectPages);
 
@@ -174,15 +172,15 @@ namespace LetPortal.Portal.Services.Apps
                 TotalStandards = collectStandards.Result?.Count(),
                 TotalLocales = collectLocales.Result?.Count(),
                 TotalPages = collectPages.Result?.Count(),
-                ChainingFiles = new List<string>() 
+                ChainingFiles = new List<string>()
             };
 
             var fileName = DateTime.UtcNow.Ticks.ToString();
             var folderName = app.Name + "_" + app.CurrentVersionNumber + "_" + fileName;
             var jsonFileName = folderName + ".json";
-            var jsonFilePath = Path.Combine(Environment.CurrentDirectory,"Temp", "Packages", folderName);
-            if(Directory.Exists(jsonFilePath))
-            {     
+            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "Temp", "Packages", folderName);
+            if (Directory.Exists(jsonFilePath))
+            {
                 Directory.Delete(jsonFilePath, true);
             }
             Directory.CreateDirectory(jsonFilePath);
@@ -341,7 +339,7 @@ namespace LetPortal.Portal.Services.Apps
                         case STANDARD_FILE:
                             var standardFilePath = Path.Combine(unzipFolderPath, STANDARD_FILE);
                             var standardsString = File.ReadAllText(standardFilePath);
-                            var standardsList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(standardsString);                            
+                            var standardsList = ConvertUtil.DeserializeObject<IEnumerable<StandardComponent>>(standardsString);
                             var standardStates = new List<ComponentInstallState>();
                             foreach (var standard in standardsList)
                             {
@@ -371,7 +369,7 @@ namespace LetPortal.Portal.Services.Apps
                         case CHART_FILE:
                             var chartFilePath = Path.Combine(unzipFolderPath, CHART_FILE);
                             var chartsString = File.ReadAllText(chartFilePath);
-                            var chartsList = ConvertUtil.DeserializeObject<IEnumerable<Chart>>(chartsString);                            
+                            var chartsList = ConvertUtil.DeserializeObject<IEnumerable<Chart>>(chartsString);
                             var chartsListStates = new List<ComponentInstallState>();
                             foreach (var chart in chartsList)
                             {
@@ -608,7 +606,7 @@ namespace LetPortal.Portal.Services.Apps
                 await _appRepository.ForceUpdateAsync(appFlatternModel.App.Id, appFlatternModel.App);
 
                 Directory.Delete(restoreFilePath, true);
-            }             
+            }
         }
 
         #endregion

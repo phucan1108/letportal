@@ -1,4 +1,5 @@
-﻿using LetPortal.Portal.Entities.SectionParts;
+﻿using LetPortal.Core.Persistences;
+using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
@@ -11,6 +12,7 @@ using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Providers.Databases;
 using LetPortal.Portal.Services.Components;
+using Microsoft.Extensions.Options;
 using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -42,9 +44,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MongoDatabaseConenction));
 
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
             List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MongoDynamicListQueryDatabase()
+                new MongoDynamicListQueryDatabase(optionsMock)
             };
 
             DynamicList databaseListSectionPart = SampleMongoDynamicList();
@@ -92,9 +95,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_context.MongoDatabaseConenction));
 
+            var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
             List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MongoDynamicListQueryDatabase()
+                new MongoDynamicListQueryDatabase(optionsMock)
             };
 
             DynamicList databaseListSectionPart = SampleMongoDynamicList();
@@ -1090,7 +1094,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 DisplayName = "Databases List",
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = "asda",
                         EntityName = "databases",
@@ -1176,9 +1180,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -1191,7 +1195,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -1204,7 +1208,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "databaseConnectionType",
                             DisplayName = "Connection Type",
@@ -1227,7 +1231,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "connectionString",
                             DisplayName = "Connection String",
@@ -1240,7 +1244,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "dataSource",
                             DisplayName = "Datasource",
@@ -1267,7 +1271,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 DisplayName = "Databases List",
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = "asda",
                         EntityName = "databases",
@@ -1353,9 +1357,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -1368,7 +1372,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -1381,7 +1385,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "databaseConnectionType",
                             DisplayName = "Connection Type",
@@ -1404,7 +1408,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "connectionString",
                             DisplayName = "Connection String",
@@ -1417,7 +1421,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "dataSource",
                             DisplayName = "Datasource",
@@ -1444,7 +1448,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 DisplayName = "Databases List",
                 ListDatasource = new DynamicListDatasource
                 {
-                    DatabaseConnectionOptions = new DatabaseOptions
+                    DatabaseConnectionOptions = new SharedDatabaseOptions
                     {
                         DatabaseConnectionId = "asda",
                         EntityName = "databases",
@@ -1530,9 +1534,9 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 },
                 ColumnsList = new ColumnsList
                 {
-                    ColumndDefs = new List<ColumndDef>
+                    ColumnDefs = new List<ColumnDef>
                     {
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "id",
                             DisplayName = "Id",
@@ -1545,7 +1549,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 0
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "name",
                             DisplayName = "Name",
@@ -1558,7 +1562,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 1
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "databaseConnectionType",
                             DisplayName = "Connection Type",
@@ -1581,7 +1585,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 2
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "connectionString",
                             DisplayName = "Connection String",
@@ -1594,7 +1598,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
                             },
                             Order = 3
                         },
-                        new ColumndDef
+                        new ColumnDef
                         {
                             Name = "dataSource",
                             DisplayName = "Datasource",

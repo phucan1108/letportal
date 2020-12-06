@@ -14,6 +14,113 @@ namespace LetPortal.Versions
         public const string GeneralUpdateWorkflowId = "5d31634fe7fefb62d805bf74";
         public const string GeneralDeleteWorkflowId = "5d316607e7fefb62d805bf79";
 
+        public static List<ShellOption> TreeOptions(
+            string inStructure = "nest", 
+            string outStructure = "nest", 
+            string displayNameField = "displayName",
+            string inChildren = "sub",
+            string outChildren = "sub",
+            string nodeIdField = "_id",
+            string nodeParentField = "parentId",
+            bool allowGenerateId = true)
+        {
+            return new List<ShellOption>
+            {
+                new ShellOption
+                {
+                    Key = "indatastructure",
+                    Value = inStructure
+                },
+                new ShellOption
+                {
+                    Key = "outdatastructure",
+                    Value = outStructure
+                },
+                new ShellOption
+                {
+                    Key = "displayname",
+                    Value = displayNameField
+                },
+                new ShellOption
+                {
+                    Key = "allowgenerateid",
+                    Value = allowGenerateId ? "true" : "false"
+                },
+                new ShellOption
+                {
+                    Key = "inchildren",
+                    Value = inChildren
+                },
+                new ShellOption
+                {
+                    Key = "outchildren",
+                    Value = outChildren
+                },
+                new ShellOption
+                {
+                    Key = "nodeidfield",
+                    Value = nodeIdField
+                },
+                new ShellOption
+                {
+                    Key = "nodeparentfield",
+                    Value = nodeParentField
+                }
+            };
+        }
+
+        public static List<ShellOption> ControlOptions(
+            string label,
+            string placeHolder,
+            string disabled,
+            string hidden,
+            string bindName,
+            string rendered,
+            List<ShellOption> combinedOptions = null
+            )
+        {
+            var options =  new List<ShellOption>
+            {
+                new ShellOption
+                {
+                    Key = "label",
+                    Value = label
+                },
+                new ShellOption
+                {
+                    Key = "placeholder",
+                    Value = placeHolder
+                },
+                new ShellOption
+                {
+                    Key = "disabled",
+                    Value = disabled
+                },
+                new ShellOption
+                {
+                    Key = "hidden",
+                    Value = hidden
+                },
+                new ShellOption
+                {
+                    Key = "rendered",
+                    Value = rendered
+                },
+                new ShellOption
+                {
+                    Key = "bindname",
+                    Value = bindName
+                }
+            };
+
+            if(combinedOptions != null)
+            {
+                options.AddRange(combinedOptions);
+            }
+
+            return options;
+        }
+
         public static List<ShellOption> DynamicListOptions()
         {
             return new List<ShellOption>

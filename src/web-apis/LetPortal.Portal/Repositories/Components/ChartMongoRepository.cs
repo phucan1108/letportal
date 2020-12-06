@@ -54,9 +54,13 @@ namespace LetPortal.Portal.Repositories.Components
                 var regexFilter = Builders<Chart>.Filter.Regex(a => a.DisplayName, new MongoDB.Bson.BsonRegularExpression(keyWord, "i"));
                 var discriminatorFilter = Builders<Chart>.Filter.Eq("_t", typeof(Chart).Name);
                 var combineFilter = Builders<Chart>.Filter.And(discriminatorFilter, regexFilter);
-                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+                return Task.FromResult(Collection.Find(combineFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
             }
-            return Task.FromResult(Collection.AsQueryable().Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName }).AsEnumerable());
+            else
+            {                   
+                var discriminatorFilter = Builders<Chart>.Filter.Eq("_t", typeof(Chart).Name);
+                return Task.FromResult(Collection.Find(discriminatorFilter).ToList()?.Select(a => new ShortEntityModel { Id = a.Id, DisplayName = a.DisplayName, AppId = a.AppId }).AsEnumerable());
+            }            
         }
 
         private List<LanguageKey> GetChartLanguages(Chart chart)

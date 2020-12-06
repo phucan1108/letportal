@@ -46,8 +46,6 @@
     {
         public bool Enable { get; set; }
 
-        public string HealthcheckEndpoint { get; set; }
-
-        public int Delay { get; set; } = 60;
+        public int Delay { get; set; } = 5;
     }
 }

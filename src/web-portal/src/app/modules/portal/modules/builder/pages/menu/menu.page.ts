@@ -6,7 +6,7 @@ import { Guid } from 'guid-typescript';
 import { MenuDialogComponent } from '../../components/menu/components/menu-dialog.component';
 import { NGXLogger } from 'ngx-logger';
 import { ArrayUtils } from 'app/core/utils/array-util';
-import * as _ from 'lodash';
+ 
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { SecurityService } from 'app/core/security/security.service';
@@ -171,7 +171,7 @@ export class MenuPage implements OnInit, AfterViewInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if(menu.level === 0){
-                    _.forEach(this.menus, menuTemp => {
+                    this.menus?.forEach(menuTemp => {
                         if(menuTemp.id === result.id){
                             menuTemp.displayName = result.displayName
                             menuTemp.url = result.url
@@ -180,9 +180,9 @@ export class MenuPage implements OnInit, AfterViewInit {
                     })
                 }
                 else{
-                    _.forEach(this.menus, menuTemp => {
+                    this.menus?.forEach(menuTemp => {
                         if(menuTemp.id === result.parentId){
-                            _.forEach(menuTemp.subMenus, menuSub => {
+                            menuTemp.subMenus?.forEach(menuSub => {
                                 if(menuSub.id === result.id){
                                     menuSub.displayName = result.displayName
                                     menuSub.url = result.url
@@ -228,15 +228,15 @@ export class MenuPage implements OnInit, AfterViewInit {
                 }
                 else{
                     const parentNode = this.findParent(result)
-                    _.forEach(parentNode.subMenus, subMenu => {
+                    parentNode.subMenus?.forEach(subMenu => {
                         if(subMenu.order >= result.order){
                             subMenu.order += 1
                         }
                     })
 
                     parentNode.subMenus.push(result)
-                    parentNode.subMenus = _.orderBy(parentNode.subMenus, sub => sub.order)
-                    _.forEach(this.menus, menuTemp => {
+                    parentNode.subMenus = parentNode.subMenus.sort(sub => sub.order)
+                    this.menus?.forEach(menuTemp => {
                         if(menuTemp.id === parentNode.id){
                             menuTemp.subMenus = parentNode.subMenus
                             return false
@@ -257,11 +257,11 @@ export class MenuPage implements OnInit, AfterViewInit {
     findParent(menu: ExtendedMenu){
         const menuPaths = menu.menuPath.split('/')
         let parentMenuTemp: ExtendedMenu = null;
-        _.forEach(menuPaths, path => {
+        menuPaths?.forEach(path => {
             if(path != '~'){
                 const lookingMenus = parentMenuTemp ? parentMenuTemp.subMenus : this.menus
                 parentMenuTemp = {
-                    ..._.find(lookingMenus, subMenu => subMenu.id === path),
+                    ...lookingMenus.find(menu => menu.id === path),
                     level: 0
                 }
             }
@@ -279,12 +279,12 @@ export class MenuPage implements OnInit, AfterViewInit {
     }
 
     private sortMenus(){
-        this.menus = _.orderBy(this.menus, a => a.order)
+        this.menus = this.menus.sort(a => a.order)
         this.refreshTree()
     }
 
     private sortSubMenus(menu: ExtendedMenu){
-        menu.subMenus = _.orderBy(menu.subMenus, a => a.order)
+        menu.subMenus = menu.subMenus.sort(a => a.order)
         return menu
     }
 }

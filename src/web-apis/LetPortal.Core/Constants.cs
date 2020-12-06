@@ -15,5 +15,7 @@
         public const string LetPortalHealthCheckData = "DataHealthCheck";
 
         public const string TokenExpiredHeader = "X-Token-Expired";
+
+        public const string SkipCheckPortalHeaders = "SkipCheckPortalHeaders";
     }
 }

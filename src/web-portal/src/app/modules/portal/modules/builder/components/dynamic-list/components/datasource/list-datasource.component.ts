@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { ExtractingSchemaQueryModel, ColumnField, ColumndDef, CommandButtonInList, ActionType, CommandPositionType, FilledParameter, Parameter, DatabaseOptions, FieldValueType, DatasourceControlType } from 'services/portal.service';
-import * as _ from 'lodash';
-import { Constants } from 'portal/resources/constants';
-import { NGXLogger } from 'ngx-logger';
-import { Guid } from 'guid-typescript';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Guid } from 'guid-typescript';
+import { NGXLogger } from 'ngx-logger';
+import { Constants } from 'portal/resources/constants';
+import { ActionType, ColumnDef, ColumnField, CommandButtonInList, CommandPositionType, DatasourceControlType, ExtractingSchemaQueryModel, FieldValueType, FilledParameter, Parameter, SharedDatabaseOptions } from 'services/portal.service';
+ 
 
 @Component({
     selector: 'let-list-datasource',
@@ -15,7 +15,7 @@ export class ListDatasourceComponent implements OnInit {
     heading = 'Database Connection Info:'
     format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     @Input()
-    databaseOptions: DatabaseOptions
+    databaseOptions: SharedDatabaseOptions
 
     @Input()
     isEditMode: boolean
@@ -27,7 +27,7 @@ export class ListDatasourceComponent implements OnInit {
     afterPopulatingQuery = new EventEmitter<any>();
 
     @Output()
-    changed = new EventEmitter<DatabaseOptions>()
+    changed = new EventEmitter<SharedDatabaseOptions>()
 
     private params: FilledParameter[] = []
     private selectedEntityname: string
@@ -50,7 +50,7 @@ export class ListDatasourceComponent implements OnInit {
     onPopulatingQuery($event: ExtractingSchemaQueryModel) {
         const columnDefs = this.populateColumnDefs($event.columnFields)
         const parameters: Array<Parameter> = []
-        _.forEach(this.params, param => {
+        this.params?.forEach(param => {
             parameters.push({ name: param.name })
         })
         this.afterPopulatingQuery.emit({
@@ -70,7 +70,7 @@ export class ListDatasourceComponent implements OnInit {
             commands
         })
     }
-    databaseOptChanged($event: DatabaseOptions){
+    databaseOptChanged($event: SharedDatabaseOptions){
         this.changed.emit($event)
     }
     onExtractingParam($event: FilledParameter[]) {
@@ -98,26 +98,26 @@ export class ListDatasourceComponent implements OnInit {
         }
     }
 
-    populateColumnDefs(columnFields: ColumnField[]): Array<ColumndDef> {
-        const columnTempDefs = new Array<ColumndDef>();
+    populateColumnDefs(columnFields: ColumnField[]): Array<ColumnDef> {
+        const columnTempDefs = new Array<ColumnDef>();
 
-        _.forEach(columnFields, (element) => {
+        columnFields?.forEach((element) => {
             // By default, we need to remove all fields that contain id or special char
             const fieldName = element.name.toLowerCase()
-            if (fieldName.indexOf('id') < 2
-                && !this.format.test(fieldName)
-                && !this.ignoreBsonFieldTypes(element.fieldType)) {
+            if (//fieldName.indexOf('id') < 2
+                //&& !this.format.test(fieldName)
+                !this.ignoreBsonFieldTypes(element.fieldType)) {
                 // Ignore some special fields
-                const columnDef: ColumndDef = {
+                const columnDef: ColumnDef = {
                     name: (element.name === '_id' || element.name === 'id') ? 'id' : element.name,
                     displayName: this.getBeautifulName(element.displayName),
                     displayFormat: '{0}',
-                    allowSort: !(element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
+                    allowSort: this.allowSort(element.fieldType) && !(element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
                     displayFormatAsHtml: false,
                     isHidden: (element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
                     searchOptions: {
-                        allowInAdvancedMode: !(element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
-                        allowTextSearch: !(element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
+                        allowInAdvancedMode: this.allowSearchText(element.fieldType) && !(element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
+                        allowTextSearch: this.allowSearchText(element.fieldType) && !(element.name === '_id' || element.name === 'id' || (element.name.toLowerCase().indexOf('id') > 0)),
                         fieldValueType: this.convertFieldType(element.fieldType)
                     },
                     datasourceOptions: {
@@ -242,7 +242,15 @@ export class ListDatasourceComponent implements OnInit {
     }
 
     private ignoreBsonFieldTypes(fieldType: string){
-        return fieldType == 'list' || fieldType == 'document'
+        return fieldType === 'list' || fieldType === 'document'
+    }
+
+    private allowSearchText(fieldType: string){
+        return fieldType === 'string' || fieldType === 'number'
+    }
+
+    private allowSort(fieldType: string){
+        return fieldType !== 'boolean' && fieldType !== 'list' && fieldType !== 'document'
     }
 
     private getBeautifulName(colName: string){

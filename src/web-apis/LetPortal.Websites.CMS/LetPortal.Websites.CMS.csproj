@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>b2382202-e7fa-47e9-b904-f9aa5a7cddf5</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LetPortal.CMS.Core\LetPortal.CMS.Core.csproj" />
+    <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
+    <ProjectReference Include="..\LetPortal.Microservices.Client\LetPortal.Microservices.Client.csproj" />
+    <ProjectReference Include="..\Themes.PersonalBlog\Themes.PersonalBlog.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+</Project>

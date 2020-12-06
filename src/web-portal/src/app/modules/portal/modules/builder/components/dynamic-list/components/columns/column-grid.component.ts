@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ColumndDef, ActionType, FieldValueType, DatasourceControlType } from 'services/portal.service';
-import { MatDialog } from '@angular/material/dialog';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { NGXLogger } from 'ngx-logger';
 import { StaticResources } from 'portal/resources/static-resources';
 import { DatasourceOptionsDialogComponent } from 'portal/shared/datasourceopts/datasourceopts.component';
-import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { ActionType, ColumnDef, DatasourceControlType, FieldValueType } from 'services/portal.service';
 
 @Component({
     selector: 'let-column-grid',
@@ -14,7 +14,7 @@ import { moveItemInArray } from '@angular/cdk/drag-drop';
 export class ColumnGridComponent implements OnInit {
 
     @Input()
-    columnDefs: Array<ColumndDef>
+    columnDefs: Array<ColumnDef>
 
     @Output()
     columnDefsChanged = new EventEmitter<any>()
@@ -47,11 +47,11 @@ export class ColumnGridComponent implements OnInit {
             name: 'Datetime',
             patterns: [
                 { name: 'Day first', format: '{0:dd/MM/yyyy}' },
-                { name: 'Month first', format: '{0:MM/dd/yyyy' },
+                { name: 'Month first', format: '{0:MM/dd/yyyy}' },
                 { name: 'Long date', format: '{0:D}'},
                 { name: 'Month year', format: '{0:Y}'},
-                { name: 'Day first time', format: '{0:dd/MM/yyyy HH:mm'},
-                { name: 'Month first time', format: '{0:MM/dd/yyyy HH:mm'}
+                { name: 'Day first time', format: '{0:dd/MM/yyyy HH:mm}'},
+                { name: 'Month first time', format: '{0:MM/dd/yyyy HH:mm}'}
             ]
         }
     ]
@@ -68,11 +68,11 @@ export class ColumnGridComponent implements OnInit {
         ]).subscribe(result => {
             if (result.matches) {
                 this.isSmallDevice = true
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on column grid', this.isSmallDevice)
             }
             else {
                 this.isSmallDevice = false
-                this.logger.debug('Small device', this.isSmallDevice)
+                this.logger.debug('Small device on column grid', this.isSmallDevice)
             }
         });
     }
@@ -83,7 +83,7 @@ export class ColumnGridComponent implements OnInit {
         return columnDef ? columnDef.name : undefined;
     }
 
-    deleteColumn(column: ColumndDef) {
+    deleteColumn(column: ColumnDef) {
         const index = this.columnDefs.indexOf(column);
         this.columnDefs.splice(index, 1);
         this.notifyColumnDefsChanged()
@@ -98,14 +98,14 @@ export class ColumnGridComponent implements OnInit {
         }
     }
 
-    onHiddenColumn(columnDef: ColumndDef) {
+    onHiddenColumn(columnDef: ColumnDef) {
         columnDef.allowSort = false;
         columnDef.searchOptions.allowInAdvancedMode = false
         columnDef.searchOptions.allowTextSearch = false
         columnDef.displayFormatAsHtml = false
     }
 
-    onFieldTypeSelectChange(columnDef: ColumndDef){
+    onFieldTypeSelectChange(columnDef: ColumnDef){
 
     }
 
@@ -115,7 +115,7 @@ export class ColumnGridComponent implements OnInit {
         this.logger.debug('New columns after dragging', this.columnDefs)
     }
 
-    openDatasourceDialogForColumn(columnDef: ColumndDef) {
+    openDatasourceDialogForColumn(columnDef: ColumnDef) {
         if (columnDef.searchOptions.fieldValueType === FieldValueType.Select) {
             if(!columnDef.datasourceOptions){
                 columnDef.datasourceOptions = {

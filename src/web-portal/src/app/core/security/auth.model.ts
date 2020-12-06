@@ -1,5 +1,5 @@
 import * as decode from 'jwt-decode';
-import * as _ from 'lodash';
+ 
 import { RolePortalClaimModel } from 'services/identity.service';
 import { ObjectUtils } from '../utils/object-util';
 
@@ -56,7 +56,7 @@ export class AuthUser {
         }
 
     hasClaim(claimType: string, claimValue: string): boolean{
-        const foundClaim = _.find(this.claims, claim => claim.name === claimType)
+        const foundClaim = this.claims.find(claim => claim.name === claimType)
         if(foundClaim){
             return foundClaim.claims.indexOf(claimValue) > -1
         }
@@ -65,9 +65,9 @@ export class AuthUser {
 
     getClaimsPerPage(claimPageName: string){
         const claims = new Object();
-        const foundClaim = _.find(this.claims, claim => claim.name === claimPageName)
+        const foundClaim = this.claims.find(claim => claim.name === claimPageName)
         if(foundClaim){
-            _.forEach(foundClaim.claims, claim => {
+            foundClaim.claims?.forEach(claim => {
                 claims[claim] = true
             })
         }

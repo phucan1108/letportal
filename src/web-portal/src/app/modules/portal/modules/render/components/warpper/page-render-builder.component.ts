@@ -1,19 +1,19 @@
-import { Component, OnInit, ContentChildren, ViewChildren, QueryList, Input, AfterViewInit, AfterContentInit, ChangeDetectorRef, AfterViewChecked, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { PageRenderSectionWrapperComponent } from './page-render-section-wrapper.component';
-import { Page, PageButton, PageSection, LocalizationClient } from 'services/portal.service';
-import { Store } from '@ngxs/store';
-import { Observable, of, Subscription } from 'rxjs';
-import { PageStateModel } from 'stores/pages/page.state';
-import { filter, tap, delay } from 'rxjs/operators';
-import { PageReadyAction, BeginRenderingPageSectionsAction, RenderedPageSectionAction, EndRenderingPageSectionsAction, BeginBuildingBoundData, AddSectionBoundData, EndBuildingBoundDataComplete, AddSectionBoundDataForStandardArray } from 'stores/pages/page.actions';
-import * as _ from 'lodash';
-import { RenderingPageSectionState, RenderingSectionState } from 'app/core/models/page.model';
-import { NGXLogger } from 'ngx-logger';
-import { ExtendedPageButton } from 'app/core/models/extended.models';
-import { PageService } from 'services/page.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { AfterContentInit, AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { ExtendedPageButton } from 'app/core/models/extended.models';
+import { RenderingPageSectionState, RenderingSectionState } from 'app/core/models/page.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, of, Subscription } from 'rxjs';
+import { delay, filter, tap } from 'rxjs/operators';
 import { LocalizationService } from 'services/localization.service';
+import { PageService } from 'services/page.service';
+import { LocalizationClient, Page, PageButton, PageSection } from 'services/portal.service';
+import { AddSectionBoundData, AddSectionBoundDataForStandardArray, AddSectionBoundDataForTree, BeginBuildingBoundData, BeginRenderingPageSectionsAction, EndBuildingBoundDataComplete, EndRenderingPageSectionsAction, PageReadyAction, RenderedPageSectionAction } from 'stores/pages/page.actions';
+import { PageStateModel } from 'stores/pages/page.state';
+import { PageRenderSectionWrapperComponent } from './page-render-section-wrapper.component';
+ 
 
 @Component({
     selector: 'let-builder',
@@ -39,6 +39,8 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     renderingSections: RenderingPageSectionState[] = []
     actionCommands: PageButton[] = []
     isSmallDevice = false
+
+    sections: PageSection[] = []
     constructor(
         private localizationService: LocalizationService,
         private localizationClient: LocalizationClient,
@@ -69,15 +71,16 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     ngOnInit(): void {
         this.logger.debug('Init render builder')
         this.localization()
-        _.forEach(this.page.builder.sections, sec =>{
+        this.page.builder.sections?.forEach(sec =>{
             this.sectionClasses.push('col-lg-12')
         })
+        this.sections = ObjectUtils.clone(this.page.builder.sections)
         this.actionCommands = this.page.commands ? this.page.commands.filter(a => !ObjectUtils.isNotNull(a.placeSectionId)) : []
         this.actionCommands = ObjectUtils.clone(this.actionCommands)
         const sub$ = this.pageService.listenDataChange$().subscribe(
             data => {
                 this.data = data
-                _.forEach(this.actionCommands, (command: ExtendedPageButton) => {
+                this.actionCommands?.forEach((command: ExtendedPageButton) => {
                     command.isHidden = this.pageService.evaluatedExpression(command.allowHidden)
                 })
                 this.readyToRenderButtons = true
@@ -88,17 +91,28 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
             filter(state => state.filterState &&
                 (state.filterState === PageReadyAction
                     || state.filterState === RenderedPageSectionAction
+                    || state.filterState === AddSectionBoundDataForTree
                     || state.filterState === AddSectionBoundData
                     || state.filterState === AddSectionBoundDataForStandardArray)),
             tap(
                 pageState => {
                     switch (pageState.filterState) {
                         case PageReadyAction:
-                            this.isReadyToRender = true
                             this.options = pageState.options
                             this.queryparams = pageState.queryparams
-                            this.counterRenderedSection = this.page.builder.sections.length
-                            this.counterBuildSectionData = this.page.builder.sections.length
+
+                            //  We need to filter which section must be rendered
+                            this.sections?.forEach(section => {
+                                if(ObjectUtils.isNotNull(section.rendered) && section.rendered !== 'true'){
+                                    const checkRendered = this.pageService.evaluatedExpression(section.rendered)
+                                    section.rendered = checkRendered ? 'true' : 'false'
+                                }
+                            })
+
+                            this.sections = this.sections.filter(a => a.rendered === 'true')
+                            this.counterRenderedSection = this.sections.length
+                            this.counterBuildSectionData = this.sections.length                            
+                            this.isReadyToRender = true
                             this.store.dispatch(new BeginRenderingPageSectionsAction(this.prepareRenderingPageSectionsStates(this.page)))
                             break
                         case RenderedPageSectionAction:
@@ -109,8 +123,8 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                                     tap(
                                         () => {
                                             this.readyToRenderAllSections = true
-                                            _.forEach(pageState.renderingSections, sec => {
-                                                const index = _.findIndex(this.page.builder.sections, a => a.name === sec.sectionName)
+                                            pageState.renderingSections?.forEach(sec => {
+                                                const index = this.sections.findIndex(a => a.name === sec.sectionName)
                                                 this.sectionClasses[index] = sec.sectionClass
                                             })
                                             this.store.dispatch(new EndRenderingPageSectionsAction())
@@ -122,8 +136,10 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                             }
                             break
                         case AddSectionBoundData:
-                        case AddSectionBoundDataForStandardArray:                            
+                        case AddSectionBoundDataForStandardArray:
+                        case AddSectionBoundDataForTree:                             
                             this.counterBuildSectionData--
+                            this.logger.debug('Hit counter bound section data', this.counterBuildSectionData)                           
                             if (this.counterBuildSectionData === 0) {
                                 const timer$ = of(true).pipe(
                                     delay(200),
@@ -155,7 +171,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
     }
 
     prepareRenderingPageSectionsStates(page: Page) {
-        _.forEach(page.builder.sections, section => {
+        this.sections?.forEach(section => {
             this.renderingSections.push({
                 sectionName: section.name,
                 sectionClass: 'col-lg-12',
@@ -186,9 +202,8 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                 this.page.displayName = pageName
             }
 
-            if(ObjectUtils.isNotNull(this.page.builder)
-                && ObjectUtils.isNotNull(this.page.builder.sections)){
-                    this.page.builder.sections.forEach(section => {
+            if(ObjectUtils.isNotNull(this.sections)){
+                    this.sections?.forEach(section => {
                         const sectionName = this.localizationService.getText(`pages.${this.page.name}.sections.${section.name}.options.displayName`)
                         if(ObjectUtils.isNotNull(sectionName)){
                             section.displayName = sectionName
@@ -196,7 +211,7 @@ export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterC
                     })
                 }
             if(ObjectUtils.isNotNull(this.page.commands)){
-                this.page.commands.forEach(command => {
+                this.page.commands?.forEach(command => {
                     const commandName = this.localizationService.getText(`pages.${this.page.name}.commands.${command.name}.options.name`)
                     if(ObjectUtils.isNotNull(commandName)){
                         command.name = commandName

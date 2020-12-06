@@ -16,6 +16,8 @@ namespace LetPortal.Portal.Repositories.Components
 
         Task<IEnumerable<ShortEntityModel>> GetShortArrayStandards(string keyWord = null);
 
+        Task<IEnumerable<ShortEntityModel>> GetShortTreeStandards(string keyWord = null);
+
         Task<StandardComponent> GetOneForRenderAsync(string id);
 
         Task<IEnumerable<LanguageKey>> GetLanguageKeysAsync(string standardId);

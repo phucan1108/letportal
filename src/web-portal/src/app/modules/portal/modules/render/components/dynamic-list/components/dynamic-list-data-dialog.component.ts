@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ColumndDef, FieldValueType } from 'services/portal.service';
+import { ColumnDef, FieldValueType } from 'services/portal.service';
 import { DatasourceCache } from '../models/commandClicked';
-import * as _ from 'lodash';
+ 
 import { ExtendedColDef } from '../models/extended.model';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { tap } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { tap } from 'rxjs/operators';
 })
 export class DynamicListDataDialogComponent implements OnInit {
 
-    headers: ColumndDef[]
+    headers: ColumnDef[]
     rawData: any
     datasourceCache: Array<DatasourceCache> = []
     isHandset = false
@@ -60,8 +60,8 @@ export class DynamicListDataDialogComponent implements OnInit {
         }
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {
-            const datasource = _.find(this.datasourceCache, (elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
-            return _.find(datasource.data, elem => elem.value.toString() === displayData).name
+            const datasource = this.datasourceCache.find((elem: DatasourceCache) => elem.datasourceId === currentColumn.datasourceId);
+            return datasource.data.find(elem => elem.value.toString() === displayData).name
         }
         return displayData
     }

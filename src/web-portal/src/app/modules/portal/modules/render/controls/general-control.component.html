@@ -132,7 +132,7 @@
                 {{ getAsyncErrorMessage() }}
             </mat-error>
         </mat-form-field>
-        <mat-slide-toggle *ngSwitchCase="controlType.Slide" [formControlName]="control.name" [id]="control.name">
+        <mat-slide-toggle *ngSwitchCase="controlType.Slide" [formControlName]="control.name" [id]="control.name" class="pt-2">
         </mat-slide-toggle>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.DateTime">
             <input matInput [matDatepicker]="picker" [placeholder]="control.defaultOptions.placeholder"
@@ -145,7 +145,7 @@
         </mat-form-field>
         <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Select">
             <mat-select [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
-                [id]="control.name" [multiple]="control.defaultOptions.multiple">
+                [id]="control.name" [multiple]="control.defaultOptions.multiple" [disabled]="selectDisabled">
                 <mat-option *ngFor="let option of optionsList$ | async" [value]="option.value">
                     {{ option.name }}
                 </mat-option>

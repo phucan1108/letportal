@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, AfterViewInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DynamicFormEventData } from '../../../../../core/models/extended.models';
-import * as _ from 'lodash';
+ 
 import { Constants } from 'portal/resources/constants';
 import { ShellConfigType } from 'app/core/shell/shell.model';
 import { ShellConfigProvider } from 'app/core/shell/shellconfig.provider';
@@ -10,6 +10,8 @@ import { BehaviorSubject } from 'rxjs';
 import { RouterExtService } from 'app/core/ext-service/routerext.service';
 import { Page } from 'services/portal.service';
 import { PageService } from 'services/page.service';
+import { tap } from 'rxjs/operators';
+import { PageReadyAction } from 'stores/pages/page.actions';
 
 @Component({
     selector: 'let-page-render',
@@ -22,12 +24,6 @@ export class PageRenderPage implements OnInit, AfterViewInit, OnDestroy {
 
     page: Page;
 
-    queryparams = new Object()
-
-    boundData: Object = new Object();
-
-    isLoading = true
-
     constructor(
         private pageService: PageService,
         private activatedRoute: ActivatedRoute,
@@ -37,8 +33,8 @@ export class PageRenderPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.logger.debug('Init page render')
-        this.pageService.initRender(this.activatedRoute.snapshot.data.page, this.activatedRoute).subscribe()
+        this.pageService.initRender(this.activatedRoute.snapshot.data.page, this.activatedRoute)
+            .subscribe()
         this.page = this.activatedRoute.snapshot.data.page
     }
 

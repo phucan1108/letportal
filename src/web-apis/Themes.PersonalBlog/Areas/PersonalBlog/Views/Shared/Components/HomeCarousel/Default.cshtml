@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Themes.PersonalBlog.Areas.PersonalBlog.Models.HomeCarouselModel>
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        @for(int i = 0; i < Model.Count(); i++)
+        {
+            <li data-target="#myCarousel" data-slide-to="@(i)" class="@(i == 0 ? "active": "")"></li>
+        }
+    </ol>
+    <div class="carousel-inner">
+        @{
+            int counter = 0;
+        }
+        @foreach(var carousel in Model)
+        {
+            <div class="carousel-item @(counter == 0 ? "active" :"")">
+                <img class="first-slide"
+                     src="@(carousel.MediaSlide.Link)"
+                     alt="@(carousel.MediaSlide.Alt)">
+                <div class="container">
+                    <div class="carousel-caption text-left">
+                        <h1>@carousel.Title</h1>
+                        <p>
+                            @carousel.Content
+                        </p>
+                        <p><a class="btn btn-lg btn-primary" href="@carousel.Link.Link" target="@carousel.Link.Target" role="button">@carousel.Link.Display</a></p>
+                    </div>
+                </div>
+            </div>
+            counter++;
+        }
+    </div>
+    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -66,6 +67,11 @@ namespace LetPortal.Core.Utils
             return JsonConvert.DeserializeObject<T>(deserializingObject);
         }
 
+        public static object DeserializeObject(string deserializingObject, Type type)
+        {
+            return JsonConvert.DeserializeObject(deserializingObject, type);
+        }
+
         public static dynamic GetOneInArray(dynamic array)
         {
             if (array.Type == JTokenType.Array)
@@ -92,6 +98,6 @@ namespace LetPortal.Core.Utils
             }
 
             return dics;
-        }
+        } 
     }
 }
