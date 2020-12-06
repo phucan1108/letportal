@@ -1,0 +1,25 @@
+name: Publish LetPortal.Microservices.Server Lib
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'src/web-apis/LetPortal.Microservices.Server/LetPortal.Microservices.Server.csproj'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Pack a LetPortal.Core
+      run: dotnet pack --configuration Release --output nupkgs
+      working-directory: src/web-apis/LetPortal.Microservices.Server
+    - name: Publish NuGet
+      run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NugetPublishKey }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      working-directory: src/web-apis/LetPortal.Microservices.Server
