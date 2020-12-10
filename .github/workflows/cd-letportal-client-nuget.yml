@@ -1,12 +1,12 @@
-name: Publish LETPortal.Core Lib
+name: Publish LetPortal.Microservices.Client Lib
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  
   push:
     branches: [ master ]
     paths:
-      - 'src/web-apis/LetPortal.Core/LetPortal.Core.csproj'
-
+      - 'src/web-apis/LetPortal.Microservices.Client/LetPortal.Microservices.Client.csproj'
+ 
 jobs:
   build:
 
@@ -18,9 +18,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Pack a LetPortal.Core
+    - name: Pack a LetPortal.Microservices.Client
       run: dotnet pack --configuration Release --output nupkgs
-      working-directory: src/web-apis/LetPortal.Core
+      working-directory: src/web-apis/LetPortal.Microservices.Client
     - name: Publish NuGet
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NugetPublishKey }} -s https://api.nuget.org/v3/index.json --skip-duplicate
-      working-directory: src/web-apis/LetPortal.Core
+      working-directory: src/web-apis/LetPortal.Microservices.Client
