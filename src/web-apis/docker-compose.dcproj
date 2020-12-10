@@ -5,11 +5,12 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>c3c6f29c-4d33-4520-a4a6-be2497789732</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-	<DockerDevelopmentMode>Regular</DockerDevelopmentMode>
+    <DockerDevelopmentMode>Regular</DockerDevelopmentMode>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
     <DockerServiceName>letportal.saturn</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="docker-compose-lnx.yml" />
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
   </ItemGroup>
