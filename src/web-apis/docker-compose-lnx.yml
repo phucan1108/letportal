@@ -20,8 +20,7 @@ services:
       context: .
       dockerfile: LetPortal.Saturn/Dockerfile
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets
-      - ${USERPROFILE}/.aspnet/https:/https/
+      - $HOME/.aspnet/https:/https/
     ports:
       - "5101:80"
       - "5102:443"
@@ -39,8 +38,7 @@ services:
       context: .
       dockerfile: LetPortal.Websites.CMS/Dockerfile
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets
-      - ${USERPROFILE}/.aspnet/https:/https/
+      - $HOME/.aspnet/https:/https/
     ports:
       - "5103:80"
       - "5104:443"
