@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  mongodb:
+    image: mongo:4.0
+    ports:
+      - "27117:27017"
+    volumes:
+      - mongodata:/data/db
+  lp.saturn:
+    image: lp-saturn:0.9.0
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal.pfx
+    depends_on:
+      - mongodb
+    build:
+      context: .
+      dockerfile: LetPortal.Saturn/Dockerfile
+    volumes:
+      - $HOME/.aspnet/https:/https/
+    ports:
+      - "5101:80"
+      - "5102:443"
+  cms:
+    image: cms:1.0.0
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Docker
+     - ASPNETCORE_URLS=https://+:443;http://+:80
+     - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
+     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal-cms.pfx
+    depends_on:
+     - mongodb
+     - lp.saturn
+    build:
+      context: .
+      dockerfile: LetPortal.Websites.CMS/Dockerfile
+    volumes:
+      - $HOME/.aspnet/https:/https/
+    ports:
+      - "5103:80"
+      - "5104:443"
+volumes:
+  mongodata:
+    driver: local
