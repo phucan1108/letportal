@@ -86,9 +86,10 @@ export class PageBuilderPage implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.pageService.init('page-builder').subscribe()
         this.page = this.activatedRoute.snapshot.data.page
+        this.logger.debug('Current page builder', this.page)
         if (this.page) {
             this.isEditMode = true 
-            if(ObjectUtils.isNotNull(this.page.builder.sections)){
+            if(ObjectUtils.isNotNull(this.page.builder?.sections)){
                 this.sections$.next(this.page.builder.sections.map(a => ({ id: a.id, displayName: a.displayName })))
             }                    
         }

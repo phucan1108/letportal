@@ -35,6 +35,26 @@ LET Portal is built by using SPA architecture. That means I am using .NET Core W
 - :white_check_mark: MySQL
 - :white_check_mark: PostgreSQL
 
+# High Level Design
+
+![High Level Design](https://docs.letportal.app/assets/images/overview/architecture.png)
+
+According to an architecture above, LET Portal has {==**two components and one 3rd-party**==}. There are:
+
+- SPA Web: **Angular 9**, our main front-end web application. It will connect to Saturn to perform APIs.
+- Saturn: **.NET Core 3.1**, our main back-bone web service. It will provide four big features: Identity, Portal, Chat&Video, Microservices
+- Proxy Server: [Nginx](https://www.nginx.com/)
+
+# Saturn
+
+![Saturn Components](https://docs.letportal.app/assets/images/overview/saturn-components.png)
+
+In the architecture above, Saturn consists of four main features: Identity, Portal, Chat&Video and Microservice. 
+
+- **Identity and Portal:** work with Web API, that mean they expose the public endpoint to be called.
+- **Chat&Video:** works under SignalR, that mean they expose the real-time connection between Client and Server.
+- **Microservice:** work under gRPC, that mean they only expose the private endpoint in HTTP/2 protocol to be called via inter-service communication.
+
 # Highlight Features
 
 ## Standard Form
