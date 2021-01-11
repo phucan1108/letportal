@@ -6,6 +6,7 @@ import { Store } from '@ngxs/store';
 import { ExtendedPageSection } from 'app/core/models/extended.models';
 import { Translator } from 'app/core/shell/translates/translate.pipe';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import StringUtils from 'app/core/utils/string-util';
 import { NGXLogger } from 'ngx-logger';
 import { ListOptions } from 'portal/modules/models/dynamiclist.extended.model';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
@@ -201,7 +202,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
             }
             else{
                 headers = this.dynamicListGrid.headers.filter(b => !b.isHidden).map(a => a.displayName)
-                orderedNames = this.dynamicListGrid.headers.filter(b => !b.isHidden).map(a => a.name)
+                orderedNames = this.dynamicListGrid.headers.filter(b => !b.isHidden).map(a => StringUtils.toCamelCase(a.name))
             }
 
             // An overkill performance when exporting over 1k rows,
@@ -210,6 +211,7 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
             const deletedProps: string[] = []
             const jsonParsedProps: string[] = []
             const firstElem = exportedData[0]
+            this.logger.debug('Ordered Names', orderedNames)
             Object.keys(firstElem)?.forEach(prop => {
                 let inDeletedProps = false
                 if(orderedNames.indexOf(prop) < 0){

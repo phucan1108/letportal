@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
 import { ObjectUtils } from 'app/core/utils/object-util';
+import StringUtils from 'app/core/utils/string-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { Guid } from 'guid-typescript';
 import { NGXLogger } from 'ngx-logger';
@@ -109,6 +110,27 @@ export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewIni
             )
         ).subscribe()
         this.constructGrid();
+        // Trigger loading data form sortChange and page event
+        if (this.listOptions.enablePagination) {
+            this.paginator.page
+                .pipe(
+                    tap(() => {
+                        this.logger.debug('Hit paginator change')
+                        this.fetchDataQuery = this.getFetchDataQuery();
+                        this.fetchData();
+                    })
+                ).subscribe()
+        }
+        
+        this.sort.sortChange
+        .pipe(
+            tap(() => {
+                this.logger.debug('Hit sort change')
+                this.fetchDataQuery = this.getFetchDataQuery();
+                this.fetchData();
+            })
+        )
+        .subscribe()
     }
 
     ngOnDestroy(): void {
@@ -268,27 +290,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     private initFetchData() {
-        // Trigger loading data form sortChange and page event
-        if (this.listOptions.enablePagination) {
-            this.paginator.page
-                .pipe(
-                    tap(() => {
-                        this.logger.debug('Hit paginator change')
-                        this.fetchDataQuery = this.getFetchDataQuery();
-                        this.fetchData();
-                    })
-                ).subscribe()
-        }
         
-        this.sort.sortChange
-        .pipe(
-            tap(() => {
-                this.logger.debug('Hit sort change')
-                this.fetchDataQuery = this.getFetchDataQuery();
-                this.fetchData();
-            })
-        )
-        .subscribe()
     }
 
     private onCommandClick(commandClicked: CommandClicked) {
@@ -366,9 +368,10 @@ export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewIni
 
         return objects;
     }
-
+    
     private translateData(renderingData: any, currentColumn: ExtendedColDef) {
-        if (currentColumn.name === 'id' || currentColumn.name === '_id') {
+        let refName = StringUtils.toCamelCase(currentColumn.name)
+        if (refName === 'id' || refName === '_id') {
             const checkData = renderingData.id
             if (!checkData) {
                 return renderingData._id
@@ -378,12 +381,12 @@ export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewIni
             }
         }
         let displayData = null
-        if (currentColumn.name.indexOf('.') > 0) {
-            const extractData = new Function('data', `return data.${currentColumn.name}`)
+        if (refName.indexOf('.') > 0) {
+            const extractData = new Function('data', `return data.${refName}`)
             displayData = extractData(renderingData)
         }
         else {
-            displayData = renderingData[currentColumn.name]
+            displayData = renderingData[refName]
         }
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {

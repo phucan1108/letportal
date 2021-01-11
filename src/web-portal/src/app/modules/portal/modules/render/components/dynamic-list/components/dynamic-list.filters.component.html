@@ -43,7 +43,7 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="col-md-2" *ngIf="filterOption.filterValueType == fieldValueType.Text">
+                <div class="col-md-2" *ngIf="filterOption.filterValueType == fieldValueType.Text || filterOption.filterValueType == fieldValueType.Number">
                     <mat-form-field class="field-full-width">
                         <input matInput placeholder="{{ 'pageRender.dynamicList.filters.fieldValue' | translate }}"
                             [(ngModel)]="filterOption.fieldValue">

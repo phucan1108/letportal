@@ -98,8 +98,14 @@ export class TreeRenderComponent implements OnInit, OnDestroy {
                             this.boundData =
                                 ObjectUtils.clone(this.standardSharedService
                                     .buildTreeData(this.section.sectionDatasource.datasourceBindName, this.datasources, this.treeOptions))
-
+                                    
                             this.cloneOneItem = this.buildEmptyData(this.controls)
+
+                            if(!ObjectUtils.isNotNull(this.boundData) || this.boundData.length == 0){
+                                let clone = ObjectUtils.clone(this.cloneOneItem)
+                                clone[this.treeOptions.displayname] = 'New'
+                                this.boundData = [clone]
+                            }
                             // Add nodeid and nodeparentid
                             if (this.treeOptions.allowgenerateid) {
                                 this.cloneOneItem[this.treeOptions.nodeidfield] = ''

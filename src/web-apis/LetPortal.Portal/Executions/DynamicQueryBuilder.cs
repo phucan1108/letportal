@@ -95,12 +95,34 @@ namespace LetPortal.Portal.Executions
                                 filterString += string.Format(builderOptions.FieldFormat, filter.FieldName) + GetOperator(filter.FilterOperator, fieldParam) + GetChainOperator(filter.FilterChainOperator) + " ";
                             }
 
-                            dynamicQuery.Parameters.Add(new DynamicQueryParameter
+                            if(filter.FieldValue is bool)
                             {
-                                Name = fieldParam,
-                                Value = filter.FieldValue,
-                                ValueType = filter.FilterValueType
-                            });
+                                dynamicQuery.Parameters.Add(new DynamicQueryParameter
+                                {
+                                    Name = fieldParam,
+                                    Value = ((bool)filter.FieldValue) ? "1" : "0",
+                                    ValueType = filter.FilterValueType
+                                });
+                            }
+                            else if(filter.FieldValue is DateTime)
+                            {
+                                dynamicQuery.Parameters.Add(new DynamicQueryParameter
+                                {
+                                    Name = fieldParam,
+                                    Value = ((DateTime)filter.FieldValue).ToShortDateString(),
+                                    ValueType = filter.FilterValueType
+                                });
+                            }
+                            else
+                            {
+                                dynamicQuery.Parameters.Add(new DynamicQueryParameter
+                                {
+                                    Name = fieldParam,
+                                    Value = filter.FieldValue,
+                                    ValueType = filter.FilterValueType
+                                });
+                            }
+                            
                         }
                     }
                 }

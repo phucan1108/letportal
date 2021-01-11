@@ -469,12 +469,19 @@ export class StandardSharedService {
 
         // Cause an exception if the data isn't array, but let it be
         let data: any[] = this.getSectionBoundData(dataSourceName, datasources) as any[]
-
         // TODO: We need to transform data from flat -> nest because Tree 
         if (treeOptions.indatastructure === 'flat') {
             return data
         }
         return data
+    }
+
+    buildEmptyOneData(controls: PageRenderedControl<DefaultControlOptions>[]): any{
+        let tempObject = new Object()
+
+        controls.forEach(control => {
+            tempObject[control.defaultOptions.bindname] = null
+        })
     }
 
     private getSectionBoundData(datasourceName: string, datasources: PageLoadedDatasource[]) {

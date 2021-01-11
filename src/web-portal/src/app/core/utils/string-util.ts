@@ -44,6 +44,19 @@ export default class StringUtils {
         return found
     }
 
+    public static toCamelCase(text: string){
+        // CHEAT: we got a big problem between Camel case between cliet and server 
+        // So we need to add cheatsheet here
+        if(text === 'RSIOver70'){
+            return 'rsiOver70'
+        }
+
+        return text
+        .replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+        .replace(/\s/g, '')
+        .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
+    }
+
     public static isAllUpperCase(text: string): boolean {
         return text === text.toUpperCase()
     }
