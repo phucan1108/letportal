@@ -1,11 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import StringUtils from 'app/core/utils/string-util';
+import { tap } from 'rxjs/operators';
 import { ColumnDef, FieldValueType } from 'services/portal.service';
 import { DatasourceCache } from '../models/commandClicked';
- 
 import { ExtendedColDef } from '../models/extended.model';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'let-dynamic-list-data-dialog',
@@ -41,7 +41,8 @@ export class DynamicListDataDialogComponent implements OnInit {
     ngOnInit(): void { }
 
     private translateData(renderingData: any, currentColumn: ExtendedColDef) {
-        if (currentColumn.name === 'id' || currentColumn.name === '_id') {
+        let refName = StringUtils.toCamelCase(currentColumn.name)
+        if (refName === 'id' || refName === '_id') {
             const checkData = renderingData.id
             if (!checkData) {
                 return renderingData._id
@@ -51,12 +52,12 @@ export class DynamicListDataDialogComponent implements OnInit {
             }
         }
         let displayData = null
-        if (currentColumn.name.indexOf('.') > 0) {
-            const extractData = new Function('data', `return data.${currentColumn.name}`)
+        if (refName.indexOf('.') > 0) {
+            const extractData = new Function('data', `return data.${refName}`)
             displayData = extractData(renderingData)
         }
         else {
-            displayData = renderingData[currentColumn.name]
+            displayData = renderingData[refName]
         }
 
         if (currentColumn.searchOptions.fieldValueType === FieldValueType.Select) {

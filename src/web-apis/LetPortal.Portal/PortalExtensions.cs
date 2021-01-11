@@ -64,7 +64,7 @@ namespace LetPortal.Portal
             builder.Services.Configure<MongoOptions>(builder.Configuration.GetSection("MongoOptions"));
             builder.Services.Configure<MapperOptions>(builder.Configuration.GetSection("MapperOptions"));
             builder.Services.Configure<BackupOptions>(builder.Configuration.GetSection("BackupOptions"));
-            var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();            
+            var mapperOptions = builder.Configuration.GetSection("MapperOptions").Get<MapperOptions>();
             builder.Services.AddSingleton(mapperOptions);
             if (portalOptions.EnableFileServer)
             {
@@ -156,51 +156,38 @@ namespace LetPortal.Portal
                 services.AddTransient<ILocalizationRepository, LocalizationEFRepository>();
                 services.AddSingleton<ICompositeControlRepository, CompositeControlEFRepository>();
             }
+            services.AddTransient<IExecutionDatabase, MongoExecutionDatabase>();
+            services.AddTransient<IExtractionDatabase, MongoExtractionDatabase>();
+            services.AddTransient<IExtractionDatasource, MongoExtractionDatasource>();
+            services.AddTransient<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();
+            services.AddTransient<IAnalyzeDatabase, MongoAnalyzeDatabase>();
+            services.AddTransient<IAnalyzeDatabase, PostgreAnalyzeDatabase>();
+            services.AddTransient<IExecutionDatabase, PostgreExecutionDatabase>();
+            services.AddTransient<IExtractionDatabase, PostgreExtractionDatabase>();
+            services.AddTransient<IDynamicListQueryDatabase, PostgreDynamicListQueryDatabase>();
+            services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
+            services.AddTransient<IExecutionChartReport, PostgreExecutionChartReport>();
+            services.AddTransient<IExtractionChartQuery, PostgreExtractionChartQuery>();
 
-            if (databaseOptions.ConnectionType == ConnectionType.MongoDB)
-            {
-                services.AddTransient<IExecutionDatabase, MongoExecutionDatabase>();
-                services.AddTransient<IExtractionDatabase, MongoExtractionDatabase>();
-                services.AddTransient<IExtractionDatasource, MongoExtractionDatasource>();
-                services.AddTransient<IDynamicListQueryDatabase, MongoDynamicListQueryDatabase>();
-                services.AddTransient<IAnalyzeDatabase, MongoAnalyzeDatabase>();
-            }
-            else if (databaseOptions.ConnectionType == ConnectionType.PostgreSQL)
-            {
-                services.AddTransient<IAnalyzeDatabase, PostgreAnalyzeDatabase>();
-                services.AddTransient<IExecutionDatabase, PostgreExecutionDatabase>();
-                services.AddTransient<IExtractionDatabase, PostgreExtractionDatabase>();
-                services.AddTransient<IDynamicListQueryDatabase, PostgreDynamicListQueryDatabase>();
-                services.AddTransient<IExtractionDatasource, PostgreExtractionDatasource>();
-                services.AddTransient<IExecutionChartReport, PostgreExecutionChartReport>();
-                services.AddTransient<IExtractionChartQuery, PostgreExtractionChartQuery>();
+            services.AddSingleton<IPostgreSqlMapper, PostgreSqlMapper>();
+            services.AddTransient<IAnalyzeDatabase, SqlServerAnalyzeDatabase>();
+            services.AddTransient<IExecutionDatabase, SqlServerExecutionDatabase>();
+            services.AddTransient<IExtractionDatabase, SqlServerExtractionDatabase>();
+            services.AddTransient<IDynamicListQueryDatabase, SqlServerDynamicListQueryDatabase>();
+            services.AddTransient<IExtractionDatasource, SqlServerExtractionDatasource>();
+            services.AddTransient<IExecutionChartReport, SqlServerExecutionChartReport>();
+            services.AddTransient<IExtractionChartQuery, SqlServerExtractionChartQuery>();
 
-                services.AddSingleton<IPostgreSqlMapper, PostgreSqlMapper>();
-            }
-            else if (databaseOptions.ConnectionType == ConnectionType.SQLServer)
-            {
-                services.AddTransient<IAnalyzeDatabase, SqlServerAnalyzeDatabase>();
-                services.AddTransient<IExecutionDatabase, SqlServerExecutionDatabase>();
-                services.AddTransient<IExtractionDatabase, SqlServerExtractionDatabase>();
-                services.AddTransient<IDynamicListQueryDatabase, SqlServerDynamicListQueryDatabase>();
-                services.AddTransient<IExtractionDatasource, SqlServerExtractionDatasource>();
-                services.AddTransient<IExecutionChartReport, SqlServerExecutionChartReport>();
-                services.AddTransient<IExtractionChartQuery, SqlServerExtractionChartQuery>();
+            services.AddSingleton<ISqlServerMapper, SqlServerMapper>();
+            services.AddTransient<IAnalyzeDatabase, MySqlAnalyzeDatabase>();
+            services.AddTransient<IExecutionDatabase, MySqlExecutionDatabase>();
+            services.AddTransient<IExtractionDatabase, MySqlExtractionDatabase>();
+            services.AddTransient<IDynamicListQueryDatabase, MySqlDynamicListQueryDatabase>();
+            services.AddTransient<IExtractionDatasource, MySqlExtractionDatasource>();
+            services.AddTransient<IExecutionChartReport, MySqlExecutionChartReport>();
+            services.AddTransient<IExtractionChartQuery, MySqlExtractionChartQuery>();
 
-                services.AddSingleton<ISqlServerMapper, SqlServerMapper>();
-            }
-            else if (databaseOptions.ConnectionType == ConnectionType.MySQL)
-            {
-                services.AddTransient<IAnalyzeDatabase, MySqlAnalyzeDatabase>();
-                services.AddTransient<IExecutionDatabase, MySqlExecutionDatabase>();
-                services.AddTransient<IExtractionDatabase, MySqlExtractionDatabase>();
-                services.AddTransient<IDynamicListQueryDatabase, MySqlDynamicListQueryDatabase>();
-                services.AddTransient<IExtractionDatasource, MySqlExtractionDatasource>();
-                services.AddTransient<IExecutionChartReport, MySqlExecutionChartReport>();
-                services.AddTransient<IExtractionChartQuery, MySqlExtractionChartQuery>();
-
-                services.AddSingleton<IMySqlMapper, MySqlMapper>();
-            }
+            services.AddSingleton<IMySqlMapper, MySqlMapper>();
         }
 
         public static void RegisterServices(IServiceCollection services)
@@ -218,7 +205,7 @@ namespace LetPortal.Portal
         }
 
         public static void RegisterProviders(IServiceCollection services)
-        {   
+        {
             services.AddTransient<IDatabaseServiceProvider, InternalDatabaseServiceProvider>();
             services.AddTransient<IEntitySchemaServiceProvider, InternalEntitySchemaServiceProvider>();
             services.AddTransient<IPageServiceProvider, InternalPageServiceProvider>();
