@@ -82,7 +82,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.10.60",
     "codelyzer": "^5.0.1",
-    "dompurify": "^2.0.8",
+    "dompurify": "^2.0.17",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.0.0",
