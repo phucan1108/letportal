@@ -60,7 +60,6 @@ namespace LetPortal.Portal.Mappers
                             return false;
                         }
                     }
-                    break;
                 case "date":
                     if (DateTime.TryParse(value, out var dateTime))
                     {

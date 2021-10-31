@@ -487,7 +487,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 new SqlServerDynamicListQueryDatabase(
                     new DynamicQueryBuilder(),
                     new SqlServerMapper(_context.MapperOptions),
-                    new CSharpMapper())
+                    new CSharpMapper(),
+                    new FakeServiceLogger<SqlServerDynamicListQueryDatabase>())
             };
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();
@@ -541,7 +542,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 new SqlServerDynamicListQueryDatabase(
                     new DynamicQueryBuilder(),
                     new SqlServerMapper(_context.MapperOptions),
-                    new CSharpMapper())
+                    new CSharpMapper(),
+                    new FakeServiceLogger<SqlServerDynamicListQueryDatabase>())
             };
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();
@@ -619,7 +621,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 new SqlServerDynamicListQueryDatabase(
                     new DynamicQueryBuilder(),
                     new SqlServerMapper(_context.MapperOptions),
-                    new CSharpMapper())
+                    new CSharpMapper(),
+                    new FakeServiceLogger<SqlServerDynamicListQueryDatabase>())
             };
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();
@@ -706,7 +709,8 @@ namespace LetPortal.Tests.ITs.Portal.Services
                 new SqlServerDynamicListQueryDatabase(
                     new DynamicQueryBuilder(),
                     new SqlServerMapper(_context.MapperOptions),
-                    new CSharpMapper())
+                    new CSharpMapper(),
+                    new FakeServiceLogger<SqlServerDynamicListQueryDatabase>())
             };
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();

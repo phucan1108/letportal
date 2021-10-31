@@ -83,7 +83,8 @@ namespace LetPortal.Portal.Executions
                                     filterString += string.Format(builderOptions.DateCompareFormat,
                                         string.Format(builderOptions.FieldFormat, filter.FieldName),
                                             GetOperator(filter.FilterOperator),
-                                            builderOptions.ParamSign + fieldParam + GetChainOperator(filter.FilterChainOperator) + " ");
+                                            builderOptions.ParamSign + fieldParam,
+                                            GetChainOperator(filter.FilterChainOperator) + " ");
                                 }
                                 else
                                 {
@@ -324,9 +325,9 @@ namespace LetPortal.Portal.Executions
             switch (filterChainOperator)
             {
                 case FilterChainOperator.And:
-                    return "AND";
+                    return " AND ";
                 case FilterChainOperator.Or:
-                    return "OR";
+                    return " OR ";
                 default:
                     return string.Empty;
             }

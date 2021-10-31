@@ -51,7 +51,7 @@ namespace LetPortal.Portal.Executions.MySQL
                             {
                                 options.ContainsOperatorFormat = "LIKE CONCAT('%', {0},'%')";
                                 options.FieldFormat = "`{0}`";
-                                options.DateCompareFormat = "date({0}){1}date({2})";
+                                options.DateCompareFormat = "date({0}){1}date({2}) {3}";
                             })
                         .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumnDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
                         .AddFilter(fetchDataModel.FilterGroupOptions.FilterGroups)
