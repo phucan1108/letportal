@@ -26,7 +26,7 @@ namespace LetPortal.Portal.Executions
 
         public string ContainsOperatorFormat = " LIKE '%' || {0} || '%'";
 
-        public string DateCompareFormat = "{0}::date{1}{2}::date";
+        public string DateCompareFormat = "{0}::date{1}{2}::date {3}";
 
         public string OrderByFormat = " ORDER BY {0}";
 

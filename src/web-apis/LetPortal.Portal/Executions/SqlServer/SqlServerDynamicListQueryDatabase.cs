@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Common;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Constants;
@@ -24,14 +25,18 @@ namespace LetPortal.Portal.Executions.SqlServer
 
         private readonly ICSharpMapper _cSharpMapper;
 
+        private readonly IServiceLogger<SqlServerDynamicListQueryDatabase> _serviceLogger;
+
         public SqlServerDynamicListQueryDatabase(
             IDynamicQueryBuilder builder,
             ISqlServerMapper sqlServerMapper,
-            ICSharpMapper cSharpMapper)
+            ICSharpMapper cSharpMapper,
+            IServiceLogger<SqlServerDynamicListQueryDatabase> serviceLogger)
         {
             _builder = builder;
             _sqlServerMapper = sqlServerMapper;
             _cSharpMapper = cSharpMapper;
+            _serviceLogger = serviceLogger;
         }
 
         public ConnectionType ConnectionType => ConnectionType.SQLServer;
@@ -52,7 +57,7 @@ namespace LetPortal.Portal.Executions.SqlServer
                                 options.ContainsOperatorFormat = " LIKE '%' + {0} + '%'";
                                 options.PaginationFormat = "OFFSET {1} ROWS FETCH NEXT {0} ROWS ONLY";
                                 options.FieldFormat = "[{0}]";
-                                options.DateCompareFormat = "cast({0} as date){1}cast({2} as date)";
+                                options.DateCompareFormat = "cast({0} as date){1}cast({2} as date) {3}";
                             })
                         .AddTextSearch(fetchDataModel.TextSearch, dynamicList.ColumnsList.ColumnDefs.Where(a => a.SearchOptions.AllowTextSearch).Select(b => b.Name))
                         .AddFilter(fetchDataModel.FilterGroupOptions.FilterGroups)
@@ -61,6 +66,8 @@ namespace LetPortal.Portal.Executions.SqlServer
                         .Build();
 
                 sqlDbConnection.Open();
+                _serviceLogger.Info("Current executed query {query}", combinedQuery.CombinedQuery);
+                _serviceLogger.Info("Current parameters {@parameters}", combinedQuery.Parameters);
                 using (var cmd = new SqlCommand(combinedQuery.CombinedQuery, sqlDbConnection))
                 {
                     foreach (var param in combinedQuery.Parameters)
