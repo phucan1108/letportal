@@ -469,6 +469,9 @@ export class StandardSharedService {
 
         // Cause an exception if the data isn't array, but let it be
         let data: any[] = this.getSectionBoundData(dataSourceName, datasources) as any[]
+        if(!ObjectUtils.isNotNull(data)){
+            return []
+        }
         // TODO: We need to transform data from flat -> nest because Tree 
         if (treeOptions.indatastructure === 'flat') {
             return data

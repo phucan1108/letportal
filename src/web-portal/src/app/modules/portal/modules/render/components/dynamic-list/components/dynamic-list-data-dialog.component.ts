@@ -40,8 +40,14 @@ export class DynamicListDataDialogComponent implements OnInit {
 
     ngOnInit(): void { }
 
-    private translateData(renderingData: any, currentColumn: ExtendedColDef) {
+    private translateData(renderingData: any, currentColumn: ExtendedColDef) {        
+        
         let refName = StringUtils.toCamelCase(currentColumn.name)
+        // Bug: some reasons the data isn't Camel Case, 
+        // we should check column name is upper case or lower case       
+        if(StringUtils.startsWithCapital(currentColumn.name)){
+            refName = currentColumn.name    
+        }
         if (refName === 'id' || refName === '_id') {
             const checkData = renderingData.id
             if (!checkData) {

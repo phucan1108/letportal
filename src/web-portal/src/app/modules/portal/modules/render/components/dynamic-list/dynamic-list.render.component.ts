@@ -150,7 +150,8 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                         preserveFragment: true,
                         preserveQueryParams: true
                     };
-                    const url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
+                    this.logger.debug('current row data before translating', commandClicked.data)
+                    const url = commandClicked.command.commandPositionType === CommandPositionType.InList ?                        
                         this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {
                             ...this.pageService.getPageShellData(),
                             data: commandClicked.data

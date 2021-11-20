@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models.Databases;
@@ -19,9 +20,14 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private readonly IOptionsMonitor<MongoOptions> _mongoOptions;
 
-        public MongoExtractionDatabase(IOptionsMonitor<MongoOptions> options)
+        private readonly IServiceLogger<MongoExtractionDatabase> _logger;
+
+        public MongoExtractionDatabase(
+            IOptionsMonitor<MongoOptions> options,
+            IServiceLogger<MongoExtractionDatabase> logger)
         {
             _mongoOptions = options;
+            _logger = logger;
         }
 
         public async Task<ExtractingSchemaQueryModel> Extract(DatabaseConnection database, string formattedString, IEnumerable<ExecuteParamModel> parameters)
@@ -74,7 +80,8 @@ namespace LetPortal.Portal.Executions.Mongo
                         {
                             // Important note: this query must have one row result for extracting params and filters
                             var currentDocument = executingCursor.Current.First();
-
+                            _logger.Info("Extracting query result: {@currentDocument}", currentDocument.ToJson());
+                            
                             foreach (var element in currentDocument.Elements)
                             {
                                 var columnField = new ColumnField

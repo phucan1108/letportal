@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LetPortal.Core.Logger;
 using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Models.DynamicLists;
@@ -13,14 +14,18 @@ namespace LetPortal.Portal.Services.Components
     {
         private readonly IDatabaseServiceProvider _databaseServiceProvider;
 
+        private readonly IServiceLogger<DynamicListService> _logger;
+
         private readonly IEnumerable<IDynamicListQueryDatabase> _dynamicListQueryDatabases;
 
         public DynamicListService(
             IDatabaseServiceProvider databaseServiceProvider,
-            IEnumerable<IDynamicListQueryDatabase> dynamicListQueryDatabases)
+            IEnumerable<IDynamicListQueryDatabase> dynamicListQueryDatabases,
+            IServiceLogger<DynamicListService> logger)
         {
             _databaseServiceProvider = databaseServiceProvider;
             _dynamicListQueryDatabases = dynamicListQueryDatabases;
+            _logger = logger;
         }
 
         public async Task<DynamicListResponseDataModel> FetchData(DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
@@ -32,6 +37,7 @@ namespace LetPortal.Portal.Services.Components
             var databaseConnection = await _databaseServiceProvider.GetOneDatabaseConnectionAsync(dynamicList.ListDatasource.DatabaseConnectionOptions.DatabaseConnectionId);
             var foundDynamicListQuery = _dynamicListQueryDatabases.First(a => a.ConnectionType == databaseConnection.GetConnectionType());
 
+            _logger.Info("Fetch data in dynamic list with model {0}", fetchDataModel);
             return await foundDynamicListQuery.Query(databaseConnection, dynamicList, fetchDataModel);
         }
 

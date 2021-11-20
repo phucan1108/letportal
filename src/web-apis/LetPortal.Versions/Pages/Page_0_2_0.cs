@@ -109,7 +109,7 @@ namespace LetPortal.Versions.Pages
                                         {
                                             DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                    "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                    "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\", \"displayName\": \"{{data.name}}\"}}}"
                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                                         ? "INSERT INTO `databases` (id, name, `displayName`, `timeSpan`, `connectionString`, `dataSource`, `databaseConnectionType`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})"
                                         : "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})")
@@ -156,7 +156,7 @@ namespace LetPortal.Versions.Pages
                                         {
                                             DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                                "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
+                                                "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\", \"displayName\": \"{{data.name}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
                                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                                                         ? "Update `databases` SET name={{data.name}}, `displayName`={{data.name}}, `timeSpan`={{currentTick()|long}}, `connectionString`={{data.connectionString}}, `dataSource`={{data.dataSource}}, `databaseConnectionType`={{data.databaseConnectionType}}"
                                                         : "Update databases SET name={{data.name}}, \"displayName\"={{data.name}}, \"timeSpan\"={{currentTick()|long}}, \"connectionString\"={{data.connectionString}}, \"dataSource\"={{data.dataSource}}, \"databaseConnectionType\"={{data.databaseConnectionType}}")
