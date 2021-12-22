@@ -203,7 +203,7 @@ label.mat-radio-label {
 
 .scrollable{
   overflow: scroll;
-  height: 300px;
+  max-height: 300px;
   overflow-x: hidden;
   overflow-y: scroll;
 }

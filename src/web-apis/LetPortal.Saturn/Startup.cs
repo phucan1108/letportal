@@ -7,6 +7,9 @@ using LetPortal.Core.Microservices.Configurations.Server;
 using LetPortal.Identity;
 using LetPortal.Identity.AppParts.Controllers;
 using LetPortal.Microservices.Server;
+using LetPortal.Notification;
+using LetPortal.Notification.AppParts.Controllers;
+using LetPortal.Notification.Hubs;
 using LetPortal.Portal;
 using LetPortal.Portal.AppParts.Controllers;
 using LetPortal.ServiceManagement;
@@ -52,6 +55,7 @@ namespace LetPortal.Saturn
                 .AddDatabaseOptions(Configuration)
                     .RegisterIdentityRepos()
                     .RegisterPortalRepos()
+                    .RegisterNotificationRepos()
                     .RegisterSaturnServerRepos();
 
             // Changed from 0.9.0: AddLetPortal is just providing Builder for combining all Features
@@ -62,9 +66,11 @@ namespace LetPortal.Saturn
                     hubSegments: new List<string>
                     {
                         "/chathub",
-                        "/videohub"
+                        "/videohub",
+                        "/notificationhub"
                     })
                 .AddChat()
+                .AddNotificationService()
                 .AddPortalService(options =>
                 {
                     options.EnableFileServer = true;
@@ -75,6 +81,7 @@ namespace LetPortal.Saturn
                 .AddApplicationPart(typeof(AppsController).Assembly)
                 .AddApplicationPart(typeof(AccountsController).Assembly)
                 .AddApplicationPart(typeof(ConfigurationController).Assembly)
+                .AddApplicationPart(typeof(NotificationsController).Assembly)
                 .AddNewtonsoftJson(options =>
                 {
                     // Important note: we still use Newtonsoft instead of .NET JSON because they still don't support Timezone
@@ -120,6 +127,7 @@ namespace LetPortal.Saturn
                 options.UseBuiltInCors = true;
                 options.UseGenerateTraceId = true;
                 options.SkipCheckUrls = new string[] {
+                        "swagger",
                         "api/accounts/login",
                         "api/accounts/forgot-password",
                         "api/accounts/recovery-password"};
@@ -142,6 +150,10 @@ namespace LetPortal.Saturn
                     options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets | Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling;
                 });
                 endpoints.MapHub<HubVideoClient>("/videohub", options =>
+                {
+                    options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets | Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling;
+                });
+                endpoints.MapHub<NotificationHubClient>("/notificationhub", options =>
                 {
                     options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets | Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling;
                 });

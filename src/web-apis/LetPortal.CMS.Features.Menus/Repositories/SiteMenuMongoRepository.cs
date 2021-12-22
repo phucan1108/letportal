@@ -18,7 +18,7 @@ namespace LetPortal.CMS.Features.Menus.Repositories
             {
                 return await FindAsync(a => a.SiteId == siteId);
             }
-            catch(Exception ex)
+            catch
             {
                 return null;
             }               

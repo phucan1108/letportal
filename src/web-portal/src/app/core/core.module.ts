@@ -1,34 +1,31 @@
-import { NgModule, ModuleWithProviders, Provider } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateConfigs } from './shell/translates/translate.configs'
-import { DatasourceOptionsService } from 'services/datasourceopts.service';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { CustomHttpService } from 'services/customhttp.service';
-import { Translator } from './shell/translates/translate.pipe';
-import { ConfigurationProvider } from './configs/configProvider';
-import { ShellConfigProvider } from './shell/shellconfig.provider';
-import { DatabasesClient, EntitySchemasClient, AppsClient, StandardComponentClient, PagesClient, DynamicListClient, ChartsClient, BackupsClient, LocalizationClient } from 'services/portal.service';
-import { RouterExtService } from './ext-service/routerext.service';
-import { SessionService } from 'services/session.service';
-import { AccountsClient, UserSessionClient, RolesClient } from 'services/identity.service';
+import { DatasourceOptionsService } from 'services/datasourceopts.service';
+import { DownloadFileService } from 'services/downloadfile.service';
+import { ExportService } from 'services/export.service';
+import { AccountsClient, RolesClient, UserSessionClient } from 'services/identity.service';
 import { PageService } from 'services/page.service';
+import { AppsClient, BackupsClient, ChartsClient, DatabasesClient, DynamicListClient, EntitySchemasClient, LocalizationClient, PagesClient, StandardComponentClient } from 'services/portal.service';
+import { SessionService } from 'services/session.service';
 import { UploadFileService } from 'services/uploadfile.service';
-import { TRANSLATOR_METHODS, CONTROL_EVENTS } from './core.config';
+import { CONTROL_EVENTS, TRANSLATOR_METHODS } from './core.config';
 import { ControlEventExecution } from './events/control/control.event';
 import { EventsProvider, EVENTS_CONFIG } from './events/event.provider';
-import { UnlockScreenDialogComponent } from './security/components/unlock-screen.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
+import { RouterExtService } from './ext-service/routerext.service';
 import { AutoCompletePipe } from './pipe/autocomplete.pipe';
-import { ExportService } from 'services/export.service';
+import { SafeHtmlPipe } from './pipe/safeHtmlPipe';
 import { SecurePipe } from './pipe/secure.pipe';
-import { MatButtonModule } from '@angular/material/button'
-import { MatIconModule } from '@angular/material/icon'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatDialogModule } from '@angular/material/dialog'
-import { MatInputModule } from '@angular/material/input'
-import { DownloadFileService } from 'services/downloadfile.service';
-import { PAGE_INTERCEPTORS, InterceptorsProvider } from './interceptors/interceptor.provider';
-import { Interceptor } from './interceptors/interceptor';
+import { UnlockScreenDialogComponent } from './security/components/unlock-screen.component';
+import { ShellConfigProvider } from './shell/shellconfig.provider';
+import { TranslateConfigs } from './shell/translates/translate.configs';
+import { Translator } from './shell/translates/translate.pipe';
 @NgModule({
   declarations: [
     UnlockScreenDialogComponent,

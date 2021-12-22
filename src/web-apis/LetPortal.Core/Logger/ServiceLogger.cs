@@ -21,11 +21,17 @@ namespace LetPortal.Core.Logger
 
         public void Enrich(Serilog.Events.LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
-            var traceId = StringUtil.DecodeBase64ToUTF8(_httpContextAccessor.HttpContext.Request.Headers[Constants.TraceIdHeader].ToString());
-            var userSessionId = StringUtil.DecodeBase64ToUTF8(_httpContextAccessor.HttpContext.Request.Headers[Constants.UserSessionIdHeader].ToString());
-            logEvent.AddPropertyIfAbsent(new LogEventProperty("TraceId", new ScalarValue(traceId)));
-            logEvent.AddPropertyIfAbsent(new LogEventProperty("UserSessionId", new ScalarValue(userSessionId)));
+            try
+            {
+                var traceId = StringUtil.DecodeBase64ToUTF8(_httpContextAccessor.HttpContext.Request.Headers[Constants.TraceIdHeader].ToString());
+                var userSessionId = StringUtil.DecodeBase64ToUTF8(_httpContextAccessor.HttpContext.Request.Headers[Constants.UserSessionIdHeader].ToString());
+                logEvent.AddPropertyIfAbsent(new LogEventProperty("TraceId", new ScalarValue(traceId)));
+                logEvent.AddPropertyIfAbsent(new LogEventProperty("UserSessionId", new ScalarValue(userSessionId)));
+            }
+            catch
+            {
 
+            }
         }
 
         public void Debug(string message, params object[] logObjects)

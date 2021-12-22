@@ -7,7 +7,7 @@
 <div *ngIf="readyToRender else loading"></div>
 <div class="table-flex" [hidden]="!readyToRender">
     <mat-table class="lmat-elevation-z8" [dataSource]="dataSource$" matSort [matSortActive]="defaultSortColumn"
-        matSortDirection="asc" matSortDisableClear>
+        [matSortDirection]="defaultSortDirection" matSortDisableClear>
         <ng-container *ngFor="let header of headers">
             <ng-container [matColumnDef]="header.name">
                 <!-- ATTRIBUTE mat-sort-header  for sorting | https://material.angular.io/components/sort/overview -->

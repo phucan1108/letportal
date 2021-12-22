@@ -12,9 +12,11 @@ using LetPortal.Microservices.Client.Configurations;
 using LetPortal.Microservices.Client.Middlewares;
 using LetPortal.Microservices.Client.Monitors;
 using LetPortal.Microservices.Client.Options;
+using LetPortal.Microservices.Client.Services;
 using LetPortal.Microservices.Client.Workers;
 using LetPortal.Microservices.LogCollector;
 using LetPortal.Microservices.Monitors;
+using LetPortal.Microservices.Notifications;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -163,6 +165,10 @@ namespace LetPortal.Microservices.Client
             // Declare Channels
             services.AddSingleton<ILogCollectorChannel, LogCollectorChannel>();
             services.AddSingleton<IMonitoHeartBeatChannel, MonitorHeartBeatChannel>();
+            services.AddSingleton<INotificationChannel, NotificationChannel>();
+
+            // Declare Services
+            services.AddSingleton<INotificationClientService, NotificationClientService>(); 
 
             // Declare gRPC client
             services.AddGrpcClient<MonitorService.MonitorServiceClient>(a =>
@@ -193,9 +199,24 @@ namespace LetPortal.Microservices.Client
                 return handler;
             });
 
+            services.AddGrpcClient<NotificationService.NotificationServiceClient>(a =>
+            {
+                a.Address = new Uri(serviceOptions.SaturnEndpoint);
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                if (serviceOptions.BypassSSL)
+                {
+                    handler.ServerCertificateCustomValidationCallback =
+                            HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                }
+                return handler;
+            });
+
             services.AddSingleton<IServiceContext, ClientServiceContext>();
             services.AddHostedService<LogCollectorBackgroundService>();
             services.AddHostedService<MonitorHealthCheckBackgrounService>();
+            services.AddHostedService<NotificationBackgroundService>();
         }
 
         public static void UseSaturnClient(

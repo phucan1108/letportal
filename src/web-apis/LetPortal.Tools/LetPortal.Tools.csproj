@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <NoWin32Manifest>true</NoWin32Manifest>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Version>0.9.0</Version>
@@ -17,8 +17,8 @@
   <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
     <PackageReference Include="Helpers.McMaster.Extensions.CommandLineUtils" Version="1.0.0" />
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.5.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LetPortal.CMS.Tools\LetPortal.CMS.Tools.csproj" />
+    <ProjectReference Include="..\LetPortal.Notification\LetPortal.Notification.csproj" />
     <ProjectReference Include="..\LetPortal.Versions\LetPortal.Versions.csproj" />
     <ProjectReference Include="..\PersonalBlog.Tools\PersonalBlog.Tools.csproj" />
   </ItemGroup>

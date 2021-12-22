@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+﻿using MySqlConnector;
 
 namespace LetPortal.Portal.Mappers.MySQL
 {

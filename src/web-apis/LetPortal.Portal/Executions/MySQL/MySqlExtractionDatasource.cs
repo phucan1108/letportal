@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace LetPortal.Portal.Executions.MySQL
 {

@@ -54,6 +54,7 @@ export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewIni
 
     datasourceCache: Array<DatasourceCache> = []
     defaultSortColumn = '';
+    defaultSortDirection = 'asc';
 
     readyToRender = false
     commandsInList: Array<CommandButtonInList> = new Array<CommandButtonInList>();
@@ -233,12 +234,23 @@ export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewIni
                 }
             }
         })
-        const foundSort = this.headers.find((element: ColumnDef) => {
-            return element.allowSort;
-        });
-        if (foundSort) {
-            this.defaultSortColumn = foundSort.name
+        
+        // New change: we have one option to choose the initial sort column
+        let splittedDefaultSort = this.listOptions.defaultSortCol.split('|')
+        let colIndex = parseInt(splittedDefaultSort[0])
+        this.defaultSortDirection = splittedDefaultSort[1]
+        if(colIndex > 0){
+            const sortHeader = this.headers[colIndex - 1]
+            this.defaultSortColumn = sortHeader.name
         }
+        else{
+            const foundSort = this.headers.find((element: ColumnDef) => {
+                return element.allowSort;
+            });
+            if (foundSort) {
+                this.defaultSortColumn = foundSort.name
+            }
+        }        
 
         if (this.dynamicList.commandsList && this.dynamicList.commandsList.commandButtonsInList.length > 0) {
             this.commandsInList = this.dynamicList.commandsList.commandButtonsInList.filter((element: CommandButtonInList) => {

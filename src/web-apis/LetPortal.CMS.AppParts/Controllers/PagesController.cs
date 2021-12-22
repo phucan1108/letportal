@@ -34,6 +34,7 @@ namespace LetPortal.CMS.AppParts.Controllers
 
         public PagesController(
             IPageRepository pageRepository,
+            ISiteRepository siteRepository,
             IPageVersionRepository pageVersionRepository,
             IHttpContextAccessor httpContextAccessor,
             IThemeRepository themeRepository,
@@ -46,6 +47,7 @@ namespace LetPortal.CMS.AppParts.Controllers
             _themeRepository = themeRepository;
             _pageTemplateRepository = pageTemplateRepository;
             _pageService = pageService;
+            _siteRepository = siteRepository;
         }
 
         [HttpPost("")]

@@ -21,6 +21,7 @@ import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ConfigurationService } from 'services/configuration.service';
 import { IDENTITY_BASE_URL } from 'services/identity.service';
 import { LocalizationService } from 'services/localization.service';
+import { NotificationService, NOTIFICATION_BASE_URL } from 'services/notification.service';
 import { PORTAL_BASE_URL } from 'services/portal.service';
 import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 import { AppRoutingModule } from './app-routing.module';
@@ -47,6 +48,9 @@ const chatBaseUrl = (configProvider: ConfigurationProvider) => {
 }
 const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().identityBaseEndpoint
+}
+const notificationBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().notificationBaseEndpoint
 }
 // required for AOT compilation
 function HttpLoaderFactory(http: HttpClient) {
@@ -97,6 +101,7 @@ function HttpLoaderFactory(http: HttpClient) {
     VideoCallService,
     LocalizationService,
     ConfigurationService,
+    NotificationService,
     {
       provide: PORTAL_BASE_URL,
       useFactory: portalBaseUrl,
@@ -110,6 +115,11 @@ function HttpLoaderFactory(http: HttpClient) {
     {
       provide: CHAT_BASE_URL,
       useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: NOTIFICATION_BASE_URL,
+      useFactory: notificationBaseUrl,
       deps: [ConfigurationProvider]
     },
     {

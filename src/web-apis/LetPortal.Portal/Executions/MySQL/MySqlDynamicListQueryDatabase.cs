@@ -11,7 +11,7 @@ using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.DynamicLists;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Newtonsoft.Json;
 
 namespace LetPortal.Portal.Executions.MySQL

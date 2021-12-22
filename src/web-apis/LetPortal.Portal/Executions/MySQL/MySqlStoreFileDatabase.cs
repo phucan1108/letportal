@@ -4,7 +4,7 @@ using LetPortal.Core.Files;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using Microsoft.AspNetCore.Http;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace LetPortal.Portal.Executions.MySQL
 {

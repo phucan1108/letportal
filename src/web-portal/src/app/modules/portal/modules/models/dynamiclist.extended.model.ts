@@ -1,5 +1,6 @@
-import { FilterField, ShellOption } from 'services/portal.service';
+import { ObjectUtils } from 'app/core/utils/object-util';
 import { ExtendedShellOption } from 'portal/shared/shelloptions/extened.shell.model';
+import { FilterField, ShellOption } from 'services/portal.service';
  
 
 export interface ExtendedFilterField extends FilterField {
@@ -89,6 +90,14 @@ export class ListOptions {
         value: 'false'
     }
 
+    public static DefaultSortCol: ExtendedShellOption = {
+        id: '',
+        allowDelete: false,
+        description: 'Enter the index of default sort column and sort direction(asc,desc). 0 means the system will automatically choose one column. Count from 1. Default: 0|asc',
+        key: 'defaultsortcol',
+        value: '0|asc'
+    }
+
     public static DefaultListOptions: ListOptions =  {
         defaultPageSize: 10,
         enableAdvancedSearch: true,
@@ -99,7 +108,8 @@ export class ListOptions {
         sizeOptions: [5, 10, 20, 30, 50],
         enableExportExcel: true,
         maximumClientExport: 1000,
-        allowExportHiddenFields: false
+        allowExportHiddenFields: false,
+        defaultSortCol: '0|asc'
     }
 
     sizeOptions: number[]
@@ -112,6 +122,7 @@ export class ListOptions {
     enableExportExcel: boolean
     maximumClientExport: number
     allowExportHiddenFields: boolean
+    defaultSortCol: string
 
     public static getListOptions(options: ShellOption[]): ListOptions {
         return {
@@ -124,7 +135,8 @@ export class ListOptions {
             enablePagination: JSON.parse(options.find(opt => opt.key === 'enablepagination').value),
             enableExportExcel: JSON.parse(options.find(opt => opt.key === 'enableexportexcel').value),
             maximumClientExport: JSON.parse(options.find(opt => opt.key === 'maximumclientexport').value)            ,
-            allowExportHiddenFields: JSON.parse(options.find(opt => opt.key === 'allowexporthiddenfields').value)
+            allowExportHiddenFields: JSON.parse(options.find(opt => opt.key === 'allowexporthiddenfields').value),
+            defaultSortCol: options.find(opt => opt.key === 'defaultsortcol') ? options.find(opt => opt.key === 'defaultsortcol').value : '0|asc'
         }
     }
 
@@ -139,6 +151,7 @@ export class ListOptions {
             && shell.key !== this.EnableExportExcel.key
             && shell.key !== this.MaximumClientExport.key
             && shell.key !== this.AllowExportHiddenFields.key
+            && shell.key !== this.DefaultSortCol.key
     }
 
     public static getDefaultShellOptionsForList(): ExtendedShellOption[] {
@@ -152,18 +165,25 @@ export class ListOptions {
             this.EnablePagination,
             this.EnableExportExcel,
             this.MaximumClientExport,
-            this.AllowExportHiddenFields
+            this.AllowExportHiddenFields,
+            this.DefaultSortCol
         ]
     }
 
     public static combinedDefaultShellOptions(opts: ExtendedShellOption[]){
         const defaultOpts = this.getDefaultShellOptionsForList()
-        opts?.forEach(a => {
-            const found = defaultOpts.find(b => b.key === a.key)
+        if(!ObjectUtils.isNotNull(opts)){
+            opts = defaultOpts
+        }
+        let nonFoundOpts: ExtendedFilterField[] = []
+        defaultOpts.forEach(a => {
+            const found = opts.find(b => b.key === a.key)
             if(found){
-                a.description = found.description
-                a.allowDelete = found.allowDelete
-                a.id = found.id
+                found.allowDelete = a.allowDelete
+                found.description = a.description
+            }
+            else{
+                opts.push(ObjectUtils.clone(a))
             }
         })
     }

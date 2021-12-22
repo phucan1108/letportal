@@ -76,7 +76,7 @@ namespace LetPortal.CMS.Core.Middlewares
                     }
                 }
             }
-            catch(Exception ex)
+            catch
             {
 
             }            

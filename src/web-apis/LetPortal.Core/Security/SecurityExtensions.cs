@@ -24,5 +24,10 @@ namespace LetPortal.Core.Security
         {
             return token.Claims.FirstOrDefault(a => a.Type == JwtClaimTypes.Picture)?.Value;
         }
+
+        public static string[] GetRoles(this JwtSecurityToken token)
+        {
+            return token.Claims.FirstOrDefault(a => a.Type == "roles")?.Value.Split("");
+        }
     }
 }

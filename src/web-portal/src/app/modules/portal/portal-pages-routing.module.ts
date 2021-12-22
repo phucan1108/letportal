@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PagesWrapperComponent } from './portal-wrapper.component';
-import { CanActivePortal } from 'portal/router/canActivePortal';
 import { AuthGuard } from 'app/core/security/authGuard';
+import { CanActivePortal } from 'portal/router/canActivePortal';
 import { AppDashboardComponent } from './components/app-dashboard/app-dashboard.component';
+import { PagesWrapperComponent } from './portal-wrapper.component';
 
 const routes: Routes = [
     {
@@ -24,6 +24,11 @@ const routes: Routes = [
                 path: 'page',
                 loadChildren: () => import('./modules/render/portal-render.module').then(m => m.PortalRenderModule),
                 canActivate: [AuthGuard , CanActivePortal]
+            },
+            {
+                path: 'notification',
+                loadChildren: () => import('./modules/notification/notification.module').then(m => m.NotificationModule),
+                canActivate: [AuthGuard]
             }
         ]
     }

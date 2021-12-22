@@ -177,6 +177,8 @@ namespace LetPortal.Microservices.Server
                 builder.Services.AddSingleton<IMonitorCounterRepository, MonitorCounterMongoRepository>();
                 builder.Services.AddSingleton<IMonitorHardwareReportRepository, MonitorHardwareReportMongoRepository>();
                 builder.Services.AddSingleton<IMonitorHttpReportRepository, MonitorHttpReportMongoRepository>();
+
+                builder.Services.AddSingleton<INotificationMessageQueueRepository, NotificationMessageQueueMongoRepository>();
             }
 
             if (databaseOptions.ConnectionType == ConnectionType.SQLServer
@@ -271,6 +273,7 @@ namespace LetPortal.Microservices.Server
             endpoints.MapGrpcService<ServiceConfigurationService>();
             endpoints.MapGrpcService<LogCollectorService>();
             endpoints.MapGrpcService<ServiceMonitorService>();
+            endpoints.MapGrpcService<NotificationServerService>();
             return endpoints;
         }
 

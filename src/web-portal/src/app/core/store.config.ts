@@ -1,13 +1,14 @@
-import { NgxsConfig } from '@ngxs/store/src/symbols';
 import { NgxsDevtoolsOptions } from '@ngxs/devtools-plugin/src/symbols';
 import { NgxsLoggerPluginOptions } from '@ngxs/logger-plugin/src/symbols';
-import { PageBuilderState } from './stores/pages/pagebuilder.state';
-import { ShellDataState } from './stores/shell/shell.state';
-import { SelectedAppState } from './stores/apps/app.state';
+import { NgxsConfig } from '@ngxs/store/src/symbols';
 import { environment } from 'environments/environment';
-import { PageState } from './stores/pages/page.state';
-import { PageControlEventState } from './stores/pages/pagecontrol.state';
 import { ChatState } from 'stores/chats/chats.state';
+import { NotificationState } from 'stores/notifications/notification.state';
+import { SelectedAppState } from './stores/apps/app.state';
+import { PageState } from './stores/pages/page.state';
+import { PageBuilderState } from './stores/pages/pagebuilder.state';
+import { PageControlEventState } from './stores/pages/pagecontrol.state';
+import { ShellDataState } from './stores/shell/shell.state';
 
 export const STATES_MODULES = [
   PageBuilderState,
@@ -15,7 +16,8 @@ export const STATES_MODULES = [
   SelectedAppState,
   PageState,
   PageControlEventState,
-  ChatState];
+  ChatState,
+  NotificationState];
 
 export const OPTIONS_CONFIG: Partial<NgxsConfig> = {
   /**

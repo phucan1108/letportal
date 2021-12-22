@@ -47,11 +47,16 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
             List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MongoDynamicListQueryDatabase(optionsMock)
+                new MongoDynamicListQueryDatabase(
+                    optionsMock,
+                    new FakeServiceLogger<MongoDynamicListQueryDatabase>())
             };
 
             DynamicList databaseListSectionPart = SampleMongoDynamicList();
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -98,11 +103,16 @@ namespace LetPortal.Tests.ITs.Portal.Services
             var optionsMock = Mock.Of<IOptionsMonitor<MongoOptions>>(_ => _.CurrentValue == _context.MongoOptions);
             List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
             {
-                new MongoDynamicListQueryDatabase(optionsMock)
+                new MongoDynamicListQueryDatabase(
+                    optionsMock,
+                    new FakeServiceLogger<MongoDynamicListQueryDatabase>())
             };
 
             DynamicList databaseListSectionPart = SampleMongoDynamicList();
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -183,7 +193,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query = "Select * from databases";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -236,7 +249,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             };
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -316,7 +332,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             DynamicList databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
                 = "Select * From databases Where name={{data.name}}";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -403,7 +422,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             DynamicList databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
                 = "Select * From databases Where name={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} Limit {{PAGENUM}} offset {{PAGESTART}}";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -492,7 +514,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query = "Select * from databases";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -545,7 +570,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             };
 
             DynamicList databaseListSectionPart = SampleEFDynamicList();
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -625,7 +653,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             DynamicList databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
                 = "Select * From databases Where name={{data.name}}";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -712,7 +743,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             DynamicList databaseListSectionPart = SampleEFDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
                 = "Select * From databases Where name={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} OFFSET {{PAGESTART}} ROWS FETCH NEXT {{PAGENUM}} ROWS ONLY";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -801,7 +835,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
             DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query = "Select * from `databases`";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -854,7 +891,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             };
 
             DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -934,7 +974,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
                 = "Select * From `databases` Where name={{data.name}}";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
@@ -1021,7 +1064,10 @@ namespace LetPortal.Tests.ITs.Portal.Services
             DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
             databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
                 = "Select * From `databases` Where name={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} LIMIT {{PAGENUM}} OFFSET {{PAGESTART}}";
-            DynamicListService dynamicListService = new DynamicListService(mockDatabaseServiceProvider.Object, dynamicListQueries);
+            DynamicListService dynamicListService = new DynamicListService(
+                mockDatabaseServiceProvider.Object, 
+                dynamicListQueries,
+                new FakeServiceLogger<DynamicListService>());
             // Act
             LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
             new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel

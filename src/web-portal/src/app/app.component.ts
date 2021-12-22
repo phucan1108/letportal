@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { tap } from 'rxjs/operators';
 import { ChatService } from 'services/chat.service';
 import { LocalizationService } from 'services/localization.service';
+import { NotificationService } from 'services/notification.service';
 import { LocalizationClient } from 'services/portal.service';
 import { SessionService } from 'services/session.service';
 import { VideoCallService } from 'services/videocall.service';
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private chatService: ChatService,
+    private notificationService: NotificationService,
     private videoService: VideoCallService,
     private securityService: SecurityService,
     private translate: TranslateService,
@@ -37,6 +39,7 @@ export class AppComponent implements OnInit {
           && this.securityService.isUserSignedIn()) {
           this.chatService.start()
           this.chatService.online()
+          this.notificationService.subcribe()
           this.videoService.start()
           setTimeout(() => {
             this.chatService.getAllAvailableUsers()

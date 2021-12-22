@@ -5,14 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Monitors;
-using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Persistences;
 using LetPortal.Microservices.Monitors;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Npgsql;
 
 namespace LetPortal.Microservices.Client.Monitors
@@ -91,11 +90,9 @@ namespace LetPortal.Microservices.Client.Monitors
                             using (var mysqlDbConnection = new MySqlConnection(_databaseOptions.CurrentValue.ConnectionString))
                             {
                                 mysqlDbConnection.Open();
-                                using (var mysqlCommand = new MySqlCommand("Select 1"))
-                                {
-                                    mysqlCommand.ExecuteScalar();
-                                    pushHealthCheckModel.DatabaseHealthy = true;
-                                }
+                                using var mysqlCommand = new MySqlCommand("Select 1");
+                                mysqlCommand.ExecuteScalar();
+                                pushHealthCheckModel.DatabaseHealthy = true;
                             }
                         }
                         catch (Exception ex)
