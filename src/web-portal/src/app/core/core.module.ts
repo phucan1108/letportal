@@ -83,7 +83,7 @@ export class CoreModule {
 
   static forRoot(
     builtInMethods: any[] = null,
-    controlEvents: ControlEventExecution[] = null): ModuleWithProviders {
+    controlEvents: ControlEventExecution[] = null): ModuleWithProviders<CoreModule> {
     return {
       ngModule: CoreModule,
       providers: [
