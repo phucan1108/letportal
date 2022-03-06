@@ -9,5 +9,12 @@ namespace LetPortal.Notification.Repositories.MessageGroups
         {
             Connection = mongoConnection;
         }
+
+        public async Task UpdateLastClicked(string subcriberId, string messageGroupId, long lastClickedTs)
+        {
+            var messageGroup = await FindAsync(a => a.SubcriberId == subcriberId && a.Id == messageGroupId);
+            messageGroup.LastVisitedTs = lastClickedTs;
+            await UpdateAsync(messageGroup.Id, messageGroup);
+        }
     }
 }

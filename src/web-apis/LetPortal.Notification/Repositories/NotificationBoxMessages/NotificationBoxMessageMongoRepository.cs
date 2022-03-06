@@ -25,6 +25,14 @@ namespace LetPortal.Notification.Repositories.NotificationBoxMessages
                     .CountAsync();
         }
 
+        public async Task<int> CheckUnreadMessagesWithTypeAsync(string subcriberId, string messageGroupId, long lastVisitedTs, NotificationType notificationType)
+        {
+            return await Collection
+                    .AsQueryable()
+                    .Where(a => a.MessageGroupId == messageGroupId && a.ReceivedDateTs > lastVisitedTs && a.SubcriberId == subcriberId && a.Type == notificationType)
+                    .CountAsync();
+        }
+
         public async Task<IEnumerable<NotificationBoxMessage>> TakeLastAsync
             (string subcriberId,
              string messageGroupId,
@@ -63,8 +71,8 @@ namespace LetPortal.Notification.Repositories.NotificationBoxMessages
 
         public async Task<NotificationBoxMessage> TakeLastOfGroup(string subcriberId, string messageGroupId)
         {
-            var last = await Collection.AsQueryable().Where(a => a.MessageGroupId == messageGroupId && a.SubcriberId == subcriberId).OrderByDescending(b => b.ReceivedDateTs).Take(1).ToListAsync();
-            return last?.First();
+            var last = await Collection.AsQueryable().Where(a => a.MessageGroupId == messageGroupId && a.SubcriberId == subcriberId).OrderByDescending(b => b.ReceivedDateTs).Take(1).FirstOrDefaultAsync();
+            return last;
         }
     }
 }

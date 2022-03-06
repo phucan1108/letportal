@@ -9,12 +9,14 @@ namespace LetPortal.Notification.Services
 
         Task MarkRead(string subcriberId, string notificationId);
 
-        Task Receive(GlobalIncomingMessage globalMessage, Func<OnlineNotificationMessage, Task> postAction);
+        Task Receive(GlobalIncomingMessage globalMessage, Func<OnlineNotificationMessage, OnlineMessageGroup, Task> postAction);
 
-        Task Receive(RoleIncomingMessage roleMessage, Func<OnlineNotificationMessage, Task> postAction);
+        Task Receive(RoleIncomingMessage roleMessage, Func<OnlineNotificationMessage, OnlineMessageGroup, Task> postAction);
 
-        Task Receive(IndividualIncomingMessage incomingMessage, Func<OnlineNotificationMessage, Task> postAction);
+        Task Receive(IndividualIncomingMessage incomingMessage, Func<OnlineNotificationMessage, OnlineMessageGroup, Task> postAction);
 
         Task ClickOnNotificationBox(string subcriberId, long clickedTicks);
+
+        Task ClickOnMessageGroup(string subcriberId, string messageGroupId, long clickedTicks);
     }
 }

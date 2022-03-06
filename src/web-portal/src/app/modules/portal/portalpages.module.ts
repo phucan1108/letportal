@@ -65,6 +65,7 @@ const mapToProvider = (interceptor: any): Provider => {
         MatExpansionModule,
         MatBadgeModule,
         MatTooltipModule,
+        MatSnackBarModule,
         TranslateModule
     ],
     exports: [],

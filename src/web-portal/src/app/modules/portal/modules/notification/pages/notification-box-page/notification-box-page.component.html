@@ -8,25 +8,29 @@
         <mat-card-content>
             <mat-grid-list cols="4" rowHeight="60px">
                 <mat-grid-tile colspan="1" rowspan="8" class="message-group-panel">
-                    <mat-grid-tile-header>
+                    <!-- <mat-grid-tile-header>
                         <form [formGroup]="formGroup" style="width: 100%">
                             <mat-form-field class="field-full-width">
                                 <input matInput placeholder="Search for sender" formControlName="groupSearch">
                                 <mat-icon matSuffix color="primary">search</mat-icon>
                             </mat-form-field>
                         </form>
-                    </mat-grid-tile-header>
+                    </mat-grid-tile-header> -->
                     <mat-selection-list role="list" #messageGroupsSelection
-                        style="position: absolute; top: 60px; left:10px; right: 10px;" class="start-50"
+                        style="position: absolute; top: 0px; left:10px; right: 10px;" class="start-50"
                         [multiple]="false">
                         <mat-list-option *ngFor="let group of messageGroup$ | async" [value]="group" role="listitem"
                             style="margin-right: 10px;" (click)="onClickSelection()">
                             <mat-icon mat-list-icon>{{group.icon}}</mat-icon>
-                            <div mat-line class="message-group-name">{{group.name}} - <span
-                                    class="period-message">{{getPeriod(group.lastMessage)}}</span></div>
+                            <div mat-line class="message-group-name">{{group.name}}  <span
+                                    class="period-message" *ngIf="hasLastMessage(group)">{{getPeriod(group.lastMessage)}}</span></div>
                             <div mat-line class="message-text message-text-group-panel"
-                                [ngClass]="{'non-read': hasUnreadMessageInGroup(group), 'color-primary':  hasUnreadMessageInGroup(group)}">
+                                [ngClass]="{'non-read': hasUnreadMessageInGroup(group), 'color-primary':  hasUnreadMessageInGroup(group)}"
+                                *ngIf="hasLastMessage(group)">
                                 {{group.lastMessage.shortMessage}}
+                            </div>
+                            <div mat-line class="message-text message-text-group-panel non-read" *ngIf="noMessage(group)">
+                                No message
                             </div>
                             <div style="width: 5px; position: absolute; right: 15px; top: 25px;"
                                 *ngIf="hasUnreadMessageInGroup(group)">
@@ -36,14 +40,15 @@
                     </mat-selection-list>
                 </mat-grid-tile>
                 <mat-grid-tile colspan="3" rowspan="1">
-                    <div class="d-flex justify-content-around" style="width: 100%;">
-                        <mat-button-toggle-group [(value)]="selectedNotificationTypes" multiple>
-                            <mat-button-toggle *ngFor="let type of notificationTypes" [value]="type">{{type}}</mat-button-toggle>
+                    <div class="d-flex justify-content-start" style="width: 100%;">
+                        <mat-button-toggle-group #toggleGroups style="width: 100%;"
+                            [(ngModel)]="selectedNotificationTypes" (change)="onSelectedChanges()" multiple>
+                            <mat-button-toggle style="width: 33.33%;" *ngFor="let type of notificationTypes"
+                                [value]="type.value">
+                                <mat-icon [color]="type.color">{{type.icon}}</mat-icon>
+                                {{type.name}}
+                            </mat-button-toggle>
                         </mat-button-toggle-group>
-                        <!-- <mat-checkbox [(ngModel)]="checkedInfo" (change)="onChangedCheckbox()">Info</mat-checkbox>
-                        <mat-checkbox [(ngModel)]="checkedWarn" (change)="onChangedCheckbox()">Warning</mat-checkbox>
-                        <mat-checkbox [(ngModel)]="checkedCritical" (change)="onChangedCheckbox()">Critical
-                        </mat-checkbox> -->
                     </div>
                 </mat-grid-tile>
                 <mat-grid-tile colspan="3" rowspan="1" *ngIf="loading">
@@ -59,7 +64,8 @@
                                     {{getPeriod(notificationMessage)}}
                                 </div>
                                 <p class="d-flex flex-row mb-1">
-                                    <mat-icon class="mr-1">{{getIcon(notificationMessage)}}</mat-icon>
+                                    <mat-icon class="mr-1" [color]="getColor(notificationMessage)">
+                                        {{getIcon(notificationMessage)}}</mat-icon>
                                     {{notificationMessage.shortMessage}}
                                 </p>
                             </div>

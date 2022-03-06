@@ -47,10 +47,13 @@ namespace LetPortal.Microservices.Server.Services
 
         public void PushHealthCheck(HealthCheckRequest healthCheckRequest)
         {
-            healthCheckRequest.ServiceId = serviceId;
-            healthCheckRequest.ServiceName = _selfOptions.ServerName;
-            var monitorTask = _monitorProvider.AddMonitorPulse(healthCheckRequest);
-            monitorTask.Wait();
+            if (!string.IsNullOrEmpty(serviceId))
+            {
+                healthCheckRequest.ServiceId = serviceId;
+                healthCheckRequest.ServiceName = _selfOptions.ServerName;
+                var monitorTask = _monitorProvider.AddMonitorPulse(healthCheckRequest);
+                monitorTask.Wait();
+            }
         }
 
         public void Run(Action postAction)

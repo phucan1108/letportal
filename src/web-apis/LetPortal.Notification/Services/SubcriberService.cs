@@ -109,7 +109,7 @@ namespace LetPortal.Notification.Services
             }
         }
 
-        public async Task Receive(GlobalIncomingMessage globalMessage, Func<OnlineNotificationMessage, Task> postAction)
+        public async Task Receive(GlobalIncomingMessage globalMessage, Func<OnlineNotificationMessage, OnlineMessageGroup, Task> postAction)
         {
             var allSubcribers = await _subscriberRepository.GetAllAsync(a => a.Active);
             foreach (var subcriber in allSubcribers)
@@ -118,7 +118,7 @@ namespace LetPortal.Notification.Services
             }
         }
 
-        public async Task Receive(RoleIncomingMessage roleMessage, Func<OnlineNotificationMessage, Task> postAction)
+        public async Task Receive(RoleIncomingMessage roleMessage, Func<OnlineNotificationMessage, OnlineMessageGroup, Task> postAction)
         {
             var allSubcribersMatchedRoles = await _subscriberRepository.GetByRoles(roleMessage.Roles.ToArray());
 
@@ -128,7 +128,7 @@ namespace LetPortal.Notification.Services
             }
         }
 
-        public async Task Receive(IndividualIncomingMessage incomingMessage, Func<OnlineNotificationMessage, Task> postAction)
+        public async Task Receive(IndividualIncomingMessage incomingMessage, Func<OnlineNotificationMessage, OnlineMessageGroup, Task> postAction)
         {
             var subcriber = await _subscriberRepository.FindAsync(a => a.UserId == incomingMessage.Target);
 
@@ -139,11 +139,11 @@ namespace LetPortal.Notification.Services
             NotificationScope scope,
             IncomingMessage incomingMessage,
             string subcriberId,
-            Func<OnlineNotificationMessage, Task> postAction)
+            Func<OnlineNotificationMessage, OnlineMessageGroup, Task> postAction)
         {
             var foundMessageGroup = await _messageGroupRepository.FindAsync(a => a.SubcriberId == subcriberId && a.ChannelCode == incomingMessage.Code);
-
-            if (foundMessageGroup == null)
+            bool requiredToPushNewMessageGroup = foundMessageGroup == null;
+            if (requiredToPushNewMessageGroup)
             {
                 var channel = await _channelRepository.FindAsync(a => a.Code == incomingMessage.Code);
 
@@ -156,7 +156,7 @@ namespace LetPortal.Notification.Services
                     Mute = false,
                     Name = channel.Name,
                     Icon = channel.Icon,
-                    LastVisitedTs = DateTime.UtcNow.Ticks,
+                    LastVisitedTs = DateTime.UtcNow.AddDays(-7).Ticks,
                     SubcriberId = subcriberId
                 };
 
@@ -186,7 +186,7 @@ namespace LetPortal.Notification.Services
 
             if (postAction != null)
             {
-                await postAction.Invoke(realTimeMessage);
+                await postAction.Invoke(realTimeMessage, requiredToPushNewMessageGroup ? foundMessageGroup.ToOnline() : null);
             }
 
         }
@@ -207,6 +207,11 @@ namespace LetPortal.Notification.Services
         public async Task ClickOnNotificationBox(string subcriberId, long clickedTicks)
         {
             await _subscriberRepository.UpdateLastClicked(subcriberId, clickedTicks);
+        }
+
+        public async Task ClickOnMessageGroup(string subcriberId, string messageGroupId, long clickedTicks)
+        {
+            await _messageGroupRepository.UpdateLastClicked(subcriberId, messageGroupId, clickedTicks);
         }
     }
 }

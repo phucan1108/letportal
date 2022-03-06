@@ -63,5 +63,10 @@ namespace LetPortal.Notification.Hubs
             return Task.CompletedTask;
 
         }
+
+        public async Task ClickedOnMessageGroup(OnlineMessageGroup onlineMessageGroup)
+        {
+            await _subcriberService.ClickOnMessageGroup(onlineMessageGroup.SubcriberId, onlineMessageGroup.Id, DateTime.UtcNow.Ticks);
+        }
     }
 }

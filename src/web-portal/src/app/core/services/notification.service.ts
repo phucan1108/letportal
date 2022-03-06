@@ -6,7 +6,7 @@ import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { tap } from 'rxjs/operators';
-import { SubcribeToServer } from 'stores/notifications/notification.actions';
+import { ReceivedNewMessageGroup, ReceivedNewNotification, SubcribeToServer } from 'stores/notifications/notification.actions';
 import { FetchedNotificationMessageRequest, MessageGroup, NotificationMessage, OnlineSubcriber } from '../models/notification.model';
 import { SecurityService } from '../security/security.service';
 export const NOTIFICATION_BASE_URL = new InjectionToken<string>('NOTIFICATION_BASE_URL');
@@ -30,12 +30,12 @@ export class NotificationService {
         this.httpClient = http
     }
 
-    public getMessageGroups(subcriberId: string): Observable<MessageGroup[]>{
+    public getMessageGroups(subcriberId: string): Observable<MessageGroup[]> {
         let url_ = this.baseUrl + "/api/notifications/message-groups/" + subcriberId
         return this.httpClient.get<MessageGroup[]>(url_)
     }
 
-    public getMessages(fetchedRequest: FetchedNotificationMessageRequest): Observable<NotificationMessage[]>{
+    public getMessages(fetchedRequest: FetchedNotificationMessageRequest): Observable<NotificationMessage[]> {
         let url_ = this.baseUrl + "/api/notifications/messages/fetch"
         return this.httpClient.post<NotificationMessage[]>(url_, fetchedRequest, {
             headers: new HttpHeaders({
@@ -44,7 +44,7 @@ export class NotificationService {
         })
     }
 
-    public subcribe(){
+    public subcribe() {
         let url_ = this.baseUrl + "/api/notifications/subcribe"
         this.httpClient.post<OnlineSubcriber>(url_, null, {
             headers: new HttpHeaders({
@@ -53,34 +53,43 @@ export class NotificationService {
         }).pipe(
             tap(
                 res => {
-                   this.store.dispatch(new SubcribeToServer({
-                       onlineSubcriber: {
-                           userId: this.security.getAuthUser().userid,
-                           userName: this.security.getAuthUser().username,
-                           subcriberId: res.subcriberId,
-                           lastClickedTs: res.lastClickedTs,
-                           lastUnreadMessages: res.lastUnreadMessages,
-                           groups: res.groups,
-                           roles: this.security.getAuthUser().roles
-                       }
-                   })) 
+                    this.logger.info('Hit calling subcriber')
+                    this.store.dispatch(new SubcribeToServer({
+                        onlineSubcriber: {
+                            userId: this.security.getAuthUser().userid,
+                            userName: this.security.getAuthUser().username,
+                            subcriberId: res.subcriberId,
+                            lastClickedTs: res.lastClickedTs,
+                            lastUnreadMessages: res.lastUnreadMessages,
+                            groups: res.groups,
+                            roles: this.security.getAuthUser().roles
+                        }
+                    }))
 
-                   // Auto connect Hub
-                   this.start()
+                    // Auto connect Hub
+                    this.start()
                 }
             )
         ).subscribe()
     }
 
-    public clickedOnNotificationBox(subcriberId: string ,postAction: () => void){
-        this.hubConnection.send('clickedOnNotificationbox',subcriberId).then(() => {
-            if(postAction != null){
+    public clickedOnNotificationBox(subcriberId: string, postAction: () => void) {
+        this.hubConnection.send('clickedOnNotificationbox', subcriberId).then(() => {
+            if (postAction != null) {
                 postAction()
             }
         })
     }
 
-    private start(){
+    public clickedOnMessageGroup(messageGroup: MessageGroup, postAction: () => void){
+        this.hubConnection.send('clickedOnMessageGroup', messageGroup).then(() => {
+            if (postAction != null) {
+                postAction()
+            }
+        })
+    }
+
+    private start() {
         this.hubConnection = this.createHubConnection(this.baseUrl, this.security.getJwtToken())
         this.hubConnection.onreconnecting((err) => {
             this.connectionState$.next(false)
@@ -90,6 +99,10 @@ export class NotificationService {
         })
 
         this.startHubConnection(this.hubConnection)
+
+        // Register events
+        this.listenPushMessage()
+        this.listenNewMessageGroup()
     }
 
     private createHubConnection(baseUrl: string, jwtToken: string) {
@@ -112,9 +125,19 @@ export class NotificationService {
             })
     }
 
-    private listenPushMessage(hubConnection: HubConnection){
+    private listenPushMessage() {
         this.hubConnection.on('push', (notificationMessage: NotificationMessage) => {
-            this.logger.debug('incoming message', notificationMessage)
+            this.store.dispatch(new ReceivedNewNotification({
+                notificationMessage: notificationMessage
+            }))
+        })
+    }
+
+    private listenNewMessageGroup() {
+        this.hubConnection.on('pushNewGroup', (messageGroup: MessageGroup) => {
+            this.store.dispatch(new ReceivedNewMessageGroup({
+                messageGroup: messageGroup
+            }))
         })
     }
 }

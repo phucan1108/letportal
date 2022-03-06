@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   version: '0.9.0',
-  configurationEndpoint: 'https://localhost:44399/api/configurations/Portal/v1.0',
+  configurationEndpoint: 'https://localhost:7511/api/configurations/Portal/v1.0',
   ignoreSendTokenEndpoints: 'api/accounts/login;api/accounts/refresh;api/accounts/forgot-password;api/accounts/recovery-password;assets/i18n',
   chatOptions: {
     allowFileTypes: 'jpg;jpeg;gif;png;zip;rar;doc;docx;xls;xlsx;pdf',
@@ -28,4 +28,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

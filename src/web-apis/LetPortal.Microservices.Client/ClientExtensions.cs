@@ -16,7 +16,7 @@ using LetPortal.Microservices.Client.Services;
 using LetPortal.Microservices.Client.Workers;
 using LetPortal.Microservices.LogCollector;
 using LetPortal.Microservices.Monitors;
-using LetPortal.Microservices.Notifications;
+using LetPortal.Notification;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

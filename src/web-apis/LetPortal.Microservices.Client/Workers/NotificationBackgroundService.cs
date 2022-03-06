@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using LetPortal.Core.Utils;
 using LetPortal.Microservices.Client.Channels;
 using LetPortal.Microservices.Client.Models;
-using LetPortal.Microservices.Notifications;
+using LetPortal.Notification;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

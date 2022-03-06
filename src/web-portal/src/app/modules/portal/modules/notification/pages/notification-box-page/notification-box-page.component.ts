@@ -1,18 +1,20 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatSelectionList } from '@angular/material/list';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
-import { MessageGroup, NotificationMessage, NotificationType, OnlineSubcriber } from 'app/core/models/notification.model';
+import { MessageGroup, NotificationMessage, NotificationType, NOTIFICATION_TYPE_RES, OnlineSubcriber } from 'app/core/models/notification.model';
 import { DateUtils } from 'app/core/utils/date-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Subject, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, filter, map, pairwise, tap, throttleTime } from 'rxjs/operators';
 import { NotificationService } from 'services/notification.service';
 import { PageService } from 'services/page.service';
-import { SubcribeToServer } from 'stores/notifications/notification.actions';
+import { ClickedOnMessageGroup, SubcribeToServer } from 'stores/notifications/notification.actions';
 import { NOTIFICATION_STATE_TOKEN } from 'stores/notifications/notification.state';
 
 @Component({
@@ -20,27 +22,26 @@ import { NOTIFICATION_STATE_TOKEN } from 'stores/notifications/notification.stat
     templateUrl: './notification-box-page.component.html',
     styleUrls: ['./notification-box-page.component.scss']
 })
-export class NotificationBoxPage implements OnInit, OnDestroy {
+export class NotificationBoxPage implements OnInit, OnDestroy, AfterViewInit {
 
     @ViewChild('messageGroupsSelection', { static: true })
     private messageGroupsSelection: MatSelectionList
+    @ViewChild('toggleGroups', { static: true })
+    private toggleGroups: MatButtonToggleGroup
     @ViewChild('scroller', { static: true }) scroller: CdkVirtualScrollViewport
-    private formGroup: FormGroup
+    formGroup: FormGroup
 
-    private messageGroup$: BehaviorSubject<MessageGroup[]> = new BehaviorSubject<MessageGroup[]>([])
-    private notificationMessages$: BehaviorSubject<NotificationMessage[]> = new BehaviorSubject<NotificationMessage[]>([])
-    private onlineSubcriber: OnlineSubcriber
-    private selectedGroup: MessageGroup
-    private checkedInfo = true
-    private checkedWarn = true
-    private checkedCritical = true
-    private disabled = false
-    private fechingSub$ = new Subject<boolean>()
+    messageGroup$: BehaviorSubject<MessageGroup[]> = new BehaviorSubject<MessageGroup[]>([])
+    notificationMessages$: BehaviorSubject<NotificationMessage[]> = new BehaviorSubject<NotificationMessage[]>([])
+    onlineSubcriber: OnlineSubcriber
+    selectedGroup: MessageGroup
 
-    private selectedNotificationType = NotificationType.Info
-    private notificationTypes: NotificationType[] = [NotificationType.Info, NotificationType.Warning, NotificationType.Critical]    
-    private selectedNotificationTypes: NotificationType[] = [NotificationType.Info, NotificationType.Warning, NotificationType.Critical] 
-    private loading = false
+    disabled = false
+    fechingSub$ = new Subject<boolean>()
+
+    notificationTypes = NOTIFICATION_TYPE_RES
+    selectedNotificationTypes: NotificationType[] = []
+    loading = false
     // Use this var for counting the scroll top behavior, it is in px
     private messageWidthSpace = 70
     // When user scrolls to top, this is a number of messages which allows to call to fetch more messages
@@ -48,18 +49,26 @@ export class NotificationBoxPage implements OnInit, OnDestroy {
     private minimumMessagesForFetching = 3
 
     sup: Subscription = new Subscription()
+
+    private defaultMessageGroupId = ''
     constructor(
         private notificationService: NotificationService,
         private pageService: PageService,
         private translate: TranslateService,
         private logger: NGXLogger,
-        private cd: ChangeDetectorRef,
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
         private fb: FormBuilder,
         private store: Store,
         private actions$: Actions,
         private ngZone: NgZone
     ) {
     }
+
+    ngAfterViewInit(): void {
+
+    }
+
     ngOnDestroy(): void {
         this.sup.unsubscribe()
     }
@@ -68,14 +77,24 @@ export class NotificationBoxPage implements OnInit, OnDestroy {
         this.formGroup = this.fb.group({
             groupSearch: ['', [Validators.required]]
         })
+
         this.sup.add(
-            this.actions$.pipe(
-                ofActionSuccessful(SubcribeToServer),
-                tap(res => {
-                    this.onlineSubcriber = this.store.selectSnapshot(NOTIFICATION_STATE_TOKEN).onlineSubcriber
-                    this.messageGroup$.next(this.onlineSubcriber.groups)
-                })
-            ).subscribe()
+            combineLatest([this.activatedRoute.paramMap, this.actions$.pipe(ofActionSuccessful(SubcribeToServer))])
+                .subscribe(
+                    pair => {
+                        this.onlineSubcriber = this.store.selectSnapshot(NOTIFICATION_STATE_TOKEN).onlineSubcriber                        
+                        this.messageGroup$.next(this.onlineSubcriber.groups)
+                        if (ObjectUtils.isNotNull(pair[0].get('messageGroupId'))) {
+                            this.defaultMessageGroupId = pair[0].get('messageGroupId')
+                            setTimeout(() => {
+                                let foundIndex = this.onlineSubcriber.groups.findIndex(a => a.id === this.defaultMessageGroupId)
+                                this.messageGroupsSelection.options.get(foundIndex).selected = true
+                                this.selectedGroup = this.onlineSubcriber.groups.find(a => a.id === this.defaultMessageGroupId)
+                                this.fechingSub$.next(true)
+                            }, 500)
+                        }
+                    }
+                )
         )
 
         this.sup.add(this.scroller.elementScrolled().pipe(
@@ -95,7 +114,7 @@ export class NotificationBoxPage implements OnInit, OnDestroy {
                                 subcriberId: this.onlineSubcriber.subcriberId,
                                 messageGroupId: this.selectedGroup.id,
                                 lastFectchedTs: this.notificationMessages$.getValue()[0].receivedDateTs,
-                                selectedTypes: this.getSelectedNotificationTypes()
+                                selectedTypes: this.selectedNotificationTypes
                             })
                             .pipe(
                                 tap(res => {
@@ -131,7 +150,7 @@ export class NotificationBoxPage implements OnInit, OnDestroy {
                     this.fetchedMessages(
                         this.onlineSubcriber.subcriberId,
                         this.selectedGroup,
-                        this.getSelectedNotificationTypes(),
+                        this.selectedNotificationTypes,
                         (messages) => {
                             if (ObjectUtils.isNotNull(messages)) {
                                 this.notificationMessages$.next([...messages, this.selectedGroup.lastMessage])
@@ -147,26 +166,22 @@ export class NotificationBoxPage implements OnInit, OnDestroy {
                 }
             })
         ).subscribe())
+
+        this.sup.add(
+            this.actions$.pipe(
+                ofActionSuccessful(ClickedOnMessageGroup),
+                tap(
+                    res => {
+                        this.onlineSubcriber = this.store.selectSnapshot(NOTIFICATION_STATE_TOKEN).onlineSubcriber                        
+                        this.messageGroup$.next(this.onlineSubcriber.groups)
+                    }
+                )
+            ).subscribe()
+        )
     }
 
-    getNotificationTypeString(type: NotificationType) {
-        switch (type) {
-            case NotificationType.Info:
-                return 'Info'
-            case NotificationType.Warning:
-                return 'Warning'
-            case NotificationType.Critical:
-                return 'Critical'
-        }
-    }
-
-
-    getPeriod(message: NotificationMessage) {
-        return DateUtils.getPeriodLength(message.receivedDate, DateUtils.getUTCNow())
-    }
-
-    getIcon(message: NotificationMessage){
-        switch(message.type){
+    getIcon(message: NotificationMessage) {
+        switch (message.type) {
             case NotificationType.Info:
                 return 'info'
             case NotificationType.Warning:
@@ -176,31 +191,50 @@ export class NotificationBoxPage implements OnInit, OnDestroy {
         }
     }
 
+    getColor(message: NotificationMessage) {
+        switch (message.type) {
+            case NotificationType.Info:
+                return 'primary'
+            case NotificationType.Warning:
+                return 'warning'
+            case NotificationType.Critical:
+                return 'accent'
+        }
+    }
+
     hasUnreadMessageInGroup(group: MessageGroup) {
-        return group.lastVisitedTs < group.lastMessage.receivedDateTs
+        if(!!group.lastMessage){
+            return group.lastVisitedTs < group.lastMessage.receivedDateTs
+        }
+        return false        
     }
 
+    hasLastMessage(group: MessageGroup){
+        return !!group.lastMessage
+    }
+
+    noMessage(group: MessageGroup){
+        return !ObjectUtils.isNotNull(group.lastMessage)
+    }
+
+    getPeriod(message: NotificationMessage) {
+        return DateUtils.getPeriodLength(message.receivedDate, DateUtils.getUTCNow())
+    }
+    
     onClickSelection() {
-        this.selectedGroup = this.messageGroupsSelection.selectedOptions.selected[0]?.value
+        this.selectedGroup = ObjectUtils.clone(this.messageGroupsSelection.selectedOptions.selected[0]?.value)
+        this.selectedGroup.lastVisitedTs = DateUtils.getDotNetTicks(DateUtils.getUTCNow())
+        this.selectedGroup.numberOfUnreadMessages = 0
         this.fechingSub$.next(true)
+        this.notificationService.clickedOnMessageGroup(this.selectedGroup, () => {
+            this.store.dispatch(new ClickedOnMessageGroup({
+                messageGroup: this.selectedGroup
+            }))
+        })
     }
 
-    onChangedCheckbox() {
+    onSelectedChanges() {
         this.fechingSub$.next(true)
-    }
-
-    getSelectedNotificationTypes(): NotificationType[] {
-        let selectedTypes: NotificationType[] = []
-        if (this.checkedInfo) {
-            selectedTypes.push(NotificationType.Info)
-        }
-        if (this.checkedWarn) {
-            selectedTypes.push(NotificationType.Warning)
-        }
-        if (this.checkedCritical) {
-            selectedTypes.push(NotificationType.Critical)
-        }
-        return selectedTypes
     }
 
     trackById(index: number, item: NotificationMessage) {

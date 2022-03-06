@@ -1,3 +1,5 @@
+import { Overlay } from '@angular/cdk/overlay';
+import { CommonModule } from '@angular/common';
 import {
   AfterContentChecked,
   AfterContentInit,
@@ -6,8 +8,7 @@ import {
   Component,
   ContentChild,
   ContentChildren,
-  DoCheck,
-  EventEmitter,
+  DoCheck, ElementRef, EventEmitter,
   Input,
   IterableDiffers,
   NgModule,
@@ -17,23 +18,23 @@ import {
   QueryList,
   Renderer2,
   TemplateRef,
-  ViewChild,
-  ElementRef
+  ViewChild
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { MaterialModule } from '../material';
 import { DomHandler } from '../services/domhandler.service';
 import { ObjectUtils } from '../services/util.service';
-import { FormsModule } from '@angular/forms';
-import { ColumnComponent, ColumnEditorTemplateLoader } from './columns';
 import {
   ColumnBodyTemplateLoader,
   EmptyTableLoader,
   RowExpansionLoader, RowSettingsLoader,
   TableBodyComponent
 } from './body';
-import { GlobalHeaderTemplateLoader, Header, HeaderComponent } from './header';
-import { Footer, FooterComponent, GlobalFooterTemplateLoader } from './footer';
+import {
+  ColumnFooterComponent,
+  ColumnFooterTemplateLoader
+} from './column-footer';
 import {
   ColumnHeaderComponent,
   ColumnHeaderTemplateLoader
@@ -42,13 +43,10 @@ import {
   ColumnSubHeaderComponent,
   ColumnSubHeaderTemplateLoader
 } from './column-sub-header';
-import {
-  ColumnFooterComponent,
-  ColumnFooterTemplateLoader
-} from './column-footer';
+import { ColumnComponent, ColumnEditorTemplateLoader } from './columns';
+import { Footer, FooterComponent, GlobalFooterTemplateLoader } from './footer';
+import { GlobalHeaderTemplateLoader, Header, HeaderComponent } from './header';
 import { MomentumTemplate } from './template.directive';
-import { Overlay } from '@angular/cdk/overlay';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'm-table',
@@ -1112,8 +1110,9 @@ export class DataTable
       type: 'text/csv;charset=utf-8;'
     });
 
-    if (window.navigator.msSaveOrOpenBlob) {
-      navigator.msSaveOrOpenBlob(blob, exportFilename + '.csv');
+    //if (window.navigator.msSaveOrOpenBlob) {
+      //navigator.msSaveOrOpenBlob(blob, exportFilename + '.csv');
+    if(false){
     } else {
       const link = document.createElement('a');
       link.style.display = 'none';

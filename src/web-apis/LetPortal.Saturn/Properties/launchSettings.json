@@ -19,11 +19,12 @@
     },
     "LetPortal.Saturn": {
       "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+      "applicationUrl": "https://localhost:7511;http://localhost:7510"
     },
     "Docker": {
       "commandName": "Docker",

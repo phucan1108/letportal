@@ -70,8 +70,8 @@ namespace LetPortal.Saturn
                         "/notificationhub"
                     })
                 .AddChat()
-                .AddNotificationService()
-                .AddPortalService(options =>
+                .AddNotification()
+                .AddPortal(options =>
                 {
                     options.EnableFileServer = true;
                 });
@@ -158,6 +158,7 @@ namespace LetPortal.Saturn
                     options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets | Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling;
                 });
                 endpoints.MapSaturnServer();
+                endpoints.MapNotification();
             });
         }
     }

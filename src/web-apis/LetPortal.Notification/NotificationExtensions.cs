@@ -2,7 +2,9 @@
 using LetPortal.Core.Logger;
 using LetPortal.Core.Persistences;
 using LetPortal.Notification.Channels;
+using LetPortal.Notification.Drivers;
 using LetPortal.Notification.Hubs;
+using LetPortal.Notification.Options;
 using LetPortal.Notification.Repositories.Channels;
 using LetPortal.Notification.Repositories.MessageGroups;
 using LetPortal.Notification.Repositories.Messages;
@@ -10,8 +12,10 @@ using LetPortal.Notification.Repositories.NotificationBoxMessages;
 using LetPortal.Notification.Repositories.NotificationMessageQueues;
 using LetPortal.Notification.Repositories.Subcribers;
 using LetPortal.Notification.Services;
+using LetPortal.Notification.Services.Rpc;
 using LetPortal.Notification.Workers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LetPortal.Notification
@@ -19,9 +23,10 @@ namespace LetPortal.Notification
     public static class NotificationExtensions
     {
         public const string NOTIFICATION_POLICY_CORS = "NotificationCors";
-        public static ILetPortalBuilder AddNotificationService(
+        public static ILetPortalBuilder AddNotification(
             this ILetPortalBuilder builder)
         {
+            builder.Services.Configure<NotificationOptions>(builder.Configuration.GetSection("NotificationOptions"));
             RegisterServices(builder.Services);
 
             builder.Services.AddCors(options =>
@@ -56,6 +61,9 @@ namespace LetPortal.Notification
         {
             services.AddTransient<IChannelService, ChannelService>();
             services.AddTransient<ISubcriberService, SubcriberService>();
+            // Register Queue Drivers
+            services.AddSingleton<INotificationQueueDriver, RabbitMqNotificationQueueDriver>();
+
             services.AddSingleton<NotificationRealTimeContext>();
             services.AddSingleton<GlobalNotificationChannel>();
             services.AddSingleton<RolesNotificationChannel>();
@@ -85,8 +93,13 @@ namespace LetPortal.Notification
                 services.AddSingleton<IMessageRepository, MessageMongoRepository>();
                 services.AddSingleton<INotificationBoxMessageRepository, NotificationBoxMessageMongoRepository>();
                 services.AddSingleton<ISubscriberRepository, SubcriberMongoRepository>();
-                services.AddSingleton<INotificationMessageQueueRepository, NotificationMessageQueueMongoRepository>();
+                services.AddSingleton<IIncomingNotificationMessageRepository, IncomingNotificationMessageMongoRepository>();
             }
+        }
+
+        public static void MapNotification(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGrpcService<NotificationServiceRpc>();
         }
     }
 }

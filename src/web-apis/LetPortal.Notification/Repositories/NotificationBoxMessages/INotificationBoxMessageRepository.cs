@@ -6,7 +6,7 @@ namespace LetPortal.Notification.Repositories.NotificationBoxMessages
 {
     public interface INotificationBoxMessageRepository : IGenericRepository<NotificationBoxMessage>
     {
-        Task<NotificationBoxMessage> TakeLastOfGroup(string subcriberId, string messageGroupId);
+        Task<NotificationBoxMessage> TakeLastOfGroup(string subcriberId, string messageGroupId);        
 
         Task<IEnumerable<NotificationBoxMessage>> TakeLastAsync
             (string subcriberId,
@@ -19,5 +19,11 @@ namespace LetPortal.Notification.Repositories.NotificationBoxMessages
             string subcriberId, 
             string messageGroupId,
             long lastVisitedTs);
+
+        Task<int> CheckUnreadMessagesWithTypeAsync(
+          string subcriberId,
+          string messageGroupId,
+          long lastVisitedTs,
+          NotificationType notificationType);
     }
 }

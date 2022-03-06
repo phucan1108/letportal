@@ -49,3 +49,9 @@ export interface FetchedNotificationMessageRequest{
     lastFectchedTs: number
     selectedTypes: NotificationType[]
 }
+
+export const NOTIFICATION_TYPE_RES = [
+    { name: 'Info', value: NotificationType.Info, icon: 'info', color: 'primary' },
+    { name: 'Warning', value: NotificationType.Warning, icon: 'warning', color: 'warn' },
+    { name: 'Critical', value: NotificationType.Critical, icon: 'gpp_bad', color: 'accent' }
+]

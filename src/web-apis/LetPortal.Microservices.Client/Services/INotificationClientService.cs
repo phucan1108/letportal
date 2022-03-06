@@ -9,6 +9,8 @@ namespace LetPortal.Microservices.Client.Services
 {
     public interface INotificationClientService
     {
+        Task CreateChannel(string name, string code, string icon);
+
         Task Send(NotificationMessage notificationMessage);
     }
 }

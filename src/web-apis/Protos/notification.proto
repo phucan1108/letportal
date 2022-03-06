@@ -1,8 +1,9 @@
 syntax = "proto3";
-option csharp_namespace = "LetPortal.Microservices.Notifications";
+option csharp_namespace = "LetPortal.Notification";
 
 service NotificationService {
-    rpc Send (NotificationMessageRequest) returns (NotificationMessageResponse);
+    rpc Send (NotificationMessageRequest) returns (NotificationMessageResponse);    
+    rpc Create (CreateChannelRequest) returns (CreateChannelResponse);
 }
 
 message NotificationMessageRequest{
@@ -16,4 +17,15 @@ message NotificationMessageRequest{
 
 message NotificationMessageResponse {
     bool succeed = 1;
+}
+
+message CreateChannelRequest{
+    string code = 1;
+    string name = 2;
+    string icon = 3;
+}
+
+message CreateChannelResponse{
+    bool succeed = 1;
+    string error = 2;
 }

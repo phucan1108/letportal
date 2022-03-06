@@ -50,12 +50,18 @@ namespace LetPortal.Notification.Workers
                             if (message != null)
                             {
                                 // After we receive a message from API, we will send to Subcriber
-                                await _subcriberService.Receive(message, async (notificationMessage) =>
+                                await _subcriberService.Receive(message, async (notificationMessage, messageGroup) =>
                                 {
                                     _notificationRealTimeContext.AddNotification(notificationMessage.SubcriberId, notificationMessage);
                                     var foundOnlineSubriber = _notificationRealTimeContext.OnlineSubcribers.FirstOrDefault(a => a.SubcriberId == notificationMessage.SubcriberId);
                                     if (foundOnlineSubriber != null)
                                     {
+                                        if (messageGroup != null)
+                                        {
+                                            // In case this is new message group, we should add the current message
+                                            messageGroup.LastMessage = notificationMessage;
+                                            await _hubNotificationClient.Clients.User(foundOnlineSubriber.UserId).PushNewGroup(messageGroup);
+                                        }
                                         await _hubNotificationClient.Clients.User(foundOnlineSubriber.UserId).Push(notificationMessage);
                                     }
                                 });

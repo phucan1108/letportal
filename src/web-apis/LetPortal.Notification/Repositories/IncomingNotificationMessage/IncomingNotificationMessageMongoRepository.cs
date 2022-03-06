@@ -5,9 +5,9 @@ using MongoDB.Driver;
 
 namespace LetPortal.Notification.Repositories.NotificationMessageQueues
 {
-    public class NotificationMessageQueueMongoRepository : MongoGenericRepository<NotificationMessageQueue>, INotificationMessageQueueRepository
+    public class IncomingNotificationMessageMongoRepository : MongoGenericRepository<IncomingNotificationMessage>, IIncomingNotificationMessageRepository
     {
-        public NotificationMessageQueueMongoRepository(MongoConnection mongoConnection)
+        public IncomingNotificationMessageMongoRepository(MongoConnection mongoConnection)
         {
             Connection = mongoConnection;
             if (!IsExisted())
@@ -16,11 +16,11 @@ namespace LetPortal.Notification.Repositories.NotificationMessageQueues
             }
         }
 
-        public async Task Listen(Func<NotificationMessageQueue, Task> proceed, CancellationToken cancellationToken)
+        public async Task Listen(Func<IncomingNotificationMessage, Task> proceed, CancellationToken cancellationToken)
         {
             DateTime lastInsertDate = DateTime.UtcNow;
 
-            var options = new FindOptions<NotificationMessageQueue>
+            var options = new FindOptions<IncomingNotificationMessage>
             {
                 // Our cursor is a tailable cursor and informs the server to await
                 CursorType = CursorType.TailableAwait

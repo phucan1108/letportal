@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using LetPortal.Core;
 using LetPortal.Core.Exceptions;
 using LetPortal.Core.Logger;
@@ -16,6 +17,7 @@ using LetPortal.Microservices.Server.Repositories.Implements;
 using LetPortal.Microservices.Server.Services;
 using LetPortal.Microservices.Server.Workers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +31,26 @@ namespace LetPortal.Microservices.Server
     public static class ServerExtensions
     {
         private static string SERVER_CORS = "SATURN_SERVER_CORS";
+
+        public static IConfigurationBuilder AddSaturnServerConfig(
+            this IConfigurationBuilder builder,
+            IWebHostEnvironment environment)
+        {
+            var configCustomBuilder = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json")
+                        .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", true)
+                        .Build();
+            var scOptions = configCustomBuilder.GetSection("ServiceConfigurationOptions").Get<ServiceConfigurationOptions>();
+
+            builder.SetBasePath(environment.ContentRootPath);
+            var path = Path.Combine(environment.ContentRootPath, scOptions.BasedFolder);
+            return AddServicePerDirectory(builder, 
+                path, 
+                environment.EnvironmentName,
+                scOptions.SharedFolder,
+                scOptions.IgnoreCombinedServices);
+        }
 
         public static IConfigurationBuilder AddServicePerDirectory(this IConfigurationBuilder builder,
             string directoryPath,
@@ -152,8 +174,6 @@ namespace LetPortal.Microservices.Server
             services.AddSingleton(a => selfServerOptions);
             services.AddSingleton<IServiceContext, ServerServiceContext>();
 
-
-
             services.AddSingleton<IServiceManagementProvider, ServiceManagamentProvider>();
             services.AddSingleton<IMonitorServiceReportProvider, MonitorServiceReportProvider>();
             services.AddSingleton<ILogEventProvider, LogEventProvider>();
@@ -177,8 +197,6 @@ namespace LetPortal.Microservices.Server
                 builder.Services.AddSingleton<IMonitorCounterRepository, MonitorCounterMongoRepository>();
                 builder.Services.AddSingleton<IMonitorHardwareReportRepository, MonitorHardwareReportMongoRepository>();
                 builder.Services.AddSingleton<IMonitorHttpReportRepository, MonitorHttpReportMongoRepository>();
-
-                builder.Services.AddSingleton<INotificationMessageQueueRepository, NotificationMessageQueueMongoRepository>();
             }
 
             if (databaseOptions.ConnectionType == ConnectionType.SQLServer
@@ -273,7 +291,6 @@ namespace LetPortal.Microservices.Server
             endpoints.MapGrpcService<ServiceConfigurationService>();
             endpoints.MapGrpcService<LogCollectorService>();
             endpoints.MapGrpcService<ServiceMonitorService>();
-            endpoints.MapGrpcService<NotificationServerService>();
             return endpoints;
         }
 

@@ -11,6 +11,10 @@ const routes: Routes = [
             {
                 path: 'box',
                 component: NotificationBoxPage
+            },
+            {
+                path: 'box/:messageGroupId',
+                component: NotificationBoxPage
             }
         ]
     }

@@ -4,8 +4,8 @@ using LetPortal.Core.Persistences.Attributes;
 
 namespace LetPortal.Notification.Entities
 {
-    [EntityCollection(Name = "notification_message_queues")]
-    public class NotificationMessageQueue : Entity
+    [EntityCollection(Name = "incoming_notification_messages")]
+    public class IncomingNotificationMessage : Entity
     {
         public string ServiceId { get; set; }
 
