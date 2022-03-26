@@ -50,7 +50,7 @@
     "jsoneditor": "^5.19.0",
     "jwt-decode": "2.2.0",
     "mat-progress-buttons": "^9.1.1",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "moment": "^2.24.0",
     "ngx-bootstrap": "^3.2.0",
     "ngx-clipboard": "^12.2.0",
