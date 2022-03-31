@@ -59,7 +59,7 @@ import { NotificationBoxPage } from './pages/notification-box-page/notification-
         MatProgressBarModule,
         MatRadioModule,  
         MatButtonToggleModule,      
-        ScrollingModule    
+        ScrollingModule        
     ],
     exports: [
         RouterModule

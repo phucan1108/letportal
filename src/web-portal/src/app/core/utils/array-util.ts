@@ -24,7 +24,8 @@ export class ArrayUtils {
 
     public static removeOneItem<T>(arrays: Array<T>, predicate?:  (value: T, index: number, obj: T[]) => unknown): Array<T> {
         const removingItemIndex = arrays.findIndex(predicate)
-        arrays.splice(removingItemIndex, 1)
+        if(removingItemIndex >= 0) 
+            arrays.splice(removingItemIndex, 1)
         return arrays
     }
 
