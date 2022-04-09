@@ -51,7 +51,7 @@
     "jwt-decode": "2.2.0",
     "mat-progress-buttons": "^9.1.1",
     "minimist": "^1.2.5",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "ngx-bootstrap": "^3.2.0",
     "ngx-clipboard": "^12.2.0",
     "ngx-custom-validators": "^7.0.0",
