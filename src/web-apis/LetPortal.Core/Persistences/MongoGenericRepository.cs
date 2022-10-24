@@ -284,7 +284,24 @@ namespace LetPortal.Core.Persistences
             }
             else
             {
-                return new ComparisonResult { IsTotallyNew = true };
+                var comparedJObject = JObject.FromObject(comparedEntity);
+                var comparedChildren = comparedJObject.Children();
+                var result = new ComparisonResult
+                {
+                    Result = new ComparisonEntity { Properties = new List<ComparisonProperty>() },
+                    IsTotallyNew = true
+                };
+                foreach (JProperty jprop in comparedChildren)
+                {
+                    result.Result.Properties.Add(
+                            new ComparisonProperty
+                            {
+                                Name = jprop.Name,
+                                SourceValue = jprop.Value?.ToString(),
+                                ComparedState = ComparedState.New
+                            });
+                }
+                return result;
             }
         }
 

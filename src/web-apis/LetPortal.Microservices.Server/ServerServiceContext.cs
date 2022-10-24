@@ -6,6 +6,7 @@ using LetPortal.Microservices.LogCollector;
 using LetPortal.Microservices.Monitors;
 using LetPortal.Microservices.Server.Options;
 using LetPortal.Microservices.Server.Providers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace LetPortal.Microservices.Server.Services
@@ -22,6 +23,8 @@ namespace LetPortal.Microservices.Server.Services
 
         private readonly IMonitorProvider _monitorProvider;
 
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
         private readonly IServiceManagementProvider _serviceManagementProvider;
 
         private readonly ILogEventProvider _logEventProvider;
@@ -34,7 +37,8 @@ namespace LetPortal.Microservices.Server.Services
             IOptionsMonitor<MonitorOptions> monitorOptions,
             IServiceManagementProvider serviceManagementProvider,
             IMonitorProvider monitorProvider,
-            ILogEventProvider logEventProvider)
+            ILogEventProvider logEventProvider,
+            IWebHostEnvironment webHostEnvironment)
         {
             _loggerOptions = loggerOptions;
             _monitorOptions = monitorOptions;
@@ -42,6 +46,7 @@ namespace LetPortal.Microservices.Server.Services
             _monitorProvider = monitorProvider;
             _logEventProvider = logEventProvider;
             _selfOptions = selfOptions;
+            _webHostEnvironment = webHostEnvironment;
             runningVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
@@ -74,7 +79,7 @@ namespace LetPortal.Microservices.Server.Services
                 ServiceHardwareInfo = new ServiceHardwareInfo
                 {
                     Directory = Environment.CurrentDirectory,
-                    Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+                    Environment = _webHostEnvironment.EnvironmentName,
                     Os = Environment.OSVersion.VersionString,
                     MachineName = Environment.MachineName,
                     ProcessorCores = Environment.ProcessorCount,

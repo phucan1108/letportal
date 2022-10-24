@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NGXLogger } from 'ngx-logger';
-import { BackupsClient, Backup, PreviewRestoreModel } from 'services/portal.service';
+import { TranslateService } from '@ngx-translate/core';
+import { SecurityService } from 'app/core/security/security.service';
 import { DateUtils } from 'app/core/utils/date-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { MessageType, ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import { SecurityService } from 'app/core/security/security.service';
+import { NGXLogger } from 'ngx-logger';
 import { PageService } from 'services/page.service';
-import { TranslateService } from '@ngx-translate/core';
+import { Backup, BackupsClient, PreviewRestoreModel } from 'services/portal.service';
 
 @Component({
     selector: 'let-backup-restore',
@@ -29,6 +29,18 @@ export class BackupRestorePage implements OnInit {
         fab: false,
         mode: 'indeterminate',
         disabled: false,
+    }
+
+    btnRestoreOpt = {
+        active: false,
+        text: 'Restore',
+        buttonColor: 'primary',
+        barColor: 'primary',
+        raised: true,
+        stroked: false,
+        fab: false,
+        mode: 'indeterminate',
+        disabled: true,
     }
     title = 'Proceed Restore'
     description = 'Are you sure to proceed this backup point?'
@@ -61,6 +73,7 @@ export class BackupRestorePage implements OnInit {
                 this.preview = res
                 this.btnOption.active = false
                 this.btnOption.disabled = true
+                this.btnRestoreOpt.disabled = false
             },
             err => {
 
@@ -70,7 +83,10 @@ export class BackupRestorePage implements OnInit {
 
     onRestore(){
         const dialog = this.shortcutUtil.confirmationDialog(
-            this.title, this.preview.totalChangedObjects === 0 ? 'No changed object, are you sure to restore this backup?' : this.description, this.waiting, MessageType.Custom, 'Restore')
+            this.title, 
+            this.preview.totalNewObjects === this.preview.totalObjects ? 
+                'New package, are you sure to install?' : 
+                (this.preview.totalChangedObjects === 0 ? 'No changed object, are you sure to restore this backup?' : this.description), this.waiting, MessageType.Custom, 'Restore')
         dialog.afterClosed().subscribe(
             res => {
                 if(!res){
@@ -82,6 +98,7 @@ export class BackupRestorePage implements OnInit {
                 }).subscribe(
                     res => {
                         this.shortcutUtil.toastMessage(this.translate.instant('common.restoreSuccessfully'), ToastType.Success)
+                        this.btnRestoreOpt.disabled = true
                     }
                 )
             }

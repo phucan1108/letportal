@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <NoWin32Manifest>true</NoWin32Manifest>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>0.9.0</Version>
+    <Version>1.0.0-preview01</Version>
     <Company>LetPortal</Company>
     <Product>LetPortal</Product>
     <Authors>An Quang Phuc Le</Authors>
@@ -17,7 +17,7 @@
   <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
     <PackageReference Include="Helpers.McMaster.Extensions.CommandLineUtils" Version="1.0.0" />
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

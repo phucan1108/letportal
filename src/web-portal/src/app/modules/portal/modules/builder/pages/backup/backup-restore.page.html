@@ -7,12 +7,11 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                    <button mat-menu-item (click)="onRestore()">{{ 'common.restore' | translate }}</button>
                     <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
                 </mat-menu>
             </mat-card-title>
         </mat-card-header>
-        <mat-card-content>
+        <mat-card-content>    
             <div class="row row-heading">
                 <h3>{{ 'pageBuilder.page.backupRestore.backupInfo' | translate }}</h3>
             </div>
@@ -36,8 +35,13 @@
             <div class="row row-heading">
                 <h3>{{ 'pageBuilder.page.backupRestore.previewList' | translate }}</h3>
             </div>
-            <div class="row row-heading">
-                <mat-bar-button (btnClick)="onPreview()" [options]="btnOption"></mat-bar-button>
+            <div class="row row-heading">                
+                <div class="col-1">
+                    <mat-bar-button (btnClick)="onPreview()" [options]="btnOption"></mat-bar-button>
+                </div>
+                <div class="col-1">
+                    <mat-bar-button (btnClick)="onRestore()" [options]="btnRestoreOpt"></mat-bar-button>
+                </div>    
             </div>
             <div class="row" *ngIf="isPreviewed">
                 <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalObjects' | translate }}</label>
