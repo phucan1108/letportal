@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using LetPortal.Core.Utils;
 using LetPortal.Microservices.Client.Channels;
-using LetPortal.Microservices.Client.Models;
 using LetPortal.Notification;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -36,23 +35,16 @@ namespace LetPortal.Microservices.Client.Workers
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Starting worker for pushing notification to Saturn at endpoint " + _options.CurrentValue.SaturnEndpoint);
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                _logger.LogInformation("Waiting to read notification from channel");
-                try
+                await foreach (var notificationMessage in _channel.GetChannel().Reader.ReadAllAsync(stoppingToken))
                 {
-                    while (await _channel.GetChannel().Reader.WaitToReadAsync(stoppingToken))
-                    {
-                        if (_channel.GetChannel().Reader.TryRead(out NotificationMessage log))
-                        {
-                            var response = await _client.SendAsync((NotificationMessageRequest)ConvertUtil.MoveValueBetweenTwoObjects(log, new NotificationMessageRequest()));
-                        }
-                    }
+                    var response = await _client.SendAsync((NotificationMessageRequest)ConvertUtil.MoveValueBetweenTwoObjects(notificationMessage, new NotificationMessageRequest()));
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError("There are some problems when trying to stream log collector", ex.ToString());
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "There are some problems when trying to send notification");
             }
         }
     }

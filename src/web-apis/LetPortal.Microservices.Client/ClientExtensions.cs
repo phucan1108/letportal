@@ -215,7 +215,7 @@ namespace LetPortal.Microservices.Client
 
             services.AddSingleton<IServiceContext, ClientServiceContext>();
             services.AddHostedService<LogCollectorBackgroundService>();
-            services.AddHostedService<MonitorHealthCheckBackgrounService>();
+            services.AddHostedService<MonitorHealthCheckBackgroundService>();
             services.AddHostedService<NotificationBackgroundService>();
         }
 

@@ -1,29 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Exceptions\**" />
+      <Compile Remove="Persistences\**" />
+      <EmbeddedResource Remove="Exceptions\**" />
+      <EmbeddedResource Remove="Persistences\**" />
+      <None Remove="Exceptions\**" />
+      <None Remove="Persistences\**" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Exceptions\" />
-        <Folder Include="Persistences\" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.19.1" />
-        <PackageReference Include="Grpc.AspNetCore.Server" Version="2.40.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.42.0">
+        <PackageReference Include="Google.Protobuf" Version="3.25.0-rc1" />
+        <PackageReference Include="Grpc.AspNetCore.Server" Version="2.58.0-pre1" />
+        <PackageReference Include="Grpc.Tools" Version="2.59.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
-        <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
+        <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
+        <PackageReference Include="RabbitMQ.Client" Version="6.6.0" />
     </ItemGroup>
     <ItemGroup>
         <Protobuf Include="..\Protos\notification.proto" GrpcServices="Server">
