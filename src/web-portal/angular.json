@@ -196,7 +196,6 @@
       }
     }
   },
-  "defaultProject": "web-portal",
   "cli": {
     "analytics": false
   }
