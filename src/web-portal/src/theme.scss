@@ -1,45 +1,49 @@
 // Import material theming functions
-@import "~@angular/material/theming";
+@use 'sass:map';
+@use '@angular/material' as mat;
 
-@include mat-core();
-$app-primary: mat-palette($mat-indigo);
-$app-accent: mat-palette($mat-pink, A200, A100, A400);
-$app-warn: mat-palette($mat-red);
-$app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
-@include angular-material-theme($app-theme);
+@include mat.core();
+$app-primary: mat.define-palette(mat.$indigo-palette);
+$app-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$app-warn: mat.define-palette(mat.$red-palette);
+$app-theme: mat.define-light-theme($app-primary, $app-accent, $app-warn);
+@include mat.all-component-themes($app-theme);
 // Create your Sass color vars (will be available in all the project)
 @mixin current-theme($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $warn: map-get($theme, warn);
-
+  
+  // Get the color config from the theme.
+  $color-config: mat.get-color-config($theme);
+  $primary: map.get($color-config, primary);
+  $accent: map.get($color-config, accent);
+  $warn: map.get($color-config, warn);
   // Support material color
   .color-primary {
-    color: mat-color($primary);
+    color: mat.get-color-from-palette($primary);
   }
   .color-accent {
-    color: mat-color($accent);
+    color: mat.get-color-from-palette($accent);
   }
   .color-warn {
-    color: mat-color($warn);
+    color: mat.get-color-from-palette($warn);
   }
   .color-success{
     color: #08976d;
   }
 
   .color-bg-primary {
-    background-color: mat-color($primary);
+    background-color: mat.get-color-from-palette($primary);
   }
   .color-bg-accent {
-    background-color: mat-color($accent);
+    background-color: mat.get-color-from-palette($accent);
   }
   .color-bg-warn {
-    background-color: mat-color($warn);
+    background-color: mat.get-color-from-palette($warn);
   }
   .color-bg-success{
     background-color:#08976d;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
   .mat-chip-0 {
     transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     transition-property: box-shadow;
@@ -61,9 +65,10 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     font-weight: 500;
     margin: 4px;
     color: #fff;
-    background-color: mat-color($primary);
+    background-color: mat.get-color-from-palette($primary);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
   .mat-chip-1 {
     transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     transition-property: box-shadow;
@@ -85,8 +90,10 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     font-weight: 500;
     margin: 4px;
     color: #fff;
-    background-color: mat-color($accent);
+    background-color: mat.get-color-from-palette($accent);
   }
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
   .mat-chip-2 {
     transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     transition-property: box-shadow;
@@ -108,9 +115,10 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     font-weight: 500;
     margin: 4px;
     color: #fff;
-    background-color: mat-color($warn);
+    background-color: mat.get-color-from-palette($warn);
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
   .mat-chip-3 {
     transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     transition-property: box-shadow;
@@ -135,8 +143,8 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     background-color: #e0e0e0;
   }
 
-  a:not(.mat-button):not(.mat-raised-button):not(.mat-fab):not(.mat-mini-fab):not([mat-list-item]) {
-    color: mat-color($primary); // 3
+  a:not(.mat-mdc-button):not(.mat-mdc-raised-button):not(.mat-mdc-fab):not(.mat-mdc-mini-fab):not([mat-list-item]) {
+    color: mat.get-color-from-palette($primary); // 3
   }
 
   .tile-icon {
@@ -148,7 +156,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     margin-left: 10px;
     background-color: rgb(255, 255, 255);
     text-align: center;
-    color: mat-color($primary);
+    color: mat.get-color-from-palette($primary);
   }
 
   .tile-icon-revert {
@@ -158,7 +166,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     cursor: pointer;
     font-size: 22px;
     margin-left: 10px;
-    background-color: mat-color($primary);
+    background-color: mat.get-color-from-palette($primary);
     text-align: center;
     color: rgb(255, 255, 255);
   }
@@ -170,7 +178,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     bottom: 40px;
     right: 20px;
     background-color: rgb(255, 255, 255);
-    color: mat-color($primary);
+    color: mat.get-color-from-palette($primary);
     border-radius: 50px;
     text-align: center;
     font-size: 30px;
@@ -185,7 +193,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     height: 48px;
     right: 20px;
     background-color: rgb(255, 255, 255);
-    color: mat-color($primary);
+    color: mat.get-color-from-palette($primary);
     border-radius: 50px;
     text-align: center;
     font-size: 22px;
@@ -198,7 +206,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     width: 48px;
     height: 48px;
     background-color: rgb(255, 255, 255);
-    color: mat-color($primary);
+    color: mat.get-color-from-palette($primary);
     border-radius: 50px;
     text-align: center;
     font-size: 22px;
@@ -211,7 +219,7 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     float: right;
     margin: 0;
     p {
-      background-color: mat-color($primary);
+      background-color: mat.get-color-from-palette($primary);
       color: rgb(255, 255, 255);
       padding-top: 6px;
       padding-bottom: 6px;

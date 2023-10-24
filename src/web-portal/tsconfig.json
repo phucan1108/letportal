@@ -28,14 +28,6 @@
       ],
       "stores/*": [
         "app/core/stores/*"
-      ],
-      "emoji-picker": [
-        "dist/emoji-picker/emoji-picker",
-        "dist/emoji-picker"        
-      ],
-      "momentum-table": [
-        "dist/momentum-table/momentum-table",
-        "dist/momentum-table"
       ]
     }
   },

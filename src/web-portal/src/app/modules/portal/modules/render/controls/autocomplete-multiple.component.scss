@@ -50,6 +50,8 @@
       div.listitem-info.right {
         text-align: right;
       }
+      /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+      /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
       mat-checkbox ::ng-deep span.mat-checkbox-label {
         overflow: hidden;
         white-space: nowrap;
@@ -67,6 +69,8 @@
   height: 20px;
   border: 0px 0px 1px 0px solid black;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 ::ng-deep .mat-form-field-infix {
   border-top: 0.24375em solid transparent;
 }

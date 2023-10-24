@@ -51,7 +51,7 @@ import { MomentumTemplate } from './template.directive';
 @Component({
   selector: 'm-table',
   template: `
-    <mat-card [ngClass]="{'m-datatable m-widget':true}" [ngStyle]="{'width': width, 'height': height}" class="card-wrapper">
+    <mat-card appearance="outlined" [ngClass]="{'m-datatable m-widget':true}" [ngStyle]="{'width': width, 'height': height}" class="card-wrapper">
       <div #cardHeader *ngIf="header" [mHeader]="header" (filterChange)="filterChange($event)"></div>
       <div class="table-container" #tableContainer (scroll)="tableContainerScrollX = $event.target.scrollLeft">
         <table>
@@ -66,25 +66,25 @@ import { MomentumTemplate } from './template.directive';
   `,
   styles: [
     `
-      :host {
-        display: block;
-      }
-      .card-wrapper {
-        padding: 0;
-      }
-      .table-container {
-        overflow: auto;
-        height: var(--table-height);
-        background: #fff;
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.87);
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-      }
-    `
+                :host {
+                  display: block;
+                }
+                .card-wrapper {
+                  padding: 0;
+                }
+                .table-container {
+                  overflow: auto;
+                  height: var(--table-height);
+                  background: #fff;
+                  font-size: 14px;
+                  color: rgba(0, 0, 0, 0.87);
+                }
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  border-spacing: 0;
+                }
+              `
   ],
   providers: [DomHandler, ObjectUtils]
 })

@@ -1,11 +1,11 @@
-::ng-deep .mat-menu-content {
+::ng-deep .mat-mdc-menu-content {
     padding-top: 3px !important;
     padding-bottom: 0px !important;    
     max-height: 400px; 
     //overflow: scroll;
 }
 
-.mat-menu-item {
+.mat-mdc-menu-item {
     line-height: 35px;
     height: 35px;
 }

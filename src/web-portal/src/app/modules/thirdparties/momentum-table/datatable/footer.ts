@@ -79,16 +79,16 @@ export class GlobalFooterTemplateLoader
   `,
   styles: [
     `
-    .card-footer{
-      height: var(--card-footer-height, 56px);
-      padding: var(--card-footer-padding, 0 14px 0 24px);
-      border-top: 1px solid #e0e0e0;
-    }
-    .paginator-wrapper{
-      display: inline-block;
-      float: right;
-    }
-  `,
+              .card-footer{
+                height: var(--card-footer-height, 56px);
+                padding: var(--card-footer-padding, 0 14px 0 24px);
+                border-top: 1px solid #e0e0e0;
+              }
+              .paginator-wrapper{
+                display: inline-block;
+                float: right;
+              }
+            `,
   ]
 })
 export class FooterComponent implements AfterViewInit {

@@ -58,12 +58,12 @@ label {
   font-size: 16px;
 }
 
-.mat-slide-toggle {
+.mat-mdc-slide-toggle {
   display: block !important;
   text-align: left;
 }
 
-.mat-raised-button {
+.mat-mdc-raised-button {
   display: block !important;
   text-align: left;
 }
@@ -72,7 +72,7 @@ label {
   padding-left: 32px;
 }
 
-.mat-dialog-content {
+.mat-mdc-dialog-content {
   font-size: 14px;
 }
 
@@ -135,7 +135,7 @@ label {
   width: 900px;
 }
 
-.m-radio-inline > .mat-radio-group > .mat-radio-button:not(:first-child) {
+.m-radio-inline > .mat-mdc-radio-group > .mat-mdc-radio-button:not(:first-child) {
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -147,6 +147,8 @@ label {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
 label.mat-radio-label {
   float: left;
 }
@@ -160,14 +162,22 @@ label.mat-radio-label {
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .fileupload-wrapper div.mat-form-field-wrapper {
   height: 0px !important;
 }
 
 // Auto Complete - Multiple
 .autocomplete-hidden-input {
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
   div.mat-form-field-wrapper {
     height: 0px;
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
     div.mat-form-field-infix {
       padding-bottom: 0px;
       height: 0px;
@@ -180,12 +190,18 @@ label.mat-radio-label {
 }
 
 .select-container {
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
   .mat-form-field-wrapper {
     padding-bottom: 0px;
   }
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
   .mat-form-field-underline {
     height: 0px;
   }
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
   .mat-form-field-underline{
     height: 0px !important;
   }

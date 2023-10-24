@@ -14,15 +14,15 @@
   min-height: 200px;
 }
 
-.suggestion-hint .mat-list {
+.suggestion-hint .mat-mdc-list {
   padding-top: 0px;
 }
 
-.suggestion-hint .mat-list-item {
+.suggestion-hint .mat-mdc-list-item {
   background-color: rgb(255, 255, 255);
 }
 
-.suggestion-hint .mat-list-item:hover {
+.suggestion-hint .mat-mdc-list-item:hover {
   background-color: rgb(245, 245, 245);
 }
 

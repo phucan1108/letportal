@@ -11,6 +11,10 @@ export class MatPaginatorIntlCustom extends MatPaginatorIntl {
     previousPageLabel = 'Previous';
     translateService: TranslateService
 
+    constructor(){
+        super()
+    }
+    
     addTranslateService(translate: TranslateService) {
         this.translateService = translate
 

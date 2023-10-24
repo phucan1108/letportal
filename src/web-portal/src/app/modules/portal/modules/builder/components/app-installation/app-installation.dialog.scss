@@ -2,6 +2,8 @@
     display: flex;
     flex-direction: column;
     margin: 15px 0;
+    /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
+    /* TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version. */
     mat-radio-button {
         margin-left: 5px;
         padding-bottom: 10px;
