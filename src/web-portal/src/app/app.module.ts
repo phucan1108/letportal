@@ -28,7 +28,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ConfigurationProvider } from './core/configs/configProvider';
 import { CoreModule } from './core/core.module';
-import { MatPaginatorIntlCustom } from './core/custom-materials/matPaginatorIntlCustom';
 import { HttpExceptionInterceptor } from './core/https/httpException.interceptor';
 import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
 import { ErrorComponent } from './modules/error/error.component';
@@ -146,9 +145,11 @@ function HttpLoaderFactory(http: HttpClient) {
     {
       provide: MatPaginatorIntl,
       useFactory: (translate: TranslateService) => {
-        const service = new MatPaginatorIntlCustom();
-        service.addTranslateService(translate);
-        return service;
+        const matPaginatorIntl = new MatPaginatorIntl()
+        matPaginatorIntl.itemsPerPageLabel = translate.instant('common.itemsPerPage')
+        matPaginatorIntl.nextPageLabel = translate.instant('common.nextText')
+        matPaginatorIntl.previousPageLabel = translate.instant('common.previous')
+        return matPaginatorIntl;
       },
       deps: [TranslateService]
     },
