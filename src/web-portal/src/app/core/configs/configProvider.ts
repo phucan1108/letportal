@@ -8,6 +8,7 @@ import { ObjectUtils } from '../utils/object-util';
 export class ConfigurationProvider {
     private configuration = {
         portalBaseEndpoint:'',
+        mediaBaseEndpoint: '',
         chatBaseEndpoint: '',
         identityBaseEndpoint: '',
         notificationBaseEndpoint: ''

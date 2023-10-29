@@ -23,7 +23,8 @@ export class SecurePipe implements PipeTransform {
                 reader.readAsDataURL(fileBlob);
               });
         }
-        catch{
+        catch(ex){
+            console.error(ex)
             return ''
         }
     }

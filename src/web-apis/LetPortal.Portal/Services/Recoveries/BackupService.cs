@@ -294,9 +294,9 @@ namespace LetPortal.Portal.Services.Recoveries
                     true);
 
             backup.FileId = uploadResponse.FileId;
-            backup.DownloadableUrl = uploadResponse.DownloadableUrl;
+            backup.DownloadableUrl = uploadResponse.DownloadVirtualPath;
             await _backupRepository.AddAsync(backup);
-            return new BackupResponseModel { DownloadableUrl = uploadResponse.DownloadableUrl };
+            return new BackupResponseModel { DownloadableUrl = uploadResponse.DownloadVirtualPath };
         }
 
         public async Task<UploadBackupResponseModel> UploadBackupFile(IFormFile uploadFile, string uploader)
@@ -327,7 +327,7 @@ namespace LetPortal.Portal.Services.Recoveries
                 var backup = backupFlatternModel.Backup;
                 backup.Id = DataUtil.GenerateUniqueId();
                 backup.FileId = storedFile.FileId;
-                backup.DownloadableUrl = storedFile.DownloadableUrl;
+                backup.DownloadableUrl = storedFile.DownloadVirtualPath;
                 await _backupRepository.AddAsync(backup);
 
                 return new UploadBackupResponseModel

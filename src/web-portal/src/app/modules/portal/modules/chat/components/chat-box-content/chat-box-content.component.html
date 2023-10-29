@@ -45,7 +45,7 @@
                     <ng-container *ngFor="let file of message.attachmentFiles">
                         <div class="img-wrapper" *ngIf="isImageFile(file.fileType)">
                             <img (click)="openDownloadFileTab(file.downloadUrl)" *ngIf="isImageFile(file.fileType)"
-                                [attr.src]="file.downloadUrl | secureFile | async" class="rounded img-thumbnail">
+                                [attr.src]="getMediaFileUrl(file.downloadUrl) | secureFile | async" class="rounded img-thumbnail">
                             <div class="overlay-img">
                                 <button mat-icon-button (click)="openDownloadFileTab(file.downloadUrl)">
                                     <mat-icon>get_app</mat-icon>
@@ -82,7 +82,7 @@
 <div *ngIf="connectionState else reconnecting"></div>
 <form [formGroup]="formGroup" #form="ngForm" [hidden]="!connectionState">
     <div class="row">
-        <div class="col-lg-12 pl-3 pr-3" #formFieldWarpper>
+        <div class="col-lg-12 pl-3 pr-3 chat-box-input" #formFieldWarpper>
             <mat-form-field class="field-full-width chat-text">
                 <textarea matInput #textInput placeholder="Aa" maxlength="1000" formControlName="text"
                     [errorStateMatcher]="errorMatcher" autocomplete="off" cdkTextareaAutosize
@@ -99,7 +99,7 @@
         </div>
         <div class="col-lg-12">
             <div class="float-left">
-                <button mat-icon-button color="primary" matTooltip="{{ 'chat.chatBoxContent.attachment.tooltip' | translate }}" [matTooltipPosition]="'above'">
+                <button mat-icon-button (click)="fileInput.click()" color="primary" matTooltip="{{ 'chat.chatBoxContent.attachment.tooltip' | translate }}" [matTooltipPosition]="'above'">
                     <mat-icon>attach_file</mat-icon>
                     <input class="file-input-overlay" type="file" #fileInput (change)="onFileChange($event)">
                 </button>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild, AfterContentChecked, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, AfterContentChecked, ChangeDetectorRef, AfterViewInit, Inject } from '@angular/core';
 import { FormGroup, NgForm } from '@angular/forms';
 import { PageRenderedControl, DefaultControlOptions } from 'app/core/models/page.model';
 import { ExtendedControlValidator } from 'app/core/models/extended.models';
@@ -7,6 +7,7 @@ import { NGXLogger } from 'ngx-logger';
 import { FilesClient, ValidatorType, ResponseUploadFile } from 'services/portal.service';
 import { UploadFileService, DownloadableResponseFile } from 'services/uploadfile.service';
 import { forkJoin } from 'rxjs';
+import { MEDIA_BASE_URL } from 'services/downloadfile.service';
 
 @Component({
     selector: 'let-file-uploader',
@@ -44,10 +45,14 @@ export class FileUploaderComponent implements OnInit, AfterContentChecked {
 
     progress;
     uploaded = false
+    mediaBaseUrl: string
     constructor(
         private cd: ChangeDetectorRef,
         private uploadFileService: UploadFileService,
-        private logger: NGXLogger) { }
+        private logger: NGXLogger,
+        @Inject(MEDIA_BASE_URL) mediaBaseUrl: string) { 
+            this.mediaBaseUrl = mediaBaseUrl
+        }
     ngAfterContentChecked(): void {
         setTimeout(() => {            
             if(this.isMaximumSize || this.isInvalidFileExtension){
@@ -134,7 +139,7 @@ export class FileUploaderComponent implements OnInit, AfterContentChecked {
 
     getDownloadableLink(file: File) {
         const found = this.uploadedFiles.find(a => a.fileName === file.name)
-        return !!found ? found.response.downloadableUrl : ''
+        return !!found ? this.mediaBaseUrl + found.response.downloadVirtualPath : ''
     }
 
     remove(file: File) {

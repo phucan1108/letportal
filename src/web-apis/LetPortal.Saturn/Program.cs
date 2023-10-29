@@ -117,11 +117,11 @@ app.UseSaturnServer(app.Lifetime, options =>
     options.AllowWrapException = true;
     options.UseBuiltInCors = true;
     options.UseGenerateTraceId = true;
-    options.SkipCheckUrls = new string[] {
+    options.SkipCheckUrls = [
                         "swagger",
                         "api/accounts/login",
                         "api/accounts/forgot-password",
-                        "api/accounts/recovery-password"};
+                        "api/accounts/recovery-password"];
 });
 
 app.UseOpenApi();
@@ -149,9 +149,3 @@ app.MapGrpcService<ServiceMonitorService>();
 app.MapGrpcService<NotificationServiceRpc>();
 
 app.Run();
-
-//var builder = WebApplication.CreateBuilder(args);
-
-//var app = builder.Build();
-//app.MapGet("/", () => "Hello World");
-//app.Run();

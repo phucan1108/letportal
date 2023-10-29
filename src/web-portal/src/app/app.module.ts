@@ -33,6 +33,7 @@ import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
 import { ErrorComponent } from './modules/error/error.component';
 import { SharedModule } from './modules/shared/shortcut.module';
 import { EmojiPickerModule } from './modules/thirdparties/emoji-picker/emoji-picker.module';
+import { MEDIA_BASE_URL } from 'services/downloadfile.service';
 
 export function hlJSLang() {
   return [
@@ -50,6 +51,9 @@ const identityBaseUrl = (configProvider: ConfigurationProvider) => {
 }
 const notificationBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().notificationBaseEndpoint
+}
+const mediaBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().mediaBaseEndpoint
 }
 // required for AOT compilation
 function HttpLoaderFactory(http: HttpClient) {
@@ -124,6 +128,11 @@ function HttpLoaderFactory(http: HttpClient) {
     {
       provide: VIDEO_BASE_URL,
       useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: MEDIA_BASE_URL,
+      useFactory: mediaBaseUrl,
       deps: [ConfigurationProvider]
     },
     {
