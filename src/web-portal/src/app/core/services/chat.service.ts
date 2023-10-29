@@ -150,8 +150,6 @@ export class ChatService {
         receiver: string,
         message: Message,
         lastSentHashCode: string, postAction: () => void) {
-        // const foundChatRoom = this.chatRooms.find(a => a.currentSession.sessionId === chatSessionId)
-        // foundChatRoom.currentSession.messages.push(message)
         this.hubConnection
             .send('sendChatMessage', {
                 chatRoomId: chatRoomId,

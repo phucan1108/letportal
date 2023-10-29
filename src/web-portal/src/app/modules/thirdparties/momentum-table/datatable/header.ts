@@ -106,7 +106,7 @@ export class GlobalHeaderTemplateLoader
         <button mat-icon-button *ngIf="header.colSetting" class="col-setting-btn" (click)="openColSetting()">
           <mat-icon class="mat-24" aria-label="column">view_column</mat-icon>
         </button>
-        <mat-card class="col-setting-wrapper" *ngIf="colSettingOpen" (click)="$event.stopPropagation()">
+        <mat-card appearance="outlined" class="col-setting-wrapper" *ngIf="colSettingOpen" (click)="$event.stopPropagation()">
           <mat-selection-list>
             <mat-list-option [selected]="!col.hidden" [value]="col.header" (click)="toggleColumn(col)" checkboxPosition="'before'" *ngFor="let col of dt.columns">
               {{col.header}}
@@ -127,96 +127,96 @@ export class GlobalHeaderTemplateLoader
   `,
   styles: [
     `
-    .card-header{
-      height: var(--card-header-height, 64px);
-      padding: var(--card-header-padding, 0 14px 0 24px);
-      border-bottom: 1px solid #e0e0e0;
-      position: relative;
-      display: flex;
-    }
-    .card-header-title{
-      width: 50%;
-      line-height: 64px;
-      font-size: 22px;
-    }
-    .card-header-selection-count{
-      width: 50%;
-      line-height: 64px;
-    }
-    .tool-box{
-      display: flex;
-      justify-content: flex-end;
-      width: 50%;
-      right: 0px;
-      color: #757575;
-    }
-    .search-setting-wrapper{
-      width: 100%;
-      position: relative;
-    }
-    .col-setting-btn{
-      top: 12px;
-    }
-    .m-search-form{
-      position: absolute !important;
-      right: 0;
-      -webkit-transition: width 0.2s ease-in-out;
-      transition: width 0.2s ease-in-out;
-      margin-top: 5px;
-    }
-    .col-setting-wrapper{
-      position: absolute !important;
-      top: 65px;
-      right: 0px;
-      padding: 0px !important;
-      z-index: 3000;
-      max-height: 250px;
-      overflow: auto;
-    }
-    .search-icon{
-      position: absolute !important;
-      top: 12px !important;
-      right: 0px !important;
-    }
-    .search-open{
-      width: 100%;
-    }
-    .search-close{
-      width: 0%;
-    }
-    .box-search{
-      background-color: #fff;
-      height: 44px;
-      position: inherit;
-      top: 10px;
-      vertical-align: top;
-      border-radius: 2px;
-      box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
-      transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
-    }
-    .box-search-icon{
-      float: right;
-    }
-    .box-search-icon button{
-      margin-top: 2px;
-    }
-    .box-search-input-wrapper{
-      overflow: hidden;
-      height: auto;
-      padding: 5px 12px;
-    }
-    .box-search input{
-      border: none;
-      padding: 0px;
-      margin: 0px;
-      height: 34px;
-      line-height: 34px;
-      width: 100%;
-      z-index: 6;
-      outline: none;
-      font-size: 16px;
-    }
-  `,
+              .card-header{
+                height: var(--card-header-height, 64px);
+                padding: var(--card-header-padding, 0 14px 0 24px);
+                border-bottom: 1px solid #e0e0e0;
+                position: relative;
+                display: flex;
+              }
+              .card-header-title{
+                width: 50%;
+                line-height: 64px;
+                font-size: 22px;
+              }
+              .card-header-selection-count{
+                width: 50%;
+                line-height: 64px;
+              }
+              .tool-box{
+                display: flex;
+                justify-content: flex-end;
+                width: 50%;
+                right: 0px;
+                color: #757575;
+              }
+              .search-setting-wrapper{
+                width: 100%;
+                position: relative;
+              }
+              .col-setting-btn{
+                top: 12px;
+              }
+              .m-search-form{
+                position: absolute !important;
+                right: 0;
+                -webkit-transition: width 0.2s ease-in-out;
+                transition: width 0.2s ease-in-out;
+                margin-top: 5px;
+              }
+              .col-setting-wrapper{
+                position: absolute !important;
+                top: 65px;
+                right: 0px;
+                padding: 0px !important;
+                z-index: 3000;
+                max-height: 250px;
+                overflow: auto;
+              }
+              .search-icon{
+                position: absolute !important;
+                top: 12px !important;
+                right: 0px !important;
+              }
+              .search-open{
+                width: 100%;
+              }
+              .search-close{
+                width: 0%;
+              }
+              .box-search{
+                background-color: #fff;
+                height: 44px;
+                position: inherit;
+                top: 10px;
+                vertical-align: top;
+                border-radius: 2px;
+                box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+                transition: box-shadow 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+              }
+              .box-search-icon{
+                float: right;
+              }
+              .box-search-icon button{
+                margin-top: 2px;
+              }
+              .box-search-input-wrapper{
+                overflow: hidden;
+                height: auto;
+                padding: 5px 12px;
+              }
+              .box-search input{
+                border: none;
+                padding: 0px;
+                margin: 0px;
+                height: 34px;
+                line-height: 34px;
+                width: 100%;
+                z-index: 6;
+                outline: none;
+                font-size: 16px;
+              }
+            `,
   ],
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy {

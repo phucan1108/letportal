@@ -19,7 +19,7 @@ namespace LetPortal.Portal.Entities.Files
         public string Uploader { get; set; }
 
         [StringLength(250)]
-        public string DownloadableUrl { get; set; }
+        public string DownloadVirtualPath { get; set; }
 
         [StringLength(1000)]
         public string IdentifierOptions { get; set; }

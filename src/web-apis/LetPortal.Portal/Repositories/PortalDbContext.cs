@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LetPortal.Core.Extensions;
 using LetPortal.Core.Persistences;
 using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
@@ -233,34 +234,12 @@ namespace LetPortal.Portal.Repositories
             var compositeControlBuilder = modelBuilder.Entity<CompositeControl>();
             compositeControlBuilder.HasKey(a => a.Id);
 
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                foreach (var property in entity.GetProperties())
-                {
-                    property.SetColumnName(ToCamelCase(property.GetColumnName()));
-                }
-            }
+            modelBuilder.MakeCamelName();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (_options.ConnectionType == ConnectionType.SQLServer)
-            {
-                optionsBuilder.UseSqlServer(_options.ConnectionString);
-            }
-            else if (_options.ConnectionType == ConnectionType.PostgreSQL)
-            {
-                optionsBuilder.UseNpgsql(_options.ConnectionString);
-            }
-            else if (_options.ConnectionType == ConnectionType.MySQL)
-            {
-                optionsBuilder.UseMySql(_options.ConnectionString);
-            }
-        }
-
-        private string ToCamelCase(string column)
-        {
-            return char.ToLowerInvariant(column[0]) + column.Substring(1);
+            optionsBuilder.ConstructConnection(_options, enableDetailError: true);
         }
     }
 }

@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,6 +21,7 @@ import { CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
 import { ChatOnlineUser, ChatSession, DoubleChatRoom, ExtendedMessage } from '../../../../../../core/models/chat.model';
 import { EMOTION_SHORTCUTS } from '../../emotions/emotion.data';
 import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
+import { MEDIA_BASE_URL } from 'services/downloadfile.service';
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     isErrorState(control: FormControl, form: NgForm | FormGroupDirective | null) {
         return control && control.invalid && control.touched;
@@ -65,6 +66,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     toggled = false
 
     inDesktop = true
+    mediaBaseUrl: string
     constructor(
         private logger: NGXLogger,
         private actions$: Actions,
@@ -73,12 +75,14 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
         private uploadFileService: UploadFileService,
         public dialog: MatDialog,
         private fb: FormBuilder,
-        private breakpointObserver: BreakpointObserver
+        private breakpointObserver: BreakpointObserver,
+        @Inject(MEDIA_BASE_URL) mediaBaseUrl: string
     ) { 
         this.breakpointObserver.observe([
             Breakpoints.Handset,
             Breakpoints.Tablet
         ]).subscribe(result => {
+            this.mediaBaseUrl = mediaBaseUrl
             if (result.matches){
                 this.logger.debug('User in tablet or handset')
                 this.inDesktop = false
@@ -248,6 +252,11 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
             (this.formGroup.controls.text.value ? this.formGroup.controls.text.value : '') + $event.char)
     }
 
+    getMediaFileUrl(fileUrl: string){
+        console.log('Hit media url', this.mediaBaseUrl + fileUrl)
+        return this.mediaBaseUrl + fileUrl 
+    }
+
     popupVideoCall(){        
         let dialogRef = this.dialog.open(VideoCallDialogComponent, {
             disableClose: true,
@@ -262,7 +271,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     openDownloadFileTab(downloadableUrl: string) {
-        window.open(downloadableUrl, '_blank')
+        window.open(this.mediaBaseUrl + downloadableUrl, '_blank')
     }
     
     onFileChange($event) {
@@ -291,7 +300,7 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
                         chatSessionId: this.currentChatSession.sessionId,
                         attachmentFiles: [
                             {
-                                downloadUrl: res.response.downloadableUrl,
+                                downloadUrl: res.response.downloadVirtualPath,
                                 fileType: res.fileName.split('.')[1],
                                 fileName: res.fileName
                             }

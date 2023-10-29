@@ -7,6 +7,10 @@ namespace LetPortal.Microservices.Client
 {
     public interface IServiceContext
     {
+        string GetServiceId();
+
+        string GetServiceName();
+
         Task PushHealthCheck(HealthCheckRequest healthCheckRequest);
 
         Task PushLog(LogCollectorRequest logCollectorRequest);

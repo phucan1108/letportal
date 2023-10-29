@@ -21,18 +21,19 @@ import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ConfigurationService } from 'services/configuration.service';
 import { IDENTITY_BASE_URL } from 'services/identity.service';
 import { LocalizationService } from 'services/localization.service';
+import { NotificationService, NOTIFICATION_BASE_URL } from 'services/notification.service';
 import { PORTAL_BASE_URL } from 'services/portal.service';
 import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ConfigurationProvider } from './core/configs/configProvider';
 import { CoreModule } from './core/core.module';
-import { MatPaginatorIntlCustom } from './core/custom-materials/matPaginatorIntlCustom';
 import { HttpExceptionInterceptor } from './core/https/httpException.interceptor';
 import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
 import { ErrorComponent } from './modules/error/error.component';
 import { SharedModule } from './modules/shared/shortcut.module';
 import { EmojiPickerModule } from './modules/thirdparties/emoji-picker/emoji-picker.module';
+import { MEDIA_BASE_URL } from 'services/downloadfile.service';
 
 export function hlJSLang() {
   return [
@@ -47,6 +48,12 @@ const chatBaseUrl = (configProvider: ConfigurationProvider) => {
 }
 const identityBaseUrl = (configProvider: ConfigurationProvider) => {
   return configProvider.getCurrentConfigs().identityBaseEndpoint
+}
+const notificationBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().notificationBaseEndpoint
+}
+const mediaBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().mediaBaseEndpoint
 }
 // required for AOT compilation
 function HttpLoaderFactory(http: HttpClient) {
@@ -97,6 +104,7 @@ function HttpLoaderFactory(http: HttpClient) {
     VideoCallService,
     LocalizationService,
     ConfigurationService,
+    NotificationService,
     {
       provide: PORTAL_BASE_URL,
       useFactory: portalBaseUrl,
@@ -113,8 +121,18 @@ function HttpLoaderFactory(http: HttpClient) {
       deps: [ConfigurationProvider]
     },
     {
+      provide: NOTIFICATION_BASE_URL,
+      useFactory: notificationBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
       provide: VIDEO_BASE_URL,
       useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: MEDIA_BASE_URL,
+      useFactory: mediaBaseUrl,
       deps: [ConfigurationProvider]
     },
     {
@@ -136,9 +154,11 @@ function HttpLoaderFactory(http: HttpClient) {
     {
       provide: MatPaginatorIntl,
       useFactory: (translate: TranslateService) => {
-        const service = new MatPaginatorIntlCustom();
-        service.addTranslateService(translate);
-        return service;
+        const matPaginatorIntl = new MatPaginatorIntl()
+        matPaginatorIntl.itemsPerPageLabel = translate.instant('common.itemsPerPage')
+        matPaginatorIntl.nextPageLabel = translate.instant('common.nextText')
+        matPaginatorIntl.previousPageLabel = translate.instant('common.previous')
+        return matPaginatorIntl;
       },
       deps: [TranslateService]
     },

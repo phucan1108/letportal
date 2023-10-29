@@ -6532,13 +6532,13 @@ export interface FlushDatabaseModel {
 
 export interface ResponseUploadFile {
     fileId?: string | undefined;
-    downloadableUrl?: string | undefined;
+    downloadVirtualPath?: string | undefined;
 }
 
 export interface File extends Entity {
     name?: string | undefined;
     uploader?: string | undefined;
-    downloadableUrl?: string | undefined;
+    downloadVirtualPath?: string | undefined;
     identifierOptions?: string | undefined;
     mimeType?: string | undefined;
     fileSize?: number;

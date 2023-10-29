@@ -261,7 +261,7 @@ namespace LetPortal.Portal.Services.Apps
                     package.Creator,
                     true);
 
-            return new PackageResponseModel { DownloadableUrl = uploadResponse.DownloadableUrl };
+            return new PackageResponseModel { DownloadableUrl = uploadResponse.DownloadVirtualPath };
         }
 
         public async Task<PreviewPackageModel> Preview(string appId)

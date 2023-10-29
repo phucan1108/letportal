@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
 using LetPortal.Core.Monitors;
-using LetPortal.Core.Monitors.Models;
 using LetPortal.Core.Persistences;
 using LetPortal.Microservices.Monitors;
 using LetPortal.Microservices.Server.Options;
@@ -13,7 +12,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Npgsql;
 
 namespace LetPortal.Microservices.Server.Monitors

@@ -1,6 +1,9 @@
-﻿using LetPortal.Chat.Entities;
+﻿using System;
+using LetPortal.Chat.Entities;
+using LetPortal.Core.Extensions;
 using LetPortal.Core.Persistences;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace LetPortal.Chat.Repositories
 {
@@ -65,34 +68,12 @@ namespace LetPortal.Chat.Repositories
                 chatUserBuilder.Property(a => a.Deactivate).HasColumnType("BIT");
             }
 
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                foreach (var property in entity.GetProperties())
-                {
-                    property.SetColumnName(ToCamelCase(property.GetColumnName()));
-                }
-            }
+            modelBuilder.MakeCamelName();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (_options.ConnectionType == ConnectionType.SQLServer)
-            {
-                optionsBuilder.UseSqlServer(_options.ConnectionString);
-            }
-            else if (_options.ConnectionType == ConnectionType.PostgreSQL)
-            {
-                optionsBuilder.UseNpgsql(_options.ConnectionString);
-            }
-            else if (_options.ConnectionType == ConnectionType.MySQL)
-            {
-                optionsBuilder.UseMySql(_options.ConnectionString);
-            }
-        }
-
-        private string ToCamelCase(string column)
-        {
-            return char.ToLowerInvariant(column[0]) + column.Substring(1);
+            optionsBuilder.ConstructConnection(_options, enableDetailError: true);
         }
     }
 }

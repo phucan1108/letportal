@@ -125,9 +125,7 @@ namespace LetPortal.Portal.Services.Files
                     FileStorageType = _fileOptions.CurrentValue.FileStorageType,
                     IdentifierOptions = storedFile.FileIdentifierOptions,
                     AllowCompress = allowCompress,
-                    DownloadableUrl = storedFile.UseServerHost
-                        ? _filePublishOptions.CurrentValue.DownloadableHost + "/" + createdId
-                            : storedFile.DownloadableUrl
+                    DownloadVirtualPath = _filePublishOptions.CurrentValue.VirtualPath + "/" + createdId
                 };
 
                 await _fileRepository.AddAsync(createFile);
@@ -136,7 +134,7 @@ namespace LetPortal.Portal.Services.Files
                 return new ResponseUploadFile
                 {
                     FileId = createFile.Id,
-                    DownloadableUrl = createFile.DownloadableUrl
+                    DownloadVirtualPath = createFile.DownloadVirtualPath
                 };
             }
             finally
@@ -176,9 +174,7 @@ namespace LetPortal.Portal.Services.Files
                 FileStorageType = _fileOptions.CurrentValue.FileStorageType,
                 IdentifierOptions = storedFile.FileIdentifierOptions,
                 AllowCompress = allowCompress,
-                DownloadableUrl = storedFile.UseServerHost
-                    ? _filePublishOptions.CurrentValue.DownloadableHost + "/" + createdId
-                        : storedFile.DownloadableUrl
+                DownloadVirtualPath = _filePublishOptions.CurrentValue.VirtualPath + "/" + createdId
             };
 
             await _fileRepository.AddAsync(createFile);
@@ -187,7 +183,7 @@ namespace LetPortal.Portal.Services.Files
             return new ResponseUploadFile
             {
                 FileId = createFile.Id,
-                DownloadableUrl = createFile.DownloadableUrl
+                DownloadVirtualPath = createFile.DownloadVirtualPath
             };
         }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ObjectUtils } from '../utils/object-util';
 import { ShellConfig, ShellConfigType } from '../shell/shell.model';
+import { ObjectUtils } from '../utils/object-util';
 
 @Injectable({
     providedIn: 'root'
@@ -8,8 +8,10 @@ import { ShellConfig, ShellConfigType } from '../shell/shell.model';
 export class ConfigurationProvider {
     private configuration = {
         portalBaseEndpoint:'',
+        mediaBaseEndpoint: '',
         chatBaseEndpoint: '',
-        identityBaseEndpoint: ''
+        identityBaseEndpoint: '',
+        notificationBaseEndpoint: ''
     }
     constructor() {
         this.configuration = { ...JSON.parse(window.sessionStorage.getItem('configurations')) };

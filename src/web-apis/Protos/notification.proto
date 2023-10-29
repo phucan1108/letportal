@@ -1,0 +1,31 @@
+syntax = "proto3";
+option csharp_namespace = "LetPortal.Notification";
+
+service NotificationService {
+    rpc Send (NotificationMessageRequest) returns (NotificationMessageResponse);    
+    rpc Create (CreateChannelRequest) returns (CreateChannelResponse);
+}
+
+message NotificationMessageRequest{
+    string service_id = 1;
+    string service_name = 2;
+    string sender = 3;
+    string channel_code = 4;
+    string message = 5;
+    string individual_user_name = 6;
+}
+
+message NotificationMessageResponse {
+    bool succeed = 1;
+}
+
+message CreateChannelRequest{
+    string code = 1;
+    string name = 2;
+    string icon = 3;
+}
+
+message CreateChannelResponse{
+    bool succeed = 1;
+    string error = 2;
+}

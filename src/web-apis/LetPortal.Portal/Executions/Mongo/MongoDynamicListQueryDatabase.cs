@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using LetPortal.Core.Common;
+using LetPortal.Core.Logger;
 using LetPortal.Core.Persistences;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.SectionParts;
@@ -23,15 +24,24 @@ namespace LetPortal.Portal.Executions.Mongo
 
         private readonly IOptionsMonitor<MongoOptions> _mongoOptions;
 
-        public MongoDynamicListQueryDatabase(IOptionsMonitor<MongoOptions> options)
+        private readonly IServiceLogger<MongoDynamicListQueryDatabase> _logger;
+
+        public MongoDynamicListQueryDatabase(
+            IOptionsMonitor<MongoOptions> options,
+            IServiceLogger<MongoDynamicListQueryDatabase> logger)
         {
             _mongoOptions = options;
+            _logger = logger;
         }
 
-        public async Task<DynamicListResponseDataModel> Query(DatabaseConnection databaseConnection, DynamicList dynamicList, DynamicListFetchDataModel fetchDataModel)
+        public async Task<DynamicListResponseDataModel> Query(
+            DatabaseConnection databaseConnection, 
+            DynamicList dynamicList, 
+            DynamicListFetchDataModel fetchDataModel)
         {
             dynamicList.GenerateFilters();
 
+            _logger.Info("Filter model before executing mongo query {@fetchDataModel}", fetchDataModel);
             var dynamicListResponseDataModel = new DynamicListResponseDataModel();
 
             // Because this flow is very complicated. We MUST UPDATE this flow fequently
@@ -60,10 +70,11 @@ namespace LetPortal.Portal.Executions.Mongo
 
             foreach (var filledParam in fetchDataModel.FilledParameterOptions.FilledParameters)
             {
-                collectionQuery = collectionQuery.Replace("{{" + filledParam.Name + "}}", filledParam.Value);
+                collectionQuery = collectionQuery.Replace("{{" + filledParam.Name + "}}", ConvertMongoValue(filledParam.Name, filledParam.Value));
             }
 
             collectionQuery = _mongoOptions.CurrentValue.EliminateDoubleQuotes(collectionQuery);
+            _logger.Info("Collection Query after parsing {0}", collectionQuery);
             var aggregatePipes = BsonSerializer.Deserialize<BsonDocument[]>(collectionQuery).Select(a => (PipelineStageDefinition<BsonDocument, BsonDocument>)a).ToList();
 
             var aggregateFluent = mongoCollection.Aggregate();
@@ -342,7 +353,8 @@ namespace LetPortal.Portal.Executions.Mongo
         }
 
         private FilterDefinition<BsonDocument> BuildOperator(FilterOption filterOption)
-        {
+        {               
+            _logger.Info("Build Operator with filter Option {@filterOption}", filterOption);
             var filterBuilderOption = Builders<BsonDocument>.Filter;
             FieldDefinition<BsonDocument, string> field = filterOption.FieldName;
             switch (filterOption.FilterValueType)
@@ -379,10 +391,24 @@ namespace LetPortal.Portal.Executions.Mongo
                     }
                     
                 case FieldValueType.DatePicker:
-                    var datetime = DateTime.Parse(filterOption.FieldValue);
-                    var month = datetime.Month;
-                    var day = datetime.Day;
-                    var year = datetime.Year;
+                    int month = 0;
+                    int year = 0;
+                    int day = 0;
+                    // Check fieldValue is DateTime
+                    if(filterOption.FieldValue is DateTime)
+                    {
+                        month = filterOption.FieldValue.Month;
+                        day = filterOption.FieldValue.Day;
+                        year = filterOption.FieldValue.Year;
+                    }
+                    else if(filterOption.FieldValue is string)
+                    {
+
+                        DateTime dateTime = DateTime.Parse(filterOption.FieldValue);
+                        month = dateTime.Month;
+                        day = dateTime.Day;
+                        year = dateTime.Year;
+                    }
                     if (filterOption.FilterOperator == FilterOperator.Equal)
                     {
                         // Support Format MM/DD/YYYY, we can change its in configuration later
@@ -438,6 +464,34 @@ namespace LetPortal.Portal.Executions.Mongo
                     break;
             }
             return null;
+        }
+
+        private string ConvertMongoValue(string fieldName, string fieldValue)
+        {
+            var splitted = fieldName.Split("|");
+            if(splitted.Length > 1)
+            {
+                switch (splitted[1])
+                {
+                    case "int":
+                        return string.Format("NumberInt(\"{0}\")", fieldValue);
+                    case "long":
+                    case "timespan":
+                        return string.Format("NumberLong(\"{0}\")", fieldValue);
+                    case "float":
+                    case "double":
+                    case "decimal":
+                        return string.Format("NumberDecimal(\"{0}\")", fieldValue);
+                    case "bool":
+                        return string.Format("Boolean({0})", fieldValue);
+                    default:
+                        return fieldValue;
+                }
+            }
+            else
+            {
+                return fieldValue;
+            }
         }
     }
 }

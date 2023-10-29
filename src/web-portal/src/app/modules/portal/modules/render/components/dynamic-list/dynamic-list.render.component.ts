@@ -148,9 +148,10 @@ export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterV
                 if (commandClicked.command.actionCommandOptions.redirectOptions.isSameDomain) {
                     const navigationExtras: NavigationExtras = {
                         preserveFragment: true,
-                        preserveQueryParams: true
+                        queryParamsHandling: 'preserve'
                     };
-                    const url = commandClicked.command.commandPositionType === CommandPositionType.InList ?
+                    this.logger.debug('current row data before translating', commandClicked.data)
+                    const url = commandClicked.command.commandPositionType === CommandPositionType.InList ?                        
                         this.translatePipe.translateDataWithShell(commandClicked.command.actionCommandOptions.redirectOptions.redirectUrl, {
                             ...this.pageService.getPageShellData(),
                             data: commandClicked.data

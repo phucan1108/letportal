@@ -24,8 +24,7 @@ namespace LetPortal.Microservices.Server.Monitors
             {
                 var pulse = healthcheck.Data[Constants.SERVER_MONITOR_HEALTHCHECK_DATA] as HealthCheckRequest;
                 _serviceContext.PushHealthCheck(pulse);
-            }
-            
+            }            
 
             // Keep updating run state
             _serviceContext.Run(null);

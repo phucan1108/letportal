@@ -6,7 +6,7 @@ using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Entities.EntitySchemas;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace LetPortal.Portal.Executions.MySQL
 {

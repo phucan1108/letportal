@@ -21,11 +21,58 @@ namespace LetPortal.Core.Persistences
         protected string CollectionName => entityCollectionAttribute.Name;
 
         protected IMongoCollection<T> Collection => Connection.GetDatabaseConnection().GetCollection<T>(CollectionName);
-
+        
+        /// <summary>
+        /// Use this method to access another Collection. For ex: stay on users but need to get roles
+        /// </summary>
         protected IMongoCollection<TEntity> GetAnotherCollection<TEntity>() where TEntity : Entity
         {
             var collectionName = typeof(TEntity).GetEntityCollectionAttribute().Name;
             return Connection.GetDatabaseConnection().GetCollection<TEntity>(collectionName);
+        }
+
+        protected bool IsExisted()
+        {
+            var mongoDatabase = Connection.GetDatabaseConnection();
+            return mongoDatabase.ListCollectionNames().ToList().Any(a => a.ToUpper() == CollectionName.ToUpper());
+        }
+
+        protected void SetCappedCollection()
+        {
+            var mongoDatabase = Connection.GetDatabaseConnection();            
+            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions
+            {
+                Capped = true,
+                MaxSize = int.MaxValue
+            };
+            mongoDatabase.CreateCollection(CollectionName, createCollectionOptions);
+        }
+
+        protected void ScanIndexs()
+        {
+            var allIndexs = typeof(T).GetMongoIndexAttributes();
+            if(allIndexs.Count > 0)
+            {
+                foreach (var index in allIndexs)
+                {
+                    var mongoIndexAttr = index.Value;
+                    switch (mongoIndexAttr.Type)
+                    {
+                        case MongoIndexType.Asc:
+                            var indexAsc = Builders<T>.IndexKeys.Ascending(index.Key);
+                            Collection.Indexes.CreateOne(new CreateIndexModel<T>(indexAsc, new CreateIndexOptions { Name = mongoIndexAttr.Name }));
+                            break;
+                        case MongoIndexType.Desc:
+                            var indexDesc = Builders<T>.IndexKeys.Descending(index.Key);
+                            Collection.Indexes.CreateOne(new CreateIndexModel<T>(indexDesc, new CreateIndexOptions { Name = mongoIndexAttr.Name }));
+                            break;
+                        case MongoIndexType.Text:
+                            var indexText = Builders<T>.IndexKeys.Descending(index.Key);
+                            Collection.Indexes.CreateOne(new CreateIndexModel<T>(indexText, new CreateIndexOptions { Name = mongoIndexAttr.Name }));
+                            break;
+                    }                    
+                }
+            }
         }
 
         public async Task AddAsync(T entity)
@@ -237,7 +284,24 @@ namespace LetPortal.Core.Persistences
             }
             else
             {
-                return new ComparisonResult { IsTotallyNew = true };
+                var comparedJObject = JObject.FromObject(comparedEntity);
+                var comparedChildren = comparedJObject.Children();
+                var result = new ComparisonResult
+                {
+                    Result = new ComparisonEntity { Properties = new List<ComparisonProperty>() },
+                    IsTotallyNew = true
+                };
+                foreach (JProperty jprop in comparedChildren)
+                {
+                    result.Result.Properties.Add(
+                            new ComparisonProperty
+                            {
+                                Name = jprop.Name,
+                                SourceValue = jprop.Value?.ToString(),
+                                ComparedState = ComparedState.New
+                            });
+                }
+                return result;
             }
         }
 
@@ -254,7 +318,7 @@ namespace LetPortal.Core.Persistences
 
         public Task<T> FindAsync(Expression<Func<T, bool>> expression)
         {
-            return Collection.AsQueryable().FirstAsync(expression);
+            return Collection.AsQueryable().FirstOrDefaultAsync(expression);
         }
 
         #region IDisposable Support

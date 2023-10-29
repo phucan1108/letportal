@@ -57,6 +57,10 @@ export default class StringUtils {
         .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
     }
 
+    public static startsWithCapital(word){
+        return /[A-Z]/.test(word.charAt(0))
+    }
+
     public static isAllUpperCase(text: string): boolean {
         return text === text.toUpperCase()
     }

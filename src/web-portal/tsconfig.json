@@ -11,12 +11,13 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "useDefineForClassFields": false,
+    "target": "es2022",
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
-      "es2018",
+      "es2022",
       "dom"
     ],
     "paths": {
@@ -28,14 +29,6 @@
       ],
       "stores/*": [
         "app/core/stores/*"
-      ],
-      "emoji-picker": [
-        "dist/emoji-picker/emoji-picker",
-        "dist/emoji-picker"        
-      ],
-      "momentum-table": [
-        "dist/momentum-table/momentum-table",
-        "dist/momentum-table"
       ]
     }
   },

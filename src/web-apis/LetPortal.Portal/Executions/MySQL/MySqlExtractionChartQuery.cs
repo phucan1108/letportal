@@ -10,7 +10,7 @@ using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Mappers;
 using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Models.Charts;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace LetPortal.Portal.Executions.MySQL
 {

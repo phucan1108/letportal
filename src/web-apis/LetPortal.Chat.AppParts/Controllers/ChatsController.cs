@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using NSwag.Annotations;
 
 namespace LetPortal.Chat.AppParts.Controllers
 {
     [Route("api/chats")]
     [ApiController]
+    [OpenApiIgnore]
     public class ChatsController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

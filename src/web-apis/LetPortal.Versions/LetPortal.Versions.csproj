@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Version>0.9.0</Version>
     <Company>LetPortal</Company>
@@ -14,16 +14,17 @@
   </PropertyGroup>
   <Import Project="..\..\editorconfig.props" Condition="Exists('..\..\editorconfig.props')" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0-preview.23472.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MongoDB.Driver" Version="2.10.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
     <ProjectReference Include="..\LetPortal.Identity\LetPortal.Identity.csproj" />
     <ProjectReference Include="..\LetPortal.Microservices.Server\LetPortal.Microservices.Server.csproj" />
+    <ProjectReference Include="..\LetPortal.Notification\LetPortal.Notification.csproj" />
     <ProjectReference Include="..\LetPortal.Portal\LetPortal.Portal.csproj" />
   </ItemGroup>
 </Project>

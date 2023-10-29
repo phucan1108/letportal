@@ -1,16 +1,15 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AccountsClient, Role, RolesClient } from 'services/identity.service';
-import { environment } from 'environments/environment';
-import { NGXLogger } from 'ngx-logger';
-import { SessionService } from 'services/session.service';
-import { SecurityService } from 'app/core/security/security.service';
-import { AuthToken } from 'app/core/security/auth.model';
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ObjectUtils } from 'app/core/utils/object-util';
-import { ChatService } from 'services/chat.service';
 import { TranslateService } from '@ngx-translate/core';
-import * as moment from 'moment'
+import { AuthToken } from 'app/core/security/auth.model';
+import { SecurityService } from 'app/core/security/security.service';
+import { ObjectUtils } from 'app/core/utils/object-util';
+import { environment } from 'environments/environment';
+import * as moment from 'moment';
+import { NGXLogger } from 'ngx-logger';
+import { AccountsClient, RolesClient } from 'services/identity.service';
+import { SessionService } from 'services/session.service';
 @Component({
     selector: 'let-login',
     templateUrl: './login.page.html',
@@ -32,11 +31,11 @@ export class LoginPage implements OnInit {
         private logger: NGXLogger,
         private session: SessionService,
         private security: SecurityService,        
-        private roleClient: RolesClient
+        private roleClient: RolesClient,
+        private cd: ChangeDetectorRef
     ) { }
 
-    ngOnInit(): void {
-
+    ngOnInit(): void {        
         // Ensure user will be signed out when be back to login page
         this.session.clear()
         this.security.userLogout()
@@ -44,7 +43,7 @@ export class LoginPage implements OnInit {
             username: ['', Validators.required],
             password: ['', Validators.required],
             rememberMe: [false],
-            language: [this.translate.currentLang, Validators.required]
+            language: [this.translate.getDefaultLang(), Validators.required]
         })
 
         this.loginForm.get('language').valueChanges.subscribe(newValue => {

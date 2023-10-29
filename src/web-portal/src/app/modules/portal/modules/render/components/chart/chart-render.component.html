@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card appearance="outlined">
     <mat-card-header>
         <mat-card-title>
             {{ displayName ? displayName : chart.displayName }} &nbsp;
@@ -99,7 +99,7 @@
 </mat-card>
 
 <ng-template #loading>
-    <mat-card>
+    <mat-card appearance="outlined">
         <mat-card-content>
             <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
         </mat-card-content>

@@ -7,6 +7,15 @@ services:
       - "27117:27017"
     volumes:
       - mongodata:/data/db
+  rabbitmq:
+    image: rabbitmq:3.9.11
+    ports:
+      - "5673:5672"
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=letportal
+      - RABBITMQ_DEFAULT_PASS=letportal
   lp.saturn:
     image: lp-saturn:0.9.0
     environment:
@@ -16,6 +25,7 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal.pfx
     depends_on:
       - mongodb
+      - rabbitmq
     build:
       context: .
       dockerfile: LetPortal.Saturn/Dockerfile
@@ -44,4 +54,6 @@ services:
       - "5104:443"
 volumes:
   mongodata:
+    driver: local
+  rabbitmqdata:
     driver: local

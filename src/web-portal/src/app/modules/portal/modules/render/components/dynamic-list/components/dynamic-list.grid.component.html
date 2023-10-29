@@ -7,7 +7,7 @@
 <div *ngIf="readyToRender else loading"></div>
 <div class="table-flex" [hidden]="!readyToRender">
     <mat-table class="lmat-elevation-z8" [dataSource]="dataSource$" matSort [matSortActive]="defaultSortColumn"
-        matSortDirection="asc" matSortDisableClear>
+        [matSortDirection]="defaultSortDirection" matSortDisableClear>
         <ng-container *ngFor="let header of headers">
             <ng-container [matColumnDef]="header.name">
                 <!-- ATTRIBUTE mat-sort-header  for sorting | https://material.angular.io/components/sort/overview -->
@@ -24,18 +24,18 @@
                         <span class="handset-data" (click)="openDialogData(data)" *ngIf="isTextAsHtml(header)"
                             [innerHtml]="renderInnerHtml(data, header) | safeHtml"></span>
                         <div class="handset-data" *ngIf="isBooleanAsHtml(header)">
-                            <mat-chip-list>
-                                <mat-chip color="primary" *ngIf="getBooleanValue(data, header)" selected>
-                                    {{ getBooleanValue(data, header) }}</mat-chip>
-                                <mat-chip color="accent" *ngIf="!getBooleanValue(data, header)" selected>
-                                    {{ getBooleanValue(data, header) }}</mat-chip>
-                            </mat-chip-list>
+                            <mat-chip-listbox>
+                                <mat-chip-option color="primary" *ngIf="getBooleanValue(data, header)" selected>
+                                    {{ getBooleanValue(data, header) }}</mat-chip-option>
+                                <mat-chip-option color="accent" *ngIf="!getBooleanValue(data, header)" selected>
+                                    {{ getBooleanValue(data, header) }}</mat-chip-option>
+                            </mat-chip-listbox>
                         </div>
                         <div class="handset-data" *ngIf="isSelectAsHtml(header)">
-                            <mat-chip-list>
+                            <mat-chip-listbox>
                                 <mat-basic-chip [class]="getClassForChip(data, header)">
                                     {{ translateData(data, header) }}</mat-basic-chip>
-                            </mat-chip-list>
+                            </mat-chip-listbox>
                         </div>
                     </ng-container>
                 </mat-cell>

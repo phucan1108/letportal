@@ -73,22 +73,28 @@ namespace LetPortal.Microservices.Server.Providers
 
         public async Task ShutdownService(string serviceId)
         {
-            var service = await _serviceRepository.GetOneAsync(serviceId);
+            if (!string.IsNullOrEmpty(serviceId))
+            {
+                var service = await _serviceRepository.GetOneAsync(serviceId);
 
-            service.ServiceState = ServiceState.Shutdown;
-            service.LastCheckedDate = DateTime.UtcNow;
+                service.ServiceState = ServiceState.Shutdown;
+                service.LastCheckedDate = DateTime.UtcNow;
 
-            await _serviceRepository.UpdateAsync(serviceId, service);
+                await _serviceRepository.UpdateAsync(serviceId, service);
+            }
         }
 
         public async Task UpdateRunningState(string serviceId)
         {
-            var service = await _serviceRepository.GetOneAsync(serviceId);
+            if (!string.IsNullOrEmpty(serviceId))
+            {
+                var service = await _serviceRepository.GetOneAsync(serviceId);
 
-            service.ServiceState = ServiceState.Run;
-            service.LastCheckedDate = DateTime.UtcNow;
-            service.CalculateRunningTime();
-            await _serviceRepository.UpdateAsync(serviceId, service);
+                service.ServiceState = ServiceState.Run;
+                service.LastCheckedDate = DateTime.UtcNow;
+                service.CalculateRunningTime();
+                await _serviceRepository.UpdateAsync(serviceId, service);
+            }            
         }
     }
 }

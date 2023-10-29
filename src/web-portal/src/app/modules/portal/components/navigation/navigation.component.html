@@ -11,9 +11,7 @@
       <!-- End logo-->
       <!-- Right top bar-->
       <span class="divider-left-right-bar"></span>
-      <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center">
-        <mat-icon [matBadgeHidden]="true" matBadge="0" matBadgeColor="warn" matTooltip="Notification" [matTooltipPosition]="'below'">notifications</mat-icon>
-      </div>
+      <notification-box></notification-box>
       <ng-container *ngIf="!hasAvatar">
         <div class="rounded-circle tile-icon d-flex align-items-center justify-content-center"
           [matMenuTriggerFor]="menu" aria-label="More">

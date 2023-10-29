@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LetPortal.Microservices.Client.Channels;
@@ -35,27 +33,21 @@ namespace LetPortal.Microservices.Client.Workers
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Starting worker for sending log to Saturn at endpoint " + _options.CurrentValue.SaturnEndpoint);
-            while (!stoppingToken.IsCancellationRequested)
+            _logger.LogInformation("Starting worker for sending log to Saturn at endpoint {saturnEndpoint}", _options.CurrentValue.SaturnEndpoint);
+
+            try
             {
-                _logger.LogInformation("Waiting to read log from channel");
-                try
+                using var call = _client.Push(cancellationToken: stoppingToken);
+                await foreach (var log in _channel.GetChannel().Reader.ReadAllAsync(stoppingToken))
                 {
-                    while (await _channel.GetChannel().Reader.WaitToReadAsync())
-                    {
-                        using var call = _client.Push();
-                        if(_channel.GetChannel().Reader.TryRead(out LogCollectorRequest log))
-                        {
-                            await call.RequestStream.WriteAsync(log);
-                        }
-                        await call.RequestStream.CompleteAsync();
-                        var serverResponse = await call.ResponseAsync;
-                    }
+                    await call.RequestStream.WriteAsync(log);
                 }
-                 catch(Exception ex)
-                {
-                    _logger.LogError("There are some problems when trying to stream log collector", ex.ToString());
-                }  
+                await call.RequestStream.CompleteAsync();
+                var serverResponse = await call.ResponseAsync;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "There are some problems when trying to stream log collector");
             }
         }
     }

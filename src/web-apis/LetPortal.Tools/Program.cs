@@ -12,6 +12,7 @@ using LetPortal.Core.Utils;
 using LetPortal.Core.Versions;
 using LetPortal.Identity;
 using LetPortal.Identity.Repositories;
+using LetPortal.Notification;
 using LetPortal.Portal;
 using LetPortal.Portal.Persistences;
 using LetPortal.Portal.Repositories;
@@ -340,6 +341,9 @@ namespace LET.Tools.Installation
             PortalExtensions.RegisterRepos(services, databaseOptions, true);
             PortalExtensions.RegisterProviders(services);
             PortalExtensions.RegisterServices(services);
+
+            NotificationExtensions.RegisterServices(services);
+            NotificationExtensions.RegisterRepos(services, databaseOptions);
         }
 
         private void RegisterServicesForIdentity(IServiceCollection services, DatabaseOptions databaseOptions)

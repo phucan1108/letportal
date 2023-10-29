@@ -50,7 +50,7 @@ namespace LetPortal.Portal
 {
     public static class PortalExtensions
     {
-        public static ILetPortalBuilder AddPortalService(
+        public static ILetPortalBuilder AddPortal(
             this ILetPortalBuilder builder,
 
             Action<PortalOptions> action = null)

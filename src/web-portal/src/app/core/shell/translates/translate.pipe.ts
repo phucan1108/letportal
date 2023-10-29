@@ -134,17 +134,13 @@ export class Translator {
                     if (config.replaceDQuote) {
                         text = text.replace(`"{{${config.key}}}"`, config.value)
                     }
-                    else {
-                        text = text.replace(`{{${config.key}}}`, config.value)
-                    }
+                    text = text.replace(`{{${config.key}}}`, config.value)
                     break
                 case ShellConfigType.Method:
                     if (config.replaceDQuote) {
                         text = text.replace(`"{{${config.key}}}"`, config.value)
                     }
-                    else {
-                        text = text.replace(`{{${config.key}}}`, config.value)
-                    }
+                    text = text.replace(`{{${config.key}}}`, config.value)
                     break
             }
         })

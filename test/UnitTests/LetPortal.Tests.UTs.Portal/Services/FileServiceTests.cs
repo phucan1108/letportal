@@ -19,7 +19,7 @@ namespace LetPortal.Tests.UTs.Portal.Services
     {
         public FilePublishOptions FilePublishOptions = new FilePublishOptions
         {
-            DownloadableHost = "http://localhost:53595/v1.0/files"
+            VirtualPath = "http://localhost:53595/v1.0/files"
         };
 
         public LetPortal.Portal.Options.Files.FileOptions FileOptions = new LetPortal.Portal.Options.Files.FileOptions
@@ -87,7 +87,6 @@ namespace LetPortal.Tests.UTs.Portal.Services
                 .Setup(a => a.StoreFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(new StoredFile
                 {
-                    DownloadableUrl = "localhost",
                     FileIdentifierOptions = "test",
                     UseServerHost = true
                 }));

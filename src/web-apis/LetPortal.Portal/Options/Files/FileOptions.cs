@@ -17,7 +17,7 @@ namespace LetPortal.Portal.Options.Files
 
     public class FilePublishOptions
     {
-        public string DownloadableHost { get; set; }
+        public string VirtualPath { get; set; }
     }
 
     public class FileValidatorOptions

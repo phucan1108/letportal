@@ -2,7 +2,7 @@
   "profiles": {
     "LET.Tools.Installation": {
       "commandName": "Project",
-      "commandLineArgs": "blog install -c mongodb://localhost:27117/cms"
+      "commandLineArgs": "identity install -c mongodb://localhost:27117/letportal"
     }
   }
 }

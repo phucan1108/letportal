@@ -81,26 +81,22 @@ namespace LetPortal.Core.Utils
         public static string EncryptionString(string plain, string key, string iv)
         {
             byte[] encrypted;
-            using (var aes = new AesManaged())
+            using (var aes = Aes.Create())
             {
                 var encryptor = aes.CreateEncryptor(GetBytes(key), GetBytes(iv));
                 // Create MemoryStream    
-                using (var ms = new MemoryStream())
+                using var ms = new MemoryStream();
+                // Create crypto stream using the CryptoStream class. This class is the key to encryption    
+                // and encrypts and decrypts data from any given stream. In this case, we will pass a memory stream    
+                // to encrypt    
+                using var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
+                // Create StreamWriter and write data to a stream    
+                using (var sw = new StreamWriter(cs))
                 {
-                    // Create crypto stream using the CryptoStream class. This class is the key to encryption    
-                    // and encrypts and decrypts data from any given stream. In this case, we will pass a memory stream    
-                    // to encrypt    
-                    using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-                    {
-                        // Create StreamWriter and write data to a stream    
-                        using (var sw = new StreamWriter(cs))
-                        {
-                            sw.Write(plain);
-                        }
-
-                        encrypted = ms.ToArray();
-                    }
+                    sw.Write(plain);
                 }
+
+                encrypted = ms.ToArray();
             }
 
             return BitConverter.ToString(encrypted);
@@ -109,7 +105,7 @@ namespace LetPortal.Core.Utils
         public static string DecryptionString(string encryption, string key, string iv)
         {
             string plain = null;
-            using (var aes = new AesManaged())
+            using (var aes = Aes.Create())
             {
                 var decryptor = aes.CreateEncryptor(GetBytes(key), GetBytes(iv));
                 // Create MemoryStream    

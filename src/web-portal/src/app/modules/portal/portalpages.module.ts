@@ -1,34 +1,33 @@
-import { NgModule, Provider, INJECTOR } from '@angular/core';
+import { LayoutModule } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
-import { PagesRoutingModule } from './portal-pages-routing.module';
-import { PagesWrapperComponent } from './portal-wrapper.component';
-import { LayoutModule } from '@angular/cdk/layout'
-import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatButtonModule } from '@angular/material/button'
-import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatIconModule } from '@angular/material/icon'
-import { MatListModule } from '@angular/material/list'
-import { MatGridListModule } from '@angular/material/grid-list'
-import { MatCardModule } from '@angular/material/card'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { MatDialogModule } from '@angular/material/dialog'
-import { MatTreeModule } from '@angular/material/tree'
-import { MatExpansionModule } from '@angular/material/expansion'
-import { MatProgressBarModule } from '@angular/material/progress-bar'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { MatBadgeModule } from '@angular/material/badge'
-import { MatTooltipModule } from '@angular/material/tooltip'
-
+import { NgModule, Provider } from '@angular/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTreeModule } from '@angular/material/tree';
+import { TranslateModule } from '@ngx-translate/core';
+import { CoreModule } from 'app/core/core.module';
+import { InterceptorsProvider, PAGE_INTERCEPTORS } from 'app/core/interceptors/interceptor.provider';
 import { MatProgressButtonsModule } from 'mat-progress-buttons';
+import { ALL_INTERCEPTORS } from '../customs/custom.config';
 import { AppDashboardComponent } from './components/app-dashboard/app-dashboard.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
-import { ChatModule } from './modules/chat/chat.module';
-import { CoreModule } from 'app/core/core.module';
-import { TranslateModule } from '@ngx-translate/core';
-import { ALL_INTERCEPTORS } from '../customs/custom.config';
-import { PAGE_INTERCEPTORS, InterceptorsProvider } from 'app/core/interceptors/interceptor.provider';
-import { SharedModule } from '../shared/shortcut.module';
+import { NotificationBoxComponent } from './components/notification/notification-box.component';
+import { PagesRoutingModule } from './portal-pages-routing.module';
+import { PagesWrapperComponent } from './portal-wrapper.component';
+
 
 const mapToProvider = (interceptor: any): Provider => {
     return {
@@ -41,12 +40,13 @@ const mapToProvider = (interceptor: any): Provider => {
     declarations: [
         PagesWrapperComponent,
         NavigationComponent,
-        AppDashboardComponent
+        AppDashboardComponent,
+        NotificationBoxComponent
     ],
     imports: [
         CoreModule.forChild(),
         CommonModule,
-        PagesRoutingModule,
+        PagesRoutingModule, 
         LayoutModule,
         MatProgressButtonsModule,
         MatProgressSpinnerModule,
@@ -65,6 +65,7 @@ const mapToProvider = (interceptor: any): Provider => {
         MatExpansionModule,
         MatBadgeModule,
         MatTooltipModule,
+        MatSnackBarModule,
         TranslateModule
     ],
     exports: [],

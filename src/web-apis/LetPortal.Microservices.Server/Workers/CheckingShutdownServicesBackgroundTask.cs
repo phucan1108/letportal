@@ -36,7 +36,6 @@ namespace LetPortal.Microservices.Server.Workers
                 // Create Cleaning Lost
                 try
                 {
-
                     var serviceManagement = _services.GetService<IServiceManagementProvider>();
 
                     await serviceManagement.CheckAndShutdownAllLostServices(_options.CurrentValue.DurationShutdown);

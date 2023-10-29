@@ -1,24 +1,27 @@
-import { Injectable, Inject, Optional } from "@angular/core";
+import { Injectable, Inject, Optional, InjectionToken } from "@angular/core";
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import * as FileSaver from 'file-saver';
 import { PORTAL_BASE_URL } from './portal.service';
 import { map } from 'rxjs/operators';
-
+export const MEDIA_BASE_URL = new InjectionToken<string>('MEDIA_BASE_URL');
 @Injectable({
     providedIn: 'root'
 })
 export class DownloadFileService {
     private http: HttpClient;
-    private baseUrl: string;
+    private baseUrl: string
 
-    constructor(@Inject(HttpClient) http: HttpClient) {
+    constructor(
+        @Inject(HttpClient) http: HttpClient,
+        @Inject(MEDIA_BASE_URL) baseUrl: string) {
         this.http = http;
+        this.baseUrl = baseUrl
     }
 
     download(url: string) {
         let fileName = ''
         let fileType = ''
-        this.http.get(url,
+        this.http.get(this.baseUrl + url,
             {observe: 'response', responseType: 'blob'})
             .pipe(
                 map((res: HttpResponse<Blob>) => {

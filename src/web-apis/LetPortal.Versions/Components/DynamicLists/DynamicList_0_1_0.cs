@@ -190,7 +190,7 @@ namespace LetPortal.Versions.SectionParts.DynamicLists
                         },
                         new ColumnDef
                         {
-                            Name = "name",
+                            Name = "displayName",
                             DisplayName = "Name",
                             DisplayFormat = "{0}",
                             AllowSort = true,

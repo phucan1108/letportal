@@ -109,7 +109,7 @@ namespace LetPortal.Versions.Pages
                                         {
                                             DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                    "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\"}}}"
+                                    "{\"$insert\":{\"{{options.entityname}}\":{ \"$data\": \"{{data}}\", \"displayName\": \"{{data.name}}\"}}}"
                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                                         ? "INSERT INTO `databases` (id, name, `displayName`, `timeSpan`, `connectionString`, `dataSource`, `databaseConnectionType`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})"
                                         : "INSERT INTO databases(id, name, \"displayName\", \"timeSpan\", \"connectionString\", \"dataSource\", \"databaseConnectionType\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()|long}}, {{data.connectionString}}, {{data.dataSource}}, {{data.databaseConnectionType}})")
@@ -156,7 +156,7 @@ namespace LetPortal.Versions.Pages
                                         {
                                             DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                                "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
+                                                "{\"$update\":{\"{{options.entityname}}\":{\"$data\":\"{{data}}\", \"displayName\": \"{{data.name}}\",\"$where\":{\"_id\":\"ObjectId('{{data.id}}')\"}}}}"
                                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                                                         ? "Update `databases` SET name={{data.name}}, `displayName`={{data.name}}, `timeSpan`={{currentTick()|long}}, `connectionString`={{data.connectionString}}, `dataSource`={{data.dataSource}}, `databaseConnectionType`={{data.databaseConnectionType}}"
                                                         : "Update databases SET name={{data.name}}, \"displayName\"={{data.name}}, \"timeSpan\"={{currentTick()|long}}, \"connectionString\"={{data.connectionString}}, \"dataSource\"={{data.dataSource}}, \"databaseConnectionType\"={{data.databaseConnectionType}}")
@@ -297,7 +297,7 @@ namespace LetPortal.Versions.Pages
                                         {
                                             DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                                    "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"author\": \"{{user.username}}\",\r\n      \"createdDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\"\r\n    }\r\n  }\r\n}"
+                                                    "{\r\n  \"$insert\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"author\": \"{{user.username}}\",\r\n      \"createdDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"modifiedDate\": \"ISODate('{{currentISODate()}}')\"\r\n    }\r\n  }\r\n}"
                                                         : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                                                             ? "INSERT INTO `apps` (id, name, `displayName`, `timeSpan`, `logo`, `defaultUrl`, `author`, `currentVersionNumber`, `dateCreated`, `dateModified`) Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()|long}}, {{data.logo}}, {{data.defaultUrl}}, {{user.username}}, {{data.currentVersionNumber}}, {{currentDate()|date}}, {{currentDate()|date}})"
                                                             : "INSERT INTO apps(id, name, \"displayName\", \"timeSpan\", \"logo\", \"defaultUrl\", \"author\", \"currentVersionNumber\", \"dateCreated\", \"dateModified\") Values ({{guid()}}, {{data.name}}, {{data.displayName}}, {{currentTick()|long}}, {{data.logo}}, {{data.defaultUrl}}, {{user.username}}, {{data.currentVersionNumber}}, {{currentDate()|date}}, {{currentDate()|date}})")
@@ -345,7 +345,7 @@ namespace LetPortal.Versions.Pages
                                         {
                                             DatabaseConnectionId = Constants.PortalDatabaseId,
                                             ExecuteCommand = versionContext.ConnectionType == Core.Persistences.ConnectionType.MongoDB ?
-                                                "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"updatedDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
+                                                "{\r\n  \"$update\": {\r\n    \"{{options.entityname}}\": {\r\n      \"$data\": \"{{data}}\",\r\n      \"modifiedDate\": \"ISODate('{{currentISODate()}}')\",\r\n      \"$where\": {\r\n        \"_id\": \"ObjectId('{{data.id}}')\"\r\n      }\r\n    }\r\n  }\r\n}"
                                                     : (versionContext.ConnectionType == Core.Persistences.ConnectionType.MySQL
                                                     ? "UPDATE `apps` SET `name`={{data.name}}, `displayName`={{data.displayName}}, `timeSpan`={{currentTick()|long}}, `logo`={{data.logo}}, `defaultUrl`={{data.defaultUrl}}, `currentVersionNumber`={{data.currentVersionNumber}}, `dateModified`={{currentDate()|date}} Where id={{data.id}}" : "UPDATE apps SET \"name\"={{data.name}}, \"displayName\"={{data.displayName}}, \"timeSpan\"={{currentTick()|long}}, \"logo\"={{data.logo}}, \"defaultUrl\"={{data.defaultUrl}}, \"currentVersionNumber\"={{data.currentVersionNumber}}, \"dateModified\"={{currentDate()|date}} Where id={{data.id}}")
                                         }

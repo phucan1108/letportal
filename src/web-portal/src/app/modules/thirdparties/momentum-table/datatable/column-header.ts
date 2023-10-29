@@ -62,64 +62,72 @@ export class ColumnHeaderTemplateLoader implements OnInit, OnDestroy {
   `,
   styles: [
     `
-    tr {
-      text-align: left;
-      font-size: 12px;
-      height: var(--table-header-height, 55px);
-      color: rgba(0, 0, 0, 0.54);
-    }
-    tr:hover{
-      background: #fff;
-    }
-    th:not(:first-child){
-      padding: var(--column-padding, 0 28px);
-    }
-    th:first-child{
-      padding: var(--first-column-padding, 0 0 0 24px);
-    }
-    th:last-child{
-      padding: var(--last-column-padding, 0 24px 0 0);
-    }
-    th{
-      top: 0;
-      background: #fff;
-      z-index: 2 !important;
-    }
-    .fixed-header {
-      transform: var(--translate);
-      position: relative;
-      box-shadow: rgb(224, 224, 224) 0 2px 0 0;
-      transition-timing-function: ease-in;
-    }
-    .m-checkbox-header, .m-expand-header{
-      width: 1%;
-    }
-    .m-sortable-column {
-      cursor: pointer;
-    }
-
-    .m-sortable-column-icon {
-      font-size: 12px;
-      vertical-align: middle;
-    }
-    ::ng-deep .single-select-table .mat-checkbox-frame {
-      border-radius: 50% !important;
-    }
-
-    ::ng-deep .single-select-table .mat-checkbox-background {
-      border-radius: 50% !important;
-    }
-    ::ng-deep .single-select-table .mat-checkbox-background svg {
-      display: none;
-    }
-
-    ::ng-deep .single-select-table
-    .mat-checkbox-checked.mat-accent
-    .mat-checkbox-background {
-      border: 4px solid #fff !important;
-      transform: scale(0.8);
-    }
-  `,
+              tr {
+                text-align: left;
+                font-size: 12px;
+                height: var(--table-header-height, 55px);
+                color: rgba(0, 0, 0, 0.54);
+              }
+              tr:hover{
+                background: #fff;
+              }
+              th:not(:first-child){
+                padding: var(--column-padding, 0 28px);
+              }
+              th:first-child{
+                padding: var(--first-column-padding, 0 0 0 24px);
+              }
+              th:last-child{
+                padding: var(--last-column-padding, 0 24px 0 0);
+              }
+              th{
+                top: 0;
+                background: #fff;
+                z-index: 2 !important;
+              }
+              .fixed-header {
+                transform: var(--translate);
+                position: relative;
+                box-shadow: rgb(224, 224, 224) 0 2px 0 0;
+                transition-timing-function: ease-in;
+              }
+              .m-checkbox-header, .m-expand-header{
+                width: 1%;
+              }
+              .m-sortable-column {
+                cursor: pointer;
+              }
+          
+              .m-sortable-column-icon {
+                font-size: 12px;
+                vertical-align: middle;
+              }
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              ::ng-deep .single-select-table .mat-checkbox-frame {
+                border-radius: 50% !important;
+              }
+          
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              ::ng-deep .single-select-table .mat-checkbox-background {
+                border-radius: 50% !important;
+              }
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              ::ng-deep .single-select-table .mat-checkbox-background svg {
+                display: none;
+              }
+          
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              /* TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version. */
+              ::ng-deep .single-select-table
+              .mat-checkbox-checked.mat-accent
+              .mat-checkbox-background {
+                border: 4px solid #fff !important;
+                transform: scale(0.8);
+              }
+            `,
   ],
 })
 export class ColumnHeaderComponent {

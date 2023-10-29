@@ -1,13 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>LetPortal.Portal.AppParts</AssemblyName>
     <RootNamespace>LetPortal.Portal.AppParts</RootNamespace>
   </PropertyGroup>
   
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0-preview.23472.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
     <ProjectReference Include="..\LetPortal.Portal\LetPortal.Portal.csproj" />
   </ItemGroup>

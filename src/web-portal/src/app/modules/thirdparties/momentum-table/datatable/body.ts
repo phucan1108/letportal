@@ -163,7 +163,7 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
               <button type="button" mat-icon-button [ngStyle]="{visibility: (colIndex == hoverCellIndex && rowIndex == hoverRowIndex) ? 'visible' : 'hidden'}" *ngIf="col.resettable" class="action-icon m-clickable" (click)="dt.columnReset($event, col, row, rowIndex, colIndex);"><mat-icon class="m-clickable">sync</mat-icon></button>
             </div>
             <div [ngStyle]="getOffsetStyles(cell)" class="m-cell-editor" (click)="$event.stopPropagation()" *ngIf="col.editable && rowIndex === dt.editRowIndex && colIndex === dt.editCellIndex">
-              <mat-card matInput class="m-input-card" *ngIf="!col.editorTemplate">
+              <mat-card appearance="outlined" matInput class="m-input-card" *ngIf="!col.editorTemplate">
                 <mat-form-field [floatLabel]="'never'" class="m-input-form">
                   <input matInput placeholder="{{col.header}}" [(ngModel)]="row[col.field]" (change)="dt.onCellEditorChange($event, col, row, rowIndex)"
                          (keydown)="dt.onCellEditorKeydown($event, col, row, rowIndex)" (blur)="dt.onCellEditorBlur($event, col, row, rowIndex)"
@@ -199,85 +199,85 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
   `,
   styles: [
     `
-      tr {
-        border-top: 1px solid #e0e0e0;
-        height: var(--row-height, 50px);
-        transition: all 0.2s;
-      }
-      tr:hover {
-        background: #eeeeee;
-      }
-      td:not(:first-child) {
-        padding: var(--column-padding, 0px 28px);
-      }
-      td:first-child {
-        padding: var(--first-column-padding, 0 0 0 24px);
-      }
-      td:last-of-type  {
-        padding: var(--last-column-padding, 0 24px 0 0);
-      }
-      .m-row-selected {
-        background: #eeeeee;
-      }
-      .checkbox-container {
-        overflow: hidden;
-      }
-      .m-cell-data {
-        position: relative;
-      }
-      .m-expand-icon {
-        font-size: 12px;
-        vertical-align: middle;
-        cursor: pointer;
-        color: #757575;
-      }
-      .m-input-card {
-        background: #f7f7f7;
-        padding: 0px 0px !important;
-        top: 0px !important;
-        width: 500px;
-      }
-      .m-input-form {
-        width: 100%;
-        padding: 0px 12px;
-      }
-      .m-cell-editor {
-        position: absolute !important;
-        z-index: 1000 !important;
-      }
-      .m-editable-column > .m-cell-editor {
-        display: none;
-      }
-      .m-editable-column.m-cell-editing > .m-cell-editor {
-        display: block;
-      }
-      .m-editable-column.m-cell-editing > .m-cell-data {
-        visibility: hidden;
-      }
-      .action-icon {
-        color: #757575;
-        cursor: pointer;
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
-      }
-      .action-icon mat-icon {
-        font-size: 16px;
-      }
-      .row-settings {
-        height: calc(var(--row-height, 48px) - 1px);
-        background: linear-gradient(to right, #eeeeeef0, #eeeeee);
-        position: absolute;
-        right: 0;
-        padding: 0 1rem;
-        line-height: calc(var(--row-height, 48px) - 1px);
-      }
-      @media (max-width: 576px) {   
-        .m-input-card {
-          width:200px;
-        }
-      }
-    `
+                tr {
+                  border-top: 1px solid #e0e0e0;
+                  height: var(--row-height, 50px);
+                  transition: all 0.2s;
+                }
+                tr:hover {
+                  background: #eeeeee;
+                }
+                td:not(:first-child) {
+                  padding: var(--column-padding, 0px 28px);
+                }
+                td:first-child {
+                  padding: var(--first-column-padding, 0 0 0 24px);
+                }
+                td:last-of-type  {
+                  padding: var(--last-column-padding, 0 24px 0 0);
+                }
+                .m-row-selected {
+                  background: #eeeeee;
+                }
+                .checkbox-container {
+                  overflow: hidden;
+                }
+                .m-cell-data {
+                  position: relative;
+                }
+                .m-expand-icon {
+                  font-size: 12px;
+                  vertical-align: middle;
+                  cursor: pointer;
+                  color: #757575;
+                }
+                .m-input-card {
+                  background: #f7f7f7;
+                  padding: 0px 0px !important;
+                  top: 0px !important;
+                  width: 500px;
+                }
+                .m-input-form {
+                  width: 100%;
+                  padding: 0px 12px;
+                }
+                .m-cell-editor {
+                  position: absolute !important;
+                  z-index: 1000 !important;
+                }
+                .m-editable-column > .m-cell-editor {
+                  display: none;
+                }
+                .m-editable-column.m-cell-editing > .m-cell-editor {
+                  display: block;
+                }
+                .m-editable-column.m-cell-editing > .m-cell-data {
+                  visibility: hidden;
+                }
+                .action-icon {
+                  color: #757575;
+                  cursor: pointer;
+                  width: 30px;
+                  height: 30px;
+                  line-height: 30px;
+                }
+                .action-icon mat-icon {
+                  font-size: 16px;
+                }
+                .row-settings {
+                  height: calc(var(--row-height, 48px) - 1px);
+                  background: linear-gradient(to right, #eeeeeef0, #eeeeee);
+                  position: absolute;
+                  right: 0;
+                  padding: 0 1rem;
+                  line-height: calc(var(--row-height, 48px) - 1px);
+                }
+                @media (max-width: 576px) {   
+                  .m-input-card {
+                    width:200px;
+                  }
+                }
+              `
   ]
 })
 export class TableBodyComponent {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29215.179
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core-Nuget", "Core-Nuget", "{B0E410E9-B0DA-4ECD-A632-5395BD45078C}"
 EndProject
@@ -113,11 +113,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protos", "Protos", "{BF1BF5
 		Protos\configuration.proto = Protos\configuration.proto
 		Protos\logcollector.proto = Protos\logcollector.proto
 		Protos\monitor.proto = Protos\monitor.proto
+		Protos\notification.proto = Protos\notification.proto
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.UTs.CMS", "..\..\test\UnitTests\LetPortal.Tests.UTs.CMS\LetPortal.Tests.UTs.CMS.csproj", "{89AD948A-4B80-4D3A-82B1-2C3A3471BE95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.CMS.Features.Menus", "LetPortal.CMS.Features.Menus\LetPortal.CMS.Features.Menus.csproj", "{946819CB-6660-41DB-9116-0B1AEDE60725}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Notification", "LetPortal.Notification\LetPortal.Notification.csproj", "{6A7BB71B-B780-41D9-9CFF-4D9D3876C426}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Notification.AppParts", "LetPortal.Notification.AppParts\LetPortal.Notification.AppParts.csproj", "{3A55054D-6DE7-4712-94CD-A507D92E699E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -229,6 +234,14 @@ Global
 		{946819CB-6660-41DB-9116-0B1AEDE60725}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{946819CB-6660-41DB-9116-0B1AEDE60725}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{946819CB-6660-41DB-9116-0B1AEDE60725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A7BB71B-B780-41D9-9CFF-4D9D3876C426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A7BB71B-B780-41D9-9CFF-4D9D3876C426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A7BB71B-B780-41D9-9CFF-4D9D3876C426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A7BB71B-B780-41D9-9CFF-4D9D3876C426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A55054D-6DE7-4712-94CD-A507D92E699E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A55054D-6DE7-4712-94CD-A507D92E699E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A55054D-6DE7-4712-94CD-A507D92E699E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A55054D-6DE7-4712-94CD-A507D92E699E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -277,6 +290,8 @@ Global
 		{BF1BF500-3A89-44C7-A28D-1E152EAF0016} = {B0E410E9-B0DA-4ECD-A632-5395BD45078C}
 		{89AD948A-4B80-4D3A-82B1-2C3A3471BE95} = {441CDE0D-9472-411D-AC47-34768FD0342E}
 		{946819CB-6660-41DB-9116-0B1AEDE60725} = {2FEBE9A1-7EFE-4940-9AB9-6EEEDE6000A0}
+		{6A7BB71B-B780-41D9-9CFF-4D9D3876C426} = {FCDBA824-B82A-4688-BF14-FF866A0B25C3}
+		{3A55054D-6DE7-4712-94CD-A507D92E699E} = {5F509A06-D8A8-4D8E-B254-FCFF47F39A91}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B8132CF7-7C19-457C-8BD0-D7F09DA986EC}

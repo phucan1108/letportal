@@ -1,4 +1,4 @@
-import * as moment from 'moment'
+import * as moment from 'moment';
 
 export class DateUtils {
     public static getUTCNow() {
@@ -8,14 +8,24 @@ export class DateUtils {
         return new Date(now_utc);
     }
 
+    public static getDotNetTicks(date: Date) {
+        return (date.getTime() * 10000) + 621355968000000000
+    }
+
     public static getUTCNowByDate(date: Date) {
         const now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
             date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
         return new Date(now_utc);
     }
 
-    public static toDateFormat(date: Date, format: string){
+    public static toDateFormat(date: Date, format: string) {
         return moment(date).format(format)
+    }
+
+    public static getPeriodLength(sourceDate: Date, targetDate: Date) {
+        let sourceMoment = moment(sourceDate)
+        let targetMoment = moment(targetDate)
+        return sourceMoment.from(targetMoment, true)
     }
 
     public static toDateMMDDYYYYString(date: Date) {

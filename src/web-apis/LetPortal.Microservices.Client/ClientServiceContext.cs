@@ -153,5 +153,15 @@ namespace LetPortal.Microservices.Client
                 }
             }
         }
+
+        public string GetServiceId()
+        {
+            return serviceId;
+        }
+
+        public string GetServiceName()
+        {
+            return _serviceOptions.CurrentValue.Name;
+        }
     }
 }
