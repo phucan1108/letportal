@@ -287,7 +287,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             Mock<IFileSeviceProvider> mockFileProvider = new Mock<IFileSeviceProvider>();
             mockFileProvider
                 .Setup(a => a.UploadFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
-                .Returns(Task.FromResult(new ResponseUploadFile { DownloadableUrl = "http://localhost", FileId = DataUtil.GenerateUniqueId() }));
+                .Returns(Task.FromResult(new ResponseUploadFile { DownloadVirtualPath = "http://localhost", FileId = DataUtil.GenerateUniqueId() }));
 
             mockFileProvider
                 .Setup(a => a.ValidateFile(It.IsAny<IFormFile>()))
@@ -362,7 +362,7 @@ namespace LetPortal.Tests.ITs.Portal.Services
             Mock<IFileSeviceProvider> mockFileProvider = new Mock<IFileSeviceProvider>();
             mockFileProvider
                 .Setup(a => a.UploadFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
-                .Returns(Task.FromResult(new ResponseUploadFile { DownloadableUrl = "http://localhost", FileId = DataUtil.GenerateUniqueId() }));
+                .Returns(Task.FromResult(new ResponseUploadFile { DownloadVirtualPath = "http://localhost", FileId = DataUtil.GenerateUniqueId() }));
 
             mockFileProvider
                 .Setup(a => a.ValidateFile(It.IsAny<IFormFile>()))
