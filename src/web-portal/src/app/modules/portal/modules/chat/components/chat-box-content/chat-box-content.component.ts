@@ -252,6 +252,10 @@ export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit
             (this.formGroup.controls.text.value ? this.formGroup.controls.text.value : '') + $event.char)
     }
 
+    changeEmojiToggle(){
+        this.toggled = !this.toggled
+    }
+
     getMediaFileUrl(fileUrl: string){
         console.log('Hit media url', this.mediaBaseUrl + fileUrl)
         return this.mediaBaseUrl + fileUrl 

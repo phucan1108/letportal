@@ -103,9 +103,9 @@
                     <mat-icon>attach_file</mat-icon>
                     <input class="file-input-overlay" type="file" #fileInput (change)="onFileChange($event)">
                 </button>
-                <button mat-icon-button color="primary" matTooltip="{{ 'chat.chatBoxContent.icon.tooltip' | translate }}" [matTooltipPosition]="'above'">
+                <button mat-icon-button color="primary" (click)="changeEmojiToggle()" matTooltip="{{ 'chat.chatBoxContent.icon.tooltip' | translate }}" [matTooltipPosition]="'above'">
                     <mat-icon style="cursor: pointer;">mood</mat-icon>
-                    <div (click)="toggled = !toggled" [(emojiPickerIf)]="toggled" [emojiPickerDirection]="'top'"
+                    <div [emojiPickerIf]="toggled" [emojiPickerDirection]="'top'"
                         (emojiPickerSelect)="emotionPicked($event)" class="field-full-width overlay-emotion">
                     </div>
                 </button>

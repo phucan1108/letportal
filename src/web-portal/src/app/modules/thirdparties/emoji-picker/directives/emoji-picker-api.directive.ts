@@ -38,6 +38,7 @@ export class EmojiPickerApiDirective {
 
 
   @Input('emojiPickerIf') set emojiPickerIf(condition: boolean) {
+    console.log('Hit Emoji Picker If', condition)
     this._emojiPickerOpenState.next(condition);
   }
   @Output('emojiPickerIfChange') emojiPickerIfEmitter = new EventEmitter<boolean>();
