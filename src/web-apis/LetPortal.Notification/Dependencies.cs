@@ -20,7 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LetPortal.Notification
 {
-    public static class NotificationExtensions
+    public static class Dependencies
     {
         public const string NOTIFICATION_POLICY_CORS = "NotificationCors";
         public static ILetPortalBuilder AddNotification(

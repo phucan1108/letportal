@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace LetPortal.Chat
 {
-    public static class ChatExtensions
+    public static class Dependencies
     {
         public const string CHAT_POLICY_CORS = "ChatCors";
         public static ILetPortalBuilder AddChat(this ILetPortalBuilder builder)

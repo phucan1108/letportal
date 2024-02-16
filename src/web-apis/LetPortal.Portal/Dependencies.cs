@@ -48,7 +48,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LetPortal.Portal
 {
-    public static class PortalExtensions
+    public static class Dependencies
     {
         public static ILetPortalBuilder AddPortal(
             this ILetPortalBuilder builder,

@@ -22,6 +22,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using Dependencies = LetPortal.Notification.Dependencies;
 
 namespace LET.Tools.Installation
 {
@@ -338,12 +339,12 @@ namespace LET.Tools.Installation
                 services.AddTransient(a => databaseOptions);
             }
 
-            PortalExtensions.RegisterRepos(services, databaseOptions, true);
-            PortalExtensions.RegisterProviders(services);
-            PortalExtensions.RegisterServices(services);
+            LetPortal.Portal.Dependencies.RegisterRepos(services, databaseOptions, true);
+            LetPortal.Portal.Dependencies.RegisterProviders(services);
+            LetPortal.Portal.Dependencies.RegisterServices(services);
 
-            NotificationExtensions.RegisterServices(services);
-            NotificationExtensions.RegisterRepos(services, databaseOptions);
+            Dependencies.RegisterServices(services);
+            Dependencies.RegisterRepos(services, databaseOptions);
         }
 
         private void RegisterServicesForIdentity(IServiceCollection services, DatabaseOptions databaseOptions)
@@ -357,7 +358,7 @@ namespace LET.Tools.Installation
                 services.AddTransient(a => databaseOptions);
             }
 
-            IdentityExtensions.RegisterRepos(services, databaseOptions);
+            LetPortal.Identity.Dependencies.RegisterRepos(services, databaseOptions);
         }
 
         private RootArgument CombineArguments()
