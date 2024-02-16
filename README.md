@@ -17,11 +17,11 @@ The current version is **0.9.0**. We are trying to push quickly many changes so 
 
 # Visit our homepage
 
-You can reach this [Home page](https://letportal.app) to keep up-to-date features.
+You can reach this [Home page](https://home.letportal.app) to keep up-to-date features.
 
 <img src="https://docs.letportal.app/assets/images/getting-started/homescreen.jpg" width="600"/>
                                                                                           
-<img src="https://letportal.app/images/letportal/featurespage/header-banner.png" width="600" />          
+<img src="https://home.letportal.app/images/letportal/featurespage/header-banner.png" width="600" />          
 
 # Technologies
 
@@ -67,7 +67,7 @@ Quickly create the form by scanning the data from the database. Ex: If you have 
 - [x] Support synchronous and asynchronous Validation
 - [x] Support Localization
 
-<img src="https://letportal.app/images/letportal/featurespage/standard-banner.png" width="600"/>
+<img src="https://home.letportal.app/images/letportal/featurespage/standard-banner.png" width="600"/>
 
 ## Array
 
@@ -77,7 +77,7 @@ Quickly create the gridview which can manipulate array data. Ex: If you have a S
 - [x] Detect dirty object
 - [x] Allow to separate INSERT, UPDATE and DELETE command when updating to Database.
 
-<img src="https://letportal.app/images/letportal/featurespage/array-banner.png" width="600"/>
+<img src="https://home.letportal.app/images/letportal/featurespage/array-banner.png" width="600"/>
 
 ## Tree
 
@@ -87,7 +87,7 @@ Quickly create the tree which can manipulate tree data. Ex: You have a nested da
 - [x] Support to convert input and output between nested and flat
 - [x] UI/UX following to Material Design
 
-<img src="https://letportal.app/images/letportal/featurespage/tree-banner.png" width="600"/>
+<img src="https://home.letportal.app/images/letportal/featurespage/tree-banner.png" width="600"/>
 
 ## Dynamic List
 
@@ -98,7 +98,7 @@ Quickly create an advanced search list which can search/sort/filter the data.
 - [x] Support format the data as HTML
 - [x] Export to CSV (in client only)
 
-<img src="https://letportal.app/images/letportal/featurespage/list-banner.jpg" width="600"/>
+<img src="https://home.letportal.app/images/letportal/featurespage/list-banner.jpg" width="600"/>
 
 ## Chart
 
@@ -108,19 +108,19 @@ Quickly create the chart by converting the query into chart. Support many chart 
 - [x] Support Advanced filter
 - [x] Support real-time data
 
-<img src="https://letportal.app/images/letportal/featurespage/chart-banner.jpg" width="600"/>
+<img src="https://home.letportal.app/images/letportal/featurespage/chart-banner.jpg" width="600"/>
 
 ## Chat & Video Call
 
 Allow user to communicate via LET Portal, save file within the system and make a video call with WebRTC.
 
-<img src="https://letportal.app/images/letportal/featurespage/chat-banner.png" width="600"/>
+<img src="https://home.letportal.app/images/letportal/featurespage/chat-banner.png" width="600"/>
 
 ## Mobile Ready
 
 All components are built to be mobile-friendly.
 
-<img src="https://letportal.app/images/letportal/featurespage/mobile-banner.png" width="300"/>
+<img src="https://home.letportal.app/images/letportal/featurespage/mobile-banner.png" width="300"/>
 
 
 ## More and more features
@@ -129,9 +129,9 @@ We also provide many simple but elegant feature such as Chat, Video Call, CLI. A
 
 # Getting Started
 
-On Windows OS, you can visit [this page](https://letportal.app/getting-started/windows)
+On Windows OS, you can visit [this page](https://home.letportal.app/getting-started/windows)
 
-On Linux Ubuntu OS, you can visit [this page](https://letportal.app/getting-started/linux)
+On Linux Ubuntu OS, you can visit [this page](https://home.letportal.app/getting-started/linux)
 
 # Documentation
 
