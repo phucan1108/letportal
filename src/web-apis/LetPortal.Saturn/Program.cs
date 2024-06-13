@@ -125,7 +125,7 @@ app.UseSaturnServer(app.Lifetime, options =>
 });
 
 app.UseOpenApi();
-app.UseSwaggerUi3();
+app.UseSwaggerUi();
 app.UseReDoc();
 app.UseAuthentication();
 app.UseAuthorization();
