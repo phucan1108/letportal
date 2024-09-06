@@ -8,14 +8,20 @@ services:
     volumes:
       - mongodata:/data/db
   rabbitmq:
-    image: rabbitmq:3.9.11
+    image: rabbitmq:3.13.7-management
     ports:
+      - "15672:15672"
       - "5673:5672"
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=letportal
       - RABBITMQ_DEFAULT_PASS=letportal
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
   lp.saturn:
     image: lp-saturn:0.9.0
     environment:
@@ -24,8 +30,10 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal.pfx
     depends_on:
-      - mongodb
-      - rabbitmq
+      mongodb:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     build:
       context: .
       dockerfile: LetPortal.Saturn/Dockerfile
@@ -35,6 +43,13 @@ services:
     ports:
       - "5101:80"
       - "5102:443"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/healthy" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    links:
+      - rabbitmq
   cms:
     image: cms:1.0.0
     environment:
@@ -42,9 +57,9 @@ services:
      - ASPNETCORE_URLS=https://+:443;http://+:80
      - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal-cms.pfx
-    depends_on:
-     - mongodb
-     - lp.saturn
+    depends_on:     
+     lp.saturn:
+       condition: service_healthy
     build:
       context: .
       dockerfile: LetPortal.Websites.CMS/Dockerfile
@@ -54,6 +69,8 @@ services:
     ports:
       - "5103:80"
       - "5104:443"
+    links:
+      - lp.saturn
 volumes:
   mongodata:
     driver: local

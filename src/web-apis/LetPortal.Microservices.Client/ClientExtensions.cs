@@ -224,6 +224,7 @@ namespace LetPortal.Microservices.Client
             IHostApplicationLifetime hostLifeTime,
             Action<SaturnClientMiddlewareOptions> action = null)
         {
+            app.UseHealthChecks("/healthy");
             var middleOptions = new SaturnClientMiddlewareOptions();
 
             if(action != null)
