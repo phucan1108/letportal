@@ -7,8 +7,8 @@ import { SecurityService } from 'app/core/security/security.service';
 import { PagesClient, ClaimValueType, AppsClient } from 'services/portal.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { SelectionModel } from '@angular/cdk/collections';
-import { RolePortalClaimModel, RolesClient, PortalClaimModel } from 'services/identity.service';
- 
+import { RolePortalClaimModel, RolesClient, PortalClaimModel } from 'services/portal.service';
+
 import { combineLatest } from 'rxjs';
 import { NGXLogger } from 'ngx-logger';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
@@ -96,8 +96,8 @@ export class RoleClaimsPage implements OnInit {
         this.transformerSelectedClaim, node => node.level, node => node.expandable, (node: SelectablePortalClaim) => node.subClaims);
 
     dataSourceSelectedClaims = new MatTreeFlatDataSource(this.treeSelectedControl, this.treeSelectedFlattener);
-    
-    hasChild = (_: number, node: ClaimNode) => node.expandable || node.level === 0;    
+
+    hasChild = (_: number, node: ClaimNode) => node.expandable || node.level === 0;
 
     ngOnInit(): void {
         this.pageService.init('role-claims').subscribe()

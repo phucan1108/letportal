@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NGXLogger } from 'ngx-logger';
 import { SecurityService } from '../security.service';
-import { AccountsClient } from 'services/identity.service';
+import { AccountsClient } from 'services/portal.service';
 import { environment } from 'environments/environment';
 import { AuthToken } from '../auth.model';
 import { SessionService } from 'services/session.service';

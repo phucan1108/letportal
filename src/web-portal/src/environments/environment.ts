@@ -1,11 +1,11 @@
-// This file can be replaced during build by using the `fileReplacements` array.
+  // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
   production: false,
   version: '0.9.0',
-  configurationEndpoint: 'https://localhost:7511/api/configurations/Portal/v1.0',
+  configurationEndpoint: 'https://localhost:5102/api/configurations/Portal/v1.0',
   ignoreSendTokenEndpoints: 'api/accounts/login;api/accounts/refresh;api/accounts/forgot-password;api/accounts/recovery-password;assets/i18n',
   chatOptions: {
     allowFileTypes: 'jpg;jpeg;gif;png;zip;rar;doc;docx;xls;xlsx;pdf',

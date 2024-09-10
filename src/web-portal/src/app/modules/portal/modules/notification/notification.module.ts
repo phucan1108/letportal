@@ -31,17 +31,17 @@ import { NotificationBoxPage } from './pages/notification-box-page/notification-
         NotificationRouterPage,
         NotificationBoxPage
     ],
-    imports: [ 
+    imports: [
         CoreModule.forChild(),
         CommonModule,
         ReactiveFormsModule,
-        NotificationRoutingModule,  
+        NotificationRoutingModule,
         FormsModule,
 		ReactiveFormsModule,
 		MatInputModule,
-		MatFormFieldModule,   
-        MatCardModule,                   
-        MatCheckboxModule, 
+		MatFormFieldModule,
+        MatCardModule,
+        MatCheckboxModule,
         MatBadgeModule,
         MatToolbarModule,
         MatIconModule,
@@ -57,14 +57,12 @@ import { NotificationBoxPage } from './pages/notification-box-page/notification-
         MatInputModule,
         MatListModule,
         MatProgressBarModule,
-        MatRadioModule,  
-        MatButtonToggleModule,      
-        ScrollingModule        
+        MatRadioModule,
+        MatButtonToggleModule,
+        ScrollingModule
     ],
     exports: [
         RouterModule
-    ],
-    entryComponents:[
     ],
     providers: [],
 })

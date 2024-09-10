@@ -219,7 +219,7 @@ export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
             if (ObjectUtils.isNotNull(standard.controls)) {
                 standard.controls?.forEach(control => {
                     const hidden = control.options.find(a => a.key === 'hidden')
-                    if (hidden !== 'true') {
+                    if (!hidden) {
                         const labelName = this.localizationService.getText(`standardComponents.${standard.name}.${control.name}.options.label`)
                         if (ObjectUtils.isNotNull(labelName)) {
                             let label = control.options.find(a => a.key === 'label')

@@ -20,7 +20,6 @@ import { MatTreeModule } from '@angular/material/tree';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreModule } from 'app/core/core.module';
 import { InterceptorsProvider, PAGE_INTERCEPTORS } from 'app/core/interceptors/interceptor.provider';
-import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { ALL_INTERCEPTORS } from '../customs/custom.config';
 import { AppDashboardComponent } from './components/app-dashboard/app-dashboard.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
@@ -46,9 +45,8 @@ const mapToProvider = (interceptor: any): Provider => {
     imports: [
         CoreModule.forChild(),
         CommonModule,
-        PagesRoutingModule, 
+        PagesRoutingModule,
         LayoutModule,
-        MatProgressButtonsModule,
         MatProgressSpinnerModule,
         MatProgressBarModule,
         MatToolbarModule,

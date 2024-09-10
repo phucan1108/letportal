@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AppsClient } from 'services/portal.service';
-import { RolesClient } from 'services/identity.service';
+import { RolesClient } from 'services/portal.service';
 
 @Injectable()
 export class RoleClaimsResolve implements Resolve<any> {

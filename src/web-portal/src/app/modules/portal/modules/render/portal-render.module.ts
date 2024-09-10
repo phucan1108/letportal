@@ -43,7 +43,6 @@ import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { AngularMarkdownEditorModule } from 'angular-markdown-editor';
 import { CoreModule } from 'app/core/core.module';
 import { MomentumTableModule } from 'app/modules/thirdparties/momentum-table/datatable/datatable';
-import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { MarkdownModule } from 'ngx-markdown';
 import { QuillModule } from 'ngx-quill';
 import { ChartFilterRenderComponent } from './components/chart/chart-filter-render.component';
@@ -134,7 +133,6 @@ export const FULL_MONTH_FORMATS = {
 		ScrollingModule,
 		MatMomentDateModule,
 		NgJsonEditorModule,
-		MatProgressButtonsModule,
 		TranslateModule,
 		QuillModule.forRoot({
             modules: {
@@ -152,11 +150,6 @@ export const FULL_MONTH_FORMATS = {
 		NgxChartsModule,
 		AngularMarkdownEditorModule.forRoot(),
 		MarkdownModule.forRoot()
-	],
-	entryComponents: [
-		DynamicListDataDialogComponent,
-		AdvancedFilterDialogComponent,
-		StandardArrayDialog
 	],
 	exports: [RouterModule],
 	providers: [

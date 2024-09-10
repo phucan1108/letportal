@@ -22,7 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LetPortal.Identity
 {
-    public static class IdentityExtensions
+    public static class Dependencies
     {
         public static ILetPortalBuilder AddIdentity(this ILetPortalBuilder builder)
         {               

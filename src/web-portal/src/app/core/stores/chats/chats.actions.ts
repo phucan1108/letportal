@@ -1,5 +1,5 @@
 import { ClickedOnChatUserEvent, TakeUserOnlineEvent, ActiveDoubleChatActionEvent, OpenNewDoubleChatRoomEvent as FetchedNewDoubleChatRoomEvent, SendNewMessageEvent, ReceivedMessageEvent, ClickedOnChatBoxIconEvent, LoadingMoreSessionEvent, LoadedMoreSessionEvent, AddedNewSessionEvent, ReceivedMessageFromAnotherDeviceEvent, InitialReceivedChatRoomEvent, NotifyNewIncomingMessageEvent, LoadedAllAvailableUsersEvent, IncomingOnlineUserEvent, IncomingOfflineUserEvent, IncomingMessageFromUnloadUserEvent, IncomingVideoCallEvent, HandshakedVideoCallEvent, ReceivedIceServerEvent } from './chats.events'
-import { ErrorCode } from 'services/identity.service'
+import { ErrorCode } from 'services/portal.service'
 
 const CHAT_ACTION = '[Chat Action]'
 
@@ -165,7 +165,7 @@ export type All =
     FetchedNewDoubleChatRoom |
     SentMessage |
     ReceivedMessage |
-    LoadedAllAvailableUsers| 
+    LoadedAllAvailableUsers|
     IncomingOnlineUser |
     IncomingOfflineUser |
     IncomingMessageFromUnloadUser

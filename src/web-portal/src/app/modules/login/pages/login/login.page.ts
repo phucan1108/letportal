@@ -8,7 +8,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import { environment } from 'environments/environment';
 import * as moment from 'moment';
 import { NGXLogger } from 'ngx-logger';
-import { AccountsClient, RolesClient } from 'services/identity.service';
+import { AccountsClient, RolesClient } from 'services/portal.service';
 import { SessionService } from 'services/session.service';
 @Component({
     selector: 'let-login',
@@ -30,12 +30,12 @@ export class LoginPage implements OnInit {
         private accountClient: AccountsClient,
         private logger: NGXLogger,
         private session: SessionService,
-        private security: SecurityService,        
+        private security: SecurityService,
         private roleClient: RolesClient,
         private cd: ChangeDetectorRef
     ) { }
 
-    ngOnInit(): void {        
+    ngOnInit(): void {
         // Ensure user will be signed out when be back to login page
         this.session.clear()
         this.security.userLogout()

@@ -6,7 +6,7 @@ import { DateUtils } from 'app/core/utils/date-util';
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
-import * as moment from 'moment';
+import Moment from 'moment';
 import { NGXLogger } from 'ngx-logger';
 import { ChartOptions } from 'portal/modules/models/chart.extended.model';
 import { Observable, Subscription } from 'rxjs';
@@ -16,7 +16,7 @@ import { PageService } from 'services/page.service';
 import { Chart, ChartFilterValue, ChartParameterValue, ChartsClient, ChartType, PageSectionLayoutType } from 'services/portal.service';
 import { AddSectionBoundData, BeginBuildingBoundData, GatherSectionValidations, SectionValidationStateAction } from 'stores/pages/page.actions';
 import { PageStateModel } from 'stores/pages/page.state';
- 
+
 @Component({
     selector: 'let-chart-render',
     templateUrl: './chart-render.component.html',
@@ -93,7 +93,7 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
                             if (state.specificValidatingSection === this.section.name
                                 || !ObjectUtils.isNotNull(state.specificValidatingSection)) {
                                 this.store.dispatch(new SectionValidationStateAction(this.section.name, true))
-                            }  
+                            }
                             break
                     }
                 }
@@ -277,19 +277,19 @@ export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy
         if(!!xFormatDate){
             if(isMultiData){
                 result?.forEach(r => {
-                    const isDate = moment(r.series[0].name).isValid()
+                    const isDate = Moment(r.series[0].name).isValid()
                     if(isDate){
                         r.series?.forEach(e => {
-                            e.name = moment(e.name).format(xFormatDate)
+                            e.name = Moment(e.name).format(xFormatDate)
                         })
                     }
                 })
             }
             else{
-                const isDate = moment(result[0].name).isValid()
+                const isDate = Moment(result[0].name).isValid()
                 if(isDate){
                     result?.forEach(e => {
-                        e.name = moment(e.name).format(xFormatDate)
+                        e.name = Moment(e.name).format(xFormatDate)
                     })
                 }
             }

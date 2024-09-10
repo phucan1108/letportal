@@ -15,7 +15,6 @@ namespace LetPortal.Identity.AppParts.Controllers
 {
     [Route("api/roles")]
     [ApiController]
-    [OpenApiIgnore]
     public class RolesController : ControllerBase
     {
         private readonly IIdentityServiceProvider _identityServiceProvider;

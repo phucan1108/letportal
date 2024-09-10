@@ -10,8 +10,6 @@ import { Subscription } from 'rxjs';
 import { HandshakedVideoCall, ReceivedIceServer, ForceDroppedCall, UserDeniedCall, DroppedCall, UserDroppedCall, UserCancelledCall } from 'stores/chats/chats.actions';
 import { CHAT_STATE_TOKEN } from 'stores/chats/chats.state';
 import 'webrtc-adapter'
-import { async } from '@angular/core/testing';
-import { ObjectUtils } from 'app/core/utils/object-util';
 import { heartBeatAnimation } from 'angular-animations';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
@@ -60,7 +58,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
         private store: Store,
         private logger: NGXLogger,
         private shortcutUtil: ShortcutUtil,
-        private breakpointObserver: BreakpointObserver,        
+        private breakpointObserver: BreakpointObserver,
         private translate: TranslateService
     ) {
         this.breakpointObserver.observe([
@@ -180,7 +178,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
             ).subscribe(
                 () => {
                     // Caller is cancelled a call when he is dialing
-                    // So we drop the call as well  
+                    // So we drop the call as well
                     this.shortcutUtil.toastMessage(this.translate.instant('chats.videoCall.messages.userEndCall'), ToastType.Warning)
                     this.store.dispatch(new DroppedCall())
                     this.dialogRef.close()
@@ -222,7 +220,7 @@ export class VideoCallDialogComponent implements OnInit, OnDestroy {
                         if (this.currentCallState === VideoCallState.Dropped) {
                             this.dropCall()
                         }
-                        // We accept a force closed here    
+                        // We accept a force closed here
                         this.dialogRef.close()
                     }, 500)
                     break

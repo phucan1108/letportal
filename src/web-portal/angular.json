@@ -15,12 +15,15 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/web-portal",
+            "outputPath": {
+              "base": "dist/web-portal"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/logo.ico",
@@ -34,27 +37,24 @@
               "./node_modules/quill/dist/quill.core.css",
               "./node_modules/quill/dist/quill.bubble.css",
               "./node_modules/quill/dist/quill.snow.css",
-              "./node_modules/quill-emoji/dist/quill-emoji.css",
               "./node_modules/quill-mention/dist/quill.mention.min.css",
               "./node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css",
               "./node_modules/prismjs/themes/prism.css"
             ],
             "scripts": [
-              "./node_modules/quill/dist/quill.min.js",
               "./node_modules/bootstrap-markdown/js/bootstrap-markdown.js",
-              "./node_modules/marked/lib/marked.js",
+              "./node_modules/marked/lib/marked.esm.js",
               "./node_modules/prismjs/prism.js",
               "./node_modules/prismjs/components/prism-css.min.js",
               "./node_modules/prismjs/components/prism-javascript.min.js",
               "./node_modules/prismjs/components/prism-typescript.min.js"
             ],
             "aot": false,
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -70,8 +70,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -79,25 +77,25 @@
                   "maximumError": "5mb"
                 }
               ]
-            }            
+            }
           },
           "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "web-portal:build"
+            "buildTarget": "web-portal:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "web-portal:build:production"
+              "buildTarget": "web-portal:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "web-portal:build"
+            "buildTarget": "web-portal:build"
           }
         },
         "test": {
