@@ -26,11 +26,6 @@ import { TranslateModule } from '@ngx-translate/core';
         MatIconModule,
         TranslateModule
     ],
-    entryComponents: [
-        ConfirmationDialogComponent,
-        ActionNotificationComponent,
-        EventDialogComponent
-    ],
     exports: [
         ConfirmationDialogComponent,
         EventDialogComponent

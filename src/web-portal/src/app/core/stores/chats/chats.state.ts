@@ -4,7 +4,7 @@ import * as ChatActions from './chats.actions'
 import { ObjectUtils } from 'app/core/utils/object-util';
 import { patch, updateItem, insertItem, removeItem } from '@ngxs/store/operators';
 import { ArrayUtils } from 'app/core/utils/array-util';
-import { ErrorCode } from 'services/identity.service';
+import { ErrorCode } from 'services/portal.service';
 import { Injectable } from '@angular/core';
 
 const MAX_ROOMS = 4
@@ -140,15 +140,14 @@ export class ChatState {
     @Action(ChatActions.ActiveChatSearchBox)
     public activeChatBox(ctx: StateContext<ChatStateModel>, { }: ChatActions.ActiveChatSearchBox) {
         const state = ctx.getState()
-        // We need to check there are any active chat, 
+        // We need to check there are any active chat,
         // if had, we need to move it back to chat room
         if (ObjectUtils.isNotNull(state.activeChatSession)) {
             const foundRoom: DoubleChatRoom = ObjectUtils.clone(state.chatRooms.find(a => a.chatRoomId === state.activeChatSession.chatRoomId))
             foundRoom.currentSession = state.activeChatSession
             ctx.setState(
                 patch({
-                    chatRooms: updateItem<ChatRoom>(a => a.chatRoomId === foundRoom.chatRoomId, foundRoom),
-                    activeChatRoom: null
+                    chatRooms: updateItem<ChatRoom>(a => a.chatRoomId === foundRoom.chatRoomId, foundRoom)
                 })
             )
         }
@@ -197,7 +196,7 @@ export class ChatState {
     @Action(ChatActions.FetchedNewDoubleChatRoom)
     public fetchedNewDoubleChatRoom(ctx: StateContext<ChatStateModel>, { event }: ChatActions.FetchedNewDoubleChatRoom) {
         const state = ctx.getState()
-        // Only new chat room is reached this action        
+        // Only new chat room is reached this action
         if (event.chatRoom.type === RoomType.Double) {
             event.chatRoom.lastVisited = (new Date()).getDate()
             ctx.setState(
@@ -263,7 +262,7 @@ export class ChatState {
         }
         else {
             // If there are no active chat session, so that means this added new session coming
-            // from unactived or unloaded 
+            // from unactived or unloaded
             const foundRoom = state.chatRooms.find(a => a.chatRoomId === event.chatSession.chatRoomId)
             if (foundRoom) {
                 let clonedFoundRoom: DoubleChatRoom = ObjectUtils.clone(foundRoom)
@@ -292,7 +291,7 @@ export class ChatState {
             else{
                 event.message.renderTime = true
             }
-            
+
             return ctx.setState(
                 patch({
                     activeChatSession: {
@@ -352,7 +351,7 @@ export class ChatState {
             else{
                 event.message.renderTime = true
             }
-            
+
             return ctx.setState(
                 patch({
                     activeChatSession: {
@@ -379,7 +378,7 @@ export class ChatState {
                     else{
                         event.message.renderTime = true
                     }
-                    
+
                     clonedFoundRoom.currentSession.messages.push(event.message)
                     // Ensure we still keep last session
                     clonedFoundRoom.currentSession.sessionId = event.chatSessionId
@@ -536,7 +535,7 @@ export class ChatState {
         return ctx.setState(
             patch({
                 handshakedVideoCall: null,
-                iceServer: null,
+                iceServers: null,
                 incomingVideoCall: null,
                 inviterVideoCall: null
             })
@@ -548,7 +547,7 @@ export class ChatState {
         return ctx.setState(
             patch({
                 handshakedVideoCall: null,
-                iceServer: null,
+                iceServers: null,
                 incomingVideoCall: null,
                 inviterVideoCall: null,
                 callErrorCode: error

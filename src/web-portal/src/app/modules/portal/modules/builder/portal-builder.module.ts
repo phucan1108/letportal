@@ -41,7 +41,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { CoreModule } from 'app/core/core.module';
 import { MomentumTableModule } from 'app/modules/thirdparties/momentum-table/datatable/datatable';
-import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { HighlightModule } from 'ngx-highlightjs';
 import { QuillModule } from 'ngx-quill';
 import { ExecutionDatabaseStepComponent } from 'portal/shared/button-options/executiondatabase-step.component';
@@ -226,7 +225,6 @@ import { StandardResolve } from './resolve/standard.resolve';
 		MomentumTableModule,
 		ScrollingModule,
 		MatMomentDateModule,
-		MatProgressButtonsModule,
 		TranslateModule,
 		QuillModule.forRoot({
 			modules: {
@@ -242,44 +240,6 @@ import { StandardResolve } from './resolve/standard.resolve';
 			}
 		}),
 		HighlightModule
-	],
-	entryComponents: [
-		CommandModalComponent,
-		DynamicListDataSourceComponent,
-		BuilderDnDComponent,
-		TextboxComponent,
-		SectionDialogComponent,
-		ControlsGridComponent,
-		ControlDialogComponent,
-		PageButtonGridComponent,
-		PageButtonDialogComponent,
-		PageEventDialogComponent,
-		PageEventGridComponent,
-		SuggestionHintComponent,
-		PageShellOptionDialogComponent,
-		MenuDialogComponent,
-		ClaimDialogComponent,
-		PageInfoComponent,
-		ShellOptionComponent,
-		CommandGridComponent,
-		DatabaseOptionComponent,
-		FilterOptionComponent,
-		ColumnGridComponent,
-		ParamsDialogComponent,
-		DatasourceOptionsDialogComponent,
-		ControlEventsDialogComponent,
-		PageDatasourceDialogComponent,
-		CommandOptionsComponent,
-		ShellOptionDialogComponent,
-		PageButtonRouteDialogComponent,
-		ButtonOptionsComponent,
-		PageButtonOptionsDialogComponent,
-		AsyncValidatorDialogComponent,
-		ChartDatasourceComponent,
-		ChartFilterGridComponent,
-		ChartFilterDialogComponent,
-		BackupSelectionComponent,
-		AppInstallationDialog
 	],
 	exports: [RouterModule],
 	providers: [

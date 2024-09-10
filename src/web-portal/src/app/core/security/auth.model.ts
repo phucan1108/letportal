@@ -1,6 +1,6 @@
-import * as decode from 'jwt-decode';
- 
-import { RolePortalClaimModel } from 'services/identity.service';
+import { jwtDecode } from 'jwt-decode';
+
+import { RolePortalClaimModel } from 'services/portal.service';
 import { ObjectUtils } from '../utils/object-util';
 
 export class AuthToken {
@@ -13,7 +13,7 @@ export class AuthToken {
         public refreshToken: string,
         public expireRefresh: number) {
         if (jwtToken) {
-            this.jsonTokenPayload = decode(jwtToken);
+            this.jsonTokenPayload = jwtDecode(jwtToken);
         }
 
         this.expireDate = new Date(0)
@@ -25,11 +25,11 @@ export class AuthToken {
 
     public toAuthUser() {
         return new AuthUser(
-            this.jsonTokenPayload.id, 
-            this.jsonTokenPayload.sub, 
+            this.jsonTokenPayload.id,
+            this.jsonTokenPayload.sub,
             this.jsonTokenPayload.roles,
             this.jsonTokenPayload.given_name,
-            this.jsonTokenPayload.picture, 
+            this.jsonTokenPayload.picture,
             this.jsonTokenPayload);
     }
 
@@ -44,12 +44,12 @@ export class AuthUser {
     claims: Array<RolePortalClaimModel> = []
 
     constructor(
-        public userid: string, 
-        public username: string, 
-        public roles: string[], 
+        public userid: string,
+        public username: string,
+        public roles: string[],
         public fullName: string,
         public avatar: string,
-        private tokenPayload: any) { 
+        private tokenPayload: any) {
             if(!ObjectUtils.isNotNull(fullName)){
                 this.fullName = this.username
             }

@@ -1,8 +1,8 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AccountsClient } from 'services/identity.service';
-import { CustomValidators } from 'ngx-custom-validators';
+import { AccountsClient } from 'services/portal.service';
+import { CustomValidators } from '@davidda/ngx-custom-validators'
 
 @Component({
     selector: 'let-forgot-password',

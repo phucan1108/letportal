@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import { AccountsClient, PortalClaimModel, RolesClient } from 'services/identity.service';
+import { AccountsClient, PortalClaimModel, RolesClient } from 'services/portal.service';
 import { SessionService } from 'services/session.service';
 import { AuthToken, AuthUser } from './auth.model';
 

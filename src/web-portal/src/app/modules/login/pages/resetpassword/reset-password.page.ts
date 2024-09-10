@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AccountsClient } from 'services/identity.service';
+import { AccountsClient } from 'services/portal.service';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({

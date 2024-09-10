@@ -13,9 +13,6 @@ import { EmojiPickerApiDirective } from './directives/emoji-picker-api.directive
 import { EmojiPickerCaretDirective } from './directives/emoji-picker-caret.directive';
 import { EmojiEmptyCategoryPipe } from './pipes/emoji-empty-category.pipe';
 
-
-
-
 @NgModule({
   declarations: [
     EmojiPickerApiDirective,
@@ -47,10 +44,7 @@ import { EmojiEmptyCategoryPipe } from './pipes/emoji-empty-category.pipe';
     EmojiCategoryComponent,
     EmojiFooterComponent
   ],
-  providers: [],
-  entryComponents: [
-    EmojiPickerComponent
-  ]
+  providers: []
 })
 export class EmojiPickerModule {
   static forRoot(): ModuleWithProviders<EmojiPickerModule> {

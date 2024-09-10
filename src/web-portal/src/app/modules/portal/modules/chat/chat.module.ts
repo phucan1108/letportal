@@ -22,7 +22,6 @@ import { MatTreeModule } from '@angular/material/tree';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreModule } from 'app/core/core.module';
 import { EmojiPickerModule } from 'app/modules/thirdparties/emoji-picker/emoji-picker.module';
-import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { ChatBoxContentComponent } from './components/chat-box-content/chat-box-content.component';
 import { ChatBoxWrapperComponent } from './components/chat-box-wrapper/chat-box-wrapper.component';
@@ -45,17 +44,13 @@ import { VideoStreamDialogComponent } from './components/video-stream-dialog/vid
         AvatarComponent,
         VideoStreamDialogComponent
     ],
-    entryComponents: [
-        VideoCallDialogComponent
-    ],
-    imports: [ 
+    imports: [
         CoreModule.forChild(),
         CommonModule,
         ReactiveFormsModule,
         EmojiPickerModule,
         MatInputModule,
-		MatFormFieldModule,
-        MatProgressButtonsModule,
+		    MatFormFieldModule,
         MatProgressSpinnerModule,
         MatProgressBarModule,
         MatToolbarModule,

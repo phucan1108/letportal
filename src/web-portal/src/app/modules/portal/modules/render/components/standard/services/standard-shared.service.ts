@@ -8,7 +8,7 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 import PageUtils from 'app/core/utils/page-util';
 import { PortalValidators } from 'app/core/validators/portal.validators';
 import { Guid } from 'guid-typescript';
-import { CustomValidators } from 'ngx-custom-validators';
+import { CustomValidators } from '@davidda/ngx-custom-validators'
 import { ArrayStandardOptions, TreeStandardOptions } from 'portal/modules/models/standard.extended.model';
 import { CustomHttpService } from 'services/customhttp.service';
 import { PageService } from 'services/page.service';
@@ -33,7 +33,7 @@ export class StandardSharedService {
      * This method is used to group all controls which are fitted in layout
      * @param filteredControls all displayed controls
      * @param numberOfColumns one col, two cols, etc...
-     * @returns controls group 
+     * @returns controls group
      */
     public buildControlsGroup(
         filteredControls: PageRenderedControl<DefaultControlOptions>[],
@@ -210,9 +210,9 @@ export class StandardSharedService {
      * Uses this method for constructing StandardBoundSection by passing StandardComponent
      * All types must call this method to build StandardBoundSection which is used in form or dialog
      * @param sectionName Section name
-     * @param storeName Store name is inputted while constructing Page Builder, it can be null 
+     * @param storeName Store name is inputted while constructing Page Builder, it can be null
      * @param standard StandardComponent instance
-     * @param boundData BoundData can be gotten from Datasource, use to set initial value and construct section data     
+     * @param boundData BoundData can be gotten from Datasource, use to set initial value and construct section data
      * @param [extendedValidators] Passing some custom validators, inputted in Standard Builder page
      * @param onComplete Callback method to retrieve sectionData, sectionMap
      * @returns bound section Always returned StandardBoundSection
@@ -262,17 +262,17 @@ export class StandardSharedService {
                     isCompositeControl: isChildCompositeControl
                 }
                 sectionsMap.push(mapDataControl)
-                
+
                 if(isChildCompositeControl){
                     if(!ObjectUtils.isNotNull(tempSectionData[control.compositeControlBindName])){
                         tempSectionData[control.compositeControlBindName] = new Object()
-                        
+
                     }
-                    tempSectionData[control.compositeControlBindName][control.defaultOptions.bindname] = controlData 
+                    tempSectionData[control.compositeControlBindName][control.defaultOptions.bindname] = controlData
                 }
                 else{
                     tempSectionData[control.defaultOptions.bindname] = controlData
-                }                
+                }
             }
             else {
                 const isChildCompositeControl = !!control.compositeControlId
@@ -285,14 +285,14 @@ export class StandardSharedService {
                 }
                 if(isChildCompositeControl){
                     if(!ObjectUtils.isNotNull(tempSectionData[storeName][control.compositeControlBindName])){
-                        tempSectionData[storeName][control.compositeControlBindName] = new Object()                        
+                        tempSectionData[storeName][control.compositeControlBindName] = new Object()
                     }
-                    tempSectionData[storeName][control.compositeControlBindName][control.defaultOptions.bindname] = controlData 
+                    tempSectionData[storeName][control.compositeControlBindName][control.defaultOptions.bindname] = controlData
                 }
                 else{
                     tempSectionData[storeName][control.defaultOptions.bindname] = controlData
-                }    
-                
+                }
+
                 sectionsMap.push(mapDataControl)
             }
 
@@ -472,7 +472,7 @@ export class StandardSharedService {
         if(!ObjectUtils.isNotNull(data)){
             return []
         }
-        // TODO: We need to transform data from flat -> nest because Tree 
+        // TODO: We need to transform data from flat -> nest because Tree
         if (treeOptions.indatastructure === 'flat') {
             return data
         }
@@ -532,11 +532,11 @@ export class StandardSharedService {
         let controlData = null
 
         // New 0.9.0: Support Child Composite Control
-        if(ObjectUtils.isNotNull(control.compositeControlRefId) 
+        if(ObjectUtils.isNotNull(control.compositeControlRefId)
             && control.type !== ControlType.Composite){
             if(!!data[control.compositeControlBindName]){
                 controlData = data[control.compositeControlBindName][control.defaultOptions.bindname]
-            }        
+            }
         }
         else if (controlBindName === 'id' || controlBindName === '_id') {
             const boundData = data._id

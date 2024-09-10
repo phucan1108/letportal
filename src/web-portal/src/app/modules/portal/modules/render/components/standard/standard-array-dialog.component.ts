@@ -7,7 +7,6 @@ import { OpenableBoundSection } from 'app/core/context/bound-section';
 import { ExtendedPageSection, GroupControls } from 'app/core/models/extended.models';
 import { DefaultControlOptions, PageRenderedControl } from 'app/core/models/page.model';
 import { ObjectUtils } from 'app/core/utils/object-util';
-import { MatProgressButtonOptions } from 'mat-progress-buttons';
 import { NGXLogger } from 'ngx-logger';
 import { PageService } from 'services/page.service';
 import { ControlType } from 'services/portal.service';
@@ -25,17 +24,6 @@ export class StandardArrayDialog implements OnInit {
     _labelClass = 'col-lg-2 col-form-label'
     _boundedClass = 'col-lg-4'
     isEdit = false
-    submitBtnOptions: MatProgressButtonOptions = {
-        active: false,
-        text: 'Save',
-        buttonColor: 'primary',
-        barColor: 'primary',
-        raised: false,
-        stroked: false,
-        fab: false,
-        mode: 'indeterminate',
-        disabled: false,
-    }
     constructor(
         private store: Store,
         private pageService: PageService,
@@ -74,13 +62,12 @@ export class StandardArrayDialog implements OnInit {
 
     submit() {
         this.builderFormGroup.markAsTouched()
-        this.submitBtnOptions.active = true
+
         // Prevent race condition on async and debounce
         setTimeout(() => {
             if (this.builderFormGroup.valid) {
                 this.dialogRef.close(true);
             }
-            this.submitBtnOptions.active = false
         }, 700)
     }
 

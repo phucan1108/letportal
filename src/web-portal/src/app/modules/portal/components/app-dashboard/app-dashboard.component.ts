@@ -5,9 +5,8 @@ import { SessionService } from 'services/session.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { UserSelectAppAction } from 'stores/apps/app.action';
- 
+
 import { mergeMap, tap } from 'rxjs/operators';
-import { MatProgressButtonOptions } from 'mat-progress-buttons';
 import { SecurityService } from 'app/core/security/security.service';
 import { AuthUser } from 'app/core/security/auth.model';
 import { NGXLogger } from 'ngx-logger';
@@ -25,7 +24,7 @@ export class AppDashboardComponent implements OnInit {
 
     apps$: Observable<Array<App>>
 
-    loadingApps$: Observable<{ app: App, loading: boolean, btnOption: MatProgressButtonOptions }[]>
+    loadingApps$: Observable<{ app: App, loading: boolean, btnOption: any }[]>
     enterText: string = 'Enter'
     constructor(
         private appsClient: AppsClient,
@@ -54,7 +53,7 @@ export class AppDashboardComponent implements OnInit {
                         ).pipe(
                             mergeMap(
                                 apps => {
-                                    const loadingApps: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }[] = []
+                                    const loadingApps: { app: App, loading: boolean, btnOption: any }[] = []
                                     apps?.forEach(app => {
                                         loadingApps.push({
                                             app,
@@ -83,7 +82,7 @@ export class AppDashboardComponent implements OnInit {
         ).subscribe()
     }
 
-    onSelectingApp(app: { app: App, loading: boolean, btnOption: MatProgressButtonOptions }) {
+    onSelectingApp(app: { app: App, loading: boolean, btnOption: any }) {
         this.localizationClient.getOne(app.app.id, this.translate.currentLang).pipe(
             tap(
                 keys => {
@@ -92,12 +91,12 @@ export class AppDashboardComponent implements OnInit {
                     }
                     app.btnOption.active = true
                     this.sessionService.setCurrentApp(app.app);
-                    this.store.dispatch(new UserSelectAppAction(app.app))        
+                    this.store.dispatch(new UserSelectAppAction(app.app))
                     this.router.navigateByUrl(app.app.defaultUrl);
                 }
             )
         ).subscribe()
-        
+
     }
 
     private getAvailableAppIds(user: AuthUser) {

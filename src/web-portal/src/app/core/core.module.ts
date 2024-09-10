@@ -10,7 +10,7 @@ import { CustomHttpService } from 'services/customhttp.service';
 import { DatasourceOptionsService } from 'services/datasourceopts.service';
 import { DownloadFileService } from 'services/downloadfile.service';
 import { ExportService } from 'services/export.service';
-import { AccountsClient, RolesClient, UserSessionClient } from 'services/identity.service';
+import { AccountsClient, RolesClient, UserSessionClient } from 'services/portal.service';
 import { PageService } from 'services/page.service';
 import { AppsClient, BackupsClient, ChartsClient, DatabasesClient, DynamicListClient, EntitySchemasClient, LocalizationClient, PagesClient, StandardComponentClient } from 'services/portal.service';
 import { SessionService } from 'services/session.service';
@@ -41,9 +41,6 @@ import { Translator } from './shell/translates/translate.pipe';
     MatFormFieldModule,
     MatDialogModule,
     MatInputModule
-  ],
-  entryComponents: [
-    UnlockScreenDialogComponent
   ],
   exports: [
     SafeHtmlPipe,
@@ -106,7 +103,7 @@ export class CoreModule {
   static forChild(
     builtInMethods: any[] = [],
     controlEvents: ControlEventExecution[] = [],
-    ): ModuleWithProviders<CoreModule> {  
+    ): ModuleWithProviders<CoreModule> {
     return {
       ngModule: CoreModule,
       providers: [

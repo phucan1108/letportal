@@ -54,7 +54,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
 
     formControlLink: FormControl = new FormControl()
 
-    optionsList$: Observable<any> 
+    optionsList$: Observable<any>
     optionsList: any[] = []
     autoOptionsList: Array<MultipleDataSelection> = []
     autoOptionsList$: BehaviorSubject<Array<MultipleDataSelection>> = new BehaviorSubject([])
@@ -78,7 +78,7 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
             icons: null
         },
         onChange: (e: any) => this.mardownChanged(e),
-        parser: (val) => this.markdownService.compile(val.trim())
+        parser: (val) => this.markdownService.parse(val.trim())
     }
     markdownValue$ = new BehaviorSubject<string>('');
     constructor(

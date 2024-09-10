@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,7 +11,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxsStoreModule } from 'app/core/store.module';
 import { environment } from 'environments/environment';
 import sql from 'highlight.js/lib/languages/sql';
-import { MatProgressButtonsModule } from 'mat-progress-buttons';
 import { ClipboardModule } from 'ngx-clipboard';
 import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
@@ -19,7 +18,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { ChatModule } from 'portal/modules/chat/chat.module';
 import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
 import { ConfigurationService } from 'services/configuration.service';
-import { IDENTITY_BASE_URL } from 'services/identity.service';
 import { LocalizationService } from 'services/localization.service';
 import { NotificationService, NOTIFICATION_BASE_URL } from 'services/notification.service';
 import { PORTAL_BASE_URL } from 'services/portal.service';
@@ -59,117 +57,98 @@ const mediaBaseUrl = (configProvider: ConfigurationProvider) => {
 function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/','.json');
 }
-@NgModule({
-  declarations: [
-    AppComponent,
-    ErrorComponent
-  ],
-  imports: [
-    ChatModule,
-    BrowserModule,
-    HttpClientModule,
-    AppRoutingModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    BrowserAnimationsModule,
-    MatProgressButtonsModule.forRoot(),
-    SharedModule,
-    NgxsStoreModule,
-    LoggerModule.forRoot({
-      serverLoggingUrl: '',
-      level: environment.production ? NgxLoggerLevel.OFF : NgxLoggerLevel.DEBUG,
-      serverLogLevel: NgxLoggerLevel.OFF
-    }),
-    ToastrModule.forRoot(),
-    ClipboardModule,
-
-    // Portal Module Sections
-    CoreModule.forRoot(),
-
-    EmojiPickerModule.forRoot(),
-    TranslateModule.forRoot(
-      {
-        defaultLanguage: environment.localization.defaultLanguage,
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient]
-        }
-      }
-    )
-  ],
-  providers: [
-    ChatService,
-    VideoCallService,
-    LocalizationService,
-    ConfigurationService,
-    NotificationService,
-    {
-      provide: PORTAL_BASE_URL,
-      useFactory: portalBaseUrl,
-      deps: [ConfigurationProvider]
-    },
-    {
-      provide: IDENTITY_BASE_URL,
-      useFactory: identityBaseUrl,
-      deps: [ConfigurationProvider]
-    },
-    {
-      provide: CHAT_BASE_URL,
-      useFactory: chatBaseUrl,
-      deps: [ConfigurationProvider]
-    },
-    {
-      provide: NOTIFICATION_BASE_URL,
-      useFactory: notificationBaseUrl,
-      deps: [ConfigurationProvider]
-    },
-    {
-      provide: VIDEO_BASE_URL,
-      useFactory: chatBaseUrl,
-      deps: [ConfigurationProvider]
-    },
-    {
-      provide: MEDIA_BASE_URL,
-      useFactory: mediaBaseUrl,
-      deps: [ConfigurationProvider]
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: JwtTokenInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpExceptionInterceptor,
-      multi: true
-    },
-    {
-      provide: HIGHLIGHT_OPTIONS,
-      useValue: {
-        languages: hlJSLang
-      }
-    },
-    {
-      provide: MatPaginatorIntl,
-      useFactory: (translate: TranslateService) => {
-        const matPaginatorIntl = new MatPaginatorIntl()
-        matPaginatorIntl.itemsPerPageLabel = translate.instant('common.itemsPerPage')
-        matPaginatorIntl.nextPageLabel = translate.instant('common.nextText')
-        matPaginatorIntl.previousPageLabel = translate.instant('common.previous')
-        return matPaginatorIntl;
-      },
-      deps: [TranslateService]
-    },
-    ConfigurationProvider
-  ],
-  entryComponents: [
-
-  ],
-  exports: [
-    CoreModule
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        ErrorComponent
+    ],
+    exports: [
+        CoreModule
+    ],
+    bootstrap: [AppComponent], imports: [ChatModule,
+        BrowserModule,
+        AppRoutingModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        BrowserAnimationsModule,
+        SharedModule,
+        NgxsStoreModule,
+        LoggerModule.forRoot({
+            serverLoggingUrl: '',
+            level: environment.production ? NgxLoggerLevel.OFF : NgxLoggerLevel.DEBUG,
+            serverLogLevel: NgxLoggerLevel.OFF
+        }),
+        ToastrModule.forRoot(),
+        ClipboardModule,
+        // Portal Module Sections
+        CoreModule.forRoot(),
+        EmojiPickerModule.forRoot(),
+        TranslateModule.forRoot({
+            defaultLanguage: environment.localization.defaultLanguage,
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })], providers: [
+        ChatService,
+        VideoCallService,
+        LocalizationService,
+        ConfigurationService,
+        NotificationService,
+        {
+            provide: PORTAL_BASE_URL,
+            useFactory: portalBaseUrl,
+            deps: [ConfigurationProvider]
+        },
+        {
+            provide: CHAT_BASE_URL,
+            useFactory: chatBaseUrl,
+            deps: [ConfigurationProvider]
+        },
+        {
+            provide: NOTIFICATION_BASE_URL,
+            useFactory: notificationBaseUrl,
+            deps: [ConfigurationProvider]
+        },
+        {
+            provide: VIDEO_BASE_URL,
+            useFactory: chatBaseUrl,
+            deps: [ConfigurationProvider]
+        },
+        {
+            provide: MEDIA_BASE_URL,
+            useFactory: mediaBaseUrl,
+            deps: [ConfigurationProvider]
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: JwtTokenInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpExceptionInterceptor,
+            multi: true
+        },
+        {
+            provide: HIGHLIGHT_OPTIONS,
+            useValue: {
+                languages: hlJSLang
+            }
+        },
+        {
+            provide: MatPaginatorIntl,
+            useFactory: (translate: TranslateService) => {
+                const matPaginatorIntl = new MatPaginatorIntl();
+                matPaginatorIntl.itemsPerPageLabel = translate.instant('common.itemsPerPage');
+                matPaginatorIntl.nextPageLabel = translate.instant('common.nextText');
+                matPaginatorIntl.previousPageLabel = translate.instant('common.previous');
+                return matPaginatorIntl;
+            },
+            deps: [TranslateService]
+        },
+        ConfigurationProvider,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

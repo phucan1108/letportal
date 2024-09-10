@@ -4,8 +4,8 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { ShortcutUtil } from 'app/modules/shared/components/shortcuts/shortcut-util';
-import { Role, RolesClient } from 'services/identity.service';
- 
+import { Role, RolesClient } from 'services/portal.service';
+
 import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.models';
 import { RouterExtService } from 'app/core/ext-service/routerext.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -79,7 +79,7 @@ export class MenuProfilesPage implements OnInit {
     checklistSelection = new SelectionModel<MenuNode>(true)
     menuProfile: MenuProfile
 
-    
+
     hasChild = (_: number, node: MenuNode) => node.expandable || node.level === 0;
 
     ngOnInit(): void {

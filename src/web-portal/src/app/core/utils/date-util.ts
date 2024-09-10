@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import Moment from 'moment';
 
 export class DateUtils {
     public static getUTCNow() {
@@ -19,12 +19,12 @@ export class DateUtils {
     }
 
     public static toDateFormat(date: Date, format: string) {
-        return moment(date).format(format)
+        return Moment(date).format(format)
     }
 
     public static getPeriodLength(sourceDate: Date, targetDate: Date) {
-        let sourceMoment = moment(sourceDate)
-        let targetMoment = moment(targetDate)
+        let sourceMoment = Moment(sourceDate)
+        let targetMoment = Moment(targetDate)
         return sourceMoment.from(targetMoment, true)
     }
 
