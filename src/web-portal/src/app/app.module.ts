@@ -1,5 +1,5 @@
 import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import {NgModule, provideExperimentalZonelessChangeDetection} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -58,97 +58,99 @@ function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/','.json');
 }
 @NgModule({ declarations: [
-        AppComponent,
-        ErrorComponent
-    ],
-    exports: [
-        CoreModule
-    ],
-    bootstrap: [AppComponent], imports: [ChatModule,
-        BrowserModule,
-        AppRoutingModule,
-        MatCardModule,
-        MatButtonModule,
-        MatIconModule,
-        BrowserAnimationsModule,
-        SharedModule,
-        NgxsStoreModule,
-        LoggerModule.forRoot({
-            serverLoggingUrl: '',
-            level: environment.production ? NgxLoggerLevel.OFF : NgxLoggerLevel.DEBUG,
-            serverLogLevel: NgxLoggerLevel.OFF
-        }),
-        ToastrModule.forRoot(),
-        ClipboardModule,
-        // Portal Module Sections
-        CoreModule.forRoot(),
-        EmojiPickerModule.forRoot(),
-        TranslateModule.forRoot({
-            defaultLanguage: environment.localization.defaultLanguage,
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient]
-            }
-        })], providers: [
-        ChatService,
-        VideoCallService,
-        LocalizationService,
-        ConfigurationService,
-        NotificationService,
-        {
-            provide: PORTAL_BASE_URL,
-            useFactory: portalBaseUrl,
-            deps: [ConfigurationProvider]
-        },
-        {
-            provide: CHAT_BASE_URL,
-            useFactory: chatBaseUrl,
-            deps: [ConfigurationProvider]
-        },
-        {
-            provide: NOTIFICATION_BASE_URL,
-            useFactory: notificationBaseUrl,
-            deps: [ConfigurationProvider]
-        },
-        {
-            provide: VIDEO_BASE_URL,
-            useFactory: chatBaseUrl,
-            deps: [ConfigurationProvider]
-        },
-        {
-            provide: MEDIA_BASE_URL,
-            useFactory: mediaBaseUrl,
-            deps: [ConfigurationProvider]
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: JwtTokenInterceptor,
-            multi: true
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: HttpExceptionInterceptor,
-            multi: true
-        },
-        {
-            provide: HIGHLIGHT_OPTIONS,
-            useValue: {
-                languages: hlJSLang
-            }
-        },
-        {
-            provide: MatPaginatorIntl,
-            useFactory: (translate: TranslateService) => {
-                const matPaginatorIntl = new MatPaginatorIntl();
-                matPaginatorIntl.itemsPerPageLabel = translate.instant('common.itemsPerPage');
-                matPaginatorIntl.nextPageLabel = translate.instant('common.nextText');
-                matPaginatorIntl.previousPageLabel = translate.instant('common.previous');
-                return matPaginatorIntl;
-            },
-            deps: [TranslateService]
-        },
-        ConfigurationProvider,
-        provideHttpClient(withInterceptorsFromDi())
-    ] })
+    AppComponent,
+    ErrorComponent
+  ],
+  exports: [
+    CoreModule
+  ],
+  bootstrap: [AppComponent], imports: [ChatModule,
+    BrowserModule,
+    AppRoutingModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    BrowserAnimationsModule,
+    SharedModule,
+    NgxsStoreModule,
+    LoggerModule.forRoot({
+      serverLoggingUrl: '',
+      level: environment.production ? NgxLoggerLevel.OFF : NgxLoggerLevel.DEBUG,
+      serverLogLevel: NgxLoggerLevel.OFF
+    }),
+    ToastrModule.forRoot(),
+    ClipboardModule,
+    // Portal Module Sections
+    CoreModule.forRoot(),
+    EmojiPickerModule.forRoot(),
+    TranslateModule.forRoot({
+      defaultLanguage: environment.localization.defaultLanguage,
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })],
+  providers: [
+    ChatService,
+    VideoCallService,
+    LocalizationService,
+    ConfigurationService,
+    NotificationService,
+    {
+      provide: PORTAL_BASE_URL,
+      useFactory: portalBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: CHAT_BASE_URL,
+      useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: NOTIFICATION_BASE_URL,
+      useFactory: notificationBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: VIDEO_BASE_URL,
+      useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: MEDIA_BASE_URL,
+      useFactory: mediaBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtTokenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpExceptionInterceptor,
+      multi: true
+    },
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        languages: hlJSLang
+      }
+    },
+    {
+      provide: MatPaginatorIntl,
+      useFactory: (translate: TranslateService) => {
+        const matPaginatorIntl = new MatPaginatorIntl();
+        matPaginatorIntl.itemsPerPageLabel = translate.instant('common.itemsPerPage');
+        matPaginatorIntl.nextPageLabel = translate.instant('common.nextText');
+        matPaginatorIntl.previousPageLabel = translate.instant('common.previous');
+        return matPaginatorIntl;
+      },
+      deps: [TranslateService]
+    },
+    ConfigurationProvider,
+    provideHttpClient(withInterceptorsFromDi()),
+    //provideExperimentalZonelessChangeDetection()
+  ] })
 export class AppModule { }
