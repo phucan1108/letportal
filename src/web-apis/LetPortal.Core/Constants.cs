@@ -17,5 +17,9 @@
         public const string TokenExpiredHeader = "X-Token-Expired";
 
         public const string SkipCheckPortalHeaders = "SkipCheckPortalHeaders";
+
+        public const string PortalApp = "portal";
+
+        public const string IdentityApp = "identity";
     }
 }
