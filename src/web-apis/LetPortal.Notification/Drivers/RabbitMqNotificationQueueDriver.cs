@@ -6,86 +6,130 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace LetPortal.Notification.Drivers
+namespace LetPortal.Notification.Drivers;
+
+internal sealed class RabbitMqNotificationQueueDriver(IOptions<NotificationOptions> options) : INotificationQueueDriver, IAsyncDisposable
 {
-    class RabbitMqNotificationQueueDriver : INotificationQueueDriver, IDisposable
+    public string Driver => "RabbitMq";
+
+    private readonly NotificationOptions _options = options.Value;
+    private readonly SemaphoreSlim _startLock = new(1, 1);
+
+    private IConnection? _pubConnection;
+    private IChannel? _pubChannel;
+    private IConnection? _consumerConnection;
+    private IChannel? _consumerChannel;
+
+    private volatile bool _isStarted;
+
+    public async Task StartAsync()
     {
-        public string Driver => "RabbitMq";
+        if (_isStarted)
+            return;
 
-        private readonly IOptions<NotificationOptions> _options;
-
-        private IConnection _pubConnection;
-
-        private IModel _pubChannel;
-
-        private IConnection _consumerConnection;
-
-        private IModel _consumerChannel;
-
-        public RabbitMqNotificationQueueDriver(IOptions<NotificationOptions> options)
+        await _startLock.WaitAsync();
+        try
         {
-            _options = options;
-            ConnectionFactory factory = new ConnectionFactory
+            if (_isStarted)
+                return;
+
+            var factory = new ConnectionFactory
             {
-                Uri = new Uri(_options.Value.ConnectionString)
+                Uri = new Uri(_options.ConnectionString)
             };
-            _pubConnection = factory.CreateConnection();
-            _consumerConnection = factory.CreateConnection();
-            _pubChannel = _pubConnection.CreateModel();
-            _pubChannel.QueueDeclare(queue: _options.Value.QueueName,
-                                 durable: true, // Ensure the message won't be lost when RabbitMq is stopped
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
 
-            _consumerChannel = _consumerConnection.CreateModel();
-            _consumerChannel.QueueDeclare(queue: _options.Value.QueueName,
-                                 durable: true, // Ensure the message won't be lost when RabbitMq is stopped
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
-            InitRabbitConnection();
+            (_pubConnection, _consumerConnection) = (await factory.CreateConnectionAsync(), await factory.CreateConnectionAsync());
+            _pubChannel = await _pubConnection.CreateChannelAsync();
+            _consumerChannel = await _consumerConnection.CreateChannelAsync();
+
+            // Declare queues for both channels
+            await Task.WhenAll(
+                DeclareQueueAsync(_pubChannel),
+                DeclareQueueAsync(_consumerChannel)
+            );
+
+            _isStarted = true;
         }
-
-        public Task Push(IncomingNotificationMessage message)
+        finally
         {
-            var rabbitMessage = ConvertUtil.SerializeObject(message);
-            var body = Encoding.UTF8.GetBytes(rabbitMessage);
-            _pubChannel.BasicPublish(exchange: "",
-                                routingKey: _options.Value.QueueName,
-                                basicProperties: null,
-                                body: body);
-            return Task.CompletedTask;
+            _startLock.Release();
         }
+    }
 
-        public Task Subcribe(Func<IncomingNotificationMessage, Task> proceed, CancellationToken cancellationToken)
-        {
-            var consumer = new EventingBasicConsumer(_consumerChannel);
-            consumer.Received += (sender, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                var notificationMessage = ConvertUtil.DeserializeObject<IncomingNotificationMessage>(message);
-                proceed.Invoke(notificationMessage);
-                Thread.Sleep(_options.Value.DelayPullMessageInMs); // Sleep in 300ms
-                _consumerChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
-                cancellationToken.ThrowIfCancellationRequested();
-            };
-            _consumerChannel.BasicConsume(queue: _options.Value.QueueName,
-                                 autoAck: false,
-                                 consumer: consumer);
-            return Task.CompletedTask;
-        }
+    private Task DeclareQueueAsync(IChannel channel) =>
+        channel.QueueDeclareAsync(
+            queue: _options.QueueName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
 
-        public void Dispose()
-        {
-            _consumerConnection.Close();
-            _pubConnection.Close();
-        }
+    public async Task PushAsync(IncomingNotificationMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(_pubChannel);
 
-        private void InitRabbitConnection()
+        var body = Encoding.UTF8.GetBytes(ConvertUtil.SerializeObject(message));
+        await _pubChannel.BasicPublishAsync(
+            exchange: string.Empty,
+            routingKey: _options.QueueName,
+            mandatory: false,
+            basicProperties: new BasicProperties(),
+            body: body);
+    }
+
+    public async Task SubcribeAsync(Func<IncomingNotificationMessage, Task> proceed, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(_consumerChannel);
+        ArgumentNullException.ThrowIfNull(proceed);
+
+        var consumer = new AsyncEventingBasicConsumer(_consumerChannel);
+        consumer.ReceivedAsync += async (_, ea) =>
         {
+            var message = Encoding.UTF8.GetString(ea.Body.Span);
+            var notificationMessage = ConvertUtil.DeserializeObject<IncomingNotificationMessage>(message);
             
+            await proceed(notificationMessage);
+            await Task.Delay(_options.DelayPullMessageInMs, cancellationToken);
+            await _consumerChannel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, cancellationToken);
+            
+            cancellationToken.ThrowIfCancellationRequested();
+        };
+
+        await _consumerChannel.BasicConsumeAsync(
+            queue: _options.QueueName,
+            autoAck: false,
+            consumer: consumer,
+            cancellationToken: cancellationToken);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_consumerChannel is not null)
+        {
+            await _consumerChannel.CloseAsync();
+            await _consumerChannel.DisposeAsync();
         }
+
+        if (_pubChannel is not null)
+        {
+            await _pubChannel.CloseAsync();
+            await _pubChannel.DisposeAsync();
+        }
+
+        if (_consumerConnection is not null)
+        {
+            await _consumerConnection.CloseAsync();
+            await _consumerConnection.DisposeAsync();
+        }
+
+        if (_pubConnection is not null)
+        {
+            await _pubConnection.CloseAsync();
+            await _pubConnection.DisposeAsync();
+        }
+
+        _startLock.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

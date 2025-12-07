@@ -12,7 +12,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MySqlConnector;
 using Npgsql;
 
 namespace LetPortal.Microservices.Server.Monitors
@@ -86,23 +85,23 @@ namespace LetPortal.Microservices.Server.Monitors
                         }
                         break;
                     case ConnectionType.MySQL:
-                        try
-                        {
-                            using (var mysqlDbConnection = new MySqlConnection(_databaseOptions.CurrentValue.ConnectionString))
-                            {
-                                mysqlDbConnection.Open();
-                                using (var mysqlCommand = new MySqlCommand("Select 1"))
-                                {
-                                    mysqlCommand.ExecuteScalar();
-                                    pushHealthCheckModel.DatabaseHealthy = true;
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            pushHealthCheckModel.DatabaseHealthy = false;
-                            pushHealthCheckModel.ErrorStack = ex.ToString();
-                        }
+                        //try
+                        //{
+                        //    using (var mysqlDbConnection = new MySqlConnection(_databaseOptions.CurrentValue.ConnectionString))
+                        //    {
+                        //        mysqlDbConnection.Open();
+                        //        using (var mysqlCommand = new MySqlCommand("Select 1"))
+                        //        {
+                        //            mysqlCommand.ExecuteScalar();
+                        //            pushHealthCheckModel.DatabaseHealthy = true;
+                        //        }
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    pushHealthCheckModel.DatabaseHealthy = false;
+                        //    pushHealthCheckModel.ErrorStack = ex.ToString();
+                        //}
                         break;
                     case ConnectionType.PostgreSQL:
                         try

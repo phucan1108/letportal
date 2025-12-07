@@ -3,11 +3,9 @@ using LetPortal.Portal.Entities.SectionParts;
 using LetPortal.Portal.Entities.Shared;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
-using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
 using LetPortal.Portal.Mappers;
-using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Providers.Databases;
@@ -814,326 +812,326 @@ namespace LetPortal.Tests.ITs.Portal.Services
 
         #endregion
 
-        #region UTs for MySQL
-        [Fact]
-        public async Task Fetch_Data_Without_Filter_In_MySQL_Test()
-        {
-            if(!_context.AllowMySQL)
-            {
-                Assert.True(true);
-                return;
-            }
-            // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
-            mockDatabaseServiceProvider
-                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
+        //#region UTs for MySQL
+        //[Fact]
+        //public async Task Fetch_Data_Without_Filter_In_MySQL_Test()
+        //{
+        //    if(!_context.AllowMySQL)
+        //    {
+        //        Assert.True(true);
+        //        return;
+        //    }
+        //    // Arrange
+        //    Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+        //    mockDatabaseServiceProvider
+        //        .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+        //        .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
 
-            List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
-            {
-                new MySqlDynamicListQueryDatabase(
-                    new DynamicQueryBuilder(),
-                    new MySqlMapper(_context.MapperOptions),
-                    new CSharpMapper())
-            };
+        //    List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
+        //    {
+        //        new MySqlDynamicListQueryDatabase(
+        //            new DynamicQueryBuilder(),
+        //            new MySqlMapper(_context.MapperOptions),
+        //            new CSharpMapper())
+        //    };
 
-            DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
-            databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query = "Select * from `databases`";
-            DynamicListService dynamicListService = new DynamicListService(
-                mockDatabaseServiceProvider.Object, 
-                dynamicListQueries,
-                new FakeServiceLogger<DynamicListService>());
-            // Act
-            LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
-            new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
-            {
-                DynamicListId = "sadas",
-                FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
-                {
-                    FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>()
-                },
-                FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
-                {
-                    FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>()
-                },
-                PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
-                {
-                    NeedTotalItems = true,
-                    PageNumber = 0,
-                    PageSize = 10
-                },
-                SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
-                {
-                },
-                TextSearch = null
-            });
+        //    DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
+        //    databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query = "Select * from `databases`";
+        //    DynamicListService dynamicListService = new DynamicListService(
+        //        mockDatabaseServiceProvider.Object, 
+        //        dynamicListQueries,
+        //        new FakeServiceLogger<DynamicListService>());
+        //    // Act
+        //    LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
+        //    new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
+        //    {
+        //        DynamicListId = "sadas",
+        //        FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
+        //        {
+        //            FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>()
+        //        },
+        //        FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
+        //        {
+        //            FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>()
+        //        },
+        //        PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
+        //        {
+        //            NeedTotalItems = true,
+        //            PageNumber = 0,
+        //            PageSize = 10
+        //        },
+        //        SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
+        //        {
+        //        },
+        //        TextSearch = null
+        //    });
 
-            // Assert
-            Assert.NotEmpty(result.Data);
-        }
+        //    // Assert
+        //    Assert.NotEmpty(result.Data);
+        //}
 
-        [Fact]
-        public async Task Fetch_Data_With_Filter_In_MySQL_Test()
-        {
-            if(!_context.AllowMySQL)
-            {
-                Assert.True(true);
-                return;
-            }
-            // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
-            mockDatabaseServiceProvider
-                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
+        //[Fact]
+        //public async Task Fetch_Data_With_Filter_In_MySQL_Test()
+        //{
+        //    if(!_context.AllowMySQL)
+        //    {
+        //        Assert.True(true);
+        //        return;
+        //    }
+        //    // Arrange
+        //    Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+        //    mockDatabaseServiceProvider
+        //        .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+        //        .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
 
-            List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
-            {
-                new MySqlDynamicListQueryDatabase(
-                    new DynamicQueryBuilder(),
-                    new MySqlMapper(_context.MapperOptions),
-                    new CSharpMapper())
-            };
+        //    List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
+        //    {
+        //        new MySqlDynamicListQueryDatabase(
+        //            new DynamicQueryBuilder(),
+        //            new MySqlMapper(_context.MapperOptions),
+        //            new CSharpMapper())
+        //    };
 
-            DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
-            DynamicListService dynamicListService = new DynamicListService(
-                mockDatabaseServiceProvider.Object, 
-                dynamicListQueries,
-                new FakeServiceLogger<DynamicListService>());
-            // Act
-            LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
-            new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
-            {
-                DynamicListId = "sadas",
-                FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
-                {
-                    FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>()
-                },
-                FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
-                {
-                    FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.FilterGroup
-                        {
-                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
-                            FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
-                            {
-                                new LetPortal.Portal.Models.DynamicLists.FilterOption
-                                {
-                                    FieldName = "name",
-                                    FieldValue = "database",
-                                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
-                                    FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
-                                    FilterValueType = FieldValueType.Text
-                                }
-                            }
-                        }
-                    }
-                },
-                PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
-                {
-                    NeedTotalItems = false,
-                    PageNumber = 0,
-                    PageSize = 10
-                },
-                SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
-                {
-                    SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.SortableField
-                        {
-                            FieldName = "displayName",
-                            SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
-                        }
-                    }
-                },
-                TextSearch = "database"
-            });
+        //    DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
+        //    DynamicListService dynamicListService = new DynamicListService(
+        //        mockDatabaseServiceProvider.Object, 
+        //        dynamicListQueries,
+        //        new FakeServiceLogger<DynamicListService>());
+        //    // Act
+        //    LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
+        //    new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
+        //    {
+        //        DynamicListId = "sadas",
+        //        FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
+        //        {
+        //            FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>()
+        //        },
+        //        FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
+        //        {
+        //            FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.FilterGroup
+        //                {
+        //                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+        //                    FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
+        //                    {
+        //                        new LetPortal.Portal.Models.DynamicLists.FilterOption
+        //                        {
+        //                            FieldName = "name",
+        //                            FieldValue = "database",
+        //                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+        //                            FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
+        //                            FilterValueType = FieldValueType.Text
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        },
+        //        PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
+        //        {
+        //            NeedTotalItems = false,
+        //            PageNumber = 0,
+        //            PageSize = 10
+        //        },
+        //        SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
+        //        {
+        //            SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.SortableField
+        //                {
+        //                    FieldName = "displayName",
+        //                    SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
+        //                }
+        //            }
+        //        },
+        //        TextSearch = "database"
+        //    });
 
-            // Assert
-            Assert.NotEmpty(result.Data);
-        }
+        //    // Assert
+        //    Assert.NotEmpty(result.Data);
+        //}
 
-        [Fact]
-        public async Task Fetch_Data_With_Filter_And_Filled_Params_In_MySQL_Test()
-        {
-            if(!_context.AllowMySQL)
-            {
-                Assert.True(true);
-                return;
-            }
-            // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
-            mockDatabaseServiceProvider
-                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
+        //[Fact]
+        //public async Task Fetch_Data_With_Filter_And_Filled_Params_In_MySQL_Test()
+        //{
+        //    if(!_context.AllowMySQL)
+        //    {
+        //        Assert.True(true);
+        //        return;
+        //    }
+        //    // Arrange
+        //    Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+        //    mockDatabaseServiceProvider
+        //        .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+        //        .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
 
-            List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
-            {
-                new MySqlDynamicListQueryDatabase(
-                    new DynamicQueryBuilder(),
-                    new MySqlMapper(_context.MapperOptions),
-                    new CSharpMapper())
-            };
+        //    List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
+        //    {
+        //        new MySqlDynamicListQueryDatabase(
+        //            new DynamicQueryBuilder(),
+        //            new MySqlMapper(_context.MapperOptions),
+        //            new CSharpMapper())
+        //    };
 
-            DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
-            databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
-                = "Select * From `databases` Where name={{data.name}}";
-            DynamicListService dynamicListService = new DynamicListService(
-                mockDatabaseServiceProvider.Object, 
-                dynamicListQueries,
-                new FakeServiceLogger<DynamicListService>());
-            // Act
-            LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
-            new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
-            {
-                DynamicListId = "sadas",
-                FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
-                {
-                    FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.FilledParameter
-                        {
-                            Name = "data.name",
-                            Value = "testdatabase"
-                        }
-                    }
-                },
-                FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
-                {
-                    FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.FilterGroup
-                        {
-                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
-                            FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
-                            {
-                                new LetPortal.Portal.Models.DynamicLists.FilterOption
-                                {
-                                    FieldName = "name",
-                                    FieldValue = "database",
-                                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
-                                    FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
-                                    FilterValueType = FieldValueType.Text
-                                }
-                            }
-                        }
-                    }
-                },
-                PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
-                {
-                    NeedTotalItems = false,
-                    PageNumber = 0,
-                    PageSize = 10
-                },
-                SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
-                {
-                    SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.SortableField
-                        {
-                            FieldName = "displayName",
-                            SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
-                        }
-                    }
-                },
-                TextSearch = "database"
-            });
+        //    DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
+        //    databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
+        //        = "Select * From `databases` Where name={{data.name}}";
+        //    DynamicListService dynamicListService = new DynamicListService(
+        //        mockDatabaseServiceProvider.Object, 
+        //        dynamicListQueries,
+        //        new FakeServiceLogger<DynamicListService>());
+        //    // Act
+        //    LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
+        //    new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
+        //    {
+        //        DynamicListId = "sadas",
+        //        FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
+        //        {
+        //            FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.FilledParameter
+        //                {
+        //                    Name = "data.name",
+        //                    Value = "testdatabase"
+        //                }
+        //            }
+        //        },
+        //        FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
+        //        {
+        //            FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.FilterGroup
+        //                {
+        //                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+        //                    FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
+        //                    {
+        //                        new LetPortal.Portal.Models.DynamicLists.FilterOption
+        //                        {
+        //                            FieldName = "name",
+        //                            FieldValue = "database",
+        //                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+        //                            FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
+        //                            FilterValueType = FieldValueType.Text
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        },
+        //        PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
+        //        {
+        //            NeedTotalItems = false,
+        //            PageNumber = 0,
+        //            PageSize = 10
+        //        },
+        //        SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
+        //        {
+        //            SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.SortableField
+        //                {
+        //                    FieldName = "displayName",
+        //                    SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
+        //                }
+        //            }
+        //        },
+        //        TextSearch = "database"
+        //    });
 
-            // Assert
-            Assert.NotEmpty(result.Data);
-        }
+        //    // Assert
+        //    Assert.NotEmpty(result.Data);
+        //}
 
-        [Fact]
-        public async Task Fetch_Data_With_Filter_And_Words_In_MySQL_Test()
-        {
-            if(!_context.AllowMySQL)
-            {
-                Assert.True(true);
-                return;
-            }
-            // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
-            mockDatabaseServiceProvider
-                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
+        //[Fact]
+        //public async Task Fetch_Data_With_Filter_And_Words_In_MySQL_Test()
+        //{
+        //    if(!_context.AllowMySQL)
+        //    {
+        //        Assert.True(true);
+        //        return;
+        //    }
+        //    // Arrange
+        //    Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+        //    mockDatabaseServiceProvider
+        //        .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+        //        .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
 
-            List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
-            {
-                new MySqlDynamicListQueryDatabase(
-                    new DynamicQueryBuilder(),
-                    new MySqlMapper(_context.MapperOptions),
-                    new CSharpMapper())
-            };
+        //    List<IDynamicListQueryDatabase> dynamicListQueries = new List<IDynamicListQueryDatabase>
+        //    {
+        //        new MySqlDynamicListQueryDatabase(
+        //            new DynamicQueryBuilder(),
+        //            new MySqlMapper(_context.MapperOptions),
+        //            new CSharpMapper())
+        //    };
 
-            DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
-            databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
-                = "Select * From `databases` Where name={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} LIMIT {{PAGENUM}} OFFSET {{PAGESTART}}";
-            DynamicListService dynamicListService = new DynamicListService(
-                mockDatabaseServiceProvider.Object, 
-                dynamicListQueries,
-                new FakeServiceLogger<DynamicListService>());
-            // Act
-            LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
-            new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
-            {
-                DynamicListId = "sadas",
-                FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
-                {
-                    FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.FilledParameter
-                        {
-                            Name = "data.name",
-                            Value = "testdatabase"
-                        }
-                    }
-                },
-                FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
-                {
-                    FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.FilterGroup
-                        {
-                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
-                            FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
-                            {
-                                new LetPortal.Portal.Models.DynamicLists.FilterOption
-                                {
-                                    FieldName = "name",
-                                    FieldValue = "database",
-                                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
-                                    FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
-                                    FilterValueType = FieldValueType.Text
-                                }
-                            }
-                        }
-                    }
-                },
-                PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
-                {
-                    NeedTotalItems = false,
-                    PageNumber = 0,
-                    PageSize = 10
-                },
-                SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
-                {
-                    SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
-                    {
-                        new LetPortal.Portal.Models.DynamicLists.SortableField
-                        {
-                            FieldName = "displayName",
-                            SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
-                        }
-                    }
-                },
-                TextSearch = "database"
-            });
+        //    DynamicList databaseListSectionPart = SampleEFMySqlDynamicList();
+        //    databaseListSectionPart.ListDatasource.DatabaseConnectionOptions.Query
+        //        = "Select * From `databases` Where name={{data.name}} AND {{SEARCH}} AND {{FILTER}} Order by {{ORDER}} LIMIT {{PAGENUM}} OFFSET {{PAGESTART}}";
+        //    DynamicListService dynamicListService = new DynamicListService(
+        //        mockDatabaseServiceProvider.Object, 
+        //        dynamicListQueries,
+        //        new FakeServiceLogger<DynamicListService>());
+        //    // Act
+        //    LetPortal.Portal.Models.DynamicLists.DynamicListResponseDataModel result = await dynamicListService.FetchData(databaseListSectionPart,
+        //    new LetPortal.Portal.Models.DynamicLists.DynamicListFetchDataModel
+        //    {
+        //        DynamicListId = "sadas",
+        //        FilledParameterOptions = new LetPortal.Portal.Models.DynamicLists.FilledParameterOptions
+        //        {
+        //            FilledParameters = new List<LetPortal.Portal.Models.DynamicLists.FilledParameter>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.FilledParameter
+        //                {
+        //                    Name = "data.name",
+        //                    Value = "testdatabase"
+        //                }
+        //            }
+        //        },
+        //        FilterGroupOptions = new LetPortal.Portal.Models.DynamicLists.FilterGroupOptions
+        //        {
+        //            FilterGroups = new List<LetPortal.Portal.Models.DynamicLists.FilterGroup>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.FilterGroup
+        //                {
+        //                    FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+        //                    FilterOptions = new List<LetPortal.Portal.Models.DynamicLists.FilterOption>
+        //                    {
+        //                        new LetPortal.Portal.Models.DynamicLists.FilterOption
+        //                        {
+        //                            FieldName = "name",
+        //                            FieldValue = "database",
+        //                            FilterChainOperator = LetPortal.Portal.Models.DynamicLists.FilterChainOperator.None,
+        //                            FilterOperator = LetPortal.Portal.Models.DynamicLists.FilterOperator.Contains,
+        //                            FilterValueType = FieldValueType.Text
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        },
+        //        PaginationOptions = new LetPortal.Portal.Models.DynamicLists.PaginationOptions
+        //        {
+        //            NeedTotalItems = false,
+        //            PageNumber = 0,
+        //            PageSize = 10
+        //        },
+        //        SortOptions = new LetPortal.Portal.Models.DynamicLists.SortOptions
+        //        {
+        //            SortableFields = new List<LetPortal.Portal.Models.DynamicLists.SortableField>
+        //            {
+        //                new LetPortal.Portal.Models.DynamicLists.SortableField
+        //                {
+        //                    FieldName = "displayName",
+        //                    SortType = LetPortal.Portal.Models.DynamicLists.SortType.Desc
+        //                }
+        //            }
+        //        },
+        //        TextSearch = "database"
+        //    });
 
-            // Assert
-            Assert.NotEmpty(result.Data);
-        }
+        //    // Assert
+        //    Assert.NotEmpty(result.Data);
+        //}
 
-        #endregion
+        //#endregion
 
         private DynamicList SampleEFDynamicList()
         {

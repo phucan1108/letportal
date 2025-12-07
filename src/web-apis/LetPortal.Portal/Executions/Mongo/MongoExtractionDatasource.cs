@@ -66,7 +66,7 @@ namespace LetPortal.Portal.Executions.Mongo
                     {
                         datasourceModels = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
                         {
-                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
+                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.CanonicalExtendedJson
                         })).Select(b =>
                                 JsonConvert.DeserializeObject<DatasourceModel>(b, new BsonConverter())).ToList();
                     }
@@ -74,7 +74,7 @@ namespace LetPortal.Portal.Executions.Mongo
                     {
                         var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
                         {
-                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict
+                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.CanonicalExtendedJson
                         })).Select(b =>
                                 JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter())).ToList();
 

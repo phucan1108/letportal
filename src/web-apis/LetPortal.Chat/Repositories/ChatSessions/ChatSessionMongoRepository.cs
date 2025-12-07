@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using LetPortal.Chat.Entities;
 using LetPortal.Core.Persistences;
 using MongoDB.Driver;

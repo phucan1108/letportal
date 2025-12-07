@@ -39,7 +39,8 @@ namespace LetPortal.Notification.Services.Rpc
         public override async Task<NotificationMessageResponse> Send(NotificationMessageRequest request, ServerCallContext context)
         {
             var driver = _drivers.First(a => a.Driver == _options.CurrentValue.Driver);
-            await driver.Push(new Entities.IncomingNotificationMessage
+            await driver.StartAsync();
+            await driver.PushAsync(new Entities.IncomingNotificationMessage
             {
                 Id = DataUtil.GenerateUniqueId(),
                 ServiceId = request.ServiceId,
@@ -50,17 +51,6 @@ namespace LetPortal.Notification.Services.Rpc
                 Sender = request.Sender,
                 SentDate = DateTime.UtcNow
             });
-            //await _notificationMessageQueueRepository.AddAsync(new Entities.IncomingNotificationMessage
-            //{
-            //    Id = DataUtil.GenerateUniqueId(),
-            //    ServiceId = request.ServiceId,
-            //    ServiceName = request.ServiceName,
-            //    ChannelCode = request.ChannelCode,
-            //    IndividualUsername = request.IndividualUserName,
-            //    Message = request.Message,
-            //    Sender = request.Sender,
-            //    SentDate = DateTime.UtcNow
-            //});
             return new NotificationMessageResponse
             {
                 Succeed = true
