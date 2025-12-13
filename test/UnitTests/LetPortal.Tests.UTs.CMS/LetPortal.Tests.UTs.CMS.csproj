@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\web-apis\LetPortal.CMS.Core\LetPortal.CMS.Core.csproj" />
-    <ProjectReference Include="..\..\..\src\web-apis\LetPortal.Core\LetPortal.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\LetPortal.CMS.Core\LetPortal.CMS.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\LetPortal.Core\LetPortal.Core.csproj" />
   </ItemGroup>
 
 </Project>

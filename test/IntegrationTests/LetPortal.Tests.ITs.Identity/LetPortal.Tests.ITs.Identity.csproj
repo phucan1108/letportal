@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\web-apis\LetPortal.Core\LetPortal.Core.csproj" />
-    <ProjectReference Include="..\..\..\src\web-apis\LetPortal.Identity\LetPortal.Identity.csproj" />
+    <ProjectReference Include="..\..\..\src\LetPortal.Core\LetPortal.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\LetPortal.Identity\LetPortal.Identity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
