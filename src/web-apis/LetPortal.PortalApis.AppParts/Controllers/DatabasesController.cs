@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LetPortal.Core.Logger;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Security;
 using LetPortal.Core.Utils;
-using LetPortal.Portal.Constants;
 using LetPortal.Portal.Entities.Databases;
 using LetPortal.Portal.Models;
 using LetPortal.Portal.Models.Databases;
@@ -13,6 +14,7 @@ using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Services.Databases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace LetPortal.Portal.AppParts.Controllers
 {
@@ -24,17 +26,39 @@ namespace LetPortal.Portal.AppParts.Controllers
 
         private readonly IDatabaseService _databaseService;
 
+        private readonly IOptions<DatabaseOptions> _databaseOptions;
+
         private readonly IServiceLogger<DatabasesController> _logger;
+
+        private const string DockerMongoConnectionString = "mongodb://mongodb:27017";
+        private const string LocalMongoConnectionString = "mongodb://localhost:27117";
 
         public DatabasesController(
             IDatabaseRepository databaseRepository,
             IDatabaseService databaseService,
+            IOptions<DatabaseOptions> databaseOptions,
             IServiceLogger<DatabasesController> logger
             )
         {
             _databaseRepository = databaseRepository;
             _databaseService = databaseService;
+            _databaseOptions = databaseOptions;
             _logger = logger;
+        }
+
+        private DatabaseConnection ApplyLocalModeTransformation(DatabaseConnection connection)
+        {
+            if (connection == null) return null;
+
+            if (_databaseOptions.Value.IsLocalMode &&
+                connection.ConnectionString.Contains(DockerMongoConnectionString, StringComparison.OrdinalIgnoreCase))
+            {
+                connection.ConnectionString = connection.ConnectionString.Replace(
+                    DockerMongoConnectionString,
+                    LocalMongoConnectionString,
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            return connection;
         }
 
         [HttpGet]
@@ -157,6 +181,8 @@ namespace LetPortal.Portal.AppParts.Controllers
 
             }
 
+            ApplyLocalModeTransformation(databaseConnection);
+
             var result = await _databaseService.ExecuteDynamic(databaseConnection, formattedContent, new List<ExecuteParamModel>());
             _logger.Info("Result of execution dynamic: {@result}", result);
             return Ok(result);
@@ -181,7 +207,7 @@ namespace LetPortal.Portal.AppParts.Controllers
             }
             else
             {
-                if(model.Content.GetType() == typeof(string))
+                if (model.Content.GetType() == typeof(string))
                 {
                     formattedContent = model.Content;
                 }
@@ -189,9 +215,9 @@ namespace LetPortal.Portal.AppParts.Controllers
                 {
                     formattedContent = ConvertUtil.SerializeObject(model.Content);
                 }
-                
-            }
 
+            }
+            ApplyLocalModeTransformation(databaseConnection);
             var result = await _databaseService.ExtractColumnSchema(databaseConnection, formattedContent, model.Parameters);
             _logger.Info("Result of extracting dynamic: {@result}", result);
             return Ok(result);
@@ -208,7 +234,7 @@ namespace LetPortal.Portal.AppParts.Controllers
             {
                 return BadRequest();
             }
-
+            ApplyLocalModeTransformation(databaseConnection);
             var result = await _databaseService.ExecuteDynamic(databaseConnection, content, new List<ExecuteParamModel>());
             _logger.Info("Result of dynamic datasource: {@result}", result);
             return Ok(result);

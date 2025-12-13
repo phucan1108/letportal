@@ -1,0 +1,25 @@
+<div class="grid-container-sub" [ngSwitch]="pageSection.constructionType">
+    <ng-container *ngSwitchCase="constructionType.Standard">
+        <divided-columns [section]="pageSection" [boundSection]="$any(boundSection)" *ngIf="readyToRender else loading"></divided-columns>
+    </ng-container>
+    <ng-container *ngSwitchCase="constructionType.Array">
+        <let-standard-array-render [section]="pageSection" [boundSection]="$any(boundSection)" *ngIf="readyToRender else loading"></let-standard-array-render>
+    </ng-container>
+    <ng-container *ngSwitchCase="constructionType.Tree">
+        <let-tree-render [section]="pageSection" [boundSection]="$any(boundSection)" *ngIf="readyToRender else loading"></let-tree-render>
+    </ng-container>
+    <ng-container *ngSwitchCase="constructionType.DynamicList">
+        <let-dynamic-list-render [section]="pageSection" [dynamicList]="pageSection.relatedDynamicList"
+            [displayName]="pageSection.displayName" *ngIf="readyToRender else loading"></let-dynamic-list-render>
+    </ng-container>
+    <ng-container *ngSwitchCase="constructionType.Chart">
+        <let-chart-render [section]="pageSection" [chart]="pageSection.relatedChart"
+            [displayName]="pageSection.displayName" *ngIf="readyToRender else loading"></let-chart-render>
+    </ng-container>
+</div>
+
+<ng-template #loading>
+    <div class="d-flex justify-content-center">
+        <mat-spinner [diameter]="20" mode="indeterminate"></mat-spinner>
+    </div>
+</ng-template>

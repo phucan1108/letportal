@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   mongodb:
-    image: mongo:4.0
+    image: mongo:4.2
     ports:
       - "27117:27017"
     volumes:
@@ -50,27 +50,27 @@ services:
       retries: 5
     links:
       - rabbitmq
-  cms:
-    image: cms:1.0.0
-    environment:
-     - ASPNETCORE_ENVIRONMENT=Docker
-     - ASPNETCORE_URLS=https://+:443;http://+:80
-     - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
-     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal-cms.pfx
-    depends_on:     
-     lp.saturn:
-       condition: service_healthy
-    build:
-      context: .
-      dockerfile: LetPortal.Websites.CMS/Dockerfile
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets
-      - ${USERPROFILE}/.aspnet/https:/https/
-    ports:
-      - "5103:80"
-      - "5104:443"
-    links:
-      - lp.saturn
+  # cms:
+  #   image: cms:1.0.0
+  #   environment:
+  #    - ASPNETCORE_ENVIRONMENT=Docker
+  #    - ASPNETCORE_URLS=https://+:443;http://+:80
+  #    - ASPNETCORE_Kestrel__Certificates__Default__Password=letportal
+  #    - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/letportal-cms.pfx
+  #   depends_on:     
+  #    lp.saturn:
+  #      condition: service_healthy
+  #   build:
+  #     context: .
+  #     dockerfile: LetPortal.Websites.CMS/Dockerfile
+  #   volumes:
+  #     - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets
+  #     - ${USERPROFILE}/.aspnet/https:/https/
+  #   ports:
+  #     - "5103:80"
+  #     - "5104:443"
+  #   links:
+  #     - lp.saturn
 volumes:
   mongodata:
     driver: local

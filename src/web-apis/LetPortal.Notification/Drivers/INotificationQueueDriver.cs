@@ -11,8 +11,10 @@ namespace LetPortal.Notification.Drivers
     {
         string Driver { get; }
 
-        Task Push(IncomingNotificationMessage message);
+        Task StartAsync();
 
-        Task Subcribe(Func<IncomingNotificationMessage, Task> proceed, CancellationToken cancellationToken);
+        Task PushAsync(IncomingNotificationMessage message);
+
+        Task SubcribeAsync(Func<IncomingNotificationMessage, Task> proceed, CancellationToken cancellationToken);
     }
 }

@@ -1,0 +1,56 @@
+<div class="grid-container-sub">
+    <mat-card appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'pageBuilder.datasourceGrid.header' | translate }}
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="addNewDatasource()">
+                        {{ 'pageBuilder.datasourceGrid.newDatasource' | translate }}
+                    </button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <m-table [(value)]="currentDatasources" #mtable [selectable]="false" [selectionHandler]="false">
+                <m-column field="name" header="{{ 'pageBuilder.datasourceGrid.datasourceName.header' | translate }}" [editable]="true">
+                    <ng-template let-col let-row="row" mTemplate="editor">
+                        <mat-form-field class="field-full-width pl-4" style="width: 250px">
+                            <input [(ngModel)]="row.name" matInput>
+                        </mat-form-field>
+                    </ng-template>
+                </m-column>
+                <m-column field="triggerCondition" header="{{ 'pageBuilder.datasourceGrid.triggerCondition.header' | translate }}" [editable]="true">
+                    <ng-template let-col let-row="row" mTemplate="editor">
+                        <mat-form-field class="field-full-width pl-4" style="width: 250px">
+                            <input [(ngModel)]="row.triggerCondition" matInput>
+                        </mat-form-field>
+                    </ng-template>
+                </m-column>
+                <m-column field="isActive" header="{{ 'common.active' | translate }}" [editable]="true">
+                    <ng-template let-col let-row="row" mTemplate="editor">
+                        <mat-slide-toggle [(ngModel)]="row.isActive" style="padding-top: 10px; padding-left: 30px;">
+                        </mat-slide-toggle>
+                    </ng-template>
+                </m-column>
+                <m-column field="name" header="{{ 'common.actionsText' | translate }}">
+                    <ng-template let-col let-row="row" mTemplate="body">
+                        <button mat-icon-button color="primary" type="button" matTooltip="{{ 'pageBuilder.datasourceGrid.datasourceOptions.tooltip' | translate }}"
+                            (click)="editDatasourceOption(row)">
+                            <mat-icon>library_books</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" type="button" matTooltip="{{ 'common.deleteDatasource' | translate }}"
+                            (click)="deleteDatasource(row)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </ng-template>
+                </m-column>
+                <ng-template mTemplate="emptyTable">
+                    <div class="align-center">{{ 'common.noRecordsText' | translate }}</div>
+                </ng-template>
+            </m-table>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -108,8 +108,6 @@ namespace LetPortal.Microservices.Server.Repositories.Implements
                             monitorCountersBuilder.Gte(a => a.HardwareCounter.MeansureDate, DateTime.SpecifyKind(startDate, DateTimeKind.Utc)),
                             monitorCountersBuilder.Lt(a => a.HardwareCounter.MeansureDate, DateTime.SpecifyKind(endDate, DateTimeKind.Utc)));
 
-                var renderedFilter = monitorCounterFilter.Render(GetAnotherCollection<MonitorCounter>().DocumentSerializer, GetAnotherCollection<MonitorCounter>().Settings.SerializerRegistry);
-
                 allRequiredCounters = GetAnotherCollection<MonitorCounter>()
                     .Find(monitorCounterFilter)
                     .Sort(Builders<MonitorCounter>.Sort.Ascending(a => a.HardwareCounter.MeansureDate))

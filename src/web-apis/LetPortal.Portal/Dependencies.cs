@@ -5,11 +5,9 @@ using LetPortal.Core.Persistences;
 using LetPortal.Core.Versions;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
-using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
 using LetPortal.Portal.Mappers;
-using LetPortal.Portal.Mappers.MySQL;
 using LetPortal.Portal.Mappers.PostgreSql;
 using LetPortal.Portal.Mappers.SqlServer;
 using LetPortal.Portal.Options.Files;
@@ -80,7 +78,7 @@ namespace LetPortal.Portal
                 builder.Services.AddTransient<IFileValidatorRule, CheckFileSizeRule>();
                 builder.Services.AddTransient<IFileValidatorRule, CheckAllowedExtensionFileRule>();
 
-                builder.Services.AddTransient<IStoreFileDatabase, MySqlStoreFileDatabase>();
+                //builder.Services.AddTransient<IStoreFileDatabase, MySqlStoreFileDatabase>();
                 builder.Services.AddTransient<IStoreFileDatabase, SqlServerStoreFileDatabase>();
                 builder.Services.AddTransient<IStoreFileDatabase, PostgreStoreFileDatabase>();
                 builder.Services.AddTransient<IStoreFileDatabase, MongoStoreFileDatabase>();
@@ -179,15 +177,16 @@ namespace LetPortal.Portal
             services.AddTransient<IExtractionChartQuery, SqlServerExtractionChartQuery>();
 
             services.AddSingleton<ISqlServerMapper, SqlServerMapper>();
-            services.AddTransient<IAnalyzeDatabase, MySqlAnalyzeDatabase>();
-            services.AddTransient<IExecutionDatabase, MySqlExecutionDatabase>();
-            services.AddTransient<IExtractionDatabase, MySqlExtractionDatabase>();
-            services.AddTransient<IDynamicListQueryDatabase, MySqlDynamicListQueryDatabase>();
-            services.AddTransient<IExtractionDatasource, MySqlExtractionDatasource>();
-            services.AddTransient<IExecutionChartReport, MySqlExecutionChartReport>();
-            services.AddTransient<IExtractionChartQuery, MySqlExtractionChartQuery>();
+            // TODO: Due to Pomelo doesn't support .NET 10 yet, MySql registration is commented out
+            //services.AddTransient<IAnalyzeDatabase, MySqlAnalyzeDatabase>();
+            //services.AddTransient<IExecutionDatabase, MySqlExecutionDatabase>();
+            //services.AddTransient<IExtractionDatabase, MySqlExtractionDatabase>();
+            //services.AddTransient<IDynamicListQueryDatabase, MySqlDynamicListQueryDatabase>();
+            //services.AddTransient<IExtractionDatasource, MySqlExtractionDatasource>();
+            //services.AddTransient<IExecutionChartReport, MySqlExecutionChartReport>();
+            //services.AddTransient<IExtractionChartQuery, MySqlExtractionChartQuery>();
 
-            services.AddSingleton<IMySqlMapper, MySqlMapper>();
+            //services.AddSingleton<IMySqlMapper, MySqlMapper>();
         }
 
         public static void RegisterServices(IServiceCollection services)

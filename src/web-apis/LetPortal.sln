@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.31911.260
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11222.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core-Nuget", "Core-Nuget", "{B0E410E9-B0DA-4ECD-A632-5395BD45078C}"
 EndProject
@@ -128,6 +128,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetPortal.Installation", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetPortal.Installation.AppParts", "LetPortal.Installation.AppParts\LetPortal.Installation.AppParts.csproj", "{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "letportal.adminsite.client", "letportal.adminsite.client\letportal.adminsite.client.esproj", "{EF2761C5-498F-B546-C10A-B485A5EE13AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -250,10 +252,6 @@ Global
 		{DA97013D-29E3-4150-8874-0EFBE66EAC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA97013D-29E3-4150-8874-0EFBE66EAC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA97013D-29E3-4150-8874-0EFBE66EAC8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -305,7 +303,6 @@ Global
 		{6A7BB71B-B780-41D9-9CFF-4D9D3876C426} = {FCDBA824-B82A-4688-BF14-FF866A0B25C3}
 		{3A55054D-6DE7-4712-94CD-A507D92E699E} = {5F509A06-D8A8-4D8E-B254-FCFF47F39A91}
 		{DA97013D-29E3-4150-8874-0EFBE66EAC8E} = {FCDBA824-B82A-4688-BF14-FF866A0B25C3}
-		{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0} = {5F509A06-D8A8-4D8E-B254-FCFF47F39A91}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B8132CF7-7C19-457C-8BD0-D7F09DA986EC}

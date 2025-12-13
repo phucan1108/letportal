@@ -1,4 +1,4 @@
-﻿using LetPortal.Core.Persistences;
+using LetPortal.Core.Persistences;
 using LetPortal.Core.Utils;
 using LetPortal.Portal.Entities.Apps;
 using LetPortal.Portal.Entities.Components;
@@ -352,11 +352,15 @@ namespace LetPortal.Tests.ITs.Portal.Services
             mockPageProvider
                 .Setup(a => a.GetPagesByIds(It.IsAny<IEnumerable<string>>()))
                 .Returns(Task.FromResult<IEnumerable<Page>>(null));
-
+            IOptions<DatabaseOptions> mockDatabaseOptions = Options.Create(new DatabaseOptions
+            {
+                IsLocalMode = true
+            });
 #pragma warning disable CA2000 // Dispose objects before losing scope
             InternalDatabaseServiceProvider databaserProvider = new InternalDatabaseServiceProvider(
                 new DatabaseService(null, null),
-                new DatabaseMongoRepository(_context.GetMongoConnection()));
+                new DatabaseMongoRepository(_context.GetMongoConnection()),
+                mockDatabaseOptions);
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             Mock<IFileSeviceProvider> mockFileProvider = new Mock<IFileSeviceProvider>();

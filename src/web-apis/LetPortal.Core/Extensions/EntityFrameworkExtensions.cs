@@ -43,11 +43,12 @@ namespace LetPortal.Core.Extensions
             else if (databaseOptions.ConnectionType == ConnectionType.MySQL)
             {
                 // New Changes: From Pomelo 6+, we need to declare Server Version
-                var serverVersion = ServerVersion.AutoDetect(databaseOptions.ConnectionString);
-                optionsBuilder
-                    .UseMySql(databaseOptions.ConnectionString, serverVersion)
-                    .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Error)
-                    .EnableDetailedErrors(enableDetailError);
+                // TODO: Due to Pomelo doesn't support .NET 10 yet, we will comment this part and wait for the new release
+                //var serverVersion = ServerVersion.AutoDetect(databaseOptions.ConnectionString);
+                //optionsBuilder
+                //    .UseMySql(databaseOptions.ConnectionString, serverVersion)
+                //    .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Error)
+                //    .EnableDetailedErrors(enableDetailError);
             }
         }
 

@@ -1,0 +1,348 @@
+<div class="grid-container">
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>
+        Backup Preview
+        <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="onCancel()">{{ 'common.cancelButton' | translate }}</button>
+        </mat-menu>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row row-heading">
+        <h3>{{ 'pageBuilder.page.backupRestore.backupInfo' | translate }}</h3>
+      </div>
+      <div class="row">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.nameText' | translate }}</label>
+        <p class="float-left col-form-label">{{backup.name}}</p>
+      </div>
+      <div class="row">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.description' | translate }}</label>
+        <p class="float-left col-form-label">{{backup.description}}</p>
+      </div>
+      <div class="row">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.creator' | translate }}</label>
+        <p class="float-left col-form-label">{{backup.creator}}</p>
+      </div>
+      <div class="row">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'common.createdDate' | translate }}</label>
+        <p class="float-left col-form-label">{{getCreatedDate()}}</p>
+      </div>
+      <div class="separator-dashed"></div>
+      <div class="row row-heading">
+        <h3>{{ 'pageBuilder.page.backupRestore.previewList' | translate }}</h3>
+      </div>
+      <div class="row row-heading">
+        <div class="col-1">
+          <button mat-raised-button [color]="btnOption.buttonColor" (click)="onPreview()" [disabled]="btnOption.disabled || btnOption.active">
+            <mat-spinner *ngIf="btnOption.active" diameter="18" class="inline-spinner"></mat-spinner>
+            <span *ngIf="!btnOption.active">{{ btnOption.text }}</span>
+          </button>
+        </div>
+        <div class="col-1">
+          <button mat-raised-button [color]="btnRestoreOpt.buttonColor" (click)="onRestore()" [disabled]="btnRestoreOpt.disabled || btnRestoreOpt.active">
+            <mat-spinner *ngIf="btnRestoreOpt.active" diameter="18" class="inline-spinner"></mat-spinner>
+            <span *ngIf="!btnRestoreOpt.active">{{ btnRestoreOpt.text }}</span>
+          </button>
+        </div>
+      </div>
+      <div class="row" *ngIf="isPreviewed">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalObjects' | translate }}</label>
+        <p class="float-left col-form-label">{{preview.totalObjects}}</p>
+      </div>
+      <div class="row" *ngIf="isPreviewed">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalNewObjects' | translate }}</label>
+        <p class="float-left col-form-label">{{preview.totalNewObjects}}</p>
+      </div>
+      <div class="row" *ngIf="isPreviewed">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalUnchangedObjects' | translate }}</label>
+        <p class="float-left col-form-label">{{preview.totalUnchangedObjects}}</p>
+      </div>
+      <div class="row" *ngIf="isPreviewed">
+        <label class="col-lg-2 col-form-label font-weight-bold">{{ 'pageBuilder.page.backupRestore.totalChangedObjects' | translate }}</label>
+        <p class="float-left col-form-label">{{preview.totalChangedObjects}}</p>
+      </div>
+      <div class="row row-heading" *ngIf="isPreviewed">
+        <div class="col-lg-12 pl-0">
+          <mat-accordion>
+            <mat-expansion-panel *ngIf="preview.apps">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.apps' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let app of preview.apps">
+                <div class="col-lg-12" *ngFor="let property of app.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="preview.databases">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.databases' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let database of preview.databases">
+                <div class="col-lg-12" *ngFor="let property of database.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="preview.standards">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.standards' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let standard of preview.standards">
+                <div class="col-lg-12" *ngFor="let property of standard.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="preview.tree">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.tree' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let tree of preview.tree">
+                <div class="col-lg-12" *ngFor="let property of tree.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="preview.array">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.array' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let array of preview.array">
+                <div class="col-lg-12" *ngFor="let property of array.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="preview.dynamicLists">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.dynamicList' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let dynamicList of preview.dynamicLists">
+                <div class="col-lg-12" *ngFor="let property of dynamicList.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="preview.charts">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.charts' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let chart of preview.charts">
+                <div class="col-lg-12" *ngFor="let property of chart.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel *ngIf="preview.pages">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'common.pages' | translate }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="row">
+                <div class="col-lg-2 border-right">
+                  <h5>{{ 'pageBuilder.page.backupRestore.propertyName' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.source' | translate }}</h5>
+                </div>
+                <div class="col-lg-5">
+                  <h5>{{ 'common.target' | translate }}</h5>
+                </div>
+              </div>
+              <div class="row" *ngFor="let page of preview.pages">
+                <div class="col-lg-12" *ngFor="let property of page.result.properties">
+                  <div class="row border-top">
+                    <div class="col-lg-2 border-right">
+                      <b>{{property.name}}</b>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'removed-code': property.comparedState === 3 || property.comparedState === 2, 'no-change': property.comparedState === 1}">{{property.sourceValue}}</code>
+                    </div>
+                    <div class="col-lg-5">
+                      <code [ngClass]="{'no-change': property.comparedState === 1}">{{property.targetValue}}</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="separator-dashed"></div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

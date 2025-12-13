@@ -46,7 +46,8 @@ namespace LetPortal.Notification.Workers
         {
             _logger.Info("Start Incoming message listener");
             var driver = _drivers.First(a => a.Driver == _options.CurrentValue.Driver);
-            await driver.Subcribe(async (message) =>
+            await driver.StartAsync();
+            await driver.SubcribeAsync(async (message) =>
             {
                 _logger.Info("Received incoming message {@message}", message);
                 var channel = await _channelService.GetByCode(message.ChannelCode);

@@ -1,7 +1,6 @@
 ﻿using LetPortal.Portal.Entities.Datasources;
 using LetPortal.Portal.Executions;
 using LetPortal.Portal.Executions.Mongo;
-using LetPortal.Portal.Executions.MySQL;
 using LetPortal.Portal.Executions.PostgreSql;
 using LetPortal.Portal.Executions.SqlServer;
 using LetPortal.Portal.Providers.Databases;
@@ -122,32 +121,32 @@ namespace LetPortal.Tests.ITs.Portal.Services
             Assert.NotEmpty(result.DatasourceModels);
         }
 
-        [Fact]
-        public async Task Fetch_Datasource_In_MySQL_Test()
-        {
-            if(!_context.AllowMySQL)
-            {
-                Assert.True(true);
-                return;
-            }
-            // Arrange
-            Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
-            mockDatabaseServiceProvider
-                .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
+        //[Fact]
+        //public async Task Fetch_Datasource_In_MySQL_Test()
+        //{
+        //    if(!_context.AllowMySQL)
+        //    {
+        //        Assert.True(true);
+        //        return;
+        //    }
+        //    // Arrange
+        //    Mock<IDatabaseServiceProvider> mockDatabaseServiceProvider = new Mock<IDatabaseServiceProvider>();
+        //    mockDatabaseServiceProvider
+        //        .Setup(a => a.GetOneDatabaseConnectionAsync(It.IsAny<string>()))
+        //        .Returns(Task.FromResult(_context.MySqlDatabaseConnection));
 
-            MySqlExtractionDatasource mysqlExtractionDatasource = new MySqlExtractionDatasource();
-            DatasourceService datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { mysqlExtractionDatasource });
-            // Act
-            LetPortal.Portal.Models.ExecutedDataSourceModel result = await datasourceService.GetDatasourceService(new Datasource
-            {
-                DatabaseId = "aaa",
-                DatasourceType = DatasourceType.Database,
-                Query = "Select name, id as Value from `databases`"
-            });
+        //    MySqlExtractionDatasource mysqlExtractionDatasource = new MySqlExtractionDatasource();
+        //    DatasourceService datasourceService = new DatasourceService(mockDatabaseServiceProvider.Object, new IExtractionDatasource[] { mysqlExtractionDatasource });
+        //    // Act
+        //    LetPortal.Portal.Models.ExecutedDataSourceModel result = await datasourceService.GetDatasourceService(new Datasource
+        //    {
+        //        DatabaseId = "aaa",
+        //        DatasourceType = DatasourceType.Database,
+        //        Query = "Select name, id as Value from `databases`"
+        //    });
 
-            // Assert
-            Assert.NotEmpty(result.DatasourceModels);
-        }
+        //    // Assert
+        //    Assert.NotEmpty(result.DatasourceModels);
+        //}
     }
 }

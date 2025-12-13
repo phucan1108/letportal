@@ -1,0 +1,18 @@
+.removed-code{
+    text-decoration: line-through;
+    color: rgba(0,0,0,.87);
+}
+
+.no-change{
+    color: lightgrey;
+}
+
+.inline-spinner {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+button[mat-raised-button] {
+  min-width: 100px;
+}

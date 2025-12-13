@@ -41,8 +41,15 @@ namespace LetPortal.Core.Common
                     else if ((child.Value as JObject).Properties().Any(a => (a as JProperty).Name == "$date"))
                     {
                         var dateStr = (child.Value as JObject).Properties().First().Value.ToString();
-                        var longEpochTime = long.Parse(dateStr);
-                        var date = DateTimeOffset.FromUnixTimeMilliseconds(longEpochTime);
+                        DateTimeOffset date;
+                        if (long.TryParse(dateStr, out var longEpochTime))
+                        {
+                            date = DateTimeOffset.FromUnixTimeMilliseconds(longEpochTime);
+                        }
+                        else
+                        {
+                            date = DateTimeOffset.Parse(dateStr);
+                        }
                         var format = formatBsonFields.FirstOrDefault(a => a.BsonFieldName == child.Name);
                         if (format != null)
                         {
