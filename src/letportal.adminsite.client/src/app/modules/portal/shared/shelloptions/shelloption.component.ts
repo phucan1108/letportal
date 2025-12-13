@@ -16,7 +16,8 @@ import { ShellOptionDialogComponent } from './shelloption.dialog.component';
 @Component({
     selector: 'let-shell-option',
     templateUrl: './shelloption.component.html',
-    styleUrls: ['./shelloption.component.scss']
+    styleUrls: ['./shelloption.component.scss'],
+    standalone: false
 })
 export class ShellOptionComponent implements OnInit, AfterViewInit {
 

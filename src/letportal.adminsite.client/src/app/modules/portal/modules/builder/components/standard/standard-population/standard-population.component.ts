@@ -8,7 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-standard-population',
-    templateUrl: './standard-population.component.html'
+    templateUrl: './standard-population.component.html',
+    standalone: false
 })
 export class StandardPopulationComponent implements OnInit {
     heading = 'Controls Population'

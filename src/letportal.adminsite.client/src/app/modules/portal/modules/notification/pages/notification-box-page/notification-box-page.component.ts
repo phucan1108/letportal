@@ -21,7 +21,8 @@ import { NOTIFICATION_STATE_TOKEN } from 'stores/notifications/notification.stat
 @Component({
     selector: 'notification-box-page',
     templateUrl: './notification-box-page.component.html',
-    styleUrls: ['./notification-box-page.component.scss']
+    styleUrls: ['./notification-box-page.component.scss'],
+    standalone: false
 })
 export class NotificationBoxPage implements OnInit, OnDestroy, AfterViewInit {
 

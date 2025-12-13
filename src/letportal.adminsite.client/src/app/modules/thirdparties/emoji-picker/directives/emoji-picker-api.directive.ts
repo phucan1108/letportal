@@ -18,11 +18,12 @@ import { DIRECTIONS } from '../misc/picker-directions';
 import { EmojiEvent } from '../misc/emoji-event';
 
 @Directive({
-  selector: '[emojiPickerIf]',
-  host: {
-    '(click)': '$event.emojiPickerExempt = true' // marking off event listening on anchor
-  }
- })
+    selector: '[emojiPickerIf]',
+    host: {
+        '(click)': '$event.emojiPickerExempt = true' // marking off event listening on anchor
+    },
+    standalone: false
+})
 export class EmojiPickerApiDirective {
   private _directionCode: DIRECTIONS = DIRECTIONS.bottom;
   private _searchBar: Boolean = false;

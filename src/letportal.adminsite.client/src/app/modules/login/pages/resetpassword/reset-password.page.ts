@@ -7,7 +7,8 @@ import { NGXLogger } from 'ngx-logger';
 @Component({
     selector: 'let-reset-password',
     templateUrl: './reset-password.page.html',
-    styleUrls: ['./reset-password.page.scss']
+    styleUrls: ['./reset-password.page.scss'],
+    standalone: false
 })
 export class ResetPasswordPage implements OnInit {
 

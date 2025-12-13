@@ -7,7 +7,8 @@ import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-httpoptions',
-    templateUrl: './httpoptions.component.html'
+    templateUrl: './httpoptions.component.html',
+    standalone: false
 })
 export class HttpOptionsComponent implements OnInit {
     @ViewChild('jsonPayloadEditor', { static: true }) jsonPayloadEditor: JsonEditorComponent

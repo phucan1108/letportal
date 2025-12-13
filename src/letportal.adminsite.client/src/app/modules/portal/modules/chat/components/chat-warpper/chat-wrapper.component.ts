@@ -14,7 +14,8 @@ import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog
 @Component({
     selector: 'let-chat-wrapper',
     templateUrl: './chat-wrapper.component.html',
-    styleUrls: ['./chat-wrapper.component.scss']
+    styleUrls: ['./chat-wrapper.component.scss'],
+    standalone: false
 })
 export class ChatWrapperComponent implements OnInit, OnDestroy {
     isShowChatHead = true

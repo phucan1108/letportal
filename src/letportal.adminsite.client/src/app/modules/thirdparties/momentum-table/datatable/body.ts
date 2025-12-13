@@ -15,8 +15,9 @@ import { ColumnComponent } from './columns';
 import { DataTable } from './datatable';
 
 @Component({
-  selector: 'm-columnBodyTemplateLoader',
-  template: ``
+    selector: 'm-columnBodyTemplateLoader',
+    template: ``,
+    standalone: false
 })
 export class ColumnBodyTemplateLoader implements OnInit, OnChanges, OnDestroy {
   @Input()
@@ -59,8 +60,9 @@ export class ColumnBodyTemplateLoader implements OnInit, OnChanges, OnDestroy {
 }
 
 @Component({
-  selector: 'm-rowExpansionLoader',
-  template: ``
+    selector: 'm-rowExpansionLoader',
+    template: ``,
+    standalone: false
 })
 export class RowExpansionLoader implements OnInit, OnDestroy {
   @Input()
@@ -89,8 +91,9 @@ export class RowExpansionLoader implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: 'm-emptyTableLoader',
-  template: ``
+    selector: 'm-emptyTableLoader',
+    template: ``,
+    standalone: false
 })
 export class EmptyTableLoader implements OnInit, OnDestroy {
   @Input()
@@ -110,8 +113,9 @@ export class EmptyTableLoader implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: 'm-rowSettingsLoader',
-  template: ``
+    selector: 'm-rowSettingsLoader',
+    template: ``,
+    standalone: false
 })
 export class RowSettingsLoader implements OnInit, OnDestroy {
   @Input()
@@ -140,8 +144,8 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: '[mTableBody]',
-  template: `
+    selector: '[mTableBody]',
+    template: `
     <ng-template ngFor let-row [ngForOf]="value" let-even="even" let-odd="odd" let-rowIndex="index">
       <tr (click)="dt.handleRowClick($event, row, rowIndex)" (mouseenter)="onRowHover(rowIndex, true)" (mouseleave)="onRowHover(rowIndex, false)" [ngClass]="[dt.isSelected(row)? 'm-row-selected': '']">
         <td *ngIf="dt.selectionHandler == true">
@@ -197,8 +201,8 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
       </td>
     </tr>
   `,
-  styles: [
-    `
+    styles: [
+        `
                 tr {
                   border-top: 1px solid #e0e0e0;
                   height: var(--row-height, 50px);
@@ -278,7 +282,8 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
                   }
                 }
               `
-  ]
+    ],
+    standalone: false
 })
 export class TableBodyComponent {
   public dt: DataTable

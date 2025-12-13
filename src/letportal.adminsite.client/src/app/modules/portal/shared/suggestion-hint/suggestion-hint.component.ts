@@ -18,7 +18,8 @@ export class SuggestionHintOptions {
     styleUrls: ['./suggestion-hint.component.scss'],
     host: {
         '(document:click)': 'onClick($event)',
-    }
+    },
+    standalone: false
 })
 export class SuggestionHintComponent implements OnInit, AfterViewInit {
     @ViewChild('formNameInput', { static: true }) formNameInput: ElementRef;

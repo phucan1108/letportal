@@ -9,7 +9,8 @@ import { ActionType, ColumnDef, ColumnField, CommandButtonInList, CommandPositio
 
 @Component({
     selector: 'let-list-datasource',
-    templateUrl: './list-datasource.component.html'
+    templateUrl: './list-datasource.component.html',
+    standalone: false
 })
 export class ListDatasourceComponent implements OnInit {
     heading = 'Database Connection Info:'

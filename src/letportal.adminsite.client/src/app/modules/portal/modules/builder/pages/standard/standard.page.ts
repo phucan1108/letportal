@@ -19,7 +19,8 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'let-standard-page',
     templateUrl: './standard.page.html',
-    styleUrls:['./standard.page.scss']
+    styleUrls: ['./standard.page.scss'],
+    standalone: false
 })
 export class StandardPagePage implements OnInit {
 

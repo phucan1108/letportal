@@ -7,7 +7,8 @@ import { PageDatasource } from 'services/portal.service';
 @Component({
     selector: 'let-page-datasource-dialog',
     templateUrl: './page-datasource.dialog.component.html',
-    styleUrls: ['./page-datasource.dialog.component.scss']
+    styleUrls: ['./page-datasource.dialog.component.scss'],
+    standalone: false
 })
 export class PageDatasourceDialogComponent implements OnInit {
 

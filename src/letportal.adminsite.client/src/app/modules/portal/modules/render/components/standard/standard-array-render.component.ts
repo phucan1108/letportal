@@ -25,7 +25,8 @@ import { StandardArrayDialog } from './standard-array-dialog.component';
 @Component({
     selector: 'let-standard-array-render',
     templateUrl: './standard-array-render.component.html',
-    styleUrls: ['./standard-array-render.component.scss']
+    styleUrls: ['./standard-array-render.component.scss'],
+    standalone: false
 })
 export class StandardArrayRenderComponent implements OnInit {
     @ViewChild('matTable', { static: false })

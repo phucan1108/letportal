@@ -10,7 +10,8 @@ import { ChartFilterDialogComponent } from './chart-filter.dialog.component';
 
 @Component({
     selector: 'let-chart-filter-grid',
-    templateUrl: './chart-filter.grid.component.html'
+    templateUrl: './chart-filter.grid.component.html',
+    standalone: false
 })
 export class ChartFilterGridComponent implements OnInit {
     @Input()

@@ -12,7 +12,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
 @Component({
     selector: 'let-datasourceopts',
     templateUrl: './datasourceopts.component.html',
-    styleUrls: ['./datasourceopts.component.scss']
+    styleUrls: ['./datasourceopts.component.scss'],
+    standalone: false
 })
 export class DatasourceOptionsDialogComponent implements OnInit {
 

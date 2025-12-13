@@ -14,7 +14,8 @@ import { App, AppsClient, CompositeControl, CompositeControlsClient } from 'serv
 @Component({
     selector: 'let-composite-builder',
     templateUrl: './composite-builder.page.html',
-    styleUrls: ['./composite-builder.page.scss']
+    styleUrls: ['./composite-builder.page.scss'],
+    standalone: false
 })
 export class CompositeBuilderPage implements OnInit {
     compositeControl: CompositeControl

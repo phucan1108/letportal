@@ -16,7 +16,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-async-validators',
-    templateUrl: './control-async-validator.dialog.component.html'
+    templateUrl: './control-async-validator.dialog.component.html',
+    standalone: false
 })
 export class AsyncValidatorDialogComponent implements OnInit {
     control: ExtendedPageControl

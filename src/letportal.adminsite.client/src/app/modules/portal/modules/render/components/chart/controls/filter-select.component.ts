@@ -6,7 +6,8 @@ import StringUtils from 'app/core/utils/string-util';
 
 @Component({
     selector: 'filter-select',
-    templateUrl: 'filter-select.component.html'
+    templateUrl: 'filter-select.component.html',
+    standalone: false
 })
 
 export class FilterSelectComponent implements OnInit {

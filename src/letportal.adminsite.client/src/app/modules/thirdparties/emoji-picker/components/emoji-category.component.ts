@@ -1,11 +1,12 @@
 import { Component, Input, ElementRef } from '@angular/core';
 
 @Component({
-  selector: 'emoji-category',
-  styleUrls: ['../styles/emoji-category.scss'],
-  template: `
+    selector: 'emoji-category',
+    styleUrls: ['../styles/emoji-category.scss'],
+    template: `
   <p class="emoji-category">{{category.name}}</p>
-  `
+  `,
+    standalone: false
 })
 
 export class EmojiCategoryComponent {

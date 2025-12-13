@@ -12,7 +12,8 @@ import { Backup, BackupsClient, PreviewRestoreModel } from 'services/portal.serv
 @Component({
     selector: 'let-backup-restore',
     templateUrl: './backup-restore.page.html',
-    styleUrls: ['./backup-restore.page.scss']
+    styleUrls: ['./backup-restore.page.scss'],
+    standalone: false
 })
 export class BackupRestorePage implements OnInit {
 

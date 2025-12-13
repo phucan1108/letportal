@@ -5,7 +5,8 @@ import { App, AppsClient, PagesClient } from 'services/portal.service';
 
 @Component({
     selector: 'let-page-info',
-    templateUrl: './page-info.component.html'
+    templateUrl: './page-info.component.html',
+    standalone: false
 })
 export class PageInfoComponent implements OnInit {
 

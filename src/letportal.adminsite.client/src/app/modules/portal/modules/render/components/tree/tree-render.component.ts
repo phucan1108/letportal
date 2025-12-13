@@ -25,7 +25,8 @@ import { TreeDataNode, TreeFlatNode } from './models/tree-node';
 @Component({
     selector: 'let-tree-render',
     templateUrl: './tree-render.component.html',
-    styleUrls: ['./tree-render.component.scss']
+    styleUrls: ['./tree-render.component.scss'],
+    standalone: false
 })
 export class TreeRenderComponent implements OnInit, OnDestroy {
     @Input()

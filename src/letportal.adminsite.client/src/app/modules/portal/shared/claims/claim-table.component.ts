@@ -13,7 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-claim-table',
-    templateUrl: './claim-table.component.html'
+    templateUrl: './claim-table.component.html',
+    standalone: false
 })
 export class ClaimTableComponent implements OnInit {
     @ViewChild('table', { static: true }) table: MatTable<PortalClaim>;

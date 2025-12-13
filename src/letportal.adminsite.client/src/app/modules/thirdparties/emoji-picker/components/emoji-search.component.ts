@@ -4,11 +4,12 @@ import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
-  selector: 'emoji-search',
-  styleUrls: ['../styles/emoji-search.scss'],
-  template: `
+    selector: 'emoji-search',
+    styleUrls: ['../styles/emoji-search.scss'],
+    template: `
   <input type="text" autocomplete="off" #input (input)="onInputChange($event)" placeholder="Search"/>
-  `
+  `,
+    standalone: false
 })
 
 export class EmojiSearchComponent implements OnDestroy {

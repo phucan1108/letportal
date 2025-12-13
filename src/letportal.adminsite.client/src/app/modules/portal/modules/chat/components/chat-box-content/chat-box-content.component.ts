@@ -28,9 +28,10 @@ export class CustomErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 @Component({
-  selector: 'let-chat-box-content',
-  templateUrl: './chat-box-content.component.html',
-  styleUrls: ['./chat-box-content.component.scss']
+    selector: 'let-chat-box-content',
+    templateUrl: './chat-box-content.component.html',
+    styleUrls: ['./chat-box-content.component.scss'],
+    standalone: false
 })
 export class ChatBoxContentComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
 

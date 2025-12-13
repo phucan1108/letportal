@@ -4,7 +4,8 @@ import { ExtendedPageControl } from '../../../../../core/models/extended.models'
 
 @Component({
     selector: 'let-textbox',
-    templateUrl: './textbox.component.html'
+    templateUrl: './textbox.component.html',
+    standalone: false
 })
 export class TextboxComponent implements OnInit {
 

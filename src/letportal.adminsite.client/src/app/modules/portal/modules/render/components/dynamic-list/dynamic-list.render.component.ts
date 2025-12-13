@@ -25,7 +25,8 @@ import { CommandClicked } from './models/commandClicked';
     selector: 'let-dynamic-list-render',
     templateUrl: './dynamic-list.render.component.html',
     styleUrls: ['./dynamic-list.render.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class DynamicListRenderComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
     @ViewChild(DynamicListGridComponent, { static: true })

@@ -43,7 +43,8 @@ import { ControlEventsDialogComponent } from './control-events.dialog.component'
         slideOutRightOnLeaveAnimation(),
         slideInLeftOnEnterAnimation(),
         slideOutLeftOnLeaveAnimation()
-    ]
+    ],
+    standalone: false
 })
 export class ControlsGridComponent implements OnInit {
     @ViewChild('table', { static: false }) table: MatTable<ExtendedPageControl>;

@@ -3,16 +3,17 @@ import { EMOJIS } from '../misc/emojis.data';
 import { EmojiListComponent } from './emoji-list.component';
 
 @Component({
-  selector: 'emoji-content',
-  styleUrls: ['../styles/emoji-content.scss'],
-  template: `
+    selector: 'emoji-content',
+    styleUrls: ['../styles/emoji-content.scss'],
+    template: `
   <emoji-header 
     [emojisCategories]="emojisCategories"
     (categorySelection)="categorySelectionHandler($event)"
     (search)="searchHandler($event)"></emoji-header>
   <emoji-list [emojis]="emojis" (emoji-selection)="emojiSelectionEmitter.emit($event)"></emoji-list>
   <emoji-footer></emoji-footer>
-  `
+  `,
+    standalone: false
 })
 
 export class EmojiContentComponent {

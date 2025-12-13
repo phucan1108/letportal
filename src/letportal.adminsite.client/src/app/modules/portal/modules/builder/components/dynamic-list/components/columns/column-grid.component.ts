@@ -9,7 +9,8 @@ import { ActionType, ColumnDef, DatasourceControlType, FieldValueType } from 'se
 
 @Component({
     selector: 'let-column-grid',
-    templateUrl: './column-grid.component.html'
+    templateUrl: './column-grid.component.html',
+    standalone: false
 })
 export class ColumnGridComponent implements OnInit {
 

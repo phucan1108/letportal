@@ -11,7 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'backup-upload',
     templateUrl: './backup-upload.page.html',
-    styleUrls: ['./backup-upload.page.scss']
+    styleUrls: ['./backup-upload.page.scss'],
+    standalone: false
 })
 export class BackupUploadpage implements OnInit {
     @ViewChild('fileInput', { static: true }) fileInput: ElementRef

@@ -12,7 +12,8 @@ import { ActionCommandOptions, ActionType, CommandButtonInList, CommandPositionT
 
 @Component({
     selector: 'let-command-dialog',
-    templateUrl: './command-dialog.component.html'
+    templateUrl: './command-dialog.component.html',
+    standalone: false
 })
 export class CommandModalComponent implements OnInit {
     commandButtonForm: FormGroup;

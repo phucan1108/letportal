@@ -13,9 +13,10 @@ import { VideoCallService } from 'services/videocall.service';
 import { SecurityService } from './core/security/security.service';
 import { ObjectUtils } from './core/utils/object-util';
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent implements OnInit {
   showChatBox = false

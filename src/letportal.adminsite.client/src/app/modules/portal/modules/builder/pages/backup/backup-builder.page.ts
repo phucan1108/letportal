@@ -18,7 +18,8 @@ import { GenerateCodeDialog } from '../../components/backup-builder/generatecode
 @Component({
     selector: 'let-backup-builder',
     templateUrl: './backup-builder.page.html',
-    styleUrls: ['./backup-builder.page.scss']
+    styleUrls: ['./backup-builder.page.scss'],
+    standalone: false
 })
 export class BackupBuilderPage implements OnInit {
 

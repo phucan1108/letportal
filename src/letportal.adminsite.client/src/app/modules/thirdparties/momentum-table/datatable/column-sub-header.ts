@@ -12,8 +12,9 @@ import { DataTable } from './datatable';
 import { ColumnComponent } from './columns';
 
 @Component({
-  selector: 'm-columnSubHeaderTemplateLoader',
-  template: ``,
+    selector: 'm-columnSubHeaderTemplateLoader',
+    template: ``,
+    standalone: false
 })
 export class ColumnSubHeaderTemplateLoader implements OnInit, OnDestroy {
   @Input() column: any;
@@ -37,8 +38,8 @@ export class ColumnSubHeaderTemplateLoader implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: '[mColumnSubHeader]',
-  template: `
+    selector: '[mColumnSubHeader]',
+    template: `
     <tr>
       <td *ngIf="dt.selectionHandler == true">
       </td>
@@ -53,8 +54,8 @@ export class ColumnSubHeaderTemplateLoader implements OnInit, OnDestroy {
       </td>
     </tr>
   `,
-  styles: [
-    `
+    styles: [
+        `
               tr {
                 text-align: left;
                 font-size: 12px;
@@ -75,7 +76,8 @@ export class ColumnSubHeaderTemplateLoader implements OnInit, OnDestroy {
                 padding: var(--last-column-padding, 0 24px 0 0)
               }
             `,
-  ],
+    ],
+    standalone: false
 })
 export class ColumnSubHeaderComponent {
   constructor(

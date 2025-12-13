@@ -24,7 +24,8 @@ import { PageButtonRouteDialogComponent } from './page-button-route.component';
 
 @Component({
     selector: 'let-page-button-grid',
-    templateUrl: './page-button-grid.component.html'
+    templateUrl: './page-button-grid.component.html',
+    standalone: false
 })
 export class PageButtonGridComponent implements OnInit {
     @ViewChild('table', { static: true }) table: MatTable<PageButton>;

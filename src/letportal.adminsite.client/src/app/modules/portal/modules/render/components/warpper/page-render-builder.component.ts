@@ -17,7 +17,8 @@ import { PageRenderSectionWrapperComponent } from './page-render-section-wrapper
 
 @Component({
     selector: 'let-builder',
-    templateUrl: './page-render-builder.component.html'
+    templateUrl: './page-render-builder.component.html',
+    standalone: false
 })
 export class PageRenderBuilderComponent implements OnInit, AfterViewInit, AfterContentInit, AfterViewChecked, OnDestroy {
 

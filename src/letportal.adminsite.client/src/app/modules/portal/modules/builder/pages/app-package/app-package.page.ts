@@ -16,7 +16,8 @@ import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'let-app-package',
-    templateUrl: './app-package.page.html'
+    templateUrl: './app-package.page.html',
+    standalone: false
 })
 export class AppPackagePage implements OnInit {
 

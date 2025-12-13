@@ -4,7 +4,8 @@ import { FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'let-json-editor',
-    templateUrl: './json-editor.component.html'
+    templateUrl: './json-editor.component.html',
+    standalone: false
 })
 export class JsonEditorCustomComponent implements OnInit {
     @ViewChild(JsonEditorComponent, { static: true }) editor: JsonEditorComponent;

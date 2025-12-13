@@ -23,7 +23,8 @@ import { DynamicListDataDialogComponent } from './dynamic-list-data-dialog.compo
 @Component({
     selector: 'dynamic-list-grid',
     templateUrl: './dynamic-list.grid.component.html',
-    styleUrls: ['./dynamic-list.grid.component.scss']
+    styleUrls: ['./dynamic-list.grid.component.scss'],
+    standalone: false
 })
 export class DynamicListGridComponent implements OnInit, OnDestroy, AfterViewInit {
 

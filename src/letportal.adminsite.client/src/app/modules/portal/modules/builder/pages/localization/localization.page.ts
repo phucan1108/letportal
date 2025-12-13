@@ -17,9 +17,10 @@ import { PageService } from 'services/page.service';
 import { LanguageKey, Localization, LocalizationClient, LocalizationContent } from 'services/portal.service';
 
 @Component({
-  selector: 'let-localization-page',
-  templateUrl: './localization.page.html',
-  styleUrls: ['./localization.page.scss']
+    selector: 'let-localization-page',
+    templateUrl: './localization.page.html',
+    styleUrls: ['./localization.page.scss'],
+    standalone: false
 })
 export class LocalizationPage implements OnInit {
   @ViewChild('mtable', { static: true })

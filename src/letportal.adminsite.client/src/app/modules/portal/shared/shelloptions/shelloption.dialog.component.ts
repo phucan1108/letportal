@@ -9,7 +9,8 @@ import { Guid } from 'guid-typescript';
 
 @Component({
     selector: 'let-shelloption-dialog',
-    templateUrl: './shelloption.dialog.component.html'
+    templateUrl: './shelloption.dialog.component.html',
+    standalone: false
 })
 export class ShellOptionDialogComponent implements OnInit {
 

@@ -16,7 +16,8 @@ import { PageReadyAction } from 'stores/pages/page.actions';
 @Component({
     selector: 'let-page-render',
     templateUrl: './page-render.page.html',
-    styleUrls: ['./page-render.page.scss']
+    styleUrls: ['./page-render.page.scss'],
+    standalone: false
 })
 export class PageRenderPage implements OnInit, AfterViewInit, OnDestroy {
 

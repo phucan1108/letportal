@@ -27,6 +27,8 @@
     <ProjectReference Include="..\LetPortal.Core\LetPortal.Core.csproj" />
     <ProjectReference Include="..\LetPortal.Identity.AppParts\LetPortal.Identity.AppParts.csproj" />
     <ProjectReference Include="..\LetPortal.Identity\LetPortal.Identity.csproj" />
+    <ProjectReference Include="..\LetPortal.Installation.AppParts\LetPortal.Installation.AppParts.csproj" />
+    <ProjectReference Include="..\LetPortal.Installation\LetPortal.Installation.csproj" />
     <ProjectReference Include="..\LetPortal.Microservices.Server\LetPortal.Microservices.Server.csproj" />
     <ProjectReference Include="..\LetPortal.Notification.AppParts\LetPortal.Notification.AppParts.csproj" />
     <ProjectReference Include="..\LetPortal.Notification\LetPortal.Notification.csproj" />

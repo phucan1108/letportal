@@ -5,7 +5,8 @@ import { StaticResources } from 'portal/resources/static-resources';
 
 @Component({
     selector: 'let-standardcontrols-list',
-    templateUrl: './standard-controls-list.component.html'
+    templateUrl: './standard-controls-list.component.html',
+    standalone: false
 })
 export class StandardControlsListComponent implements OnInit {
 

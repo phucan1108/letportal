@@ -18,7 +18,8 @@ import { StandardSharedService } from './services/standard-shared.service';
 
 @Component({
     selector: 'divided-columns',
-    templateUrl: './divided-columns-section.component.html'
+    templateUrl: './divided-columns-section.component.html',
+    standalone: false
 })
 export class DividedColumnsSectionComponent implements OnInit, OnDestroy {
 

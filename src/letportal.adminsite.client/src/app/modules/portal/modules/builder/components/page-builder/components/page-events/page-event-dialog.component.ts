@@ -9,7 +9,8 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
     selector: 'let-page-event-dialog',
-    templateUrl: './page-event-dialog.component.html'
+    templateUrl: './page-event-dialog.component.html',
+    standalone: false
 })
 export class PageEventDialogComponent implements OnInit {
 

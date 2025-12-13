@@ -17,7 +17,8 @@ import { CommandModalComponent } from './command-dialog.component';
 
 @Component({
     selector: 'let-command-grid',
-    templateUrl: './command-grid.component.html'
+    templateUrl: './command-grid.component.html',
+    standalone: false
 })
 export class CommandGridComponent implements OnInit {
 

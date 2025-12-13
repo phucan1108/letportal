@@ -49,8 +49,8 @@ import { GlobalHeaderTemplateLoader, Header, HeaderComponent } from './header';
 import { MomentumTemplate } from './template.directive';
 
 @Component({
-  selector: 'm-table',
-  template: `
+    selector: 'm-table',
+    template: `
     <mat-card appearance="outlined" [ngClass]="{'m-datatable m-widget':true}" [ngStyle]="{'width': width, 'height': height}" class="card-wrapper">
       <div #cardHeader *ngIf="header" [mHeader]="header" (filterChange)="filterChange($event)"></div>
       <div class="table-container" #tableContainer (scroll)="onTableContainerScroll($event)">
@@ -64,8 +64,8 @@ import { MomentumTemplate } from './template.directive';
       <div *ngIf="footer" [mFooter]="footer"></div>
     </mat-card>
   `,
-  styles: [
-    `
+    styles: [
+        `
                 :host {
                   display: block;
                 }
@@ -85,8 +85,9 @@ import { MomentumTemplate } from './template.directive';
                   border-spacing: 0;
                 }
               `
-  ],
-  providers: [DomHandler, ObjectUtils]
+    ],
+    providers: [DomHandler, ObjectUtils],
+    standalone: false
 })
 export class DataTable
   implements

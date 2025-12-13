@@ -5,10 +5,10 @@ import { of } from 'rxjs';
 
 
 @Component({
-	selector: 'm-action-natification',
-	templateUrl: './action-notification.component.html',
-	changeDetection: ChangeDetectionStrategy.Default
-
+    selector: 'm-action-natification',
+    templateUrl: './action-notification.component.html',
+    changeDetection: ChangeDetectionStrategy.Default,
+    standalone: false
 })
 export class ActionNotificationComponent implements OnInit {
 	constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) { }

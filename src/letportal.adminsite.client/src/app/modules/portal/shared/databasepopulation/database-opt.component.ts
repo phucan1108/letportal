@@ -15,7 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-database-opt',
-    templateUrl: './database-opt.component.html'
+    templateUrl: './database-opt.component.html',
+    standalone: false
 })
 export class DatabaseOptionComponent implements OnInit, AfterViewInit {
 

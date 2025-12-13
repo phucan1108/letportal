@@ -25,7 +25,8 @@ import { AutocompleteMultipleComponent } from './autocomplete-multiple.component
 @Component({
     selector: 'let-general-control',
     templateUrl: './general-control.component.html',
-    styleUrls: ['./general-control.component.scss']
+    styleUrls: ['./general-control.component.scss'],
+    standalone: false
 })
 export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit {
 

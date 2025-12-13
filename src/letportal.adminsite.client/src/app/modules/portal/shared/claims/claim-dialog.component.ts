@@ -7,7 +7,8 @@ import { StaticResources } from 'portal/resources/static-resources';
 
 @Component({
     selector: 'let-claim-dialog',
-    templateUrl: './claim-dialog.component.html'
+    templateUrl: './claim-dialog.component.html',
+    standalone: false
 })
 export class ClaimDialogComponent implements OnInit {
 

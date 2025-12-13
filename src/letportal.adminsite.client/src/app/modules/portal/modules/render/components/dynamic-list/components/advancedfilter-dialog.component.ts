@@ -9,7 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-advanced-filer-dialog',
-    templateUrl: './advancedfilter-dialog.component.html'
+    templateUrl: './advancedfilter-dialog.component.html',
+    standalone: false
 })
 export class AdvancedFilterDialogComponent implements OnInit {
 

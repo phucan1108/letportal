@@ -10,8 +10,9 @@ import { ShortEntityModel } from 'services/portal.service';
 
 
 @Component({
-  selector: 'let-backup-selection',
-  templateUrl: './backup-selection.component.html'
+    selector: 'let-backup-selection',
+    templateUrl: './backup-selection.component.html',
+    standalone: false
 })
 export class BackupSelectionComponent implements OnInit {
 

@@ -15,7 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-page-event-grid',
-    templateUrl: './page-event-grid.component.html'
+    templateUrl: './page-event-grid.component.html',
+    standalone: false
 })
 export class PageEventGridComponent implements OnInit {
     @ViewChild('table', { static: true }) table: MatTable<PageEvent>;

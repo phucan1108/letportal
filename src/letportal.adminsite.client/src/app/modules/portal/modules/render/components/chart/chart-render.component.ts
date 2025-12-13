@@ -20,7 +20,8 @@ import { LegendPosition } from '@swimlane/ngx-charts';
 @Component({
     selector: 'let-chart-render',
     templateUrl: './chart-render.component.html',
-    styleUrls: ['./chart-render.component.scss']
+    styleUrls: ['./chart-render.component.scss'],
+    standalone: false
 })
 export class ChartRenderComponent implements OnInit, AfterViewChecked, OnDestroy {
 

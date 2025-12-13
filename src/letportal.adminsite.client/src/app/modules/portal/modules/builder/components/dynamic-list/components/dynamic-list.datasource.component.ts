@@ -5,7 +5,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'dynamic-list-datasource',
-    templateUrl: './dynamic-list.datasource.component.html'
+    templateUrl: './dynamic-list.datasource.component.html',
+    standalone: false
 })
 export class DynamicListDataSourceComponent implements OnInit {
     @ViewChild(JsonEditorComponent, { static: true }) editor: JsonEditorComponent;

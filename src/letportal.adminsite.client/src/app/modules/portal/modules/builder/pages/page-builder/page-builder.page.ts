@@ -30,8 +30,9 @@ import { ExtendedPageSection } from '../../../../../../core/models/extended.mode
     selector: 'let-page-builder',
     templateUrl: './page-builder.page.html',
     providers: [{
-        provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true }
-    }]
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true }
+        }],
+    standalone: false
 })
 export class PageBuilderPage implements OnInit, OnDestroy {
     @ViewChild('table', { static: false }) table: MatTable<ExtendedShellOption>;

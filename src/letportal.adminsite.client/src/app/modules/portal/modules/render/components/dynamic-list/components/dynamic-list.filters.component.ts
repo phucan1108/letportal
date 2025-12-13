@@ -13,7 +13,8 @@ import { AdvancedFilterDialogComponent } from './advancedfilter-dialog.component
  
 @Component({
     selector: 'dynamic-list-filters',
-    templateUrl: './dynamic-list.filters.component.html'
+    templateUrl: './dynamic-list.filters.component.html',
+    standalone: false
 })
 export class DynamicListFiltersComponent implements OnInit {
     constructor(

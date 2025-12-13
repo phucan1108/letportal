@@ -21,7 +21,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 @Component({
     selector: 'dynamic-list-builder',
     templateUrl: './dynamic-list-builder.page.html',
-    styleUrls: ['./dynamic-list-builder.page.scss']
+    styleUrls: ['./dynamic-list-builder.page.scss'],
+    standalone: false
 })
 export class DynamicListBuilderPage implements OnInit {
     //#region New changes

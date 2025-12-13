@@ -20,7 +20,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-builder-dnd',
-    templateUrl: './builder-dnd.component.html'
+    templateUrl: './builder-dnd.component.html',
+    standalone: false
 })
 export class BuilderDnDComponent implements OnInit {
 

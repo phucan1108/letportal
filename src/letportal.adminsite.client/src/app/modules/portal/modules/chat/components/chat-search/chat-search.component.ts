@@ -13,7 +13,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 @Component({
     selector: 'let-chat-search',
     templateUrl: './chat-search.component.html',
-    styleUrls: ['./chat-search.component.scss']
+    styleUrls: ['./chat-search.component.scss'],
+    standalone: false
 })
 export class ChatSearchComponent implements OnInit, OnDestroy {
     @Output()
