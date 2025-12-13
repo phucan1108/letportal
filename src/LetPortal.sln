@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36717.8 d17.14
@@ -27,11 +27,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{1AD0B019-3412-475C-BC7E-1479D67D1BE4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.UTs.Portal", "..\..\test\UnitTests\LetPortal.Tests.UTs.Portal\LetPortal.Tests.UTs.Portal.csproj", "{AE221F24-BAC9-4367-8C1F-EEDE87840E1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.UTs.Portal", "..\test\UnitTests\LetPortal.Tests.UTs.Portal\LetPortal.Tests.UTs.Portal.csproj", "{AE221F24-BAC9-4367-8C1F-EEDE87840E1E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Portal", "..\..\test\IntegrationTests\LetPortal.Tests.ITs.Portal\LetPortal.Tests.ITs.Portal.csproj", "{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Portal", "..\test\IntegrationTests\LetPortal.Tests.ITs.Portal\LetPortal.Tests.ITs.Portal.csproj", "{9F44F21C-C4EC-42D9-81B0-98D5A2456A5B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Identity", "..\..\test\IntegrationTests\LetPortal.Tests.ITs.Identity\LetPortal.Tests.ITs.Identity.csproj", "{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.ITs.Identity", "..\test\IntegrationTests\LetPortal.Tests.ITs.Identity\LetPortal.Tests.ITs.Identity.csproj", "{7535DBEF-5CBA-4E7A-B72D-C6CFF96F5EBD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{768D0C05-5520-40C6-851D-CF4F2E490BD5}"
 	ProjectSection(SolutionItems) = preProject
@@ -116,7 +116,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protos", "Protos", "{BF1BF5
 		Protos\notification.proto = Protos\notification.proto
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.UTs.CMS", "..\..\test\UnitTests\LetPortal.Tests.UTs.CMS\LetPortal.Tests.UTs.CMS.csproj", "{89AD948A-4B80-4D3A-82B1-2C3A3471BE95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.Tests.UTs.CMS", "..\test\UnitTests\LetPortal.Tests.UTs.CMS\LetPortal.Tests.UTs.CMS.csproj", "{89AD948A-4B80-4D3A-82B1-2C3A3471BE95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LetPortal.CMS.Features.Menus", "LetPortal.CMS.Features.Menus\LetPortal.CMS.Features.Menus.csproj", "{946819CB-6660-41DB-9116-0B1AEDE60725}"
 EndProject
@@ -320,3 +320,4 @@ Global
 		SolutionGuid = {B8132CF7-7C19-457C-8BD0-D7F09DA986EC}
 	EndGlobalSection
 EndGlobal
+
