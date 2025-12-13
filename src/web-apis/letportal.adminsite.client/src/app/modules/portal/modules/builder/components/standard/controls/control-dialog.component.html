@@ -1,0 +1,128 @@
+<h3 mat-dialog-title>
+    {{ 'common.control' | translate }}
+</h3>
+<mat-dialog-content>
+    <form class="m-form dialog-width" [formGroup]="controlForm">
+        <div class="row row-heading">
+            <h3>{{ 'pageBuilder.standard.controlDialog.controlSettings' | translate }}:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.controlName' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="Control Name" #controlNameInput formControlName="name" maxlength="100" />
+                    <mat-hint align="end"> {{controlNameInput.value?.length || 0}}/100</mat-hint>
+                    <mat-error *ngIf="controlForm.get('name').hasError('isExist')">
+                        {{ 'common.errors.nameAlreadyUsed' | translate }}
+                    </mat-error>
+                    <mat-error *ngIf="controlForm.get('name').hasError('pattern')">
+                        {{ 'common.erros.alphaChars' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.controlType' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'common.pickOneControlType' | translate }}" formControlName="controlType">
+                        <mat-option *ngFor="let type of _controlTypes" [value]="type.value">
+                            {{ type.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="isCompositeControl()">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.compositeControl' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'common.compositeControl' | translate }}" formControlName="compositeControl">
+                        <mat-option *ngFor="let compositeControl of compositeControls$ | async" [value]="compositeControl.id">
+                            {{ compositeControl.displayName }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div class="row row-heading" *ngIf="currentControlType !== controlType.LineBreaker">
+        <h3>{{ 'pageBuilder.standard.controlDialog.controlOptions' | translate }}:</h3>
+    </div>
+    <let-shell-option *ngIf="currentControlType !== controlType.LineBreaker" [shellOptions$]="shellOptions$" (changed)="onChangingOptions($event)"></let-shell-option>
+    <div class="row row-heading" *ngIf="currentControlType !== controlType.LineBreaker">
+        <h3>{{ 'pageBuilder.standard.controlDialog.validationOptions' | translate }}</h3>
+    </div>
+    <div *ngIf="!isHandset && currentControlType !== controlType.LineBreaker">
+        <ng-container *ngFor="let validator of validators$ | async">
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">{{validator.displayName}}</label>
+                <div class="col-lg-1 pt-3 align-center">
+                    <mat-checkbox [(ngModel)]="validator.isActive" (change)="picked($event)">
+                    </mat-checkbox>
+                </div>
+                <div class="col-lg-4">
+                    <mat-form-field class="field-full-width">
+                        <input [(ngModel)]="validator.validatorMessage" placeholder="{{ 'pageBuilder.standard.controlDialog.errorMessage.placeholder' | translate }}" matInput>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4">
+                    <mat-form-field *ngIf="!validator.hideOption" class="field-full-width">
+                        <input [(ngModel)]="validator.validatorOption"
+                            [placeholder]="validator.validatorOptionPlaceholder" matInput>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <mat-accordion *ngIf="isHandset && currentControlType !== controlType.LineBreaker">
+        <mat-expansion-panel *ngFor="let validator of validators$ | async">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{validator.displayName}}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="form-group row">
+                <div class="col-lg-2">
+                    <mat-checkbox [(ngModel)]="validator.isActive" (change)="picked($event)">
+                        {{ 'common.active' | translate }}
+                    </mat-checkbox>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">{{ 'common.errorMessage' | translate }}</label>
+                <div class="col-lg-2">
+                    <mat-form-field class="field-full-width">
+                        <input [(ngModel)]="validator.validatorMessage" placeholder="{{ 'pageBuilder.standard.controlDialog.errorMessage.placeholder' | translate }}" matInput>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="!validator.hideOption">
+                <label class="col-lg-2 col-form-label">
+                    {{ 'common.option' | translate }}
+                </label>
+                <div class="col-lg-2">
+                    <mat-form-field class="field-full-width">
+                        <input [(ngModel)]="validator.validatorOption"
+                            [placeholder]="validator.validatorOptionPlaceholder" matInput>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="">
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="onSubmittingControl()" color="primary">
+        {{ 'common.saveButton' | translate }}
+    </button>
+</mat-dialog-actions>

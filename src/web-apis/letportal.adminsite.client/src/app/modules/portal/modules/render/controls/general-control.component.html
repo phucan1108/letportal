@@ -1,0 +1,240 @@
+<div [formGroup]="formGroup">
+    <ng-container [ngSwitch]="control.type">
+        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Textbox">
+            <input [formControlName]="control.name" [id]="control.name" matInput #formNameInput
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled">
+            <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
+            <mat-error *ngIf="isInvalid('required')">
+                {{getErrorMessage('required')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('minlength')">
+                {{getErrorMessage('minlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('maxlength')">
+                {{getErrorMessage('maxlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('number')">
+                {{getErrorMessage('number')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('email')">
+                {{getErrorMessage('email')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('pattern')">
+                {{getErrorMessage('pattern')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equal')">
+                {{getErrorMessage('equal')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equalTo')">
+                {{getErrorMessage('equalTo')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
+            <mat-error *ngIf="hasAsyncInvalid">
+                {{ getAsyncErrorMessage() }}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Email">
+            <input [formControlName]="control.name" [id]="control.name" matInput #formNameInput
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled"
+                type="email">
+            <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
+            <mat-error *ngIf="isInvalid('required')">
+                {{getErrorMessage('required')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('minlength')">
+                {{getErrorMessage('minlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('maxlength')">
+                {{getErrorMessage('maxlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('email')">
+                {{getErrorMessage('email')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('pattern')">
+                {{getErrorMessage('pattern')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equal')">
+                {{getErrorMessage('equal')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equalTo')">
+                {{getErrorMessage('equalTo')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
+            <mat-error *ngIf="hasAsyncInvalid">
+                {{ getAsyncErrorMessage() }}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Password">
+            <input [formControlName]="control.name" [id]="control.name" matInput #formNameInput
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled"
+                type="password">
+            <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
+            <mat-error *ngIf="isInvalid('required')">
+                {{getErrorMessage('required')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('minlength')">
+                {{getErrorMessage('minlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('maxlength')">
+                {{getErrorMessage('maxlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('pattern')">
+                {{getErrorMessage('pattern')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equal')">
+                {{getErrorMessage('equal')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equalTo')">
+                {{getErrorMessage('equalTo')}}
+            </mat-error>
+            <mat-error *ngIf="hasAsyncInvalid">
+                {{ getAsyncErrorMessage() }}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Textarea">
+            <mat-label>{{control.defaultOptions.placeholder}}</mat-label>
+            <textarea [formControlName]="control.name" [id]="control.name" matInput #formNameInput
+                [placeholder]="control.defaultOptions.placeholder" [disabled]="control.defaultOptions.checkDisabled"
+                [rows]="control.defaultOptions.textarearows"></textarea>
+            <mat-hint align="end" *ngIf="maxLength > 0">{{formNameInput.value?.length || 0}}/{{maxLength}}</mat-hint>
+            <mat-error *ngIf="isInvalid('required')">
+                {{getErrorMessage('required')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('minlength')">
+                {{getErrorMessage('minlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('maxlength')">
+                {{getErrorMessage('maxlength')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('number')">
+                {{getErrorMessage('number')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('email')">
+                {{getErrorMessage('email')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('pattern')">
+                {{getErrorMessage('pattern')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equal')">
+                {{getErrorMessage('equal')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('equalTo')">
+                {{getErrorMessage('equalTo')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
+            <mat-error *ngIf="hasAsyncInvalid">
+                {{ getAsyncErrorMessage() }}
+            </mat-error>
+        </mat-form-field>
+        <mat-slide-toggle *ngSwitchCase="controlType.Slide" [formControlName]="control.name" [id]="control.name" class="pt-2">
+        </mat-slide-toggle>
+        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.DateTime">
+            <input matInput [matDatepicker]="picker" [placeholder]="control.defaultOptions.placeholder"
+                [formControlName]="control.name" [id]="control.name">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="hasAsyncInvalid">
+                {{ getAsyncErrorMessage() }}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Select">
+            <mat-select [placeholder]="control.defaultOptions.placeholder" [formControlName]="control.name"
+                [id]="control.name" [multiple]="control.defaultOptions.multiple" [disabled]="selectDisabled">
+                <mat-option *ngFor="let option of optionsList$ | async" [value]="option.value">
+                    {{ option.name }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isInvalid('required')">
+                {{getErrorMessage('required')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
+            <mat-error *ngIf="hasAsyncInvalid">
+                {{ getAsyncErrorMessage() }}
+            </mat-error>
+        </mat-form-field>
+        <div class="field-full-width" *ngSwitchCase="controlType.AutoComplete">
+            <div *ngIf="control.defaultOptions.multiple">
+                <let-mat-auto-multiple #autoComplete [(dropdownList)]="autoOptionsList" display-key="name"
+                    (selectionChanged)="onAutoChanged()"></let-mat-auto-multiple>
+                <mat-form-field class="autocomplete-hidden-input field-full-width">
+                    <input [id]="control.name" [placeholder]="control.defaultOptions.placeholder"
+                        [formControlName]="control.name" matInput>
+                    <mat-error *ngIf="isInvalid('required')">
+                        {{getErrorMessage('required')}}
+                    </mat-error>
+                    <mat-error *ngIf="isInvalid('isExist')">
+                        {{getErrorMessage('isExist')}}
+                    </mat-error>
+                    <mat-error *ngIf="hasAsyncInvalid">
+                        {{ getAsyncErrorMessage() }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <mat-form-field class="field-full-width" *ngIf="!control.defaultOptions.multiple">
+                <input type="text" [placeholder]="control.defaultOptions.placeholder" [formControl]="formControlLink"
+                    [id]="control.name" matInput [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                    (optionSelected)="onAutoCompleteSelected($event)">
+                    <mat-option *ngFor="let option of autoOptionsList$ | async" [value]="option.value">
+                        {{ option.name }}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="isInvalid('required')">
+                    {{getErrorMessage('required')}}
+                </mat-error>
+                <mat-error *ngIf="isInvalid('isExist')">
+                    {{getErrorMessage('isExist')}}
+                </mat-error>
+                <mat-error *ngIf="hasAsyncInvalid">
+                    {{ getAsyncErrorMessage() }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!--  -->
+        <mat-form-field class="field-full-width" *ngSwitchCase="controlType.Number">
+            <input [formControlName]="control.name" [id]="control.name" matInput
+                [placeholder]="control.defaultOptions.placeholder" type="number">
+            <mat-error *ngIf="isInvalid('required')">
+                {{getErrorMessage('required')}}
+            </mat-error>
+            <mat-error *ngIf="isInvalid('isExist')">
+                {{getErrorMessage('isExist')}}
+            </mat-error>
+            <mat-error *ngIf="hasAsyncInvalid">
+                {{ getAsyncErrorMessage() }}
+            </mat-error>
+        </mat-form-field>
+        <mat-checkbox class="pt-3 float-left" *ngSwitchCase="controlType.Checkbox" [formControlName]="control.name">
+        </mat-checkbox>
+        <div *ngSwitchCase="controlType.Radio">
+            <mat-radio-group class="radio-group" [formControlName]="control.name" [id]="control.name">
+                <mat-radio-button class="radio-button" *ngFor="let option of optionsList$ | async"
+                    [value]="option.value">
+                    {{ option.name }}
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <let-icon-picker [control]="control" [validators]="validators" [tooltip]="control.defaultOptions.placeholder"
+            [formControlKey]="control.name" [form]="formGroup" *ngSwitchCase="controlType.IconPicker"></let-icon-picker>
+        <let-file-uploader [control]="control" [validators]="validators" [tooltip]="control.defaultOptions.placeholder"
+            [formControlKey]="control.name" [form]="formGroup" *ngSwitchCase="controlType.Uploader"></let-file-uploader>
+        <div class="pt-3" *ngSwitchCase="controlType.RichTextEditor">
+            <quill-editor [formControlName]="control.name" [readOnly]="control.defaultOptions.checkDisabled">
+            </quill-editor>
+        </div>
+        <div *ngSwitchCase="controlType.MarkdownEditor" class="disable-align-center">
+            <angular-markdown-editor textareaId="markdowTextArea" [rows]="20" name="markdownText"
+                [options]="markdownOptions" [(ngModel)]="markdownContent" [ngModelOptions]="{standalone: true}">
+            </angular-markdown-editor>
+        </div>
+    </ng-container>
+</div>

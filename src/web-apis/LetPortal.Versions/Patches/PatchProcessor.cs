@@ -21,6 +21,7 @@ using LetPortal.Portal.Repositories.Databases;
 using LetPortal.Portal.Repositories.Pages;
 using LetPortal.Portal.Services.Databases;
 using LetPortal.Portal.Services.Recoveries;
+using Microsoft.Extensions.Options;
 
 namespace LetPortal.Versions.Patches
 {
@@ -139,7 +140,7 @@ namespace LetPortal.Versions.Patches
                                     databaseRepository = new DatabaseEFRepository(new PortalDbContext(databaseOptions));
 #pragma warning restore CA2000 // Dispose objects before losing scope
                                 }
-                                var databaseServiceProvider = new InternalDatabaseServiceProvider(new DatabaseService(null, null), databaseRepository);
+                                var databaseServiceProvider = new InternalDatabaseServiceProvider(new DatabaseService(null, null), databaseRepository, Options.Create(databaseOptions));
                                 await databaseServiceProvider.ForceUpdateDatabases(databasesList);
                                 databaseServiceProvider.Dispose();
                                 break;

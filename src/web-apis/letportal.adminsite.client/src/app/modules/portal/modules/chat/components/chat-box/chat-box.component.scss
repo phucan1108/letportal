@@ -1,0 +1,97 @@
+.online > .mat-badge-content.mat-badge-active {
+    background-color: #08976d;
+    right: -5px;
+    bottom: -5px;
+}
+
+.offline > .mat-badge-content.mat-badge-active {
+    right: -5px;
+    bottom: -5px;
+}
+
+.chat-box {
+    position: fixed;
+    bottom: 35px;
+    width: 320px;
+    height: 450px;
+    right: 90px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+}
+.chat-box.arrow-right:after {
+    content: " ";
+    position: absolute;
+    right: -15px;
+    border-top: 15px solid transparent;
+    border-right: none;
+    border-left: 15px solid rgb(255, 255, 255);
+    border-bottom: 15px solid transparent;
+}
+.chat-box-0.arrow-right:after {
+    bottom: 75px;
+}
+.chat-box-1.arrow-right:after {
+    bottom: 135px;
+}
+.chat-box-2.arrow-right:after {
+    bottom: 195px;
+}
+.chat-box-3.arrow-right:after {
+    bottom: 255px;
+}
+.chat-box-4.arrow-right:after {
+    bottom: 315px;
+}
+
+.overlay-notified-status {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+.user-avatar {
+    width: 100%;
+    height: 100%;
+    margin-left: 6px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+@media (max-width: 576px) {    
+    .chat-box {
+        bottom: 105px;        
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .chat-box.arrow-right:after {
+        content: " ";
+        position: absolute;
+        right: 15px;
+        bottom: -15px;
+        border-top: 15px solid rgb(255, 255, 255);
+        border-right: 15px solid transparent;
+        border-left: 15px solid transparent;
+        border-bottom: none;
+        display: none;
+    }
+    .chat-box-0.arrow-right:after {
+        right: 45px;
+    }
+    .chat-box-1.arrow-right:after {
+        right: 105px;
+    }
+    .chat-box-2.arrow-right:after {
+        right: 165px;
+    }
+    .chat-box-3.arrow-right:after {
+        right: 225px;
+    }
+    .chat-box-4.arrow-right:after {
+        right: 285px;
+    }
+}

@@ -1,0 +1,42 @@
+<div class="row row-heading">
+    <h3>{{ 'pageBuilder.chart.filterGrid.header' | translate }}:</h3>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <button mat-raised-button color="primary" (click)="add()">
+            {{'common.addFilterText' | translate }}
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 pt-3">
+        <m-table [(value)]="chartFilters" #mtable [selectable]="false" [selectionHandler]="false">
+            <m-column field="name" header="{{ 'common.nameText' | translate}}">
+            </m-column>
+            <m-column field="displayName" header="{{ 'common.displayNameText' | translate }}">
+            </m-column>
+            <m-column field="value" header="{{ 'common.actionsText' | translate }}">
+                <ng-template let-col let-row="row" mTemplate="body">
+                    <button mat-icon-button color="accent" type="button"
+                        matTooltip="{{ 'common.editFilterText' | translate }}"
+                        (click)="editFilter(row)">
+                        <mat-icon>create</mat-icon>
+                    </button>&nbsp;
+                    <button *ngIf="enableDatasource(row)" mat-icon-button color="primary"
+                        matTooltip="{{'common.editDatasourceText' | translate}}"
+                        (click)="editDatasource(row)">
+                        <mat-icon>library_books</mat-icon>
+                    </button>&nbsp;
+                    <button mat-icon-button color="warn" matTooltip="{{ 'common.deleteFilterText' | translate }}" (click)="deleteFilter(row)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </ng-template>
+            </m-column>
+            <ng-template mTemplate="emptyTable">
+                <div class="align-center">
+                    {{ 'common.noRecordsText' | translate }}
+                </div>
+            </ng-template>
+        </m-table>
+    </div>
+</div>

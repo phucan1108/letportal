@@ -1,0 +1,8 @@
+<let-database-opt *ngIf="databaseOptions"
+    [heading]="heading"
+    [databaseOptions]="databaseOptions"
+    (afterSelectingEntity)="onSelectingEntity($event)" 
+    (afterPopulatingQuery)="onPopulatingQuery($event)"
+    (afterSelectingEntityName)="onSelectingEntityName($event)"
+    (afterPopulatingParams)="onExtractingParam($event)">
+</let-database-opt>

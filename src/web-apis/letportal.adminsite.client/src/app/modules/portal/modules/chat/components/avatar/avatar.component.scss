@@ -1,0 +1,75 @@
+.overlay-notified-status {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    margin-left: 3px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+.chat-box-head-0.chat-box-head {
+    bottom: 100px;
+}
+.chat-box-head-1.chat-box-head {
+    bottom: 160px;
+}
+.chat-box-head-2.chat-box-head {
+    bottom: 220px;
+}
+.chat-box-head-3.chat-box-head {
+    bottom: 280px;
+}
+.chat-box-head-4.chat-box-head {
+    bottom: 340px;
+}
+
+.overlay-user-status {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+}
+
+.online > .mat-badge-content.mat-badge-active {
+    background-color: #08976d;
+    right: -5px;
+    bottom: -5px;
+}
+
+.offline > .mat-badge-content.mat-badge-active {
+    right: -5px;
+    bottom: -5px;
+}
+
+@media (max-width: 576px) {
+    .chat-box-head-0.chat-box-head{
+        right: 80px;
+        bottom: 40px;
+    }
+    .chat-box-head-1.chat-box-head{
+        right: 140px;
+        bottom: 40px;
+    }
+    .chat-box-head-2.chat-box-head{
+        right: 200px;
+        bottom: 40px;
+    }
+    .chat-box-head-3.chat-box-head{
+        right: 260px;
+        bottom: 40px;
+    }
+    .chat-box-head-4.chat-box-head{
+        right: 320px;
+        bottom: 40px;
+    }
+}

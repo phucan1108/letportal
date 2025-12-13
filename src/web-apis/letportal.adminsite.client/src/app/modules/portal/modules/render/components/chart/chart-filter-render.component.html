@@ -1,0 +1,26 @@
+<div class="row" [formGroup]="formGroup">
+    <div class="col-lg-12">
+        <ng-container *ngFor="let filter of chartFilters; index as i">
+            <ng-container [ngSwitch]="filter.type">
+                <filter-checkbox [filter]="filter" [formGroup]="formGroup" *ngSwitchCase="filterType.Checkbox"
+                    (changed)="filterChanged($event)">
+                </filter-checkbox>
+                <filter-select [filter]="filter" [formGroup]="formGroup" *ngSwitchCase="filterType.Select" (changed)="filterChanged($event)">
+                </filter-select>
+                <filter-datepicker [filter]="filter" [formGroup]="formGroup" *ngSwitchCase="filterType.DatePicker"
+                    (changed)="filterChanged($event)">
+                </filter-datepicker>
+                <filter-datepicker [filter]="filter" [formGroup]="formGroup" *ngSwitchCase="filterType.MonthYearPicker"
+                    (changed)="filterChanged($event)"></filter-datepicker>
+                <filter-number [filter]="filter" [formGroup]="formGroup" *ngSwitchCase="filterType.NumberPicker"
+                    (changed)="filterChanged($event)">
+                </filter-number>
+            </ng-container>
+        </ng-container>
+    </div>
+    <div class="col-lg-10 offset-lg-2">
+        <button mat-raised-button color="primary" (click)="submit()">
+            {{'pageRender.chart.filters.button.apply' | translate }}
+        </button>
+    </div>
+</div>

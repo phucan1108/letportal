@@ -6,10 +6,14 @@
     <UserSecretsId>07b67c9c-57f1-402b-a5ae-636d55d7b899</UserSecretsId>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <RollForward>Major</RollForward>
+    <SpaRoot>..\letportal.adminsite.client</SpaRoot>
+    <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+    <SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="10.*-*" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.100">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -29,9 +33,15 @@
     <ProjectReference Include="..\LetPortal.PortalApis.AppParts\LetPortal.Portal.AppParts.csproj" />
     <ProjectReference Include="..\LetPortal.Portal\LetPortal.Portal.csproj" />
     <ProjectReference Include="..\LetPortal.ServiceManagement.AppParts\LetPortal.ServiceManagement.AppParts.csproj" />
-  </ItemGroup>
+    </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\letportal.adminsite.client\letportal.adminsite.client.esproj">
+        <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      </ProjectReference>
+    </ItemGroup>
+
+    <ItemGroup>
     <Content Update="Files\Shared\v1.0\appsettings.Docker.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

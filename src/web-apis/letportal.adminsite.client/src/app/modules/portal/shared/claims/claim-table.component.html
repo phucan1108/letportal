@@ -1,0 +1,56 @@
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-12">
+            <button mat-raised-button color="primary"
+                (click)="addClaim()">
+            {{ 'shared.claimTable.buttons.addClaim' | translate }}</button>
+        </div>
+        <div class="col-lg-12">
+            <mat-table #table class="lmat-elevation-z8" [dataSource]="claims">
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'common.nameText' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let claim" class="mat-column-vinCode">{{claim.name}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="displayName">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'common.displayNameText' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let claim" class="mat-column-vinCode">{{claim.displayName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="claimValueType">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'common.valueType' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let claim" class="mat-column-vinCode">
+                        {{translateClaimValueType(claim.claimValueType)}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ 'common.actionsText' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let claim">
+                        <button mat-icon-button color="primary" matTooltip="{{ 'shared.claimTable.buttons.editClaim' | translate }}"
+                            (click)="editClaim(claim)" *ngIf="!isDefaultClaim(claim)">
+                            <mat-icon>create</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="warn" type="button"
+                            matTooltip="{{ 'shared.claimTable.buttons.deleteClaim' | translate }}" (click)="deleteClaim(claim)" *ngIf="!isDefaultClaim(claim)">
+                            <mat-icon>delete</mat-icon>
+                        </button>&nbsp;
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedClaimListColumns"></mat-header-row>
+                <mat-row *matRowDef="let claim; columns: displayedClaimListColumns">
+                </mat-row>
+            </mat-table>
+            <div class="align-center" *ngIf="claims.length == 0">
+                {{ 'common.noRecordsText' | translate }}
+            </div>
+        </div>
+    </div>
+</div>

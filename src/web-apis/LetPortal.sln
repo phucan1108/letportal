@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11222.16 d18.3
+VisualStudioVersion = 18.3.11222.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core-Nuget", "Core-Nuget", "{B0E410E9-B0DA-4ECD-A632-5395BD45078C}"
 EndProject
@@ -129,8 +129,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetPortal.Installation.AppParts", "LetPortal.Installation.AppParts\LetPortal.Installation.AppParts.csproj", "{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "letportal.adminsite.client", "letportal.adminsite.client\letportal.adminsite.client.esproj", "{EF2761C5-498F-B546-C10A-B485A5EE13AF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetPortal.AdminSite.Server", "LetPortal.AdminSite.Server\LetPortal.AdminSite.Server.csproj", "{9B2D0F24-24E1-4ABF-BC9F-A5B484AC7C77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -264,10 +262,6 @@ Global
 		{EF2761C5-498F-B546-C10A-B485A5EE13AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF2761C5-498F-B546-C10A-B485A5EE13AF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF2761C5-498F-B546-C10A-B485A5EE13AF}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{9B2D0F24-24E1-4ABF-BC9F-A5B484AC7C77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B2D0F24-24E1-4ABF-BC9F-A5B484AC7C77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B2D0F24-24E1-4ABF-BC9F-A5B484AC7C77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B2D0F24-24E1-4ABF-BC9F-A5B484AC7C77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -321,7 +315,6 @@ Global
 		{DA97013D-29E3-4150-8874-0EFBE66EAC8E} = {FCDBA824-B82A-4688-BF14-FF866A0B25C3}
 		{EFCA66AE-D87B-4AAD-B2C7-782A197A30C0} = {5F509A06-D8A8-4D8E-B254-FCFF47F39A91}
 		{EF2761C5-498F-B546-C10A-B485A5EE13AF} = {20473F00-C684-49CA-92AB-B5D2CEE12B9D}
-		{9B2D0F24-24E1-4ABF-BC9F-A5B484AC7C77} = {20473F00-C684-49CA-92AB-B5D2CEE12B9D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B8132CF7-7C19-457C-8BD0-D7F09DA986EC}

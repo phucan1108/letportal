@@ -1,0 +1,26 @@
+<h3 mat-dialog-title>{{ 'pageRender.dynamicList.dataDialog.header' | translate }}</h3>
+<mat-dialog-content>
+    <div class="dialog-width">
+        <ng-container *ngFor="let header of headers">
+            <div class="row" *ngIf="!header.isHidden && isHandset">
+                <label class="col-lg-6 col-md-12 col-form-label">
+                    <b>{{ header.displayName }}</b>
+                </label>
+                <div class="col-lg-6 col-md-12">
+                    {{ translateData(rawData, header) }}
+                </div>
+            </div>
+            <div class="row" *ngIf="!header.isHidden && !isHandset">
+                <label class="col-lg-2 col-md-12 col-form-label">
+                    <b>{{ header.displayName }}</b>
+                </label>
+                <div class="col-lg-10 col-md-12 pt-3">
+                    {{ translateData(rawData, header) }}
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="">{{ 'pageRender.dynamicList.dataDialog.buttons.cancel' | translate }}</button>
+</mat-dialog-actions>

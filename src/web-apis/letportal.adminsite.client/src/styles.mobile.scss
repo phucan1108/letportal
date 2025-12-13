@@ -1,0 +1,24 @@
+/* Mobile Size*/
+
+@media (max-width: 576px) {
+  .row-heading {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  .col-form-label {
+    text-align: left;
+  }
+  .dialog-box-row {
+    min-width: 450px;
+  }
+  .filter-wrapper {
+    padding-left: 0px !important;
+  }
+  .dialog-width {
+    width: 100% !important;
+  }
+
+  .tile{
+    width: 50% !important;
+  }
+}

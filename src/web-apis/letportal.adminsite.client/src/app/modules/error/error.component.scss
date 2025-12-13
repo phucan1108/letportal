@@ -1,0 +1,28 @@
+.error-center {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background: rgb(1,45,157);
+  background: linear-gradient(180deg, rgba(1,45,157,1) 50%, rgba(0,142,255,0.9) 100%);
+  height: 100%;
+}
+.error-box {
+  width: 100%;
+  max-width: 500px;
+  padding: 15px;
+  margin: auto;
+}
+.error {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.error-code {
+  bottom: 60%;
+  color: #2d353c;
+  font-size: 110px;
+  line-height: 100px;
+}

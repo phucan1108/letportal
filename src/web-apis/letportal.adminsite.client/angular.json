@@ -27,27 +27,50 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "src/polyfills.ts"
             ],
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "src/tsconfig.app.json",
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "/assets"
+              },
+              "src/logo.ico"
             ],
             "styles": [
-              "src/styles.css"
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/styles.scss",
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/highlight.js/styles/vs.css",
+              "./node_modules/quill/dist/quill.core.css",
+              "./node_modules/quill/dist/quill.bubble.css",
+              "./node_modules/quill/dist/quill.snow.css",
+              "./node_modules/quill-mention/dist/quill.mention.min.css",
+              "./node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css",
+              "./node_modules/prismjs/themes/prism.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/bootstrap-markdown/js/bootstrap-markdown.js",
+              "./node_modules/marked/lib/marked.esm.js",
+              "./node_modules/prismjs/prism.js",
+              "./node_modules/prismjs/components/prism-css.min.js",
+              "./node_modules/prismjs/components/prism-javascript.min.js",
+              "./node_modules/prismjs/components/prism-typescript.min.js"
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -78,7 +101,7 @@
           "defaultConfiguration": "development",
           "options": {
             "proxyConfig": "src/proxy.conf.js",
-            "port": 50186
+            "port": 4200
           }
         },
         "extract-i18n": {

@@ -9,6 +9,8 @@ namespace LetPortal.Core.Persistences
         public string Datasource { get; set; }
 
         public ConnectionType ConnectionType { get; set; }
+
+        public bool IsLocalMode { get; set; }
     }
 
     public class MapperOptions

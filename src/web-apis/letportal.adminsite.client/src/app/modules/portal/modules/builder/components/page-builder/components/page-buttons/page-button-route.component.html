@@ -1,0 +1,62 @@
+<h3 mat-dialog-title>{{ 'pageBuilder.buttonRoute.header' | translate }}: {{currentCommand.name}}</h3>
+<mat-dialog-content>
+    <div class="dialog-width">
+        <div class="row">
+            <div class="col-lg-12">
+                <button mat-raised-button (click)="addRoute()" color="primary">
+                    {{ 'pageBuilder.buttonRoute.addRoute' | translate }}
+                </button>
+            </div>
+        </div>
+        <div class="row" *ngIf="!isShowRouteForm">
+            <div class="col-lg-12">
+                <mat-table class="lmat-elevation-z8" [dataSource]="routes$">
+                    <ng-container matColumnDef="condition">
+                        <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                            {{ 'common.condition' | translate }}
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let route" class="mat-column-vinCode">
+                            {{route.condition}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="redirectUrl">
+                        <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                            {{ 'common.url' | translate }}
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let route" class="mat-column-vinCode">
+                            {{route.redirectUrl}}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef>
+                            {{ 'common.actionsText' | translate }}
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let route">
+                            <button mat-icon-button color="primary" matTooltip="{{ 'common.editRoute' | translate }}" (click)="editRoute(route)">
+                                <mat-icon>create</mat-icon>
+                            </button>&nbsp;
+                            <button mat-icon-button color="warn" type="button" matTooltip="{{ 'common.deleteRoute' | translate }}"
+                                (click)="deleteRoute(route)">
+                                <mat-icon>delete</mat-icon>
+                            </button>&nbsp;
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedListColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedListColumns">
+                    </mat-row>
+                </mat-table>
+            </div>
+        </div>
+        <let-pageroute [route]="currentRoute" *ngIf="isShowRouteForm"></let-pageroute>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial *ngIf="!isShowRouteForm">
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="cancel()" *ngIf="isShowRouteForm">
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="save()" color="primary">
+        {{ 'common.saveButton' | translate }}
+    </button>
+</mat-dialog-actions>

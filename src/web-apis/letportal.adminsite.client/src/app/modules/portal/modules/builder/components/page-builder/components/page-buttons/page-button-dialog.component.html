@@ -1,0 +1,84 @@
+<h3 mat-dialog-title>
+    {{ 'pageBuilder.buttonDialog.header' | translate }}
+</h3>
+<mat-dialog-content>
+    <form class="dialog-width" [formGroup]="actionCommandForm" (ngSubmit)="onSubmittingCommand()">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'pageBuilder.buttonDialog.buttonName' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'pageBuilder.buttonDialog.buttonName.placeholder' | translate }}" formControlName="name" />
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'pageBuilder.buttonDialog.placeSection' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'pageBuilder.buttonDialog.placeSection.placeholder' | translate }}" formControlName="placeSectionId">
+                        <mat-option *ngFor="let section of sections" [value]="section.id">
+                            {{section.displayName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'pageBuilder.buttonDialog.color' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'pageBuilder.buttonDialog.color.placeholder' | translate }}" formControlName="color">
+                        <mat-option *ngFor="let color of _colors" [value]="color.value">
+                            {{ color.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.icon' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'common.icon' | translate }}" aria-label="Icon" [matAutocomplete]="autoIcon"
+                        formControlName="icon">
+                    <mat-autocomplete #autoIcon="matAutocomplete">
+                        <mat-option *ngFor="let _icon of iconFilterOptions | async" [value]="_icon">
+                            <mat-icon>{{_icon}}</mat-icon>
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.isHidden' | translate }}**</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'pageBuilder.buttonDialog.hidden.placeholder' | translate }}" formControlName="allowHidden" />
+                    <mat-icon matSuffix matTooltip="{{ 'pageBuilder.buttonDialog.hidden.tootlip' | translate }}">
+                        help_outline</mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'pageBuilder.buttonDialog.requiredValidation' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-slide-toggle formControlName="isRequiredValidation" name="isRequiredValidation">
+                </mat-slide-toggle>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="onSubmittingCommand()" color="primary">
+        {{ 'common.saveButton' | translate }}
+    </button>
+</mat-dialog-actions>

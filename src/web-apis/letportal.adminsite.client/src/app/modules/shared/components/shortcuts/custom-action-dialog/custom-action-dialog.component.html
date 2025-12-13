@@ -1,0 +1,7 @@
+<h3 mat-dialog-title>{{data.title}}</h3>
+<mat-dialog-content>{{ viewLoading ? data.waitDesciption : data.description}}</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-button (click)="onNoClick()">Cancel</button>&nbsp;
+	<button mat-button (click)="onYesClick()" color="primary" cdkFocusInitial
+		[disabled]="viewLoading">{{saveButtonText}}</button>
+</mat-dialog-actions>

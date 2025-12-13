@@ -170,7 +170,7 @@ namespace LetPortal.Portal.Executions.Mongo
                                     a.ToJson(
                                         new MongoDB.Bson.IO.JsonWriterSettings
                                         {
-                                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.CanonicalExtendedJson
+                                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.RelaxedExtendedJson
                                         })).Select(b =>
                                             JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter(GetFormatFields(dynamicList.ColumnsList.ColumnDefs)))).ToList();
                     }
@@ -219,7 +219,7 @@ namespace LetPortal.Portal.Executions.Mongo
                                     a.ToJson(
                                         new MongoDB.Bson.IO.JsonWriterSettings
                                         {
-                                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.CanonicalExtendedJson
+                                            OutputMode = MongoDB.Bson.IO.JsonOutputMode.RelaxedExtendedJson
                                         })).Select(b =>
                                             JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter(GetFormatFields(dynamicList.ColumnsList.ColumnDefs)))).ToList();
                     }

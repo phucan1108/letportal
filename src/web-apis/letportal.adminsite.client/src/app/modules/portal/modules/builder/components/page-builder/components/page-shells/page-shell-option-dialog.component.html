@@ -1,0 +1,23 @@
+<h3 mat-dialog-title>
+    {{ 'pageBuilder.pageOptions.header' | translate }}
+</h3>
+<mat-dialog-content>
+    <form [formGroup]="shellFormGroup">
+        <div class="form-group row">
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'pageBuilder.pageOptions.key.placeholder' | translate }}" formControlName="key" />
+                </mat-form-field>
+            </div>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'pageBuilder.pageOptions.name.placeholder' | translate }}" formControlName="value" />
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmittingShellOption()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>

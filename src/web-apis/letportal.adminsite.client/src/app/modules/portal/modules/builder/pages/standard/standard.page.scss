@@ -1,0 +1,18 @@
+/* HIDE RADIO */
+[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* IMAGE STYLES */
+[type="radio"] + img {
+  cursor: pointer;
+  outline: 2px solid #9c9c9c;
+}
+
+/* CHECKED STYLES */
+[type="radio"]:checked + img {
+  outline: 4px dotted #ff4081;
+}

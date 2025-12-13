@@ -1,0 +1,13 @@
+/* Tablet Size*/
+
+@media (min-width: 576.98px) and (max-width: 991.98px) {
+  .col-form-label {
+    text-align: left;
+  }
+  .dialog-box-row {
+    min-width: 700px;
+  }
+  .dialog-width {
+    width: 580px !important;
+  }
+}

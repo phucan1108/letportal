@@ -1,0 +1,264 @@
+// Import material theming functions
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@include mat.core();
+$app-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
+$app-accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$app-warn: mat.m2-define-palette(mat.$m2-red-palette);
+$app-theme: mat.m2-define-light-theme($app-primary, $app-accent, $app-warn);
+@include mat.all-component-themes($app-theme);
+// Create your Sass color vars (will be available in all the project)
+@mixin current-theme($theme) {
+  
+  // Get the color config from the theme.
+  $color-config: mat.m2-get-color-config($theme);
+  $primary: map.get($color-config, primary);
+  $accent: map.get($color-config, accent);
+  $warn: map.get($color-config, warn);
+  // Support material color
+  .color-primary {
+    color: mat.m2-get-color-from-palette($primary);
+  }
+  .color-accent {
+    color: mat.m2-get-color-from-palette($accent);
+  }
+  .color-warn {
+    color: mat.m2-get-color-from-palette($warn);
+  }
+  .color-success{
+    color: #08976d;
+  }
+
+  .color-bg-primary {
+    background-color: mat.m2-get-color-from-palette($primary);
+  }
+  .color-bg-accent {
+    background-color: mat.m2-get-color-from-palette($accent);
+  }
+  .color-bg-warn {
+    background-color: mat.m2-get-color-from-palette($warn);
+  }
+  .color-bg-success{
+    background-color:#08976d;
+  }
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  .mat-chip-0 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: #fff;
+    background-color: mat.m2-get-color-from-palette($primary);
+  }
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  .mat-chip-1 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: #fff;
+    background-color: mat.m2-get-color-from-palette($accent);
+  }
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  .mat-chip-2 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: #fff;
+    background-color: mat.m2-get-color-from-palette($warn);
+  }
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
+  .mat-chip-3 {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition-property: box-shadow;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0s;
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 16px;
+    align-items: center;
+    cursor: default;
+    min-height: 32px;
+    height: 1px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 4px;
+    color: rgba(0, 0, 0, 0.87);
+    background-color: #e0e0e0;
+  }
+
+  a:not(.mat-mdc-button):not(.mat-mdc-raised-button):not(.mat-mdc-fab):not(.mat-mdc-mini-fab):not([mat-list-item]) {
+    color: mat.m2-get-color-from-palette($primary); // 3
+  }
+
+  .tile-icon {
+    width: 40px;
+    height: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 22px;
+    margin-left: 10px;
+    background-color: rgb(255, 255, 255);
+    text-align: center;
+    color: mat.m2-get-color-from-palette($primary);
+  }
+
+  .tile-icon-revert {
+    width: 40px;
+    height: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 22px;
+    margin-left: 10px;
+    background-color: mat.m2-get-color-from-palette($primary);
+    text-align: center;
+    color: rgb(255, 255, 255);
+  }
+
+  .chat-head {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    bottom: 40px;
+    right: 20px;
+    background-color: rgb(255, 255, 255);
+    color: mat.m2-get-color-from-palette($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  .chat-box-head {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    right: 20px;
+    background-color: rgb(255, 255, 255);
+    color: mat.m2-get-color-from-palette($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 22px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  .avatar-head {
+    width: 48px;
+    height: 48px;
+    background-color: rgb(255, 255, 255);
+    color: mat.m2-get-color-from-palette($primary);
+    border-radius: 50px;
+    text-align: center;
+    font-size: 22px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  .sent_mess {
+    float: right;
+    margin: 0;
+    p {
+      background-color: mat.m2-get-color-from-palette($primary);
+      color: rgb(255, 255, 255);
+      padding-top: 6px;
+      padding-bottom: 6px;
+      padding-left: 10px;
+      padding-right: 10px;
+      text-align: right;
+      float: right;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+    .time-text {
+      color: grey;
+      float: right;
+    }
+  }
+
+  .received_mess {
+    float: left;
+    margin: 0;
+    p {
+      background-color: rgb(241, 240, 240);
+      color: rgb(68, 73, 80);
+      padding-top: 6px;
+      padding-bottom: 6px;
+      padding-left: 10px;
+      padding-right: 10px;
+      text-align: left;
+      float: left;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+    .time-text {
+      color: grey;
+      float: left;
+    }
+  }
+}
+@include current-theme($app-theme);

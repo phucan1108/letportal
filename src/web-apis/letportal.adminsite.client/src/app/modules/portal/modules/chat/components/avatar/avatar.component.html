@@ -1,0 +1,28 @@
+<ng-container *ngIf="!hasRoomAvatar">
+    <div [attr.class]="cssClasses">
+        <div [matTooltip]="user.fullName"
+            [matTooltipPosition]="'left'" (click)="onClicked()" >
+            {{user.shortName}}
+            <div class="overlay-user-status" *ngIf="trackOnline" matBadge="&#8288;" matBadgeColor="warn"
+            matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': user.isOnline, 'offline': !user.isOnline}">
+            </div>
+            <div class="overlay-notified-status" *ngIf="counterNumber > 0" matBadgePosition="above after"
+                matBadgeSize="small" [matBadge]="counterNumber" matBadgeColor="warn">
+            </div>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="hasRoomAvatar">
+    <div [attr.class]="cssClasses">
+        <div [matTooltip]="user.fullName"
+            [matTooltipPosition]="'left'" (click)="onClicked()">
+            <img [src]="user.avatar | secureFile | async" class="rounded-circle user-avatar" />
+            <div class="overlay-user-status" *ngIf="trackOnline" matBadge="&#8288;" matBadgeColor="warn"
+            matBadgePosition="below after" matBadgeSize="small" [ngClass]="{'online': user.isOnline, 'offline': !user.isOnline}">
+            </div>
+            <div class="overlay-notified-status" *ngIf="counterNumber > 0" matBadgePosition="above after"
+                matBadgeSize="small" [matBadge]="counterNumber" matBadgeColor="warn">
+            </div>
+        </div>
+    </div>
+</ng-container>

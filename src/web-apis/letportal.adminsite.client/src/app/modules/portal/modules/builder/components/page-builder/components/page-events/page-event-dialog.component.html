@@ -1,0 +1,65 @@
+<h3 mat-dialog-title>
+    {{ 'common.event' | translate }}
+</h3>
+<mat-dialog-content>
+    <form class="dialog-width" [formGroup]="eventForm">
+        <div class="row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.eventName' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'pageBuilder.pageEvents.dialog.eventName.placeholder' | translate }}" aria-label="Event Name"
+                        [matAutocomplete]="choosenDatasource" formControlName="eventName">
+                    <mat-autocomplete #choosenDatasource="matAutocomplete" (optionSelected)="eventSelected($event)">
+                        <mat-option *ngFor="let event of availableEvents$ | async" [value]="event">
+                            <small>{{event}}</small>
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'pageBuilder.pageEvents.dialog.eventActionType' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'pageBuilder.pageEvents.dialog.eventActionType.placeholder' | translate }}" formControlName="eventActionType">
+                        <mat-option *ngFor="let type of _eventActionTypes" [value]="type.value">
+                            {{ type.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <let-httpoptions [httpOptions]="httpOptions" (changed)="onChangeHttpOptions($event)"
+            (checkValid)="onCheckingHttpOptionsValid($event)"
+            *ngIf="eventForm.get('eventActionType').value == eventActionType.WebService">
+        </let-httpoptions>
+
+        <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.WebService">
+            <label class=" col-lg-2 col-form-label">{{ 'pageBuilder.pageEvents.dialog.reboundDataControls' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select formControlName="boundData" multiple>
+                        <mat-option *ngFor="let bounData of availableBoundDatas" [value]="bounData">{{bounData}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="eventForm.get('eventActionType').value == eventActionType.TriggerEvent">
+            <label class=" col-lg-2 col-form-label">{{ 'pageBuilder.pageEvents.dialog.triggerEventList' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select formControlName="triggerEventsList" multiple>
+                        <mat-option *ngFor="let event of availableTriggerEvents" [value]="event">{{event}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmit()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>

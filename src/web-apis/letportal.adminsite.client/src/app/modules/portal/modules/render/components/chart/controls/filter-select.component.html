@@ -1,0 +1,12 @@
+<div class="row">
+    <label class="col-form-label col-lg-2 font-weight-bold">{{filter.displayName}}</label>
+    <div [formGroup]="formGroup" class="col-lg-4">
+        <mat-form-field class="field-full-width">
+            <mat-select [formControlName]="controlName" [multiple]="filter.isMultiple">
+                <mat-option *ngFor="let option of optionsList | async" [value]="option.value">
+                    {{ option.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>

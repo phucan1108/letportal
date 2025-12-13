@@ -1,0 +1,168 @@
+<h3 mat-dialog-title>{{ 'pageBuilder.standard.controls.asyncValidators.header' | translate }}</h3>
+<mat-dialog-content>
+    <ng-container *ngIf="isShowEditForm">
+        <form [formGroup]="asyncValidatorForm" class="dialog-width" action="#">
+            <div class="row row-heading">
+                <h3>
+                    {{ 'pageBuilder.standard.controls.asyncValidators.validatorForm' | translate }}
+                </h3>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">
+                    {{ 'common.validatorName' | translate }}:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <input matInput placeholder="{{ 'common.validatorName' | translate }}" #validatorNameInput formControlName="validatorName"
+                            maxlength="100" />
+                        <mat-hint align="end"> {{validatorNameInput.value?.length || 0}}/100</mat-hint>
+                        <mat-error *ngIf="asyncValidatorForm.get('validatorName').hasError('isExist')">
+                            {{ 'common.errors.nameAlreadyUsed' | translate }}
+                        </mat-error>
+                        <mat-error *ngIf="asyncValidatorForm.get('validatorName').hasError('pattern')">
+                           {{ 'common.erros.alphaChars' | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">{{ 'common.active' | translate}}</label>
+                <div class="col-lg-6 pt-3">
+                    <mat-checkbox formControlName="isActive">
+                    </mat-checkbox>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">{{ 'common.errorMessage' | translate }}:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <input matInput placeholder="{{ 'common.validatorErrorMessage' | translate }}" #validatorErrorInput
+                            formControlName="validatorMessage" maxlength="500" />
+                        <mat-hint align="end"> {{validatorErrorInput.value?.length || 0}}/500</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">{{ 'pageBuilder.standard.controls.asyncValidators.asyncType' | translate }}:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <mat-select placeholder="{{ 'common.pickOneValidatorType' | translate }}" formControlName="validatorType">
+                            <mat-option *ngFor="let type of validatorTypes" [value]="type.value">
+                                {{ type.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">
+                    {{ 'common.evaluatedExpression' | translate }}:</label>
+                <div class="col-lg-6">
+                    <mat-form-field class="field-full-width">
+                        <input matInput placeholder="{{ 'common.evaluatedExpression' | translate }}" #evaluatedExpressionInput
+                            formControlName="evaluatedExpression" maxlength="500" />
+                        <mat-hint align="end"> {{evaluatedExpressionInput.value?.length || 0}}/500</mat-hint>
+                        <mat-icon matSuffix matTooltip="{{ 'pageBuilder.standard.controls.asyncValidators.expression.tooltip' | translate }}">
+                            help_outline</mat-icon>
+                    </mat-form-field>
+                </div>
+            </div>
+            <let-databaseoptions [databaseOptions]="databaseOptions" [options]="dbOptions"
+                *ngIf="asyncValidatorForm.get('validatorType').value == validatorType.DatabaseValidator">
+            </let-databaseoptions>
+            <let-httpoptions [httpOptions]="httpOptions" (changed)="onChangeHttpOptions($event)"
+                (checkValid)="onCheckingHttpOptionsValid($event)"
+                *ngIf="asyncValidatorForm.get('validatorType').value == validatorType.HttpValidator">
+            </let-httpoptions>
+        </form>
+    </ng-container>
+    <div class="row dialog-width" [hidden]="isShowEditForm">
+        <div class="col-lg-12">
+            <button mat-raised-button color="primary" (click)="addValidator()">{{ 'pageBuilder.standard.controls.asyncValidators.addValidator' | translate }}</button>
+        </div>
+        <div class="col-lg-12">
+            <mat-table #table class="lmat-elevation-z8" [dataSource]="validators$" *ngIf="!isHandset">
+                <ng-container matColumnDef="validatorName">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ 'common.nameText' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let validator">
+                        {{validator.validatorName}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="validatorMessage">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ 'common.message' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let validator">
+                        {{validator.validatorMessage}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ 'common.actionsText' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let validator">
+                        <button mat-icon-button color="primary" matTooltip="{{ 'common.editValidator' | translate }}"
+                            (click)="editValidator(validator)">
+                            <mat-icon>create</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let validator; columns: displayedColumns">
+                </mat-row>
+            </mat-table>
+
+        </div>
+    </div>
+    <div [hidden]="isShowEditForm">
+        <mat-accordion *ngIf="isHandset">
+            <mat-expansion-panel *ngFor="let validator of validators$ | async ;let index = index;">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{validator.validatorName}}
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="row">
+                    <label class="col-lg-2 col-form-label font-weight-bold">
+                        {{ 'common.nameText' | translate }}
+                    </label>
+                    <label class="col-lg-2 col-form-label">
+                        {{validator.validatorName}}
+                    </label>
+                    <label class="col-lg-2 col-form-label font-weight-bold">
+                        {{ 'common.message' | translate }}
+                    </label>
+                    <label class="col-lg-2 col-form-label">
+                        {{validator.validatorMessage}}
+                    </label>
+                    <div class="col-lg-2 d-flex justify-content-center">
+                        <button mat-button color="primary" matTooltip="{{ 'common.actionsText' | translate }}" [matMenuTriggerFor]="action"
+                            aria-label="Toggle menu">
+                            {{ 'common.actionsText' | translate }}
+                        </button>
+                        <mat-menu #action="matMenu" xPosition="after">
+                            <button mat-menu-item color="primary" matTooltip="{{ 'common.editValidator' | translate }}"
+                                (click)="editValidator(validator)">
+                                <mat-icon>create</mat-icon>
+                               {{ 'common.editEvent' | translate }}
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" *ngIf="!isShowEditForm">
+        {{ 'common.cancelButton' | translate }}
+    </button>
+    <button mat-button (click)="onSave()" color="primary" *ngIf="!isShowEditForm">
+        {{ 'common.saveButton' | translate }}
+    </button>
+    <button mat-button (click)="cancelEdit()" *ngIf="isShowEditForm">
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="saveValidator()" color="primary" *ngIf="isShowEditForm">
+        {{ 'common.saveButton' | translate }}
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,206 @@
+
+<div class="row row-heading">
+    <h3>{{ 'shared.commandOptions.confirmationOptions' | translate }}</h3>
+</div>
+<form [formGroup]="confirmationFormGroup">
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">
+            {{ 'shared.commandOptions.confirmationText' | translate }}
+        </label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="confirmationText" matInput #confirmationTextInput maxlength="250">
+                <mat-hint align="end">{{confirmationTextInput.value?.length || 0}}/250</mat-hint>
+                <mat-icon matSuffix matTooltip="{{ 'shared.commandOptions.confirmation.tooltip' | translate }}">help_outline</mat-icon>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">{{ 'common.enable' | translate }}</label>
+        <div class="col-lg-6 pt-3">
+            <mat-slide-toggle formControlName="isEnable"></mat-slide-toggle>
+        </div>
+    </div>
+</form>
+<div class="row row-heading">
+    <h3>{{ 'shared.buttonOptions.actionOptions' | translate }}</h3>
+</div>
+<div class="form-group row">
+    <label class="col-lg-2 col-form-label">
+        {{ 'shared.commandOptions.actionType' | translate }}
+    </label>
+    <div class="col-lg-6">
+        <mat-form-field class="field-full-width">
+            <mat-select placeholder="{{ 'common.pickOneActionType' | translate }}" [(ngModel)]="currentActionType"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option *ngFor="let type of actionTypes" [value]="type.value">
+                    {{ type.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-lg-2 col-form-label">{{ 'common.enable' | translate }}</label>
+    <div class="col-lg-10">
+        <mat-slide-toggle [(ngModel)]="isEnable"></mat-slide-toggle>
+    </div>
+</div>
+<ng-container [ngSwitch]="currentActionType">
+    <div *ngSwitchCase="actionType.ExecuteDatabase">
+        <div class="row row-heading">
+            <h3>{{ 'shared.commandOptions.multipleExecutions' | translate }}:</h3>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 pl-4">
+                <button mat-raised-button color="primary" (click)="addStep()">
+                    {{ 'shared.commandOptions.addStep' | translate }}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 pt-3" *ngIf="isReadyToRender">
+                <mat-accordion cdkDropList [cdkDropListData]="steps" (cdkDropListDropped)="onExecutionDrop($event)">
+                    <mat-expansion-panel *ngFor="let step of steps;let index = index" cdkDrag [cdkDragData]="step">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                {{ 'common.step' | translate }} {{index + 1}}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <let-executiondatabase-step [step]="step" [databaseConnections]="databaseConnections"
+                            (changed)="stepChanged($event,index)"></let-executiondatabase-step>
+                        <div class="drag-drop-placeholder" *cdkDragPlaceholder></div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </div>
+    </div>
+    <form [formGroup]="httpOptionsForm" *ngSwitchCase="actionType.CallHttpService ">
+        <div class="row row-heading">
+            <h3>
+                {{ 'shared.commandOptions.webServiceInfo' | translate }}:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'shared.commandOptions.serviceUrl' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="httpCallUrl" matInput #httpUrlInput 
+                    placeholder="{{ 'shared.commandOptions.enterUrl' | translate }}"
+                        autocomplete="off">
+                    <mat-hint align="end">{{httpUrlInput.value?.length || 0}}/255</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'shared.commandOptions.httpMethod' | translate }}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'shared.commandOptions.pickOneHttpMethod' | translate }}" formControlName="httpCallMethod">
+                        <mat-option *ngFor="let httpMethod of _httpMethods" [value]="httpMethod.value">
+                            {{ httpMethod.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'shared.commandOptions.jsonBody' | translate }}:</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <json-editor #jsonPayloadEditor [options]="editorOptions1" [data]="jsonHttpBodyData"></json-editor>
+                    <input formControlName="httpJsonPayload" matInput #jsonBodyInput style="display:none">
+                    <mat-hint align="end">{{jsonBodyInput.value?.length || 0}}/5000</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.outputProjection' | translate }}:</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="httpOutputProjection" matInput #outputProjectionInput
+                        placeholder="{{ 'shared.commandOptions.enterUrl' | translate }}" autocomplete="off">
+                    <mat-hint align="end">{{outputProjectionInput.value?.length || 0}}/255</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'shared.commandOptions.successCode' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="httpSuccessCode" matInput #httpSuccessCodeInput
+                        placeholder="{{ 'shared.commandOptions.successCode.placeholder' | translate }}">
+                    <mat-hint align="end">{{httpSuccessCodeInput.value?.length || 0}}/255</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <form [formGroup]="redirectionOptionsForm" *ngSwitchCase="actionType.Redirect">
+        <div class="row row-heading">
+            <h3>
+                {{ 'shared.commandOptions.redirectionInfo' | translate }}:</h3>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.page' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'common.pickPage' | translate }}" formControlName="targetPageId">
+                        <mat-option *ngFor="let page of page$ | async" [value]="page.id">
+                            {{ page.displayName }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.url' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'common.redirectUrl' | translate }}" formControlName="redirectUrl" />
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.sameDomain' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-slide-toggle formControlName="isSameDomain" name="isSameDomain">
+                </mat-slide-toggle>
+            </div>
+        </div>
+    </form>
+</ng-container>
+
+<form [formGroup]="notificationOptionsForm" *ngIf="currentActionType !== actionType.Redirect">
+    <div class="row row-heading">
+        <h3>{{ 'common.notificationInfo' | translate }}:</h3>
+    </div>
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">
+            {{ 'common.completeMessage' | translate }}
+        </label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="completeMessage" matInput #completeMessageInput
+                    placeholder="{{ 'common.enterCompleteMessage' | translate }}" autocomplete="off">
+                <mat-hint align="end">{{completeMessageInput.value?.length || 0}}/255</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-lg-2 col-form-label">{{ 'common.failedMessage' | translate }}</label>
+        <div class="col-lg-6">
+            <mat-form-field class="field-full-width">
+                <input formControlName="failedMessage" matInput #failedMessageInput 
+                    placeholder="{{ 'common.enterFailedMessage' | translate }}"
+                    autocomplete="off">
+                <mat-hint align="end">{{failedMessageInput.value?.length || 0}}/255</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+</form>

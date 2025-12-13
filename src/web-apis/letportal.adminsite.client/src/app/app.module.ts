@@ -1,18 +1,156 @@
-import { NgModule } from '@angular/core';
+import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {NgModule, provideExperimentalZonelessChangeDetection} from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { BrowserModule } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NgxsStoreModule } from 'app/core/store.module';
+import { environment } from 'environments/environment';
+import sql from 'highlight.js/lib/languages/sql';
+import { ClipboardModule } from 'ngx-clipboard';
+import { HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { ToastrModule } from 'ngx-toastr';
+import { ChatModule } from 'portal/modules/chat/chat.module';
+import { ChatService, CHAT_BASE_URL } from 'services/chat.service';
+import { ConfigurationService } from 'services/configuration.service';
+import { LocalizationService } from 'services/localization.service';
+import { NotificationService, NOTIFICATION_BASE_URL } from 'services/notification.service';
+import { PORTAL_BASE_URL } from 'services/portal.service';
+import { VideoCallService, VIDEO_BASE_URL } from 'services/videocall.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ConfigurationProvider } from './core/configs/configProvider';
+import { CoreModule } from './core/core.module';
+import { HttpExceptionInterceptor } from './core/https/httpException.interceptor';
+import { JwtTokenInterceptor } from './core/security/jwtToken.interceptor';
+import { ErrorComponent } from './modules/error/error.component';
+import { SharedModule } from './modules/shared/shortcut.module';
+import { EmojiPickerModule } from './modules/thirdparties/emoji-picker/emoji-picker.module';
+import { MEDIA_BASE_URL } from 'services/downloadfile.service';
 
-@NgModule({
-  declarations: [
-    AppComponent
+export function hlJSLang() {
+  return [
+    { name: 'sql', func: sql }
+  ]
+}
+const portalBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().portalBaseEndpoint
+}
+const chatBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().chatBaseEndpoint
+}
+const identityBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().identityBaseEndpoint
+}
+const notificationBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().notificationBaseEndpoint
+}
+const mediaBaseUrl = (configProvider: ConfigurationProvider) => {
+  return configProvider.getCurrentConfigs().mediaBaseEndpoint
+}
+// required for AOT compilation
+function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/','.json');
+}
+@NgModule({ declarations: [
+    AppComponent,
+    ErrorComponent
   ],
-  imports: [
+  exports: [
+    CoreModule
+  ],
+  bootstrap: [AppComponent], imports: [ChatModule,
     BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [provideHttpClient()],
-  bootstrap: [AppComponent]
-})
+    AppRoutingModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    BrowserAnimationsModule,
+    SharedModule,
+    NgxsStoreModule,
+    LoggerModule.forRoot({
+      serverLoggingUrl: '',
+      level: environment.production ? NgxLoggerLevel.OFF : NgxLoggerLevel.DEBUG,
+      serverLogLevel: NgxLoggerLevel.OFF
+    }),
+    ToastrModule.forRoot(),
+    ClipboardModule,
+    // Portal Module Sections
+    CoreModule.forRoot(),
+    EmojiPickerModule.forRoot(),
+    TranslateModule.forRoot({
+      defaultLanguage: environment.localization.defaultLanguage,
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })],
+  providers: [
+    ChatService,
+    VideoCallService,
+    LocalizationService,
+    ConfigurationService,
+    NotificationService,
+    {
+      provide: PORTAL_BASE_URL,
+      useFactory: portalBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: CHAT_BASE_URL,
+      useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: NOTIFICATION_BASE_URL,
+      useFactory: notificationBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: VIDEO_BASE_URL,
+      useFactory: chatBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: MEDIA_BASE_URL,
+      useFactory: mediaBaseUrl,
+      deps: [ConfigurationProvider]
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtTokenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpExceptionInterceptor,
+      multi: true
+    },
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        languages: hlJSLang
+      }
+    },
+    {
+      provide: MatPaginatorIntl,
+      useFactory: (translate: TranslateService) => {
+        const matPaginatorIntl = new MatPaginatorIntl();
+        matPaginatorIntl.itemsPerPageLabel = translate.instant('common.itemsPerPage');
+        matPaginatorIntl.nextPageLabel = translate.instant('common.nextText');
+        matPaginatorIntl.previousPageLabel = translate.instant('common.previous');
+        return matPaginatorIntl;
+      },
+      deps: [TranslateService]
+    },
+    ConfigurationProvider,
+    provideHttpClient(withInterceptorsFromDi()),
+    //provideExperimentalZonelessChangeDetection()
+  ] })
 export class AppModule { }

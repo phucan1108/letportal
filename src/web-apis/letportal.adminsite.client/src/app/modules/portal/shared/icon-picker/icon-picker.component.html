@@ -1,0 +1,10 @@
+<div [formGroup]="form">
+    <mat-form-field class="field-full-width">
+        <input matInput [placeholder]="tooltip" [matAutocomplete]="autoIcon" [formControlName]="formControlKey">
+        <mat-autocomplete #autoIcon="matAutocomplete">
+            <mat-option *ngFor="let _icon of iconFilterOptions | async" [value]="_icon">
+                <mat-icon>{{_icon}}</mat-icon>
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+</div>

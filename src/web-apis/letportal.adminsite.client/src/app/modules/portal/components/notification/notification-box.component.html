@@ -1,0 +1,42 @@
+<div class="rounded-circle tile-icon d-flex align-items-center justify-content-center" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu" (click)="clickedOnNotificationBox()">
+    <mat-icon [matBadgeHidden]="hideBadge" [matBadge]="numberBadge" matBadgeColor="warn" matTooltip="Notification"
+        [matTooltipPosition]="'below'">notifications</mat-icon>
+</div>
+<mat-menu #menu="matMenu" xPosition="before">    
+    <button *ngFor="let group of onlineSubcriber.groups; last as last" (click)="clickOnGroup(group)" mat-menu-item style="width: 350px; height: 50px;">
+        <div class="row">
+            <div class="col-2 d-flex justify-content-center align-items-center pr-0">
+                <mat-icon style="margin-left: 16px;">{{group.icon}}</mat-icon>
+            </div>
+            <div class="col-8" *ngIf="hasLastMessage(group)">
+                <div class="row" style="height: 50px;" >
+                    <div class="col-12" style="font-size: 10px; font-weight: bold; height: 25px; line-height: 2;">
+                        {{group.name}}  <span class="period-message">{{getPeriod(group.lastMessage)}}</span>
+                    </div>
+                    <div class="col-12" [ngClass]="{'non-read': hasUnreadMessageInGroup(group), 'color-primary':  hasUnreadMessageInGroup(group)}" style="height: 25px; line-height: 1; text-overflow: ellipsis;">
+                        {{group.lastMessage.shortMessage}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-8" *ngIf="noMessage(group)">
+                <div class="row" style="height: 50px;" >
+                    <div class="col-12" style="font-size: 10px; font-weight: bold; height: 25px; line-height: 2;">
+                        {{group.name}}
+                    </div>
+                    <div class="col-12" style="height: 25px; line-height: 1; text-overflow: ellipsis;">
+                        No messages
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 d-flex justify-content-center align-items-center pr-0">
+                <div style="width: 5px;">
+                    <mat-icon [inline]="true" color="primary" *ngIf="hasUnreadMessageInGroup(group)">fiber_manual_record</mat-icon>
+                </div>                
+            </div>
+        </div>        
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="openNotificationDialog()">
+        <p class="text-center"><a>View all notifications</a></p>
+    </button>
+</mat-menu>

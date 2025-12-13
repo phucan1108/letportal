@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Because we got many problems with circular dependencies from 3rd
+    // We need to change development to work on ES5 instead of ES2015
+    "target": "es5",
+    "outDir": "../out-tsc/app",
+    "types": []
+  },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts",
+    "environments/*.ts"
+  ]
+}

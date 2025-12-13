@@ -1,0 +1,40 @@
+<h3 mat-dialog-title>
+    {{ 'common.option' | translate }}
+</h3>
+<mat-dialog-content>
+    <form [formGroup]="shellOptForm">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.keyText' | translate }}
+            </label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'shared.shelloptions.dialog.key.placeholder' | translate }}" formControlName="key" #keyInput maxlength="100" />
+                    <mat-hint align="end">
+                        {{keyInput.value?.length || 0}}/100
+                    </mat-hint>
+                    <mat-error *ngIf="shellOptForm.get('key').hasError('isExist')">
+                        {{ 'shared.shelloptions.dialog.key.existedError' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.valueText' | translate }}
+            </label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'shared.shelloptions.dialog.value.placeholder' | translate }}" formControlName="value" #valueInput maxlength="250" />
+                    <mat-hint align="end">
+                        {{valueInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="save()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>

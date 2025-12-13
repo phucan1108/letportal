@@ -1,0 +1,72 @@
+<div class="grid-container-sub">
+    <mat-card appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>
+                {{ 'pageBuilder.buttonGrid.header' | translate }}
+                <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item (click)="addNewCommand()">
+                        {{ 'pageBuilder.buttonGrid.buttons.newButton' | translate }}
+                    </button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="align-center">
+            <mat-table #table class="lmat-elevation-z8" [dataSource]="currentActionCommands">
+
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'common.displayNameText' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let command" class="mat-column-vinCode">{{command.name}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="confirmation">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'pageBuilder.buttonGrid.confirmation' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let command" class="mat-column-vinCode">{{command.buttonOptions.actionCommandOptions.confirmationOptions ? command.buttonOptions.actionCommandOptions.confirmationOptions.isEnable : false}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+                        {{ 'pageBuilder.buttonGrid.actionEnable' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let command" class="mat-column-vinCode">{{command.buttonOptions.actionCommandOptions?.isEnable}}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ 'common.actionsText' | translate }}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let command">
+                        <button mat-icon-button color="primary" matTooltip="{{ 'common.editCommand' | translate }}"
+                            (click)="editCommand(command)">
+                            <mat-icon>create</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="primary" matTooltip="{{ 'common.editOptions' | translate }}"
+                            (click)="editOptions(command)">
+                            <mat-icon>build</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="primary" matTooltip="{{ 'common.editRoute' | translate }}" (click)="editRoute(command)">
+                            <mat-icon>device_hub</mat-icon>
+                        </button>&nbsp;
+                        <button mat-icon-button color="warn" type="button" matTooltip="{{ 'common.deleteCommand' | translate }}"
+                            (click)="deleteCommand(command)">
+                            <mat-icon>delete</mat-icon>
+                        </button>&nbsp;
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedListColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedListColumns">
+                </mat-row>
+            </mat-table>
+
+            <div class="align-center" *ngIf="currentActionCommands.length == 0">
+                {{ 'common.noRecordsText' | translate }}
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

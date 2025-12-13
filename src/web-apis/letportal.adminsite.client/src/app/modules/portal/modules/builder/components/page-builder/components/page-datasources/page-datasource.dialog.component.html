@@ -1,0 +1,41 @@
+<h3 mat-dialog-title>
+    {{ 'common.datasourceText' | translate }}
+</h3>
+<mat-dialog-content>
+    <form class="dialog-width" [formGroup]="datasourceForm" (ngSubmit)="onSubmit()">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.nameText' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="name" matInput #displayNameInput placeholder="{{ 'common.enterDatasourceName' | translate }}">
+                    <mat-hint align="end">
+                        {{displayNameInput.value?.length || 0}}/255
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.condition' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input formControlName="triggerCondition" matInput #triggerConditionInput
+                        placeholder="{{ 'pageBuilder.datasourceDialog.condition.placeholder' | translate }}">
+                    <mat-hint align="end">
+                        {{triggerConditionInput.value?.length || 0}}/255
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.active' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-slide-toggle formControlName="isActive"></mat-slide-toggle>
+            </div>
+        </div>        
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmit()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>

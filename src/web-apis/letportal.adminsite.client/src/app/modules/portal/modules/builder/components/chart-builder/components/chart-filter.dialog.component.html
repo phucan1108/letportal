@@ -1,0 +1,98 @@
+<h3 mat-dialog-title>Chart Filter</h3>
+<mat-dialog-content>
+    <form class="dialog-width" [formGroup]="chartFilterFormGroup" (ngSubmit)="onSubmit()">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.nameText' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'common.namePlaceholder' | translate }}" #nameInput formControlName="name"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{nameInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.displayNameText' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'common.displayNamePlaceholder' | translate }}" #displayNameInput formControlName="displayName"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{displayNameInput.value?.length || 0}}/250
+                    </mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'pageBuilder.chart.filterDialog.controlType' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'pageBuilder.chart.filterDialog.controlType.placeholder' | translate }}" formControlName="type">
+                        <mat-option *ngFor="let filterType of _filterTypes$ | async" [value]="filterType.value">
+                            {{ filterType.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="enableRangeValue()">
+            <label class="col-lg-2 col-form-label"></label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'pageBuilder.chart.filterDialog.rangeValue.placeholder' | translate }}" #rangeValueInput formControlName="rangeValue"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{rangeValueInput.value?.length || 0}}/250
+                    </mat-hint>
+                    <mat-icon matSuffix
+                        matTooltip="{{ 'pageBuilder.chart.filterDialog.rangeValue.tooltip' | translate }}">
+                        help
+                    </mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="enableMultiple()">
+            <label class="col-lg-2 col-form-label">{{ 'common.mutipleLabel' | translate }}</label>
+            <div class="col-lg-1 pt-3 align-center">
+                <mat-checkbox formControlName="isMultiple">
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.defaultValueLabel' | translate }}</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'common.defaultValuePlaceholder' | translate }}" #defaultValueInput formControlName="defaultValue"
+                        maxlength="250" />
+                    <mat-hint align="end">
+                        {{defaultValueInput.value?.length || 0}}/250
+                    </mat-hint>
+                    <mat-icon matSuffix
+                        matTooltip="{{ 'pageBuilder.chart.filterDialog.defaultValue.tooltip' | translate }}">
+                        help
+                    </mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'pageBuilder.chart.filterDialog.allowDefaultValue' | translate }}</label>
+            <div class="col-lg-1 pt-3 align-center">
+                <mat-checkbox formControlName="allowDefaultValue">
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">{{ 'common.isHidden' | translate }}</label>
+            <div class="col-lg-1 pt-3 align-center">
+                <mat-checkbox formControlName="isHidden">
+                </mat-checkbox>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmit()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>

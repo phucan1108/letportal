@@ -1,0 +1,16 @@
+<h3 mat-dialog-title>
+    {{ 'pageBuilder.buttonOptions.header' | translate }}
+</h3>
+<mat-dialog-content>
+    <div class="dialog-width">
+        <let-buttonoptions #buttonOptionsComponent [buttonOptions]="buttonOptions"></let-buttonoptions>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>
+        {{ 'common.cancelButton' | translate }}
+    </button>&nbsp;
+    <button mat-button (click)="save()" color="primary">
+        {{ 'common.saveButton' | translate }}
+    </button>
+</mat-dialog-actions>

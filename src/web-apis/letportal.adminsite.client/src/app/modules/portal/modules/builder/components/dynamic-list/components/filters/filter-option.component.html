@@ -1,0 +1,113 @@
+<div class="row row-heading">
+    <h3>{{ 'pageBuilder.dynamicList.filters.header' | translate }}:</h3>
+</div>
+<div *ngIf="!isSmallDevice">
+    <ng-container *ngFor="let filter of filterOptions;let index = index; trackBy: trackFilterName">
+        <div class="form-group row">
+            <div class="col-lg-1">
+                <button mat-icon-button color="primary" matTooltip="{{ 'common.actionsText' | translate }}" class="more-button"
+                    [matMenuTriggerFor]="action" aria-label="Toggle menu">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <mat-menu #action="matMenu" xPosition="after">
+                    <button mat-menu-item color="warn" (click)="deleteFilter(filter)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        {{ 'common.deleteText' | translate }}
+                    </button>
+                    <button *ngIf="filter.fieldValueType == fieldValueType.Select" mat-menu-item
+                        (click)="openDatasourceDialogForFilter(filter)">
+                        <mat-icon color="accent">library_books</mat-icon>
+                        {{ 'common.datasourceText' | translate }}
+                    </button>
+                </mat-menu>
+            </div>
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <input [(ngModel)]="filter.displayName" matInput placeholder="{{ 'pageBuilder.dynamicList.filters.filterFieldName' | translate }}">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'pageBuilder.dynamicList.filters.fieldType.tooltip' | translate }}" [(ngModel)]="filter.fieldValueType"
+                        (selectionChange)="onFieldTypeSelectChange(filter)">
+                        <mat-option *ngFor="let fieldType of _fieldTypes" [value]="fieldType.value">
+                            {{ fieldType.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-7 pt-3">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <mat-checkbox [(ngModel)]="filter.allowTextSearch" name="allowInAdvancedMode"
+                            matTooltip="{{ 'pageBuilder.dynamicList.filters.searchKeywords.tooltip' | translate }}">
+                            {{ 'pageBuilder.dynamicList.filters.searchKeyword' | translate }}
+                        </mat-checkbox>
+                    </div>
+                    <div class="col-lg-3">
+                        <mat-checkbox [(ngModel)]="filter.allowInAdvancedMode" name="allowInAdvancedMode"
+                            matTooltip="{{ 'pageBuilder.dynamicList.filters.advancedMode.tooltip' | translate }}">
+                            {{ 'pageBuilder.dynamicList.filters.advancedMode' | translate }}
+                        </mat-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
+
+<mat-accordion *ngIf="isSmallDevice">
+    <mat-expansion-panel *ngFor="let filter of filterOptions;let index = index; trackBy: trackFilterName">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{filter.name}}
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="form-group row">
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <input [(ngModel)]="filter.displayName" matInput placeholder="{{ 'pageBuilder.dynamicList.filters.filterFieldName' | translate}}">
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="Pick one field type" [(ngModel)]="filter.fieldValueType"
+                        (selectionChange)="onFieldTypeSelectChange(filter)">
+                        <mat-option *ngFor="let fieldType of _fieldTypes" [value]="fieldType.value">
+                            {{ fieldType.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-3">
+                <mat-checkbox [(ngModel)]="filter.allowTextSearch" name="allowInAdvancedMode"
+                    matTooltip="{{ 'pageBuilder.dynamicList.filters.searchKeywords.tooltip' | translate }}">
+                    {{ 'pageBuilder.dynamicList.filters.searchKeyword' | translate }}
+                </mat-checkbox>
+            </div>
+            <div class="col-lg-3">
+                <mat-checkbox [(ngModel)]="filter.allowInAdvancedMode" name="allowInAdvancedMode"
+                    matTooltip="{{ 'pageBuilder.dynamicList.filters.advancedMode.tooltip' | translate }}">
+                    {{ 'pageBuilder.dynamicList.filters.advancedMode' | translate }}
+                </mat-checkbox>
+            </div>
+            <div class="col-lg-2 d-flex justify-content-center">
+                <button mat-button color="primary" matTooltip="{{ 'common.actionsText' | translate }}" [matMenuTriggerFor]="action"
+                    aria-label="Toggle menu">
+                    {{ 'common.actionsText' | translate }}
+                </button>
+                <mat-menu #action="matMenu" xPosition="after">
+                    <button mat-menu-item color="warn" (click)="deleteFilter(filter)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        {{ 'common.deleteText' | translate }}
+                    </button>
+                    <button *ngIf="filter.fieldValueType == fieldValueType.Select" mat-menu-item
+                        (click)="openDatasourceDialogForFilter(filter)">
+                        <mat-icon color="accent">library_books</mat-icon>
+                        {{ 'common.datasourceText' | translate }}
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

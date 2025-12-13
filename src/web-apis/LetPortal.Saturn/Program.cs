@@ -127,6 +127,10 @@ app.UseSaturnServer(app.Lifetime, options =>
 app.UseOpenApi();
 app.UseSwaggerUi();
 app.UseReDoc();
+
+app.UseDefaultFiles();
+app.MapStaticAssets();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -147,5 +151,7 @@ app.MapGrpcService<ServiceConfigurationService>();
 app.MapGrpcService<LogCollectorService>();
 app.MapGrpcService<ServiceMonitorService>();
 app.MapGrpcService<NotificationServiceRpc>();
+
+app.MapFallbackToFile("/index.html");
 
 app.Run();

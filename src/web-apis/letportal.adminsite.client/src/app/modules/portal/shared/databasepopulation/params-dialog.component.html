@@ -1,0 +1,21 @@
+<h3 mat-dialog-title>
+    {{ 'shared.paramsDialog.params' | translate }}
+</h3>
+<mat-dialog-content>
+    <ng-container *ngFor="let param of params">
+        <div class="row">
+            <label class="col-lg-6 col-form-label">
+                {{param.name}}
+            </label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <input matInput placeholder="{{ 'shared.shelloptions.dialog.value.placeholder' | translate }}" [(ngModel)]="param.replaceValue" [name]="param.replaceValue" />
+                </mat-form-field>
+            </div>
+        </div>
+    </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onPolulating()" color="primary">{{ 'common.populate' | translate }}</button>
+</mat-dialog-actions>

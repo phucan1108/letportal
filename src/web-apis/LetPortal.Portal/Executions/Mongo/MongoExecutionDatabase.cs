@@ -62,7 +62,7 @@ namespace LetPortal.Portal.Executions.Mongo
                                     // Note: Server will decrease the performance for deserializing JSON instead of client
                                     var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
                                     {
-                                        OutputMode = MongoDB.Bson.IO.JsonOutputMode.CanonicalExtendedJson
+                                        OutputMode = MongoDB.Bson.IO.JsonOutputMode.RelaxedExtendedJson
                                     })).Select(b =>
                                             JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter())).ToList();
                                     result.Result = objsList.Count > 1 ? objsList : objsList[0];
@@ -175,7 +175,7 @@ namespace LetPortal.Portal.Executions.Mongo
                                     // Note: Server will decrease the performance for deserializing JSON instead of client
                                     var objsList = executingCursor.Current.Select(a => a.ToJson(new MongoDB.Bson.IO.JsonWriterSettings
                                     {
-                                        OutputMode = MongoDB.Bson.IO.JsonOutputMode.CanonicalExtendedJson
+                                        OutputMode = MongoDB.Bson.IO.JsonOutputMode.RelaxedExtendedJson
                                     })).Select(b =>
                                             JsonConvert.DeserializeObject<dynamic>(b, new BsonConverter())).ToList();
                                     result.Result = objsList.Count > 1 ? objsList : objsList[0];

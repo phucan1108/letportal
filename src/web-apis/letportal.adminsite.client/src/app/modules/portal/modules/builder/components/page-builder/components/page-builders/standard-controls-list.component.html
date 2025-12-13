@@ -1,0 +1,26 @@
+<mat-table #table class="lmat-elevation-z8" [dataSource]="controls">
+    <ng-container matColumnDef="controlName">
+        <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+            {{ 'pageBuilder.sectionControlsList.controlName' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let control" class="mat-column-vinCode">{{control.name}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="controlType">
+        <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+            {{ 'pageBuilder.sectionControlsList.controlType' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let control" class="mat-column-vinCode">
+            {{translateControlType(control.type)}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="controlEvents">
+        <mat-header-cell *matHeaderCellDef class="mat-column-vinCode">
+            {{ 'pageBuilder.sectionControlsList.controlEvents' | translate }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let control" class="mat-column-vinCode">{{getAllControlEvents(control)}}
+        </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedListColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedListColumns">
+    </mat-row>
+</mat-table>

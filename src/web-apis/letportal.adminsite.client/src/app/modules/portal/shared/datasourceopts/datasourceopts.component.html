@@ -1,0 +1,130 @@
+<h3 mat-dialog-title>
+    {{ 'common.datasourceText' | translate }}
+</h3>
+<mat-dialog-content>
+    <form class="m-form dialog-width" [formGroup]="datasourceForm">
+        <div class="form-group row">
+            <label class="col-lg-2 col-form-label">
+                {{ 'common.datasourceType' | translate }}:</label>
+            <div class="col-lg-6">
+                <mat-form-field class="field-full-width">
+                    <mat-select placeholder="{{ 'common.pickOneControlType' | translate }}" formControlName="type">
+                        <mat-option *ngFor="let type of _datasourceTypes" [value]="type.value">
+                            {{ type.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="datasourceForm.get('type').value === datasourceType.StaticResource">
+            <label class="col-lg-2 col-form-label">{{ 'common.jsonDatasource' | translate }}:</label>
+            <div class="col-lg-10">
+                <mat-form-field class="field-full-width">
+                    <json-editor [options]="jsonStaticOptions" [data]="staticJsonData" #jsonStaticEditorQuery>
+                    </json-editor>
+                    <input formControlName="jsonquery" matInput #queryStaticInput style="display:none">
+                    <mat-hint align="end">{{queryStaticInput.value?.length || 0}}/500</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="datasourceForm.get('type').value === datasourceType.Database">
+            <div class="col-lg-12">
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">
+                        {{ 'common.connections' | translate }}:
+                        <button mat-icon-button matTooltip="{{ 'shared.datasourceOptions.refreshPlaceholder' | translate }}" (click)="refreshEntities()">
+                            <mat-icon>cached</mat-icon>
+                        </button>
+                    </label>
+                    <div class="col-lg-10">
+                        <mat-form-field class="field-full-width">
+                            <mat-select placeholder="{{ 'common.connectionPlaceholder' | translate }}" formControlName="databaseId">
+                                <mat-option *ngFor="let database of databaseConnections$ | async" [value]="database.id">
+                                    {{ database.displayName }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">
+                        {{ 'shared.databaseOpt.chooseEntity.label' | translate }}:
+                    </label>
+                    <div class="col-lg-10">
+                        <mat-form-field class="field-full-width">
+                            <mat-select placeholder="{{ 'shared.databaseOpt.chooseEntity.placeholder' | translate }}" formControlName="entityName">
+                                <mat-option *ngFor="let entity of entities | async" [value]="entity.name">
+                                    {{ entity.displayName }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">{{ 'common.query' | translate }}:</label>
+                    <div class="col-lg-10">
+                        <mat-form-field class="field-full-width">
+                            <json-editor [options]="jsonOptions" [data]="queryJsonData" #jsonEditorQuery>
+                            </json-editor>
+                            <input formControlName="query" matInput #queryTypeInput style="display:none">
+                            <mat-hint align="end">{{queryTypeInput.value?.length || 0}}/500</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="datasourceForm.get('type').value === datasourceType.WebService">
+            <div class="col-lg-12">
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">
+                        {{ 'common.url' | translate }}:
+                    </label>
+                    <div class="col-lg-6">
+                        <mat-form-field class="field-full-width">
+                            <input matInput placeholder="{{ 'shared.datasourceOptions.webServiceUrl.placeholder' | translate }}" formControlName="httpServiceUrl" />
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">
+                        {{ 'common.method' | translate }}:
+                    </label>
+                    <div class="col-lg-10">
+                        <mat-form-field class="field-full-width">
+                            <mat-select placeholder="{{ 'common.chooseMethod' | translate }}" formControlName="httpMethod">
+                                <mat-option *ngFor="let _httpMethod of _httpMethods" [value]="_httpMethod">
+                                    {{ _httpMethod }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">{{ 'common.body' | translate }}:</label>
+                    <div class="col-lg-10">
+                        <mat-form-field class="field-full-width">
+                            <json-editor [options]="jsonHttpBodyOptions" [data]="httpBodyJsonData" #jsonBodyEditorQuery>
+                            </json-editor>
+                            <input formControlName="jsonBody" matInput #queryHttpBodyInput style="display:none">
+                            <mat-hint align="end">{{queryHttpBodyInput.value?.length || 0}}/500</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-2 col-form-label">{{ 'common.outputProjection' | translate }}:</label>
+                    <div class="col-lg-10">
+                        <mat-form-field class="field-full-width">
+                            <input formControlName="httpOutputProjection" matInput #httpOutputProjectionInput
+                                placeholder="{{ 'shared.httpOptions.outputProjection.placeholder' | translate }}">
+                            <mat-hint align="end">{{httpOutputProjectionInput.value?.length || 0}}/255</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="">{{ 'common.cancelButton' | translate }}</button>&nbsp;
+    <button mat-button (click)="onSubmit()" color="primary">{{ 'common.saveButton' | translate }}</button>
+</mat-dialog-actions>

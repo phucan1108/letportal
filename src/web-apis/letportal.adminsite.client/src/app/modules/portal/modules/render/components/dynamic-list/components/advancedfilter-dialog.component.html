@@ -1,0 +1,57 @@
+<h3 mat-dialog-title>{{ 'pageRender.dynamicList.advancedFilterDialog.header' | translate }}</h3>
+<mat-dialog-content>
+    <div class="row">
+        <div class="col-md-12">
+            <mat-form-field class="field-full-width">
+                <mat-select placeholder="{{ 'pageRender.dynamicList.advancedFilterDialog.fieldSearch.placeholder' | translate }}" [(ngModel)]="filterOption.fieldName"
+                    (selectionChange)="onFieldNameSelected(filterOption)">
+                    <mat-option *ngFor="let filter of filters" [value]="filter.name">
+                        {{ filter.displayName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-md-12">
+            <mat-form-field class="field-full-width">
+                <mat-select placeholder="{{ 'pageRender.dynamicList.advancedFilterDialog.operator.placeholder' | translate }}" [(ngModel)]="filterOption.filterOperator"  [disabled]="filterOption.filterOperators.length == 1">
+                    <mat-option *ngFor="let operator of filterOption.filterOperators" [value]="operator.value">
+                        {{ operator.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-md-12" *ngIf="filterOption.filterValueType == fieldValueType.Text || filterOption.filterValueType == fieldValueType.Number">
+            <mat-form-field class="field-full-width">
+                <input matInput placeholder="{{ 'pageRender.dynamicList.advancedFilterDialog.fieldValue.placeholder' | translate }}" [(ngModel)]="filterOption.fieldValue">
+            </mat-form-field>
+        </div>
+        <div class="col-md-12" *ngIf="filterOption.filterValueType == fieldValueType.Checkbox">
+            <mat-checkbox [(ngModel)]="filterOption.fieldValue">
+            </mat-checkbox>
+        </div>
+        <div class="col-md-12" *ngIf="filterOption.filterValueType == fieldValueType.Slide">
+            <mat-slide-toggle [(ngModel)]="filterOption.fieldValue"></mat-slide-toggle>
+        </div>
+        <div class="col-md-12" *ngIf="filterOption.filterValueType == fieldValueType.DatePicker">
+            <mat-form-field class="field-full-width">
+                <input matInput [matDatepicker]="picker" placeholder="{{ 'pageRender.dynamicList.filters.datePicker.placeholder' | translate }}"
+                    [(ngModel)]="filterOption.fieldValue">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="col-md-12" *ngIf="filterOption.filterValueType == fieldValueType.Select">
+            <mat-form-field class="field-full-width">
+                <mat-select placeholder="{{ 'pageRender.dynamicList.advancedFilterDialog.fieldSearch.placeholder' | translate }}" [(ngModel)]="filterOption.fieldValue" [disabled]="filterOption.filterDataSource.length < 2">
+                    <mat-option *ngFor="let filter of filterOption.filterDataSource" [value]="filter.value">
+                        {{ filter.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="">{{ 'pageRender.dynamicList.advancedFilterDialog.buttons.cancel' | translate }}</button>
+    <button mat-button (click)="onFilterSubmit()" color="primary">{{ 'pageRender.dynamicList.advancedFilterDialog.buttons.add' | translate }}</button>
+</mat-dialog-actions>
