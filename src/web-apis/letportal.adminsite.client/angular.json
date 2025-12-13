@@ -84,6 +84,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "docker": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.docker.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -96,6 +107,9 @@
             },
             "development": {
               "buildTarget": "letportal.adminsite.client:build:development"
+            },
+            "docker": {
+              "buildTarget": "letportal.adminsite.client:build:docker"
             }
           },
           "defaultConfiguration": "development",
