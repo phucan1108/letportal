@@ -10,7 +10,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'let-icon-picker',
-    templateUrl: './icon-picker.component.html'
+    templateUrl: './icon-picker.component.html',
+    standalone: false
 })
 export class IconPickerComponent implements OnInit {
     iconFilterOptions: Observable<string[]>;

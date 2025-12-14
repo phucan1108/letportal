@@ -21,7 +21,8 @@ import { TranslateService } from '@ngx-translate/core';
     styleUrls: ['./video-call-dialog.component.scss'],
     animations: [
         heartBeatAnimation({ anchor: 'heartBeat', direction: '<=>', duration: 1000 })
-    ]
+    ],
+    standalone: false
 })
 export class VideoCallDialogComponent implements OnInit, OnDestroy {
 

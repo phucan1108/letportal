@@ -3,8 +3,9 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MessageType } from '../shortcut.models';
 
 @Component({
-	selector: 'let-custom-action-dialog',
-	templateUrl: './custom-action-dialog.component.html'
+    selector: 'let-custom-action-dialog',
+    templateUrl: './custom-action-dialog.component.html',
+    standalone: false
 })
 export class ConfirmationDialogComponent implements OnInit {
 	viewLoading = false;

@@ -22,7 +22,8 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'let-menu',
     templateUrl: './menu.page.html',
-    styleUrls: ['./menu.page.scss']
+    styleUrls: ['./menu.page.scss'],
+    standalone: false
 })
 export class MenuPage implements OnInit, AfterViewInit {
     constructor(

@@ -14,7 +14,8 @@ import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dial
 @Component({
     selector: 'let-page-button-dialog',
     templateUrl: './page-button-dialog.component.html',
-    styleUrls: ['./page-button-dialog.component.scss']
+    styleUrls: ['./page-button-dialog.component.scss'],
+    standalone: false
 })
 export class PageButtonDialogComponent implements OnInit {
     iconFilterOptions: Observable<string[]>;

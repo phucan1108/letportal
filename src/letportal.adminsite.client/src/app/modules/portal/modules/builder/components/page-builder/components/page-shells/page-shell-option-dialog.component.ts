@@ -5,7 +5,8 @@ import { ShellOption } from 'services/portal.service';
 
 @Component({
     selector: 'let-page-shell-option-dialog',
-    templateUrl: './page-shell-option-dialog.component.html'
+    templateUrl: './page-shell-option-dialog.component.html',
+    standalone: false
 })
 export class PageShellOptionDialogComponent implements OnInit {
     shellFormGroup: FormGroup;

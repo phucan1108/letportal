@@ -11,7 +11,8 @@ import { ChartFilterGridComponent } from './chart-filter.grid.component';
 
 @Component({
     selector: 'let-chart-filter-dialog',
-    templateUrl: './chart-filter.dialog.component.html'
+    templateUrl: './chart-filter.dialog.component.html',
+    standalone: false
 })
 export class ChartFilterDialogComponent implements OnInit {
     chartFilterFormGroup: FormGroup

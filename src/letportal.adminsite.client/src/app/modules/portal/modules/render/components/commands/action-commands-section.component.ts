@@ -9,7 +9,8 @@ import { PageService } from 'services/page.service';
 
 @Component({
     selector: 'action-commands',
-    templateUrl: './action-commands-section.component.html'
+    templateUrl: './action-commands-section.component.html',
+    standalone: false
 })
 export class ActionCommandsSectionComponent implements OnInit, OnDestroy {
 

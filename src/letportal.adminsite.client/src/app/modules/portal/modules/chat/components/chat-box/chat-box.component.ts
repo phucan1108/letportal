@@ -16,8 +16,8 @@ import { debounceTime } from 'rxjs/operators';
     selector: 'let-chat-box',
     templateUrl: './chat-box.component.html',
     styleUrls: ['./chat-box.component.scss'],
-    animations: [
-    ]
+    animations: [],
+    standalone: false
 })
 export class ChatBoxComponent implements OnInit, OnDestroy {
     showChatBadge = false

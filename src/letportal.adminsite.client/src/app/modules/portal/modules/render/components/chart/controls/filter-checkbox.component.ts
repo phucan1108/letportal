@@ -5,7 +5,8 @@ import StringUtils from 'app/core/utils/string-util';
 
 @Component({
     selector: 'filter-checkbox',
-    templateUrl: 'filter-checkbox.component.html'
+    templateUrl: 'filter-checkbox.component.html',
+    standalone: false
 })
 
 export class FilterCheckboxComponent implements OnInit {

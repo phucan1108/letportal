@@ -16,7 +16,8 @@ import { PageStateModel } from 'stores/pages/page.state';
 
 @Component({
     selector: 'let-section-wrapper',
-    templateUrl: './page-render-section-wrapper.component.html'
+    templateUrl: './page-render-section-wrapper.component.html',
+    standalone: false
 })
 export class PageRenderSectionWrapperComponent implements OnInit, OnDestroy {
     constructor(

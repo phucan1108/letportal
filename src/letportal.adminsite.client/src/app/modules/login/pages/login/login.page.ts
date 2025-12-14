@@ -13,7 +13,8 @@ import { SessionService } from 'services/session.service';
 @Component({
     selector: 'let-login',
     templateUrl: './login.page.html',
-    styleUrls: ['./login.page.scss']
+    styleUrls: ['./login.page.scss'],
+    standalone: false
 })
 export class LoginPage implements OnInit {
 

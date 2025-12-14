@@ -11,7 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-executiondatabase-step',
-    templateUrl: './executiondatabase-step.component.html'
+    templateUrl: './executiondatabase-step.component.html',
+    standalone: false
 })
 export class ExecutionDatabaseStepComponent implements OnInit {
     @Input()

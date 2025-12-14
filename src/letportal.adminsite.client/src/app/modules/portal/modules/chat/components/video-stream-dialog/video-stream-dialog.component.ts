@@ -19,7 +19,8 @@ import { TranslateService } from '@ngx-translate/core';
     animations: [
         slideInRightOnEnterAnimation({ anchor: 'enter' }),
         slideOutLeftOnLeaveAnimation({ anchor: 'leave' })
-    ]
+    ],
+    standalone: false
 })
 export class VideoStreamDialogComponent implements OnInit {
 

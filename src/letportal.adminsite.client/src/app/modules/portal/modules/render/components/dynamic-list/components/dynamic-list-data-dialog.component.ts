@@ -8,8 +8,9 @@ import { DatasourceCache } from '../models/commandClicked';
 import { ExtendedColDef } from '../models/extended.model';
 
 @Component({
-  selector: 'let-dynamic-list-data-dialog',
-  templateUrl: './dynamic-list-data-dialog.component.html'
+    selector: 'let-dynamic-list-data-dialog',
+    templateUrl: './dynamic-list-data-dialog.component.html',
+    standalone: false
 })
 export class DynamicListDataDialogComponent implements OnInit {
 

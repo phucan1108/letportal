@@ -11,8 +11,9 @@ import {
 import { DataTable } from './datatable';
 import { ColumnComponent } from './columns';
 @Component({
-  selector: 'm-columnFooterTemplateLoader',
-  template: ``,
+    selector: 'm-columnFooterTemplateLoader',
+    template: ``,
+    standalone: false
 })
 export class ColumnFooterTemplateLoader implements OnInit, OnDestroy {
   @Input() column: any;
@@ -36,8 +37,8 @@ export class ColumnFooterTemplateLoader implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: '[mColumnFooter]',
-  template: `
+    selector: '[mColumnFooter]',
+    template: `
     <tr>
       <td *ngIf="dt.selectionHandler == true">
       </td>
@@ -51,8 +52,8 @@ export class ColumnFooterTemplateLoader implements OnInit, OnDestroy {
       </td>
     </tr>
   `,
-  styles: [
-    `
+    styles: [
+        `
               tr {
                 text-align: left;
                 font-size: 12px;
@@ -73,7 +74,8 @@ export class ColumnFooterTemplateLoader implements OnInit, OnDestroy {
                 padding: var(--last-column-padding, 0 24px 0 0)
               }
             `,
-  ],
+    ],
+    standalone: false
 })
 export class ColumnFooterComponent {
   constructor(

@@ -7,7 +7,8 @@ import { StaticResources } from 'portal/resources/static-resources';
 
 @Component({
     selector: 'let-icon-picker-shared',
-    templateUrl: './icon-picker.component.html'
+    templateUrl: './icon-picker.component.html',
+    standalone: false
 })
 export class IconPickerSharedComponent implements OnInit {
     iconFilterOptions: Observable<string[]>;

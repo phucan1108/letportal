@@ -2,9 +2,9 @@ import { Component, Input, ViewChildren, QueryList, forwardRef, Output, EventEmi
 import { EmojiCategoryComponent } from './emoji-category.component';
 
 @Component({
-  selector: 'emoji-list',
-  styleUrls: ['../styles/emoji-list.scss'],
-  template: `
+    selector: 'emoji-list',
+    styleUrls: ['../styles/emoji-list.scss'],
+    template: `
   <div class="emoji-list">
     <ng-container *ngFor="let emojiCategory of emojis | notEmptyEmojiCategory">
       <emoji-category [category]="emojiCategory"></emoji-category>
@@ -16,7 +16,8 @@ import { EmojiCategoryComponent } from './emoji-category.component';
       </div>
     </ng-container>
   </div>
-  `
+  `,
+    standalone: false
 })
 
 export class EmojiListComponent {

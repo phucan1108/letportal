@@ -381,7 +381,7 @@ export class PageService {
         controlName: string, 
         compositeControlId: string,
         isChildCompositeControl: boolean,
-        parameters: PageParameterModel[]): Observable<ExecuteDynamicResultModel> {
+        parameters: PageParameterModel[]): Observable<any[]> {
         return this.pageClients.fetchControlDatasource(this.page.id, {
             sectionName,
             controlName,

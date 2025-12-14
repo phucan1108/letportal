@@ -22,7 +22,7 @@ const routes: Routes = [
             },
             {
                 path: 'page',
-                loadChildren: () => import('./modules/render/portal-render.module').then(m => m.PortalRenderModule),
+                loadChildren: () => import('app/modules/portal/modules/render/portal-render.module').then(m => m.PortalRenderModule),
                 canActivate: [AuthGuard , CanActivePortal]
             },
             {

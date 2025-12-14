@@ -18,7 +18,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 @Component({
     selector: 'let-app-dashboard',
     templateUrl: './app-dashboard.component.html',
-    styleUrls: ['./app-dashboard.component.scss']
+    styleUrls: ['./app-dashboard.component.scss'],
+    standalone: false
 })
 export class AppDashboardComponent implements OnInit {
 

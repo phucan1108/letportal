@@ -9,7 +9,8 @@ import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'let-generate-code-dialog',
-    templateUrl: './generatecode.dialog.html'
+    templateUrl: './generatecode.dialog.html',
+    standalone: false
 })
 export class GenerateCodeDialog implements OnInit {
     generateCodeForm: FormGroup

@@ -12,7 +12,8 @@ import { Location } from '@angular/common';
 
 @Component({
     selector: 'let-unlock-screen',
-    templateUrl: './unlock-screen.component.html'
+    templateUrl: './unlock-screen.component.html',
+    standalone: false
 })
 export class UnlockScreenDialogComponent implements OnInit {
 

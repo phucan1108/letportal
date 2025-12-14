@@ -12,7 +12,8 @@ import { ToastType } from 'app/modules/shared/components/shortcuts/shortcut.mode
 @Component({
     selector: 'let-app-install-dialog',
     templateUrl: './app-installation.dialog.html',
-    styleUrls: ['./app-installation.dialog.scss']
+    styleUrls: ['./app-installation.dialog.scss'],
+    standalone: false
 })
 export class AppInstallationDialog implements OnInit {
     installWayFormGroup: FormGroup

@@ -48,21 +48,18 @@
               "src/styles.scss",
               "node_modules/ngx-toastr/toastr.css",
               "node_modules/highlight.js/styles/vs.css",
-              "./node_modules/quill/dist/quill.core.css",
-              "./node_modules/quill/dist/quill.bubble.css",
-              "./node_modules/quill/dist/quill.snow.css",
-              "./node_modules/quill-mention/dist/quill.mention.min.css",
-              "./node_modules/bootstrap-markdown/css/bootstrap-markdown.min.css",
-              "./node_modules/prismjs/themes/prism.css"
-            ],
-            "scripts": [
-              "./node_modules/bootstrap-markdown/js/bootstrap-markdown.js",
-              "./node_modules/marked/lib/marked.esm.js",
-              "./node_modules/prismjs/prism.js",
-              "./node_modules/prismjs/components/prism-css.min.js",
-              "./node_modules/prismjs/components/prism-javascript.min.js",
-              "./node_modules/prismjs/components/prism-typescript.min.js"
-            ]
+                "./node_modules/quill/dist/quill.core.css",
+                "./node_modules/quill/dist/quill.bubble.css",
+                "./node_modules/quill/dist/quill.snow.css",
+                "./node_modules/quill-mention/dist/quill.mention.min.css",
+                "./node_modules/prismjs/themes/prism.css"
+              ],
+              "scripts": [
+                "./node_modules/prismjs/prism.js",
+                "./node_modules/prismjs/components/prism-css.min.js",
+                "./node_modules/prismjs/components/prism-javascript.min.js",
+                "./node_modules/prismjs/components/prism-typescript.min.js"
+              ]
           },
           "configurations": {
             "production": {

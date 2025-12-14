@@ -9,7 +9,8 @@ import { PageRouteComponent } from './page-route.component';
 
 @Component({
     selector: 'let-page-button-route',
-    templateUrl: './page-button-route.component.html'
+    templateUrl: './page-button-route.component.html',
+    standalone: false
 })
 export class PageButtonRouteDialogComponent implements OnInit {
 

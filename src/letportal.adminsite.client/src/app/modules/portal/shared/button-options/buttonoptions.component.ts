@@ -7,7 +7,8 @@ import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-buttonoptions',
-    templateUrl: './buttonoptions.component.html'
+    templateUrl: './buttonoptions.component.html',
+    standalone: false
 })
 export class ButtonOptionsComponent implements OnInit {
 

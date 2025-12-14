@@ -25,7 +25,8 @@ import { AutocompleteMultipleComponent } from './autocomplete-multiple.component
 @Component({
     selector: 'let-general-control',
     templateUrl: './general-control.component.html',
-    styleUrls: ['./general-control.component.scss']
+    styleUrls: ['./general-control.component.scss'],
+    standalone: false
 })
 export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -68,18 +69,8 @@ export class GeneralControlComponent implements OnInit, OnDestroy, AfterViewInit
     selectDisabled = false
     sectionName = ''
 
-    // Check full documentation of Markdown Editor: https://github.com/ghiscoding/angular-markdown-editor
-    markdownContent: string
-    // see full markdown options: https://github.com/ghiscoding/angular-markdown-editor/blob/master/src/lib/angular-markdown-editor/global-editor-options.ts
-    markdownOptions = {
-        iconlibrary: 'fa',
-        fullscreen: {
-            enable: false,
-            icons: null
-        },
-        onChange: (e: any) => this.mardownChanged(e),
-        parser: (val) => this.markdownService.parse(val.trim())
-    }
+    // Markdown Editor - using ngx-markdown for Angular 19 compatibility
+    markdownContent: string = ''
     markdownValue$ = new BehaviorSubject<string>('');
     constructor(
         @Optional() private eventsProvider: EventsProvider,

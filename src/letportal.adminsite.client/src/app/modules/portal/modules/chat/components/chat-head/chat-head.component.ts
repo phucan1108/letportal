@@ -13,7 +13,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     styleUrls: ['./chat-head.component.scss'],
     animations: [
         headShakeAnimation()
-    ]
+    ],
+    standalone: false
 })
 export class ChatHeadComponent implements OnInit {
 

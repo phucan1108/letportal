@@ -17,7 +17,8 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'chart-builder',
     templateUrl: './chart-builder.page.html',
-    styleUrls: ['./chart-builder.page.scss']
+    styleUrls: ['./chart-builder.page.scss'],
+    standalone: false
 })
 export class ChartBuilderPage implements OnInit {
     componentInfo: FormGroup

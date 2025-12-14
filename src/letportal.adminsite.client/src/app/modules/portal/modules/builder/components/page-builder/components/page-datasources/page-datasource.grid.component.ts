@@ -17,7 +17,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-page-datasource-grid',
-    templateUrl: './page-datasource.grid.component.html'
+    templateUrl: './page-datasource.grid.component.html',
+    standalone: false
 })
 export class PageDatasourceGridComponent implements OnInit {
     @ViewChild('table', { static: false }) table: MatTable<PageDatasource>;

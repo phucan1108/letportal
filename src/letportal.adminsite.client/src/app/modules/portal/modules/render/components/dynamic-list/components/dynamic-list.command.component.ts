@@ -4,7 +4,8 @@ import { CommandClicked } from '../models/commandClicked';
 
 @Component({
     selector: 'dynamic-list-command',
-    templateUrl: './dynamic-list.command.component.html'
+    templateUrl: './dynamic-list.command.component.html',
+    standalone: false
 })
 export class DynamicListCommandComponent implements OnInit {
 

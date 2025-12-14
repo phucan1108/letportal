@@ -20,6 +20,8 @@ using LetPortal.Notification.Hubs;
 using LetPortal.Microservices.Server.Services;
 using LetPortal.Core.Microservices.Configurations.Server;
 using LetPortal.Notification.Services.Rpc;
+using LetPortal.Installation;
+using LetPortal.Installation.AppParts.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddSaturnServerConfig(builder.Environment);
@@ -67,7 +69,8 @@ services
     .AddPortal(options =>
     {
         options.EnableFileServer = true;
-    });
+    })
+    .AddInstallation();
 
 services
     .AddControllers()
@@ -75,6 +78,7 @@ services
     .AddApplicationPart(typeof(AccountsController).Assembly)
     .AddApplicationPart(typeof(ConfigurationController).Assembly)
     .AddApplicationPart(typeof(NotificationsController).Assembly)
+    .AddApplicationPart(typeof(InstallationController).Assembly)
     .AddNewtonsoftJson(options =>
     {
         // Important note: we still use Newtonsoft instead of .NET JSON because they still don't support Timezone

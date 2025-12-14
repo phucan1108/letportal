@@ -8,7 +8,8 @@ import { MultipleDataSelection } from 'portal/modules/models/control.extended.mo
     selector: 'let-mat-auto-multiple',
     templateUrl: './autocomplete-multiple.component.html',
     styleUrls: ['./autocomplete-multiple.component.scss'],
-    providers: [{ provide: MatFormFieldControl, useExisting: AutocompleteMultipleComponent }]
+    providers: [{ provide: MatFormFieldControl, useExisting: AutocompleteMultipleComponent }],
+    standalone: false
 })
 export class AutocompleteMultipleComponent implements ControlValueAccessor, OnChanges {
 

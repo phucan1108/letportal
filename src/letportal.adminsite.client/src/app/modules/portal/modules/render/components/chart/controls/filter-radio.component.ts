@@ -4,7 +4,8 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
     selector: 'filter-radio',
-    templateUrl: 'filter-radio.component.html'
+    templateUrl: 'filter-radio.component.html',
+    standalone: false
 })
 
 export class FilterRadioComponent implements OnInit {

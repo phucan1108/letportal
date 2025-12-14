@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
-  name: 'autocomplete'
+    name: 'autocomplete',
+    standalone: false
 })
 export class AutoCompletePipe implements PipeTransform {
   transform(dropdownList: any[], filterObj: any): any {

@@ -17,10 +17,11 @@ import { UserSelectAppAction } from 'stores/apps/app.action';
 import { AppDashboardComponent } from '../app-dashboard/app-dashboard.component';
 
 @Component({
-  selector: 'app-navigation',
-  templateUrl: './navigation.component.html',
-  styleUrls: ['./navigation.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-navigation',
+    templateUrl: './navigation.component.html',
+    styleUrls: ['./navigation.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class NavigationComponent implements OnInit, OnDestroy {
 

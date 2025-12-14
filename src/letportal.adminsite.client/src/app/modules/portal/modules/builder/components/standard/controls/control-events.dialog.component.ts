@@ -17,7 +17,8 @@ import { DatabaseFormOptions, DatabaseOptionsComponent } from 'portal/shared/dat
     selector: 'let-controlevents-dialog',
     templateUrl: './control-events.dialog.component.html',
     styleUrls: ['./control-events.dialog.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ControlEventsDialogComponent implements OnInit {
     @ViewChild(DatabaseOptionsComponent, { static: false }) dbOptionsComponent: DatabaseOptionsComponent

@@ -18,7 +18,8 @@ import { NOTIFICATION_STATE_TOKEN } from 'stores/notifications/notification.stat
     selector: 'notification-box',
     templateUrl: './notification-box.component.html',
     styleUrls: ['./notification-box.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class NotificationBoxComponent implements OnInit, OnDestroy {
     hideBadge = true

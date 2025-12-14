@@ -11,7 +11,8 @@ import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
     selector: 'chart-filter-render',
-    templateUrl: 'chart-filter-render.component.html'
+    templateUrl: 'chart-filter-render.component.html',
+    standalone: false
 })
 
 export class ChartFilterRenderComponent implements OnInit {

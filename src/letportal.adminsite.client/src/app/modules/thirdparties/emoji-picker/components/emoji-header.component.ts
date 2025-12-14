@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core'
 
 @Component({
-  selector: 'emoji-header',
-  styleUrls: ['../styles/emoji-header.scss'],
-  template: `
+    selector: 'emoji-header',
+    styleUrls: ['../styles/emoji-header.scss'],
+    template: `
   <emoji-categories [emojisCategories]="emojisCategories" (categorySelection)="categorySelection.emit($event)"></emoji-categories>
   <emoji-search (search)="searchEmitter.emit($event)"></emoji-search>
-  `
+  `,
+    standalone: false
 })
 export class EmojiHeaderComponent {
   @Input('emojisCategories') emojisCategories

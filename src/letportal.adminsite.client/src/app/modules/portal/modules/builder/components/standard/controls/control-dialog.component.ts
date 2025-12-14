@@ -17,7 +17,8 @@ import { ControlsGridComponent } from './controls-grid.component';
 @Component({
     selector: 'let-control-dialog',
     templateUrl: './control-dialog.component.html',
-    styleUrls: ['./control-dialog.component.scss']
+    styleUrls: ['./control-dialog.component.scss'],
+    standalone: false
 })
 export class ControlDialogComponent implements OnInit {
 

@@ -14,7 +14,8 @@ import { ActionCommandRenderOptions } from './actioncommandrenderoptions';
 
 @Component({
     selector: 'let-commandoptions',
-    templateUrl: './commandoptions.component.html'
+    templateUrl: './commandoptions.component.html',
+    standalone: false
 })
 export class CommandOptionsComponent implements OnInit {
 

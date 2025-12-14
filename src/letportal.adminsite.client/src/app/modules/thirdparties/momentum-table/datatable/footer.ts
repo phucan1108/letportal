@@ -10,15 +10,17 @@ import {
   OnDestroy,
   OnInit,
   SimpleChanges,
-  TemplateRef, ViewChild,
+  TemplateRef,
+  ViewChild,
   ViewContainerRef,
-} from '@angular/core';
-import { DataTable } from './datatable';
+} from '@angular/core'
 import { MatPaginator } from '@angular/material/paginator';
+import { DataTable } from './datatable';
 
 @Component({
-  selector: 'm-footer',
-  template: ``,
+    selector: 'm-footer',
+    template: ``,
+    standalone: false
 })
 export class Footer {
   @Input() paginator: boolean = false;
@@ -32,8 +34,9 @@ export class Footer {
 }
 
 @Component({
-  selector: 'm-globalFooterTemplateLoader',
-  template: `<ng-content></ng-content>`,
+    selector: 'm-globalFooterTemplateLoader',
+    template: `<ng-content></ng-content>`,
+    standalone: false
 })
 export class GlobalFooterTemplateLoader
   implements OnInit, OnChanges, OnDestroy {
@@ -61,8 +64,8 @@ export class GlobalFooterTemplateLoader
 }
 
 @Component({
-  selector: '[mFooter]',
-  template: `
+    selector: '[mFooter]',
+    template: `
     <div *ngIf="footer.template" class="card-footer">
       <m-globalFooterTemplateLoader [footer]="footer">
         <div *ngIf="footer.paginator" class="paginator-wrapper">
@@ -77,8 +80,8 @@ export class GlobalFooterTemplateLoader
       </div>
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
               .card-footer{
                 height: var(--card-footer-height, 56px);
                 padding: var(--card-footer-padding, 0 14px 0 24px);
@@ -89,7 +92,8 @@ export class GlobalFooterTemplateLoader
                 float: right;
               }
             `,
-  ]
+    ],
+    standalone: false
 })
 export class FooterComponent implements AfterViewInit {
   @Input('mFooter') footer: Footer;

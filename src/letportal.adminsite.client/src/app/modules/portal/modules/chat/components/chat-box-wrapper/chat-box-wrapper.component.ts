@@ -8,7 +8,8 @@ import { NGXLogger } from 'ngx-logger';
 
 @Component({
     selector: 'let-chat-box-wrapper',
-    templateUrl: './chat-box-wrapper.component.html'
+    templateUrl: './chat-box-wrapper.component.html',
+    standalone: false
 })
 export class ChatBoxWrapperComponent implements OnInit, OnDestroy {
     chatRooms: ChatRoom[] = []

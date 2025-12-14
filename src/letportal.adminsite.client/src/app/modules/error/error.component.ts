@@ -7,7 +7,8 @@ import { SecurityService } from 'app/core/security/security.service';
 @Component({
     selector: 'let-error',
     templateUrl: './error.component.html',
-    styleUrls: ['./error.component.scss']
+    styleUrls: ['./error.component.scss'],
+    standalone: false
 })
 export class ErrorComponent implements OnInit {
     constructor(

@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { SecurityService } from '../security/security.service';
 
 @Pipe({
-    name: 'secureFile'
+    name: 'secureFile',
+    standalone: false
 })
 export class SecurePipe implements PipeTransform {
   constructor(

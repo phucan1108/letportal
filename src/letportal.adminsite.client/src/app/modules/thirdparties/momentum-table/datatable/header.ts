@@ -21,8 +21,9 @@ import {
 import { DataTable } from './datatable';
 
 @Component({
-  selector: 'm-header',
-  template: ``,
+    selector: 'm-header',
+    template: ``,
+    standalone: false
 })
 export class Header {
   @Input() title: string;
@@ -40,8 +41,9 @@ export class Header {
 }
 
 @Component({
-  selector: 'm-globalHeaderTemplateLoader',
-  template: ``,
+    selector: 'm-globalHeaderTemplateLoader',
+    template: ``,
+    standalone: false
 })
 export class GlobalHeaderTemplateLoader
   implements OnInit, OnChanges, OnDestroy {
@@ -69,8 +71,8 @@ export class GlobalHeaderTemplateLoader
 }
 
 @Component({
-  selector: '[mHeader]',
-  template: `
+    selector: '[mHeader]',
+    template: `
     <div *ngIf="header.template" class="card-header">
       <m-globalHeaderTemplateLoader [header]="header"></m-globalHeaderTemplateLoader>
     </div>
@@ -125,8 +127,8 @@ export class GlobalHeaderTemplateLoader
 
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
               .card-header{
                 height: var(--card-header-height, 64px);
                 padding: var(--card-header-padding, 0 14px 0 24px);
@@ -217,7 +219,8 @@ export class GlobalHeaderTemplateLoader
                 font-size: 16px;
               }
             `,
-  ],
+    ],
+    standalone: false
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy {
   @Input('mHeader') header: Header;

@@ -3,9 +3,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MessageType, EventDialogType } from '../shortcut.models';
 
 @Component({
-	selector: 'let-event-dialog',
+    selector: 'let-event-dialog',
     templateUrl: './event-dialog.component.html',
-    styleUrls: ['./event-dialog.component.scss']
+    styleUrls: ['./event-dialog.component.scss'],
+    standalone: false
 })
 export class EventDialogComponent implements OnInit {
 	viewLoading = false;

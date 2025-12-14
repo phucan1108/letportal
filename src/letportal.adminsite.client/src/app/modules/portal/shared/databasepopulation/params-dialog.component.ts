@@ -5,7 +5,8 @@ import { FilledParameterModel, ExecuteParamModel } from 'services/portal.service
 
 @Component({
     selector: 'let-params-dialog',
-    templateUrl: './params-dialog.component.html'
+    templateUrl: './params-dialog.component.html',
+    standalone: false
 })
 export class ParamsDialogComponent implements OnInit {
 

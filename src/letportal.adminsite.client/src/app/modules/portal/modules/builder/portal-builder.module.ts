@@ -220,7 +220,7 @@ import { StandardResolve } from './resolve/standard.resolve';
 		MatDialogModule,
 		MatRadioModule,
 		MatTreeModule,
-		NgJsonEditorModule,
+    NgJsonEditorModule,
 		DragDropModule,
 		MomentumTableModule,
 		ScrollingModule,

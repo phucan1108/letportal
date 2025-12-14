@@ -13,8 +13,9 @@ import {
 import { MomentumTemplate } from './template.directive';
 
 @Component({
-  selector: 'm-columnEditorTemplateLoader',
-  template: ``,
+    selector: 'm-columnEditorTemplateLoader',
+    template: ``,
+    standalone: false
 })
 export class ColumnEditorTemplateLoader implements OnInit, OnDestroy {
   @Input() column: any;
@@ -44,8 +45,9 @@ export class ColumnEditorTemplateLoader implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: 'm-column',
-  template: ``,
+    selector: 'm-column',
+    template: ``,
+    standalone: false
 })
 export class ColumnComponent implements AfterContentInit {
   @Input() field: string;

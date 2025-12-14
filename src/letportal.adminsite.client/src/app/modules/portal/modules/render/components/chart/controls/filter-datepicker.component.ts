@@ -5,7 +5,8 @@ import StringUtils from 'app/core/utils/string-util';
 
 @Component({
     selector: 'filter-datepicker',
-    templateUrl: 'filter-datepicker.component.html'
+    templateUrl: 'filter-datepicker.component.html',
+    standalone: false
 })
 
 export class FilterDatepickerComponent implements OnInit {

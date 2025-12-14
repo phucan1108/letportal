@@ -7,7 +7,8 @@ import { ExtendedMenu } from 'portal/modules/models/menu.model';
 
 @Component({
     selector: 'let-menu-dialog',
-    templateUrl: './menu-dialog.component.html'
+    templateUrl: './menu-dialog.component.html',
+    standalone: false
 })
 export class MenuDialogComponent implements OnInit {
 

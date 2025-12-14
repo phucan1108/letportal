@@ -13,7 +13,8 @@ import { ControlType } from 'services/portal.service';
 
 @Component({
     selector: 'let-standard-array-dialog',
-    templateUrl: './standard-array-dialog.component.html'
+    templateUrl: './standard-array-dialog.component.html',
+    standalone: false
 })
 export class StandardArrayDialog implements OnInit {
     boundSection: OpenableBoundSection

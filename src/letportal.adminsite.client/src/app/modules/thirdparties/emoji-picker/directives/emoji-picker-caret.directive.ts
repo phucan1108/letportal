@@ -8,14 +8,15 @@ import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { CaretEvent } from '../misc/caret-event';
 
 @Directive({
-  selector: '[emojiPickerCaretEmitter]',
-  host: {
-    '(keyup)': 'updateCaretPosition()',
-    '(mouseup)': 'updateCaretPosition()',
-    '(selectstart)': 'updateCaretPosition()',
-    '(focus)': 'updateCaretPosition()',
-    '(DOMSubtreeModified)': 'updateCaretDueMutation($event)'
-  }
+    selector: '[emojiPickerCaretEmitter]',
+    host: {
+        '(keyup)': 'updateCaretPosition()',
+        '(mouseup)': 'updateCaretPosition()',
+        '(selectstart)': 'updateCaretPosition()',
+        '(focus)': 'updateCaretPosition()',
+        '(DOMSubtreeModified)': 'updateCaretDueMutation($event)'
+    },
+    standalone: false
 })
 export class EmojiPickerCaretDirective implements OnInit, OnDestroy {
   @Output('emojiPickerCaretEmitter') caretEmitter = new EventEmitter<CaretEvent>();

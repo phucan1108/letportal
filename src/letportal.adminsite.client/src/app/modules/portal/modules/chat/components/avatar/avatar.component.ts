@@ -4,7 +4,8 @@ import { ChatOnlineUser } from 'app/core/models/chat.model';
 @Component({
     selector: 'let-avatar',
     templateUrl: './avatar.component.html',
-    styleUrls: ['./avatar.component.scss']
+    styleUrls: ['./avatar.component.scss'],
+    standalone: false
 })
 export class AvatarComponent implements OnInit {
 

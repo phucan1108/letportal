@@ -10,7 +10,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-databaseoptions',
-    templateUrl: './databaseoptions.component.html'
+    templateUrl: './databaseoptions.component.html',
+    standalone: false
 })
 export class DatabaseOptionsComponent implements OnInit {
     @Input()

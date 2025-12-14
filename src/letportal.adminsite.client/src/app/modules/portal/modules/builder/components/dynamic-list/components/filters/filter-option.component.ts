@@ -7,7 +7,8 @@ import { FieldValueType, FilterField } from 'services/portal.service';
 
 @Component({
     selector: 'let-filter-option',
-    templateUrl: './filter-option.component.html'
+    templateUrl: './filter-option.component.html',
+    standalone: false
 })
 export class FilterOptionComponent implements OnInit {
     @Input()

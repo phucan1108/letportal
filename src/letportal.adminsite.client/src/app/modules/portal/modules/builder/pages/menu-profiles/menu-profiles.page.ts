@@ -16,7 +16,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-menu-profiles',
-    templateUrl: './menu-profiles.page.html'
+    templateUrl: './menu-profiles.page.html',
+    standalone: false
 })
 export class MenuProfilesPage implements OnInit {
     constructor(

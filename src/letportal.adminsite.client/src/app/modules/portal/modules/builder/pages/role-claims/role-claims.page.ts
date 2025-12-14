@@ -20,9 +20,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { ObjectUtils } from 'app/core/utils/object-util';
 
 @Component({
-  selector: 'let-role-claims',
-  templateUrl: './role-claims.page.html',
-  styleUrls: ['./role-claims.page.scss']
+    selector: 'let-role-claims',
+    templateUrl: './role-claims.page.html',
+    styleUrls: ['./role-claims.page.scss'],
+    standalone: false
 })
 export class RoleClaimsPage implements OnInit {
 

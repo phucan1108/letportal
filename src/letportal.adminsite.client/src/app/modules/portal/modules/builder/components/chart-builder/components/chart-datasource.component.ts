@@ -6,7 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'let-chart-datasource',
-    templateUrl: './chart-datasource.component.html'
+    templateUrl: './chart-datasource.component.html',
+    standalone: false
 })
 export class ChartDatasourceComponent implements OnInit {
     heading = 'Database Connection Info:'

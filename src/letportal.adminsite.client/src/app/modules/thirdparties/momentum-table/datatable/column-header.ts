@@ -12,8 +12,9 @@ import { DataTable } from './datatable';
 import { ColumnComponent } from './columns';
 
 @Component({
-  selector: 'm-columnHeaderTemplateLoader',
-  template: ``,
+    selector: 'm-columnHeaderTemplateLoader',
+    template: ``,
+    standalone: false
 })
 export class ColumnHeaderTemplateLoader implements OnInit, OnDestroy {
   @Input() column: any;
@@ -37,8 +38,8 @@ export class ColumnHeaderTemplateLoader implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: '[mColumnHeader]',
-  template: `
+    selector: '[mColumnHeader]',
+    template: `
     <tr>
       <th *ngIf="dt.selectionHandler" class="m-checkbox-header">
         <div class="m-header-th m-header-th--checkbox">
@@ -60,8 +61,8 @@ export class ColumnHeaderTemplateLoader implements OnInit, OnDestroy {
       </th>
     </tr>
   `,
-  styles: [
-    `
+    styles: [
+        `
               tr {
                 text-align: left;
                 font-size: 12px;
@@ -128,7 +129,8 @@ export class ColumnHeaderTemplateLoader implements OnInit, OnDestroy {
                 transform: scale(0.8);
               }
             `,
-  ],
+    ],
+    standalone: false
 })
 export class ColumnHeaderComponent {
   constructor(

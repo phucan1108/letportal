@@ -16,7 +16,6 @@ FROM build AS publish
 RUN dotnet publish "LetPortal.Saturn.csproj" -c Release -o /app/publish
 
 FROM base AS final
-RUN apt-get update && apt-get install -y curl
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "LetPortal.Saturn.dll"]

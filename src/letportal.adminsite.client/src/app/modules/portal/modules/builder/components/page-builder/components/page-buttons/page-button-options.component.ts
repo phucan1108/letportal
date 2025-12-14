@@ -8,7 +8,8 @@ import { ButtonOptionsComponent } from 'portal/shared/button-options/buttonoptio
 
 @Component({
     selector: 'let-page-button-options',
-    templateUrl: './page-button-options.component.html'
+    templateUrl: './page-button-options.component.html',
+    standalone: false
 })
 export class PageButtonOptionsDialogComponent implements OnInit {
 

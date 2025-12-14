@@ -4,16 +4,17 @@ import { Subject } from 'rxjs';
 import { takeUntil, debounceTime} from 'rxjs/operators';
 
 @Component({
-  selector: 'emoji-picker',
-  styles: [':host { position: absolute; z-index: 9999; }'],
-  template: `
+    selector: 'emoji-picker',
+    styles: [':host { position: absolute; z-index: 9999; }'],
+    template: `
   <emoji-content (emoji-selection)="selectionEmitter.emit($event)"></emoji-content>
   `,
-  host: {
-    '(document:click)': 'onBackground($event)',
-    '(click)': '_lastHostMousedownEvent = $event',
-    '(window:resize)': '_windowResize.next($event)'
-  }
+    host: {
+        '(document:click)': 'onBackground($event)',
+        '(click)': '_lastHostMousedownEvent = $event',
+        '(window:resize)': '_windowResize.next($event)'
+    },
+    standalone: false
 })
 
 export class EmojiPickerComponent {

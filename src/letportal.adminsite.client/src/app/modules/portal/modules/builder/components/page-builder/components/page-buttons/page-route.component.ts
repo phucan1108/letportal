@@ -8,7 +8,8 @@ import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'let-pageroute',
-    templateUrl: './page-route.component.html'
+    templateUrl: './page-route.component.html',
+    standalone: false
 })
 export class PageRouteComponent implements OnInit {
 

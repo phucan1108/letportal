@@ -6,7 +6,8 @@ import StringUtils from 'app/core/utils/string-util';
 
 @Component({
     selector: 'filter-number',
-    templateUrl: 'filter-number.component.html'
+    templateUrl: 'filter-number.component.html',
+    standalone: false
 })
 
 export class FilterNumberComponent implements OnInit {

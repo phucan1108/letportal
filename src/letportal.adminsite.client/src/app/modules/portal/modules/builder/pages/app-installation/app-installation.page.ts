@@ -17,7 +17,8 @@ import { PageService } from 'services/page.service';
 @Component({
     selector: 'let-app-installation',
     templateUrl: './app-installation.page.html',
-    styleUrls: ['./app-installation.page.scss']
+    styleUrls: ['./app-installation.page.scss'],
+    standalone: false
 })
 export class AppInstallationPage implements OnInit {
     unpackModel : UnpackResponseModel

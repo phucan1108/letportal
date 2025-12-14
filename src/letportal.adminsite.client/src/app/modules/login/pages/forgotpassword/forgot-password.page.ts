@@ -7,7 +7,8 @@ import { CustomValidators } from '@davidda/ngx-custom-validators'
 @Component({
     selector: 'let-forgot-password',
     templateUrl: './forgot-password.page.html',
-    styleUrls: ['./forgot-password.page.scss']
+    styleUrls: ['./forgot-password.page.scss'],
+    standalone: false
 })
 export class ForgotPasswordPage implements OnInit {
 

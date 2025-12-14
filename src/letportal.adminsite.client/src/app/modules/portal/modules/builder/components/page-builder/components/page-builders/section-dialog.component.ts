@@ -11,7 +11,8 @@ import { FormUtil } from 'app/core/utils/form-util';
 
 @Component({
     selector: 'let-section-dialog',
-    templateUrl: './section-dialog.component.html'
+    templateUrl: './section-dialog.component.html',
+    standalone: false
 })
 export class SectionDialogComponent implements OnInit {
 

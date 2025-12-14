@@ -10,9 +10,10 @@ import { forkJoin } from 'rxjs';
 import { MEDIA_BASE_URL } from 'services/downloadfile.service';
 
 @Component({
-  selector: 'let-file-uploader',
-  templateUrl: './file-uploader.component.html',
-  styleUrls: ['./file-uploader.component.scss']
+    selector: 'let-file-uploader',
+    templateUrl: './file-uploader.component.html',
+    styleUrls: ['./file-uploader.component.scss'],
+    standalone: false
 })
 export class FileUploaderComponent implements OnInit, AfterContentChecked {
   @ViewChild('fileInput', { static: true }) fileInput: ElementRef

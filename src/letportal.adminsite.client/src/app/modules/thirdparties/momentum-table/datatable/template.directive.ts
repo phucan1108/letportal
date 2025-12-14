@@ -1,7 +1,8 @@
 import { Directive, Input, TemplateRef } from '@angular/core';
 
 @Directive({
-  selector: '[mTemplate]',
+    selector: '[mTemplate]',
+    standalone: false
 })
 export class MomentumTemplate {
   @Input('mTemplate') type: string;
