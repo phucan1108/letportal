@@ -66,7 +66,7 @@ export class SecurityService {
     }
 
     getJwtToken() {
-        return this.authToken.jwtToken
+        return this.authToken ? this.authToken.jwtToken : null
     }
 
     isUserSignedIn() {

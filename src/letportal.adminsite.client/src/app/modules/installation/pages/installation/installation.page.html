@@ -1,0 +1,149 @@
+<div class="installation-center text-center">
+  <mat-card appearance="outlined" class="install-card">
+    <mat-card-header>
+      <div style="font-size: 30px;" mat-card-avatar>
+        <mat-icon [inline]="true" color="primary">build_circle</mat-icon>
+      </div>
+      <mat-card-title>
+        <div class="pt-2 install-header">
+          {{ 'pages.installation.header' | translate }}
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="align-center">
+      <ng-container *ngIf="!status?.installed; else installedBlock">
+        <form [formGroup]="installForm" (ngSubmit)="onInstall()" class="form-body">
+          <div class="form-group row">
+            <div class="col-lg-6 col-xs-12">
+              <mat-form-field class="field-full-width">
+                <mat-label>{{ 'pages.installation.labels.application' | translate }}</mat-label>
+                <mat-select formControlName="app">
+                  <mat-option value="portal">{{ 'pages.installation.options.portal' | translate }}</mat-option>
+                  <mat-option value="identity">{{ 'pages.installation.options.identity' | translate }}</mat-option>
+                </mat-select>
+                <mat-icon matSuffix>apps</mat-icon>
+                <mat-error *ngIf="installForm.controls.app.hasError('required')">{{ 'pages.installation.validation.appRequired' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-lg-6 col-xs-12">
+              <mat-form-field class="field-full-width">
+                <mat-label>{{ 'pages.installation.labels.databaseType' | translate }}</mat-label>
+                <mat-select formControlName="databaseType">
+                  <mat-option *ngFor="let type of databaseTypes" [value]="type.value">{{ type.labelKey | translate }}</mat-option>
+                </mat-select>
+                <mat-icon matSuffix>storage</mat-icon>
+                <mat-error *ngIf="installForm.controls.databaseType.hasError('required')">{{ 'pages.installation.validation.databaseTypeRequired' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-lg-12 col-xs-12">
+              <mat-form-field class="field-full-width">
+                <mat-label>{{ 'pages.installation.labels.version' | translate }}</mat-label>
+                <mat-select formControlName="versionNumber" [disabled]="versionsLoading">
+                  <mat-option [value]="''">{{ 'pages.installation.labels.latest' | translate }}</mat-option>
+                  <mat-option *ngFor="let version of availableVersions" [value]="version.versionNumber">
+                    {{ version.versionNumber }}
+                    <span class="muted" *ngIf="version.isInstalled">{{ 'pages.installation.version.alreadyInstalled' | translate }}</span>
+                    <span class="muted" *ngIf="!version.isInstalled && version.canUpgradeTo">{{ 'pages.installation.version.upgradeTarget' | translate }}</span>
+                  </mat-option>
+                </mat-select>
+                <mat-icon matSuffix>update</mat-icon>
+              </mat-form-field>
+              <mat-progress-bar *ngIf="versionsLoading" mode="indeterminate"></mat-progress-bar>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-lg-12 col-xs-12">
+              <mat-form-field class="field-full-width">
+                <mat-label>{{ 'pages.installation.labels.connectionString' | translate }}</mat-label>
+                <textarea matInput rows="3" formControlName="connectionString" [placeholder]="'pages.installation.labels.sampleConnection' | translate"></textarea>
+                <mat-icon matSuffix>link</mat-icon>
+                <mat-error *ngIf="installForm.controls.connectionString.hasError('required')">{{ 'pages.installation.validation.connectionRequired' | translate }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-lg-12 col-xs-12 actions">
+              <button mat-flat-button color="primary" type="button" (click)="reloadVersions()" [disabled]="versionsLoading">
+                {{ 'pages.installation.buttons.refresh' | translate }}
+              </button>
+              <button mat-flat-button color="primary" type="submit" [disabled]="installForm.invalid || installing">
+                <mat-progress-spinner *ngIf="installing" diameter="16" mode="indeterminate"></mat-progress-spinner>
+                <span *ngIf="!installing">{{ 'pages.installation.buttons.install' | translate }}</span>
+                <span *ngIf="installing">{{ 'pages.installation.buttons.installing' | translate }}</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+
+      <ng-template #installedBlock>
+        <div class="installed-message">
+          <mat-icon color="primary">verified</mat-icon>
+          <div class="installed-text">
+            <div class="status-title">{{ 'pages.installation.installed.messageTitle' | translate }}</div>
+            <div class="muted">{{ 'pages.installation.installed.messageSubtitle' | translate }}</div>
+          </div>
+        </div>
+        <div class="installed-action">
+          <button mat-flat-button color="primary" (click)="goToLogin()">{{ 'pages.installation.buttons.access' | translate }}</button>
+        </div>
+      </ng-template>
+
+      <div class="status-block" *ngIf="status">
+        <mat-divider></mat-divider>
+        <div class="status-line" [ngClass]="status.installed ? 'success' : 'warn'">
+          <mat-icon>{{ status.installed ? 'verified' : 'hourglass_empty' }}</mat-icon>
+          <div>
+            <div class="status-title">{{ status.installed ? ('pages.installation.status.installed' | translate) : ('pages.installation.status.notInstalled' | translate) }}</div>
+            <div class="muted" *ngIf="status.canUpgrade">{{ 'pages.installation.status.canUpgrade' | translate }}</div>
+            <div class="muted" *ngIf="!status.canUpgrade && status.installed">{{ 'pages.installation.status.upToDate' | translate }}</div>
+          </div>
+        </div>
+        <div class="installed-list" *ngIf="status.installedAppVersions?.length">
+          <div class="installed-app" *ngFor="let appVersion of status.installedAppVersions">
+            <div class="app-name">{{ appVersion.name }}</div>
+            <div class="app-version-text">
+              {{ 'pages.installation.status.currentVersion' | translate }}: {{ appVersion.currentVersion }} |
+              {{ 'pages.installation.status.latestVersion' | translate }}: {{ appVersion.availableVersion }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-block" *ngIf="installResult">
+        <mat-divider></mat-divider>
+        <div class="status-line" [ngClass]="installResult.success ? 'success' : 'error'">
+          <mat-icon>{{ installResult.success ? 'check_circle' : 'error' }}</mat-icon>
+          <div>
+            <div class="status-title">{{ installResult.message || (installResult.success ? ('pages.installation.result.success' | translate) : ('pages.installation.result.failed' | translate)) }}</div>
+            <div class="muted" *ngIf="installResult.installedVersion">{{ 'pages.installation.result.installedVersion' | translate }}: {{ installResult.installedVersion }}</div>
+          </div>
+        </div>
+        <div *ngIf="installResult.executedSteps?.length">
+          <h4>{{ 'pages.installation.result.executedSteps' | translate }}</h4>
+          <mat-list>
+            <mat-list-item *ngFor="let step of installResult.executedSteps">
+              <mat-icon matListIcon>task_alt</mat-icon>
+              <div matLine>{{ step }}</div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+        <div *ngIf="installResult.errors?.length">
+          <h4>{{ 'pages.installation.result.errors' | translate }}</h4>
+          <mat-list>
+            <mat-list-item *ngFor="let err of installResult.errors">
+              <mat-icon matListIcon color="warn">report_problem</mat-icon>
+              <div matLine>{{ err }}</div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

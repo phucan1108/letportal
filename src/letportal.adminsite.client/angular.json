@@ -43,11 +43,10 @@
               },
               "src/logo.ico"
             ],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss",
-              "node_modules/ngx-toastr/toastr.css",
-              "node_modules/highlight.js/styles/vs.css",
+              "styles": [
+                "src/styles.scss",
+                "node_modules/ngx-toastr/toastr.css",
+                "node_modules/highlight.js/styles/vs.css",
                 "./node_modules/quill/dist/quill.core.css",
                 "./node_modules/quill/dist/quill.bubble.css",
                 "./node_modules/quill/dist/quill.snow.css",

@@ -15,6 +15,7 @@ import { SessionService } from 'services/session.service';
 import { VideoCallService } from 'services/videocall.service';
 import { UserSelectAppAction } from 'stores/apps/app.action';
 import { AppDashboardComponent } from '../app-dashboard/app-dashboard.component';
+import { MaterialThemeKey, ThemeMode, ThemeService } from 'app/core/services/theme.service';
 
 @Component({
     selector: 'app-navigation',
@@ -39,6 +40,18 @@ export class NavigationComponent implements OnInit, OnDestroy {
   hasSelectedApp = false
   hasAvatar = false
   userShortName = ''
+  selectedTheme: MaterialThemeKey
+  selectedMode: ThemeMode
+  themeOptions: { key: MaterialThemeKey, labelKey: string }[] = [
+    { key: 'rose-red', labelKey: 'pages.login.theme.options.roseRed' },
+    { key: 'azure-blue', labelKey: 'pages.login.theme.options.azureBlue' },
+    { key: 'magenta-violet', labelKey: 'pages.login.theme.options.magentaViolet' },
+    { key: 'cyan-orange', labelKey: 'pages.login.theme.options.cyanOrange' },
+  ]
+  themeModeOptions: { key: ThemeMode, labelKey: string, icon: string }[] = [
+    { key: 'dark', labelKey: 'pages.login.themeMode.dark', icon: 'dark_mode' },
+    { key: 'light', labelKey: 'pages.login.themeMode.light', icon: 'light_mode' },
+  ]
 
   subscription: Subscription = new Subscription()
   constructor(
@@ -51,7 +64,8 @@ export class NavigationComponent implements OnInit, OnDestroy {
     private security: SecurityService,
     private chatService: ChatService,
     private videoService: VideoCallService,
-    private cd: ChangeDetectorRef) {
+    private cd: ChangeDetectorRef,
+    private themeService: ThemeService) {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.router.events.subscribe((event: Event) => {
       switch (true) {
@@ -76,6 +90,8 @@ export class NavigationComponent implements OnInit, OnDestroy {
     this.hasSelectedApp = this.session.getCurrentApp() ? true : false
     this.authUser = this.security.getAuthUser()
     this.hasAvatar = ObjectUtils.isNotNull(this.authUser.avatar)
+    this.selectedTheme = this.themeService.getCurrentTheme()
+    this.selectedMode = this.themeService.getCurrentMode()
 
     this.userShortName = this.authUser.getShortName()
     // If user stays in App Selector page, we don't display menu
@@ -161,5 +177,17 @@ export class NavigationComponent implements OnInit, OnDestroy {
     else {
       return menus
     }
+  }
+
+  changeTheme(theme: MaterialThemeKey){
+    this.selectedTheme = theme
+    this.themeService.applyTheme(theme, this.selectedMode)
+    this.cd.markForCheck()
+  }
+
+  changeMode(mode: ThemeMode){
+    this.selectedMode = mode
+    this.themeService.applyMode(mode)
+    this.cd.markForCheck()
   }
 }

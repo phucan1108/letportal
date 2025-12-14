@@ -10,6 +10,14 @@
   height: 100%;
 }
 
+body[data-theme-mode="light"] .login-center{
+  background: linear-gradient(180deg, #e8f1ff 10%, #b7d3ff 100%);
+}
+
+body[data-theme-mode="dark"] .login-center{
+  background: linear-gradient(180deg, #0b1b3a 50%, #040915 100%);
+}
+
 .version-text{
   position: absolute;
   bottom: 10px;

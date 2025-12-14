@@ -8,6 +8,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/login/login.module').then(m => m.LoginModule)
   },
   {
+    path: 'installation',
+    loadChildren: () => import('./modules/installation/installation.module').then(m => m.InstallationModule)
+  },
+  {
     path: 'portal',
     loadChildren: () => import('./modules/portal/portalpages.module').then(m => m.PortalPagesModule)    
   },

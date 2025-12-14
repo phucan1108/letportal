@@ -1,0 +1,58 @@
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+
+export type MaterialThemeKey = 'azure-blue' | 'rose-red' | 'magenta-violet' | 'cyan-orange';
+export type ThemeMode = 'light' | 'dark';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ThemeService {
+  private readonly themeLinkId = 'material-dynamic-theme';
+  private readonly storageKey = 'material-theme';
+  private readonly modeStorageKey = 'material-theme-mode';
+  private readonly defaultTheme: MaterialThemeKey = 'azure-blue';
+  private readonly defaultMode: ThemeMode = 'light';
+  // SCSS-driven themes keyed by name; CSS is generated in styles.scss and activated via data attributes.
+  private readonly themeMap: Record<MaterialThemeKey, true> = {
+    'azure-blue': true,
+    'rose-red': true,
+    'magenta-violet': true,
+    'cyan-orange': true
+  };
+
+  constructor(@Inject(DOCUMENT) private document: Document) { }
+
+  initTheme(): void {
+    const saved = (localStorage.getItem(this.storageKey) as MaterialThemeKey) || this.defaultTheme;
+    const savedMode = (localStorage.getItem(this.modeStorageKey) as ThemeMode) || this.defaultMode;
+    this.applyTheme(saved, savedMode);
+  }
+
+  applyTheme(theme: MaterialThemeKey, mode?: ThemeMode): void {
+    const themeKey = this.themeMap[theme] ? theme : this.defaultTheme;
+    const modeKey: ThemeMode = mode || this.getCurrentMode();
+    localStorage.setItem(this.storageKey, themeKey);
+    localStorage.setItem(this.modeStorageKey, modeKey);
+    this.document.body.setAttribute('data-theme', themeKey);
+    this.document.body.setAttribute('data-theme-mode', modeKey);
+  }
+
+  getCurrentTheme(): MaterialThemeKey {
+    return (localStorage.getItem(this.storageKey) as MaterialThemeKey) || this.defaultTheme;
+  }
+
+  getAvailableThemes(): MaterialThemeKey[] {
+    return Object.keys(this.themeMap) as MaterialThemeKey[];
+  }
+
+  applyMode(mode: ThemeMode): void {
+    const targetMode: ThemeMode = mode || this.defaultMode;
+    const currentTheme = this.getCurrentTheme();
+    this.applyTheme(currentTheme, targetMode);
+  }
+
+  getCurrentMode(): ThemeMode {
+    return (localStorage.getItem(this.modeStorageKey) as ThemeMode) || this.defaultMode;
+  }
+}

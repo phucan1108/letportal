@@ -65,3 +65,24 @@
   width: 40px;
   height: 40px;
 }
+
+.theme-swatch{
+  margin-left: auto;
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.12);
+  display: inline-block;
+  &.selected{
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.24);
+  }
+}
+
+[data-theme="rose-red"] .theme-swatch[data-theme="rose-red"]{ background: linear-gradient(90deg, #f06292 0%, #e91e63 100%); }
+[data-theme="azure-blue"] .theme-swatch[data-theme="azure-blue"]{ background: linear-gradient(90deg, #64b5f6 0%, #1e88e5 100%); }
+[data-theme="magenta-violet"] .theme-swatch[data-theme="magenta-violet"]{ background: linear-gradient(90deg, #ab47bc 0%, #7b1fa2 100%); }
+[data-theme="cyan-orange"] .theme-swatch[data-theme="cyan-orange"]{ background: linear-gradient(90deg, #26c6da 0%, #ff9800 100%); }
+
+.mode-check{
+  margin-left: auto;
+}

@@ -1,0 +1,106 @@
+.installation-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(1,45,157,1) 50%, rgba(0,142,255,0.9) 100%);
+}
+
+.install-card {
+  width: 100%;
+  max-width: 640px;
+  padding: 8px;
+}
+
+.install-header {
+  font-size: 20px;
+}
+
+.form-body {
+  width: 100%;
+}
+
+.field-full-width {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+
+  &.success {
+    color: #2e7d32;
+  }
+
+  &.warn {
+    color: #f57c00;
+  }
+
+  &.error {
+    color: #c62828;
+  }
+
+  .status-title {
+    font-size: 14px;
+  }
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.installed-list {
+  margin-top: 12px;
+}
+
+.installed-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.installed-text {
+  text-align: left;
+}
+
+.installed-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.installed-app {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.app-name {
+  font-weight: 600;
+}
+
+.app-version-text {
+  color: #374151;
+}
+
+mat-card-actions {
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .install-card {
+    max-width: 90%;
+  }
+}

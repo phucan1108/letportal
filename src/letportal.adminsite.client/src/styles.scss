@@ -1,7 +1,103 @@
 @use '@angular/material' as mat;
-/* You can add global styles to this file, and also import other style files */
+
+// ------------------------------
+// Material 19 custom theme setup
+// ------------------------------
+@include mat.core();
+
+$azure-blue-light: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette
+  )
+));
+$azure-blue-dark: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette
+  )
+));
+
+$rose-red-light: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$rose-palette,
+    tertiary: mat.$red-palette
+  )
+));
+$rose-red-dark: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$rose-palette,
+    tertiary: mat.$red-palette
+  )
+));
+
+$magenta-violet-light: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$magenta-palette,
+    tertiary: mat.$violet-palette
+  )
+));
+$magenta-violet-dark: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$magenta-palette,
+    tertiary: mat.$violet-palette
+  )
+));
+
+$cyan-orange-light: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$cyan-palette,
+    tertiary: mat.$orange-palette
+  )
+));
+$cyan-orange-dark: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$cyan-palette,
+    tertiary: mat.$orange-palette
+  )
+));
+
+// Default theme (light azure-blue)
+:root {
+  @include mat.all-component-themes($azure-blue-light);
+}
+
+// Per-theme overrides (apply full theme to get color + tokens)
+[data-theme="azure-blue"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($azure-blue-dark);
+}
+
+[data-theme="rose-red"][data-theme-mode="light"] {
+  @include mat.all-component-themes($rose-red-light);
+}
+[data-theme="rose-red"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($rose-red-dark);
+}
+
+[data-theme="magenta-violet"][data-theme-mode="light"] {
+  @include mat.all-component-themes($magenta-violet-light);
+}
+[data-theme="magenta-violet"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($magenta-violet-dark);
+}
+
+[data-theme="cyan-orange"][data-theme-mode="light"] {
+  @include mat.all-component-themes($cyan-orange-light);
+}
+[data-theme="cyan-orange"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($cyan-orange-dark);
+}
+
+/* Add global styles & imports to this file! */
 @import "theme.scss";
-/* Add application styles & imports to this file! */
 @import "jsoneditor/dist/jsoneditor.min.css";
 
 @import "styles.desktop.scss";

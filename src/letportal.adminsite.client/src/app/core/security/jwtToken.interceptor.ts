@@ -39,43 +39,52 @@ export class JwtTokenInterceptor implements HttpInterceptor {
         })
 
         if (!ignore) {
-            headers = headers.set('Authorization', 'Bearer ' + this.security.getJwtToken());
-            headers = headers.set('X-User-Session-Id', window.btoa(this.session.getUserSession()))
-            const authReq = req.clone({ headers });
-            return next.handle(authReq).pipe(
-                catchError(err => {
-                    const httpErrorResponse: HttpErrorResponse = err as HttpErrorResponse
-                    if (httpErrorResponse.status === 401) {
+            const token = this.security.getJwtToken();
+            if (!!token) {
+                headers = headers.set('Authorization', 'Bearer ' + token);
+                const sessionId = this.session.getUserSession();
+                if (!!sessionId) {
+                    headers = headers.set('X-User-Session-Id', window.btoa(sessionId))
+                }
+                const authReq = req.clone({ headers });
+                return next.handle(authReq).pipe(
+                    catchError(err => {
+                        const httpErrorResponse: HttpErrorResponse = err as HttpErrorResponse
+                        if (httpErrorResponse.status === 401) {
 
-                        this.logger.debug('Response error', httpErrorResponse.headers.getAll('X-Token-Expired'))
-                        // Check actual token expire
-                        if (httpErrorResponse.headers.has('X-Token-Expired')) {
-                            // Remove current token and user session id
-                            this.session.clearUserSession()
-                            this.session.clearUserToken()
-                            // Popup dialog for letting user types his password
-                            if(!this.isOpenningUnlock){
-                                const dialogRef = this.dialog.open(UnlockScreenDialogComponent, {
-                                    disableClose: true
-                                });
-                                this.isOpenningUnlock = true
-                                dialogRef.afterClosed().subscribe(res => {
-                                    if (!!res) {
-                                        this.router.navigateByUrl(this.routerEx.getCurrentUrl())
-                                    }
-                                })
+                            this.logger.debug('Response error', httpErrorResponse.headers.getAll('X-Token-Expired'))
+                            // Check actual token expire
+                            if (httpErrorResponse.headers.has('X-Token-Expired')) {
+                                // Remove current token and user session id
+                                this.session.clearUserSession()
+                                this.session.clearUserToken()
+                                // Popup dialog for letting user types his password
+                                if(!this.isOpenningUnlock){
+                                    const dialogRef = this.dialog.open(UnlockScreenDialogComponent, {
+                                        disableClose: true
+                                    });
+                                    this.isOpenningUnlock = true
+                                    dialogRef.afterClosed().subscribe(res => {
+                                        if (!!res) {
+                                            this.router.navigateByUrl(this.routerEx.getCurrentUrl())
+                                        }
+                                    })
+                                }
+                            }
+                            else {
+                                // There are some hacking cheats, force back to login page
+                                this.session.clear()
+                                this.security.userLogout()
+                                this.router.navigateByUrl('/')
                             }
                         }
-                        else {
-                            // There are some hacking cheats, force back to login page
-                            this.session.clear()
-                            this.security.userLogout()
-                            this.router.navigateByUrl('/')
-                        }
-                    }
-                    return throwError(err)
-                })
-            )
+                        return throwError(err)
+                    })
+                )
+            }
+            else{
+                return next.handle(req);
+            }
         }
         else {
             return next.handle(req);

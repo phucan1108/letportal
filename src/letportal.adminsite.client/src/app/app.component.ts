@@ -12,6 +12,7 @@ import { SessionService } from 'services/session.service';
 import { VideoCallService } from 'services/videocall.service';
 import { SecurityService } from './core/security/security.service';
 import { ObjectUtils } from './core/utils/object-util';
+import { ThemeService } from './core/services/theme.service';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -30,10 +31,12 @@ export class AppComponent implements OnInit {
     private translate: TranslateService,
     private localizationService: LocalizationService,
     private session: SessionService,
-    private localizationsClient: LocalizationClient
+    private localizationsClient: LocalizationClient,
+    private themeService: ThemeService
   ) {
   }
   ngOnInit(): void {
+    this.themeService.initTheme();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         if (event.urlAfterRedirects.indexOf('/portal/') >= 0

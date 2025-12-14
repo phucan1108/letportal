@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { NGXLogger } from 'ngx-logger';
 import { AccountsClient, RolesClient } from 'services/portal.service';
 import { SessionService } from 'services/session.service';
+import { ThemeService } from 'app/core/services/theme.service';
 @Component({
     selector: 'let-login',
     templateUrl: './login.page.html',
@@ -24,6 +25,7 @@ export class LoginPage implements OnInit {
     languages = environment.localization.allowedLanguages
     selectedLanguage: string = environment.localization.defaultLanguage
     enableSwitchLanguage = environment.localization.allowSwitchLanguage
+    // Theme selection moved to navigation
     constructor(
         private translate: TranslateService,
         private fb: FormBuilder,
@@ -33,8 +35,12 @@ export class LoginPage implements OnInit {
         private session: SessionService,
         private security: SecurityService,
         private roleClient: RolesClient,
-        private cd: ChangeDetectorRef
-    ) { }
+        private cd: ChangeDetectorRef,
+        private themeService: ThemeService
+    ) {
+        // Ensure a theme is applied on load
+        this.themeService.applyTheme(this.themeService.getCurrentTheme(), this.themeService.getCurrentMode())
+    }
 
     ngOnInit(): void {
         // Ensure user will be signed out when be back to login page
@@ -51,6 +57,7 @@ export class LoginPage implements OnInit {
             this.selectedLanguage = newValue
             this.translate.use(newValue)
         })
+
     }
 
     @HostListener('window:keydown.enter',  ['$event'])

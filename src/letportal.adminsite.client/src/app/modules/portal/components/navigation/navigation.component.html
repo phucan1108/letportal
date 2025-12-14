@@ -29,6 +29,15 @@
           {{ 'navigation.hiText' | translate }}, {{authUser.fullName}}
         </p>
         <mat-divider></mat-divider>
+        <button mat-menu-item [matMenuTriggerFor]="themeMenu">
+          <mat-icon>palette</mat-icon>
+          {{ 'pages.login.theme.label' | translate }}
+        </button>
+        <button mat-menu-item [matMenuTriggerFor]="modeMenu">
+          <mat-icon>dark_mode</mat-icon>
+          {{ 'pages.login.themeMode.label' | translate }}
+        </button>
+        <mat-divider></mat-divider>
         <button mat-menu-item (click)="profile()">
           <mat-icon>account_box</mat-icon>
           {{ 'navigation.profileText' | translate }}
@@ -42,6 +51,21 @@
           {{ 'navigation.logoutText' | translate }}
         </button>
       </mat-menu>
+
+      <mat-menu #themeMenu="matMenu">
+        <button mat-menu-item *ngFor="let theme of themeOptions" (click)="changeTheme(theme.key)">
+          <mat-icon>{{ selectedTheme === theme.key ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+          <span>{{ theme.labelKey | translate }}</span>
+        </button>
+      </mat-menu>
+
+      <mat-menu #modeMenu="matMenu">
+        <button mat-menu-item *ngFor="let mode of themeModeOptions" (click)="changeMode(mode.key)">
+          <mat-icon>{{ mode.icon }}</mat-icon>
+          <span>{{ mode.labelKey | translate }}</span>
+          <mat-icon class="mode-check" *ngIf="selectedMode === mode.key">check</mat-icon>
+        </button>
+      </mat-menu>
     </mat-toolbar-row>
   </mat-toolbar>
   <mat-sidenav-container class="sidenav-container" [hasBackdrop]="true">
@@ -50,7 +74,6 @@
       <mat-expansion-panel class="no-border-box" *ngFor="let menu of menus">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon class="icon-side mr-3">{{menu.icon}}</mat-icon>
             <b class="parent-menu">{{menu.displayName}}</b>
           </mat-panel-title>
         </mat-expansion-panel-header>
@@ -59,13 +82,13 @@
             <a *ngIf="!child.hide" mat-list-item
               [routerLink]="child.url.startsWith('/') ? child.url : ('/' + child.url)" routerLinkActive="true"
               class="sub-menu">
-              <mat-icon class="icon-side-small mr-3 pt-1">{{child.icon}}</mat-icon>{{child.displayName}}
+                {{child.displayName}}
             </a>
           </ng-container>
         </mat-nav-list>
       </mat-expansion-panel>
     </mat-sidenav>
-    <mat-sidenav-content class="sidenav-content">
+    <mat-sidenav-content>
       <mat-progress-bar *ngIf="loading" color="accent" mode="indeterminate">
       </mat-progress-bar>
       <ng-content select="[mainContent]"></ng-content>
