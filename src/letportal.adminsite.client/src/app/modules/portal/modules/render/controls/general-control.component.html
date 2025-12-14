@@ -232,9 +232,17 @@
             </quill-editor>
         </div>
         <div *ngSwitchCase="controlType.MarkdownEditor" class="disable-align-center">
-            <angular-markdown-editor textareaId="markdowTextArea" [rows]="20" name="markdownText"
-                [options]="markdownOptions" [(ngModel)]="markdownContent" [ngModelOptions]="{standalone: true}">
-            </angular-markdown-editor>
+            <div class="markdown-editor-container">
+                <mat-form-field class="full-width">
+                    <mat-label>Markdown Content</mat-label>
+                    <textarea matInput rows="10" [(ngModel)]="markdownContent" [ngModelOptions]="{standalone: true}"
+                        (ngModelChange)="mardownChanged($event)" placeholder="Enter markdown content..."></textarea>
+                </mat-form-field>
+                <div class="markdown-preview" *ngIf="markdownContent">
+                    <h4>Preview:</h4>
+                    <markdown [data]="markdownContent"></markdown>
+                </div>
+            </div>
         </div>
     </ng-container>
 </div>

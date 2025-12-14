@@ -40,9 +40,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
-import { AngularMarkdownEditorModule } from 'angular-markdown-editor';
 import { CoreModule } from 'app/core/core.module';
-import { MomentumTableModule } from 'app/modules/thirdparties/momentum-table/datatable/datatable';
 import { MarkdownModule } from 'ngx-markdown';
 import { QuillModule } from 'ngx-quill';
 import { ChartFilterRenderComponent } from './components/chart/chart-filter-render.component';
@@ -85,9 +83,8 @@ export const FULL_MONTH_FORMATS = {
 	  monthYearLabel: 'MMM YYYY',
 	  dateA11yLabel: 'LL',
 	  monthYearA11yLabel: 'MMMM YYYY',
-	},
-  };
-
+	}
+}
 
 @NgModule({
 	imports: [
@@ -129,10 +126,10 @@ export const FULL_MONTH_FORMATS = {
 		MatRadioModule,
 		MatTreeModule,
 		DragDropModule,
-		MomentumTableModule,
+		//MomentumTableModule,
 		ScrollingModule,
 		MatMomentDateModule,
-		NgJsonEditorModule,
+    NgJsonEditorModule,
 		TranslateModule,
 		QuillModule.forRoot({
             modules: {
@@ -148,7 +145,6 @@ export const FULL_MONTH_FORMATS = {
             }
 		}),
 		NgxChartsModule,
-		AngularMarkdownEditorModule.forRoot(),
 		MarkdownModule.forRoot()
 	],
 	exports: [RouterModule],
@@ -198,4 +194,4 @@ export const FULL_MONTH_FORMATS = {
 		TreeRenderComponent
 	]
 })
-export class PortalRenderModule { }
+export class PortalRenderModule { } 

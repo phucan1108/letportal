@@ -18,3 +18,33 @@
 **/values.dev.yaml
 **/.toolstarget
 .vs
+
+# Node.js - This is the biggest culprit (~300-400MB)
+**/node_modules
+
+# Angular build outputs
+**/dist
+**/.angular
+
+# Test projects (not needed for production build)
+**/test
+**/tests
+**/*.Tests
+**/LetPortal.Tests.*
+
+# NuGet packages cache
+**/.nuget
+**/packages
+
+# IDE and editor files
+**/*.swp
+**/*.swo
+**/*~
+
+# Log files
+**/logs
+**/*.log
+
+# Temporary files
+**/tmp
+**/temp

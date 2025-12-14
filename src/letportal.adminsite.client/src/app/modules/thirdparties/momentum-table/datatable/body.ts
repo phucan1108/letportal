@@ -184,9 +184,11 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
             <i class="material-icons m-clickable" *ngIf="dt.isRowExpanded(row)">keyboard_arrow_down</i>
           </span>
         </td>
-        <div class="row-settings" *ngIf="dt.rowSettingsTemplate && hoverRowIndex === rowIndex">
+      </tr>
+      <tr *ngIf="dt.rowSettingsTemplate && hoverRowIndex === rowIndex" class="row-settings">
+        <td [attr.colspan]="dt.totalColumns()">
           <m-rowSettingsLoader [rowData]="row" [rowIndex]="rowIndex" [template]="dt.rowSettingsTemplate"></m-rowSettingsLoader>
-        </div>
+        </td>
       </tr>
       <tr *ngIf="dt.expandable && dt.isRowExpanded(row)" class="m-expanded-row-content">
         <td [attr.colspan]="dt.totalColumns()">
@@ -286,10 +288,7 @@ export class RowSettingsLoader implements OnInit, OnDestroy {
     standalone: false
 })
 export class TableBodyComponent {
-  public dt: DataTable
-  constructor(@Inject(forwardRef(() => DataTable)) dt) {
-    this.dt = dt as DataTable
-  }
+  constructor(@Inject(forwardRef(() => DataTable)) public dt: DataTable) {}
   @Input('mTableBody')
   columns: ColumnComponent[];
   @Input()

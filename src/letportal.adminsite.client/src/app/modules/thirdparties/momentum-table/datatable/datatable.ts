@@ -43,10 +43,10 @@ import {
   ColumnSubHeaderComponent,
   ColumnSubHeaderTemplateLoader
 } from './column-sub-header';
-import { ColumnComponent, ColumnEditorTemplateLoader } from './columns';
 import { Footer, FooterComponent, GlobalFooterTemplateLoader } from './footer';
 import { GlobalHeaderTemplateLoader, Header, HeaderComponent } from './header';
 import { MomentumTemplate } from './template.directive';
+import { ColumnComponent, ColumnEditorTemplateLoader } from './columns';
 
 @Component({
     selector: 'm-table',
@@ -1143,17 +1143,10 @@ export class DataTable
 
 @NgModule({
   imports: [CommonModule, MaterialModule, FormsModule],
-  exports: [DataTable, ColumnComponent, MomentumTemplate, Header, Footer],
-  declarations: [
+  exports: [
     DataTable,
     ColumnComponent,
     HeaderComponent,
-    FooterComponent,
-    ColumnHeaderComponent,
-    ColumnSubHeaderComponent,
-    ColumnFooterComponent,
-    TableBodyComponent,
-    EmptyTableLoader,
     RowSettingsLoader,
     RowExpansionLoader,
     MomentumTemplate,
@@ -1165,7 +1158,36 @@ export class DataTable
     ColumnHeaderTemplateLoader,
     ColumnBodyTemplateLoader,
     ColumnFooterTemplateLoader,
-    ColumnEditorTemplateLoader
+    ColumnEditorTemplateLoader,
+    TableBodyComponent,
+    EmptyTableLoader,
+    ColumnHeaderComponent,
+    ColumnSubHeaderComponent,
+    ColumnFooterComponent,
+    FooterComponent,
+  ],
+  declarations: [
+    DataTable,
+    ColumnComponent,
+    HeaderComponent,
+    RowSettingsLoader,
+    RowExpansionLoader,
+    MomentumTemplate,
+    GlobalHeaderTemplateLoader,
+    ColumnSubHeaderTemplateLoader,
+    GlobalFooterTemplateLoader,
+    Header,
+    Footer,
+    ColumnHeaderTemplateLoader,
+    ColumnBodyTemplateLoader,
+    ColumnFooterTemplateLoader,
+    ColumnEditorTemplateLoader,
+    TableBodyComponent,
+    EmptyTableLoader,
+    ColumnHeaderComponent,
+    ColumnSubHeaderComponent,
+    ColumnFooterComponent,
+    FooterComponent
   ]
 })
 export class MomentumTableModule { }

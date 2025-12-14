@@ -10,11 +10,12 @@ import {
   OnDestroy,
   OnInit,
   SimpleChanges,
-  TemplateRef, ViewChild,
+  TemplateRef,
+  ViewChild,
   ViewContainerRef,
-} from '@angular/core';
-import { DataTable } from './datatable';
+} from '@angular/core'
 import { MatPaginator } from '@angular/material/paginator';
+import { DataTable } from './datatable';
 
 @Component({
     selector: 'm-footer',
