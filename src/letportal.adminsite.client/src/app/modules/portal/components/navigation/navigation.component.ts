@@ -43,6 +43,10 @@ export class NavigationComponent implements OnInit, OnDestroy {
   selectedTheme: MaterialThemeKey
   selectedMode: ThemeMode
   themeOptions: { key: MaterialThemeKey, labelKey: string }[] = [
+    { key: 'deep-purple-amber', labelKey: 'pages.login.theme.options.deepPurpleAmber' },
+    { key: 'indigo-pink', labelKey: 'pages.login.theme.options.indigoPink' },
+    { key: 'pink-blue-grey', labelKey: 'pages.login.theme.options.pinkBlueGrey' },
+    { key: 'purple-green', labelKey: 'pages.login.theme.options.purpleGreen' },
     { key: 'rose-red', labelKey: 'pages.login.theme.options.roseRed' },
     { key: 'azure-blue', labelKey: 'pages.login.theme.options.azureBlue' },
     { key: 'magenta-violet', labelKey: 'pages.login.theme.options.magentaViolet' },

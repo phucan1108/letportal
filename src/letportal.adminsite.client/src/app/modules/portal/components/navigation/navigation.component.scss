@@ -19,6 +19,10 @@
   z-index: 10;
 }
 
+.mat-toolbar button.mat-mdc-icon-button {
+  color: inherit; // keep icons aligned with toolbar foreground color
+}
+
 .portal-container {
   display: flex;
   flex-direction: column;
@@ -78,10 +82,14 @@
   }
 }
 
-[data-theme="rose-red"] .theme-swatch[data-theme="rose-red"]{ background: linear-gradient(90deg, #f06292 0%, #e91e63 100%); }
-[data-theme="azure-blue"] .theme-swatch[data-theme="azure-blue"]{ background: linear-gradient(90deg, #64b5f6 0%, #1e88e5 100%); }
-[data-theme="magenta-violet"] .theme-swatch[data-theme="magenta-violet"]{ background: linear-gradient(90deg, #ab47bc 0%, #7b1fa2 100%); }
-[data-theme="cyan-orange"] .theme-swatch[data-theme="cyan-orange"]{ background: linear-gradient(90deg, #26c6da 0%, #ff9800 100%); }
+.theme-swatch[data-theme="deep-purple-amber"]{ background: linear-gradient(90deg, #673ab7 0%, #ffc107 100%); }
+.theme-swatch[data-theme="indigo-pink"]{ background: linear-gradient(90deg, #3f51b5 0%, #e91e63 100%); }
+.theme-swatch[data-theme="pink-blue-grey"]{ background: linear-gradient(90deg, #e91e63 0%, #607d8b 100%); }
+.theme-swatch[data-theme="purple-green"]{ background: linear-gradient(90deg, #9c27b0 0%, #4caf50 100%); }
+.theme-swatch[data-theme="rose-red"]{ background: linear-gradient(90deg, #f06292 0%, #e91e63 100%); }
+.theme-swatch[data-theme="azure-blue"]{ background: linear-gradient(90deg, #64b5f6 0%, #1e88e5 100%); }
+.theme-swatch[data-theme="magenta-violet"]{ background: linear-gradient(90deg, #ab47bc 0%, #7b1fa2 100%); }
+.theme-swatch[data-theme="cyan-orange"]{ background: linear-gradient(90deg, #26c6da 0%, #ff9800 100%); }
 
 .mode-check{
   margin-left: auto;

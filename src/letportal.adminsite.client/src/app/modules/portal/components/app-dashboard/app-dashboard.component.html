@@ -2,15 +2,15 @@
     <div class="row">
         <ng-container *ngFor="let app of loadingApps$ | async">
             <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6 tile">
-                <div class="text-center shadow-lg p-3 mb-5 bg-white rounded">
-                    <div style="font-size: 50px;">
+                <div class="app-card">
+                    <div class="app-card__icon">
                         <mat-icon [inline]="true">{{app.app.logo}}</mat-icon>
                     </div>
-                    <div>
+                    <div class="app-card__title">
                         <h6>{{app.app.displayName}}</h6>
                     </div>
-                    <div class="d-flex justify-content-center">
-                       <button mat-raised-button color="primary" class="d-flex justify-content-center" (click)="onSelectingApp(app)">{{enterText}}</button>
+                    <div class="app-card__cta">
+                       <button mat-raised-button color="primary" (click)="onSelectingApp(app)">{{enterText}}</button>
                     </div>
                 </div>
             </div>

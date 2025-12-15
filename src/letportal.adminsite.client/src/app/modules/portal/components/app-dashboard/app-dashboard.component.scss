@@ -1,9 +1,37 @@
-.box-part {
-  background: #fff;
-  border-radius: 0;
-  padding: 60px 10px;
-  margin: 30px 0px;
+:host {
+  display: block;
 }
-.text {
-  margin: 20px 0px;
+
+.app-card {
+  background-color: var(--app-card-surface, #fff);
+  color: var(--app-card-on-surface, #1f1f1f);
+  border: 1px solid var(--app-card-border, rgba(0,0,0,0.06));
+  border-radius: 12px;
+  padding: 24px 16px 28px;
+  margin: 20px 0;
+  box-shadow: 0 14px 28px rgba(var(--app-card-shadow-rgb, 0, 0, 0), 0.28);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  text-align: center;
+}
+
+.app-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 34px rgba(var(--app-card-shadow-rgb, 0, 0, 0), 0.32);
+}
+
+.app-card__icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+  color: var(--app-card-primary, currentColor);
+}
+
+.app-card__title {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.app-card__cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }

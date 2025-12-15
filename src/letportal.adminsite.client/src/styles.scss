@@ -1,4 +1,6 @@
 @use '@angular/material' as mat;
+@use 'sass:color';
+@use 'sass:map';
 
 // ------------------------------
 // Material 19 custom theme setup
@@ -65,35 +67,129 @@ $cyan-orange-dark: mat.define-theme((
   )
 ));
 
+// Recreated Angular Material prebuilt themes (Angular 16) via SCSS
+$legacy-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+$deep-purple-amber-primary: mat.m2-define-palette(mat.$m2-deep-purple-palette);
+$deep-purple-amber-accent: mat.m2-define-palette(mat.$m2-amber-palette, A200, A100, A400);
+$deep-purple-amber-light: mat.m2-define-light-theme($deep-purple-amber-primary, $deep-purple-amber-accent, $legacy-warn);
+$deep-purple-amber-dark: mat.m2-define-dark-theme($deep-purple-amber-primary, $deep-purple-amber-accent, $legacy-warn);
+
+$indigo-pink-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
+$indigo-pink-accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$indigo-pink-light: mat.m2-define-light-theme($indigo-pink-primary, $indigo-pink-accent, $legacy-warn);
+$indigo-pink-dark: mat.m2-define-dark-theme($indigo-pink-primary, $indigo-pink-accent, $legacy-warn);
+
+$pink-blue-grey-primary: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$pink-blue-grey-accent: mat.m2-define-palette(mat.$m2-blue-grey-palette);
+$pink-blue-grey-light: mat.m2-define-light-theme($pink-blue-grey-primary, $pink-blue-grey-accent, $legacy-warn);
+$pink-blue-grey-dark: mat.m2-define-dark-theme($pink-blue-grey-primary, $pink-blue-grey-accent, $legacy-warn);
+
+$purple-green-primary: mat.m2-define-palette(mat.$m2-purple-palette);
+$purple-green-accent: mat.m2-define-palette(mat.$m2-green-palette);
+$purple-green-light: mat.m2-define-light-theme($purple-green-primary, $purple-green-accent, $legacy-warn);
+$purple-green-dark: mat.m2-define-dark-theme($purple-green-primary, $purple-green-accent, $legacy-warn);
+
+@mixin app-card-vars($theme) {
+  $theme-version: mat.get-theme-version($theme);
+  $surface: null;
+  $on-surface: null;
+  $primary: null;
+
+  @if $theme-version == 0 {
+    // Legacy M2 theme objects
+    $surface: map.get(map.get($theme, background), card);
+    $on-surface: map.get(map.get($theme, foreground), text);
+    $primary: mat.m2-get-color-from-palette(map.get($theme, primary));
+  }
+  @else {
+    $theme-type: mat.get-theme-type($theme);
+    // Approximate surface/text using neutral palette stops on M3 theme objects
+    $surface: if($theme-type == light, mat.get-theme-color($theme, neutral, 98), mat.get-theme-color($theme, neutral, 10));
+    $on-surface: if($theme-type == light, mat.get-theme-color($theme, neutral, 10), mat.get-theme-color($theme, neutral, 90));
+    $primary: mat.get-theme-color($theme, primary);
+  }
+
+  --app-card-surface: #{$surface};
+  --app-card-on-surface: #{$on-surface};
+  --app-card-primary: #{$primary};
+  --app-card-border: #{rgba($on-surface, 0.08)};
+  --app-card-shadow-rgb: 0, 0, 0;
+}
+
 // Default theme (light azure-blue)
 :root {
   @include mat.all-component-themes($azure-blue-light);
+  @include app-card-vars($azure-blue-light);
 }
 
 // Per-theme overrides (apply full theme to get color + tokens)
 [data-theme="azure-blue"][data-theme-mode="dark"] {
   @include mat.all-component-themes($azure-blue-dark);
+  @include app-card-vars($azure-blue-dark);
 }
 
 [data-theme="rose-red"][data-theme-mode="light"] {
   @include mat.all-component-themes($rose-red-light);
+  @include app-card-vars($rose-red-light);
 }
 [data-theme="rose-red"][data-theme-mode="dark"] {
   @include mat.all-component-themes($rose-red-dark);
+  @include app-card-vars($rose-red-dark);
 }
 
 [data-theme="magenta-violet"][data-theme-mode="light"] {
   @include mat.all-component-themes($magenta-violet-light);
+  @include app-card-vars($magenta-violet-light);
 }
 [data-theme="magenta-violet"][data-theme-mode="dark"] {
   @include mat.all-component-themes($magenta-violet-dark);
+  @include app-card-vars($magenta-violet-dark);
 }
 
 [data-theme="cyan-orange"][data-theme-mode="light"] {
   @include mat.all-component-themes($cyan-orange-light);
+  @include app-card-vars($cyan-orange-light);
 }
 [data-theme="cyan-orange"][data-theme-mode="dark"] {
   @include mat.all-component-themes($cyan-orange-dark);
+  @include app-card-vars($cyan-orange-dark);
+}
+
+[data-theme="deep-purple-amber"][data-theme-mode="light"] {
+  @include mat.all-component-themes($deep-purple-amber-light);
+  @include app-card-vars($deep-purple-amber-light);
+}
+[data-theme="deep-purple-amber"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($deep-purple-amber-dark);
+  @include app-card-vars($deep-purple-amber-dark);
+}
+
+[data-theme="indigo-pink"][data-theme-mode="light"] {
+  @include mat.all-component-themes($indigo-pink-light);
+  @include app-card-vars($indigo-pink-light);
+}
+[data-theme="indigo-pink"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($indigo-pink-dark);
+  @include app-card-vars($indigo-pink-dark);
+}
+
+[data-theme="pink-blue-grey"][data-theme-mode="light"] {
+  @include mat.all-component-themes($pink-blue-grey-light);
+  @include app-card-vars($pink-blue-grey-light);
+}
+[data-theme="pink-blue-grey"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($pink-blue-grey-dark);
+  @include app-card-vars($pink-blue-grey-dark);
+}
+
+[data-theme="purple-green"][data-theme-mode="light"] {
+  @include mat.all-component-themes($purple-green-light);
+  @include app-card-vars($purple-green-light);
+}
+[data-theme="purple-green"][data-theme-mode="dark"] {
+  @include mat.all-component-themes($purple-green-dark);
+  @include app-card-vars($purple-green-dark);
 }
 
 /* Add global styles & imports to this file! */

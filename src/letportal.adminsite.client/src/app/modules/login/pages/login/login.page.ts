@@ -46,6 +46,8 @@ export class LoginPage implements OnInit {
         // Ensure user will be signed out when be back to login page
         this.session.clear()
         this.security.userLogout()
+        // Reset to default theme when returning to login
+        this.themeService.resetToDefault()
         this.loginForm = this.fb.group({
             username: ['', Validators.required],
             password: ['', Validators.required],
