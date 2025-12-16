@@ -5,9 +5,11 @@
     text-align: left;
   }
   .dialog-box-row {
-    min-width: 700px;
+    min-width: 0;
   }
   .dialog-width {
-    width: 580px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0;
   }
 }

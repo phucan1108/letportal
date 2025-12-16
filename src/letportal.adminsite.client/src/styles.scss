@@ -304,7 +304,8 @@ label {
 }
 
 .dialog-box-row {
-  min-width: 840px;
+  min-width: 0;
+  width: auto;
 }
 
 .divider-left-right-bar {
@@ -325,7 +326,9 @@ label {
 }
 
 .dialog-width {
-  width: 900px;
+  width: auto;
+  max-width: 90vw;
+  min-width: 0;
 }
 
 .m-radio-inline > .mat-mdc-radio-group > .mat-mdc-radio-button:not(:first-child) {

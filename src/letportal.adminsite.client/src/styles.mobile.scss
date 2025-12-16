@@ -9,13 +9,15 @@
     text-align: left;
   }
   .dialog-box-row {
-    min-width: 450px;
+    min-width: 0;
   }
   .filter-wrapper {
     padding-left: 0px !important;
   }
   .dialog-width {
-    width: 100% !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0;
   }
 
   .tile{

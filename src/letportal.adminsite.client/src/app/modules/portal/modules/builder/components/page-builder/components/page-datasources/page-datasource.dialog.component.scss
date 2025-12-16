@@ -1,15 +1,5 @@
 .dialog-width {
-    width: 800px;
-}
-
-@media (min-width: 576.98px) and (max-width: 991.98px) {
-    .dialog-width {
-        width: 700px;
-    }
-}
-
-@media(max-width: 576px){
-    .dialog-width {
-        width: auto;
-    }
+    width: auto;
+    max-width: 90vw;
+    min-width: 0;
 }
